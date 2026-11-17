@@ -59,7 +59,7 @@ final class CrucibleJei implements IRecipeCategory<CrucibleRecipe> {
             b.addSlot(RecipeIngredientRole.INPUT, 1 + (i % 2) * 18, 1 + (i / 2) * 18).setStandardSlotBackground()
                     .addItemStacks(List.of(in.get(i).getItems()));
         }
-        b.addSlot(RecipeIngredientRole.CATALYST, 44, 22).setStandardSlotBackground()
+        b.addSlot(RecipeIngredientRole.CRAFTING_STATION, 44, 22).setStandardSlotBackground()
                 .addItemStacks(List.of(new ItemStack(Items.LAVA_BUCKET), new ItemStack(Items.MAGMA_BLOCK), new ItemStack(Items.BLAZE_ROD), new ItemStack(Items.BLAZE_POWDER)));
         b.addSlot(RecipeIngredientRole.OUTPUT, 98, 11).setOutputSlotBackground().addItemStack(r.result());
     }

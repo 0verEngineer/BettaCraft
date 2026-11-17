@@ -27,21 +27,21 @@ final class DataGenM39 {
 
     private DataGenM39() {}
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         for (var f : LIVE) {
-            tag.apply(ModTags.LIVE_FOOD).addOptional(f);
-            tag.apply(ModTags.BETTA_FOOD).addOptional(f);
+            tag.apply(ModTags.LIVE_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+            tag.apply(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
         }
         for (var f : FLAKES) {
-            tag.apply(ModTags.BETTA_FOOD).addOptional(f);
-            tag.apply(FoodDiet.Group.FLAKES.tag).addOptional(f);
+            tag.apply(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+            tag.apply(FoodDiet.Group.FLAKES.tag).add(net.minecraft.tags.TagEntry.optionalElement(f));
         }
         for (var f : FROZEN) {
-            tag.apply(ModTags.FROZEN_FOOD).addOptional(f);
-            tag.apply(ModTags.BETTA_FOOD).addOptional(f);
-            tag.apply(ModTags.CONDITIONING_FOOD).addOptional(f);
+            tag.apply(ModTags.FROZEN_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+            tag.apply(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+            tag.apply(ModTags.CONDITIONING_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
         }
         // the seed of a daphnia barrel: ours and Fintastic's
-        tag.apply(ModTags.DAPHNIA_STARTERS).add(ModItems.DAPHNIA.get()).addOptional(Compat.rl(Compat.FINTASTIC, "daphnia"));
+        tag.apply(ModTags.DAPHNIA_STARTERS).add(ModItems.DAPHNIA.get()).add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, "daphnia")));
     }
 }

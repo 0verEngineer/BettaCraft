@@ -89,12 +89,12 @@ public final class SoundTest {
             Component kind = Component.translatable("sound_test.bettacraft." + (e.vanilla() ? "vanilla" : "own"));
             if (e.offByDefault()) kind = kind.copy().append(" ").append(Component.translatable("command.bettacraft.sounds.off_by_default"));
             mc.player.displayClientMessage(Component.translatable("command.bettacraft.sounds.playing", index + 1, ENTRIES.size(),
-                    Component.translatable("sound_test.bettacraft." + e.device()), Component.literal(e.event().get().getLocation().getPath())
+                    Component.translatable("sound_test.bettacraft." + e.device()), Component.literal(e.event().get().location().getPath())
                             .append(" (").append(kind).append(")")), false);
-            PLAYED.add(e.event().get().getLocation().toString());
+            PLAYED.add(e.event().get().location().toString());
         }
         if (ticks % loopTicks == 0 && ticks / loopTicks < e.repeats()) {
-            mc.getSoundManager().play(new SimpleSoundInstance(e.event().get().getLocation(), SoundSource.BLOCKS, 1.0F, 1.0F,
+            mc.getSoundManager().play(new SimpleSoundInstance(e.event().get().location(), SoundSource.BLOCKS, 1.0F, 1.0F,
                     RandomSource.create(), false, 0, SoundInstance.Attenuation.NONE, 0, 0, 0, true));
         }
         if (++ticks >= GAP) {

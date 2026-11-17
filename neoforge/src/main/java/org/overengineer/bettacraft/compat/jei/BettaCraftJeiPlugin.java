@@ -159,15 +159,10 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         // M24: the melts of the crucible (from the recipe manager of the world)
         // M52: the recipes the server sent (Fabric's JEI starts before the client level exists)
-        var connection = net.minecraft.client.Minecraft.getInstance().getConnection();
-        var mcLevel = net.minecraft.client.Minecraft.getInstance().level;
-        var rm = connection != null ? connection.getRecipeManager() : mcLevel != null ? mcLevel.getRecipeManager() : null;
-        if (rm != null) {
-            registration.addRecipes(CrucibleJei.TYPE, rm.getAllRecipesFor(org.overengineer.bettacraft.registry.ModRecipes.CRUCIBLE_TYPE.get())
-                    .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
-            registration.addRecipes(FoodMakerJei.TYPE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(rm)
-                    .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList()); // M26 part b
-        }
+        // M52b: clients have no recipe manager since 1.21.2: the recipes our recipe sync sent (crafting.RecipeSync)
+        var synced = org.overengineer.bettacraft.crafting.RecipeSync.client();
+        registration.addRecipes(CrucibleJei.TYPE, synced.crucible().stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
+        registration.addRecipes(FoodMakerJei.TYPE, synced.foodMaker().stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList()); // M26 part b
         // M33 part b: no info pages with features.compat.jei off, none for the items of a feature that is off (at JEI's start)
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI)) return;
         for (String path : ItemHints.ITEMS) {

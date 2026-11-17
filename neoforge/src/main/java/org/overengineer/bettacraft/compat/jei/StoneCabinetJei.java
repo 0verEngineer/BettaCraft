@@ -23,9 +23,16 @@ import org.overengineer.bettacraft.registry.ModItems;
  */
 final class StoneCabinetJei implements ICraftingCategoryExtension<StoneCabinetRecipe> {
     @Override
+    public List<net.minecraft.world.item.crafting.display.SlotDisplay> getIngredients(RecipeHolder<StoneCabinetRecipe> holder) {
+        List<net.minecraft.world.item.crafting.display.SlotDisplay> out = new ArrayList<>();
+        for (var o : holder.value().getIngredients()) out.add(o.map(net.minecraft.world.item.crafting.Ingredient::display)
+                .orElse(net.minecraft.world.item.crafting.display.SlotDisplay.Empty.INSTANCE));
+        return out;
+    }
+
+    @Override
     public void setRecipe(RecipeHolder<StoneCabinetRecipe> holder, IRecipeLayoutBuilder builder, ICraftingGridHelper grid, IFocusGroup focuses) {
-        var level = Minecraft.getInstance().level;
-        List<CabinetStones.Pair> pairs = level == null ? CabinetStones.VANILLA : CabinetStones.all(level.getRecipeManager(), level.registryAccess());
+        List<CabinetStones.Pair> pairs = org.overengineer.bettacraft.crafting.RecipeSync.client().stones(); // M52b: synced
         if (pairs.isEmpty()) pairs = CabinetStones.VANILLA;
         List<ItemStack> slabs = new ArrayList<>(), stones = new ArrayList<>(), cabinets = new ArrayList<>();
         for (CabinetStones.Pair p : pairs) {
@@ -34,7 +41,7 @@ final class StoneCabinetJei implements ICraftingCategoryExtension<StoneCabinetRe
             stones.add(new ItemStack(p.stone()));
             cabinets.add(CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), BuiltInRegistries.BLOCK.getKey(bi.getBlock())));
         }
-        List<ItemStack> chests = List.of(holder.value().getIngredients().get(4).getItems());
+        List<ItemStack> chests = org.overengineer.bettacraft.crafting.RecipeCompat.stacks(holder.value().getIngredients().get(4));
         List<List<ItemStack>> inputs = List.of(slabs, slabs, slabs, stones, chests, stones, stones, stones, stones);
         List<IRecipeSlotBuilder> in = grid.createAndSetInputs(builder, inputs, 3, 3);
         IRecipeSlotBuilder out = grid.createAndSetOutputs(builder, cabinets);

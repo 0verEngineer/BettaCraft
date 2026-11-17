@@ -15,10 +15,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.decor.DecorType;
@@ -62,72 +62,72 @@ final class DataGenM28 {
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // alder cones: birch leaves dried like the almond leaves (alder and birch are one family)
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 200)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("alder_cone"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone")));
         SimpleCookingRecipeBuilder.smoking(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 100)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("alder_cone_smoking"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone_smoking")));
         SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 600)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("alder_cone_campfire"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone_campfire")));
         // wrecks
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.ROWING_BOAT))
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.ROWING_BOAT))
                 .requires(ItemTags.BOATS).requires(ItemTags.PLANKS).requires(Items.MOSS_CARPET)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_rowing_boat"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.SHIP_BOW))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_rowing_boat")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SHIP_BOW))
                 .pattern(" SW").pattern("PCP").pattern("LPL")
                 .define('S', Tags.Items.RODS_WOODEN).define('W', Items.WHITE_WOOL).define('P', ItemTags.PLANKS).define('L', ItemTags.LOGS)
                 .define('C', ModItems.SPAWNING_CAVE.get())
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_ship_bow"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_ship_bow")));
         // stones
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.HOLEY_ROCK))
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.HOLEY_ROCK))
                 .requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.DRIPSTONE_BLOCK)
-                .unlockedBy("has_calcite", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, BettaCraft.id("decor_holey_rock"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SLATE_CAVE))
+                .unlockedBy("has_calcite", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, RecipeCompat.key(BettaCraft.id("decor_holey_rock")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SLATE_CAVE))
                 .requires(Items.DEEPSLATE_TILES).requires(Items.DEEPSLATE_TILES).requires(Items.POLISHED_DEEPSLATE).requires(Items.COBBLED_DEEPSLATE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_slate_cave"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SEIRYU_STONE))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_slate_cave")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SEIRYU_STONE))
                 .requires(Items.STONE).requires(Items.STONE).requires(Items.ANDESITE).requires(Items.TUFF).requires(Items.CALCITE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_seiryu_stone"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.DRAGON_STONE))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_seiryu_stone")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DRAGON_STONE))
                 .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.BROWN_TERRACOTTA).requires(Items.PACKED_MUD)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_dragon_stone"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.LAVA_ROCK))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_dragon_stone")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.LAVA_ROCK))
                 .requires(Items.BLACKSTONE).requires(Items.BLACKSTONE).requires(Items.RED_TERRACOTTA).requires(Items.MAGMA_BLOCK)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_lava_rock"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_lava_rock")));
         // roots
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.MANGROVE_ROOT))
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.MANGROVE_ROOT))
                 .requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_LOG)
-                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, BettaCraft.id("decor_mangrove_root"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SPIDERWOOD))
+                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, RecipeCompat.key(BettaCraft.id("decor_mangrove_root")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SPIDERWOOD))
                 .requires(Items.STRIPPED_OAK_LOG).requires(Items.OAK_LOG).requires(Tags.Items.RODS_WOODEN).requires(Tags.Items.RODS_WOODEN)
                 .requires(Tags.Items.RODS_WOODEN)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_spiderwood"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.BOGWOOD_BRIDGE))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_spiderwood")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.BOGWOOD_BRIDGE))
                 .requires(Items.DARK_OAK_LOG).requires(Items.DARK_OAK_LOG).requires(Items.DARK_OAK_LOG).requires(Items.MUD)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_bogwood_bridge"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_bogwood_bridge")));
         // caves and tubes
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.COCONUT_CAVE))
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.COCONUT_CAVE))
                 .requires(Items.BROWN_TERRACOTTA).requires(Items.BROWN_TERRACOTTA).requires(Items.BROWN_WOOL).requires(Items.BOWL)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_coconut_cave"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CLAY_TUBES))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_coconut_cave")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.CLAY_TUBES))
                 .pattern("CCC").pattern("C C").pattern("CCC")
                 .define('C', ModItems.SPAWNING_CAVE.get())
-                .unlockedBy("has_spawning_cave", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, BettaCraft.id("decor_clay_tubes"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SHRIMP_TUBES))
+                .unlockedBy("has_spawning_cave", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_clay_tubes")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SHRIMP_TUBES))
                 .requires(Items.TERRACOTTA).requires(Items.ORANGE_TERRACOTTA).requires(Items.WHITE_TERRACOTTA).requires(Items.CLAY_BALL)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_shrimp_tubes"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_shrimp_tubes")));
         // kitsch
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.RUIN_COLUMN))
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.RUIN_COLUMN))
                 .requires(Items.POLISHED_DIORITE).requires(Items.POLISHED_DIORITE).requires(Items.DIORITE).requires(Items.MOSS_CARPET)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_ruin_column"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.DIVER_HELMET))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_ruin_column")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DIVER_HELMET))
                 .pattern("TTT").pattern("GCG").pattern("TTT")
                 .define('T', Items.ORANGE_TERRACOTTA).define('G', Tags.Items.GLASS_PANES).define('C', Tags.Items.INGOTS_COPPER)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_diver_helmet"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.TREASURE_CHEST))
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_diver_helmet")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.TREASURE_CHEST))
                 .requires(Items.CHEST).requires(ModItems.AIR_STONE.get()).requires(Tags.Items.NUGGETS_GOLD).requires(Items.YELLOW_CONCRETE)
-                .unlockedBy("has_air_stone", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, BettaCraft.id("decor_treasure_chest"));
+                .unlockedBy("has_air_stone", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_treasure_chest")));
     }
 
-    static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(ModTags.SHRIMP_SHELTER).addTag(BlockTags.TERRACOTTA).add(ModBlocks.SPAWNING_CAVE.get());
         // M29: the coconut shell and the slate cave are spawning caves of the Apistogramma
         tag.apply(ModTags.SMALL_CAVES).add(net.minecraft.world.level.block.Blocks.BROWN_TERRACOTTA, net.minecraft.world.level.block.Blocks.BROWN_WOOL,

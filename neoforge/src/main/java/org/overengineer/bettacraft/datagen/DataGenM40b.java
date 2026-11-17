@@ -10,11 +10,11 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import org.overengineer.bettacraft.BettaCraft;
@@ -90,21 +90,21 @@ final class DataGenM40b {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter) {
         Ingredient pipe = Ingredient.of(ModItems.GLASS_PIPE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_FRESH_PIPE.get(), 8)
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_FRESH_PIPE.get(), 8)
                 .pattern("PPP").pattern("PDP").pattern("PPP").define('P', pipe).define('D', Tags.Items.DYES_LIME)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_fresh_pipe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_WASTE_PIPE.get(), 8)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_fresh_pipe")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_WASTE_PIPE.get(), 8)
                 .pattern("PPP").pattern("PDP").pattern("PPP").define('P', pipe).define('D', Tags.Items.DYES_BROWN)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_waste_pipe"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FILTER_FRESH_PORT.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_waste_pipe")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_FRESH_PORT.get())
                 .requires(ModItems.FILTER_INLET.get()).requires(Tags.Items.DYES_LIME)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_fresh_port"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FILTER_WASTE_PORT.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_fresh_port")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_WASTE_PORT.get())
                 .requires(ModItems.FILTER_OUTLET.get()).requires(Tags.Items.DYES_BROWN)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_waste_port"));
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_waste_port")));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         for (Block b : pipes()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         for (Block b : blocks()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FILTER_PIPE_BUNDLE.get());

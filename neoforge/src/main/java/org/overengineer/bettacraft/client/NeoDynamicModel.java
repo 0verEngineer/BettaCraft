@@ -1,35 +1,32 @@
 package org.overengineer.bettacraft.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
+import net.minecraft.util.TriState;
 import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.neoforge.NeoModelData;
 import org.overengineer.bettacraft.platform.client.DynamicModel;
 import org.overengineer.bettacraft.platform.model.ModelValues;
 
 /**
- * M52: one of our {@link DynamicModel}s as a NeoForge model: the model data becomes its render values, the render types
- * its layers; the item draws this model itself (render passes, transforms) with the wrapped JSON model's item render types.
+ * M52: one of our {@link DynamicModel}s as a NeoForge model. M52b (1.21.11): a {@link DynamicBlockStateModel} whose parts
+ * are the model's quads of one chunk layer each; the block entity's model data (read from the level, as NeoForge does
+ * since 21.5) becomes the render values. The items of the mod draw with {@code client.item.BlockModelItem}.
  */
-public final class NeoDynamicModel extends BakedModelWrapper<BakedModel> {
+public final class NeoDynamicModel implements DynamicBlockStateModel {
     private final DynamicModel dynamic;
 
     public NeoDynamicModel(DynamicModel dynamic) {
-        super((BakedModel) dynamic);
         this.dynamic = dynamic;
     }
 
@@ -37,53 +34,75 @@ public final class NeoDynamicModel extends BakedModelWrapper<BakedModel> {
         return dynamic;
     }
 
-    @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData data, @Nullable RenderType renderType) {
-        return dynamic.quads(state, side, rand, NeoModelData.fromNeo(data), renderType);
+    /** The render values of the block at {@code pos} (the block entity's model data plus what the model reads itself). */
+    ModelValues values(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return dynamic.modelData(level, pos, state, NeoModelData.fromNeo(level.getModelData(pos)));
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        return dynamic.quads(state, side, rand, ModelValues.EMPTY, null);
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+        collect(state, random, values(level, pos, state), parts);
+    }
+
+    void collect(@Nullable BlockState state, RandomSource random, ModelValues data, List<BlockModelPart> parts) {
+        for (ChunkSectionLayer layer : dynamic.layers(state, random, data)) {
+            @SuppressWarnings("unchecked")
+            List<BakedQuad>[] sides = new List[7];
+            for (Direction d : Direction.values()) sides[d.ordinal()] = dynamic.quads(state, d, random, data, layer);
+            sides[6] = dynamic.quads(state, null, random, data, layer);
+            parts.add(new Part(layer, sides, dynamic.ambientOcclusion(), dynamic.particle(data)));
+        }
     }
 
     @Override
-    public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
-        return ChunkRenderTypeSet.of(dynamic.layers(state, rand, NeoModelData.fromNeo(data)));
+    public TextureAtlasSprite particleIcon() {
+        return dynamic.particle(ModelValues.EMPTY);
     }
 
     @Override
-    public ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData data) {
-        ModelValues in = NeoModelData.fromNeo(data);
-        ModelValues out = dynamic.modelData(level, pos, state, in);
-        return out == in ? data : NeoModelData.toNeo(out);
+    public TextureAtlasSprite particleIcon(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return dynamic.particle(values(level, pos, state));
     }
 
     @Override
-    public TextureAtlasSprite getParticleIcon(ModelData data) {
-        return dynamic.particle(NeoModelData.fromNeo(data));
+    public @Nullable Object createGeometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+        return null; // the quads depend on the neighbours and the block entity: never shared
     }
 
-    @Override
-    public List<RenderType> getRenderTypes(ItemStack stack, boolean fabulous) {
-        List<RenderType> own = dynamic.itemLayers(fabulous);
-        if (own != null) return own;
-        BakedModel original = dynamic.original();
-        return original != null ? original.getRenderTypes(stack, fabulous) : super.getRenderTypes(stack, fabulous);
+    /** The quads of one chunk layer. */
+    record Part(ChunkSectionLayer layer, List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle) implements BlockModelPart {
+        @Override
+        public List<BakedQuad> getQuads(@Nullable Direction side) {
+            return sides[side == null ? 6 : side.ordinal()];
+        }
+
+        @Override
+        public boolean useAmbientOcclusion() {
+            return ao;
+        }
+
+        @Override
+        public TextureAtlasSprite particleIcon() {
+            return particle;
+        }
+
+        @Override
+        public ChunkSectionLayer getRenderType(BlockState state) {
+            return layer;
+        }
+
+        @Override
+        public TriState ambientOcclusion() {
+            return ao ? TriState.DEFAULT : TriState.FALSE;
+        }
     }
 
-    /** M21.7: the item is drawn with this model (the wrapper used to hand the passes to the wrapped model). */
-    @Override
-    public List<BakedModel> getRenderPasses(ItemStack stack, boolean fabulous) {
-        return List.of(this);
-    }
-
-    @Override
-    public BakedModel applyTransform(ItemDisplayContext context, PoseStack pose, boolean leftHand) {
-        BakedModel original = dynamic.original();
-        if (original != null) original.applyTransform(context, pose, leftHand);
-        else getTransforms().getTransform(context).apply(leftHand, pose);
-        return this;
+    static List<BakedQuad> all(List<BlockModelPart> parts) {
+        List<BakedQuad> out = new ArrayList<>();
+        for (BlockModelPart p : parts) {
+            for (Direction d : Direction.values()) out.addAll(p.getQuads(d));
+            out.addAll(p.getQuads(null));
+        }
+        return out;
     }
 }

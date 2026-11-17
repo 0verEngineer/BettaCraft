@@ -15,8 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.common.data.AdvancementProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.overengineer.bettacraft.datagen.model.ExistingFileHelper;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.decor.DecorType;
 import org.overengineer.bettacraft.progression.BettaEventTrigger;
@@ -27,7 +26,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * Advancement tree "Bettacraft" (M6). Titles/descriptions: {@code advancements.bettacraft.<id>.title/.description}
  * (en in {@link LangEn}, de by hand). Most criteria are {@code bettacraft:event} fired by {@link Progress}.
  */
-final class ModAdvancements implements AdvancementProvider.AdvancementGenerator {
+final class ModAdvancements implements net.minecraft.data.advancements.AdvancementSubProvider {
     /** All ids in tree order (also used by the language files and tests). */
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
@@ -56,12 +55,12 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
     private Consumer<AdvancementHolder> out;
 
     @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver, ExistingFileHelper efh) {
+    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver) {
         out = saver;
         AdvancementHolder root = Advancement.Builder.advancement()
                 .display(ModItems.BETTA_BUCKET.get(), title("root"), desc("root"),
                         Identifier.withDefaultNamespace("textures/block/mud.png"), AdvancementType.TASK, false, false, false)
-                .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
+                .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(net.minecraft.core.registries.BuiltInRegistries.ITEM, 
                         ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get(), ModItems.TANK.get(), ModItems.SWAMP_WATER_BOTTLE.get(),
                         ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.HEATER_SMALL.get(), ModItems.SALT_WATER_BOTTLE.get())))
                 .addCriterion("caught", BettaEventTrigger.Instance.of(Progress.CATCH_BETTA))
@@ -70,7 +69,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
 
         // catching and keeping
         simple(root, "catch_betta", ModItems.BETTA_BUCKET.get(), AdvancementType.TASK,
-                "bucket", FilledBucketTrigger.TriggerInstance.filledBucket(ItemPredicate.Builder.item().of(ModItems.BETTA_BUCKET.get())),
+                "bucket", FilledBucketTrigger.TriggerInstance.filledBucket(ItemPredicate.Builder.item().of(net.minecraft.core.registries.BuiltInRegistries.ITEM, ModItems.BETTA_BUCKET.get())),
                 "event", BettaEventTrigger.Instance.of(Progress.CATCH_BETTA));
         AdvancementHolder tank = simple(root, "build_tank", ModItems.TANK.get(), AdvancementType.TASK,
                 "built", BettaEventTrigger.Instance.of(Progress.TANK_BUILT));
@@ -84,7 +83,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         simple(inserted, "water_change", Items.WATER_BUCKET, AdvancementType.TASK,
                 "changed", BettaEventTrigger.Instance.of(Progress.WATER_CHANGE));
         simple(ideal, "cooler", ModItems.COOLER_MEDIUM.get(), AdvancementType.TASK,
-                "cooler", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
+                "cooler", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(net.minecraft.core.registries.BuiltInRegistries.ITEM, 
                         ModItems.COOLER_SMALL.get(), ModItems.COOLER_MEDIUM.get(), ModItems.COOLER_LARGE.get())));
         simple(inserted, "feeder", ModItems.FEEDER.get(), AdvancementType.TASK,
                 "fed", BettaEventTrigger.Instance.of(Progress.FEEDER));
@@ -148,7 +147,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         simple(larvae, "food_bred", ModItems.LARVA_TUB.get(), AdvancementType.GOAL,
                 "bred", BettaEventTrigger.Instance.of(Progress.FOOD_BRED));
         simple(swamp, "fry_food", ModItems.ARTEMIA_NAUPLII.get(), AdvancementType.TASK,
-                "fry_food", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
+                "fry_food", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(net.minecraft.core.registries.BuiltInRegistries.ITEM, 
                         ModItems.INFUSORIA.get(), ModItems.ARTEMIA_NAUPLII.get())));
         m45(filled, inserted, tank, interior, larvae);
     }

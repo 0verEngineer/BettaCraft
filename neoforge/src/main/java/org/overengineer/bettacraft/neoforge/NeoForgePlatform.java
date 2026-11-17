@@ -51,12 +51,12 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public boolean isClient() {
-        return FMLEnvironment.dist.isClient();
+        return FMLEnvironment.getDist().isClient();
     }
 
     @Override
     public boolean isDevelopment() {
-        return !FMLEnvironment.production;
+        return !FMLEnvironment.isProduction();
     }
 
     @Override
@@ -91,7 +91,7 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public void sendToServer(CustomPacketPayload payload) {
-        PacketDistributor.sendToServer(payload);
+        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(payload);
     }
 
     @Override
@@ -124,24 +124,28 @@ public final class NeoForgePlatform implements Platform {
         player.openMenu(provider, extra::accept);
     }
 
+    private static <T, H> @Nullable H wrap(@Nullable T handler, java.util.function.Function<T, H> f) {
+        return handler == null ? null : f.apply(handler);
+    }
+
     @Override
     public @Nullable IItemHandler itemHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(level.getCapability(Capabilities.ItemHandler.BLOCK, pos, side));
+        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Item.BLOCK, pos, side), net.neoforged.neoforge.items.IItemHandler::of));
     }
 
     @Override
     public @Nullable IFluidHandler fluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(level.getCapability(Capabilities.FluidHandler.BLOCK, pos, side));
+        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Fluid.BLOCK, pos, side), net.neoforged.neoforge.fluids.capability.IFluidHandler::of));
     }
 
     @Override
     public @Nullable IEnergyStorage energyStorage(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side));
+        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Energy.BLOCK, pos, side), net.neoforged.neoforge.energy.IEnergyStorage::of));
     }
 
     @Override
     public @Nullable IEnergyStorage energyStorage(Level level, BlockPos pos, BlockState state, @Nullable BlockEntity be, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(Capabilities.EnergyStorage.BLOCK.getCapability(level, pos, state, be, side));
+        return NeoTransfer.fromNeo(wrap(Capabilities.Energy.BLOCK.getCapability(level, pos, state, be, side), net.neoforged.neoforge.energy.IEnergyStorage::of));
     }
 
     @Override
@@ -187,12 +191,12 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public ItemStack craftingRemainder(ItemStack stack) {
-        return stack.getCraftingRemainingItem();
+        return stack.getCraftingRemainder();
     }
 
     @Override
     public @Nullable net.minecraft.world.food.FoodProperties foodProperties(ItemStack stack, @Nullable net.minecraft.world.entity.LivingEntity eater) {
-        return stack.getFoodProperties(eater);
+        return stack.get(net.minecraft.core.component.DataComponents.FOOD);
     }
 
     @Override
@@ -252,7 +256,7 @@ public final class NeoForgePlatform implements Platform {
     @Override
     public net.minecraft.world.item.SpawnEggItem spawnEgg(java.util.function.Supplier<? extends net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.Mob>> type,
             int background, int highlight, net.minecraft.world.item.Item.Properties props) {
-        return new net.neoforged.neoforge.common.DeferredSpawnEggItem(type, background, highlight, props);
+        return new net.minecraft.world.item.SpawnEggItem(props.spawnEgg(type.get())); // M52b: no colours since 1.21.5 (textures)
     }
 
     @Override
@@ -280,10 +284,6 @@ public final class NeoForgePlatform implements Platform {
         return state.getLightEmission(level, pos);
     }
 
-    @Override
-    public com.mojang.serialization.MapCodec<net.minecraft.world.item.crafting.Ingredient> ingredientMapCodec() {
-        return net.minecraft.world.item.crafting.Ingredient.MAP_CODEC_NONEMPTY;
-    }
 
     @Override
     public FluidActionResult tryFillContainer(ItemStack container, IFluidHandler source, int maxAmount, @Nullable Player player, boolean doFill) {

@@ -163,7 +163,8 @@ public final class NbtCompat {
         return e.registryAccess();
     }
 
-    private static HolderLookup.Provider fallback() {
+    /** The registries of the running server (or built-in ones), where the caller has none (M52b: attachments). */
+    public static HolderLookup.Provider fallback() {
         MinecraftServer server = Platform.available() ? Platform.get().currentServer() : null;
         if (server != null) return server.registryAccess();
         return RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);

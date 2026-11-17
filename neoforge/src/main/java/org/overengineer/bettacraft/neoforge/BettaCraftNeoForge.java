@@ -66,14 +66,8 @@ public final class BettaCraftNeoForge {
         modBus.addListener(NeoForgeNetwork::register);
         modBus.addListener(NeoForgeCapabilities::register);
         modBus.addListener((FMLCommonSetupEvent e) -> e.enqueueWork(BettaCraft::commonSetup));
-        // M32 part c: tanks and monitors as sources of Create's Display Link (the only class compiled against Create's API)
-        if (ModList.get().isLoaded(org.overengineer.bettacraft.compat.create.CreateCompat.MOD_ID)) {
-            org.overengineer.bettacraft.compat.create.CreateDisplays.register(modBus);
-            // M41: the drive adapter and the shaft on the cabinet with real stress (compiled against Create too)
-            org.overengineer.bettacraft.compat.create.CreateDrive.register(modBus);
-            // M50: the care on the road (compiled against Create too)
-            org.overengineer.bettacraft.compat.create.CreateCompat.travelTick = org.overengineer.bettacraft.compat.create.CreateTravel::tick;
-        }
+        // M32 part c, M41, M50: the Create integration (Display Link sources, drive adapter, care on the road) rests on 1.21.11:
+        // Create has no build for it (M52b), its classes are left out of this branch
         // M21.7: the slab table of the stone cabinets follows reloads of recipes and tags
         NeoForge.EVENT_BUS.addListener((TagsUpdatedEvent e) -> BettaCraft.onTagsUpdated());
         // Better Fish Tanks (M7): release our bags and betta buckets into its tanks (reflection, only with the mod)

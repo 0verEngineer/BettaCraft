@@ -27,7 +27,7 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD) return;
-        for (var s : org.overengineer.bettacraft.world.WildSpawns.wildlife(biome)) builder.getMobSpawnSettings().addSpawn(s.category(), s.data());
+        for (var s : org.overengineer.bettacraft.world.WildSpawns.wildlife(biome)) builder.getMobSpawnSettings().addSpawn(s.category(), s.weight(), s.data());
     }
 
     @Override

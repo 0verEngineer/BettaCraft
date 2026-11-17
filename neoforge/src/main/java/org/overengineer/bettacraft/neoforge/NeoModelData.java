@@ -2,8 +2,8 @@ package org.overengineer.bettacraft.neoforge;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelProperty;
 import org.overengineer.bettacraft.platform.model.ModelKey;
 import org.overengineer.bettacraft.platform.model.ModelValues;
 

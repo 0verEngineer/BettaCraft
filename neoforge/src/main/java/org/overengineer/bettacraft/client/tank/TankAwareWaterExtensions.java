@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.client.tank;
 
-import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.lang.reflect.Field;
@@ -8,7 +7,8 @@ import java.util.Map;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.client.renderer.fog.FogData;
+import net.minecraft.client.renderer.fog.environment.FogEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.overengineer.bettacraft.tank.TankBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,16 +84,16 @@ public final class TankAwareWaterExtensions implements IClientFluidTypeExtension
     @Override public Identifier getFlowingTexture() { return delegate.getFlowingTexture(); }
     @Override public Identifier getOverlayTexture() { return delegate.getOverlayTexture(); }
     @Override public Identifier getRenderOverlayTexture(Minecraft mc) { return delegate.getRenderOverlayTexture(mc); }
-    @Override public void renderOverlay(Minecraft mc, PoseStack poseStack) { delegate.renderOverlay(mc, poseStack); }
+    @Override public void renderOverlay(Minecraft mc, PoseStack poseStack, net.minecraft.client.renderer.MultiBufferSource buffers) { delegate.renderOverlay(mc, poseStack, buffers); }
 
     @Override
-    public Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
+    public Vector4f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector4f fluidFogColor) {
         return delegate.modifyFogColor(camera, partialTick, level, renderDistance, darkenWorldAmount, fluidFogColor);
     }
 
     @Override
-    public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
-        delegate.modifyFogRender(camera, mode, renderDistance, partialTick, nearDistance, farDistance, shape);
+    public void modifyFogRender(Camera camera, @org.jetbrains.annotations.Nullable FogEnvironment environment, float renderDistance, float partialTick, FogData fogData) {
+        delegate.modifyFogRender(camera, environment, renderDistance, partialTick, fogData);
     }
 
     @Override public Identifier getStillTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getStillTexture(state, getter, pos); }

@@ -144,7 +144,7 @@ public final class DeepNavigation {
                 if (!visible(row)) continue;
                 NavigationNode node = (NavigationNode) nodeF.get(row);
                 int indent = depth(row) * STEP + 7;
-                if (!node.iconFactory().get().isEmpty()) indent += 8;
+                if (!node.icon().isEmpty()) indent += 8;
                 LytRect bounds = ((LytParagraph) paragraphF.get(row)).layout(context, indent, y, NAVBAR_WIDTH - indent);
                 topF.setInt(row, bounds.y());
                 bottomF.setInt(row, bounds.bottom());

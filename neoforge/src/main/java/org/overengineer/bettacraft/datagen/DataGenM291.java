@@ -7,9 +7,9 @@ import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelBuilder;
+import org.overengineer.bettacraft.datagen.model.ItemModelBuilder;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelBuilder;
 
 /**
  * M29.1: every block of the mod shows as a 3D block in the inventory, the hotbar, JEI and the handbook, like vanilla
@@ -112,7 +112,7 @@ final class DataGenM291 {
 
     /** Heater / cooler: a glass tube with the coil (the middle segment) and the dark cap with the lamp; taller by size. */
     static void tube(ItemModelProvider p, String item, String kind, float bodyHeight) {
-        ItemModelBuilder b = p.getBuilder(item).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        ItemModelBuilder b = p.getBuilder(item).parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("body", p.modLoc("block/" + kind + "_middle")).texture("foot", p.modLoc("block/" + kind + "_anchor"))
                 .texture("cap", p.modLoc("block/" + kind + "_top")).texture("particle", p.modLoc("block/" + kind + "_middle"));
         float y0 = (16 - bodyHeight - 3) / 2F;
@@ -123,7 +123,7 @@ final class DataGenM291 {
 
     /** Internal / corner filter: a box with the intake slots, the cap on top and the outlet towards the front. */
     static void filter(ItemModelProvider p, String item, String body, String foot, String cap, String outlet) {
-        ItemModelBuilder b = p.getBuilder(item).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        ItemModelBuilder b = p.getBuilder(item).parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("body", p.modLoc("block/" + body)).texture("foot", p.modLoc("block/" + foot))
                 .texture("cap", p.modLoc("block/" + cap)).texture("outlet", p.modLoc("block/" + outlet)).texture("particle", p.modLoc("block/" + body));
         sides(box(b, 4.5F, 1, 5, 11.5F, 6, 11), "#foot", new float[]{2, 2, 14, 10}, null, "#cap");
@@ -142,7 +142,7 @@ final class DataGenM291 {
      * with its knob standing up on the side, a bit bigger than on the block so the icon reads as a hand-cranked machine.
      */
     static void foodMaker(ItemModelProvider p) {
-        ItemModelBuilder b = p.getBuilder("food_maker").parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        ItemModelBuilder b = p.getBuilder("food_maker").parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("front", p.modLoc("block/food_maker_front")).texture("side", p.modLoc("block/food_maker_side"))
                 .texture("top", p.modLoc("block/food_maker_top")).texture("hopper", p.modLoc("block/food_maker_hopper"))
                 .texture("crank", p.modLoc("block/food_maker_crank")).texture("knob", p.modLoc("block/food_maker_knob"))
@@ -163,7 +163,7 @@ final class DataGenM291 {
      * tinted in the light colour (tint 0, like the panel of the block).
      */
     static void lamp(ItemModelProvider p, String item, String housing, String top, float x0, float x1, float z0, float z1, float h) {
-        ItemModelBuilder b = p.getBuilder(item).parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        ItemModelBuilder b = p.getBuilder(item).parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("housing", p.modLoc("block/" + housing)).texture("top", p.modLoc("block/" + top))
                 .texture("panel", p.modLoc("block/" + item + "_panel_on")).texture("cone", p.modLoc("item/light_cone"))
                 .texture("particle", p.modLoc("block/" + housing)).renderType("minecraft:translucent");
@@ -179,7 +179,7 @@ final class DataGenM291 {
 
     /** Sponge filter: the round sponge with the lift tube on top. */
     static void spongeFilter(ItemModelProvider p) {
-        ItemModelBuilder b = p.getBuilder("sponge_filter").parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        ItemModelBuilder b = p.getBuilder("sponge_filter").parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("sponge", p.modLoc("block/sponge_filter_sponge")).texture("tube", p.modLoc("block/sponge_filter_top_side"))
                 .texture("top", p.modLoc("block/sponge_filter_top")).texture("particle", p.modLoc("block/sponge_filter_sponge"));
         sides(box(b, 4, 0.5F, 4, 12, 10.5F, 12), "#sponge", new float[]{0, 0, 16, 16}, "#sponge", "#sponge");

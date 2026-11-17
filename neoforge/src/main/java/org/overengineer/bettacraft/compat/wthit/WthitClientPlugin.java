@@ -53,7 +53,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
-            InfoLines.tank(accessor.getData().raw().getCompound(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
+            InfoLines.tank(accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
         }
     }
 
@@ -61,7 +61,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
-            InfoLines.filter(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+            InfoLines.filter(accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
 
@@ -70,7 +70,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
-            InfoLines.spring(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+            InfoLines.spring(accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
 
@@ -78,7 +78,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
-            InfoLines.culture(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+            InfoLines.culture(accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY)).forEach(tooltip::addLine);
         }
     }
 
@@ -96,7 +96,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         public void appendBody(ITooltip tooltip, IEntityAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             if (!(accessor.getEntity() instanceof BettaEntity b)) return;
-            InfoLines.betta(b, accessor.getData().raw().getCompound(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
+            InfoLines.betta(b, accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY), details(accessor.getPlayer())).forEach(tooltip::addLine);
         }
     }
 }

@@ -12,10 +12,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -66,20 +66,20 @@ final class DataGenM31c {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.CRICKET_CULTURE.get(), 3)
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.CRICKET_CULTURE.get(), 3)
                 .requires(Items.WHEAT).requires(Items.SHORT_GRASS).requires(Items.PAPER)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("cricket_culture"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FRUIT_FLY_CULTURE.get(), 2)
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("cricket_culture")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.FRUIT_FLY_CULTURE.get(), 2)
                 .requires(Items.GLASS_BOTTLE).requires(Ingredient.of(Items.APPLE, Items.SWEET_BERRIES, Items.MELON_SLICE))
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("fruit_fly_culture"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("fruit_fly_culture")));
     }
 
-    static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(ModTags.FROG_NEST_GROUND).addTag(BlockTags.LEAVES).addTag(BlockTags.DIRT)
                 .add(Blocks.MOSS_BLOCK, Blocks.MOSS_CARPET, Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS);
     }
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         tag.apply(ModTags.FEEDER_INSECTS).add(ModItems.CRICKETS.get());
         tag.apply(ModTags.SMALL_FEEDER_INSECTS).add(ModItems.FRUIT_FLIES.get());
         tag.apply(ModTags.GECKO_FRUIT).add(Items.SWEET_BERRIES, Items.GLOW_BERRIES, Items.MELON_SLICE);

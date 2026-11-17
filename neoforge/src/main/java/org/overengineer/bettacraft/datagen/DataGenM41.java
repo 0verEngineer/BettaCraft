@@ -5,9 +5,9 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.BettaCraft;
 
 /**
@@ -42,8 +42,8 @@ final class DataGenM41 {
         p.withExistingParent("drive_adapter", p.modLoc("block/drive_adapter"));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
-        tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).addOptional(BettaCraft.id("drive_adapter"));
-        tag.apply(BlockTags.MINEABLE_WITH_AXE).addOptional(BettaCraft.id("drive_adapter"));
+    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+        tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("drive_adapter")));
+        tag.apply(BlockTags.MINEABLE_WITH_AXE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("drive_adapter")));
     }
 }

@@ -34,7 +34,6 @@
   "client": [
     "BreakSoundMixin",
     "ClientDestroyMixin",
-    "LivingRendererMixin",
     "MouseScrollMixin",
     "PickBlockMixin",
     "RenderDataMixin"

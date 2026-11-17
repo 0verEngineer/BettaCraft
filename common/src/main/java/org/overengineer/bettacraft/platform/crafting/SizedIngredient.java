@@ -18,13 +18,13 @@ import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.platform.Platform;
 
 /**
- * M52: an ingredient with a count (food maker, crucible). Saved flat like NeoForge's sized ingredient:
- * {@code {"item": "...", "count": 4}} / {@code {"tag": "...", "count": 4}} (the ingredient's own fields and the count); the
- * ingredient map codec comes from the loader (NeoForge: with its custom ingredient types).
+ * M52: an ingredient with a count (food maker, crucible). M52b (1.21.11): saved like NeoForge 21.11's sized ingredient,
+ * {@code {"ingredient": "minecraft:stone", "count": 4}} / {@code {"ingredient": "#c:ingots/iron", ...}} (1.21.2 made
+ * ingredients plain item lists or tags; 1.21.1 saved the ingredient's own fields flat beside the count).
  */
 public final class SizedIngredient {
     public static final Codec<SizedIngredient> FLAT_CODEC = Codec.lazyInitialized(() -> RecordCodecBuilder.create(i -> i.group(
-            Platform.get().ingredientMapCodec().forGetter(SizedIngredient::ingredient),
+            Ingredient.CODEC.fieldOf("ingredient").forGetter(SizedIngredient::ingredient),
             ExtraCodecs.POSITIVE_INT.optionalFieldOf("count").xmap(o -> o.orElse(1), Optional::of).forGetter(SizedIngredient::count)
     ).apply(i, SizedIngredient::new)));
 

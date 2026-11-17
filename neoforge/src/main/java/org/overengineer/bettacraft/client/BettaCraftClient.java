@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.client;
 
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -25,7 +24,6 @@ import org.overengineer.bettacraft.client.render.TankSignRenderer;
 import org.overengineer.bettacraft.client.screen.FeederScreen;
 import org.overengineer.bettacraft.client.screen.TankScreen;
 import org.overengineer.bettacraft.client.tank.TankAwareWaterExtensions;
-import org.overengineer.bettacraft.client.tank.TankModelLoader;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
@@ -60,12 +58,13 @@ public final class BettaCraftClient {
         // M21.5: the handbook is registered from code (own <Small> tag for the byline on the start page)
         if (org.overengineer.bettacraft.progression.GuideBook.installed()) org.overengineer.bettacraft.compat.guideme.GuideMEClientCompat.register();
         ClientFeatures.jeiRefresh = () -> org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.applyFeatures();
-        if (org.overengineer.bettacraft.compat.create.CreateCompat.loaded()) {
-            org.overengineer.bettacraft.compat.create.CreateCompat.travelClient = org.overengineer.bettacraft.compat.create.CreateTravelClient::accept;
-        }
+        // M52b: no Create on 1.21.11 (the travelling tank client of compat/create is left out of this branch)
         modBus.addListener(BettaCraftClient::onClientSetup);
-        modBus.addListener(BettaCraftClient::onRegisterGeometryLoaders);
-        modBus.addListener(BettaCraftClient::onItemColors);
+        // M52b: the item colours and properties of 1.21.1 as our own tint source and item model property (1.21.4 item models)
+        ClientSetup.itemColors(org.overengineer.bettacraft.client.item.ItemTints::register);
+        modBus.addListener((RegisterColorHandlersEvent.ItemTintSources e) -> ClientSetup.itemModelTypes(itemModelTypes(e, null, null)));
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent e) -> ClientSetup.itemModelTypes(itemModelTypes(null, e, null)));
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterItemModelsEvent e) -> ClientSetup.itemModelTypes(itemModelTypes(null, null, e)));
         modBus.addListener(BettaCraftClient::onBlockColors);
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
@@ -81,26 +80,31 @@ public final class BettaCraftClient {
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
                 net.neoforged.neoforge.client.gui.VanillaGuiLayers.CHAT, org.overengineer.bettacraft.BettaCraft.id("interior_leave_hint"),
                 org.overengineer.bettacraft.client.interior.InteriorLeaveHud::render));
-        modBus.addListener((net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent e) -> e.registerReloadListener(
+        modBus.addListener((net.neoforged.neoforge.client.event.AddClientReloadListenersEvent e) -> e.addListener(BettaCraft.id("client_resources"),
                 (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> ClientSetup.onResourcesReloaded()));
         // our dynamic models (cabinets, filter pipes and bundles M40, interior floor, plant meshes M21): client.model.ModelSwaps
-        modBus.addListener((ModelEvent.RegisterAdditional e) -> {
-            for (var id : org.overengineer.bettacraft.client.model.ModelSwaps.extraModels())
-                e.register(net.minecraft.client.resources.model.ModelResourceLocation.standalone(id));
-        });
+        modBus.addListener(NeoForgeClientPlatform::registerStandalone);
         modBus.addListener((ModelEvent.ModifyBakingResult e) -> {
             org.overengineer.bettacraft.client.model.ModelSwaps.beforeBake();
-            for (var entry : e.getModels().entrySet()) {
-                var swapped = org.overengineer.bettacraft.client.model.ModelSwaps.swap(entry.getKey(), entry.getValue());
-                if (swapped != null) entry.setValue(swapped);
-            }
+            var sprites = e.getTextureGetter();
+            e.getBakingResult().blockStateModels().replaceAll((state, model) -> {
+                var swapped = org.overengineer.bettacraft.client.model.ModelSwaps.swap(state, model, sprites);
+                return swapped != null ? swapped : model;
+            });
         });
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RecipesUpdatedEvent e) -> org.overengineer.bettacraft.equipment.CabinetStones.clear());
+        // (M52b: the stone cabinet pairs come with our recipe sync, crafting.RecipeSync, since clients have no recipes in 1.21.2+)
         // M33 part b: leaving a server goes back to the local feature switches
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e) -> ClientFeatures.logout());
         // M52: the render stages of the miniatures, plant meshes, jets and the decor preview (ClientSetup.init)
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent e) ->
-                org.overengineer.bettacraft.platform.client.ClientEvents.fireRenderLevel(NeoForgeClientPlatform.wrap(e)));
+        // (M52b: NeoForge 21.9+ has one event per stage; several of our 1.21.1 stages share one)
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterSky e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_SKY));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterOpaqueBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterEntities e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_ENTITIES, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterTranslucentBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterTripwireBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterParticles e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_PARTICLES));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterWeather e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_WEATHER));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterLevel e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_LEVEL));
         // M21 follow-up: plant meshes follow their chunks (rebuilt when one arrives again, forgotten when it leaves)
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Load e) -> {
             if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(e.getChunk().getPos().x, e.getChunk().getPos().z);
@@ -126,7 +130,13 @@ public final class BettaCraftClient {
                 org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll();
             }
         });
-        modBus.addListener((net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent e) -> ClientSetup.particles(e::registerSpriteSet));
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent e) -> ClientSetup.particles(new ClientSetup.Particles() {
+            @Override
+            public <T extends net.minecraft.core.particles.ParticleOptions> void registerSpriteSet(net.minecraft.core.particles.ParticleType<T> type,
+                    java.util.function.Function<net.minecraft.client.particle.SpriteSet, net.minecraft.client.particle.ParticleProvider<T>> factory) {
+                e.registerSpriteSet(type, factory::apply);
+            }
+        }));
         // M52: the common client events (ClientEvents) from NeoForge's
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> org.overengineer.bettacraft.platform.client.ClientEvents.fireTickPost());
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Opening e) ->
@@ -156,12 +166,30 @@ public final class BettaCraftClient {
     private static void onClientSetup(FMLClientSetupEvent event) {
         // Client extensions were registered during Minecraft construction (before this event); wrap vanilla water now.
         event.enqueueWork(TankAwareWaterExtensions::install);
-        event.enqueueWork(() -> ClientSetup.itemProperties(ItemProperties::register));
+        event.enqueueWork(() -> ClientSetup.itemProperties(org.overengineer.bettacraft.client.item.ItemPredicates::register));
     }
 
-    /** Fish overlay of bucket and bag in the fish's own colours (tint 1 = body, 2 = fins). */
-    private static void onItemColors(RegisterColorHandlersEvent.Item event) {
-        ClientSetup.itemColors(event::register);
+    /** M52b: our item model types into whichever of NeoForge's three registration events fired. */
+    private static ClientSetup.ItemModelTypes itemModelTypes(RegisterColorHandlersEvent.ItemTintSources tints,
+            net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent properties,
+            net.neoforged.neoforge.client.event.RegisterItemModelsEvent models) {
+        return new ClientSetup.ItemModelTypes() {
+            @Override
+            public void tintSource(net.minecraft.resources.Identifier id, com.mojang.serialization.MapCodec<? extends net.minecraft.client.color.item.ItemTintSource> codec) {
+                if (tints != null) tints.register(id, codec);
+            }
+
+            @Override
+            public void conditionalProperty(net.minecraft.resources.Identifier id,
+                    com.mojang.serialization.MapCodec<? extends net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty> codec) {
+                if (properties != null) properties.register(id, codec);
+            }
+
+            @Override
+            public void itemModel(net.minecraft.resources.Identifier id, com.mojang.serialization.MapCodec<? extends net.minecraft.client.renderer.item.ItemModel.Unbaked> codec) {
+                if (models != null) models.register(id, codec);
+            }
+        };
     }
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
@@ -183,16 +211,12 @@ public final class BettaCraftClient {
             }
 
             @Override
-            public <T extends net.minecraft.world.level.block.entity.BlockEntity> void registerBlockEntityRenderer(
+            public <T extends net.minecraft.world.level.block.entity.BlockEntity, S extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState> void registerBlockEntityRenderer(
                     net.minecraft.world.level.block.entity.BlockEntityType<? extends T> type,
-                    net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T> provider) {
+                    net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T, S> provider) {
                 event.registerBlockEntityRenderer(type, provider);
             }
         });
-        // M41: the drive adapter's shaft (the block exists only with Create)
-        if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(org.overengineer.bettacraft.compat.create.CreateCompat.MOD_ID)) {
-            org.overengineer.bettacraft.compat.create.DriveAdapterRenderer.register(event);
-        }
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {
@@ -203,10 +227,6 @@ public final class BettaCraftClient {
                 event.register(type, factory);
             }
         });
-    }
-
-    private static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(TankModelLoader.ID, TankModelLoader.INSTANCE);
     }
 
     /** M25: the look of our water fluids: Minecraft's water textures in a tint. */

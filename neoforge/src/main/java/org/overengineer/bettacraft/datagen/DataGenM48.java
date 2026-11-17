@@ -8,7 +8,7 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.registry.ModTags;
@@ -29,25 +29,25 @@ final class DataGenM48 {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasSaltWater) {
         // phytoplankton: salt water, a sea plant and some nutrients; ripens in light
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.PHYTOPLANKTON_CULTURE.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.PHYTOPLANKTON_CULTURE.get())
                 .requires(ModItems.SALT_WATER_BOTTLE.get()).requires(Items.SEAGRASS).requires(Items.BONE_MEAL)
-                .unlockedBy("has_salt_water", hasSaltWater).save(out, BettaCraft.id("phytoplankton_culture_seagrass"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.PHYTOPLANKTON_CULTURE.get())
+                .unlockedBy("has_salt_water", hasSaltWater).save(out, RecipeCompat.key(BettaCraft.id("phytoplankton_culture_seagrass")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.PHYTOPLANKTON_CULTURE.get())
                 .requires(ModItems.SALT_WATER_BOTTLE.get()).requires(Items.KELP).requires(Items.BONE_MEAL)
-                .unlockedBy("has_salt_water", hasSaltWater).save(out, BettaCraft.id("phytoplankton_culture_kelp"));
+                .unlockedBy("has_salt_water", hasSaltWater).save(out, RecipeCompat.key(BettaCraft.id("phytoplankton_culture_kelp")));
         // rotifers: a starter from an infusoria culture (rotifers live in it) on phytoplankton ...
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get())
                 .requires(ModItems.PHYTOPLANKTON.get()).requires(ModItems.INFUSORIA.get())
                 .unlockedBy("has_phytoplankton", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PHYTOPLANKTON.get()))
-                .save(out, BettaCraft.id("rotifer_culture_start"));
+                .save(out, RecipeCompat.key(BettaCraft.id("rotifer_culture_start")));
         // ... then the culture goes on: a bottle of rotifers on two of phytoplankton makes two cultures
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get(), 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get(), 2)
                 .requires(ModItems.ROTIFERS.get()).requires(ModItems.PHYTOPLANKTON.get(), 2)
                 .unlockedBy("has_rotifers", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.ROTIFERS.get()))
-                .save(out, BettaCraft.id("rotifer_culture"));
+                .save(out, RecipeCompat.key(BettaCraft.id("rotifer_culture")));
     }
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         // rotifers are the finest fry food (from the first day, like infusoria)
         tag.apply(ModTags.FRY_FOOD_START).add(ModItems.ROTIFERS.get());
         tag.apply(ModTags.BETTA_FOOD).add(ModItems.ROTIFERS.get());

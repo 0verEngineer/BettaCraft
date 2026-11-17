@@ -368,10 +368,6 @@ public final class FabricPlatform implements Platform {
         return biome.climateSettings.downfall();
     }
 
-    @Override
-    public com.mojang.serialization.MapCodec<Ingredient> ingredientMapCodec() {
-        return FlatIngredient.MAP_CODEC;
-    }
 
     /** {@code {"item": ...}} or {@code {"tag": ...}}: the flat ingredient of a sized ingredient (vanilla values). */
     static final class FlatIngredient {

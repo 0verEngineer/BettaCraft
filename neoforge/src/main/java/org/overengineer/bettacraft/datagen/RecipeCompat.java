@@ -1,0 +1,49 @@
+package org.overengineer.bettacraft.datagen;
+
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+
+/**
+ * M52b: what the recipe generators of the mod need since 1.21.2 (recipe builders and tag ingredients take the item
+ * lookup of the run, recipes are saved under resource keys), so the many static recipe methods keep their shape.
+ */
+public final class RecipeCompat {
+    private static HolderGetter<Item> items;
+
+    private RecipeCompat() {}
+
+    /** Set by the recipe provider before it builds the recipes. */
+    static void begin(HolderGetter<Item> lookup) {
+        items = lookup;
+    }
+
+    public static HolderGetter<Item> items() {
+        if (items == null) throw new IllegalStateException("recipes are only made inside the recipe provider");
+        return items;
+    }
+
+    public static Ingredient tag(TagKey<Item> tag) {
+        return Ingredient.of(items().getOrThrow(tag));
+    }
+
+    /** The fixed result of a recipe (1.21.1 {@code getResultItem}; empty when it has none). */
+    public static net.minecraft.world.item.ItemStack result(Recipe<?> recipe) {
+        if (recipe instanceof org.overengineer.bettacraft.crucible.CrucibleRecipe c) return c.getResultItem(null);
+        if (recipe instanceof org.overengineer.bettacraft.food.FoodMakerRecipe f) return f.getResultItem(null);
+        for (var d : recipe.display()) {
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay i) return i.stack();
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay i) return new net.minecraft.world.item.ItemStack(i.item());
+        }
+        return net.minecraft.world.item.ItemStack.EMPTY;
+    }
+
+    public static ResourceKey<Recipe<?>> key(Identifier id) {
+        return ResourceKey.create(Registries.RECIPE, id);
+    }
+}

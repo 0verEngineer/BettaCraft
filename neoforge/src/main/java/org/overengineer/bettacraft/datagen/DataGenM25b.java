@@ -13,12 +13,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.platform.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.overengineer.bettacraft.datagen.model.ExistingFileHelper;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.co2.BioCo2Block;
 import org.overengineer.bettacraft.co2.Co2CylinderBlock;
@@ -105,37 +105,37 @@ final class DataGenM25b {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // yeast: brown mushrooms and sugar set up in a bowl
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.YEAST.get(), 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.YEAST.get(), 2)
                 .requires(Items.BROWN_MUSHROOM).requires(Items.SUGAR).requires(Items.BOWL)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("yeast"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BIO_CO2.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("yeast")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.BIO_CO2.get())
                 .pattern(" K ").pattern("G G").pattern("GGG")
                 .define('K', Items.DRIED_KELP).define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("bio_co2"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CO2_CYLINDER.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("bio_co2")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CO2_CYLINDER.get())
                 .pattern(" C ").pattern("I I").pattern("III")
                 .define('C', Tags.Items.INGOTS_COPPER).define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("co2_cylinder"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CO2_SOLENOID.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("co2_cylinder")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CO2_SOLENOID.get())
                 .requires(Tags.Items.INGOTS_COPPER).requires(Tags.Items.DUSTS_REDSTONE).requires(Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("co2_solenoid"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CO2_STATION.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("co2_solenoid")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CO2_STATION.get())
                 .pattern("IHI").pattern("CPC").pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON).define('H', Items.HOPPER).define('C', Tags.Items.INGOTS_COPPER).define('P', Items.PISTON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("co2_station"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RO_UNIT.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("co2_station")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.RO_UNIT.get())
                 .pattern("PGP").pattern("IBI").pattern("III")
                 .define('P', ModItems.GLASS_PIPE.get()).define('G', Tags.Items.GLASS_PANES).define('B', Items.BUCKET).define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("ro_unit"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.RO_MEMBRANE.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("ro_unit")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.RO_MEMBRANE.get())
                 .requires(Items.PAPER).requires(Items.PAPER).requires(Items.PAPER).requires(Items.PAPER).requires(Tags.Items.SLIME_BALLS).requires(Items.DRIED_KELP)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("ro_membrane"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.RO_PREFILTER.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("ro_membrane")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.RO_PREFILTER.get())
                 .requires(Items.CHARCOAL).requires(net.minecraft.tags.ItemTags.WOOL).requires(Items.PAPER).requires(Items.PAPER)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("ro_prefilter"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("ro_prefilter")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         for (Block b : List.of(ModBlocks.CO2_CYLINDER.get(), ModBlocks.CO2_STATION.get(), ModBlocks.RO_UNIT.get()))
             tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         tag.apply(ModTags.FLUE_GAS_SOURCES).add(Blocks.FURNACE, Blocks.SMOKER, Blocks.BLAST_FURNACE, Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE);
@@ -144,13 +144,13 @@ final class DataGenM25b {
     /** The CO2 gas of other mods (none in Minecraft): the common tags, if a mod fills them. */
     static final class FluidTagsGen extends net.minecraft.data.tags.FluidTagsProvider {
         FluidTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
-            super(out, lookup, BettaCraft.MOD_ID, efh);
+            super(out, lookup, BettaCraft.MOD_ID);
         }
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(ModTags.CO2_GAS).addOptionalTag(Identifier.fromNamespaceAndPath("c", "carbon_dioxide"))
-                    .addOptionalTag(Identifier.fromNamespaceAndPath("c", "co2"));
+            tag(ModTags.CO2_GAS).add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "carbon_dioxide")))
+                    .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "co2")));
         }
     }
 }

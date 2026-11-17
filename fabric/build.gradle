@@ -13,7 +13,7 @@ group = mod_group_id
 def commonProject = project(':common')
 
 base {
-    // bettacraft-fabric-1.21.1-<mod_version>.jar
+    // bettacraft-fabric-1.21.11-<mod_version>.jar
     archivesName = "${mod_id}-fabric-${minecraft_version}"
 }
 
@@ -26,7 +26,6 @@ tasks.register('integrationSources', Sync) {
         include 'org/overengineer/bettacraft/compat/jade/**'
         include 'org/overengineer/bettacraft/compat/jei/**'
         include 'org/overengineer/bettacraft/compat/wthit/**'
-        include 'org/overengineer/bettacraft/compat/top/**'
     }
     into integrationSrc
 }
@@ -35,6 +34,8 @@ sourceSets {
     main {
         java.srcDir(commonProject.file('src/main/java'))
         java.srcDir(integrationSrc)
+        // M52b: no TOP and no EMI for Fabric 1.21.11
+        java.exclude('org/overengineer/bettacraft/fabric/compat/TopFabricPlugin.java', 'org/overengineer/bettacraft/fabric/compat/BettaCraftEmiPlugin.java')
         resources {
             srcDir(commonProject.file('src/main/resources'))
             srcDir(commonProject.file('src/generated/resources'))
@@ -179,9 +180,9 @@ dependencies {
     // Team Reborn Energy: the power of the devices on Fabric (1 E = 1 FE), bundled (jar in jar) like other Fabric mods do
     modImplementation include("teamreborn:energy:${teamreborn_energy_version}") { transitive = false }
     // the handbook on Fabric (optional at runtime)
-    modCompileOnly "maven.modrinth:patchouli:${patchouli_fabric_version}"
+    modCompileOnly "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
     if (!project.hasProperty('noPatchouli')) {
-        modLocalRuntime "maven.modrinth:patchouli:${patchouli_fabric_version}"
+        modLocalRuntime "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
         // its nested config library (Fiber; the dev runtime does not load the jars inside a mod jar): extracted, read only
         localRuntime files({ fileTree(layout.buildDirectory.dir('patchouli-libraries')).include('*.jar').files }) { builtBy 'extractPatchouliLibraries' }
     }
@@ -191,11 +192,10 @@ dependencies {
     modCompileOnly "maven.modrinth:jade:${jade_fabric_version}"
     modCompileOnly "maven.modrinth:jei:${jei_fabric_version}"
     modCompileOnly("maven.modrinth:wthit:${wthit_fabric_version}") { transitive = false }
-    // M52: TOP, REI and EMI (their plugins live in fabric/compat)
-    modCompileOnly("maven.modrinth:the-one-probe:${top_fabric_version}") { transitive = false }
+    // M52: REI (its plugin lives in fabric/compat). M52b: The One Probe and EMI have no Fabric 1.21.11 build (their plugins
+    // are left out of this branch)
     modCompileOnly("maven.modrinth:rei:${rei_fabric_version}") { transitive = false }
     modCompileOnly("maven.modrinth:architectury-api:${architectury_fabric_version}") { transitive = false }
-    modCompileOnly("maven.modrinth:emi:${emi_fabric_version}") { transitive = false }
     compileOnly 'me.shedaniel.cloth:basic-math:0.6.1'
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
     if (project.hasProperty('rei')) localRuntime 'me.shedaniel.cloth:basic-math:0.6.1'
@@ -242,7 +242,7 @@ configurations {
     patchouliJar { transitive = false }
 }
 dependencies {
-    patchouliJar "maven.modrinth:patchouli:${patchouli_fabric_version}"
+    patchouliJar "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
 }
 tasks.register('extractPatchouliLibraries', Copy) {
     def jar = configurations.patchouliJar
@@ -454,6 +454,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xmaxerrs', '100000']
 }
 
 tasks.named('jar', Jar).configure {
@@ -531,7 +532,7 @@ configurations {
 dependencies {
     prodMods "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
     prodMods "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"
-    prodMods "maven.modrinth:patchouli:${patchouli_fabric_version}"
+    prodMods "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
     prodMods "maven.modrinth:jade:${jade_fabric_version}"
     prodMods "com.terraformersmc:modmenu:${modmenu_version}"
 }

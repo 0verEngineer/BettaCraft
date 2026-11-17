@@ -2,43 +2,61 @@ package org.overengineer.bettacraft.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.resources.model.BakedModel;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.function.Function;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
+import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.neoforge.NeoModelData;
 import org.overengineer.bettacraft.platform.client.ClientPlatform;
+import org.overengineer.bettacraft.platform.client.DynamicModel;
+import org.overengineer.bettacraft.platform.client.RenderFrame;
 import org.overengineer.bettacraft.platform.client.RenderLevelStageEvent;
 import org.overengineer.bettacraft.platform.model.ModelKey;
 
-/** M52: the client platform layer on NeoForge: model data and render types per model, the render stage event. */
+/**
+ * M52: the client platform layer on NeoForge. M52b (1.21.11): block models are made of parts, each part names its chunk
+ * layer (NeoForge's {@code BlockModelPart#getRenderType}); a block entity's model data is read from the level.
+ */
 public final class NeoForgeClientPlatform implements ClientPlatform {
-    @Override
-    public Object modelData(BakedModel model, BlockAndTintGetter level, BlockPos pos, BlockState state) {
-        return model.getModelData(level, pos, state, ModelData.EMPTY);
+    /** The extra models of {@code ModelSwaps#extraModels} (filter bundle arms), registered as standalone models. */
+    static final java.util.Map<net.minecraft.resources.Identifier, StandaloneModelKey<BlockStateModel>> STANDALONE = new java.util.concurrent.ConcurrentHashMap<>();
+
+    static void registerStandalone(net.neoforged.neoforge.client.event.ModelEvent.RegisterStandalone e) {
+        for (var id : org.overengineer.bettacraft.client.model.ModelSwaps.extraModels()) {
+            StandaloneModelKey<BlockStateModel> key = STANDALONE.computeIfAbsent(id, k -> new StandaloneModelKey<>(k::toString));
+            e.register(key, SimpleUnbakedStandaloneModel.blockStateModel(id));
+        }
     }
 
     @Override
-    public Iterable<RenderType> renderTypes(BakedModel model, BlockState state, RandomSource rand, Object modelData) {
-        return model.getRenderTypes(state, rand, (ModelData) modelData);
+    public Object modelData(BlockStateModel model, BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return null; // the models read the block entity's model data from the level themselves
     }
 
     @Override
-    public void renderBatched(BlockRenderDispatcher brd, BlockState state, BlockPos pos, BlockAndTintGetter level, PoseStack ps, VertexConsumer vc,
-            boolean checkSides, RandomSource rand, Object modelData, @Nullable RenderType layer) {
-        brd.renderBatched(state, pos, level, ps, vc, checkSides, rand, (ModelData) modelData, layer);
-    }
-
-    @Override
-    public void renderSingleBlock(BlockRenderDispatcher brd, BlockState state, PoseStack ps, MultiBufferSource buffers, int light, int overlay,
-            @Nullable RenderType layer) {
-        brd.renderSingleBlock(state, ps, buffers, light, overlay, ModelData.EMPTY, layer);
+    public void tesselate(BlockState state, BlockPos pos, BlockAndTintGetter level, PoseStack ps, Function<ChunkSectionLayer, VertexConsumer> buffers,
+            boolean checkSides, RandomSource rand, Object modelData, @Nullable ChunkSectionLayer only) {
+        var brd = Minecraft.getInstance().getBlockRenderer();
+        List<BlockModelPart> parts = brd.getBlockModel(state).collectParts(level, pos, state, rand);
+        if (only != null) parts.removeIf(p -> p.getRenderType(state) != only);
+        if (parts.isEmpty()) return;
+        brd.getModelRenderer().tesselateBlock(level, parts, state, pos, ps, buffers, checkSides, OverlayTexture.NO_OVERLAY);
     }
 
     @Override
@@ -47,37 +65,85 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public BakedModel wrap(org.overengineer.bettacraft.platform.client.DynamicModel model) {
+    public BlockStateModel wrap(DynamicModel model) {
         return new NeoDynamicModel(model);
     }
 
     @Override
-    public java.util.List<net.minecraft.client.renderer.block.model.BakedQuad> quads(BakedModel model, @Nullable BlockState state,
-            @Nullable net.minecraft.core.Direction side, RandomSource rand, @Nullable RenderType layer) {
-        return model.getQuads(state, side, rand, ModelData.EMPTY, layer);
+    public @Nullable DynamicModel dynamic(BlockStateModel model) {
+        return model instanceof NeoDynamicModel n ? n.dynamic() : null;
     }
 
     @Override
-    public java.util.Collection<RenderType> layers(BakedModel model, BlockState state, RandomSource rand) {
-        java.util.List<RenderType> out = new java.util.ArrayList<>(2);
-        for (RenderType rt : model.getRenderTypes(state, rand, ModelData.EMPTY)) out.add(rt);
+    public List<BakedQuad> quads(BlockStateModel model, @Nullable BlockState state, @Nullable Direction side, RandomSource rand,
+            @Nullable ChunkSectionLayer layer) {
+        List<BlockModelPart> parts = model.collectParts(rand);
+        if (parts.size() == 1 && (layer == null || state == null || parts.getFirst().getRenderType(state) == layer)) return parts.getFirst().getQuads(side);
+        List<BakedQuad> out = new ArrayList<>();
+        for (BlockModelPart p : parts) {
+            if (layer != null && state != null && p.getRenderType(state) != layer) continue;
+            out.addAll(p.getQuads(side));
+        }
         return out;
     }
 
     @Override
-    public BakedModel standaloneModel(net.minecraft.resources.Identifier id) {
-        return net.minecraft.client.Minecraft.getInstance().getModelManager()
-                .getModel(net.minecraft.client.resources.model.ModelResourceLocation.standalone(id));
+    public Collection<ChunkSectionLayer> layers(BlockStateModel model, BlockState state, RandomSource rand) {
+        LinkedHashSet<ChunkSectionLayer> out = new LinkedHashSet<>(2);
+        for (BlockModelPart p : model.collectParts(rand)) out.add(p.getRenderType(state));
+        return out;
     }
 
     @Override
-    public net.minecraft.client.renderer.block.model.BakedQuad quad(int[] vertices, int tint, net.minecraft.core.Direction direction,
-            net.minecraft.client.renderer.texture.TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
-        return new net.minecraft.client.renderer.block.model.BakedQuad(vertices, tint, direction, sprite, shade, ambientOcclusion);
+    public BlockStateModel standaloneModel(net.minecraft.resources.Identifier id) {
+        StandaloneModelKey<BlockStateModel> key = STANDALONE.get(id);
+        BlockStateModel m = key == null ? null : Minecraft.getInstance().getModelManager().getStandaloneModel(key);
+        return m != null ? m : Minecraft.getInstance().getModelManager().getMissingBlockStateModel();
+    }
+
+    /** Ints per vertex of the 1.21.1 layout: x, y, z, colour ABGR, u, v, light, normal. */
+    private static final int STRIDE = 8;
+
+    @Override
+    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
+        org.joml.Vector3f[] pos = new org.joml.Vector3f[4];
+        long[] uv = new long[4];
+        int[] colors = new int[4], normals = new int[4];
+        for (int i = 0; i < 4; i++) {
+            int o = i * STRIDE;
+            pos[i] = new org.joml.Vector3f(Float.intBitsToFloat(v[o]), Float.intBitsToFloat(v[o + 1]), Float.intBitsToFloat(v[o + 2]));
+            colors[i] = net.minecraft.util.ARGB.fromABGR(v[o + 3]);
+            uv[i] = net.minecraft.client.model.geom.builders.UVPair.pack(Float.intBitsToFloat(v[o + 4]), Float.intBitsToFloat(v[o + 5]));
+            normals[i] = v[o + 7] & 0xFFFFFF;
+        }
+        return new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], tint, direction, sprite, shade, 0,
+                net.neoforged.neoforge.client.model.quad.BakedNormals.of(normals[0], normals[1], normals[2], normals[3]),
+                net.neoforged.neoforge.client.model.quad.BakedColors.of(colors[0], colors[1], colors[2], colors[3]), ambientOcclusion);
     }
 
     @Override
-    public boolean quadAo(net.minecraft.client.renderer.block.model.BakedQuad quad) {
+    public int[] vertices(BakedQuad q) {
+        int[] v = new int[STRIDE * 4];
+        var n = q.direction().getUnitVec3i();
+        int faceNormal = net.neoforged.neoforge.client.model.quad.BakedNormals.pack(n.getX(), n.getY(), n.getZ());
+        for (int i = 0; i < 4; i++) {
+            int o = i * STRIDE;
+            var p = q.position(i);
+            v[o] = Float.floatToRawIntBits(p.x());
+            v[o + 1] = Float.floatToRawIntBits(p.y());
+            v[o + 2] = Float.floatToRawIntBits(p.z());
+            v[o + 3] = net.minecraft.util.ARGB.toABGR(q.bakedColors().color(i));
+            v[o + 4] = Float.floatToRawIntBits(net.minecraft.client.model.geom.builders.UVPair.unpackU(q.packedUV(i)));
+            v[o + 5] = Float.floatToRawIntBits(net.minecraft.client.model.geom.builders.UVPair.unpackV(q.packedUV(i)));
+            v[o + 6] = 0;
+            int normal = q.bakedNormals().normal(i);
+            v[o + 7] = net.neoforged.neoforge.client.model.quad.BakedNormals.isUnspecified(normal) ? faceNormal : normal;
+        }
+        return v;
+    }
+
+    @Override
+    public boolean quadAo(BakedQuad quad) {
         return quad.hasAmbientOcclusion();
     }
 
@@ -86,38 +152,14 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
         return contents.getOriginalImage();
     }
 
-    /** NeoForge's render stage event as the common one. */
-    public static RenderLevelStageEvent wrap(net.neoforged.neoforge.client.event.RenderLevelStageEvent e) {
-        return new RenderLevelStageEvent(stage(e.getStage()), e.getLevelRenderer(), e.getPoseStack(), e.getModelViewMatrix(), e.getProjectionMatrix(),
-                e.getRenderTick(), e.getPartialTick(), e.getCamera(), e.getFrustum());
-    }
-
-    private static RenderLevelStageEvent.Stage stage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage s) {
-        for (RenderLevelStageEvent.Stage ours : RenderLevelStageEvent.Stage.values()) {
-            if (STAGES[ours.ordinal()] == s) return ours;
-        }
-        return RenderLevelStageEvent.Stage.AFTER_LEVEL; // a stage we never draw at
-    }
-
-    private static final net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage[] STAGES;
-
-    static {
-        var S = RenderLevelStageEvent.Stage.values();
-        STAGES = new net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage[S.length];
-        for (RenderLevelStageEvent.Stage ours : S) {
-            STAGES[ours.ordinal()] = switch (ours) {
-                case AFTER_SKY -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_SKY;
-                case AFTER_SOLID_BLOCKS -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS;
-                case AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS;
-                case AFTER_CUTOUT_BLOCKS -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS;
-                case AFTER_ENTITIES -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_ENTITIES;
-                case AFTER_BLOCK_ENTITIES -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES;
-                case AFTER_TRANSLUCENT_BLOCKS -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS;
-                case AFTER_TRIPWIRE_BLOCKS -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS;
-                case AFTER_PARTICLES -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES;
-                case AFTER_WEATHER -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_WEATHER;
-                case AFTER_LEVEL -> net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL;
-            };
+    /** NeoForge's render stage events as the common stages (several of ours share one of NeoForge's since 1.21.9). */
+    static void fire(net.neoforged.neoforge.client.event.RenderLevelStageEvent e, RenderLevelStageEvent.Stage... stages) {
+        Minecraft mc = Minecraft.getInstance();
+        PoseStack ps = e.getPoseStack() != null ? e.getPoseStack() : new PoseStack();
+        for (RenderLevelStageEvent.Stage s : stages) {
+            org.overengineer.bettacraft.platform.client.ClientEvents.fireRenderLevel(new RenderLevelStageEvent(s, e.getLevelRenderer(), ps,
+                    e.getModelViewMatrix(), RenderFrame.projection(), mc.levelRenderer.getTicks(), mc.getDeltaTracker(),
+                    mc.gameRenderer.getMainCamera(), RenderFrame.frustum()));
         }
     }
 }

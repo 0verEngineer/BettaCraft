@@ -17,7 +17,7 @@ final class DataGenM32b {
 
     private DataGenM32b() {}
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(SABLE_SILENT_ASSEMBLY_REMOVAL).add(ModBlocks.TANK.get());
     }
 }

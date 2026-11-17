@@ -209,8 +209,6 @@ public interface Platform {
     /** The light a block state gives at a position (NeoForge: the position-aware light emission). */
     int lightEmission(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos);
 
-    /** The ingredient codec of a flat sized ingredient (NeoForge: its map codec with the custom ingredient types). */
-    com.mojang.serialization.MapCodec<net.minecraft.world.item.crafting.Ingredient> ingredientMapCodec();
 
     /** A menu factory that reads the extra data of {@link #openMenu}. */
     @FunctionalInterface

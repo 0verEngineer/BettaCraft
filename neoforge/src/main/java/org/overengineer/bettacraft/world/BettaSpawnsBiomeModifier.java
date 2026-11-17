@@ -27,7 +27,7 @@ public record BettaSpawnsBiomeModifier(HolderSet<Biome> biomes) implements Biome
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD || !biomes.contains(biome)) return;
-        for (var s : org.overengineer.bettacraft.world.WildSpawns.bettas()) builder.getMobSpawnSettings().addSpawn(s.category(), s.data());
+        for (var s : org.overengineer.bettacraft.world.WildSpawns.bettas()) builder.getMobSpawnSettings().addSpawn(s.category(), s.weight(), s.data());
     }
 
     @Override

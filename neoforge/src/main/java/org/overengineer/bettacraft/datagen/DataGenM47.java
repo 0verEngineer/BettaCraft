@@ -9,10 +9,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.platform.Tags;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import org.overengineer.bettacraft.BettaCraft;
@@ -68,14 +68,14 @@ final class DataGenM47 {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> has) {
-        Ingredient plant = CompoundIngredient.of(Ingredient.of(ModTags.AQUATIC_PLANT_ITEMS), Ingredient.of(Items.SEAGRASS, Items.KELP, Items.LILY_PAD));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.BREEDING_BASIN.get())
+        Ingredient plant = CompoundIngredient.of(RecipeCompat.tag(ModTags.AQUATIC_PLANT_ITEMS), Ingredient.of(Items.SEAGRASS, Items.KELP, Items.LILY_PAD));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.BREEDING_BASIN.get())
                 .pattern("G G").pattern("GPG").pattern("SSS")
                 .define('G', Tags.Items.GLASS_PANES).define('P', plant).define('S', ItemTags.WOODEN_SLABS)
-                .unlockedBy("has_pane", has).save(out, BettaCraft.id("breeding_basin"));
+                .unlockedBy("has_pane", has).save(out, RecipeCompat.key(BettaCraft.id("breeding_basin")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.BREEDING_BASIN.get());
     }
 }

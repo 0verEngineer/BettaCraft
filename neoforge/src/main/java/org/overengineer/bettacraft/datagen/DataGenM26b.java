@@ -14,11 +14,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.platform.crafting.SizedIngredient;
 import org.overengineer.bettacraft.BettaCraft;
@@ -79,18 +79,18 @@ final class DataGenM26b {
     }
 
     private static SizedIngredient in(TagKey<Item> tag, int n) {
-        return new SizedIngredient(Ingredient.of(tag), n);
+        return new SizedIngredient(RecipeCompat.tag(tag), n);
     }
 
     private static void make(RecipeOutput out, String id, ItemLike result, int n, SizedIngredient... ingredients) {
-        out.accept(BettaCraft.id("food_maker/" + id), new FoodMakerRecipe(List.of(ingredients), new ItemStack(result, n)), null);
+        out.accept(RecipeCompat.key(BettaCraft.id("food_maker/" + id)), new FoodMakerRecipe(List.of(ingredients), new ItemStack(result, n)), null);
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FOOD_MAKER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FOOD_MAKER.get())
                 .pattern("IHI").pattern("IGI").pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON).define('H', Items.HOPPER).define('G', Items.GRINDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("food_maker"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("food_maker")));
         // dry food from vanilla ingredients (fish and spider eyes are the protein, wheat binds, kelp and vegetables are the plants)
         make(out, "betta_pellets", ModItems.BETTA_PELLETS.get(), 12, in(ModTags.PELLET_FISH, 1), in(Items.WHEAT, 1), in(Items.DRIED_KELP, 1));
         make(out, "fish_flakes", ModItems.FISH_FLAKES.get(), 12, in(ModTags.PELLET_FISH, 1), in(Items.WHEAT, 1), in(Items.KELP, 1), in(Items.SUGAR, 1));
@@ -110,7 +110,7 @@ final class DataGenM26b {
         return TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", path));
     }
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         Item flakes = ModItems.FISH_FLAKES.get(), granules = ModItems.FOOD_GRANULES.get(), shrimp = ModItems.SHRIMP_FOOD.get();
         Item[] frozen = {ModItems.FROZEN_MOSQUITO_LARVAE.get(), ModItems.FROZEN_ARTEMIA.get(), ModItems.FROZEN_DAPHNIA.get()};
         tag.apply(ModTags.BETTA_FOOD).add(flakes, granules, shrimp).add(frozen);
@@ -142,7 +142,7 @@ final class DataGenM26b {
         diet(tag, FoodDiet.Diet.CARNIVORE, List.of(FoodDiet.Group.FROZEN, FoodDiet.Group.LIVE), List.of(FoodDiet.Group.FLAKES, FoodDiet.Group.WAFERS));
     }
 
-    private static void diet(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag, FoodDiet.Diet d,
+    private static void diet(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag, FoodDiet.Diet d,
                              List<FoodDiet.Group> favourite, List<FoodDiet.Group> poor) {
         var f = tag.apply(d.favourite);
         for (FoodDiet.Group g : favourite) f.addTag(g.tag);

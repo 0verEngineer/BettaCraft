@@ -12,10 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -76,18 +76,18 @@ final class DataGenM31b {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TERRARIUM_BOX.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.TERRARIUM_BOX.get(), 2)
                 .pattern("SHS").pattern("S S").pattern("SSS")
                 .define('S', ItemTags.WOODEN_SLABS).define('H', Items.IRON_BARS)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("terrarium_box"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("terrarium_box")));
     }
 
-    static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(ModTags.TURTLE_NEST_GROUND).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(org.overengineer.bettacraft.platform.Tags.Blocks.SANDS)
                 .add(Blocks.FARMLAND, Blocks.DIRT_PATH);
     }
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         tag.apply(ModTags.TURTLE_GREENS).add(Items.DANDELION, Items.PINK_PETALS, Items.SHORT_GRASS, Items.FERN, Items.OXEYE_DAISY);
     }
 }

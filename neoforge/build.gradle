@@ -25,7 +25,7 @@ sourceSets.test.java.srcDir(commonProject.file('src/test/java'))
 sourceSets.test.resources.srcDir(commonProject.file('src/test/resources'))
 
 base {
-    // bettacraft-neoforge-1.21.1-<mod_version>.jar
+    // bettacraft-neoforge-1.21.11-<mod_version>.jar
     archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
@@ -38,6 +38,14 @@ sourceSets {
         runtimeClasspath += sourceSets.main.output
     }
 }
+// M52b: Create has no 1.21.11 build. The classes that extend Create's (and the tests and smoke scenes of it) are left out
+// of this branch; its reflection part (common compat/create) finds no Create and stays off.
+def createClasses = ['CreateDisplays', 'CreateDrive', 'CreateTravel', 'CreateTravelClient', 'DriveAdapterBlock',
+                     'DriveAdapterBlockEntity', 'DriveAdapterRenderer'].collect { "org/overengineer/bettacraft/compat/create/${it}.java".toString() }
+sourceSets.main.java.exclude(createClasses)
+sourceSets.dev.java.exclude(['org/overengineer/bettacraft/gametest/CreateDeviceGameTests.java',
+                             'org/overengineer/bettacraft/gametest/CreateTravelGameTests.java',
+                             'org/overengineer/bettacraft/client/DevClientSmokeM32c.java'])
 configurations {
     devImplementation.extendsFrom implementation
     devCompileOnly.extendsFrom compileOnly
@@ -679,14 +687,8 @@ dependencies {
     // win). Never for GameTests (they ping the mock players like Jade). Config compat.overlayProvider picks the overlay.
     compileOnly "maven.modrinth:the-one-probe:${top_version}"
     if (project.hasProperty('top') && !project.hasProperty('noTop') && !gameTests) localRuntime "maven.modrinth:the-one-probe:${top_version}"
-    // Create (M32 part c): only compileOnly for the one class that extends its abstract DisplaySource (Display Links),
-    // loaded only when Create is there; everything else of the Create compat is reflection. Never in the jar; in dev
-    // Create comes from run/create-mods (-Pcreate).
-    compileOnly "maven.modrinth:create:${create_version}"
-    // M41: the drive adapter's classes extend Create's kinetic block and block entity, whose super types live in the libraries
-    // Create bundles (Ponder with Catnip, Flywheel, Registrate): compileOnly from the jars nested in the same Create jar
-    // (extracted by extractCreateLibraries, read only). Never in our jar.
-    compileOnly files({ fileTree(layout.buildDirectory.dir('create-libraries')).include('*.jar').files }) { builtBy 'extractCreateLibraries' }
+    // Create (M32 part c, M41): no build for 1.21.11 (M52b); the classes that extend Create's (Display Link source, drive
+    // adapter, travelling tanks) are left out of this branch (sourceSets below), the reflection part of the compat stays.
     compileOnly "maven.modrinth:wthit:${wthit_version}"
     compileOnly "maven.modrinth:badpackets:${badpackets_version}"
     if (project.hasProperty('wthit') && !project.hasProperty('noWthit') && !gameTests) {
@@ -698,13 +700,10 @@ dependencies {
     // and reflection. In dev they are on the run classpath (client, server and GameTests) unless -PnoCompat is given;
     // the versions are the ones of ATM10.
     if (!project.hasProperty('noCompat')) {
-        localRuntime "curse.maven:better-fishtanks-1196541:${bft_file_id}"
-        localRuntime "maven.modrinth:mint-lib:${mint_lib_version}"
-        localRuntime "maven.modrinth:fintastic:${fintastic_version}"
+        // M52b: Better Fish Tanks, Fintastic and Naturalist have no 1.21.11 build
         localRuntime "maven.modrinth:fish-of-thieves:${fish_of_thieves_version}"
         localRuntime "maven.modrinth:yacl:${yacl_version}"
         localRuntime "maven.modrinth:aquaculture:${aquaculture_version}"
-        localRuntime "maven.modrinth:naturalist:${naturalist_version}"
     }
 
     testImplementation platform("org.junit:junit-bom:${junit_version}")
@@ -712,23 +711,6 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-// M41: the libraries nested in the Create jar (jar-in-jar), for compiling the drive classes (compileOnly above)
-configurations {
-    createJar { transitive = false }
-}
-dependencies {
-    createJar "maven.modrinth:create:${create_version}"
-}
-tasks.register('extractCreateLibraries', Copy) {
-    def jar = configurations.createJar
-    inputs.files(jar)
-    from({ zipTree(jar.singleFile) }) {
-        include 'META-INF/jarjar/*.jar'
-        eachFile { it.path = it.name }
-        includeEmptyDirs = false
-    }
-    into layout.buildDirectory.dir('create-libraries')
-}
 
 test {
     useJUnitPlatform()
@@ -789,6 +771,7 @@ neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xmaxerrs', '100000']
 }
 
 idea {

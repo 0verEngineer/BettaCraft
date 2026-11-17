@@ -14,11 +14,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.food.LiveCultureBlock;
@@ -115,29 +115,29 @@ final class DataGenM26 {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TUBIFEX_DISH.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.TUBIFEX_DISH.get())
                 .pattern("B B").pattern("BBB").define('B', Items.BRICK)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("tubifex_dish"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DAPHNIA_BARREL.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("tubifex_dish")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.DAPHNIA_BARREL.get())
                 .pattern("P P").pattern("P P").pattern("SSS").define('P', ItemTags.PLANKS).define('S', ItemTags.WOODEN_SLABS)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("daphnia_barrel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LIVE_FOOD_PUMP.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("daphnia_barrel")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.LIVE_FOOD_PUMP.get())
                 .pattern("IPI").pattern("IRI").define('I', Tags.Items.INGOTS_IRON).define('P', ModItems.GLASS_PIPE.get()).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("live_food_pump"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("live_food_pump")));
         // green water: swamp water fertilised with bone meal, ripens in the light (like the artemia culture)
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.GREEN_WATER_CULTURE.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.GREEN_WATER_CULTURE.get())
                 .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.BONE_MEAL)
                 .unlockedBy("has_swamp_water", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
-                .save(out, BettaCraft.id("green_water_culture"));
+                .save(out, RecipeCompat.key(BettaCraft.id("green_water_culture")));
         DataGenM26b.recipes(out, hasTank); // M26 part b
     }
 
-    static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.LIVE_FOOD_PUMP.get(), ModBlocks.FOOD_MAKER.get());
         tag.apply(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.DAPHNIA_BARREL.get());
     }
 
-    static void itemTags(Function<TagKey<Item>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
         tag.apply(ModTags.BETTA_FOOD).add(ModItems.TUBIFEX.get(), ModItems.DAPHNIA.get());
         tag.apply(ModTags.LIVE_FOOD).add(ModItems.TUBIFEX.get(), ModItems.DAPHNIA.get());
         tag.apply(ModTags.CONDITIONING_FOOD).add(ModItems.TUBIFEX.get());

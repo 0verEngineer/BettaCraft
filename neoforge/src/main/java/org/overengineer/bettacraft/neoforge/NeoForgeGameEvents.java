@@ -242,15 +242,17 @@ final class NeoForgeGameEvents {
             });
         }
         for (EventPriority p : types.getOrDefault(AddReloadListenerEvent.class, Set.of())) {
-            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.AddReloadListenerEvent.class, e -> {
+            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.AddServerReloadListenersEvent.class, e -> {
                 var s = new AddReloadListenerEvent();
                 fire(e, s, p);
-                s.getListeners().forEach(e::addListener);
+                // M52b: NeoForge 21.4+ names every reload listener
+                var listeners = s.getListeners();
+                for (int i = 0; i < listeners.size(); i++) e.addListener(org.overengineer.bettacraft.BettaCraft.id("reload_" + p.name().toLowerCase(java.util.Locale.ROOT) + "_" + i), listeners.get(i));
             });
         }
         for (EventPriority p : types.getOrDefault(VillagerTradesEvent.class, Set.of())) {
             NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.village.VillagerTradesEvent.class, e -> {
-                var s = new VillagerTradesEvent(e.getType(), e.getTrades());
+                var s = new VillagerTradesEvent(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getValue(e.getType()), e.getTrades());
                 fire(e, s, p);
             });
         }
@@ -279,8 +281,8 @@ final class NeoForgeGameEvents {
         return net.neoforged.bus.api.EventPriority.valueOf(p.name());
     }
 
-    private static net.neoforged.neoforge.common.util.TriState tri(TriState t) {
-        return t.isTrue() ? net.neoforged.neoforge.common.util.TriState.TRUE : t.isFalse() ? net.neoforged.neoforge.common.util.TriState.FALSE
-                : net.neoforged.neoforge.common.util.TriState.DEFAULT;
+    private static net.minecraft.util.TriState tri(TriState t) {
+        return t.isTrue() ? net.minecraft.util.TriState.TRUE : t.isFalse() ? net.minecraft.util.TriState.FALSE
+                : net.minecraft.util.TriState.DEFAULT;
     }
 }

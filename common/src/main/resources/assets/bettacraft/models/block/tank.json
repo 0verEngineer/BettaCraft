@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/block",
-  "loader": "bettacraft:tank",
   "textures": {
     "particle": "minecraft:block/glass",
     "edge": "bettacraft:block/tank_edge",

@@ -12,12 +12,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
+import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.platform.crafting.SizedIngredient;
 import org.overengineer.bettacraft.BettaCraft;
@@ -217,86 +217,86 @@ final class DataGenM24 {
     // ------------------------------------------------------------------ recipes
 
     private static Ingredient tag(String c) {
-        return Ingredient.of(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", c)));
+        return RecipeCompat.tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", c)));
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter) {
         // the crucible melt (M29.1: no blaze powder any more, one iron more instead): 4 iron + coal (carbon) + nether quartz
         // (stands in for chromium) -> 3 stainless steel; blaze rods and blaze powder stay fuel
-        out.accept(BettaCraft.id("stainless_steel_ingot_from_crucible"), new CrucibleRecipe(List.of(
-                new SizedIngredient(Ingredient.of(Tags.Items.INGOTS_IRON), 4),
-                new SizedIngredient(Ingredient.of(net.minecraft.tags.ItemTags.COALS), 1),
-                new SizedIngredient(Ingredient.of(Tags.Items.GEMS_QUARTZ), 1)), new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
+        out.accept(RecipeCompat.key(BettaCraft.id("stainless_steel_ingot_from_crucible")), new CrucibleRecipe(List.of(
+                new SizedIngredient(RecipeCompat.tag(Tags.Items.INGOTS_IRON), 4),
+                new SizedIngredient(RecipeCompat.tag(net.minecraft.tags.ItemTags.COALS), 1),
+                new SizedIngredient(RecipeCompat.tag(Tags.Items.GEMS_QUARTZ), 1)), new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
         var steel = ModTags.STAINLESS_STEEL_INGOTS;
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CRUCIBLE.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CRUCIBLE.get())
                 .pattern("N N").pattern("NCN").pattern("NNN")
                 .define('N', Items.NETHER_BRICK).define('C', Items.CAULDRON)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("crucible"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GLASS_PIPE.get(), 8)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("crucible")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.GLASS_PIPE.get(), 8)
                 .pattern("GGG").define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("glass_pipe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STAINLESS_STEEL_PIPE.get(), 8)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("glass_pipe")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.STAINLESS_STEEL_PIPE.get(), 8)
                 .pattern("SSS").define('S', steel)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("stainless_steel_pipe"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WATER_PUMP.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("stainless_steel_pipe")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.WATER_PUMP.get())
                 .pattern(" S ").pattern("PRP").pattern(" S ")
                 .define('S', steel).define('P', ModItems.GLASS_PIPE.get()).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("water_pump"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BULKHEAD.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("water_pump")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.BULKHEAD.get())
                 .requires(steel).requires(ModItems.GLASS_PIPE.get()).requires(Items.DRIED_KELP)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("bulkhead"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTERIOR_PIPE.get(), 8)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("bulkhead")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTERIOR_PIPE.get(), 8)
                 .requires(ModItems.GLASS_PIPE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("interior_pipe"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTAKE_STRAINER.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("interior_pipe")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_STRAINER.get())
                 .requires(ModItems.INTERIOR_PIPE.get()).requires(Items.IRON_BARS)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("intake_strainer"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.LILY_PIPE.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_strainer")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.LILY_PIPE.get())
                 .requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(Items.GLASS_BOTTLE)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("lily_pipe"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.NOZZLE.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("lily_pipe")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.NOZZLE.get(), 2)
                 .requires(ModItems.INTERIOR_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("nozzle"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SPRAY_BAR.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("nozzle")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SPRAY_BAR.get())
                 .requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("spray_bar"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_CHAMBER.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("spray_bar")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_CHAMBER.get(), 2)
                 .pattern("IGI").pattern("G G").pattern("IGI")
                 .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_chamber"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_PUMP_HEAD.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_chamber")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_PUMP_HEAD.get())
                 .pattern("SRS").pattern("SPS")
                 .define('S', steel).define('R', Tags.Items.DUSTS_REDSTONE).define('P', ModItems.WATER_PUMP.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_pump_head"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_INLET.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_pump_head")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_INLET.get(), 2)
                 .pattern("P").pattern("S").define('P', ModItems.GLASS_PIPE.get()).define('S', steel)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_inlet"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FILTER_OUTLET.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_inlet")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_OUTLET.get(), 2)
                 .pattern("S").pattern("P").define('P', ModItems.GLASS_PIPE.get()).define('S', steel)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_outlet"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FILTER_FOAM.get(), 1)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_outlet")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_FOAM.get(), 1)
                 .requires(net.minecraft.tags.ItemTags.WOOL).requires(Items.DRIED_KELP)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_foam"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CERAMIC_RINGS.get(), 1)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_foam")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CERAMIC_RINGS.get(), 1)
                 .pattern(" C ").pattern("CBC").pattern(" C ")
                 .define('C', Items.CLAY_BALL).define('B', Items.BONE_MEAL)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("ceramic_rings"));
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("ceramic_rings")));
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.CHARCOAL), RecipeCategory.MISC, ModItems.ACTIVATED_CARBON.get(), 0.1F, 200)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("activated_carbon"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FILTER_PEAT.get(), 1)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("activated_carbon")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_PEAT.get(), 1)
                 .requires(Items.MUD).requires(Items.MOSS_CARPET)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("filter_peat"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RESERVOIR.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_peat")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.RESERVOIR.get())
                 .pattern("IGI").pattern("G G").pattern("IGI")
                 .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_BLOCKS_CHEAP)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("reservoir"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LEVEL_SENSOR.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("reservoir")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.LEVEL_SENSOR.get())
                 .pattern("C").pattern("S").pattern("P")
                 .define('C', Items.COMPARATOR).define('S', steel).define('P', ModItems.GLASS_PIPE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("level_sensor"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WATER_CHANGE_CONTROLLER.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("level_sensor")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.WATER_CHANGE_CONTROLLER.get())
                 .pattern("SCS").pattern("SPS")
                 .define('S', steel).define('C', Items.CLOCK).define('P', ModItems.WATER_PUMP.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("water_change_controller"));
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("water_change_controller")));
     }
 }

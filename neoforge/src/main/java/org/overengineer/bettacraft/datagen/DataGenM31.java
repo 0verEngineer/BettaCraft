@@ -7,10 +7,10 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
@@ -108,7 +108,7 @@ final class DataGenM31 {
      * out of an item frame. Only the item; the wall mat still stands upright when placed.
      */
     private static void heatMatItem(ItemModelProvider p) {
-        var b = p.getBuilder("heat_mat").parent(new net.neoforged.neoforge.client.model.generators.ModelFile.UncheckedModelFile("minecraft:block/block"))
+        var b = p.getBuilder("heat_mat").parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("mat", p.modLoc("block/heat_mat_on")).texture("particle", p.modLoc("block/heat_mat_on"));
         b.element().from(1, 7.5F, 1).to(15, 8.5F, 15).allFaces((d, f) -> f.texture("#mat").uvs(1, d.getAxis().isVertical() ? 1 : 14, 15, 15)).end();
         b.transforms()
@@ -134,28 +134,28 @@ final class DataGenM31 {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // heat mat: copper heating trace laminated between paper, a redstone thermostat lead
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HEAT_MAT.get(), 2)
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.HEAT_MAT.get(), 2)
                 .pattern("PPP").pattern("CRC").pattern("PPP")
                 .define('P', Items.PAPER).define('C', Tags.Items.INGOTS_COPPER).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("heat_mat"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("heat_mat")));
         // basking lamp: a reflector of iron around a glowstone bulb, wired with redstone
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASKING_LAMP.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.BASKING_LAMP.get())
                 .pattern("III").pattern("IGI").pattern(" R ")
                 .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.DUSTS_GLOWSTONE).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("basking_lamp"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("basking_lamp")));
         // mister: a bottle as the water tank, a little pump (redstone) and an iron nozzle
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MISTER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.MISTER.get())
                 .pattern(" N ").pattern("GBG").pattern("GRG")
                 .define('N', Tags.Items.NUGGETS_IRON).define('G', Tags.Items.GLASS_PANES).define('B', Items.GLASS_BOTTLE).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("mister"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("mister")));
         // thermo-hygrometer: a small display (glass pane) in an iron case with the sensor electronics (redstone)
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.THERMO_HYGROMETER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.THERMO_HYGROMETER.get())
                 .pattern("NGN").pattern("NRN")
                 .define('N', Tags.Items.NUGGETS_IRON).define('G', Tags.Items.GLASS_PANES).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("thermo_hygrometer"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("thermo_hygrometer")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.BASKING_LAMP.get(), ModBlocks.MISTER.get(), ModBlocks.THERMO_HYGROMETER.get());
     }
 }

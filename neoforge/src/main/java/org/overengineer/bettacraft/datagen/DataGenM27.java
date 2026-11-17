@@ -10,11 +10,11 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
+import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.monitor.MonitorBlock;
@@ -91,13 +91,13 @@ final class DataGenM27 {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.MONITOR.get(), 4)
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.MONITOR.get(), 4)
                 .pattern("IGI").pattern("GRG").pattern("IGI")
                 .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("monitor"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("monitor")));
     }
 
-    static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MONITOR.get());
     }
 }

@@ -8,11 +8,11 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.AirPumpBlock;
@@ -182,53 +182,53 @@ final class DataGenM23 {
     // ------------------------------------------------------------------ recipes
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter, net.minecraft.advancements.Criterion<?> hasLight) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.AIR_HOSE.get(), 4)
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AIR_HOSE.get(), 4)
                 .pattern("K").pattern("K").pattern("K").define('K', Items.DRIED_KELP)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("air_hose"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.AIR_HOSE.get(), 8)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_hose")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AIR_HOSE.get(), 8)
                 .pattern("S").pattern("S").pattern("S").define('S', Tags.Items.SLIME_BALLS)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("air_hose_from_slime"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.AIR_PUMP.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_hose_from_slime")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AIR_PUMP.get())
                 .pattern("IRI").pattern("ILI").pattern("H H")
                 .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('L', Items.LEATHER).define('H', ModItems.AIR_HOSE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("air_pump"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.AIR_STONE.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_pump")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AIR_STONE.get(), 2)
                 .requires(Items.FLINT).requires(Tags.Items.SANDS).requires(ModItems.AIR_HOSE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("air_stone"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 2)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_stone")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 2)
                 .requires(Items.SPONGE).requires(Items.BLACK_DYE)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("intake_sponge"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 1)
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_sponge")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 1)
                 .requires(ItemTagsWool.WOOL).requires(Items.BLACK_DYE).requires(Items.STRING)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("intake_sponge_from_wool"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SPONGE_FILTER.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_sponge_from_wool")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SPONGE_FILTER.get())
                 .pattern(" H ").pattern("SGS").pattern("SSS")
                 .define('H', ModItems.AIR_HOSE.get()).define('S', ModItems.INTAKE_SPONGE.get()).define('G', Tags.Items.GLASS_PANES)
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("sponge_filter"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CORNER_FILTER.get())
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("sponge_filter")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CORNER_FILTER.get())
                 .pattern("GIG").pattern("GRG").pattern("GSG")
                 .define('G', Tags.Items.GLASS_PANES).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE)
                 .define('S', ModItems.INTAKE_SPONGE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("corner_filter"));
+                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("corner_filter")));
         // the light tiers: three bars into a 2-wide panel (one item = both halves), panels and glowstone into a high-power LED
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.LED_PANEL.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.LED_PANEL.get())
                 .pattern("LLL").pattern("III")
                 .define('L', ModItems.TANK_LIGHT.get()).define('I', Tags.Items.INGOTS_IRON)
-                .unlockedBy("has_light", hasLight).save(out, BettaCraft.id("led_panel"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.HIGH_POWER_LED.get(), 2)
+                .unlockedBy("has_light", hasLight).save(out, RecipeCompat.key(BettaCraft.id("led_panel")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.HIGH_POWER_LED.get(), 2)
                 .pattern("CCC").pattern("PGP")
                 .define('C', Tags.Items.INGOTS_COPPER).define('P', ModItems.LED_PANEL.get()).define('G', Tags.Items.DUSTS_GLOWSTONE)
-                .unlockedBy("has_light", hasLight).save(out, BettaCraft.id("high_power_led"));
+                .unlockedBy("has_light", hasLight).save(out, RecipeCompat.key(BettaCraft.id("high_power_led")));
         // colour like the bar (M18): one item and a dye
         for (DyeColor c : DyeColor.values()) {
             DyeItem dye = DyeItem.byColor(c);
             for (var led : java.util.List.of(ModItems.LED_PANEL, ModItems.HIGH_POWER_LED)) {
                 String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(led.get()).getPath();
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, TankLightItem.of(led.get(), c, 1))
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, TankLightItem.of(led.get(), c, 1))
                         .requires(led.get()).requires(dye)
                         .group("bettacraft:" + id + "_dye")
                         .unlockedBy("has_light", hasLight)
-                        .save(out, BettaCraft.id(id + "_" + c.getName()));
+                        .save(out, RecipeCompat.key(BettaCraft.id(id + "_" + c.getName())));
             }
         }
     }

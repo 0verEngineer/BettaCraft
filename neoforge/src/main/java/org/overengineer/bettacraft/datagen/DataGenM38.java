@@ -28,23 +28,23 @@ final class DataGenM38 {
     static final List<String> FINTASTIC_ROCKS = List.of("live_rock", "porous_live_rock", "green_algae_live_rock", "red_algae_live_rock",
             "dead_live_rock", "dead_porous_live_rock");
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         var interior = tag.apply(ModTags.INTERIOR_WATER_PLANTS);
         var sway = tag.apply(ModTags.SWAYING_PLANTS);
         for (String[] p : WATER_PLANTS) {
-            interior.addOptional(Compat.rl(p[0], p[1]));
-            sway.addOptional(Compat.rl(p[0], p[1]));
+            interior.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(p[0], p[1])));
+            sway.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(p[0], p[1])));
         }
         var floating = tag.apply(ModTags.FLOATING_PLANTS);
         for (String[] p : FLOATING) {
-            interior.addOptional(Compat.rl(p[0], p[1]));
-            floating.addOptional(Compat.rl(p[0], p[1]));
+            interior.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(p[0], p[1])));
+            floating.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(p[0], p[1])));
         }
         var reef = tag.apply(ModTags.REEF_SURFACES);
         var epiphyte = tag.apply(ModTags.EPIPHYTE_SURFACES);
         for (String r : FINTASTIC_ROCKS) {
-            reef.addOptional(Compat.rl(Compat.FINTASTIC, r));
-            epiphyte.addOptional(Compat.rl(Compat.FINTASTIC, r));
+            reef.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, r)));
+            epiphyte.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, r)));
         }
     }
 }

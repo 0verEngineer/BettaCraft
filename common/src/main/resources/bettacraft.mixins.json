@@ -33,7 +33,10 @@
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
     "client.CreativeModeTabsAccessor",
-    "client.IrisBlockIdsMixin"
+    "client.IrisBlockIdsMixin",
+    "client.LevelRendererFrustumMixin",
+    "client.LivingEntityRendererGlassMixin",
+    "client.LivingEntityRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

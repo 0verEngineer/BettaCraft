@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.Nullable;
+import org.overengineer.bettacraft.neoforge.transfer.NeoResources;
 import org.overengineer.bettacraft.neoforge.transfer.NeoTransfer;
 import org.overengineer.bettacraft.osmosis.WaterBucketWrapper;
 import org.overengineer.bettacraft.platform.energy.IEnergyStorage;
@@ -34,11 +35,11 @@ final class NeoForgeCapabilities {
     static void register(RegisterCapabilitiesEvent event) {
         // M22.1: a bucket of sea water is a bucket of water for other mods' tanks and pipes (it empties into a bucket)
         // M25: other mods see the fluids of their own (bettacraft:sea_water, bettacraft:ro_water)
-        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
-                (stack, ctx) -> new WaterBucketWrapper(stack, org.overengineer.bettacraft.registry.ModFluids.SEA_WATER),
+        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM,
+                (stack, access) -> new WaterBucketWrapper(access, org.overengineer.bettacraft.registry.ModFluids.SEA_WATER),
                 org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
-        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
-                (stack, ctx) -> new WaterBucketWrapper(stack, org.overengineer.bettacraft.registry.ModFluids.RO_WATER),
+        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM,
+                (stack, access) -> new WaterBucketWrapper(access, org.overengineer.bettacraft.registry.ModFluids.RO_WATER),
                 org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get());
         // M25: the reverse osmosis unit (water in, reverse osmosis water out; parts from hoppers; FE for the pressure pump while
         // a power option is on) and the CO2 filling station (cylinders, FE for the compressor, CO2 gas of other mods)
@@ -141,22 +142,22 @@ final class NeoForgeCapabilities {
     }
 
     private static <B extends BlockEntity> void items(RegisterCapabilitiesEvent e, BlockEntityType<B> type, BiFunction<B, Direction, @Nullable IItemHandler> f) {
-        e.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, (be, side) -> NeoTransfer.toNeo(f.apply(be, side)));
+        e.registerBlockEntity(Capabilities.Item.BLOCK, type, (be, side) -> NeoResources.items(f.apply(be, side)));
     }
 
     private static <B extends BlockEntity> void fluids(RegisterCapabilitiesEvent e, BlockEntityType<B> type, BiFunction<B, Direction, @Nullable IFluidHandler> f) {
-        e.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, (be, side) -> NeoTransfer.toNeo(f.apply(be, side)));
+        e.registerBlockEntity(Capabilities.Fluid.BLOCK, type, (be, side) -> NeoResources.fluids(f.apply(be, side)));
     }
 
     private static <B extends BlockEntity> void energy(RegisterCapabilitiesEvent e, BlockEntityType<B> type, BiFunction<B, Direction, @Nullable IEnergyStorage> f) {
-        e.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, type, (be, side) -> NeoTransfer.toNeo(f.apply(be, side)));
+        e.registerBlockEntity(Capabilities.Energy.BLOCK, type, (be, side) -> NeoResources.energy(f.apply(be, side)));
     }
 
     private static void fluidBlocks(RegisterCapabilitiesEvent e, BlockFn<IFluidHandler> f, Block... blocks) {
-        e.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> NeoTransfer.toNeo(f.apply(level, pos, state, be, side)), blocks);
+        e.registerBlock(Capabilities.Fluid.BLOCK, (level, pos, state, be, side) -> NeoResources.fluids(f.apply(level, pos, state, be, side)), blocks);
     }
 
     private static void energyBlocks(RegisterCapabilitiesEvent e, BlockFn<IEnergyStorage> f, Block... blocks) {
-        e.registerBlock(Capabilities.EnergyStorage.BLOCK, (level, pos, state, be, side) -> NeoTransfer.toNeo(f.apply(level, pos, state, be, side)), blocks);
+        e.registerBlock(Capabilities.Energy.BLOCK, (level, pos, state, be, side) -> NeoResources.energy(f.apply(level, pos, state, be, side)), blocks);
     }
 }

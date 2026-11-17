@@ -42,15 +42,19 @@ final class NeoForgeRegistration {
             AttachmentType.Builder<T> b = AttachmentType.builder(a.defaultValue());
             Attachment.Serializer<T> s = a.serializer();
             if (s != null) {
-                b.serialize(new IAttachmentSerializer<CompoundTag, T>() {
+                // M52b: NeoForge 21.6+ serializes attachments through value input and output; the saved compound stays the same
+                b.serialize(new IAttachmentSerializer<T>() {
                     @Override
-                    public T read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-                        return s.read(tag, provider);
+                    public T read(IAttachmentHolder holder, net.minecraft.world.level.storage.ValueInput input) {
+                        return s.read(org.overengineer.bettacraft.util.NbtCompat.read(input), input.lookup());
                     }
 
                     @Override
-                    public CompoundTag write(T value, HolderLookup.Provider provider) {
-                        return s.write(value, provider);
+                    public boolean write(T value, net.minecraft.world.level.storage.ValueOutput output) {
+                        CompoundTag tag = s.write(value, org.overengineer.bettacraft.util.NbtCompat.fallback());
+                        if (tag == null) return false;
+                        org.overengineer.bettacraft.util.NbtCompat.write(output, tag);
+                        return true;
                     }
                 });
                 if (a.copyOnDeath()) b.copyOnDeath();

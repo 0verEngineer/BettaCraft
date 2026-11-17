@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.neoforge.mixin;
 
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.common.extensions.IBlockEntityExtension;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
 import org.overengineer.bettacraft.neoforge.NeoModelData;

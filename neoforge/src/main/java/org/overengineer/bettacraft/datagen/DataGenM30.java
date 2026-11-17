@@ -4,8 +4,8 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -29,19 +29,19 @@ final class DataGenM30 {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // the large net: a stainless steel hoop with a string mesh on a long handle
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.LARGE_NET.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.LARGE_NET.get())
                 .pattern("SSS").pattern("SWS").pattern(" T ")
                 .define('S', ModTags.STAINLESS_STEEL_INGOTS).define('W', Tags.Items.STRINGS).define('T', ModItems.AQUARIUM_NET.get())
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("large_net"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("large_net")));
         // the transport tub: a big tub with a steel rim and handles
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.TRANSPORT_TUB.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.TRANSPORT_TUB.get())
                 .pattern("S S").pattern("B B").pattern("BBB")
                 .define('S', ModTags.STAINLESS_STEEL_INGOTS).define('B', Items.BUCKET)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("transport_tub"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("transport_tub")));
         // the steel leader: steel wire with a swivel and a hook
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.STEEL_LEADER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.STEEL_LEADER.get())
                 .pattern("  S").pattern(" W ").pattern("N  ")
                 .define('S', ModTags.STAINLESS_STEEL_INGOTS).define('W', Tags.Items.STRINGS).define('N', Tags.Items.NUGGETS_IRON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("steel_leader"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("steel_leader")));
     }
 }

@@ -12,11 +12,11 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import org.overengineer.bettacraft.BettaCraft;
@@ -80,31 +80,31 @@ final class DataGenM37 {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // the crank: an iron arm with a knob on a stick
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.CRANK.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.CRANK.get())
                 .pattern("IN").pattern("S ")
                 .define('I', Tags.Items.INGOTS_IRON).define('N', Tags.Items.NUGGETS_IRON).define('S', Tags.Items.RODS_WOODEN)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("crank"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("crank")));
         // the intermediates: kelp meal (organic: dried kelp ground with bone meal) and nutrient salt (phosphate from bone meal,
         // potash from charcoal, iron)
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.KELP_MEAL.get(), 2)
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.KELP_MEAL.get(), 2)
                 .requires(Items.DRIED_KELP).requires(Items.DRIED_KELP).requires(Items.BONE_MEAL)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("kelp_meal"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.NUTRIENT_SALT.get(), 2)
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("kelp_meal")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.NUTRIENT_SALT.get(), 2)
                 .requires(Items.BONE_MEAL).requires(Items.CHARCOAL).requires(Tags.Items.NUGGETS_IRON)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("nutrient_salt"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("nutrient_salt")));
         // the fertilizer maker: an iron case with a bucket on top, the cauldron as mixing tank and its crank
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FERTILIZER_MAKER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FERTILIZER_MAKER.get())
                 .pattern("IBI").pattern("ICI").pattern("IKI")
                 .define('I', Tags.Items.INGOTS_IRON).define('B', Items.BUCKET).define('C', Items.CAULDRON).define('K', ModItems.CRANK.get())
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("fertilizer_maker"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("fertilizer_maker")));
         // the canister of the dosing pump: two full bottles (500 mL; the bottles come back)
         var full = DataComponentIngredient.of(false, DataComponents.DAMAGE, 0, ModItems.LIQUID_FERTILIZER.get());
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.FERTILIZER_CANISTER.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FERTILIZER_CANISTER.get())
                 .requires(ModItems.DOSING_CANISTER.get()).requires(full).requires(full)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("fertilizer_canister"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("fertilizer_canister")));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FERTILIZER_MAKER.get());
     }
 }

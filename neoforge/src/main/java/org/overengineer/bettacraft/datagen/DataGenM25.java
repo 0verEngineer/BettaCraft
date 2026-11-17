@@ -7,7 +7,7 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -23,21 +23,21 @@ final class DataGenM25 {
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ModItems.TDS_METER.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.TDS_METER.get())
                 .requires(Tags.Items.INGOTS_IRON).requires(Tags.Items.INGOTS_COPPER).requires(Tags.Items.DUSTS_REDSTONE).requires(Tags.Items.GLASS_PANES)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("tds_meter"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ModItems.PH_TEST_KIT.get())
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("tds_meter")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.PH_TEST_KIT.get())
                 .requires(Items.GLASS_BOTTLE).requires(Items.PAPER).requires(Tags.Items.DYES_RED).requires(Tags.Items.DYES_YELLOW).requires(Tags.Items.DYES_BLUE)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("ph_test_kit"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.REMINERALISING_SALT.get(), 4)
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("ph_test_kit")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.REMINERALISING_SALT.get(), 4)
                 .requires(Items.CALCITE).requires(Items.BONE_MEAL).requires(Items.BONE_MEAL)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("remineralising_salt"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("remineralising_salt")));
         // dried almond (catappa) leaves: jungle leaves dried in a smoker, on a campfire or in a furnace
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 200)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("almond_leaf"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("almond_leaf")));
         SimpleCookingRecipeBuilder.smoking(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 100)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("almond_leaf_smoking"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("almond_leaf_smoking")));
         SimpleCookingRecipeBuilder.campfireCooking(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 600)
-                .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("almond_leaf_campfire"));
+                .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("almond_leaf_campfire")));
     }
 }

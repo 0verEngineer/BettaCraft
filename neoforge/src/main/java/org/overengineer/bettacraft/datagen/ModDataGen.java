@@ -22,7 +22,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -47,11 +47,11 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCon
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import org.overengineer.bettacraft.platform.Tags;
 import net.neoforged.neoforge.common.conditions.AndCondition;
 import net.neoforged.neoforge.common.conditions.ICondition;
@@ -60,7 +60,7 @@ import net.neoforged.neoforge.common.conditions.OrCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.overengineer.bettacraft.datagen.model.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.common.loot.LootTableIdCondition;
@@ -95,24 +95,32 @@ public final class ModDataGen {
             ResourceKey.create(Registries.PLACED_FEATURE, BettaCraft.id("wild_coral"));
 
     @SubscribeEvent
-    public static void gather(GatherDataEvent event) {
+    public static void gather(GatherDataEvent.Client event) {
+        // M52b: one client data run makes everything (NeoForge 21.4+ splits the client and server data runs)
         DataGenerator gen = event.getGenerator();
         PackOutput out = gen.getPackOutput();
-        ExistingFileHelper efh = event.getExistingFileHelper();
+        ExistingFileHelper efh = ExistingFileHelper.INSTANCE;
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
-        gen.addProvider(event.includeClient(), new EnglishLang(out));
-        gen.addProvider(event.includeClient(), new BlockStates(out, efh));
-        gen.addProvider(event.includeClient(), new ItemModels(out, efh));
-        gen.addProvider(event.includeServer(), new Recipes(out, lookup));
-        gen.addProvider(event.includeServer(), new LootTableProvider(out, Set.of(),
+        gen.addProvider(true, new EnglishLang(out));
+        gen.addProvider(true, new BlockStates(out, efh));
+        gen.addProvider(true, new ItemModels(out, efh));
+        // M52b: the 1.21.4 item model definitions, after all item models (tints: the items with a 1.21.1 item colour)
+        java.util.Set<net.minecraft.world.item.Item> tinted = new java.util.HashSet<>();
+        org.overengineer.bettacraft.client.ClientSetup.itemColors((tint, items) -> {
+            for (var i : items) tinted.add(i.asItem());
+        });
+        gen.addProvider(true, new org.overengineer.bettacraft.datagen.model.ItemDefinitionProvider(out, BettaCraft.MOD_ID, tinted,
+                java.util.Map.of("tank", "tank", "cabinet", "cabinet")));
+        gen.addProvider(true, new Recipes.Runner(out, lookup));
+        gen.addProvider(true, new LootTableProvider(out, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)), lookup));
-        BlockTagsGen blockTags = gen.addProvider(event.includeServer(), new BlockTagsGen(out, lookup, efh));
-        gen.addProvider(event.includeServer(), new ItemTagsGen(out, lookup, blockTags.contentsGetter(), efh));
-        gen.addProvider(event.includeServer(), new EntityTagsGen(out, lookup, efh));
-        gen.addProvider(event.includeServer(), new DataGenM25b.FluidTagsGen(out, lookup, efh)); // M25
-        gen.addProvider(event.includeServer(), new BiomeTagsGen(out, lookup, efh));
-        gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
+        BlockTagsGen blockTags = gen.addProvider(true, new BlockTagsGen(out, lookup, efh));
+        gen.addProvider(true, new ItemTagsGen(out, lookup, blockTags.contentsGetter(), efh));
+        gen.addProvider(true, new EntityTagsGen(out, lookup, efh));
+        gen.addProvider(true, new DataGenM25b.FluidTagsGen(out, lookup, efh)); // M25
+        gen.addProvider(true, new BiomeTagsGen(out, lookup, efh));
+        gen.addProvider(true, new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, ctx -> {
                     ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
                             org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE));
@@ -141,9 +149,9 @@ public final class ModDataGen {
                             net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION));
                 }),
                 Set.of(BettaCraft.MOD_ID)));
-        gen.addProvider(event.includeServer(), new LootModifiers(out, lookup));
-        gen.addProvider(event.includeServer(), new GeneticsFiles(out));
-        gen.addProvider(event.includeServer(), new net.neoforged.neoforge.common.data.AdvancementProvider(out, lookup, efh, List.of(new ModAdvancements())));
+        gen.addProvider(true, new LootModifiers(out, lookup));
+        gen.addProvider(true, new GeneticsFiles(out));
+        gen.addProvider(true, new net.minecraft.data.advancements.AdvancementProvider(out, lookup, List.of(new ModAdvancements())));
     }
 
     // ------------------------------------------------------------------ genetics (M5): built-in colours, genes, varieties
@@ -772,14 +780,33 @@ public final class ModDataGen {
     // ------------------------------------------------------------------ recipes
 
     static final class Recipes extends RecipeProvider {
-        Recipes(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
-            super(out, lookup);
+        Recipes(HolderLookup.Provider registries, RecipeOutput out) {
+            super(registries, out);
+        }
+
+        /** M52b: the 1.21.2 recipe data provider (it makes a recipe provider per run). */
+        static final class Runner extends RecipeProvider.Runner {
+            Runner(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
+                super(out, lookup);
+            }
+
+            @Override
+            protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput out) {
+                return new Recipes(registries, out);
+            }
+
+            @Override
+            public String getName() {
+                return "Recipes: " + BettaCraft.MOD_ID;
+            }
         }
 
         @Override
-        protected void buildRecipes(RecipeOutput raw) {
+        protected void buildRecipes() {
+            RecipeOutput raw = this.output;
+            RecipeCompat.begin(this.items);
             RecipeOutput output = featureGated(raw); // M33: every recipe only while its features are on
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK.get(), 4)
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.TANK.get(), 4)
                     .pattern("GGG")
                     .pattern("GIG")
                     .pattern("III")
@@ -787,10 +814,10 @@ public final class ModDataGen {
                     .define('I', Tags.Items.INGOTS_IRON)
                     .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(asTankRecipe(output), BettaCraft.id("tank"));
+                    .save(asTankRecipe(output), RecipeCompat.key(BettaCraft.id("tank")));
 
             // M11: the clean tank (clear vanilla glass without texture): iron nugget in the middle instead of the ingot
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
                             org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, org.overengineer.bettacraft.tank.TankStyle.CLEAN, 4))
                     .pattern("GGG")
                     .pattern("GNG")
@@ -801,23 +828,23 @@ public final class ModDataGen {
                     .unlockedBy("has_glass", has(Items.GLASS))
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("tank_clean"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("tank_clean")));
             // M11: one vanilla-glass tank converts between textured and clean (both directions)
             for (var from : org.overengineer.bettacraft.tank.TankStyle.values()) {
                 var to = from == org.overengineer.bettacraft.tank.TankStyle.CLEAN ? org.overengineer.bettacraft.tank.TankStyle.TEXTURED
                         : org.overengineer.bettacraft.tank.TankStyle.CLEAN;
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
                                 org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, to, 1))
                         .requires(net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
-                                net.minecraft.core.component.predicates.DataComponentPredicate.builder()
+                                net.minecraft.core.component.DataComponentExactPredicate.builder()
                                         .expect(ModDataComponents.GLASS.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS)
                                         .expect(ModDataComponents.TANK_STYLE.get(), from).build(), ModItems.TANK.get()))
                         .group("bettacraft:tank_style")
                         .unlockedBy("has_tank", has(ModItems.TANK.get()))
-                        .save(asStyleRecipe(output, from), BettaCraft.id("tank_" + from.getSerializedName() + "_to_" + to.getSerializedName()));
+                        .save(asStyleRecipe(output, from), RecipeCompat.key(BettaCraft.id("tank_" + from.getSerializedName() + "_to_" + to.getSerializedName())));
             }
             // M11: mirror stick (optional-features #2): a glass pane silvered with an iron nugget on a stick
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MIRROR_STICK.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.MIRROR_STICK.get())
                     .pattern("P")
                     .pattern("N")
                     .pattern("S")
@@ -826,10 +853,10 @@ public final class ModDataGen {
                     .define('S', Tags.Items.RODS_WOODEN)
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
-                    .save(output, BettaCraft.id("mirror_stick"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("mirror_stick")));
 
             // M12: aquarium net: a string mesh on a stick
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.AQUARIUM_NET.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.AQUARIUM_NET.get())
                     .pattern(" TT")
                     .pattern(" TT")
                     .pattern("S  ")
@@ -837,17 +864,17 @@ public final class ModDataGen {
                     .define('S', Tags.Items.RODS_WOODEN)
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
                     .unlockedBy("has_plant", has(ModItems.FLOATING_PLANTS.get(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED).get()))
-                    .save(output, BettaCraft.id("tank_net"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("tank_net")));
 
             // M14: algae scraper: an iron blade on a stick
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.ALGAE_SCRAPER.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.ALGAE_SCRAPER.get())
                     .pattern("  I")
                     .pattern(" S ")
                     .pattern("S  ")
                     .define('I', Tags.Items.INGOTS_IRON)
                     .define('S', Tags.Items.RODS_WOODEN)
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
-                    .save(output, BettaCraft.id("algae_scraper"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("algae_scraper")));
 
             // Fish bag (PLAN 4.3): kelp unless #bettacraft:plastic_sheets has entries; COMMON config can force one.
             ICondition plasticEmpty = new TagEmptyCondition(ModTags.PLASTIC_SHEETS);
@@ -855,158 +882,158 @@ public final class ModDataGen {
                     new AndCondition(List.of(new FishBagRecipeCondition("auto"), plasticEmpty))));
             ICondition plastic = new OrCondition(List.of(new FishBagRecipeCondition("plastic"),
                     new AndCondition(List.of(new FishBagRecipeCondition("auto"), new NotCondition(plasticEmpty)))));
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FISH_BAG.get(), 2)
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.FISH_BAG.get(), 2)
                     .pattern(" S ").pattern("K K").pattern(" K ")
                     .define('S', Tags.Items.STRINGS).define('K', Items.DRIED_KELP)
                     .unlockedBy("has_kelp", has(Items.DRIED_KELP))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output.withConditions(kelp), BettaCraft.id("fish_bag_kelp"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FISH_BAG.get(), 4)
+                    .save(output.withConditions(kelp), RecipeCompat.key(BettaCraft.id("fish_bag_kelp")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.FISH_BAG.get(), 4)
                     .pattern(" S ").pattern("P P").pattern(" P ")
                     .define('S', Tags.Items.STRINGS).define('P', ModTags.PLASTIC_SHEETS)
                     .unlockedBy("has_plastic", has(ModTags.PLASTIC_SHEETS))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output.withConditions(plastic), BettaCraft.id("fish_bag_plastic"));
+                    .save(output.withConditions(plastic), RecipeCompat.key(BettaCraft.id("fish_bag_plastic")));
 
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BETTA_PELLETS.get(), 8)
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.BETTA_PELLETS.get(), 8)
                     .requires(ModTags.PELLET_FISH)
                     .requires(ModItems.MOSQUITO_LARVAE.get())
                     .requires(Items.BONE_MEAL)
                     .requires(Items.DRIED_KELP)
                     .unlockedBy("has_larvae", has(ModItems.MOSQUITO_LARVAE.get()))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("betta_pellets"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("betta_pellets")));
 
             Ingredient swamp = Ingredient.of(ModItems.SWAMP_WATER_BOTTLE.get());
             SimpleCookingRecipeBuilder.smelting(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 200)
-                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, BettaCraft.id("mosquito_larvae_smelting"));
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, RecipeCompat.key(BettaCraft.id("mosquito_larvae_smelting")));
             SimpleCookingRecipeBuilder.smoking(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 100)
-                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, BettaCraft.id("mosquito_larvae_smoking"));
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, RecipeCompat.key(BettaCraft.id("mosquito_larvae_smoking")));
             SimpleCookingRecipeBuilder.campfireCooking(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 600)
-                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, BettaCraft.id("mosquito_larvae_campfire"));
+                    .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, RecipeCompat.key(BettaCraft.id("mosquito_larvae_campfire")));
 
             // fry food (M2): cultures become ready after a day (CultureItem)
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
                     .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.SEAGRASS)
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
-                    .save(output, BettaCraft.id("infusoria_culture_seagrass"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("infusoria_culture_seagrass")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.INFUSORIA_CULTURE.get())
                     .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(net.minecraft.tags.ItemTags.LEAVES)
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
-                    .save(output, BettaCraft.id("infusoria_culture_leaves"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ARTEMIA_CULTURE.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("infusoria_culture_leaves")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ARTEMIA_CULTURE.get())
                     .requires(ModItems.SALT_WATER_BOTTLE.get()).requires(ModItems.ARTEMIA_CYSTS.get())
                     .unlockedBy("has_cysts", has(ModItems.ARTEMIA_CYSTS.get()))
-                    .save(output, BettaCraft.id("artemia_culture"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("artemia_culture")));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.HEATER_SMALL.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.HEATER_SMALL.get())
                     .pattern("C").pattern("R").pattern("G")
                     .define('C', Tags.Items.INGOTS_COPPER).define('R', Tags.Items.DUSTS_REDSTONE).define('G', Tags.Items.GLASS_PANES)
                     .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("heater_small"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEATER_MEDIUM.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("heater_small")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.HEATER_MEDIUM.get())
                     .requires(ModItems.HEATER_SMALL.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_heater", has(ModItems.HEATER_SMALL.get()))
-                    .save(output, BettaCraft.id("heater_medium"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.HEATER_LARGE.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("heater_medium")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.HEATER_LARGE.get())
                     .requires(ModItems.HEATER_MEDIUM.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_heater", has(ModItems.HEATER_MEDIUM.get()))
-                    .save(output, BettaCraft.id("heater_large"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("heater_large")));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FEEDER.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FEEDER.get())
                     .pattern(" I ").pattern("IHI")
                     .define('I', Tags.Items.INGOTS_IRON).define('H', Items.HOPPER)
                     .unlockedBy("has_hopper", has(Items.HOPPER))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("feeder"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("feeder")));
             // M21.5: the clip-on feeder: iron, a glass window, the clip from nuggets
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.CLIP_FEEDER.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CLIP_FEEDER.get())
                     .pattern("NIN").pattern(" G ")
                     .define('N', Tags.Items.NUGGETS_IRON).define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES)
                     .unlockedBy("has_feeder", has(ModItems.FEEDER.get()))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("clip_feeder"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK_LIGHT.get(), 3)
+                    .save(output, RecipeCompat.key(BettaCraft.id("clip_feeder")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.TANK_LIGHT.get(), 3)
                     .pattern("III").pattern("GDG")
                     .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('D', Tags.Items.DUSTS_GLOWSTONE)
                     .unlockedBy("has_glowstone", has(Tags.Items.DUSTS_GLOWSTONE))
                     .unlockedBy("has_betta", has(ModItems.BETTA_BUCKET.get()))
-                    .save(output, BettaCraft.id("tank_light"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("tank_light")));
             // M18: coloured lights: one light (any colour) + dye, or eight lights around a dye (like stained glass)
             for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
                 net.minecraft.world.item.Item dye = net.minecraft.world.item.DyeItem.byColor(c);
-                ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1))
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1))
                         .requires(ModItems.TANK_LIGHT.get()).requires(dye)
                         .group("bettacraft:tank_light_dye")
                         .unlockedBy("has_light", has(ModItems.TANK_LIGHT.get()))
-                        .save(output, BettaCraft.id("tank_light_" + c.getName()));
-                ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 8))
+                        .save(output, RecipeCompat.key(BettaCraft.id("tank_light_" + c.getName())));
+                ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 8))
                         .pattern("LLL").pattern("LDL").pattern("LLL")
                         .define('L', ModItems.TANK_LIGHT.get()).define('D', dye)
                         .group("bettacraft:tank_light_dye8")
                         .unlockedBy("has_light", has(ModItems.TANK_LIGHT.get()))
-                        .save(output, BettaCraft.id("tank_light_" + c.getName() + "_8"));
+                        .save(output, RecipeCompat.key(BettaCraft.id("tank_light_" + c.getName() + "_8")));
             }
             decorRecipes(output);
 
             // M9: coolers (snow instead of copper, sizes like the heaters), lid, live food breeders
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COOLER_SMALL.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.COOLER_SMALL.get())
                     .pattern("S").pattern("R").pattern("G")
                     .define('S', Items.SNOWBALL).define('R', Tags.Items.DUSTS_REDSTONE).define('G', Tags.Items.GLASS_PANES)
                     .unlockedBy("has_heater", has(ModItems.HEATER_SMALL.get()))
                     .unlockedBy("has_snowball", has(Items.SNOWBALL))
-                    .save(output, BettaCraft.id("cooler_small"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COOLER_MEDIUM.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("cooler_small")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.COOLER_MEDIUM.get())
                     .requires(ModItems.COOLER_SMALL.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_cooler", has(ModItems.COOLER_SMALL.get()))
-                    .save(output, BettaCraft.id("cooler_medium"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.COOLER_LARGE.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("cooler_medium")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.COOLER_LARGE.get())
                     .requires(ModItems.COOLER_MEDIUM.get(), 2).requires(Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_cooler", has(ModItems.COOLER_MEDIUM.get()))
-                    .save(output, BettaCraft.id("cooler_large"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.TANK_LID.get(), 3)
+                    .save(output, RecipeCompat.key(BettaCraft.id("cooler_large")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.TANK_LID.get(), 3)
                     .pattern("N N").pattern("PPP")
                     .define('N', Tags.Items.NUGGETS_IRON).define('P', Tags.Items.GLASS_PANES)
                     .unlockedBy("has_tank", has(ModItems.TANK.get()))
-                    .save(output, BettaCraft.id("tank_lid"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LARVA_TUB.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("tank_lid")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.LARVA_TUB.get())
                     .pattern("P P").pattern("PIP").pattern("SSS")
                     .define('P', net.minecraft.tags.ItemTags.PLANKS).define('I', Tags.Items.NUGGETS_IRON)
                     .define('S', net.minecraft.tags.ItemTags.WOODEN_SLABS)
                     .unlockedBy("has_larvae", has(ModItems.MOSQUITO_LARVAE.get()))
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get()))
-                    .save(output, BettaCraft.id("larva_tub"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.ARTEMIA_HATCHERY.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("larva_tub")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.ARTEMIA_HATCHERY.get())
                     .pattern("G G").pattern("G G").pattern("IRI")
                     .define('G', Tags.Items.GLASS_BLOCKS).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_cysts", has(ModItems.ARTEMIA_CYSTS.get()))
                     .unlockedBy("has_salt_water", has(ModItems.SALT_WATER_BOTTLE.get()))
-                    .save(output, BettaCraft.id("artemia_hatchery"));
+                    .save(output, RecipeCompat.key(BettaCraft.id("artemia_hatchery")));
 
             // M4: external filter and the cabinet of any planks
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EXTERNAL_FILTER.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.EXTERNAL_FILTER.get())
                     .pattern("KHK").pattern("IWI").pattern("IRI")
                     .define('K', Items.DRIED_KELP).define('H', Items.HOPPER).define('I', Tags.Items.INGOTS_IRON)
                     .define('W', net.minecraft.tags.ItemTags.WOOL).define('R', Tags.Items.DUSTS_REDSTONE)
                     .unlockedBy("has_hopper", has(Items.HOPPER))
-                    .save(output, BettaCraft.id("external_filter"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.CABINET.get())
+                    .save(output, RecipeCompat.key(BettaCraft.id("external_filter")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.CABINET.get())
                     .pattern("SSS").pattern("PCP").pattern("PPP")
                     .define('S', net.minecraft.tags.ItemTags.WOODEN_SLABS).define('P', net.minecraft.tags.ItemTags.PLANKS)
                     .define('C', Tags.Items.CHESTS_WOODEN)
                     .unlockedBy("has_planks", has(net.minecraft.tags.ItemTags.PLANKS))
-                    .save(as(output, org.overengineer.bettacraft.equipment.CabinetRecipe::of), BettaCraft.id("cabinet"));
+                    .save(as(output, org.overengineer.bettacraft.equipment.CabinetRecipe::of), RecipeCompat.key(BettaCraft.id("cabinet")));
             // M21.7: the cabinet of stone; the ingredient lists hold the vanilla stones and their slabs in the same order
             // (JEI, the recipe book and the handbook cycle through matching pairs), the recipe itself checks any stone
             var stones = org.overengineer.bettacraft.equipment.CabinetStones.VANILLA;
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.CABINET.get())
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.CABINET.get())
                     .pattern("SSS").pattern("PCP").pattern("PPP")
                     .define('S', net.minecraft.world.item.crafting.Ingredient.of(stones.stream().map(p -> p.slab()).toArray(net.minecraft.world.level.ItemLike[]::new)))
                     .define('P', net.minecraft.world.item.crafting.Ingredient.of(stones.stream().map(p -> p.stone()).toArray(net.minecraft.world.level.ItemLike[]::new)))
                     .define('C', Tags.Items.CHESTS_WOODEN)
                     .unlockedBy("has_cobblestone", has(Items.COBBLESTONE))
-                    .save(as(output, org.overengineer.bettacraft.equipment.StoneCabinetRecipe::of), BettaCraft.id("stone_cabinet"));
+                    .save(as(output, org.overengineer.bettacraft.equipment.StoneCabinetRecipe::of), RecipeCompat.key(BettaCraft.id("stone_cabinet")));
         }
 
         /**
@@ -1016,10 +1043,10 @@ public final class ModDataGen {
         private static RecipeOutput featureGated(RecipeOutput parent) {
             return new RecipeOutput() {
                 @Override
-                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(net.minecraft.resources.ResourceKey<Recipe<?>> id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     String result = null;
                     try {
-                        var stack = recipe.getResultItem(net.minecraft.core.RegistryAccess.EMPTY);
+                        var stack = RecipeCompat.result(recipe);
                         var key = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
                         if (!stack.isEmpty() && key.getNamespace().equals(BettaCraft.MOD_ID)) result = key.getPath();
                     } catch (RuntimeException ignored) {
@@ -1027,7 +1054,7 @@ public final class ModDataGen {
                     }
                     var type = net.minecraft.core.registries.BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
                     List<ICondition> all = new java.util.ArrayList<>(List.of(conditions));
-                    for (var f : org.overengineer.bettacraft.config.FeatureContent.ofRecipe(id.getPath(), result, type == null ? null : type.toString())) {
+                    for (var f : org.overengineer.bettacraft.config.FeatureContent.ofRecipe(id.identifier().getPath(), result, type == null ? null : type.toString())) {
                         all.add(new org.overengineer.bettacraft.config.FeatureCondition(f));
                     }
                     parent.accept(id, recipe, advancement, all.toArray(ICondition[]::new));
@@ -1037,6 +1064,11 @@ public final class ModDataGen {
                 public Advancement.Builder advancement() {
                     return parent.advancement();
                 }
+
+                @Override
+                public void includeRootAdvancement() {
+                    parent.includeRootAdvancement();
+                }
             };
         }
 
@@ -1044,7 +1076,7 @@ public final class ModDataGen {
         private static RecipeOutput as(RecipeOutput parent, java.util.function.Function<ShapedRecipe, Recipe<?>> wrap) {
             return new RecipeOutput() {
                 @Override
-                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(net.minecraft.resources.ResourceKey<Recipe<?>> id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, wrap.apply((ShapedRecipe) recipe), advancement, conditions);
                 }
 
@@ -1052,70 +1084,75 @@ public final class ModDataGen {
                 public Advancement.Builder advancement() {
                     return parent.advancement();
                 }
+
+                @Override
+                public void includeRootAdvancement() {
+                    parent.includeRootAdvancement();
+                }
             };
         }
 
         /** M3: internal filter and the decoration structures (own, plausible recipes). */
         private void decorRecipes(RecipeOutput output) {
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.INTERNAL_FILTER.get())
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTERNAL_FILTER.get())
                     .requires(Tags.Items.INGOTS_IRON).requires(Tags.Items.INGOTS_IRON).requires(net.minecraft.tags.ItemTags.WOOL)
                     .requires(Tags.Items.DUSTS_REDSTONE).requires(Items.IRON_BARS)
-                    .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(output, BettaCraft.id("internal_filter"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CASTLE))
+                    .unlockedBy("has_iron_bars", has(Items.IRON_BARS)).save(output, RecipeCompat.key(BettaCraft.id("internal_filter")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.CASTLE))
                     .pattern("W W").pattern("BIB").pattern("BBB")
                     .define('W', Items.STONE_BRICK_WALL).define('B', Items.STONE_BRICKS).define('I', Items.IRON_BARS)
-                    .unlockedBy("has_stone_bricks", has(Items.STONE_BRICKS)).save(output, BettaCraft.id("decor_castle"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.SHIPWRECK))
+                    .unlockedBy("has_stone_bricks", has(Items.STONE_BRICKS)).save(output, RecipeCompat.key(BettaCraft.id("decor_castle")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SHIPWRECK))
                     .pattern(" SW").pattern("PBP").pattern(" P ")
                     .define('S', Tags.Items.RODS_WOODEN).define('W', net.minecraft.tags.ItemTags.WOOL).define('P', net.minecraft.tags.ItemTags.PLANKS)
                     .define('B', Items.BARREL)
-                    .unlockedBy("has_barrel", has(Items.BARREL)).save(output, BettaCraft.id("decor_shipwreck"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.DINO_SKULL))
+                    .unlockedBy("has_barrel", has(Items.BARREL)).save(output, RecipeCompat.key(BettaCraft.id("decor_shipwreck")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DINO_SKULL))
                     .requires(Items.BONE_BLOCK).requires(Items.BONE_BLOCK).requires(Items.BONE).requires(Items.POLISHED_DIORITE_SLAB)
-                    .unlockedBy("has_bone_block", has(Items.BONE_BLOCK)).save(output, BettaCraft.id("decor_dino_skull"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.VOLCANO))
+                    .unlockedBy("has_bone_block", has(Items.BONE_BLOCK)).save(output, RecipeCompat.key(BettaCraft.id("decor_dino_skull")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.VOLCANO))
                     .requires(Items.BASALT).requires(Items.BASALT).requires(Items.BLACKSTONE).requires(Items.MAGMA_BLOCK)
-                    .unlockedBy("has_magma", has(Items.MAGMA_BLOCK)).save(output, BettaCraft.id("decor_volcano"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.DRIFTWOOD), 2)
+                    .unlockedBy("has_magma", has(Items.MAGMA_BLOCK)).save(output, RecipeCompat.key(BettaCraft.id("decor_volcano")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DRIFTWOOD), 2)
                     .requires(net.minecraft.tags.ItemTags.LOGS).requires(net.minecraft.tags.ItemTags.LOGS).requires(Items.MANGROVE_ROOTS)
-                    .unlockedBy("has_mangrove_roots", has(Items.MANGROVE_ROOTS)).save(output, BettaCraft.id("decor_driftwood"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.STONES), 2)
+                    .unlockedBy("has_mangrove_roots", has(Items.MANGROVE_ROOTS)).save(output, RecipeCompat.key(BettaCraft.id("decor_driftwood")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.STONES), 2)
                     .requires(Items.COBBLESTONE).requires(Items.ANDESITE).requires(Items.MOSSY_COBBLESTONE)
-                    .unlockedBy("has_mossy_cobblestone", has(Items.MOSSY_COBBLESTONE)).save(output, BettaCraft.id("decor_stones"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.MOSS_BALL), 4)
+                    .unlockedBy("has_mossy_cobblestone", has(Items.MOSSY_COBBLESTONE)).save(output, RecipeCompat.key(BettaCraft.id("decor_stones")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.MOSS_BALL), 4)
                     .requires(Items.MOSS_BLOCK).requires(Items.SLIME_BALL)
-                    .unlockedBy("has_moss", has(Items.MOSS_BLOCK)).save(output, BettaCraft.id("decor_moss_ball"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.HAMMOCK), 2)
+                    .unlockedBy("has_moss", has(Items.MOSS_BLOCK)).save(output, RecipeCompat.key(BettaCraft.id("decor_moss_ball")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.HAMMOCK), 2)
                     .requires(Items.OAK_LEAVES).requires(Items.OAK_FENCE).requires(Tags.Items.STRINGS)
-                    .unlockedBy("has_leaves", has(Items.OAK_LEAVES)).save(output, BettaCraft.id("decor_hammock"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.ALMOND_LEAF), 2)
+                    .unlockedBy("has_leaves", has(Items.OAK_LEAVES)).save(output, RecipeCompat.key(BettaCraft.id("decor_hammock")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.ALMOND_LEAF), 2)
                     .requires(net.minecraft.tags.ItemTags.LEAVES).requires(Items.BROWN_DYE)
-                    .unlockedBy("has_brown_dye", has(Items.BROWN_DYE)).save(output, BettaCraft.id("decor_almond_leaf"));
+                    .unlockedBy("has_brown_dye", has(Items.BROWN_DYE)).save(output, RecipeCompat.key(BettaCraft.id("decor_almond_leaf")));
             // M19: spawning cave (fired clay tube) and spawning mop (green wool on a stone)
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_CAVE))
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_CAVE))
                     .pattern("CCC").pattern("C  ").pattern("CCC")
                     .define('C', ModItems.SPAWNING_CAVE.get())
-                    .unlockedBy("has_spawning_cave", has(ModItems.SPAWNING_CAVE.get())).save(output, BettaCraft.id("decor_spawning_cave"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_MOP))
+                    .unlockedBy("has_spawning_cave", has(ModItems.SPAWNING_CAVE.get())).save(output, RecipeCompat.key(BettaCraft.id("decor_spawning_cave")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_MOP))
                     .requires(ModItems.SPAWNING_MOP.get()).requires(ModItems.SPAWNING_MOP.get()).requires(ModItems.SPAWNING_MOP.get())
                     .requires(Items.COBBLESTONE)
-                    .unlockedBy("has_spawning_mop", has(ModItems.SPAWNING_MOP.get())).save(output, BettaCraft.id("decor_spawning_mop"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModItems.SPAWNING_CAVE.get(), 8)
+                    .unlockedBy("has_spawning_mop", has(ModItems.SPAWNING_MOP.get())).save(output, RecipeCompat.key(BettaCraft.id("decor_spawning_mop")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.BUILDING_BLOCKS, ModItems.SPAWNING_CAVE.get(), 8)
                     .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.CLAY_BALL)
-                    .unlockedBy("has_terracotta", has(Items.TERRACOTTA)).save(output, BettaCraft.id("spawning_cave"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, ModItems.SPAWNING_MOP.get(), 4)
+                    .unlockedBy("has_terracotta", has(Items.TERRACOTTA)).save(output, RecipeCompat.key(BettaCraft.id("spawning_cave")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.SPAWNING_MOP.get(), 4)
                     .requires(Items.GREEN_WOOL).requires(Tags.Items.STRINGS)
-                    .unlockedBy("has_green_wool", has(Items.GREEN_WOOL)).save(output, BettaCraft.id("spawning_mop"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREEDING_BOX.get())
+                    .unlockedBy("has_green_wool", has(Items.GREEN_WOOL)).save(output, RecipeCompat.key(BettaCraft.id("spawning_mop")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.BREEDING_BOX.get())
                     .pattern("P P").pattern("PSP").pattern("PPP")
                     .define('P', Tags.Items.GLASS_PANES).define('S', Tags.Items.STRINGS)
-                    .unlockedBy("has_glass_pane", has(Tags.Items.GLASS_PANES)).save(output, BettaCraft.id("breeding_box"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FRY_POWDER.get(), 3)
+                    .unlockedBy("has_glass_pane", has(Tags.Items.GLASS_PANES)).save(output, RecipeCompat.key(BettaCraft.id("breeding_box")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.FRY_POWDER.get(), 3)
                     .requires(ModItems.BETTA_PELLETS.get()).requires(ModItems.BETTA_PELLETS.get()).requires(Items.BONE_MEAL)
-                    .unlockedBy("has_pellets", has(ModItems.BETTA_PELLETS.get())).save(output, BettaCraft.id("fry_powder"));
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ALGAE_WAFER.get(), 4)
+                    .unlockedBy("has_pellets", has(ModItems.BETTA_PELLETS.get())).save(output, RecipeCompat.key(BettaCraft.id("fry_powder")));
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ALGAE_WAFER.get(), 4)
                     .requires(Items.DRIED_KELP).requires(Items.DRIED_KELP).requires(ModItems.BETTA_PELLETS.get())
-                    .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, BettaCraft.id("algae_wafer"));
+                    .unlockedBy("has_dried_kelp", has(Items.DRIED_KELP)).save(output, RecipeCompat.key(BettaCraft.id("algae_wafer")));
             reefRecipes(output);
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
@@ -1138,14 +1175,14 @@ public final class ModDataGen {
             DataGenM31c.recipes(output, hasIt(ModItems.TANK.get())); // M31 part c
             DataGenM31d.recipes(output, hasIt(ModItems.TANK.get())); // M31 part d
             // M25 part d: active soil from clay, mud and filter peat (humic acids)
-            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.BUILDING_BLOCKS, ModItems.ACTIVE_SOIL.get(), 8)
                     .pattern("CMC").pattern("MPM").pattern("CMC")
                     .define('C', Items.CLAY_BALL).define('M', Items.MUD).define('P', ModItems.FILTER_PEAT.get())
-                    .unlockedBy("has_tank", hasIt(ModItems.TANK.get())).save(output, BettaCraft.id("active_soil"));
-            ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
+                    .unlockedBy("has_tank", hasIt(ModItems.TANK.get())).save(output, RecipeCompat.key(BettaCraft.id("active_soil")));
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.CAVE))
                     .pattern("TMT").pattern("T T")
                     .define('T', Items.TUFF).define('M', Items.MOSS_BLOCK)
-                    .unlockedBy("has_tuff", has(Items.TUFF)).save(output, BettaCraft.id("decor_cave"));
+                    .unlockedBy("has_tuff", has(Items.TUFF)).save(output, RecipeCompat.key(BettaCraft.id("decor_cave")));
         }
 
         private static net.minecraft.world.item.Item decor(DecorType t) {
@@ -1156,7 +1193,7 @@ public final class ModDataGen {
         private static RecipeOutput asStyleRecipe(RecipeOutput parent, org.overengineer.bettacraft.tank.TankStyle from) {
             return new RecipeOutput() {
                 @Override
-                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(net.minecraft.resources.ResourceKey<Recipe<?>> id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, new org.overengineer.bettacraft.tank.TankStyleRecipe((net.minecraft.world.item.crafting.ShapelessRecipe) recipe, from),
                             advancement, conditions);
                 }
@@ -1165,19 +1202,29 @@ public final class ModDataGen {
                 public Advancement.Builder advancement() {
                     return parent.advancement();
                 }
+
+                @Override
+                public void includeRootAdvancement() {
+                    parent.includeRootAdvancement();
+                }
             };
         }
 
         private static RecipeOutput asTankRecipe(RecipeOutput parent) {
             return new RecipeOutput() {
                 @Override
-                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(net.minecraft.resources.ResourceKey<Recipe<?>> id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, TankRecipe.of((ShapedRecipe) recipe), advancement, conditions);
                 }
 
                 @Override
                 public Advancement.Builder advancement() {
                     return parent.advancement();
+                }
+
+                @Override
+                public void includeRootAdvancement() {
+                    parent.includeRootAdvancement();
                 }
             };
         }
@@ -1187,45 +1234,45 @@ public final class ModDataGen {
 
     /** M20: salt, sea water, calcium, skimmer, pump, rock and coral frags from vanilla corals. */
     static void reefRecipes(RecipeOutput output) {
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SEA_SALT.get())
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SEA_SALT.get())
                 .requires(ModItems.SEA_WATER_BUCKET.get())
-                .unlockedBy("has_sea_water", hasIt(ModItems.SEA_WATER_BUCKET.get())).save(output, BettaCraft.id("sea_salt"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.SEA_WATER_BUCKET.get())
+                .unlockedBy("has_sea_water", hasIt(ModItems.SEA_WATER_BUCKET.get())).save(output, RecipeCompat.key(BettaCraft.id("sea_salt")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SEA_WATER_BUCKET.get())
                 .requires(Items.WATER_BUCKET).requires(ModItems.SEA_SALT.get())
-                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("sea_water_bucket"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 4)
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("sea_water_bucket")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 4)
                 .requires(Items.CALCITE).requires(ModItems.SEA_SALT.get())
-                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("calcium_additive"));
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 2)
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("calcium_additive")));
+        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CALCIUM_ADDITIVE.get(), 2)
                 .requires(Items.BONE_MEAL).requires(Items.BONE_MEAL).requires(Items.BONE_MEAL).requires(ModItems.SEA_SALT.get())
-                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("calcium_additive_from_bone_meal"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PROTEIN_SKIMMER.get())
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("calcium_additive_from_bone_meal")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.PROTEIN_SKIMMER.get())
                 .pattern("GIG").pattern("G G").pattern("IRI")
                 .define('G', Tags.Items.GLASS_PANES).define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE)
-                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("protein_skimmer"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FLOW_PUMP.get())
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("protein_skimmer")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FLOW_PUMP.get())
                 .pattern(" I ").pattern("IRI").pattern(" K ")
                 .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('K', Items.BLACK_DYE)
-                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, BettaCraft.id("flow_pump"));
+                .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("flow_pump")));
         // M22.3: the magnifier: a glass pane in a ring of copper (or gold) on a stick
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
                 .pattern(" C ").pattern("CGC").pattern(" S ")
                 .define('C', Tags.Items.INGOTS_COPPER).define('G', Tags.Items.GLASS_PANES).define('S', Tags.Items.RODS_WOODEN)
-                .unlockedBy("has_copper", hasIt(Items.COPPER_INGOT)).save(output, BettaCraft.id("magnifier"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
+                .unlockedBy("has_copper", hasIt(Items.COPPER_INGOT)).save(output, RecipeCompat.key(BettaCraft.id("magnifier")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
                 .pattern(" C ").pattern("CGC").pattern(" S ")
                 .define('C', Tags.Items.INGOTS_GOLD).define('G', Tags.Items.GLASS_PANES).define('S', Tags.Items.RODS_WOODEN)
-                .unlockedBy("has_gold", hasIt(Items.GOLD_INGOT)).save(output, BettaCraft.id("magnifier_from_gold"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.REEF_ROCK.get(), 4)
+                .unlockedBy("has_gold", hasIt(Items.GOLD_INGOT)).save(output, RecipeCompat.key(BettaCraft.id("magnifier_from_gold")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.BUILDING_BLOCKS, ModItems.REEF_ROCK.get(), 4)
                 .pattern("CS").pattern("SC")
                 .define('C', Items.CALCITE).define('S', net.minecraft.tags.ItemTags.SAND)
-                .unlockedBy("has_calcite", hasIt(Items.CALCITE)).save(output, BettaCraft.id("reef_rock"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.LIVE_ROCK.get(), 8)
+                .unlockedBy("has_calcite", hasIt(Items.CALCITE)).save(output, RecipeCompat.key(BettaCraft.id("reef_rock")));
+        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.BUILDING_BLOCKS, ModItems.LIVE_ROCK.get(), 8)
                 .pattern("RRR").pattern("RCR").pattern("RRR")
                 .define('R', ModItems.REEF_ROCK.get())
                 .define('C', net.minecraft.world.item.crafting.Ingredient.of(Items.TUBE_CORAL, Items.BRAIN_CORAL, Items.BUBBLE_CORAL, Items.FIRE_CORAL,
                         Items.HORN_CORAL, Items.TUBE_CORAL_FAN, Items.BRAIN_CORAL_FAN, Items.BUBBLE_CORAL_FAN, Items.FIRE_CORAL_FAN, Items.HORN_CORAL_FAN))
-                .unlockedBy("has_reef_rock", hasIt(ModItems.REEF_ROCK.get())).save(output, BettaCraft.id("live_rock"));
+                .unlockedBy("has_reef_rock", hasIt(ModItems.REEF_ROCK.get())).save(output, RecipeCompat.key(BettaCraft.id("live_rock")));
         // frags from the corals of the ocean: tube -> star polyps, brain -> Lobophyllia, bubble -> hammer, fire -> Acropora, horn -> leather
         var map = new java.util.LinkedHashMap<net.minecraft.world.item.Item, org.overengineer.bettacraft.plants.PlantSpecies>();
         map.put(Items.TUBE_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.GREEN_STAR_POLYPS);
@@ -1235,9 +1282,9 @@ public final class ModDataGen {
         map.put(Items.HORN_CORAL, org.overengineer.bettacraft.plants.PlantSpecies.LEATHER_CORAL);
         for (var e : map.entrySet()) {
             var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(e.getKey()).getPath();
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.AQUATIC_PLANTS.get(e.getValue()).get(), 2)
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AQUATIC_PLANTS.get(e.getValue()).get(), 2)
                     .requires(e.getKey()).requires(ModItems.REEF_ROCK.get())
-                    .unlockedBy("has_" + id, hasIt(e.getKey())).save(output, BettaCraft.id("frag_from_" + id));
+                    .unlockedBy("has_" + id, hasIt(e.getKey())).save(output, RecipeCompat.key(BettaCraft.id("frag_from_" + id)));
         }
     }
 
@@ -1257,7 +1304,7 @@ public final class ModDataGen {
             add(ModBlocks.TANK.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.TANK.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.TANK.get())
-                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                            .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.GLASS.get()).include(ModDataComponents.TANK_STYLE.get()))))));
             dropSelf(ModBlocks.FEEDER.get());
             dropSelf(ModBlocks.CLIP_FEEDER.get());
@@ -1317,7 +1364,7 @@ public final class ModDataGen {
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CO2_CYLINDER.get())
-                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                            .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.CO2_GAS.get()).include(ModDataComponents.CO2_SOLENOID.get()))))));
             dropSelf(ModBlocks.LARVA_TUB.get());
             dropSelf(ModBlocks.ARTEMIA_HATCHERY.get());
@@ -1327,12 +1374,12 @@ public final class ModDataGen {
             add(ModBlocks.EXTERNAL_FILTER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.EXTERNAL_FILTER.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.EXTERNAL_FILTER.get())
-                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                            .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(net.minecraft.core.component.DataComponents.CONTAINER))))));
             add(ModBlocks.CABINET.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CABINET.get(), LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CABINET.get())
-                            .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                            .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.WOOD.get()).include(ModDataComponents.OUTLET_SIDE.get())
                                     .include(ModDataComponents.CABINET_FRONT.get()).include(ModDataComponents.CABINET_JOINTS.get()))))));
         }
@@ -1418,7 +1465,7 @@ public final class ModDataGen {
 
     static final class BlockTagsGen extends BlockTagsProvider {
         BlockTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
-            super(out, lookup, BettaCraft.MOD_ID, efh);
+            super(out, lookup, BettaCraft.MOD_ID);
         }
 
         @Override
@@ -1454,17 +1501,17 @@ public final class ModDataGen {
             tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
             tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
-                    .addOptional(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.TANK_BLOCK);
+                    .add(net.minecraft.tags.TagEntry.optionalElement(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.TANK_BLOCK));
             tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
-                    .addOptional(Compat.rl(Compat.FINTASTIC, "duckweed")).addOptional(Compat.rl(Compat.FINTASTIC, "lotus_pad"));
+                    .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, "duckweed"))).add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, "lotus_pad")));
             // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
             var plants = tag(ModTags.INTERIOR_WATER_PLANTS);
-            for (String p : Compat.FINTASTIC_PLANTS) plants.addOptional(Compat.rl(Compat.FINTASTIC, p));
+            for (String p : Compat.FINTASTIC_PLANTS) plants.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, p)));
             // M22.1: they sway in the miniature outside the tank too
             var sway = tag(ModTags.SWAYING_PLANTS).add(net.minecraft.world.level.block.Blocks.KELP, net.minecraft.world.level.block.Blocks.KELP_PLANT,
                     net.minecraft.world.level.block.Blocks.SEAGRASS, net.minecraft.world.level.block.Blocks.TALL_SEAGRASS)
                     .addTag(BlockTags.CORALS).addTag(BlockTags.WALL_CORALS);
-            for (String p : Compat.FINTASTIC_PLANTS) sway.addOptional(Compat.rl(Compat.FINTASTIC, p));
+            for (String p : Compat.FINTASTIC_PLANTS) sway.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, p)));
             // M13: where aquarium plants grow
             tag(ModTags.EPIPHYTE_SURFACES).addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS)
                     .addTag(BlockTags.STONE_BRICKS).addTag(Tags.Blocks.COBBLESTONES).addTag(BlockTags.WOODEN_SLABS).addTag(BlockTags.WOODEN_STAIRS)
@@ -1500,8 +1547,8 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK)
-                    .addOptional(Compat.rl("create", "limestone")).addOptional(Compat.rl("create", "cut_limestone"))
-                    .addOptional(Compat.rl("create", "polished_cut_limestone")).addOptionalTag(Identifier.fromNamespaceAndPath("c", "stones/limestone"));
+                    .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "limestone"))).add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "cut_limestone")))
+                    .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "polished_cut_limestone"))).add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "stones/limestone")));
             tag(ModTags.DRIFTWOOD).addTag(BlockTags.LOGS).add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS);
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
@@ -1511,7 +1558,7 @@ public final class ModDataGen {
     static final class ItemTagsGen extends ItemTagsProvider {
         ItemTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup,
                     CompletableFuture<TagsProvider.TagLookup<Block>> blocks, ExistingFileHelper efh) {
-            super(out, lookup, blocks, BettaCraft.MOD_ID, efh);
+            super(out, lookup, BettaCraft.MOD_ID);
         }
 
         @Override
@@ -1565,24 +1612,24 @@ public final class ModDataGen {
             for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
             tag(ModTags.PLASTIC_SHEETS)
-                    .addOptionalTag(Identifier.fromNamespaceAndPath("c", "plastics"))
-                    .addOptionalTag(Identifier.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets"))
-                    .addOptional(Identifier.fromNamespaceAndPath("mekanism", "hdpe_sheet"));
+                    .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "plastics")))
+                    .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets")))
+                    .add(net.minecraft.tags.TagEntry.optionalElement(Identifier.fromNamespaceAndPath("mekanism", "hdpe_sheet")));
             // raw fish for pellets: cod, salmon and the raw fish of other mods (Aquaculture, Fish of Thieves, ...)
             tag(ModTags.PELLET_FISH).add(Items.COD, Items.SALMON).addOptionalTag(Tags.Items.FOODS_RAW_FISH)
-                    .addOptional(Compat.rl(Compat.AQUACULTURE, "fish_fillet_raw"));
+                    .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.AQUACULTURE, "fish_fillet_raw")));
             // food of other mods (M7): fish feed and pellets as normal food, worms and shrimp as live food
-            for (var f : Compat.FOOD) tag(ModTags.BETTA_FOOD).addOptional(f);
+            for (var f : Compat.FOOD) tag(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
             for (var f : Compat.LIVE_FOOD) {
-                tag(ModTags.LIVE_FOOD).addOptional(f);
-                tag(ModTags.BETTA_FOOD).addOptional(f);
+                tag(ModTags.LIVE_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+                tag(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
             }
         }
     }
 
     static final class EntityTagsGen extends EntityTypeTagsProvider {
         EntityTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
-            super(out, lookup, BettaCraft.MOD_ID, efh);
+            super(out, lookup, BettaCraft.MOD_ID);
         }
 
         @Override
@@ -1594,21 +1641,21 @@ public final class ModDataGen {
                 tag(ModTags.C_FISH).add(t.get());
                 tag(ModTags.C_FISHES).add(t.get());
             }
-            tag(ModTags.BFT_CATCHABLE).addOptional(BettaCraft.id("betta"));
+            tag(ModTags.BFT_CATCHABLE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("betta")));
             var inhabitants = tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
-            for (var e : Compat.INHABITANTS) inhabitants.addOptional(e);
+            for (var e : Compat.INHABITANTS) inhabitants.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // giant fish of other mods (their hitboxes are small, the animals are not)
             // M16: the vanilla frog is no tank animal (lives on land, the tadpole grows into it and hops out)
             var blacklist = tag(ModTags.TANK_BLACKLIST).add(EntityType.FROG);
-            for (var e : Compat.BLACKLIST) blacklist.addOptional(e);
+            for (var e : Compat.BLACKLIST) blacklist.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // M30: big animals that go into big tanks by the size rule (their length from the hitbox): the vanilla dolphin
             tag(ModTags.BIG_TANK_ANIMALS).add(EntityType.DOLPHIN);
             // M16: axolotls hunt small fish and fry
             var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH, EntityType.AXOLOTL);
-            for (var e : Compat.PREDATORS) predators.addOptional(e);
+            for (var e : Compat.PREDATORS) predators.add(net.minecraft.tags.TagEntry.optionalElement(e));
             DataGenM50.entityTags(this::tag); // M50: Sable keeps our animals in its airships
             var prey = tag(ModTags.BETTA_PREY);
-            for (var e : Compat.PREY) prey.addOptional(e);
+            for (var e : Compat.PREY) prey.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // M28.1: every animal of the mod, and the ones that spawn wild (for commands: @e[type=#bettacraft:all_animals])
             var all = tag(ModTags.ALL_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
             var wild = tag(ModTags.WILD_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
@@ -1623,9 +1670,9 @@ public final class ModDataGen {
         }
     }
 
-    static final class BiomeTagsGen extends TagsProvider<Biome> {
+    static final class BiomeTagsGen extends net.minecraft.data.tags.KeyTagProvider<Biome> {
         BiomeTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
-            super(out, Registries.BIOME, lookup, BettaCraft.MOD_ID, efh);
+            super(out, Registries.BIOME, lookup, BettaCraft.MOD_ID);
         }
 
         @Override
@@ -1633,18 +1680,18 @@ public final class ModDataGen {
             tag(ModTags.BETTA_SPAWN_BIOMES).addTag(Tags.Biomes.IS_SWAMP);
             // M25.1: the waters by biome (BiomeWaters): vanilla, the common tags and known biome mods (optional)
             var warm = tag(ModTags.WARM_OCEAN_WATERS).add(net.minecraft.world.level.biome.Biomes.WARM_OCEAN);
-            Compat.WARM_OCEAN_BIOMES.forEach(warm::addOptional);
+            Compat.WARM_OCEAN_BIOMES.forEach(id -> warm.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             tag(ModTags.LUKEWARM_OCEAN_WATERS).add(net.minecraft.world.level.biome.Biomes.LUKEWARM_OCEAN, net.minecraft.world.level.biome.Biomes.DEEP_LUKEWARM_OCEAN);
             var mangrove = tag(ModTags.MANGROVE_WATERS).add(net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP);
-            Compat.MANGROVE_BIOMES.forEach(mangrove::addOptional);
+            Compat.MANGROVE_BIOMES.forEach(id -> mangrove.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             tag(ModTags.LUSH_CAVE_WATERS).add(net.minecraft.world.level.biome.Biomes.LUSH_CAVES);
             var swamp = tag(ModTags.SWAMP_WATERS).add(net.minecraft.world.level.biome.Biomes.SWAMP).addTag(Tags.Biomes.IS_SWAMP);
-            Compat.SWAMP_BIOMES.forEach(swamp::addOptional);
+            Compat.SWAMP_BIOMES.forEach(id -> swamp.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             var river = tag(ModTags.RIVER_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_RIVER);
-            Compat.RIVER_BIOMES.forEach(river::addOptional);
+            Compat.RIVER_BIOMES.forEach(id -> river.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             tag(ModTags.BEACH_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_BEACH);
             var jungle = tag(ModTags.JUNGLE_WATERS).addTag(net.minecraft.tags.BiomeTags.IS_JUNGLE);
-            Compat.JUNGLE_BIOMES.forEach(jungle::addOptional);
+            Compat.JUNGLE_BIOMES.forEach(id -> jungle.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             tag(ModTags.CORAL_REEF_BIOMES).addTag(ModTags.WARM_OCEAN_WATERS);
             // M28.1: cold fresh water (the wild Marimo): frozen rivers and the lakes of taigas and snowy plains
             tag(ModTags.COLD_WATERS).add(net.minecraft.world.level.biome.Biomes.FROZEN_RIVER, net.minecraft.world.level.biome.Biomes.SNOWY_PLAINS,
@@ -1653,7 +1700,7 @@ public final class ModDataGen {
             tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
             // M31 part b: Hermann's tortoise: savannas and the dry shrublands of biome mods (its home is Mediterranean scrub)
             var tortoise = tag(ModTags.TORTOISE_LANDS).addTag(Tags.Biomes.IS_SAVANNA);
-            Compat.TORTOISE_BIOMES.forEach(tortoise::addOptional);
+            Compat.TORTOISE_BIOMES.forEach(id -> tortoise.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             // M31 part c: the leopard gecko (rocky semi-desert) and the corn snake (fields and woods of temperate lands)
             tag(ModTags.ARID_LANDS).addTag(Tags.Biomes.IS_DESERT).addTag(net.minecraft.tags.BiomeTags.IS_BADLANDS);
             tag(ModTags.SNAKE_LANDS).add(net.minecraft.world.level.biome.Biomes.FOREST, net.minecraft.world.level.biome.Biomes.FLOWER_FOREST,
