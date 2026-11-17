@@ -25,6 +25,10 @@ navigation:
   light and the feeders on it, the clip-on feeder on its glass and the cabinet under it. Trying it shows "Break
   protection is on". Explosions and pistons leave it alone too (server config `tank.protectFromExplosionsAndPistons`,
   on by default). Config switch of the whole feature: `features.equipment.breakProtection`.
+* **A** (right of the lock; owner and operators only): which [hired aquarists](../getting_started/hired_aquarist.md) may
+  work at this aquarium: **A** the owner's (and his team's, with FTB Teams), **A+** every player's (released for friends
+  who share their aquarist), **A-** none. A locked aquarium is never touched by an aquarist. Hidden while
+  `features.aquaristNpc.enabled` is off.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
 * Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
   and the button to enter the interior. The last line warns about poor water or missing power.

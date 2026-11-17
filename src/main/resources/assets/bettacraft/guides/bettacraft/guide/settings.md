@@ -153,6 +153,7 @@ another group (reef fish and seahorses need the tankmates, corals need salt wate
 | `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | their sub-switches (care, breeding, leaf litter, contraptions ...) |
 | `compat.jei`, `compat.overlays`, `compat.guideme`, `compat.betterFishTanks` | the integration with that mod (no JEI pages, no overlay lines, no handbook item, no release into BFT tanks) |
 | `compat.mekanism`, `compat.enderio`, `compat.thermal` | the stainless steel recipe of that mod's machine |
+| `aquaristNpc.enabled` | no [hired aquarist](getting_started/hired_aquarist.md) comes; hired ones wait without working |
 
 Every switch has its own line in the Mod settings with an explanation. A config from before 1.26 is moved to these keys
 by itself when the game starts (the old file stays as `bettacraft-common.toml.pre-m33`); after a change in the file `/reload`
@@ -333,6 +334,9 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
   switches it (see Presets above).
 * Operators: `/bettacraft foreign list [radius]` lists the animals of vanilla and other mods in the tank you look at (or in
   the tanks nearby) with their profile, and the types of other mods without one ([profiles](settings/foreign_profiles.md)).
+* `/bettacraft aquarist hire` / `decline`: the answer to an aquarist's offer (the buttons in the chat);
+  `/bettacraft aquarist status`: why no [hired aquarist](getting_started/hired_aquarist.md) has come yet. Operators:
+  `/bettacraft aquarist arrive [player]` lets one come now.
 
 ## In this chapter
 

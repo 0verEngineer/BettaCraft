@@ -39,6 +39,7 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Gast von weit her** | Setze einen Axolotl oder ein Tier einer anderen Mod mit Bettacraft-Profil in ein Becken |
 | <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Kaulquappen!** | Der Laich deiner Zwergkrallenfrösche schlüpft in einem Becken |
 | <ItemImage id="bettacraft:fish_bag" /> | ↳ **Einzug** | Setze einen Betta in ein Aquarium |
+| <ItemImage id="minecraft:emerald" /> | ↳ **Ein Aquarist kommt vorbei** | Stelle den Aquaristen ein, der deine Becken pflegen will |
 | <ItemImage id="bettacraft:breeding_basin" /> | ↳ **Ein Aquarianer im Dorf** | Handle mit einem Aquarianer |
 | <ItemImage id="bettacraft:feeder" /> | ↳ **Zimmerservice** | Lass einen Futterautomaten deine Fische füttern |
 | <ItemImage id="minecraft:iron_sword" /> | ↳ **Kampffisch** | Zwei erwachsene Männchen treffen in einem Aquarium aufeinander. Trenne sie! |

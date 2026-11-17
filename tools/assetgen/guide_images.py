@@ -1071,6 +1071,33 @@ def m50(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M51 scene (DevClientSmokeM51, -Psmoketestm51): the hired aquarist at his workplace, his offer, his menu and the tank menu
+# with the aquarist button (en, de), his four looks. ``py guide_images.py m51``.
+M51_WORLD = {"hired_aquarist": ("bettacraft_m51_working_1", (280, 270, 1200, 680)),
+             "hired_aquarist_looks": ("bettacraft_m51_variants", (240, 320, 1040, 720))}
+M51_MENUS = {"hired_aquarist_offer": ("bettacraft_m51_offer_menu", (340, 258, 940, 702)),
+             "hired_aquarist_menu": ("bettacraft_m51_menu", (340, 258, 940, 702)),
+             "hired_aquarist_tank_menu": ("bettacraft_m51_tank_menu", (394, 250, 886, 530))}
+
+
+def m51(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M51_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+    for name, (shot, box) in M51_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1085,6 +1112,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m51"]:
+        m51(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m50"]:
         m50(out_en)
         return 0

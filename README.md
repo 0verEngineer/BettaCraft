@@ -60,6 +60,13 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   food, floating and aquarium plants, shrimp, snails, test kits, substrate and live food cultures, as a master pairs of
   rare bred tankmate varieties, and **buys your bettas and bred tankmates** for emeralds by the rarity of their visible
   genes (a data file modpacks can change).
+- **Hired aquarist:** once a player keeps three tanks and bred something, an aquarist (a person of his own, with four
+  procedural looks) comes by and offers his work; refused, the next one comes days later after another breeding. Hired, he
+  lives in a bed near a breeding basin, takes an emerald (or some bread) a day from a chest there and really walks to the
+  tanks: feeding from the chest, water changes from the reservoir, algae, trimming plants (cuttings into the chest),
+  moving young into a rearing tank and warnings in the chat (JourneyMap waypoints); six tasks with three levels each in his
+  menu. Multiplayer: each player has his own; he works only at his employer's tanks, those of the FTB Teams party and
+  those released for him in the tank menu, never at locked ones. Without wage he slows down and leaves after three days.
 
 ### Aquariums and the interior
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable to
@@ -311,7 +318,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 111 quests (1.40.0; 33 before 1.36.0) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 112 quests (1.41.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
@@ -338,6 +345,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 |---|---|
 | always (the core of the mod) | Glass House, Water Works, The Basics, Travel Bag, Under the Tank, Cool Down, Swamp Soup |
 | `features.algae.enabled` | Clear View |
+| `features.aquaristNpc.enabled` | An Aquarist Comes By |
 | `features.aquaticPlants.enabled` | Green Thumb |
 | `features.bettas.enabled` | Labyrinth Fish, Moving In, Fish Flakes, Room Service, Tropical, Mirror, Mirror, Back on Fin, A Lesson Learned (optional) |
 | `features.bigTanks.bigAnimals` | Heavy Lifting, Big Fish |

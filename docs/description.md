@@ -142,6 +142,14 @@ the Mods 10, and fine on its own.
 
 ![One multiblock filter for two tanks: filter pipes with T-pieces, a pipe bundle with four lines, fresh and waste water ports and pipe covers](images/bettacraft-filter-lines.jpg)
 
+## A hired aquarist
+
+Keep a few tanks and breed something, and an aquarist comes by to offer his work. Hire him, give him a bed and a breeding
+basin with a chest next to it, and he walks to your tanks every day: he feeds from the chest, changes the water from the
+reservoir, scrapes the algae, trims the plants, moves the young into a rearing tank and tells you what is wrong, for an
+emerald (or some bread) a day. In multiplayer every player has his own, and he only works at his employer's tanks, those
+of the team (FTB Teams) and those released for him.
+
 ## Handbook and menus
 
 An in-game handbook (with GuideME) in English and German with a page for every animal, plant, coral and device and
@@ -166,7 +174,7 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (111 quests, English and German), KubeJS events (animal born,
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (112 quests, English and German), KubeJS events (animal born,
   animal died, monitor alarm), JourneyMap waypoints at tanks with a monitor alarm, and `/bettacraft foreign list` to see
   which animals of other mods still need a profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes

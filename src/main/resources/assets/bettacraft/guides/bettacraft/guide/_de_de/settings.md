@@ -154,6 +154,7 @@ Zucht-Schalter `breeding.enabled`, Schildkröten die Terrarien). Aus heißt:
 | `foreignAnimals.enabled`, `decor.enabled`, `compat.create.enabled` | ihre Unterschalter (Pflege, Zucht, Laub, Contraptions ...) |
 | `compat.jei`, `compat.overlays`, `compat.guideme`, `compat.betterFishTanks` | die Anbindung an diese Mod (keine JEI-Seiten, keine Overlay-Zeilen, kein Handbuch-Item, kein Aussetzen in BFT-Becken) |
 | `compat.mekanism`, `compat.enderio`, `compat.thermal` | das Edelstahl-Rezept der Maschine dieser Mod |
+| `aquaristNpc.enabled` | kein [angestellter Aquarist](getting_started/hired_aquarist.md) kommt; angestellte warten, ohne zu arbeiten |
 
 Jeder Schalter hat in den Mod-Einstellungen seine eigene Zeile mit Erklärung. Eine Config von vor 1.26 wird beim Start von
 selbst auf diese Schlüssel umgestellt (die alte Datei bleibt als `bettacraft-common.toml.pre-m33`); nach einer Änderung in der
@@ -346,6 +347,9 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
   `/bettacraft preset <Name>` wechselt sie (siehe Voreinstellungen oben).
 * Operatoren: `/bettacraft foreign list [Radius]` listet die Tiere aus Vanilla und anderen Mods im angeschauten Becken (oder in
   den Becken in der Nähe) mit ihrem Profil und die Typen anderer Mods ohne Profil ([Profile](settings/foreign_profiles.md)).
+* `/bettacraft aquarist hire` / `decline`: die Antwort auf das Angebot eines Aquaristen (die Knöpfe im Chat);
+  `/bettacraft aquarist status`: warum noch kein [angestellter Aquarist](getting_started/hired_aquarist.md) gekommen ist.
+  Operatoren: `/bettacraft aquarist arrive [Spieler]` lässt sofort einen kommen.
 
 ## In diesem Kapitel
 

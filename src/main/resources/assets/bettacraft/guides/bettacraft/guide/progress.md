@@ -39,6 +39,7 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Guest from Afar** | Put an axolotl or an animal of another mod with a Bettacraft profile into a tank |
 | <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Tadpoles!** | The spawn of your dwarf clawed frogs hatches in a tank |
 | <ItemImage id="bettacraft:fish_bag" /> | ↳ **Moving In** | Put a betta into a tank |
+| <ItemImage id="minecraft:emerald" /> | ↳ **An Aquarist Comes By** | Hire the aquarist who comes to look after your tanks |
 | <ItemImage id="bettacraft:breeding_basin" /> | ↳ **An Aquarist in the Village** | Trade with an aquarist villager |
 | <ItemImage id="bettacraft:feeder" /> | ↳ **Room Service** | Let an aquarium feeder feed your fish |
 | <ItemImage id="minecraft:iron_sword" /> | ↳ **Fighting Fish** | Two adult males meet in one tank. Separate them! |

@@ -27,6 +27,10 @@ den [Innenraum](../interior.md).)
   Wer es versucht, bekommt den Hinweis „Bruchschutz ist an“. Explosionen und Kolben lassen es ebenfalls in Ruhe
   (Server-Config `tank.protectFromExplosionsAndPistons`, standardmäßig an). Schalter für die ganze Funktion:
   `features.equipment.breakProtection`.
+* **A** (rechts neben der Sperre; nur Besitzer und Operatoren): welche [angestellten Aquaristen](../getting_started/hired_aquarist.md)
+  an diesem Aquarium arbeiten dürfen: **A** der des Besitzers (und seines Teams, mit FTB Teams), **A+** die aller Spieler
+  (freigegeben für Freunde, die ihren Aquaristen teilen), **A-** keiner. Ein gesperrtes Aquarium fasst kein Aquarist an.
+  Unsichtbar, solange `features.aquaristNpc.enabled` aus ist.
 * Größe, Wassermenge, Wasser- und Umgebungstemperatur, die **Zieltemperatur** (– / +).
 * Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter, die Zahl der Tiere
   und der Knopf zum Betreten des Innenraums. Die letzte Zeile warnt vor mäßigem Wasser oder fehlendem Strom.

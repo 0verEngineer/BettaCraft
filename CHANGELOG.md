@@ -4,6 +4,46 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.41.0-beta.1] - 2026-11-17
+
+A hired aquarist comes to every player with a few tanks and a first breeding, and works for him: he walks to the tanks,
+feeds, changes water, cleans, trims and moves the young, for an emerald a day.
+
+### Added
+- **Hired aquarist** (switch `features.aquaristNpc.enabled`, on by default; server config `hiredAquarist.*`):
+  - **Arrival:** a player who owns at least 3 tanks and bred something (any breeding advancement) gets a visit by day: an
+    aquarist walks up and offers his work in the chat with the buttons **[Hire]** and **[No, thanks]** (also in his window).
+    Refused or unanswered for a day, he leaves; the next one comes after 5 to 10 in-game days and another breeding.
+    `/bettacraft aquarist status` tells why none has come yet; operators: `/bettacraft aquarist arrive [player]`.
+  - **A person of his own:** a human model with procedural work clothes (teal rubber apron with a betta, gloves, boots,
+    cap), four looks, a first name (a name tag of his employer renames him). He cannot be hurt (only `/kill`), runs away
+    from monsters, cannot be pushed, leashed, ridden or caught; only his employer or an operator uses his menu.
+  - **Home and wage:** he takes a free bed and a free breeding basin within 32 blocks (their POI tickets, so villagers
+    leave them alone), sleeps at night and takes his wage every morning from the chests next to the basin: 1 emerald, or 3
+    pieces of food. Without wage he works at half speed and leaves after 3 days (also without a bed or basin).
+  - **Six tasks**, each switched on or off in his menu with its own level 1 to 3: feeding from the chests (1 to 3 times a
+    day, live food first; not tanks with a feeder), water changes with water from a reservoir, pipe or water source next to
+    the basin (15 to 35 %, salt water for salt tanks), scraping algae, thinning floating plants and trimming grown aquarium
+    plants (the plants and cuttings go into the chest), moving young bettas, tankmates and froglets into a rearing tank
+    chosen in his menu (2 to 8 per trip), and warnings in the chat (sick animals, too little water, temperature, water,
+    hunger, crowding, the breeding warnings) with a JourneyMap waypoint at the tank. He really walks there: every round he
+    fetches what he needs at the basin, goes from tank to tank and brings the rest back. Up to 16 loaded tanks within 32
+    blocks of his basin.
+  - **Multiplayer:** each player has his own aquarist. He works only at his employer's tanks, with FTB Teams at those of
+    the party's members (`hiredAquarist.ftbTeams`, through reflection, no dependency) and at tanks their owners released
+    for every aquarist; never at locked tanks, tanks set to "no aquarist" or tanks of strangers, and he checks it again
+    right before every job. The new **A** button of the tank menu (owner or operator) sets who may: the owner's aquarist,
+    every player's (A+) or none (A-). A tank without an owner goes to the next player who opens it.
+  - Nothing is lost or doubled: what he carries (food, cuttings, water, young) goes back when he leaves, is dismissed or
+    is removed; young the rearing tank does not take go back into their tank (or as a filled fish bag into a chest). His
+    chunk unloading keeps everything; tanks in unloaded chunks are left alone.
+  - His menu: status, home, wage, the tasks with their levels, the rearing tank, the tanks around and whose they are; Jade,
+    The One Probe and WTHIT show whom he works for and what he does.
+  - Advancement and quest **An Aquarist Comes By** (chapter: 112 quests); handbook page "Hired aquarist" (en, de).
+
+### Changed
+- The tank menu's name box is a little narrower (room for the aquarist button); network version 19.
+
 ## [1.40.0-beta.1] - 2026-11-17
 
 Tanks keep living on the road: on Create Aeronautics airships everything runs as on the ground, on Create contraptions the
