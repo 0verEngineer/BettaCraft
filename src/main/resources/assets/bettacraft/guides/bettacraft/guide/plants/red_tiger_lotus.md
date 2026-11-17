@@ -40,6 +40,7 @@ The red tiger lotus (*Nymphaea zenkeri*) from West Africa: a bulb with mottled r
 * **Shears** on a wild plant in jungle water: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Wandering trader** (rare offers): 1 for 4 emeralds.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 5 emeralds; one of about 7 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

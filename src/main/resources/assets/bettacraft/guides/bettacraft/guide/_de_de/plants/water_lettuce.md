@@ -36,6 +36,7 @@ Die Muschelblume (*Pistia stratiotes*) aus den Tropen: Rosetten aus samtigen Bl�
 * **Angeln** in Mangrovens체mpfen: 0,6 % pro Fang (etwa 1 von 167 F채ngen), statt des Fischs.
 * **Wilde Schwimmpflanzen abbauen** in Dschungelgew채ssern: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Wilde Schwimmpflanzen abbauen** in Mangrovens체mpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Neuling): 2 f체r 1 Smaragd; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: w채chst auf einer beleuchteten Wasseroberfl채che und bildet Ableger; mit dem Kescher herausnehmen.
 
 Die Biome von Biome-Mods z채hlen mit ([Biom-Tags](../settings.md)).

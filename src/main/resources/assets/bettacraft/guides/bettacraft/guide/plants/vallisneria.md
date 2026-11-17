@@ -36,6 +36,7 @@ Vallisneria (*Vallisneria spiralis*), eelgrass from warm waters worldwide: long 
 * **Fishing** in rivers: 0.32 % per catch (about 1 in 310 catches), instead of the fish.
 * **Shears** on a wild plant in rivers: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Wandering trader** (usual offers): 2 for 1 emerald.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

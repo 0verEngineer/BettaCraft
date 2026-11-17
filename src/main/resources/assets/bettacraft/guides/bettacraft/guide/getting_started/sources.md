@@ -406,3 +406,54 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 | [Pacific Cleaner Shrimp](../saltwater/cleaner_shrimp.md) | 1 | 5 |
 | [Blue-Leg Hermit Crab](../saltwater/hermit_crab.md) | 3 | 5 |
 | [Live Rock](../saltwater/reef_rock.md) | 8 | 6 |
+
+## Aquarist villager
+
+| Level | Thing | Count | Emeralds |
+|---|---|---|---|
+| Novice | [Betta Pellets](../food.md) | 8 | 1 |
+| Novice | [Fish Flakes](../food/food_variety.md) | 8 | 1 |
+| Novice | [Amazon Frogbit](../plants/amazon_frogbit.md) | 2 | 1 |
+| Novice | [Salvinia](../plants/salvinia.md) | 2 | 1 |
+| Novice | [Duckweed](../plants/duckweed.md) | 2 | 1 |
+| Novice | [Water Lettuce](../plants/water_lettuce.md) | 2 | 1 |
+| Apprentice | [Java Fern](../plants/java_fern.md) | 2 | 2 |
+| Apprentice | [Anubias Nana](../plants/anubias_nana.md) | 2 | 2 |
+| Apprentice | [Java Moss](../plants/java_moss.md) | 2 | 2 |
+| Apprentice | [Cryptocoryne Wendtii (Green)](../plants/cryptocoryne_wendtii_green.md) | 2 | 2 |
+| Apprentice | [Vallisneria](../plants/vallisneria.md) | 2 | 2 |
+| Apprentice | [Amazon Sword](../plants/amazon_sword.md) | 2 | 2 |
+| Apprentice | [Rotala Rotundifolia](../plants/rotala_rotundifolia.md) | 2 | 2 |
+| Apprentice | [Sagittaria Subulata](../plants/sagittaria_subulata.md) | 2 | 2 |
+| Journeyman | [Neocaridina Shrimp](../invertebrates/neocaridina.md) | 2 | 4 |
+| Journeyman | [Ramshorn Snail](../invertebrates/ramshorn.md) | 2 | 3 |
+| Journeyman | [Zebra Nerite](../invertebrates/zebra_nerite.md) | 1 | 3 |
+| Journeyman | [Apple Snail](../invertebrates/apple_snail.md) | 1 | 3 |
+| Journeyman | [pH Drop Test](../equipment/water_tests.md) | 1 | 3 |
+| Journeyman | [TDS Meter](../equipment/water_tests.md) | 1 | 4 |
+| Journeyman | [Artemia Cysts](../food/fry_food.md) | 4 | 2 |
+| Journeyman | [Active Soil](../interior/active_soil.md) | 8 | 3 |
+| Expert | [Infusoria Culture](../food/fry_food.md) | 1 | 3 |
+| Expert | [Artemia Hatchery](../food/fry_food.md) | 1 | 4 |
+| Expert | [Green Water Culture](../food/daphnia_barrel.md) | 1 | 3 |
+| Expert | [Red Tiger Lotus](../plants/red_tiger_lotus.md) | 1 | 5 |
+| Expert | [Cryptocoryne 'Flamingo'](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| Expert | [Bucephalandra 'Blue'](../plants/bucephalandra_blue.md) | 1 | 5 |
+| Expert | [Ludwigia 'Super Red'](../plants/ludwigia_super_red.md) | 1 | 5 |
+| Expert | [Rotala 'H'ra'](../plants/rotala_hra.md) | 1 | 5 |
+| Expert | [Marimo Ball](../plants/marimo.md) | 1 | 5 |
+| Expert | [Echinodorus 'Red Diamond'](../plants/echinodorus_red_diamond.md) | 1 | 5 |
+| Master | [Green Neon Tetra](../tankmates/green_neon_tetra.md) | 2 | 14 |
+| Master | [Bristlenose Pleco](../tankmates/bristlenose_pleco.md) | 2 | 14 |
+| Master | [Platy](../tankmates/platy.md) | 2 | 14 |
+| Master | [Dwarf Gourami](../tankmates/dwarf_gourami.md) | 2 | 14 |
+| Master | [Ram Cichlid](../tankmates/ram_cichlid.md) | 2 | 14 |
+| Master | [Cockatoo Dwarf Cichlid](../tankmates/cockatoo_cichlid.md) | 2 | 14 |
+| Master | [Agassiz's Dwarf Cichlid](../tankmates/agassiz_dwarf_cichlid.md) | 2 | 14 |
+| Master | [Angelfish](../tankmates/angelfish.md) | 2 | 14 |
+| Master | [Discus](../tankmates/discus.md) | 2 | 14 |
+| Master | [Tiger Barb](../tankmates/tiger_barb.md) | 2 | 14 |
+| Master | [Zebra Danio](../tankmates/zebra_danio.md) | 2 | 14 |
+| Master | [Honey Gourami](../tankmates/honey_gourami.md) | 2 | 14 |
+| Master | [Black Molly](../tankmates/black_molly.md) | 2 | 14 |
+| Master | [Swordtail](../tankmates/swordtail.md) | 2 | 14 |

@@ -38,6 +38,7 @@ Java moss (*Taxiphyllum barbieri*) from South-East Asia: fine green sprigs that 
 * **Shears** on a wild plant in rivers: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in mangrove swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in lush caves: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

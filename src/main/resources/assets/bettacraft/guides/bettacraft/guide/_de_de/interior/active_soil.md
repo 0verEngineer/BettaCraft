@@ -33,6 +33,8 @@ Nur für Süßwasser: Im Meerwasser puffert die Karbonathärte des Meersalzes de
 
 ## Bezug
 
+* **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 8 für 3 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
+
 Herstellung:
 
 <RecipesFor id="bettacraft:active_soil" />

@@ -55,6 +55,7 @@ Jedes erwachsene Weibchen besetzt eine eigene **kleine Höhle**: zuerst die [Kok
 * **Wild** in Flüssen, einzeln (Spawn-Gewicht 1) (Config `features.tankmates.cichlids`).
 * **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 3) (Config `features.tankmates.cichlids`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 36 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.cichlids`).
 * **[Zucht](breeding.md)**: Höhlenbrüter: das Weibchen laicht in einer kleinen Höhle und bewacht die Brut.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

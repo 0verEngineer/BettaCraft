@@ -39,6 +39,7 @@ Die Paradiesschnecke (*Pomacea diffusa*) aus dem Amazonasbecken: eine große Sch
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 16–18 % pro Schwung (etwa 1 von 6 Schwüngen).
 * **Wild** in Dschungelgewässern, in Gruppen von 2–5 (Spawn-Gewicht 3) (Config `features.invertebrates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 1 für 3 Smaragde.
+* **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 1 für 3 Smaragde; eins von etwa 5 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

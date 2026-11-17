@@ -68,6 +68,7 @@ Overfeeding does no harm.
 
 * <ItemLink id="bettacraft:swamp_water_bottle" />: **Glass bottle** filled with water in swamps.
 * <ItemLink id="bettacraft:mosquito_larvae" />: **Breaking mud** in swamps: 4 % per block.
+* <ItemLink id="bettacraft:betta_pellets" />: **[Aquarist villager](getting_started/aquarist.md)** (Novice): 8 for 1 emerald; one of about 4 in this offer (config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:betta_pellets" />: **[Food maker](food/food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 
 Crafting:

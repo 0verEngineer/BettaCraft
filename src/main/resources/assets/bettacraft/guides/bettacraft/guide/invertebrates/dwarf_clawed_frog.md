@@ -32,6 +32,30 @@ the decoration of the interior (rocks, roots, plants, caves) instead of walking 
   two or three feedings a day.
 * After 4 days without food a frog starts to starve.
 
+## Breeding
+
+![Frog spawn at the surface and tadpoles](../images/frog_breeding.png)
+
+Dwarf clawed frogs breed like in nature (config `features.frogs.breeding`):
+
+1. **Amplexus:** a **cool water change** (a quarter of the water within a quarter of a day, 1.5 °C cooler, the trigger
+   of the corydoras) into a tank at **24–28 °C** sets a pair off: within the next day a grown, fed male clasps a grown,
+   fed female from behind, and she carries him up to the surface. Every frog has a sex (frogs from before 1.37 got one
+   from their UUID).
+2. **Spawn:** at the surface she releases 20–50 eggs; the spawn floats there among the floating plants for 2 days
+   (`frogs.frogSpawnHatchDays`). **Bettas and other fish eat it**, the frogs a little too; **floating plants** hide most
+   of it.
+3. **Tadpoles** hatch (at most 40 per tank, `frogs.maxTadpoles`). They hover in the open water and need **fine food**:
+   [infusoria](../food/live_food.md), artemia nauplii or fry food (a planted tank grows a little by itself). Two days
+   without enough food and they starve. **With bettas in the tank hardly one survives**; plants hide them a little.
+4. After 6 days (`frogs.tadpoleDays`) a tadpole becomes a small **froglet** that grows up in 4 days
+   (`frogs.frogletDays`) and only breeds then.
+
+![A pair in amplexus: the male holds on to the female's back](../images/frog_amplexus.png)
+
+The tank log tells every step. A tank of its own for the frogs, dense floating plants and an infusoria culture make the
+best breeding tank.
+
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 1.3 % per swing (about 1 in 76 swings).

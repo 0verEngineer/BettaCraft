@@ -56,6 +56,7 @@ Braucht eine **Laichhöhle** (Deko) und 23–27 °C. Jedes Männchen besetzt ein
 * **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.tankmates.wildSpawns`).
 * **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 5) (Config `features.tankmates.wildSpawns`).
 * **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 36 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.wildSpawns`).
 * **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -408,3 +408,54 @@ die [Biom-Tags](../settings.md)).
 | [Weißband-Putzergarnele](../saltwater/cleaner_shrimp.md) | 1 | 5 |
 | [Blaubein-Einsiedlerkrebs](../saltwater/hermit_crab.md) | 3 | 5 |
 | [Lebendgestein](../saltwater/reef_rock.md) | 8 | 6 |
+
+## Aquarianer
+
+| Stufe | Ware | Anzahl | Smaragde |
+|---|---|---|---|
+| Neuling | [Betta-Pellets](../food.md) | 8 | 1 |
+| Neuling | [Flockenfutter](../food/food_variety.md) | 8 | 1 |
+| Neuling | [Amazonas-Froschbiss](../plants/amazon_frogbit.md) | 2 | 1 |
+| Neuling | [Schwimmfarn](../plants/salvinia.md) | 2 | 1 |
+| Neuling | [Wasserlinse](../plants/duckweed.md) | 2 | 1 |
+| Neuling | [Muschelblume](../plants/water_lettuce.md) | 2 | 1 |
+| Lehrling | [Javafarn](../plants/java_fern.md) | 2 | 2 |
+| Lehrling | [Anubias nana](../plants/anubias_nana.md) | 2 | 2 |
+| Lehrling | [Javamoos](../plants/java_moss.md) | 2 | 2 |
+| Lehrling | [Cryptocoryne wendtii (grün)](../plants/cryptocoryne_wendtii_green.md) | 2 | 2 |
+| Lehrling | [Vallisneria](../plants/vallisneria.md) | 2 | 2 |
+| Lehrling | [Amazonas-Schwertpflanze](../plants/amazon_sword.md) | 2 | 2 |
+| Lehrling | [Rotala rotundifolia](../plants/rotala_rotundifolia.md) | 2 | 2 |
+| Lehrling | [Pfeilkraut (Sagittaria subulata)](../plants/sagittaria_subulata.md) | 2 | 2 |
+| Geselle | [Neocaridina-Garnele](../invertebrates/neocaridina.md) | 2 | 4 |
+| Geselle | [Posthornschnecke](../invertebrates/ramshorn.md) | 2 | 3 |
+| Geselle | [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md) | 1 | 3 |
+| Geselle | [Apfelschnecke](../invertebrates/apple_snail.md) | 1 | 3 |
+| Geselle | [pH-Tropfentest](../equipment/water_tests.md) | 1 | 3 |
+| Geselle | [TDS-Messstift](../equipment/water_tests.md) | 1 | 4 |
+| Geselle | [Artemia-Zysten](../food/fry_food.md) | 4 | 2 |
+| Geselle | [Aktivboden](../interior/active_soil.md) | 8 | 3 |
+| Experte | [Infusorien-Ansatz](../food/fry_food.md) | 1 | 3 |
+| Experte | [Artemia-Ansatz](../food/fry_food.md) | 1 | 4 |
+| Experte | [Grünwasser-Ansatz](../food/daphnia_barrel.md) | 1 | 3 |
+| Experte | [Roter Tigerlotus](../plants/red_tiger_lotus.md) | 1 | 5 |
+| Experte | [Cryptocoryne „Flamingo“](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| Experte | [Bucephalandra „Blue“](../plants/bucephalandra_blue.md) | 1 | 5 |
+| Experte | [Ludwigia „Super Red“](../plants/ludwigia_super_red.md) | 1 | 5 |
+| Experte | [Rotala „H'ra“](../plants/rotala_hra.md) | 1 | 5 |
+| Experte | [Marimo-Kugel](../plants/marimo.md) | 1 | 5 |
+| Experte | [Echinodorus „Red Diamond“](../plants/echinodorus_red_diamond.md) | 1 | 5 |
+| Meister | [Grüner Neon](../tankmates/green_neon_tetra.md) | 2 | 14 |
+| Meister | [Antennenwels](../tankmates/bristlenose_pleco.md) | 2 | 14 |
+| Meister | [Platy](../tankmates/platy.md) | 2 | 14 |
+| Meister | [Zwergfadenfisch](../tankmates/dwarf_gourami.md) | 2 | 14 |
+| Meister | [Schmetterlingsbuntbarsch](../tankmates/ram_cichlid.md) | 2 | 14 |
+| Meister | [Kakadu-Zwergbuntbarsch](../tankmates/cockatoo_cichlid.md) | 2 | 14 |
+| Meister | [Agassiz-Zwergbuntbarsch](../tankmates/agassiz_dwarf_cichlid.md) | 2 | 14 |
+| Meister | [Skalar](../tankmates/angelfish.md) | 2 | 14 |
+| Meister | [Diskus](../tankmates/discus.md) | 2 | 14 |
+| Meister | [Sumatrabarbe](../tankmates/tiger_barb.md) | 2 | 14 |
+| Meister | [Zebrabärbling](../tankmates/zebra_danio.md) | 2 | 14 |
+| Meister | [Honigfadenfisch](../tankmates/honey_gourami.md) | 2 | 14 |
+| Meister | [Black Molly](../tankmates/black_molly.md) | 2 | 14 |
+| Meister | [Schwertträger](../tankmates/swordtail.md) | 2 | 14 |

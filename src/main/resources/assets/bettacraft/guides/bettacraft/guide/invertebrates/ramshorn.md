@@ -41,6 +41,7 @@ The ramshorn snail (*Planorbella* sp.) from the still waters of North America: a
 * **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wild** in swamps, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wandering trader** (rare offers): 2 for 4 emeralds.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 2 for 3 emeralds; one of about 5 in this offer (config `features.sources.aquaristVillager`).
 * **Breeding** in the aquarium (one animal is enough).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

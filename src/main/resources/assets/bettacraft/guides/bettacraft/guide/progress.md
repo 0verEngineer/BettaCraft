@@ -35,7 +35,9 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Clear View** | Scrape algae off the glass of a tank with the algae scraper |
 | <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Colony** | Young shrimp, snails or crayfish are born in a tank |
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Guest from Afar** | Put an axolotl or an animal of another mod with a Bettacraft profile into a tank |
+| <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Tadpoles!** | The spawn of your dwarf clawed frogs hatches in a tank |
 | <ItemImage id="bettacraft:fish_bag" /> | ↳ **Moving In** | Put a betta into a tank |
+| <ItemImage id="bettacraft:breeding_basin" /> | ↳ **An Aquarist in the Village** | Trade with an aquarist villager |
 | <ItemImage id="bettacraft:feeder" /> | ↳ **Room Service** | Let an aquarium feeder feed your fish |
 | <ItemImage id="minecraft:iron_sword" /> | ↳ **Fighting Fish** | Two adult males meet in one tank. Separate them! |
 | <ItemImage id="bettacraft:guppy_bucket" /> | ↳ **Line Breeder** | Breed a named guppy or endler strain such as Red Cobra, Blue Moscow or Endler Tiger |

@@ -68,6 +68,7 @@ und Frostfutter aus Vanilla-Zutaten her. Verschiedene Futter passen unterschiedl
 
 * <ItemLink id="bettacraft:swamp_water_bottle" />: **Glasflasche** mit Wasser gefüllt in Sümpfen.
 * <ItemLink id="bettacraft:mosquito_larvae" />: **Schlamm abbauen** in Sümpfen: 4 % pro Block.
+* <ItemLink id="bettacraft:betta_pellets" />: **[Aquarianer](getting_started/aquarist.md)** (Neuling): 8 für 1 Smaragd; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:betta_pellets" />: **[Futtermaschine](food/food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 
 Herstellung:

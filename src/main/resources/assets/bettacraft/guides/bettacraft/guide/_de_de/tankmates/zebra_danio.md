@@ -55,6 +55,7 @@ Bei 24–27 °C streut ein Paar 30–80 Eier in feinfiedrige Pflanzen, Javamoos 
 * **Wild** in Flüssen, in Gruppen von 3–6 (Spawn-Gewicht 5) (Config `features.tankmates.communityFish`).
 * **Wild** in Sümpfen, in Gruppen von 3–6 (Spawn-Gewicht 3) (Config `features.tankmates.communityFish`).
 * **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.communityFish`).
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

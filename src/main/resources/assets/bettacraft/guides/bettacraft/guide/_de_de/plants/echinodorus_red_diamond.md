@@ -36,6 +36,7 @@ item_ids:
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,23–0,27 % pro Schwung (etwa 1 von 369–443 Schwüngen) (Config `features.aquaticPlants.netCatches`).
 * **Angeln** in Dschungelgewässern: 0,14 % pro Fang (etwa 1 von 730 Fängen), statt des Fischs.
 * **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 5 Smaragde; eins von etwa 7 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

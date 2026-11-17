@@ -35,7 +35,9 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Klare Sicht** | Kratze mit dem Algenschaber Algen von der Scheibe eines Beckens |
 | <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Kolonie** | In einem Becken kommen junge Garnelen, Schnecken oder Krebse zur Welt |
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Gast von weit her** | Setze einen Axolotl oder ein Tier einer anderen Mod mit Bettacraft-Profil in ein Becken |
+| <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Kaulquappen!** | Der Laich deiner Zwergkrallenfrösche schlüpft in einem Becken |
 | <ItemImage id="bettacraft:fish_bag" /> | ↳ **Einzug** | Setze einen Betta in ein Aquarium |
+| <ItemImage id="bettacraft:breeding_basin" /> | ↳ **Ein Aquarianer im Dorf** | Handle mit einem Aquarianer |
 | <ItemImage id="bettacraft:feeder" /> | ↳ **Zimmerservice** | Lass einen Futterautomaten deine Fische füttern |
 | <ItemImage id="minecraft:iron_sword" /> | ↳ **Kampffisch** | Zwei erwachsene Männchen treffen in einem Aquarium aufeinander. Trenne sie! |
 | <ItemImage id="bettacraft:guppy_bucket" /> | ↳ **Linienzüchter** | Züchte eine benannte Guppy- oder Endler-Zuchtform wie Red Cobra, Blue Moskau oder Endler Tiger |

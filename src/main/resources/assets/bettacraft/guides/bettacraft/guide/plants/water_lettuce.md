@@ -36,6 +36,7 @@ Water lettuce (*Pistia stratiotes*) from the tropics: rosettes of velvety leaves
 * **Fishing** in mangrove swamps: 0.6 % per catch (about 1 in 167 catches), instead of the fish.
 * **Breaking wild floating plants** in jungle water: 100 % per block (config `features.floatingPlants.wildPlants`).
 * **Breaking wild floating plants** in mangrove swamps: 100 % per block (config `features.floatingPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Novice): 2 for 1 emerald; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Offshoots**: grows on a lit aquarium surface and forms offshoots; take some out with the aquarium net.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

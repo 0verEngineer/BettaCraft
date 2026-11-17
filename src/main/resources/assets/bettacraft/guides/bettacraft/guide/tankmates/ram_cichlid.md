@@ -33,11 +33,14 @@ A small, colourful dwarf cichlid: golden head with a black bar through the eye, 
 | Stocking | counts as 0.8 fish |
 | Breeding | Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood, 20–60 young |
 | Betta tank | with care (big tank) |
-| Special | guards its brood, territorial, 4 colour varieties |
+| Special | guards its brood, territorial, 6 colour varieties |
 
 ## Varieties
 
-Varieties: Wild type, Gold, Electric Blue, Balloon. The wild type is dominant, the bred varieties are recessive: only two equal alleles show the colour (carriers look wild). Of two different bred varieties the one listed first shows. Wild fish now and then carry a bred variety hidden; the menu shows the genes in a tooltip.
+![The ram forms: Black and German Blue](../images/ram_forms.png)
+
+Varieties: Wild type, Gold, Electric Blue, Black, German Blue, Balloon. **Black** has a velvet-black body with blue
+spangles, **German Blue** a stronger blue than the wild form, a red belly and a red eye. The wild type is dominant, the bred varieties are recessive: only two equal alleles show the colour (carriers look wild). Of two different bred varieties the one listed first shows. Wild fish now and then carry a bred variety hidden; the menu shows the genes in a tooltip.
 
 ## Breeding
 
@@ -47,6 +50,9 @@ At 27–30 °C a pair forms: the male and the nearest free female clean a **flat
 
 * Warm and soft: 25–31 °C suits a betta tank; with a betta it is okay if the tank is big enough and has a flat stone of its own (the betta may get bitten near the brood).
 * The Balloon is a bred body form (short and round); in the game it sits on the colour locus like the other varieties.
+* Of two bred forms the one listed first shows: Gold before Electric Blue, Black, German Blue and Balloon. A Black × German
+  Blue pair gives only black young that carry German Blue; their young are a quarter German Blue. Wild-caught rams and the
+  wild-type rams of the trader sometimes carry a form hidden; rams of older worlds keep their genes.
 * Males are territorial: each needs about 3 water blocks; in a smaller tank the extra males are chased and bitten.
 
 ## Obtaining
@@ -56,6 +62,7 @@ At 27–30 °C a pair forms: the male and the nearest free female clean a **flat
 * **Wild** in rivers, alone (spawn weight 3) (config `features.tankmates.cichlids`).
 * **Wild** in jungle water, alone (spawn weight 2) (config `features.tankmates.cichlids`).
 * **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.cichlids`).
 * **[Breeding](breeding.md)**: Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

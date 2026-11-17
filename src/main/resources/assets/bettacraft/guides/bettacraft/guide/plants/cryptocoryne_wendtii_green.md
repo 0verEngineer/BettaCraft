@@ -38,6 +38,7 @@ item_ids:
 * **Glass bottle** filled with water in swamps: 1.5 % per bottle, along with the water.
 * **Shears** on a wild plant in jungle water: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in mangrove swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

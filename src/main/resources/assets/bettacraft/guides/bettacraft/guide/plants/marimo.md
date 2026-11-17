@@ -37,6 +37,7 @@ The Marimo ball (*Aegagropila linnaei*) from the cold lakes of Japan and Norther
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.08–0.1 % per swing (about 1 in 1042–1250 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in rivers: 0.03 % per catch (about 1 in 3100 catches), instead of the fish.
 * **Shears** on a wild plant in cold lakes and frozen rivers: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 5 emeralds; one of about 7 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 2 cuttings per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

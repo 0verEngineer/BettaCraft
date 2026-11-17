@@ -21,6 +21,9 @@ Beckenblock; das Beckenmenü zeigt dieselben Werte im Reiter **Wasser**):
 
 ## Bezug
 
+* <ItemLink id="bettacraft:tds_meter" />: **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 1 für 4 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:ph_test_kit" />: **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 1 für 3 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
+
 Herstellung:
 
 <RecipesFor id="bettacraft:tds_meter" />

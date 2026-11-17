@@ -33,11 +33,14 @@ Ein kleiner, bunter Zwergbuntbarsch: goldener Kopf mit schwarzer Augenbinde, ein
 | Besatz | zählt als 0,8 Fisch |
 | Zucht | Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut, 20–60 Junge |
 | Betta-Becken | mit Vorsicht (großes Becken) |
-| Besonderheiten | bewacht seine Brut, revierbildend, 4 Farbformen |
+| Besonderheiten | bewacht seine Brut, revierbildend, 6 Farbformen |
 
 ## Farbformen
 
-Farbformen: Wildform, Gold, Electric Blue, Ballon. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Farbe (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge tragen manchmal eine Zuchtform verdeckt; das Menü zeigt die Gene im Tooltip.
+![Die Ram-Formen Black und German Blue](../images/ram_forms.png)
+
+Farbformen: Wildform, Gold, Electric Blue, Black, German Blue, Ballon. **Black** hat einen samtschwarzen Körper mit
+blauen Glanzpunkten, **German Blue** ein kräftigeres Blau als die Wildform, einen roten Bauch und ein rotes Auge. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Farbe (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge tragen manchmal eine Zuchtform verdeckt; das Menü zeigt die Gene im Tooltip.
 
 ## Zucht
 
@@ -47,6 +50,9 @@ Bei 27–30 °C findet sich ein Paar: Das Männchen und das nächste freie Weibc
 
 * Warm und weich: 25–31 °C passen zum Betta-Becken; mit einem Betta geht es, wenn das Becken groß genug ist und einen eigenen flachen Stein hat (in der Nähe der Brut wird der Betta gebissen).
 * Der Ballon ist eine gezüchtete Körperform (kurz und rund); im Spiel liegt er wie die anderen Zuchtformen auf dem Farb-Locus.
+* Von zwei Zuchtformen zeigt sich die zuerst genannte: Gold vor Electric Blue, Black, German Blue und Ballon. Ein Paar Black ×
+  German Blue gibt nur schwarze Junge, die German Blue tragen; deren Junge sind zu einem Viertel German Blue. Wildfänge und
+  die Wildform-Rams des Händlers tragen manchmal eine Form verdeckt; Rams älterer Welten behalten ihre Gene.
 * Männchen sind revierbildend: jedes braucht etwa 3 Wasserblöcke; in einem kleineren Becken werden die überzähligen Männchen gejagt und gebissen.
 
 ## Bezug
@@ -56,6 +62,7 @@ Bei 27–30 °C findet sich ein Paar: Das Männchen und das nächste freie Weibc
 * **Wild** in Flüssen, einzeln (Spawn-Gewicht 3) (Config `features.tankmates.cichlids`).
 * **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 2) (Config `features.tankmates.cichlids`).
 * **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 36 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.cichlids`).
 * **[Zucht](breeding.md)**: Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

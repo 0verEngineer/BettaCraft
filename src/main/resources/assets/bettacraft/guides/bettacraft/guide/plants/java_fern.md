@@ -36,6 +36,7 @@ Java fern (*Microsorum pteropus*) from the streams of South-East Asia: long, fir
 * **Fishing** in rivers: 0.97 % per catch (about 1 in 103 catches), instead of the fish.
 * **Shears** on a wild plant in jungle water: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in mangrove swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim; breaking a rhizome piece divides it.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

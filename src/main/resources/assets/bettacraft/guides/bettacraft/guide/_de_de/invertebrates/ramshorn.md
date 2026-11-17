@@ -41,6 +41,7 @@ Die Posthornschnecke (*Planorbella* sp.) aus den stillen Gewässern Nordamerikas
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Wild** in Sümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Fahrender Händler** (seltene Angebote): 2 für 4 Smaragde.
+* **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 2 für 3 Smaragde; eins von etwa 5 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Vermehrung** im Aquarium (ein Tier genügt).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

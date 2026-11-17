@@ -38,6 +38,7 @@ Wasserlinse (*Lemna minor*), auf stillem Wasser fast überall zu Hause: winzige 
 * **Wilde Schwimmpflanzen abbauen** in Sümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Wilde Schwimmpflanzen abbauen** in Flüssen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
 * **Wilde Schwimmpflanzen abbauen** in Mangrovensümpfen: 100 % pro Block (Config `features.floatingPlants.wildPlants`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Neuling): 2 für 1 Smaragd; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: wächst auf einer beleuchteten Wasseroberfläche und bildet Ableger; mit dem Kescher herausnehmen.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

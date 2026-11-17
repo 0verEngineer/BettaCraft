@@ -36,6 +36,7 @@ item_ids:
 
 * **Fishing** in swamps: 0.13 % per catch (about 1 in 793 catches), instead of the fish.
 * **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 5 emeralds; one of about 7 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

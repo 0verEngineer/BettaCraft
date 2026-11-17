@@ -32,6 +32,32 @@ die Deko des Innenraums herum (Steine, Wurzeln, Pflanzen, Höhlen), statt durch 
   sie mit zwei oder drei Fütterungen am Tag öfter.
 * Nach 4 Tagen ohne Futter beginnt ein Frosch zu hungern.
 
+## Zucht
+
+![Froschlaich an der Oberfläche und Kaulquappen](../images/frog_breeding.png)
+
+Zwergkrallenfrösche vermehren sich wie in der Natur (Config `features.frogs.breeding`):
+
+1. **Amplexus:** ein **kühler Wasserwechsel** (ein Viertel des Wassers innerhalb eines Vierteltags, 1,5 °C kühler, der
+   Auslöser der Panzerwelse) in einem Becken mit **24–28 °C** bringt ein Paar in Stimmung: innerhalb des nächsten Tages
+   umklammert ein erwachsenes, satt gefüttertes Männchen ein erwachsenes, satt gefüttertes Weibchen von hinten, und sie
+   trägt ihn hinauf zur Oberfläche. Jeder Frosch hat ein Geschlecht (Frösche aus der Zeit vor 1.37 haben es aus ihrer
+   UUID bekommen).
+2. **Laich:** an der Oberfläche gibt sie 20–50 Eier ab; der Laich treibt dort zwischen den Schwimmpflanzen 2 Tage lang
+   (`frogs.frogSpawnHatchDays`). **Bettas und andere Fische fressen ihn**, die Frösche auch ein wenig; **Schwimmpflanzen**
+   verstecken das meiste.
+3. **Kaulquappen** schlüpfen (höchstens 40 pro Becken, `frogs.maxTadpoles`). Sie schweben im freien Wasser und brauchen
+   **feines Futter**: [Infusorien](../food/live_food.md), Artemia-Nauplien oder Aufzuchtfutter (ein bepflanztes Becken
+   bildet ein wenig selbst). Zwei Tage ohne genug Futter, und sie verhungern. **Mit Bettas im Becken überlebt kaum eine**;
+   Pflanzen verstecken sie ein wenig.
+4. Nach 6 Tagen (`frogs.tadpoleDays`) wird eine Kaulquappe zum kleinen **Jungfrosch**, der in 4 Tagen
+   (`frogs.frogletDays`) erwachsen wird und erst dann züchtet.
+
+![Ein Paar im Amplexus: das Männchen hält sich am Rücken des Weibchens fest](../images/frog_amplexus.png)
+
+Das Beckenprotokoll meldet jeden Schritt. Ein eigenes Becken für die Frösche, dichte Schwimmpflanzen und eine
+Infusorien-Kultur sind das beste Zuchtbecken.
+
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 1,3 % pro Schwung (etwa 1 von 76 Schwüngen).

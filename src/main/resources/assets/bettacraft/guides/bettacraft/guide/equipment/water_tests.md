@@ -21,6 +21,9 @@ block; the tank menu shows the same values in the tab **Water**):
 
 ## Obtaining
 
+* <ItemLink id="bettacraft:tds_meter" />: **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 1 for 4 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:ph_test_kit" />: **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 1 for 3 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
+
 Crafting:
 
 <RecipesFor id="bettacraft:tds_meter" />

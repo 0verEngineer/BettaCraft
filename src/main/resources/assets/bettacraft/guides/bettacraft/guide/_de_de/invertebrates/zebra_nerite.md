@@ -37,5 +37,6 @@ Die Zebra-Rennschnecke (*Neritina natalensis*) aus den Mangroven und Flussmündu
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 9–11 % pro Schwung (etwa 1 von 9–11 Schwüngen), 1–2 auf einmal.
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 1 für 3 Smaragde; eins von etwa 5 in diesem Angebot (Config `features.sources.aquaristVillager`).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

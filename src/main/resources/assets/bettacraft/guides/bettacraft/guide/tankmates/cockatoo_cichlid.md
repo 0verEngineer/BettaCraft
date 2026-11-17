@@ -55,6 +55,7 @@ Every adult female claims a **small cave** of her own: the [coconut shell](../in
 * **Wild** in rivers, alone (spawn weight 1) (config `features.tankmates.cichlids`).
 * **Wild** in jungle water, alone (spawn weight 3) (config `features.tankmates.cichlids`).
 * **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.cichlids`).
 * **[Breeding](breeding.md)**: Cave brooder: the female spawns in a small cave and guards the brood.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

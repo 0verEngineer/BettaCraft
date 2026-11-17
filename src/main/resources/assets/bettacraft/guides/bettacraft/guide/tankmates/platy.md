@@ -48,6 +48,7 @@ At 22–26 °C a female with a male gets pregnant and gives birth to 8–25 youn
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.89–1.1 % per swing (about 1 in 95–113 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–3 (spawn weight 5) (config `features.tankmates.wildSpawns`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 36 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.wildSpawns`).
 * **[Breeding](breeding.md)**: Bears live young.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

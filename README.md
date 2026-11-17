@@ -56,6 +56,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 - **Two sizes:** bettas are drawn at **Normal** size (the default since 1.28, about halfway between the old size and the
   bettas of other mods) or **Large** (the size before 1.28); the server sets it for everyone (`sizes.betta`), the hitbox
   follows the look, nothing else changes.
+- **Aquarist villager:** place a breeding basin in a village and an unemployed villager becomes an aquarist. He sells
+  food, floating and aquarium plants, shrimp, snails, test kits, substrate and live food cultures, as a master pairs of
+  rare bred tankmate varieties, and **buys your bettas and bred tankmates** for emeralds by the rarity of their visible
+  genes (a data file modpacks can change).
 
 ### Aquariums and the interior
 - **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable to
@@ -95,12 +99,15 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 ### Tankmates and small animals
 - **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish,
   corydoras, plecos, otocinclus, loaches and garra, barbs, guppies and endlers (own genetics with 28 strains), platys,
-  mollies and swordtails, gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers**. Shoals, water
+  mollies and swordtails, gouramis, **cichlids** (rams in six forms with Black and German Blue, Apistogramma, angelfish,
+  discus) and **puffers**. Shoals, water
   ranges, predators and prey, fin nippers, snail eaters, and a breeding style per species (glued eggs, caves, egg
   scatterers, livebearers, foam nests, open and cave brooders that guard their young, a mouthbrooder).
 - **Small animals:** Neocaridina in eleven colours with selection grades, bee shrimp (Crystal Red/Black S to SSS, Blue
   Bolt, Wine Red, Tiger), Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and more crawl
-  over floor, plants and glass; algae grow and the cleaning crew eats them. Dwarf clawed frogs. **Big crayfish** (the
+  over floor, plants and glass; algae grow and the cleaning crew eats them. **Dwarf clawed frogs** breed like in nature: a
+  cool water change sets a pair off (amplexus), the spawn floats at the surface (fish eat it, floating plants hide it),
+  the tadpoles need infusoria and become froglets. **Big crayfish** (the
   Florida crayfish in blue and orange, the all-female marbled crayfish) eat plants, dig them up and catch slow fish.
 - **Axolotls** (vanilla) get real care in a tank: cool water with a cooler, eggs on the plants, larvae, and the five
   colours inherited by Mendel (blue recessive and rare).
@@ -187,9 +194,9 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
 
 ### Handbook, progression, languages
-- 224 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
-  get it (generated from the game data), 31 advancements, JEI pages and tooltips.
-- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 105 in all): off, it loses its recipes,
+- 311 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
+  get it (generated from the game data), 56 advancements, JEI pages and tooltips.
+- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 122 in all): off, it loses its recipes,
   trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
 - Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
   old age (`health.oldAge.enabled`).
@@ -339,6 +346,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.foodVariety.enabled` | Balanced Diet |
 | `features.foreignAnimals.enabled` | Guest from Afar |
 | `features.foreignAnimals.vanillaPets` | House Pet |
+| `features.frogs.breeding` | Tadpoles |
 | `features.frogs.enabled` | Tiny Frogs |
 | `features.interior.enabled` | Honey, I Shrunk Myself, Groundwork |
 | `features.invertebrates.enabled` | Cleanup Crew, Colony |
@@ -364,6 +372,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.saltwater.reefFish` | Clownfish |
 | `features.saltwater.seahorses` | Seahorses |
 | `features.saltwater.seahorses` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Proud Father |
+| `features.sources.aquaristVillager` | An Aquarist in the Village |
 | `features.tankmates.barbsAndLoaches` | Barbs and Loaches |
 | `features.tankmates.cichlids` | Dwarf Cichlids |
 | `features.tankmates.communityFish` | Schooling Fish |

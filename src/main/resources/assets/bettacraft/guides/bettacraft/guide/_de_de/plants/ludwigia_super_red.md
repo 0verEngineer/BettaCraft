@@ -36,6 +36,7 @@ item_ids:
 
 * **Angeln** in Sümpfen: 0,13 % pro Fang (etwa 1 von 793 Fängen), statt des Fischs.
 * **Schere** an einem wilden Pflanzenbestand in Sümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 5 Smaragde; eins von etwa 7 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 3 Ableger pro Schnitt; sie breitet sich auch selbst aus (Seitentriebe).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

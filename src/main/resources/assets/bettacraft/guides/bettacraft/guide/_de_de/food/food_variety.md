@@ -64,6 +64,7 @@ Alle kommen aus der [Futtermaschine](food_maker.md).
 
 ## Bezug
 
+* <ItemLink id="bettacraft:fish_flakes" />: **[Aquarianer](../getting_started/aquarist.md)** (Neuling): 8 für 1 Smaragd; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:fish_flakes" />: **[Futtermaschine](food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:kelp" /> + 1 × <ItemLink id="minecraft:sugar" /> → 12.
 * <ItemLink id="bettacraft:food_granules" />: **[Futtermaschine](food_maker.md)**: 1 × <ItemLink id="minecraft:spider_eye" /> + 2 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 * <ItemLink id="bettacraft:shrimp_food" />: **[Futtermaschine](food_maker.md)**: 1 × <ItemLink id="minecraft:kelp" /> + 1 × <ItemLink id="minecraft:carrot" /> + 1 × <ItemLink id="minecraft:bone_meal" /> → 8.

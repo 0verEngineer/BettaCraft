@@ -73,6 +73,7 @@ shrimp, overfeeding hardly fouls the water.
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 9.1–11 % per swing (about 1 in 9–11 swings), 1–3 at a time.
 * **Wild** in rivers, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wandering trader** (rare offers): 2 for 6 emeralds.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 2 for 4 emeralds; one of about 3 in this offer (config `features.sources.aquaristVillager`).
 * **Breeding** in the aquarium (male and female).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

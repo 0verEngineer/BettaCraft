@@ -74,6 +74,7 @@ Garnelen verdirbt Überfüttern das Wasser kaum.
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 9,1–11 % pro Schwung (etwa 1 von 9–11 Schwüngen), 1–3 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde.
+* **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 2 für 4 Smaragde; eins von etwa 3 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Vermehrung** im Aquarium (Männchen und Weibchen).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -4,6 +4,38 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.37.0-beta.1] - 2026-11-17
+
+An aquarist moves into the village, the ram gets two new forms, and the dwarf clawed frogs breed.
+
+### Added
+- **Aquarist villager:** a new villager profession with the **breeding basin** (a small glass basin with gravel, water and
+  plants on a wooden stand; glass panes, a water plant and wooden slabs) as workplace: an unemployed villager next to it
+  becomes an aquarist, in every village. Two offers on each of the five levels: food and floating plants, aquarium
+  plants, shrimp and snails, test kits, artemia cysts and active soil, live food cultures and rare plants, and as a master
+  pairs of rare bred tankmate varieties. He **buys bettas** (bucket or fish bag) and **bred tankmates** (fish bag) and pays
+  by their type and the rarity of their visible genes (bred, generation, named variety, rare fin forms and patterns, long
+  fins, wild species; for tankmates the bred colour and the species). The price table is a data file
+  (`data/<ns>/bettacraft/aquarist_prices.json`) that datapacks can change. Switch `features.sources.aquaristVillager`.
+- **Black and German Blue ram:** two new recessive forms of the ram cichlid on its colour locus (dominance Gold, Electric
+  Blue, Black, German Blue, Balloon): Black with a velvet-black body and blue spangles, German Blue stronger blue than the
+  wild form with a red belly and a red eye. Wild rams and the wild-type rams (and other wild-type fish) of the wandering
+  trader can carry them hidden.
+- **Dwarf clawed frogs breed:** frogs now have a sex; a cool water change into a tank at 24-28 °C sets a grown, fed pair
+  off (amplexus: the male holds on to the female, who carries him to the surface), the 20-50 eggs float at the surface for
+  two days (bettas and other fish eat them, floating plants hide them), the tadpoles live as data animals in the open water
+  and need fine food (infusoria, artemia nauplii, fry food), with bettas in the tank hardly one survives, and after six days
+  they turn into froglets that grow up in four. Switch `features.frogs.breeding`, server config `frogs.frogBreedingSpeed`,
+  `frogSpawnHatchDays`, `tadpoleDays`, `frogletDays`, `maxTadpoles`.
+- Advancements "Tadpoles!" and "An Aquarist in the Village", and their quests in the quest chapter; the cichlid quest names
+  the ram forms.
+- Handbook (English and German): the aquarist villager page, frog breeding, the ram forms, the aquarist in every
+  Obtaining section and on "Where to find what".
+
+### Compatibility
+- Frogs of older worlds get their sex from their UUID once and keep it; old rams keep their genes; tanks without spawn or
+  tadpoles save nothing new.
+
 ## [1.36.1-beta.1] - 2026-11-17
 
 Small fixes: the heat mat icon, nicer wild carpets, the leopard gecko without holes, fewer artemia cysts from sand, and

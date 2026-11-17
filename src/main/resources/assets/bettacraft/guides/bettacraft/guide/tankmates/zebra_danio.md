@@ -55,6 +55,7 @@ At 24–27 °C a pair scatters 30–80 eggs into fine-leaved plants, java moss o
 * **Wild** in rivers, in groups of 3–6 (spawn weight 5) (config `features.tankmates.communityFish`).
 * **Wild** in swamps, in groups of 3–6 (spawn weight 3) (config `features.tankmates.communityFish`).
 * **Wandering trader** (usual offers): 6 for 4 emeralds; one of 36 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.communityFish`).
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

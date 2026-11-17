@@ -32,6 +32,8 @@ Only for fresh water: in salt water the alkalinity of the sea salt buffers the p
 
 ## Obtaining
 
+* **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 8 for 3 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
+
 Crafting:
 
 <RecipesFor id="bettacraft:active_soil" />

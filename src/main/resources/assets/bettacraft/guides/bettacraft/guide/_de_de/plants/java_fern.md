@@ -36,6 +36,7 @@ Javafarn (*Microsorum pteropus*) aus den Bächen Südostasiens: lange, feste Wed
 * **Angeln** in Flüssen: 0,97 % pro Fang (etwa 1 von 103 Fängen), statt des Fischs.
 * **Schere** an einem wilden Pflanzenbestand in Dschungelgewässern: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Schere** an einem wilden Pflanzenbestand in Mangrovensümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 1 Ableger pro Schnitt; ein abgebautes Rhizomstück teilt sie.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -38,6 +38,7 @@ The Amazon sword (*Echinodorus grisebachii* "Bleherae") from South America: a bi
 * **Shears** on a wild plant in jungle water: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Shears** on a wild plant in rivers: 100 % per cut (config `features.aquaticPlants.wildPlants`).
 * **Wandering trader** (usual offers): 1 for 1 emerald.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

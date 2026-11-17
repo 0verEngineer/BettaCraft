@@ -64,6 +64,7 @@ All of them come from the [food maker](food_maker.md).
 
 ## Obtaining
 
+* <ItemLink id="bettacraft:fish_flakes" />: **[Aquarist villager](../getting_started/aquarist.md)** (Novice): 8 for 1 emerald; one of about 4 in this offer (config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:fish_flakes" />: **[Food maker](food_maker.md)**: 1 × <ItemLink id="minecraft:cod" /> + 1 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:kelp" /> + 1 × <ItemLink id="minecraft:sugar" /> → 12.
 * <ItemLink id="bettacraft:food_granules" />: **[Food maker](food_maker.md)**: 1 × <ItemLink id="minecraft:spider_eye" /> + 2 × <ItemLink id="minecraft:wheat" /> + 1 × <ItemLink id="minecraft:dried_kelp" /> → 12.
 * <ItemLink id="bettacraft:shrimp_food" />: **[Food maker](food_maker.md)**: 1 × <ItemLink id="minecraft:kelp" /> + 1 × <ItemLink id="minecraft:carrot" /> + 1 × <ItemLink id="minecraft:bone_meal" /> → 8.

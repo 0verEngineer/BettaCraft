@@ -36,6 +36,7 @@ item_ids:
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.23–0.27 % per swing (about 1 in 369–443 swings) (config `features.aquaticPlants.netCatches`).
 * **Fishing** in jungle water: 0.14 % per catch (about 1 in 730 catches), instead of the fish.
 * **Shears** on a wild plant in jungle water: 100 % per cut (config `features.aquaticPlants.wildPlants`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 5 emeralds; one of about 7 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting per trim.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).
