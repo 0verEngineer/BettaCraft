@@ -4,6 +4,29 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.42.0-beta.1] - 2026-11-17
+
+Bettacraft runs on Fabric too: the first multiloader version, one code base for NeoForge and Fabric 1.21.1.
+
+### Added
+- **Fabric 1.21.1** (Fabric Loader 0.16+, Fabric API, Forge Config API Port): the whole mod, with the same ids, data,
+  configs (the same TOML files and keys; Mod Menu shows the config screen) and worlds as on NeoForge. Items, fluids and
+  energy go through Fabric's transfer API and Team Reborn Energy (pipes, tanks and cables of Fabric tech mods).
+- **Handbook on Fabric** as a **Patchouli** book (optional dependency), made from the same pages as the GuideME
+  handbook (English and German, images, recipes, the tank shapes as multiblocks).
+- Two files per release on CurseForge: `bettacraft-neoforge-1.21.1-<version>.jar` and
+  `bettacraft-fabric-1.21.1-<version>.jar`.
+
+### Changed
+- The code is split into `common/`, `neoforge/` and `fabric/`; the NeoForge jar keeps its content and behaviour (the
+  same data and assets, old worlds load).
+- The NeoForge jar is now called `bettacraft-neoforge-1.21.1-<version>.jar`.
+
+### Known gaps on Fabric
+- The info overlays (Jade, WTHIT, The One Probe) and JEI / REI / EMI pages are not on Fabric yet; Create, AE2,
+  KubeJS, FTB Quests, GuideME, Aquaculture and Fintastic have no Fabric 1.21.1 version (their integrations stay on
+  NeoForge).
+
 ## [1.41.0-beta.1] - 2026-11-17
 
 A hired aquarist comes to every player with a few tanks and a first breeding, and works for him: he walks to the tanks,

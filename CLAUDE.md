@@ -15,6 +15,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `common/src/test` | JUnit tests (genetics, chemistry, lang completeness, config labels, ids, handbook generator `guide/GuideGen` + `GuideGenTest`, `GuidePagesTest`); compiled in common, run by the neoforge module |
 | `common/accesstransformer.cfg` | the vanilla members NeoForge's AT opens and common uses (compile only) |
 | `neoforge/src/main` | the NeoForge mod: entry point `neoforge/BettaCraftNeoForge`, platform implementation, capabilities, NeoForge event glue (`*NeoForgeEvents`), datagen, baked models, JEI/Jade/WTHIT/TOP/GuideME/Create compat; jar = common + neoforge |
+| `fabric/` | the Fabric mod (Loom): `fabric/BettaCraftFabric` (entry point), `FabricPlatform`, `FabricRegistration`, `FabricNetwork`, `FabricCapabilities`/`FabricTransfer` (transfer API, TR Energy), `FabricGameEvents` + `mixin/` (NeoForge events), `FabricWorld` (spawns, loot), `FabricConditions`, client `FabricClientPlatform`/`FabricDynamicModel`/`FabricModels`; dev: `fabric/src/dev` (smoke, GameTest runner, stubs in `src/devstubs`); handbook converter `tools/guide` |
 | `neoforge/src/dev` | development-only source set, merged into the mod in every `gradlew run*` task but never in the jar: smoke scenes `DevSmoke*` / `DevClientSmoke*`, the showcase world (`command/DevShowcase`), GameTests (`gametest/`) and their template |
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
@@ -139,6 +140,48 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
   on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
   `RELEASING.md` (not committed).
+
+## Ports (M52)
+
+Since 1.42.0 the mod is multiloader: `common/` (all game code, vanilla only), `neoforge/` and `fabric/` (thin glue).
+Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), the layout of the MultiLoader-Template
+(no Architectury, no runtime API mod). Both jars land in `build/libs/` (`bettacraft-neoforge-<mc>-<v>.jar`,
+`bettacraft-fabric-<mc>-<v>.jar`), one CurseForge project, one file per loader and version.
+
+| Branch | MC | Loaders | Java | Maintenance |
+|---|---|---|---|---|
+| `master` | 1.21.1 | NeoForge + Fabric | 21 | full (main target ATM10) |
+| `1.21.11` (M52b, planned) | 1.21.11 | NeoForge + Fabric | 21 | one release, then only severe fixes |
+| `26.1.2` (M52c, planned) | 26.1.2 | NeoForge + Fabric | 25 | full |
+| `26.2` (M52d, planned) | 26.2 | NeoForge + Fabric | 25 | one release, then only severe fixes |
+| `26.3` (M52e, planned) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
+
+Fabric on 1.21.1 (this branch):
+```
+./gradlew :fabric:build                                    # Fabric jar (+ Patchouli book from the GuideME pages, verifyFabricJar)
+./gradlew runFabricGameTest --no-configuration-cache       # Fabric GameTests (the shared ones, -Pgametests=<prefix> works)
+./gradlew runFabricServer -Psmoketest --no-configuration-cache
+./gradlew runFabricClient -Psmoketestfabric --no-configuration-cache   # background client: M11 + M13 scenes, run-fabric/screenshots
+```
+- Fabric differences: config by Forge Config API Port (same TOML files and keys), Mod Menu for the screen; transfer API
+  items/fluids (81 droplets = 1 mB) and Team Reborn Energy instead of capabilities; the handbook is a **Patchouli** book
+  converted at build time from the GuideME pages (`tools/guide`, single source: edit the GuideME pages only); recipe
+  conditions and NeoForge ingredient types of our data are converted at build time (`fabricData`), biome / loot
+  modifiers come from code (`fabric/FabricWorld`); NeoForge events by Fabric callbacks and mixins (`fabric/mixin`).
+  Integrations that exist only on NeoForge (Create, AE2, KubeJS, GuideME, FTB Quests ...) stay in `neoforge/compat`.
+- The Fabric dev source set compiles the NeoForge dev files that need nothing else of NeoForge (GameTests, a few smoke
+  scenes); a NeoForge dev file using NeoForge APIs is left out automatically, `fabricDevSkip` in `fabric/build.gradle`
+  lists the ones that fail otherwise. Prefer `Platform` / `GameTestCompat` in new GameTests so they run on both.
+
+**Rule for every milestone from M53 on:**
+- New code goes to `common/` (loader-free); only what a loader really needs goes to `neoforge/` / `fabric/`, behind
+  `platform/`. A new NeoForge-only API use needs its Fabric counterpart in the same milestone (or a documented gap).
+- Work on `master` first (1.21.1, both loaders). Green means: the NeoForge suites as before **and** `:fabric:build`,
+  `runFabricGameTest`, `runFabricServer -Psmoketest` (client smoke when rendering changed).
+- Then forward to the fully maintained branches (`26.1.2`, the newest 26.x) by cherry-pick; MC-free parts apply cleanly,
+  GUI / rendering by hand. Branches with "only severe fixes" get bug fixes only. Each port branch builds, tests and
+  releases on its own (its own reference world for `smoketestUpgrade`, its own CHANGELOG section).
+- Push, tag and release of any branch only with the user's OK.
 
 ## Working rules
 

@@ -2,7 +2,7 @@
 
 # Bettacraft
 
-Betta fish and real aquariums for Minecraft 1.21.1 (NeoForge): catch wild bettas and tankmates, keep them in multiblock
+Betta fish and real aquariums for Minecraft 1.21.1 (NeoForge and Fabric): catch wild bettas and tankmates, keep them in multiblock
 aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the water,
 run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel genetics.
 
@@ -231,11 +231,16 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 | | |
 |---|---|
 | Minecraft | 1.21.1 |
-| NeoForge | 21.1.200 or newer |
+| Loader | NeoForge 21.1.200 or newer, **or** Fabric Loader 0.16 or newer |
 | Java | 21 |
 | Side | client and dedicated server (install on both) |
 
-No other mod is required.
+| Loader | File | Required mods | Optional |
+|---|---|---|---|
+| NeoForge | `bettacraft-neoforge-1.21.1-<version>.jar` | none | GuideME (handbook), JEI, Jade, The One Probe, WTHIT, ... |
+| Fabric | `bettacraft-fabric-1.21.1-<version>.jar` | Fabric API, Forge Config API Port | Patchouli (handbook), Mod Menu (config screen) |
+
+On NeoForge no other mod is required. On Fabric the overlay and recipe viewer integrations are not there yet.
 
 ## Optional integrations
 
