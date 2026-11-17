@@ -290,4 +290,9 @@ public final class NeoForgePlatform implements Platform {
         var r = net.neoforged.neoforge.fluids.FluidUtil.tryFillContainer(container, NeoTransfer.toNeo(source), maxAmount, player, doFill);
         return new FluidActionResult(r.isSuccess(), r.getResult());
     }
+
+    @Override
+    public String modVersion(String modId) {
+        return net.neoforged.fml.ModList.get().getModContainerById(modId).map(m -> m.getModInfo().getVersion().toString()).orElse("?");
+    }
 }

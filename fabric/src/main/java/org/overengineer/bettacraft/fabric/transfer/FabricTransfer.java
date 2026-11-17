@@ -57,6 +57,11 @@ public final class FabricTransfer {
         return new TheirItems(s);
     }
 
+    /** Another mod's fluid storage as our fluid handler. */
+    public static IFluidHandler fromFabric(Storage<FluidVariant> s) {
+        return s instanceof OurFluids o ? o.handler : new TheirFluids(s);
+    }
+
     public static @Nullable IFluidHandler fluids(Level level, BlockPos pos, @Nullable Direction side) {
         Storage<FluidVariant> s = FluidStorage.SIDED.find(level, pos, side);
         if (s == null) return null;

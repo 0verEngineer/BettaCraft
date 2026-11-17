@@ -22,9 +22,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterGenes;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -88,7 +85,6 @@ import org.slf4j.LoggerFactory;
  * apple snail, shrimp, crayfish) and the racer nerites with their individual shades, and the colour forms of the
  * tankmates (green and blue neon, guppies, endlers, platies, ...).
  */
-@EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevShowcase {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/showcase");
     private static final boolean ENABLED = Boolean.getBoolean("bettacraft.showcase");
@@ -105,12 +101,16 @@ public final class DevShowcase {
             "mangrove_planks", "cherry_planks", "bamboo_planks", "crimson_planks", "warped_planks", "pale_oak_planks"};
     private static final List<ChunkPos> forced = new ArrayList<>();
 
+    /** M52: extra rows after the showcase (the Fabric save/load test) and a step after saving (its manifest). */
+    public static java.util.function.BiConsumer<ServerLevel, BlockPos> extraRows;
+    public static java.util.function.BiConsumer<MinecraftServer, ServerLevel> afterSave;
+
     private DevShowcase() {}
 
-    @SubscribeEvent
-    public static void onTick(ServerTickEvent.Post event) {
+    /** M52: every server tick (NeoForge: {@link DevShowcaseNeoForge}; Fabric: the Fabric dev smoke). */
+    public static void onTick(MinecraftServer tickedServer) {
         if (!ENABLED) return;
-        MinecraftServer server = event.getServer();
+        MinecraftServer server = tickedServer;
         ServerLevel level = server.overworld();
         ticks++;
         try {
@@ -127,6 +127,7 @@ public final class DevShowcase {
                 if (!ready && ticks < 1200) return;
                 builtAt = ticks;
                 build(level);
+                if (extraRows != null) extraRows.accept(level, origin.offset(0, 0, row * ROW));
                 LOGGER.info("[showcase] built {} rows, {} tanks, {} animals, {} plants at {}", row, tanks, animals, plants, origin);
                 logChunks(server, "after the build");
             } else if (builtAt > 0 && ticks == builtAt + 40) {
@@ -149,6 +150,7 @@ public final class DevShowcase {
                 LOGGER.info("[showcase] saving");
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
                 server.saveEverything(false, true, true);
+                if (afterSave != null) afterSave.accept(server, level);
                 LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks ({} named), {} animals, {} plants", tanks, named, animals, plants);
                 haltAt = ticks + 20;
             } else if (ticks == haltAt) {

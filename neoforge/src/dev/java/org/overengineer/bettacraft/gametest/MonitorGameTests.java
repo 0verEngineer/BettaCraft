@@ -288,7 +288,7 @@ public final class MonitorGameTests {
         BlockPos tl = new BlockPos(10, 2, 8);
         wall(h, tl, 2, 1);
         MonitorBlockEntity c = be(h, tl);
-        net.minecraft.server.level.ServerPlayer p = net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.getLevel(),
+        net.minecraft.server.level.ServerPlayer p = LoaderHooks.get().fakePlayer(h.getLevel(),
                 new com.mojang.authlib.GameProfile(new java.util.UUID(27, 2), "MonitorEditor"));
         p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 5.5)));
         DashboardLayout l = new DashboardLayout();

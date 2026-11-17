@@ -160,23 +160,23 @@ public final class StoneCabinetGameTests {
         ((CabinetBlockEntity) level.getBlockEntity(h.absolutePos(b))).setWood(blockId(Items.COBBLED_DEEPSLATE));
         // properties of the stone, wood unchanged
         var stoneState = h.getBlockState(a);
-        float resist = stoneState.getExplosionResistance(level, h.absolutePos(a), null);
+        float resist = GameTestCompat.blast(stoneState, level, h.absolutePos(a));
         h.assertTrue(Math.abs(resist - Blocks.STONE_BRICKS.getExplosionResistance()) < 1e-4, "blast resistance of stone bricks: " + resist);
-        h.assertTrue(stoneState.getSoundType(level, h.absolutePos(a), sp) == SoundType.STONE, "stone sound");
-        h.assertTrue(h.getBlockState(b).getSoundType(level, h.absolutePos(b), sp) == SoundType.DEEPSLATE, "deepslate sound");
-        float woodResist = h.getBlockState(w).getExplosionResistance(level, h.absolutePos(w), null);
-        h.assertTrue(Math.abs(woodResist - 2.5F) < 1e-4 && h.getBlockState(w).getSoundType(level, h.absolutePos(w), sp) == SoundType.WOOD, "wooden cabinet unchanged");
+        h.assertTrue(GameTestCompat.sound(stoneState, level, h.absolutePos(a), sp) == SoundType.STONE, "stone sound");
+        h.assertTrue(GameTestCompat.sound(h.getBlockState(b), level, h.absolutePos(b), sp) == SoundType.DEEPSLATE, "deepslate sound");
+        float woodResist = GameTestCompat.blast(h.getBlockState(w), level, h.absolutePos(w));
+        h.assertTrue(Math.abs(woodResist - 2.5F) < 1e-4 && GameTestCompat.sound(h.getBlockState(w), level, h.absolutePos(w), sp) == SoundType.WOOD, "wooden cabinet unchanged");
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         float hand = stoneState.getDestroyProgress(sp, level, h.absolutePos(a));
-        h.assertTrue(!stoneState.canHarvestBlock(level, h.absolutePos(a), sp), "no drop by hand");
+        h.assertTrue(!GameTestCompat.harvest(stoneState, level, h.absolutePos(a), sp), "no drop by hand");
         float handWood = h.getBlockState(w).getDestroyProgress(sp, level, h.absolutePos(w));
-        h.assertTrue(h.getBlockState(w).canHarvestBlock(level, h.absolutePos(w), sp), "wood by hand as before");
+        h.assertTrue(GameTestCompat.harvest(h.getBlockState(w), level, h.absolutePos(w), sp), "wood by hand as before");
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_PICKAXE));
         float pick = stoneState.getDestroyProgress(sp, level, h.absolutePos(a));
         float expect = Blocks.STONE_BRICKS.defaultBlockState().getDestroyProgress(sp, level, h.absolutePos(a));
         h.assertTrue(Math.abs(pick - expect) < 1e-6 && pick > hand * 5, "a pickaxe mines it like stone bricks: " + pick + " / " + expect + ", hand " + hand);
-        h.assertTrue(stoneState.canHarvestBlock(level, h.absolutePos(a), sp), "drops with a pickaxe");
+        h.assertTrue(GameTestCompat.harvest(stoneState, level, h.absolutePos(a), sp), "drops with a pickaxe");
         // contents and stone through breaking with the pickaxe
         ((CabinetBlockEntity) level.getBlockEntity(h.absolutePos(a))).storage().insertItem(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 3), false);
         h.assertTrue(sp.gameMode.destroyBlock(h.absolutePos(a)), "broken");

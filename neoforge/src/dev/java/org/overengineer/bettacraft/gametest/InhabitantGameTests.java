@@ -239,7 +239,7 @@ public final class InhabitantGameTests {
         h.assertTrue(TankInhabitants.breakBlockedReason(level, abs).isPresent(), "blocked with a fish inside");
         Player p = h.makeMockPlayer(GameType.SURVIVAL);
         BlockState s = level.getBlockState(abs);
-        boolean removed = s.onDestroyedByPlayer(level, abs, p, true, level.getFluidState(abs));
+        boolean removed = ((org.overengineer.bettacraft.platform.PlayerDestroyable) s.getBlock()).onDestroyedByPlayer(s, level, abs, p, true, level.getFluidState(abs));
         h.assertTrue(!removed && level.getBlockState(abs).is(ModBlocks.TANK.get()), "block stays");
         h.succeed();
     }

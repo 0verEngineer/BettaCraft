@@ -14,6 +14,10 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
   energy go through Fabric's transfer API and Team Reborn Energy (pipes, tanks and cables of Fabric tech mods).
 - **Handbook on Fabric** as a **Patchouli** book (optional dependency), made from the same pages as the GuideME
   handbook (English and German, images, recipes, the tank shapes as multiblocks).
+- **Integrations on Fabric:** Jade, WTHIT and The One Probe (the tank, betta, filter and cabinet lines), JEI, REI and
+  EMI (information pages, crucible and food maker recipes), FTB Quests (the quest chapter), Refined Storage (items and
+  fluids through the transfer API), JourneyMap (alarm waypoints), Better Fish Tanks, Naturalist, Fish of Thieves and
+  Critters and Companions (their animals in our tanks).
 - Two files per release on CurseForge: `bettacraft-neoforge-1.21.1-<version>.jar` and
   `bettacraft-fabric-1.21.1-<version>.jar`.
 
@@ -23,9 +27,10 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
 - The NeoForge jar is now called `bettacraft-neoforge-1.21.1-<version>.jar`.
 
 ### Known gaps on Fabric
-- The info overlays (Jade, WTHIT, The One Probe) and JEI / REI / EMI pages are not on Fabric yet; Create, AE2,
-  KubeJS, FTB Quests, GuideME, Aquaculture and Fintastic have no Fabric 1.21.1 version (their integrations stay on
-  NeoForge).
+- A glowing pipe cover (glowstone, sea lantern ...) does not light up its surroundings (Fabric has no light by block
+  entity).
+- Create, AE2, KubeJS, GuideME, Aquaculture, Fintastic and Cable Facades have no Fabric 1.21.1 version: their
+  integrations stay on NeoForge. The public events for scripts (`api/event`) are NeoForge events.
 
 ## [1.41.0-beta.1] - 2026-11-17
 

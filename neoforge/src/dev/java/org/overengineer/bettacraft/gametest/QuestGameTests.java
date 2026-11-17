@@ -41,8 +41,17 @@ public final class QuestGameTests {
     private QuestGameTests() {}
 
     private static Object call(Object o, String name) throws ReflectiveOperationException {
-        Method m = o.getClass().getMethod(name);
-        return m.invoke(o);
+        // M52: newer FTB Quests (the Fabric build) made some getters private (getFilename): from the class hierarchy too
+        for (Class<?> c = o.getClass(); c != null; c = c.getSuperclass()) {
+            try {
+                Method m = c.getDeclaredMethod(name);
+                m.setAccessible(true);
+                return m.invoke(o);
+            } catch (NoSuchMethodException ignored) {
+                // up
+            }
+        }
+        return o.getClass().getMethod(name).invoke(o);
     }
 
     private static boolean skip(String mod, String what) {
@@ -179,7 +188,7 @@ public final class QuestGameTests {
             Object team = file.getClass().getMethod("getOrCreateTeamData", net.minecraft.world.entity.Entity.class).invoke(file, sp);
             Method completed = team.getClass().getMethod("isCompleted", Class.forName("dev.ftb.mods.ftbquests.quest.QuestObject"));
             // the player tick of FTB Quests (a mock player is not ticked by a connection; the client smoke has a real one)
-            h.onEachTick(() -> net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.tick.PlayerTickEvent.Post(sp)));
+            h.onEachTick(() -> LoaderHooks.get().playerTickPost(sp));
             h.succeedWhen(() -> {
                 try {
                     for (String n : List.of("first_tank", "swamp_water", "mosquito_larvae", "paludarium")) {

@@ -23,7 +23,6 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -75,13 +74,15 @@ public final class FeatureSwitchGameTests {
         for (var e : rm.listResources("recipe", p -> p.getNamespace().equals(BettaCraft.MOD_ID) && p.getPath().endsWith(".json")).entrySet()) {
             String path = e.getKey().getPath();
             try (Reader r = e.getValue().openAsReader()) {
-                files.put(BettaCraft.id(path.substring("recipe/".length(), path.length() - ".json".length())), JsonParser.parseReader(r));
+                JsonElement json = JsonParser.parseReader(r);
+                if (!LoaderHooks.get().recipeAllowed(json, server)) continue; // Fabric: the conditions are read with the file
+                files.put(BettaCraft.id(path.substring("recipe/".length(), path.length() - ".json".length())), json);
             } catch (IOException ex) {
                 throw new GameTestAssertException("cannot read " + e.getKey() + ": " + ex);
             }
         }
         Loader l = new Loader(server.registryAccess());
-        l.injectContext(ICondition.IContext.EMPTY, server.registryAccess());
+        LoaderHooks.get().prepareRecipeLoader(l, server);
         // M42: KubeJS mixes into RecipeManager.apply and reads the reload resources it keeps in the real manager (a field of
         // its mixin); a fresh manager lacks them (NullPointerException), so it gets those of the server's
         try {

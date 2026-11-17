@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 public final class FabricGameTests implements ModInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/gametest");
     public static final Set<Class<?>> CLASSES = new HashSet<>();
+    /** The names of our tests (libraries of other mods bring GameTests of their own, which do not run here). */
+    private static final Set<String> OURS = new HashSet<>();
 
     @Override
     public void onInitialize() {
@@ -40,17 +42,20 @@ public final class FabricGameTests implements ModInitializer {
             if (in == null) throw new IllegalStateException("bettacraft_fabric_gametests.txt is missing");
             List<String> names = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines().map(String::trim)
                     .filter(s -> !s.isEmpty()).toList();
+            Set<String> before = new HashSet<>();
+            for (TestFunction f : GameTestRegistry.getAllTestFunctions()) before.add(f.testName());
             for (String n : names) {
                 Class<?> c = Class.forName(n);
                 CLASSES.add(c);
                 register(c);
             }
-            LOGGER.info("[gametest] Fabric: {} GameTest classes, {} tests", CLASSES.size(), GameTestRegistry.getAllTestFunctions().size());
+            for (TestFunction f : GameTestRegistry.getAllTestFunctions()) if (!before.contains(f.testName())) OURS.add(f.testName());
+            LOGGER.info("[gametest] Fabric: {} GameTest classes, {} tests", CLASSES.size(), OURS.size());
         } catch (Exception e) {
             throw new IllegalStateException("cannot register the GameTests", e);
         }
         String only = System.getProperty("bettacraft.gametest.only", "");
-        if (!only.isBlank()) ServerLifecycleEvents.SERVER_STARTING.register(server -> filter(server, only));
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> filter(server, only));
     }
 
     /**
@@ -108,6 +113,10 @@ public final class FabricGameTests implements ModInitializer {
             f.setAccessible(true);
             @SuppressWarnings("unchecked")
             Collection<TestFunction> tests = (Collection<TestFunction>) f.get(server);
+            int foreign = tests.size();
+            tests.removeIf(t -> !OURS.contains(t.testName()));
+            if (foreign != tests.size()) LOGGER.info("[gametest] {} GameTests of other mods left out", foreign - tests.size());
+            if (prefixes.isEmpty()) return;
             int before = tests.size();
             tests.removeIf(t -> prefixes.stream().noneMatch(p -> t.testName().toLowerCase(Locale.ROOT).startsWith(p)
                     || t.testName().toLowerCase(Locale.ROOT).contains("." + p) || t.batchName().toLowerCase(Locale.ROOT).startsWith(p)));

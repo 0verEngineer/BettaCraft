@@ -51,13 +51,8 @@ public final class ClientFeatures {
     public static void invalidateCreativeTabs() {
         if (failed) return;
         try {
-            if (cachedParameters == null) {
-                Field f = CreativeModeTabs.class.getDeclaredField("CACHED_PARAMETERS");
-                f.setAccessible(true);
-                cachedParameters = f;
-            }
-            cachedParameters.set(null, null);
-        } catch (ReflectiveOperationException | RuntimeException e) {
+            org.overengineer.bettacraft.mixin.client.CreativeModeTabsAccessor.bettacraft$setCachedParameters(null);
+        } catch (RuntimeException e) {
             failed = true;
             LOG.warn("Cannot rebuild the creative tabs after a change of the feature switches (they follow on the next login): {}", e.toString());
         }

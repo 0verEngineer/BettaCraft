@@ -10,12 +10,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
-import org.overengineer.bettacraft.api.event.AnimalDiedEvent;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaCare;
@@ -44,7 +41,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
 @PrefixGameTestTemplate(false)
 public final class OldAgeGameTests {
     private static final String EMPTY = "empty_32x10x32";
-    private static final List<AnimalDiedEvent> DIED = new ArrayList<>();
+    private static final List<String> DIED = new ArrayList<>(); // the causes
     private static boolean listening;
 
     private OldAgeGameTests() {}
@@ -58,7 +55,7 @@ public final class OldAgeGameTests {
         ServerConfig.CareMode mode = ServerConfig.CARE_MODE.get();
         if (!listening) {
             listening = true;
-            NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, AnimalDiedEvent.class, DIED::add);
+            GameTestCompat.onDied(DIED::add);
         }
         DIED.clear();
         try {
@@ -89,7 +86,7 @@ public final class OldAgeGameTests {
             DIED.clear();
             step(c, betta, neon, level);
             h.assertTrue(!betta.isAlive() && !neon.isAlive(), "both died of old age");
-            long events = DIED.stream().filter(e -> OldAge.CAUSE.equals(e.getCause())).count();
+            long events = DIED.stream().filter(OldAge.CAUSE::equals).count();
             h.assertTrue(events == 2, "two AnimalDiedEvents with the cause old_age: " + events + " of " + DIED.size());
             h.assertTrue(c.getTank().log().stream().anyMatch(l -> l.key().equals("log.bettacraft.died")), "tank log");
             h.assertTrue(c.getTank().inhabitants().isEmpty(), "gone from the tank");

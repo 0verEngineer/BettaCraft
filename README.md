@@ -238,9 +238,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 | Loader | File | Required mods | Optional |
 |---|---|---|---|
 | NeoForge | `bettacraft-neoforge-1.21.1-<version>.jar` | none | GuideME (handbook), JEI, Jade, The One Probe, WTHIT, ... |
-| Fabric | `bettacraft-fabric-1.21.1-<version>.jar` | Fabric API, Forge Config API Port | Patchouli (handbook), Mod Menu (config screen) |
+| Fabric | `bettacraft-fabric-1.21.1-<version>.jar` | Fabric API, Forge Config API Port | Patchouli (handbook), Mod Menu (config screen), Jade, WTHIT, The One Probe, JEI, REI, EMI, FTB Quests, ... |
 
-On NeoForge no other mod is required. On Fabric the overlay and recipe viewer integrations are not there yet.
+On NeoForge no other mod is required. Create, AE2, KubeJS, Aquaculture and Fintastic exist only for NeoForge, so their
+integrations are NeoForge only.
 
 ## Optional integrations
 

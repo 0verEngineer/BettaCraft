@@ -51,7 +51,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * <p>
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
-public class FilterPipeBlock extends BaseEntityBlock {
+public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PositionalBlock.Sound {
     public static final MapCodec<FilterPipeBlock> CODEC = simpleCodec(p -> new FilterPipeBlock(PipeLine.INTAKE, p));
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.SIDES;
     /** A T-piece (joins up to all six sides). */

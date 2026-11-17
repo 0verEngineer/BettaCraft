@@ -156,19 +156,33 @@ Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), t
 | `26.2` (M52d, planned) | 26.2 | NeoForge + Fabric | 25 | one release, then only severe fixes |
 | `26.3` (M52e, planned) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
 
-Fabric on 1.21.1 (this branch):
+Fabric on 1.21.1 (this branch). Gradle 9.8.2 with the daemon on JDK 25 (`gradle/gradle-daemon-jvm.properties`, needed by
+Fabric Loom 1.19.4; the game still targets Java 21):
 ```
 ./gradlew :fabric:build                                    # Fabric jar (+ Patchouli book from the GuideME pages, verifyFabricJar)
-./gradlew runFabricGameTest --no-configuration-cache       # Fabric GameTests (the shared ones, -Pgametests=<prefix> works)
+./gradlew runFabricGameTest --no-configuration-cache       # Fabric GameTests (shared classes; -Pgametests=<prefix>; with mod groups below)
 ./gradlew runFabricServer -Psmoketest --no-configuration-cache
 ./gradlew runFabricClient -Psmoketestfabric --no-configuration-cache   # background client: M11 + M13 scenes, run-fabric/screenshots
+./gradlew runFabricClient -Psmoketestbook -Poverlays|-Prei|-Pemi --no-configuration-cache   # handbook (Patchouli) en+de + recipe viewer
+./gradlew prodFabricServer -Psmoketest / prodFabricClient -Psmoketestfabric   # production (intermediary) runs with official jars
+./gradlew fabricMultiplayerTest --no-configuration-cache   # Fabric server + two background clients (Dev1, Dev2)
+./gradlew fabricSaveLoadTest --no-configuration-cache      # showcase world built on Fabric, reloaded twice, nothing lost
 ```
+- Fabric dev mod groups (official Fabric jars in `run-fabric/<group>`, not in git; nested libraries are extracted for the
+  dev runtime): `-Poverlays` (Jade, JEI + Mezz Config, WTHIT + Bad Packets, The One Probe), `-Prei` (REI, Architectury,
+  Cloth Config), `-Pemi`, `-Pfabricintegration` (Refined Storage, JourneyMap + Common Networking, Better Fish Tanks + MINT
+  Lib, Naturalist, Fish of Thieves + YACL, Critters and Companions + GeckoLib, Architectury, MidnightLib, Cloth Config),
+  `-Pquests` (FTB Quests, Library, Teams from FTB's maven; the chapter of `modpack/` is copied into the run).
 - Fabric differences: config by Forge Config API Port (same TOML files and keys), Mod Menu for the screen; transfer API
   items/fluids (81 droplets = 1 mB) and Team Reborn Energy instead of capabilities; the handbook is a **Patchouli** book
   converted at build time from the GuideME pages (`tools/guide`, single source: edit the GuideME pages only); recipe
   conditions and NeoForge ingredient types of our data are converted at build time (`fabricData`), biome / loot
   modifiers come from code (`fabric/FabricWorld`); NeoForge events by Fabric callbacks and mixins (`fabric/mixin`).
-  Integrations that exist only on NeoForge (Create, AE2, KubeJS, GuideME, FTB Quests ...) stay in `neoforge/compat`.
+  Jade/JEI/WTHIT/TOP plugins are shared (`neoforge/compat/{jade,jei,wthit,top}` compiled into both jars), REI and EMI
+  plugins live in `fabric/compat`. Integrations that exist only on NeoForge (Create, AE2, KubeJS, GuideME, Aquaculture,
+  Fintastic, Cable Facades) stay NeoForge-only. Blocks whose behaviour depends on the block entity (stone cabinets,
+  covered pipes) implement `platform/PositionalBlock`; Fabric has no light by position (a glowing pipe cover does not
+  emit light there).
 - The Fabric dev source set compiles the NeoForge dev files that need nothing else of NeoForge (GameTests, a few smoke
   scenes); a NeoForge dev file using NeoForge APIs is left out automatically, `fabricDevSkip` in `fabric/build.gradle`
   lists the ones that fail otherwise. Prefer `Platform` / `GameTestCompat` in new GameTests so they run on both.

@@ -384,4 +384,9 @@ public final class FabricPlatform implements Platform {
 
         private FlatIngredient() {}
     }
+
+    @Override
+    public String modVersion(String modId) {
+        return net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer(modId).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("?");
+    }
 }

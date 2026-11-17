@@ -37,8 +37,8 @@ public final class PatchouliConverter {
     public static final String NS = "bettacraft";
     public static final String BOOK = "handbook";
     /** Visible characters per text page (Patchouli's page is small); the first page of an entry has the title too. */
-    static final int PAGE = 520;
-    static final int FIRST_PAGE = 420;
+    static final int PAGE = 400;
+    static final int FIRST_PAGE = 320;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /** One GuideME page. */
@@ -57,7 +57,16 @@ public final class PatchouliConverter {
     public final List<String> warnings = new ArrayList<>();
     public int images;
 
+    /** The items of the mod: their generated item models (assets/bettacraft/models/item next to lang/). */
+    private final java.util.Set<String> itemModels = new java.util.HashSet<>();
+
     public PatchouliConverter(Path guide, Path enLang, Path deLang, List<Path> recipeDirs) throws IOException {
+        Path models = enLang.getParent().getParent().resolve("models/item");
+        if (Files.isDirectory(models)) {
+            try (var st = Files.list(models)) {
+                st.forEach(f -> itemModels.add(f.getFileName().toString().replace(".json", "")));
+            }
+        }
         this.guide = guide;
         this.en = lang(enLang);
         this.de = lang(deLang);
@@ -233,7 +242,7 @@ public final class PatchouliConverter {
                 // only real items (GuideME also lists ids of non-items, e.g. the frog spawn of a tank)
                 for (String id : p.itemIds()) {
                     String path = id.substring(id.indexOf(':') + 1);
-                    if (!id.startsWith(NS + ":") || en.containsKey("item." + NS + "." + path) || en.containsKey("block." + NS + "." + path)) {
+                    if (!id.startsWith(NS + ":") || itemModels.contains(path)) {
                         map.addProperty(id, 0);
                     }
                 }
@@ -262,7 +271,24 @@ public final class PatchouliConverter {
         return s.replaceAll("\\$\\([^)]*\\)", "");
     }
 
+    /** Every string value with % escaped as %% (an i18n book formats its texts). */
+    private static JsonElement escapePercent(JsonElement e) {
+        if (e.isJsonPrimitive() && e.getAsJsonPrimitive().isString()) return new com.google.gson.JsonPrimitive(e.getAsString().replace("%", "%%"));
+        if (e.isJsonArray()) {
+            JsonArray a = new JsonArray();
+            for (JsonElement x : e.getAsJsonArray()) a.add(escapePercent(x));
+            return a;
+        }
+        if (e.isJsonObject()) {
+            JsonObject o = new JsonObject();
+            for (var en : e.getAsJsonObject().entrySet()) o.add(en.getKey(), escapePercent(en.getValue()));
+            return o;
+        }
+        return e;
+    }
+
     private static void write(Path p, JsonElement json) throws IOException {
+        json = escapePercent(json);
         Files.createDirectories(p.getParent());
         Files.writeString(p, GSON.toJson(json) + "\n", StandardCharsets.UTF_8);
     }
@@ -415,9 +441,9 @@ public final class PatchouliConverter {
             if (visible > 0 && visible + n > budget()) flush();
             if (visible > 0) text.append(newParagraph ? "$(br2)" : "$(br)");
             text.append(patchouli);
-            visible += n + (newParagraph ? 20 : 10);
+            visible += n + (newParagraph ? 45 : 25);
             // a very long paragraph: split at sentences
-            while (visible > budget() * 1.4 && text.length() > 0) {
+            while (visible > budget() && text.length() > 0) {
                 String all = text.toString();
                 int cut = cutAt(all, budget());
                 if (cut <= 0 || cut >= all.length()) break;
@@ -615,9 +641,7 @@ public final class PatchouliConverter {
                 // a recipe Patchouli cannot draw (food maker, crucible, stone cabinet ...): the item with its name
                 JsonObject p = new JsonObject();
                 p.addProperty("type", "patchouli:spotlight");
-                JsonObject it = new JsonObject();
-                it.addProperty("id", item);
-                p.add("item", it);
+                p.addProperty("item", item); // Patchouli reads an item stack string
                 p.addProperty("link_recipe", true);
                 special(p);
             }
@@ -668,19 +692,29 @@ public final class PatchouliConverter {
                 warnings.add(page.path() + ": empty scene");
                 return;
             }
-            // Patchouli: pattern[layer from top][z][x]; '0' marks the centre
+            // Patchouli: pattern[layer from top][z][x]; exactly one '0' marks the centre (here: the middle of the bottom
+            // layer; it keeps its block through the mapping "0")
+            int cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2;
+            String centre = cx + "," + minY + "," + cz;
+            Character centreKey = grid.get(centre);
             JsonArray pattern = new JsonArray();
             for (int y = maxY; y >= minY; y--) {
                 JsonArray layer = new JsonArray();
                 for (int z = minZ; z <= maxZ; z++) {
                     StringBuilder row = new StringBuilder();
-                    for (int x = minX; x <= maxX; x++) row.append(grid.getOrDefault(x + "," + y + "," + z, ' '));
+                    for (int x = minX; x <= maxX; x++) {
+                        String at = x + "," + y + "," + z;
+                        row.append(at.equals(centre) ? '0' : grid.getOrDefault(at, ' '));
+                    }
                     layer.add(row.toString());
                 }
                 pattern.add(layer);
             }
             JsonObject mapping = new JsonObject();
             keys.forEach((state, k) -> mapping.addProperty(String.valueOf(k), state));
+            if (centreKey != null) keys.forEach((state, k) -> {
+                if (k.equals(centreKey)) mapping.addProperty("0", state);
+            });
             JsonObject mb = new JsonObject();
             mb.add("pattern", pattern);
             mb.add("mapping", mapping);

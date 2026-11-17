@@ -53,20 +53,9 @@ public final class TravellingTankRenderer {
 
     private record Cache(ListTag source, List<Animal> animals) {}
 
-    private static final Field TOUCHING_WATER = touchingWater();
     private static boolean failedOnce;
 
     private TravellingTankRenderer() {}
-
-    private static Field touchingWater() {
-        try {
-            Field f = Entity.class.getDeclaredField("wasTouchingWater");
-            f.setAccessible(true);
-            return f;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            return null;
-        }
-    }
 
     /**
      * M50: whether this tank block (controller or member) is in a Sable sub-level (on an airship); checked once a second,
@@ -150,12 +139,7 @@ public final class TravellingTankRenderer {
             double hx = place.size() == 3 ? place.getDouble(0) : 0.5, hy = place.size() == 3 ? place.getDouble(1) : 0.4,
                     hz = place.size() == 3 ? place.getDouble(2) : 0.5;
             RandomSource r = RandomSource.create(e.getUUID().getLeastSignificantBits() ^ i);
-            if (TOUCHING_WATER != null) {
-                try {
-                    TOUCHING_WATER.setBoolean(e, true); // swimming, not flopping on land
-                } catch (IllegalAccessException ignored) {
-                }
-            }
+            ((org.overengineer.bettacraft.mixin.EntityAccessor) e).bettacraft$setWasTouchingWater(true); // swimming, not flopping on land
             float sat = org.overengineer.bettacraft.tank.TravelCare.satiation(tag);
             boolean sick = org.overengineer.bettacraft.tank.TravelCare.sick(tag);
             float lively = sick ? 0.3F : 0.45F + 0.55F * Mth.clamp(sat * 2F, 0F, 1F);

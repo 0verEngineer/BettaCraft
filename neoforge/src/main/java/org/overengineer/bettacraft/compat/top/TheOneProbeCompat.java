@@ -12,8 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
-import net.neoforged.fml.InterModComms;
-import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.compat.info.InfoLines;
@@ -37,11 +35,6 @@ import mcjty.theoneprobe.api.ProbeMode;
  */
 public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     public static final String MOD_ID = "theoneprobe";
-
-    /** Hands our providers to TOP through its IMC entry point. */
-    public static void register(net.neoforged.bus.api.IEventBus modBus) {
-        modBus.addListener((InterModEnqueueEvent e) -> InterModComms.sendTo(MOD_ID, "getTheOneProbe", TheOneProbeCompat::new));
-    }
 
     @Override
     public Void apply(ITheOneProbe probe) {

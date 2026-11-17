@@ -93,7 +93,8 @@ public final class BettaCraftNeoForge {
         }
         // The One Probe (M8): providers through its IMC entry point. Jade and WTHIT find their plugins themselves.
         if (ModList.get().isLoaded(org.overengineer.bettacraft.compat.top.TheOneProbeCompat.MOD_ID)) {
-            org.overengineer.bettacraft.compat.top.TheOneProbeCompat.register(modBus);
+            modBus.addListener((net.neoforged.fml.event.lifecycle.InterModEnqueueEvent e) -> net.neoforged.fml.InterModComms.sendTo(
+                    "theoneprobe", "getTheOneProbe", org.overengineer.bettacraft.compat.top.TheOneProbeCompat::new)); // TOP's IMC entry point
         }
 
         // M22.3: the server settings (free genes) reach the clients at login and whenever the server config is reloaded

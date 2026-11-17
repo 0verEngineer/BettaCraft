@@ -68,6 +68,9 @@ public interface Platform {
     /** Fake players of other mods (machines that use items). */
     boolean isFakePlayer(@Nullable Player player);
 
+    /** The version of a loaded mod, "?" if it is not there. */
+    String modVersion(String modId);
+
     /** The translation key of a fluid (NeoForge: its fluid type's). */
     String fluidDescriptionId(Fluid fluid);
 

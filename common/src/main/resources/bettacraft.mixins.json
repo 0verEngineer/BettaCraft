@@ -4,6 +4,7 @@
   "package": "org.overengineer.bettacraft.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EntityAccessor",
     "interior.ChunkGenerationTaskMixin",
     "interior.ChunkMapMixin",
     "interior.CoralBlockMixin",
@@ -27,6 +28,7 @@
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
+    "client.CreativeModeTabsAccessor",
     "client.IrisBlockIdsMixin"
   ],
   "injectors": {

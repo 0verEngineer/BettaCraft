@@ -27,9 +27,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.Critter;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
@@ -59,7 +56,6 @@ import org.slf4j.LoggerFactory;
  * snapshot (save and reload keep everything). Logs "[smoketest] UPGRADE STAGE n PASSED". Errors in the log are checked by
  * the Gradle task.
  */
-@EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevSmokeUpgrade {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final int STAGE = Integer.getInteger("bettacraft.smoketest.upgrade", 0);
@@ -94,13 +90,15 @@ public final class DevSmokeUpgrade {
      * as {@code Bettacraft Referenz 1.31.0} (built for the old multiblock filters of M40: only the comparison and the M40 check).
      */
     private static boolean legacy = true;
+    /** M52: the world was saved by this very version (a save/load test, no migration to check). */
+    private static boolean sameVersion;
 
     private DevSmokeUpgrade() {}
 
-    @SubscribeEvent
-    public static void onTick(ServerTickEvent.Post event) {
+    /** M52: every server tick (NeoForge: {@link DevSmokeUpgradeNeoForge}; Fabric: the Fabric dev smoke). */
+    public static void onTick(MinecraftServer tickedServer) {
         if (STAGE == 0) return;
-        MinecraftServer server = event.getServer();
+        MinecraftServer server = tickedServer;
         ServerLevel level = server.overworld();
         ticks++;
         try {
@@ -110,6 +108,7 @@ public final class DevSmokeUpgrade {
                 if (!Files.exists(file)) throw new IllegalStateException("missing " + file);
                 expected = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
                 legacy = legacyVersion(expected.has("version") ? expected.get("version").getAsString() : "");
+                sameVersion = expected.has("version") && expected.get("version").getAsString().equals(org.overengineer.bettacraft.platform.Platform.get().modVersion(BettaCraft.MOD_ID));
                 Set<Long> chunks = new HashSet<>();
                 for (JsonElement e : expected.getAsJsonArray("tanks")) {
                     BlockPos p = BlockPos.of(e.getAsJsonObject().get("pos").getAsLong());
@@ -148,7 +147,9 @@ public final class DevSmokeUpgrade {
                     }
                 }
                 if (STAGE == 2 && legacy) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
-                m40Check(level); // M40: old multiblock filters need their guards now
+                // M40: old multiblock filters need their guards now (M52: not in a world this version saved itself, the
+                // Fabric save/load test)
+                if (!sameVersion) m40Check(level);
                 if (!problems.isEmpty()) {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
@@ -449,7 +450,7 @@ public final class DevSmokeUpgrade {
 
     private static void write(MinecraftServer server, ServerLevel level, String name) throws java.io.IOException {
         JsonObject s = snapshot(server, level, expected);
-        s.addProperty("version", net.neoforged.fml.ModList.get().getModContainerById(BettaCraft.MOD_ID).map(m -> m.getModInfo().getVersion().toString()).orElse("?"));
+        s.addProperty("version", org.overengineer.bettacraft.platform.Platform.get().modVersion(BettaCraft.MOD_ID));
         Files.writeString(server.getWorldPath(LevelResource.ROOT).resolve(name), new GsonBuilder().setPrettyPrinting().create().toJson(s));
     }
 

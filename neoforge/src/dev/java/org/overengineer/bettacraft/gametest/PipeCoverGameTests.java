@@ -149,7 +149,7 @@ public final class PipeCoverGameTests {
             p.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.GLOWSTONE, 1));
             click(p, r.pipe(), Direction.UP);
             h.assertTrue(cover(h, r.pipe()) != null && cover(h, r.pipe()).is(Blocks.GLOWSTONE), "glowstone on the pipe");
-            h.assertTrue(level.getBlockState(r.pipe()).getLightEmission(level, r.pipe()) == 15, "it shines: " + level.getBlockState(r.pipe()).getLightEmission(level, r.pipe()));
+            h.assertTrue(GameTestCompat.light(level.getBlockState(r.pipe()), level, r.pipe(), 15) == 15, "it shines: " + GameTestCompat.light(level.getBlockState(r.pipe()), level, r.pipe(), 15));
             h.assertTrue(p.getInventory().countItem(Items.STONE_BRICKS) == 1, "the stone brick of the cover came back: " + p.getInventory().countItem(Items.STONE_BRICKS));
             // sneak-right-click with the pipe cover: the glowstone back, the pipe again
             p.setShiftKeyDown(true);
@@ -157,7 +157,7 @@ public final class PipeCoverGameTests {
             p.setShiftKeyDown(false);
             h.assertTrue(cover(h, r.pipe()) == null && !full(h, r.pipe()), "the cover is off");
             h.assertTrue(p.getInventory().countItem(Items.GLOWSTONE) == 1, "the glowstone back");
-            h.assertTrue(level.getBlockState(r.pipe()).getLightEmission(level, r.pipe()) == 0, "no light without it");
+            h.assertTrue(GameTestCompat.light(level.getBlockState(r.pipe()), level, r.pipe(), 0) == 0, "no light without it");
             // the bundle keeps its cover when a line goes out (a single pipe again) and in again
             h.assertTrue(FilterPipeBundleBlock.removeLine(level, r.bundle(), PipeLine.RETURN).size() == 1, "the return line out");
             h.assertTrue(level.getBlockState(r.bundle()).is(ModBlocks.FILTER_INLET_PIPE.get()) && log.equals(cover(h, r.bundle())), "a single pipe, still the log");

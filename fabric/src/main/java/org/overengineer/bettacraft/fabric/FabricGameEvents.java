@@ -69,6 +69,18 @@ public final class FabricGameEvents {
             if (e.isCanceled()) return orFail(e.getCancellationResult());
             // no block use (beds in the interior): nothing happens, like NeoForge without the block's own action
             if (e.getUseBlock().isFalse()) return InteractionResult.FAIL;
+            // NeoForge's useBlock TRUE: the block is used even while sneaking (a filled bucket into a tank)
+            if (e.getUseBlock().isTrue() && player.isSecondaryUseActive()) {
+                var state = level.getBlockState(hit.getBlockPos());
+                var stack = player.getItemInHand(hand);
+                var r = state.useItemOn(stack, level, player, hand, hit);
+                if (r.consumesAction()) return r.result();
+                if (r == net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
+                    var r2 = state.useWithoutItem(level, player, hit);
+                    if (r2.consumesAction()) return r2;
+                }
+                if (e.getUseItem().isFalse()) return InteractionResult.PASS;
+            }
             // NeoForge's onItemUseFirst: the item before the block (the crank on a spring)
             var stack = player.getItemInHand(hand);
             if (e.getUseItem().isTrue() || !e.getUseItem().isFalse()) {

@@ -21,6 +21,15 @@ public final class FabricDevSmoke implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // M52: the showcase world (with the rows of the save/load test) and the save/load check, shared with NeoForge
+        if (Boolean.getBoolean("bettacraft.showcase")) {
+            org.overengineer.bettacraft.command.DevShowcase.extraRows = org.overengineer.bettacraft.command.FabricUpgradeReference::extras;
+            org.overengineer.bettacraft.command.DevShowcase.afterSave = org.overengineer.bettacraft.command.FabricUpgradeReference::manifest;
+            net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(org.overengineer.bettacraft.command.DevShowcase::onTick);
+        }
+        if (Integer.getInteger("bettacraft.smoketest.upgrade", 0) > 0) {
+            net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(org.overengineer.bettacraft.command.DevSmokeUpgrade::onTick);
+        }
         if (!Boolean.getBoolean("bettacraft.smoketest")) return;
         ServerLifecycleEvents.SERVER_STARTED.register(FabricDevSmoke::build);
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(s -> {

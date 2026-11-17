@@ -27,6 +27,15 @@
     ],
     "jei_mod_plugin": [
       "org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin"
+    ],
+    "emi": [
+      "org.overengineer.bettacraft.fabric.compat.BettaCraftEmiPlugin"
+    ],
+    "rei_client": [
+      "org.overengineer.bettacraft.fabric.compat.BettaCraftReiPlugin"
+    ],
+    "theoneprobe": [
+      "org.overengineer.bettacraft.fabric.compat.TopFabricPlugin"
     ]
   },
   "mixins": [
@@ -46,6 +55,9 @@
     "modmenu": "*",
     "jade": "*",
     "jei": "*",
-    "wthit": "*"
+    "wthit": "*",
+    "theoneprobe": "*",
+    "roughlyenoughitems": "*",
+    "emi": "*"
   }
 }

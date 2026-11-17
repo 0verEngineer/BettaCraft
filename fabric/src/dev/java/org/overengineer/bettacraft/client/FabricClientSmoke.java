@@ -28,6 +28,69 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM11 m11;
     private static DevClientSmokeM13 m13;
     private static int stage;
+    private static BookTour book;
+
+    /** The pages of the handbook (Patchouli) and the recipe viewer pages, screenshots in English and German. */
+    private static final class BookTour {
+        private static final String[][] PAGES = {
+                {"landing", null, "0"}, {"species", "bettacraft:tankmates/neon_tetra", "0"}, {"device", "bettacraft:equipment/air_pump", "0"},
+                {"device_recipe", "bettacraft:equipment/air_pump", "2"}, {"multiblock", "bettacraft:aquarium/shapes", "2"},
+                {"entity", "bettacraft:bettas", "2"}, {"table", "bettacraft:aquarium/temperature", "2"}};
+        private final java.util.Deque<Runnable> steps = new java.util.ArrayDeque<>();
+        private int wait;
+
+        BookTour() {
+            for (String lang : new String[]{"en_us", "de_de"}) {
+                steps.add(() -> language(lang));
+                for (int i = 0; i < 30; i++) steps.add(() -> {});
+                for (String[] page : PAGES) {
+                    steps.add(() -> open(page[1], Integer.parseInt(page[2])));
+                    for (int i = 0; i < 25; i++) steps.add(() -> {});
+                    steps.add(() -> shot("book_" + page[0] + "_" + lang));
+                    steps.add(() -> Minecraft.getInstance().setScreen(null));
+                }
+                // the recipe viewer (JEI / REI / EMI, whichever runs): the uses of the food maker
+                steps.add(() -> RecipeViewerShots.show(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.FOOD_MAKER.get())));
+                for (int i = 0; i < 30; i++) steps.add(() -> {});
+                steps.add(() -> shot("viewer_food_maker_" + lang));
+                steps.add(() -> RecipeViewerShots.show(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.TANK.get())));
+                for (int i = 0; i < 30; i++) steps.add(() -> {});
+                steps.add(() -> shot("viewer_tank_" + lang));
+                steps.add(() -> Minecraft.getInstance().setScreen(null));
+            }
+            steps.add(() -> language("en_us"));
+            for (int i = 0; i < 20; i++) steps.add(() -> {});
+        }
+
+        boolean tick(Minecraft mc) {
+            Runnable r = steps.poll();
+            if (r == null) return true;
+            r.run();
+            return false;
+        }
+
+        private static void language(String code) {
+            Minecraft mc = Minecraft.getInstance();
+            if (code.equals(mc.options.languageCode)) return;
+            mc.options.languageCode = code;
+            mc.getLanguageManager().setSelected(code);
+            mc.reloadResourcePacks();
+        }
+
+        private static void open(String entry, int page) {
+            net.minecraft.resources.ResourceLocation bookId = org.overengineer.bettacraft.BettaCraft.id("handbook");
+            var api = vazkii.patchouli.api.PatchouliAPI.get();
+            if (entry == null) api.openBookGUI(bookId);
+            else api.openBookEntry(bookId, net.minecraft.resources.ResourceLocation.parse(entry), page);
+        }
+
+        private static void shot(String name) {
+            Minecraft mc = Minecraft.getInstance();
+            mc.getToasts().clear();
+            net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.getMainRenderTarget(),
+                    c -> LOGGER.info("[smoketest] {}", c.getString()));
+        }
+    }
 
     @Override
     public void onInitializeClient() {
@@ -77,6 +140,17 @@ public final class FabricClientSmoke implements ClientModInitializer {
         if (ticks > 60) mc.player.getAbilities().flying = true;
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
+            // -Psmoketestbook: only the handbook (Patchouli) and the recipe viewer, English and German
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.book")) {
+                stage = 10;
+                book = new BookTour();
+            }
+            if (stage == 10 && book.tick(mc)) {
+                LOGGER.info("[smoketest] fabric client book test finished");
+                LOGGER.info("[smoketest] PASSED");
+                mc.stop();
+                return;
+            }
             if (stage == 0 && ticks == 60) {
                 LOGGER.info("[smoketest] fabric client in world: M11 scene");
                 m11 = new DevClientSmokeM11();

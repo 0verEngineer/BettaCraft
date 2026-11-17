@@ -166,7 +166,8 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   | NeoForge 21.1.200+ | `bettacraft-neoforge-1.21.1-<version>.jar` | nothing else | GuideME |
   | Fabric Loader 0.16+ | `bettacraft-fabric-1.21.1-<version>.jar` | Fabric API, Forge Config API Port | Patchouli |
 
-  The integrations below are NeoForge only for now (on Fabric: the handbook with Patchouli, Mod Menu for the config).
+  On Fabric the handbook is a Patchouli book and Mod Menu shows the config; the integrations below work on both loaders
+  where the other mod exists for Fabric (Create, AE2, KubeJS, Aquaculture and Fintastic are NeoForge only).
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
 - **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and

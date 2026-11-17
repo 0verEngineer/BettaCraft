@@ -72,7 +72,7 @@ public final class CystGameTests {
         ServerLevel level = h.getLevel();
         ItemStack jar = jars(1);
         h.assertTrue(!jar.isDamageableItem() && !jar.isBarVisible(), "no wear, no bar");
-        h.assertTrue(!jar.getItem().hasCraftingRemainingItem(jar) && jar.getItem().getCraftingRemainingItem(jar).isEmpty(), "no remainder");
+        h.assertTrue(GameTestCompat.noRemainder(jar), "no remainder");
         CraftingInput input = CraftingInput.of(2, 1, List.of(new ItemStack(ModItems.SALT_WATER_BOTTLE.get()), jars(5)));
         var recipe = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
         h.assertTrue(recipe.isPresent(), "artemia culture recipe");

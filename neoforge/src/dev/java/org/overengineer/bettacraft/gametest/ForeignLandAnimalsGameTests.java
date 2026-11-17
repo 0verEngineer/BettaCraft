@@ -460,7 +460,7 @@ public final class ForeignLandAnimalsGameTests {
         e0.discard();
         LivingEntity a = put(h, c, tub);
         a.getRandom().setSeed(39_300L); // M39 part c: its own random seeded (its way through the tank)
-        h.assertTrue(a.isMultipartEntity() && a.getParts() != null && a.getParts().length > 0, "a multi-part animal");
+        h.assertTrue(LoaderHooks.get().parts(a) != null && LoaderHooks.get().parts(a).length > 0, "a multi-part animal");
         h.runAfterDelay(60, () -> {
             TankData t = c.getTank();
             h.assertTrue(a.isAlive() && t.inhabitants().contains(a.getUUID()), "alive in the tank");
@@ -469,7 +469,7 @@ public final class ForeignLandAnimalsGameTests {
             // M39 part c (flaky before: "its part in the tank too"): Fintastic puts the head and tail parts at past positions of the
             // body (a ring buffer of the last ticks) along its pitch, so after a quick climb or turn the tail trails several blocks
             // behind, also below the glass, until it catches up; the parts belong to the body and follow it (not left in the world)
-            for (var part : a.getParts()) {
+            for (var part : LoaderHooks.get().parts(a)) {
                 h.assertTrue(part.position().distanceTo(a.position()) <= 8.0, "its part " + part.position() + " follows the body " + a.position());
             }
             h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), t).stream().noneMatch(x -> GameTestCompat.isPart(x)),

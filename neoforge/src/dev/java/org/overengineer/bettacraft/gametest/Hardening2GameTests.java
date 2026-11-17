@@ -55,7 +55,7 @@ public final class Hardening2GameTests {
         // what Skeleton#doFreezeConversion does
         Stray n = s.convertTo(EntityType.STRAY, true);
         if (n == null) throw new GameTestAssertException("no conversion");
-        net.neoforged.neoforge.event.EventHooks.onLivingConvert(s, n);
+        GameTestCompat.converted(s, n);
         h.assertTrue(GlassMobs.isGlassMob(n), "the stray carries the mark of the skeleton");
         n.kill();
         List<ItemEntity> drops = level.getEntitiesOfClass(ItemEntity.class, n.getBoundingBox().inflate(3));

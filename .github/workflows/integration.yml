@@ -39,7 +39,10 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "21"
+          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
+          java-version: |
+            25
+            21
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6

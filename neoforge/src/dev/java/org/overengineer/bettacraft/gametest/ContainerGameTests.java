@@ -23,7 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.FluidUtil;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -211,15 +210,15 @@ public final class ContainerGameTests {
         check(handler != null, "no fluid capability");
         var sea = org.overengineer.bettacraft.registry.ModFluids.SEA_WATER.get();
         check(handler.getFluidInTank(0).is(sea) && handler.getFluidInTank(0).getAmount() == 1000, "not 1000 mB of sea water: " + handler.getFluidInTank(0));
-        FluidTank foreign = new FluidTank(8000);
-        var result = FluidUtil.tryEmptyContainer(stack, org.overengineer.bettacraft.neoforge.transfer.NeoTransfer.fromNeo(foreign), 1000, null, true);
+        LoaderHooks.ForeignTank foreign = LoaderHooks.get().foreignTank(8000);
+        var result = FluidUtil.tryEmptyContainer(stack, foreign.handler(), 1000, null, true);
         check(result.isSuccess() && result.getResult().is(Items.BUCKET), "the bucket did not empty into the foreign tank");
-        check(foreign.getFluidAmount() == 1000 && foreign.getFluid().is(sea), "the foreign tank has no sea water: " + foreign.getFluid());
+        check(foreign.amount() == 1000 && foreign.holds(sea), "the foreign tank has no sea water: " + foreign.amount());
         // the other way round an empty bucket fills with sea water
-        var back = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), org.overengineer.bettacraft.neoforge.transfer.NeoTransfer.fromNeo(foreign), 1000, null, true);
+        var back = FluidUtil.tryFillContainer(new ItemStack(Items.BUCKET), foreign.handler(), 1000, null, true);
         check(back.isSuccess() && back.getResult().is(ModItems.SEA_WATER_BUCKET.get()), "the empty bucket did not fill with sea water from the foreign tank");
-        check(foreign.getFluid().isEmpty() || foreign.getFluid().getAmount() == 0, "water left in the foreign tank");
-        check(foreign.fill(new net.neoforged.neoforge.fluids.FluidStack(Fluids.WATER, 1), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE) == 1, "foreign tank broken");
+        check(foreign.amount() == 0, "water left in the foreign tank");
+        check(foreign.simulateFill(Fluids.WATER) == 1, "foreign tank broken");
         h.succeed();
     }
 

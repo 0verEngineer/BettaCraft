@@ -20,6 +20,11 @@ import org.overengineer.bettacraft.registry.ModItems;
 public final class BettaCraftJeiPlugin implements IModPlugin {
     private static mezz.jei.api.runtime.IJeiRuntime runtime;
 
+    /** The running JEI (null before it started); the dev smokes open recipe pages with it. */
+    public static mezz.jei.api.runtime.IJeiRuntime runtime() {
+        return runtime;
+    }
+
     /** M33 part b: the stacks this plugin took out of JEI's list (features that are off), to give back when they are on. */
     private static final List<ItemStack> removed = new ArrayList<>();
     private static final java.util.Set<mezz.jei.api.recipe.RecipeType<?>> hiddenCategories = new java.util.HashSet<>();
@@ -152,11 +157,14 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         // M24: the melts of the crucible (from the recipe manager of the world)
+        // M52: the recipes the server sent (Fabric's JEI starts before the client level exists)
+        var connection = net.minecraft.client.Minecraft.getInstance().getConnection();
         var mcLevel = net.minecraft.client.Minecraft.getInstance().level;
-        if (mcLevel != null) {
-            registration.addRecipes(CrucibleJei.TYPE, mcLevel.getRecipeManager().getAllRecipesFor(org.overengineer.bettacraft.registry.ModRecipes.CRUCIBLE_TYPE.get())
+        var rm = connection != null ? connection.getRecipeManager() : mcLevel != null ? mcLevel.getRecipeManager() : null;
+        if (rm != null) {
+            registration.addRecipes(CrucibleJei.TYPE, rm.getAllRecipesFor(org.overengineer.bettacraft.registry.ModRecipes.CRUCIBLE_TYPE.get())
                     .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList());
-            registration.addRecipes(FoodMakerJei.TYPE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(mcLevel.getRecipeManager())
+            registration.addRecipes(FoodMakerJei.TYPE, org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(rm)
                     .stream().map(net.minecraft.world.item.crafting.RecipeHolder::value).toList()); // M26 part b
         }
         // M33 part b: no info pages with features.compat.jei off, none for the items of a feature that is off (at JEI's start)

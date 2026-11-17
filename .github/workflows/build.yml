@@ -60,7 +60,10 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "21"
+          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
+          java-version: |
+            25
+            21
 
       - name: Set up Gradle (cache, wrapper validation)
         uses: gradle/actions/setup-gradle@v6
@@ -171,6 +174,14 @@ jobs:
             id: smoke-top-wthit
             run: ./gradlew runServer -Psmoketest -Ptop -Pwthit
             check: smoke
+          - name: Fabric production server smoke (intermediary, official jars)
+            id: fabric-prod
+            run: ./gradlew prodFabricServer -Psmoketest
+            check: smoke
+          - name: Fabric save and load (showcase world built, reloaded twice)
+            id: fabric-saveload
+            run: ./gradlew fabricSaveLoadTest
+            check: exit
           - name: GameTests with the power mods (-Ppower)
             id: gametest-power
             fetch: tools/ci/power-mods.json
@@ -184,7 +195,10 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: "21"
+          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
+          java-version: |
+            25
+            21
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
