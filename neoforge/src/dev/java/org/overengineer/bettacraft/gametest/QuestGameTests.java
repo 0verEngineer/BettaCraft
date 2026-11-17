@@ -134,7 +134,7 @@ public final class QuestGameTests {
                         var f = task.getClass().getDeclaredField("advancement");
                         f.setAccessible(true);
                         Object id = f.get(task);
-                        var adv = id == null ? null : h.getLevel().getServer().getAdvancements().get(net.minecraft.resources.ResourceLocation.parse(id.toString()));
+                        var adv = id == null ? null : h.getLevel().getServer().getAdvancements().get(net.minecraft.resources.Identifier.parse(id.toString()));
                         if (adv == null) problems.add("unknown advancement " + id + " in " + qt.getString());
                     } else {
                         problems.add("task " + type);
@@ -220,8 +220,8 @@ public final class QuestGameTests {
             boolean show = BettacraftApi.questTagsOn(tags);
             CompoundTag d = data(h, e.getValue());
             boolean optional = !show || tags.contains(BettacraftApi.TAG_OPTIONAL);
-            if (d.getBoolean("invisible") == show || d.getBoolean("optional") != optional) {
-                wrong.add(e.getKey() + " (invisible " + d.getBoolean("invisible") + ", optional " + d.getBoolean("optional") + ", tags on " + show + ")");
+            if (d.getBooleanOr("invisible", false) == show || d.getBooleanOr("optional", false) != optional) {
+                wrong.add(e.getKey() + " (invisible " + d.getBooleanOr("invisible", false) + ", optional " + d.getBooleanOr("optional", false) + ", tags on " + show + ")");
             }
         }
         h.assertTrue(wrong.isEmpty(), when + ": " + String.join(", ", wrong));
@@ -245,22 +245,22 @@ public final class QuestGameTests {
             h.assertTrue(q.size() == QUESTS, "all quests by name: " + q.size());
             ApiEvents.featuresChanged(h.getLevel().getServer()); // also a plain reload: nothing changes
             assertShownByTags(h, q, "after the start");
-            h.assertTrue(data(h, q.get("travelling_tank")).getBoolean("invisible") == !org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create"), "the Create quests by Create");
-            h.assertTrue(data(h, q.get("fight")).getBoolean("optional"), "the fight is optional by design");
+            h.assertTrue(data(h, q.get("travelling_tank")).getBooleanOr("invisible", false) == !org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create"), "the Create quests by Create");
+            h.assertTrue(data(h, q.get("fight")).getBooleanOr("optional", false), "the fight is optional by design");
             Features.set(Feature.TANKMATES, false);
             ApiEvents.featuresChanged(h.getLevel().getServer());
             for (String n : List.of("tankmates", "livebearer_litter", "guppy_strain", "guppy_collection", "cichlids", "reef_fish", "seahorse_fry")) {
                 CompoundTag d = data(h, q.get(n));
-                h.assertTrue(d.getBoolean("invisible") && d.getBoolean("optional"), n + " hidden and optional with the tankmates off");
+                h.assertTrue(d.getBooleanOr("invisible", false) && d.getBooleanOr("optional", false), n + " hidden and optional with the tankmates off");
             }
             for (String n : List.of("first_tank", "fish_bag", "critters", "algae", "corals", "dynasty")) {
-                h.assertTrue(!data(h, q.get(n)).getBoolean("invisible"), n + " stays");
+                h.assertTrue(!data(h, q.get(n)).getBooleanOr("invisible", false), n + " stays");
             }
             assertShownByTags(h, q, "tankmates off");
             Features.set(Feature.TANKMATES, true);
             ApiEvents.featuresChanged(h.getLevel().getServer());
             CompoundTag back = data(h, q.get("tankmates"));
-            h.assertTrue(!back.getBoolean("invisible") && !back.getBoolean("optional"), "shown and required again");
+            h.assertTrue(!back.getBooleanOr("invisible", false) && !back.getBooleanOr("optional", false), "shown and required again");
             assertShownByTags(h, q, "tankmates on again");
         } catch (ReflectiveOperationException e) {
             throw new GameTestAssertException("FTB Quests API changed: " + e);

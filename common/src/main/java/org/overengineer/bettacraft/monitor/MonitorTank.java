@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.Arrays;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -52,7 +53,7 @@ public final class MonitorTank {
 
     public CompoundTag save() {
         CompoundTag c = new CompoundTag();
-        c.putUUID("id", id);
+        NbtCompat.putUUID(c, "id", id);
         c.putString("name", name);
         c.putLong("pos", pos.asLong());
         c.putLong("seen", seen);
@@ -67,10 +68,10 @@ public final class MonitorTank {
     public static MonitorTank load(CompoundTag c) {
         float[] values = new float[MonitorValue.ALL.length];
         Arrays.fill(values, Float.NaN);
-        CompoundTag v = c.getCompound("values");
-        for (MonitorValue m : MonitorValue.ALL) if (v.contains(m.id)) values[m.ordinal()] = v.getFloat(m.id);
-        MonitorTank t = new MonitorTank(c.getUUID("id"), c.getString("name"), BlockPos.of(c.getLong("pos")), false, values, c.getLong("seen"));
-        t.detail = c.getCompound("detail").copy();
+        CompoundTag v = c.getCompoundOrEmpty("values");
+        for (MonitorValue m : MonitorValue.ALL) if (v.contains(m.id)) values[m.ordinal()] = v.getFloatOr(m.id, 0f);
+        MonitorTank t = new MonitorTank(NbtCompat.getUUID(c, "id"), c.getStringOr("name", ""), BlockPos.of(c.getLongOr("pos", 0L)), false, values, c.getLongOr("seen", 0L));
+        t.detail = c.getCompoundOrEmpty("detail").copy();
         return t;
     }
 

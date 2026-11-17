@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,13 +13,13 @@ import java.util.function.ToIntFunction;
 import javax.annotation.Nullable;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.model.BettaModel;
@@ -34,7 +35,7 @@ import org.overengineer.bettacraft.genetics.BettaPatterns;
  * are composited into one texture per look ({@link BettaSkins}) and drawn in a single pass, so shader packs neither
  * z-fight coplanar passes nor drop the translucent ones.
  */
-public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
+public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity>, BettaModel> {
     public static final Map<BettaModelDefinitions.Shape, ModelLayerLocation> LAYERS = new EnumMap<>(BettaModelDefinitions.Shape.class);
 
     static {
@@ -43,12 +44,12 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         }
     }
 
-    private static final ResourceLocation BODY = tex("region_body");
-    private static final ResourceLocation FINS = tex("region_fins");
-    private static final ResourceLocation IRIDESCENCE = tex("iridescence");
-    private static final ResourceLocation EYE = tex("eye");
-    private static final ResourceLocation BARS = tex("pattern_bars");
-    private static final Map<String, ResourceLocation> PATTERN_TEX = new java.util.HashMap<>();
+    private static final Identifier BODY = tex("region_body");
+    private static final Identifier FINS = tex("region_fins");
+    private static final Identifier IRIDESCENCE = tex("iridescence");
+    private static final Identifier EYE = tex("eye");
+    private static final Identifier BARS = tex("pattern_bars");
+    private static final Map<String, Identifier> PATTERN_TEX = new java.util.HashMap<>();
 
     static {
         for (String p : BettaModelDefinitions.PATTERNS) PATTERN_TEX.put(p, tex("pattern_" + p));
@@ -65,7 +66,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         }
     }
 
-    private static ResourceLocation tex(String name) {
+    private static Identifier tex(String name) {
         return BettaCraft.id("textures/entity/betta/" + name + ".png");
     }
 
@@ -77,25 +78,40 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     }
 
     @Override
-    public void render(BettaEntity fish, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffers, int light) {
-        BettaModel m = models.get(shapeOf(fish.genome()));
-        this.model = m;
-        this.shadowRadius = 0.15F * fish.sizeScale();
-        BettaTints.beginFish(fish);
-        ResourceLocation skin = skin(fish);
-        BettaTints.endFish();
-        this.currentSkin = skin != null ? skin : BODY;
-        // the stage alpha (see-through fry) is in the composite itself (shader packs ignore vertex alpha)
-        this.currentAlpha = Math.round(BettaModelDefinitions.STAGE_ALPHAS[fish.lifeStage().ordinal()] * 255);
-        super.render(fish, yaw, partialTicks, pose, buffers, light);
+    public MobState<BettaEntity> createRenderState() {
+        return new MobState<>();
     }
 
-    private ResourceLocation currentSkin = BODY;
-    private int currentAlpha = 255;
+    /** M52b: what 1.21.1 chose in render(): the model of the tail shape, the composited skin, the stage alpha. */
+    @Override
+    public void extractRenderState(BettaEntity fish, MobState<BettaEntity> state, float partialTick) {
+        super.extractRenderState(fish, state, partialTick);
+        state.entity = fish;
+        state.partialTick = partialTick;
+        state.model = models.get(shapeOf(fish.genome()));
+        BettaTints.beginFish(fish);
+        Identifier skin = skin(fish);
+        BettaTints.endFish();
+        state.skin = skin != null ? skin : BODY;
+        // the stage alpha (see-through fry) is in the composite itself (shader packs ignore vertex alpha)
+        state.alpha = Math.round(BettaModelDefinitions.STAGE_ALPHAS[fish.lifeStage().ordinal()] * 255);
+    }
+
+    @Override
+    protected float getShadowRadius(MobState<BettaEntity> state) {
+        return 0.15F * state.entity.sizeScale();
+    }
+
+    @Override
+    public void submit(MobState<BettaEntity> state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
+                       net.minecraft.client.renderer.state.CameraRenderState camera) {
+        if (state.model instanceof BettaModel m) this.model = m;
+        super.submit(state, pose, collector, camera);
+    }
 
     /** The composited texture of this fish right now (tints depend on sex, stage, health, flaring and the tank). */
     @Nullable
-    private static ResourceLocation skin(BettaEntity f) {
+    private static Identifier skin(BettaEntity f) {
         BettaGenome g = f.genome();
         java.util.List<BettaSkins.Layer> layers = new java.util.ArrayList<>(6);
         // body and fins carry the stage alpha; the overlays only colour what is there (BettaSkins keeps their coverage)
@@ -103,7 +119,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
         layers.add(new BettaSkins.Layer(FINS, BettaTints.forFish(BettaColors.rgb(g.finColor()), f)));
         boolean fry = f.lifeStage().ordinal() <= 2;
         if (!fry) {
-            ResourceLocation pattern = PATTERN_TEX.get(g.pattern());
+            Identifier pattern = PATTERN_TEX.get(g.pattern());
             if (pattern != null && !pattern.equals(PATTERN_TEX.get(BettaPatterns.NONE))) {
                 layers.add(new BettaSkins.Layer(pattern, BettaTints.forFish(BettaColors.rgb(g.patternColor()), f) | 0xFF000000));
             }
@@ -122,29 +138,34 @@ public class BettaRenderer extends MobRenderer<BettaEntity, BettaModel> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(BettaEntity entity) {
-        return currentSkin;
+    public Identifier getTextureLocation(MobState<BettaEntity> state) {
+        return state.skin != null ? state.skin : BODY;
     }
 
     @Nullable
     @Override
-    protected RenderType getRenderType(BettaEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
-        if (!bodyVisible && !translucent) return glowing ? RenderType.outline(currentSkin) : null;
+    protected RenderType getRenderType(MobState<BettaEntity> state, boolean bodyVisible, boolean translucent, boolean glowing) {
+        Identifier currentSkin = getTextureLocation(state);
+        int currentAlpha = state.alpha;
+        if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(currentSkin) : null;
         // fry are see-through (PLAN 5.3). With back-face culling: the fins are flat boxes whose front and back faces lie
         // in one plane; drawn both, shader packs let them z-fight (flickering fins). Culled, each side shows one face.
-        return currentAlpha < 255 ? RenderType.entityTranslucentCull(currentSkin) : RenderType.entityCutout(currentSkin);
+        return currentAlpha < 255 ? RenderTypes.itemEntityTranslucentCull(currentSkin) : RenderTypes.entityCutout(currentSkin);
     }
 
     @Override
-    protected void scale(BettaEntity fish, PoseStack pose, float partialTick) {
+    protected void scale(MobState<BettaEntity> state, PoseStack pose) {
+        BettaEntity fish = state.entity;
         float s = BettaModelDefinitions.ADULT_RENDER_SCALE * fish.sizeScale() // M36: life stage times the size setting
                 * org.overengineer.bettacraft.genetics.BettaSpecies.scaleOf(fish.genome().species()); // M29 part c: imbellis smaller
         pose.scale(s, s, s);
     }
 
     @Override
-    protected void setupRotations(BettaEntity fish, PoseStack pose, float bob, float yBodyRot, float partialTick, float scale) {
-        super.setupRotations(fish, pose, bob, yBodyRot, partialTick, scale);
+    protected void setupRotations(MobState<BettaEntity> state, PoseStack pose, float yBodyRot, float scale) {
+        super.setupRotations(state, pose, yBodyRot, scale);
+        BettaEntity fish = state.entity;
+        float bob = state.ageInTicks, partialTick = state.partialTick;
         // body wiggle: strong while swimming, a faint sway while hovering (a full wiggle at rest looked like turning)
         double v = Math.hypot(fish.getX() - fish.xo, fish.getZ() - fish.zo);
         // M21.5: the eased speed (the raw last-tick speed made the wiggle jump)

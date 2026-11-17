@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.config;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -63,7 +64,7 @@ public final class WorldConfigMigration {
         private final Set<String> ids = new LinkedHashSet<>();
 
         public static Done get(MinecraftServer server) {
-            return server.overworld().getDataStorage().computeIfAbsent(new SavedData.Factory<>(Done::new, Done::load, null), NAME);
+            return server.overworld().getDataStorage().computeIfAbsent(org.overengineer.bettacraft.util.NbtCompat.savedData(NAME, Done::new, Done::load, Done::save));
         }
 
         public boolean has(String id) {
@@ -79,7 +80,6 @@ public final class WorldConfigMigration {
             if (ids.remove(id)) setDirty();
         }
 
-        @Override
         public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
             ListTag list = new ListTag();
             for (String id : ids) list.add(StringTag.valueOf(id));
@@ -89,7 +89,7 @@ public final class WorldConfigMigration {
 
         public static Done load(CompoundTag tag, HolderLookup.Provider registries) {
             Done d = new Done();
-            for (Tag t : tag.getList("done", Tag.TAG_STRING)) d.ids.add(t.getAsString());
+            for (Tag t : tag.getListOrEmpty("done")) d.ids.add(NbtCompat.asString(t));
             return d;
         }
     }

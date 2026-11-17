@@ -69,7 +69,7 @@ final class DevClientSmokeM20 {
     private int wait;
 
     DevClientSmokeM20() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 520, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 520, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(160, () -> server(this::pose));
@@ -111,7 +111,7 @@ final class DevClientSmokeM20 {
         then(10, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, 0F, 0F);
+            p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         }));
         String lang = mc.options.languageCode;
         menu(5, "menu_water", lang, null);
@@ -151,7 +151,7 @@ final class DevClientSmokeM20 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         reach(p, false);
         level.setDayTime(6000);
         base = p.blockPosition().offset(0, 0, -10);
@@ -237,7 +237,7 @@ final class DevClientSmokeM20 {
 
     /** Fish freeze around the scene; the clownfish in their anemone. */
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, reef);
         if (c == null) return;
         TankWaterVolume w = new TankWaterVolume(c.getTank());
@@ -279,7 +279,7 @@ final class DevClientSmokeM20 {
                     z = w.box().minZ + 0.5;
                 }
             }
-            m.moveTo(x, y, z, yaw, 0F);
+            m.snapTo(x, y, z, yaw, 0F);
             SmokeFreeze.freeze(m, true);
             m.setDeltaMovement(Vec3.ZERO);
             m.setYRot(yaw);
@@ -412,7 +412,7 @@ final class DevClientSmokeM20 {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -489,7 +489,7 @@ final class DevClientSmokeM20 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void language(String code) {

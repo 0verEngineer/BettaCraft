@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import net.minecraft.world.InteractionResult;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,7 +11,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -79,8 +80,8 @@ public final class ForeignTerrariumGameTests {
     static Animal animal(String file, String naturalistId, EntityType<?> standIn) {
         ForeignProfile p = ForeignProfiles.files().get(BettaCraft.id(file));
         if (p == null) throw new GameTestAssertException("no shipped profile " + file);
-        if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(ResourceLocation.parse(naturalistId).getNamespace())) {
-            EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(naturalistId)).orElseThrow();
+        if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(Identifier.parse(naturalistId).getNamespace())) {
+            EntityType<?> t = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(naturalistId)).orElseThrow();
             if (ForeignProfiles.of(t) != p) throw new GameTestAssertException(naturalistId + " is not mapped to its profile");
             return new Animal(t, p, true);
         }
@@ -91,9 +92,9 @@ public final class ForeignTerrariumGameTests {
 
     /** Puts the stand-in profiles in place (nothing to do with Naturalist); the returned runnable restores the profiles. */
     static Runnable install(List<Animal> animals) {
-        Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
+        Map<Identifier, ForeignProfile> saved = ForeignProfiles.files();
         if (animals.stream().allMatch(Animal::real)) return () -> {};
-        Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
+        Map<Identifier, ForeignProfile> files = new LinkedHashMap<>(saved);
         int i = 0;
         for (Animal a : animals) if (!a.real()) files.put(BettaCraft.id("gametest_stand_in_" + i++), a.profile());
         ForeignProfiles.set(files);
@@ -102,10 +103,10 @@ public final class ForeignTerrariumGameTests {
 
     /** Runs the test with the stand-in profiles in place (nothing to do with Naturalist), restoring the profiles afterwards. */
     static void with(List<Animal> animals, Runnable body) {
-        Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
+        Map<Identifier, ForeignProfile> saved = ForeignProfiles.files();
         boolean stand = animals.stream().anyMatch(a -> !a.real());
         if (stand) {
-            Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
+            Map<Identifier, ForeignProfile> files = new LinkedHashMap<>(saved);
             int i = 0;
             for (Animal a : animals) if (!a.real()) files.put(BettaCraft.id("gametest_stand_in_" + i++), a.profile());
             ForeignProfiles.set(files);
@@ -179,7 +180,7 @@ public final class ForeignTerrariumGameTests {
         Entity e = type.create(h.getLevel());
         if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no " + type);
         Vec3 a = h.absoluteVec(rel);
-        e.moveTo(a.x, a.y, a.z, 0, 0);
+        e.snapTo(a.x, a.y, a.z, 0, 0);
         if (e instanceof Mob m) m.setPersistenceRequired();
         if (!h.getLevel().addFreshEntity(e)) throw new GameTestAssertException("not added");
         return le;
@@ -299,7 +300,7 @@ public final class ForeignTerrariumGameTests {
             ItemStack greens = new ItemStack(Items.DANDELION, 4);
             player.setItemInHand(InteractionHand.MAIN_HAND, greens);
             var r = ForeignFood.handFeed(greens, level, c.getBlockPos(), player, InteractionHand.MAIN_HAND);
-            h.assertTrue(r == net.minecraft.world.ItemInteractionResult.CONSUME, "it eats from the hand");
+            h.assertTrue(r == net.minecraft.world.InteractionResult.CONSUME, "it eats from the hand");
             h.assertTrue(ForeignCare.health(t).daysSinceFed() < 0.01, "fed by hand");
             player.discard();
             ItemStackHandler feeder = new ItemStackHandler(3);
@@ -404,11 +405,11 @@ public final class ForeignTerrariumGameTests {
             ServerPlayer player = MockPlayers.serverPlayer(h);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.TERRARIUM_BOX.get(), 4));
             LivingEntity t = wild(h, tortoise.type(), new Vec3(4, 2, 28));
-            player.moveTo(t.getX() + 1, t.getY(), t.getZ());
+            player.snapTo(t.getX() + 1, t.getY(), t.getZ());
             player.interactOn(t, InteractionHand.MAIN_HAND);
             h.assertFalse(t.isAlive(), "the tortoise went into the box");
             ItemStack filled = ItemStack.EMPTY;
-            for (ItemStack s : player.getInventory().items) if (TerrariumBoxItem.isFilled(s)) filled = s;
+            for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.isFilled(s)) filled = s;
             h.assertTrue(TerrariumBoxItem.containedType(filled) == tortoise.type(), "a box with the tortoise");
             h.assertTrue(filled.getMaxStackSize() == 1, "one animal per box");
             LivingEntity cow = wild(h, EntityType.COW, new Vec3(8, 2, 28));
@@ -454,7 +455,7 @@ public final class ForeignTerrariumGameTests {
         QuestAdv.gone(h, watcher);
         Turtle baby = EntityType.TURTLE.create(level);
         baby.setAge(-24000);
-        baby.moveTo(h.absoluteVec(new Vec3(20, 2, 2)));
+        baby.snapTo(h.absoluteVec(new Vec3(20, 2, 2)));
         h.assertTrue(TankInhabitants.bagTakes(baby), "a hatchling goes into a bag");
         ItemStack bag = FishBagItem.fillWith(baby);
         baby.discard();

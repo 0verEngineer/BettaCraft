@@ -47,7 +47,7 @@ class ForeignProfileTest {
         assertEquals(g.breedMin(), p.breeding().tempMin());
         assertTrue(p.breeding().breeds());
         assertEquals(List.of("FinColor", "TailColor"), p.breeding().inherit());
-        assertTrue(p.breeding().offspringNbt().getBoolean("CanGrowUp"));
+        assertTrue(p.breeding().offspringNbt().getBooleanOr("CanGrowUp", false));
         assertTrue(p.suppressOwn());
         assertTrue(p.eatsKind("normal") && p.eatsKind("live") && !p.eatsKind("fry"));
         assertTrue(p.tolerates(25) && !p.tolerates(30));

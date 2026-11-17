@@ -101,7 +101,7 @@ public class DriveAdapterBlockEntity extends KineticBlockEntity implements TankD
     @Override
     public void tick() {
         super.tick();
-        if (level == null || level.isClientSide || (level.getGameTime() + worldPosition.asLong()) % 20 != 0) return;
+        if (level == null || level.isClientSide() || (level.getGameTime() + worldPosition.asLong()) % 20 != 0) return;
         // no care step served it for a while (no tank at its back, the tank gone, the switch off): idle
         boolean served = lastLoad != Long.MIN_VALUE && level.getGameTime() - lastLoad <= CreateDrive.STALE && level.getGameTime() >= lastLoad;
         if (!served || !TankDrive.enabled()) set(idleImpact(), 0, NO_TANK);
@@ -120,9 +120,9 @@ public class DriveAdapterBlockEntity extends KineticBlockEntity implements TankD
     @Override
     protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(tag, registries, clientPacket);
-        if (tag.contains("DriveImpact")) impact = tag.getFloat("DriveImpact");
-        fe = tag.getDouble("DriveFe");
-        state = tag.getInt("DriveState");
+        if (tag.contains("DriveImpact")) impact = tag.getFloatOr("DriveImpact", 0f);
+        fe = tag.getDoubleOr("DriveFe", 0d);
+        state = tag.getIntOr("DriveState", 0);
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.spider.Spider;
 import org.joml.Vector3f;
 import org.overengineer.bettacraft.BettaCraft;
 
@@ -26,7 +26,7 @@ public final class GlassMobRendering {
 
     /** Before a living entity is drawn: a climbing spider in glass lies flat on the glass. */
     public static void pre(LivingEntity e, float partialTick, com.mojang.blaze3d.vertex.PoseStack pose) {
-        if (!(e instanceof net.minecraft.world.entity.monster.Spider s) || !s.isClimbing() || s.getScale() >= GLASS_SCALE) return;
+        if (!(e instanceof net.minecraft.world.entity.monster.spider.Spider s) || !s.isClimbing() || s.getScale() >= GLASS_SCALE) return;
         net.minecraft.core.Direction wall = net.minecraft.core.Direction.fromYRot(net.minecraft.util.Mth.rotLerp(partialTick, s.yBodyRotO, s.yBodyRot));
         pose.pushPose();
         // turn about the horizontal axis along the glass: its front goes up, its belly onto the glass

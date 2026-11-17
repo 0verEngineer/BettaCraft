@@ -92,7 +92,7 @@ final class DevClientSmokeM40c {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(-10, 2, 260);
         for (BlockPos q : BlockPos.betweenClosed(base.offset(-3, -1, -2), base.offset(18, 6, 12)))
             level.setBlock(q, q.getY() == base.getY() - 1 ? Blocks.SMOOTH_STONE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
@@ -176,7 +176,7 @@ final class DevClientSmokeM40c {
     private static void click(ServerPlayer p, BlockPos pos, ItemStack main, ItemStack off) {
         p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, main);
         p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, off);
-        p.gameMode.useItemOn(p, p.serverLevel(), main, net.minecraft.world.InteractionHand.MAIN_HAND,
+        p.gameMode.useItemOn(p, p.level(), main, net.minecraft.world.InteractionHand.MAIN_HAND,
                 new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false));
         p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         p.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, ItemStack.EMPTY);
@@ -188,9 +188,9 @@ final class DevClientSmokeM40c {
 
     @SuppressWarnings("unchecked")
     private static ItemStack withData(String item, String component, Object value) {
-        ItemStack s = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(item)));
+        ItemStack s = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse(item)));
         var t = (net.minecraft.core.component.DataComponentType<Object>) net.minecraft.core.registries.BuiltInRegistries.DATA_COMPONENT_TYPE
-                .get(net.minecraft.resources.ResourceLocation.parse(component));
+                .get(net.minecraft.resources.Identifier.parse(component));
         if (t != null) s.set(t, value);
         return s;
     }
@@ -204,7 +204,7 @@ final class DevClientSmokeM40c {
         try {
             ItemStack ae2 = ItemStack.EMPTY, eio = ItemStack.EMPTY, mek = ItemStack.EMPTY;
             if (loaded("ae2")) {
-                var f = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse("ae2:facade"));
+                var f = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:facade"));
                 ae2 = (ItemStack) f.getClass().getMethod("createFacadeForItem", ItemStack.class, boolean.class).invoke(f, new ItemStack(Blocks.SMOOTH_QUARTZ), false);
             }
             if (loaded("enderio")) {

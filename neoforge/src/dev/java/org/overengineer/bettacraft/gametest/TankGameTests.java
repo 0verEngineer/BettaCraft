@@ -133,7 +133,7 @@ public final class TankGameTests {
         h.runAfterDelay(2, () -> {
             h.setBlock(b, ModBlocks.TANK.get().defaultBlockState());
             if (h.getLevel().getBlockEntity(h.absolutePos(b)) instanceof TankBlockEntity be) {
-                be.setGlassId(net.minecraft.resources.ResourceLocation.withDefaultNamespace("tinted_glass"));
+                be.setGlassId(net.minecraft.resources.Identifier.withDefaultNamespace("tinted_glass"));
             }
             h.runAfterDelay(3, () -> {
                 h.assertTrue(controller(h, a) != controller(h, b), "different glass stays separate");

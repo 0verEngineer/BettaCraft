@@ -97,6 +97,6 @@ public final class WindSpring {
 
     /** Reads it back (an int written by the food maker before M37 too). */
     public void load(CompoundTag t, String key) {
-        ticks = Math.max(0, t.getLong(key));
+        ticks = Math.max(0, t.getLongOr(key, 0L));
     }
 }

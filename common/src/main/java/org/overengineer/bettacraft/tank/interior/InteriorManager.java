@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import org.overengineer.bettacraft.util.Perms;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public final class InteriorManager {
             return;
         }
         TankBlockEntity controller = TankMultiblock.getController(player.level(), clicked);
-        ServerLevel interior = interiorLevel(player.server);
+        ServerLevel interior = interiorLevel(player.level().getServer());
         if (controller == null || interior == null) {
             player.displayClientMessage(Component.translatable(interior == null
                     ? "message.bettacraft.interior.missing_dimension" : "message.bettacraft.tank.not_formed"), true);
@@ -90,19 +91,19 @@ public final class InteriorManager {
         if (region.built()) {
             teleportInto(player, region);
         } else {
-            InteriorPreparation.prepare(player.server, region, player);
+            InteriorPreparation.prepare(player.level().getServer(), region, player);
         }
     }
 
     /** Teleports into a built region (centre of the floor) and remembers the return point. */
     static void teleportInto(ServerPlayer player, InteriorRegion region) {
-        ServerLevel interior = interiorLevel(player.server);
+        ServerLevel interior = interiorLevel(player.level().getServer());
         if (interior == null || isInterior(player.level())) return;
         ModAttachments.INTERIOR_RETURN.set(player, new InteriorReturn(player.level().dimension(), player.position(),
                 player.getYRot(), player.getXRot(), region.id()));
         BlockPos target = entryPoint(region);
         while (target.getY() < InteriorRegion.BASE_Y + region.sizeY() - 2 && !interior.getBlockState(target).isAir()) target = target.above();
-        player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, player.getYRot(), player.getXRot());
+        player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
         player.displayClientMessage(Component.translatable("message.bettacraft.interior.entered",
                 region.sizeX(), region.sizeY(), region.sizeZ()), true);
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.ENTER_INTERIOR);
@@ -135,24 +136,24 @@ public final class InteriorManager {
     public static void leave(ServerPlayer player) {
         InteriorReturn ret = ModAttachments.INTERIOR_RETURN.get(player);
         ModAttachments.INTERIOR_RETURN.remove(player);
-        ServerLevel target = ret.isSet() ? player.server.getLevel(ret.dimension()) : null;
+        ServerLevel target = ret.isSet() ? player.level().getServer().getLevel(ret.dimension()) : null;
         if (target == null || isInterior(target)) {
             // No valid return point: world spawn of the overworld.
-            ServerLevel overworld = player.server.overworld();
-            BlockPos spawn = overworld.getSharedSpawnPos();
-            player.teleportTo(overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, player.getYRot(), player.getXRot());
+            ServerLevel overworld = player.level().getServer().overworld();
+            BlockPos spawn = overworld.getRespawnData().pos();
+            player.teleportTo(overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
             return;
         }
         Vec3 p = ret.position();
-        player.teleportTo(target, p.x, p.y, p.z, ret.yRot(), ret.xRot());
+        player.teleportTo(target, p.x, p.y, p.z, java.util.Set.of(), ret.yRot(), ret.xRot(), false);
     }
 
     /** Whether the player may change blocks inside the region at {@code pos} (tank lock, PLAN 7.1). */
     public static boolean canBuild(Player player, BlockPos pos) {
-        if (player.hasPermissions(2)) return true;
-        InteriorRegion r = player.getServer() == null ? null : regionAt(player.getServer(), pos);
+        if (Perms.has(player, 2)) return true;
+        InteriorRegion r = player.level().getServer() == null ? null : regionAt(player.level().getServer(), pos);
         if (r == null) return false;
-        ServerLevel tankLevel = player.getServer().getLevel(r.tankDimension());
+        ServerLevel tankLevel = player.level().getServer().getLevel(r.tankDimension());
         if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {
             TankBlockEntity c = TankMultiblock.getController(tankLevel, r.tankMin());
             if (c != null && c.getTank().regionId() == r.id()) return TankInhabitants.canModify(player, c.getTank());
@@ -603,7 +604,7 @@ public final class InteriorManager {
             double lx = p.getX() - from.originX() + dx, ly = p.getY() - InteriorRegion.BASE_Y + dy, lz = p.getZ() - from.originZ() + dz;
             if (lx < 0 || lz < 0 || lx >= to.sizeX() || lz >= to.sizeZ() || ly < 0 || ly >= to.sizeY()) continue;
             if (piece != null && !to.inShape((int) Math.floor(lx), (int) Math.floor(Math.min(ly, to.sizeY() - 1)), (int) Math.floor(lz))) continue;
-            p.teleportTo(level, to.originX() + lx, InteriorRegion.BASE_Y + ly, to.originZ() + lz, p.getYRot(), p.getXRot());
+            p.teleportTo(level, to.originX() + lx, InteriorRegion.BASE_Y + ly, to.originZ() + lz, java.util.Set.of(), p.getYRot(), p.getXRot(), false);
             InteriorReturn ret = ModAttachments.INTERIOR_RETURN.get(p);
             if (ret.isSet()) {
                 ModAttachments.INTERIOR_RETURN.set(p, new InteriorReturn(ret.dimension(), ret.position(), ret.yRot(), ret.xRot(), to.id()));
@@ -634,8 +635,6 @@ public final class InteriorManager {
     /** M15: per region the players inside it, sent to the tank's clients (they keep the client from breaking it). */
     private static final it.unimi.dsi.fastutil.ints.Int2IntMap OCCUPANTS = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
     /** M17: holds the chunk of an occupied tank (renewed every 10 ticks while players are inside). */
-    public static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> OCCUPIED_TICKET =
-            net.minecraft.server.level.TicketType.create("bettacraft_occupied_tank", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 60);
 
     public static void updateOccupants(MinecraftServer server) {
         ServerLevel in = interiorLevel(server);
@@ -657,7 +656,7 @@ public final class InteriorManager {
             // the tank itself; with its chunk unloaded only the owner could build and the occupant count went stale
             if (tankLevel != null && n > 0) {
                 net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(r.tankMin());
-                tankLevel.getChunkSource().addRegionTicket(OCCUPIED_TICKET, cp, 0, cp);
+                tankLevel.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.OCCUPIED_TANK.get(), cp, 0);
             }
             if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {
                 TankBlockEntity c = TankMultiblock.getController(tankLevel, r.tankMin());

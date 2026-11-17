@@ -73,6 +73,6 @@ public class DeviceEnergy extends EnergyStorage {
     }
 
     public void load(CompoundTag t) {
-        set(t.getInt("energy"));
+        set(t.getIntOr("energy", 0));
     }
 }

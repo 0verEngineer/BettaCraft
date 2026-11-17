@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.overengineer.bettacraft.BettaCraft;
@@ -18,8 +19,8 @@ import org.overengineer.bettacraft.equipment.FilterFlow;
  * immediate geometry from block entity renderers / the miniature pass, so Sodium's chunk meshing is not involved.
  */
 public final class FlowRenderer {
-    public static final ResourceLocation HOSE = BettaCraft.id("textures/entity/filter/hose.png");
-    public static final ResourceLocation JET = BettaCraft.id("textures/entity/filter/jet.png");
+    public static final Identifier HOSE = BettaCraft.id("textures/entity/filter/hose.png");
+    public static final Identifier JET = BettaCraft.id("textures/entity/filter/jet.png");
     private static final float HOSE_HALF = 0.045F;
     /** Jet tint (ARGB). */
     private static final int JET_COLOR = 0xF0E4F0FF;
@@ -27,11 +28,11 @@ public final class FlowRenderer {
     private FlowRenderer() {}
 
     public static RenderType hoseType() {
-        return RenderType.entityCutoutNoCull(HOSE);
+        return RenderTypes.entityCutoutNoCull(HOSE);
     }
 
     public static RenderType jetType() {
-        return RenderType.entityTranslucent(JET);
+        return RenderTypes.entityTranslucent(JET);
     }
 
     /** Hose from the filter up the wall, over the rim and down to the outlet, plus the outlet nozzle. */

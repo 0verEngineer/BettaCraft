@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -52,12 +52,12 @@ public final class ZooPlantTests {
     private ZooPlantTests() {}
 
     public static List<Block> candidates() {
-        List<ResourceLocation> ids = new ArrayList<>(BuiltInRegistries.BLOCK.keySet());
-        ids.sort(java.util.Comparator.comparing(ResourceLocation::toString));
+        List<Identifier> ids = new ArrayList<>(BuiltInRegistries.BLOCK.keySet());
+        ids.sort(java.util.Comparator.comparing(Identifier::toString));
         List<Block> out = new ArrayList<>();
-        for (ResourceLocation rl : ids) {
+        for (Identifier rl : ids) {
             if (ZooSuite.OWN.contains(rl.getNamespace()) || rl.getPath().startsWith("potted_")) continue;
-            Block b = BuiltInRegistries.BLOCK.get(rl);
+            Block b = BuiltInRegistries.BLOCK.getValue(rl);
             boolean plant = b instanceof BushBlock || b instanceof GrowingPlantBlock || b instanceof BaseCoralPlantTypeBlock
                     || b instanceof LiquidBlockContainer && !(b instanceof net.minecraft.world.level.block.SimpleWaterloggedBlock)
                     && !(b instanceof net.minecraft.world.level.block.EntityBlock);
@@ -130,7 +130,7 @@ public final class ZooPlantTests {
         h.runAfterDelay(80, () -> {
             List<List<String>> rows = new ArrayList<>();
             for (Placed p : placed) {
-                ResourceLocation id = BuiltInRegistries.BLOCK.getKey(p.block());
+                Identifier id = BuiltInRegistries.BLOCK.getKey(p.block());
                 if (p.tank() == null) {
                     rows.add(ZooSuite.row(id.getNamespace(), id, p.block().getClass().getSimpleName(), p.in(), "-", "-", "-"));
                     continue;

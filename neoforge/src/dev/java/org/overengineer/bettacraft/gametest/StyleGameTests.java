@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -56,12 +56,12 @@ import org.overengineer.bettacraft.tank.TankStyleRecipe;
 @PrefixGameTestTemplate(false)
 public final class StyleGameTests {
     private static final String EMPTY = "empty_32x10x32";
-    private static final ResourceLocation GLASS = ResourceLocation.withDefaultNamespace("glass");
-    private static final ResourceLocation LIGHT_BLUE = ResourceLocation.withDefaultNamespace("light_blue_stained_glass");
+    private static final Identifier GLASS = Identifier.withDefaultNamespace("glass");
+    private static final Identifier LIGHT_BLUE = Identifier.withDefaultNamespace("light_blue_stained_glass");
 
     private StyleGameTests() {}
 
-    private static void add(GameTestHelper h, BlockPos rel, ResourceLocation glass, TankStyle style) {
+    private static void add(GameTestHelper h, BlockPos rel, Identifier glass, TankStyle style) {
         h.setBlock(rel, ModBlocks.TANK.get().defaultBlockState());
         if (h.getBlockEntity(rel) instanceof TankBlockEntity be) {
             be.setGlassId(glass);
@@ -158,7 +158,7 @@ public final class StyleGameTests {
         TankInteractions.changeWater(level, c, 1500);
         c.getTank().setName("M10 tank");
         CompoundTag be = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(be.getInt("schema") >= 6 && "clean".equals(be.getString("style")), "M11 and later write schema 6+ with the style");
+        h.assertTrue(be.getIntOr("schema", 0) >= 6 && "clean".equals(be.getStringOr("style", "")), "M11 and later write schema 6+ with the style");
         be.putInt("schema", 5);
         be.remove("style");
         c.loadWithComponents(be, level.registryAccess());
@@ -183,7 +183,7 @@ public final class StyleGameTests {
         ServerLevel level = h.getLevel();
         add(h, new BlockPos(2, 1, 2), LIGHT_BLUE, TankStyle.TEXTURED);
         CompoundTag d = InfoData.tank(level, h.absolutePos(new BlockPos(2, 1, 2)));
-        h.assertTrue(d != null && LIGHT_BLUE.toString().equals(d.getString("glass")) && "textured".equals(d.getString("style")), "glass in the info data: " + d);
+        h.assertTrue(d != null && LIGHT_BLUE.toString().equals(d.getStringOr("glass", "")) && "textured".equals(d.getStringOr("style", "")), "glass in the info data: " + d);
         List<Component> lines = InfoLines.tank(d, false);
         boolean found = false;
         for (Component l : lines) {
@@ -198,7 +198,7 @@ public final class StyleGameTests {
         h.assertTrue(found, "overlay line with the localized glass name: " + lines);
         add(h, new BlockPos(6, 1, 2), GLASS, TankStyle.CLEAN);
         CompoundTag dc = InfoData.tank(level, h.absolutePos(new BlockPos(6, 1, 2)));
-        h.assertTrue("clean".equals(dc.getString("style")), "clean style in the info data");
+        h.assertTrue("clean".equals(dc.getStringOr("style", "")), "clean style in the info data");
         // glass of a removed mod: the id is shown
         Component gone = InfoLines.glassLine("othermod:gone_glass", "textured");
         h.assertTrue(gone.getString().contains("othermod:gone_glass"), "unknown glass shows its id: " + gone.getString());
@@ -220,10 +220,10 @@ public final class StyleGameTests {
             b.setNoGravity(true);
         }
         Vec3 centre = Vec3.atCenterOf(h.absolutePos(new BlockPos(3, 1, 3)));
-        male.moveTo(centre.x - 0.4, centre.y, centre.z, 0F, 0F);
-        female.moveTo(centre.x + 0.4, centre.y, centre.z, 0F, 0F);
+        male.snapTo(centre.x - 0.4, centre.y, centre.z, 0F, 0F);
+        female.snapTo(centre.x + 0.4, centre.y, centre.z, 0F, 0F);
         ServerPlayer p = MockPlayers.serverPlayer(h);
-        p.moveTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
+        p.snapTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
         p.lookAt(EntityAnchorArgument.Anchor.EYES, centre);
         // no mirror: nothing happens
         h.assertTrue(!MirrorStickItem.holds(p), "empty hands");
@@ -240,10 +240,10 @@ public final class StyleGameTests {
             h.assertTrue(male.isFlaring(), "male flares (synced flag)");
             h.assertTrue(!female.isFlaring(), "female does not");
             CompoundTag info = InfoData.betta(male);
-            h.assertTrue(info.getBoolean("trained") && info.getBoolean("flaring"), "info overlay shows the training: " + info);
+            h.assertTrue(info.getBooleanOr("trained", false) && info.getBooleanOr("flaring", false), "info overlay shows the training: " + info);
             // an opaque wall between the player and the tank blocks the view
             for (int x = 1; x <= 5; x++) for (int y = 1; y <= 3; y++) h.setBlock(new BlockPos(x, y, 1), Blocks.STONE);
-            p.moveTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
+            p.snapTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
             p.lookAt(EntityAnchorArgument.Anchor.EYES, centre);
             h.assertTrue(MirrorStickItem.flareNear(level, p) == 0, "no flare through stone");
             p.discard();
@@ -266,11 +266,11 @@ public final class StyleGameTests {
         male.setNoGravity(true);
         Vec3 centre = Vec3.atCenterOf(h.absolutePos(new BlockPos(3, 1, 3)));
         ServerPlayer p = MockPlayers.serverPlayer(h);
-        p.moveTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
+        p.snapTo(centre.x, centre.y - 1.62 + 0.1, centre.z - 3.5, 0F, 0F);
         p.lookAt(EntityAnchorArgument.Anchor.EYES, centre);
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.MIRROR_STICK.get()));
         // nose to the mirror (the player is to the north: yaw 180)
-        male.moveTo(centre.x, centre.y, centre.z, 180F, 0F);
+        male.snapTo(centre.x, centre.y, centre.z, 180F, 0F);
         male.setYBodyRot(180F);
         Vec3 start = male.position();
         h.onEachTick(() -> {

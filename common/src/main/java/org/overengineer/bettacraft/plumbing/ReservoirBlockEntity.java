@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -27,7 +30,7 @@ public class ReservoirBlockEntity extends BlockEntity {
 
     private void changed() {
         setChanged();
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState s = getBlockState();
         int fill = (int) Math.ceil(8.0 * water.amount() / CAPACITY);
         if (s.hasProperty(WaterDeviceBlock.FILL) && s.getValue(WaterDeviceBlock.FILL) != fill) {
@@ -43,14 +46,19 @@ public class ReservoirBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         water.save(tag, registries);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         water.load(tag, registries);
     }
 }

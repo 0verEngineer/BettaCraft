@@ -55,9 +55,9 @@ final class DevClientSmokeM9 {
         then(1, () -> server(this::build));
         // the glowstone light has spread now: hatch one batch of nauplii
         then(20, () -> server(p -> {
-            if (p.serverLevel().getBlockEntity(hatchPos) instanceof CultureTubBlockEntity t) {
-                int n = t.advance(p.serverLevel(), 1.05);
-                LOGGER.info("[smoketest] M9 hatchery: {} batch(es), {} (blocked {})", n, t.items().getStackInSlot(CultureTubBlockEntity.OUTPUT), t.blocker(p.serverLevel()));
+            if (p.level().getBlockEntity(hatchPos) instanceof CultureTubBlockEntity t) {
+                int n = t.advance(p.level(), 1.05);
+                LOGGER.info("[smoketest] M9 hatchery: {} batch(es), {} (blocked {})", n, t.items().getStackInSlot(CultureTubBlockEntity.OUTPUT), t.blocker(p.level()));
             }
         }));
         then(1, () -> mc.options.hideGui = true);
@@ -73,7 +73,7 @@ final class DevClientSmokeM9 {
         then(50, () -> shot("overlay_larva_tub"));
         // the tank menu: water tab, then the overview with the warning line
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankMin);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tankMin);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -90,7 +90,7 @@ final class DevClientSmokeM9 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos base = p.blockPosition().offset(0, 2, 100);
         tankMin = base;
         for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) for (int x = 0; x < 3; x++) {
@@ -132,7 +132,7 @@ final class DevClientSmokeM9 {
         for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
             if (!(e instanceof BettaEntity b)) continue;
             SmokeFreeze.freeze(b, true);
-            b.moveTo(tankMin.getX() + 1.8 + i * 0.6, tankMin.getY() + 0.7 + i * 0.4, tankMin.getZ() + 0.8, 90F - i * 180F, 0F);
+            b.snapTo(tankMin.getX() + 1.8 + i * 0.6, tankMin.getY() + 0.7 + i * 0.4, tankMin.getZ() + 0.8, 90F - i * 180F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -162,7 +162,7 @@ final class DevClientSmokeM9 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

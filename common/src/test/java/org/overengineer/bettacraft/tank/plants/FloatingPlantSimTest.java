@@ -260,7 +260,7 @@ class FloatingPlantSimTest {
         weird.putString("type", "giant_kelp");
         weird.putDouble("x", 0.5);
         weird.putDouble("z", 0.5);
-        bad.getList("plants", 10).add(weird);
+        bad.getListOrEmpty("plants").add(weird);
         assertEquals(2, TankData.load(bad).plants().size());
         // a piece of the tank keeps only the plants above its own blocks
         TankData left = TankData.create(List.of(new BlockPos(0, 64, 0)), 16);

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -237,19 +240,24 @@ public class CalciumReactorBlockEntity extends BlockEntity implements MenuProvid
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         tag.putDouble("carry", carry);
         tag.putInt("status", status);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
-        double c = tag.getDouble("carry");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        double c = tag.getDoubleOr("carry", 0d);
         carry = Double.isFinite(c) ? Math.max(0, c) : 0;
-        status = tag.getInt("status");
+        status = tag.getIntOr("status", 0);
     }
 }

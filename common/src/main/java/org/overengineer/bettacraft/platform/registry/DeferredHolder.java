@@ -11,7 +11,7 @@ import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 
 /**
@@ -27,7 +27,7 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         this.key = Objects.requireNonNull(key);
     }
 
-    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, ResourceLocation id) {
+    public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier id) {
         return new DeferredHolder<>(ResourceKey.create(registryKey, id));
     }
 
@@ -37,13 +37,13 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
 
     @SuppressWarnings("unchecked")
     private Registry<R> registry() {
-        return (Registry<R>) BuiltInRegistries.REGISTRY.get(key.registry());
+        return (Registry<R>) BuiltInRegistries.REGISTRY.getValue(key.registry());
     }
 
     private Holder<R> bind(boolean required) {
         if (holder == null) {
             Registry<R> reg = registry();
-            if (reg != null) holder = reg.getHolder(key).orElse(null);
+            if (reg != null) holder = reg.get(key).<Holder<R>>map(h -> h).orElse(null);
             if (holder == null && required) throw new IllegalStateException("Registry object not present: " + key);
         }
         return holder;
@@ -64,8 +64,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         return isBound() ? Optional.of(get()) : Optional.empty();
     }
 
-    public ResourceLocation getId() {
-        return key.location();
+    public Identifier getId() {
+        return key.identifier();
     }
 
     public ResourceKey<R> getKey() {
@@ -84,8 +84,8 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     }
 
     @Override
-    public boolean is(ResourceLocation id) {
-        return key.location().equals(id);
+    public boolean is(Identifier id) {
+        return key.identifier().equals(id);
     }
 
     @Override

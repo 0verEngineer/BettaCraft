@@ -126,7 +126,7 @@ public final class PathfindingGameTests {
         h.assertTrue(way.stream().anyMatch(p -> p.z > t.min().getZ() + 1.45), "through the gap at the back");
 
         DwarfFrogEntity frog = frogIn(h, c);
-        frog.moveTo(from.x, from.y, from.z, 0, 0);
+        frog.snapTo(from.x, from.y, from.z, 0, 0);
         frog.setBreathForTest(DwarfFrogEntity.maxBreath());
         AtomicInteger inside = new AtomicInteger();
         frog.goToForTest(to);

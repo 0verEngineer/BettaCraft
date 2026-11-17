@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.filter;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -407,7 +410,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         if (p == power) return;
         power = p;
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     @Override
@@ -435,13 +438,13 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         t.putInt("outlets", outlets);
         t.putInt("flow", flow);
         t.putDouble("clean", cleanBlocks);
-        if (tank != null) t.put("tank", NbtUtils.writeBlockPos(tank));
+        if (tank != null) t.put("tank", NbtCompat.writeBlockPos(tank));
         t.putIntArray("media", media);
         t.putBoolean("retrofit", retrofit);
         net.minecraft.nbt.ListTag l = new net.minecraft.nbt.ListTag();
         for (TankLink k : tanks) {
             CompoundTag e = new CompoundTag();
-            e.put("pos", NbtUtils.writeBlockPos(k.tank()));
+            e.put("pos", NbtCompat.writeBlockPos(k.tank()));
             e.putString("status", k.status().name());
             e.putInt("flow", k.flow());
             e.putDouble("clean", k.clean());
@@ -453,35 +456,35 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     }
 
     private void read(CompoundTag t) {
-        power = t.contains("power") ? Math.max(0, Math.min(10, t.getInt("power"))) : 10;
+        power = t.contains("power") ? Math.max(0, Math.min(10, t.getIntOr("power", 0))) : 10;
         try {
-            problem = MultiblockFilter.Problem.valueOf(t.getString("problem"));
+            problem = MultiblockFilter.Problem.valueOf(t.getStringOr("problem", ""));
         } catch (IllegalArgumentException e) {
             problem = MultiblockFilter.Problem.NONE;
         }
-        chambers = t.getInt("chambers");
-        inlets = t.getInt("inlets");
-        outlets = t.getInt("outlets");
-        flow = t.getInt("flow");
-        cleanBlocks = t.getDouble("clean");
-        tank = t.contains("tank") ? NbtUtils.readBlockPos(t, "tank").orElse(null) : null;
-        media = t.getIntArray("media");
-        retrofit = t.getBoolean("retrofit");
+        chambers = t.getIntOr("chambers", 0);
+        inlets = t.getIntOr("inlets", 0);
+        outlets = t.getIntOr("outlets", 0);
+        flow = t.getIntOr("flow", 0);
+        cleanBlocks = t.getDoubleOr("clean", 0d);
+        tank = t.contains("tank") ? NbtCompat.readBlockPos(t, "tank").orElse(null) : null;
+        media = t.getIntArray("media").orElse(new int[0]);
+        retrofit = t.getBooleanOr("retrofit", false);
         List<TankLink> l = new ArrayList<>();
-        var list = t.getList("tanks", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        var list = t.getListOrEmpty("tanks");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag e = list.getCompound(i);
+            CompoundTag e = list.getCompoundOrEmpty(i);
             MultiblockFilter.LinkStatus st;
             try {
-                st = MultiblockFilter.LinkStatus.valueOf(e.getString("status"));
+                st = MultiblockFilter.LinkStatus.valueOf(e.getStringOr("status", ""));
             } catch (IllegalArgumentException x) {
                 st = MultiblockFilter.LinkStatus.OK;
             }
-            BlockPos p = NbtUtils.readBlockPos(e, "pos").orElse(null);
-            if (p != null) l.add(new TankLink(p, st, e.getInt("flow"), e.getDouble("clean"), e.getInt("percent")));
+            BlockPos p = NbtCompat.readBlockPos(e, "pos").orElse(null);
+            if (p != null) l.add(new TankLink(p, st, e.getIntOr("flow", 0), e.getDoubleOr("clean", 0d), e.getIntOr("percent", 0)));
         }
         tanks = l;
-        int[] ports = t.getIntArray("ports");
+        int[] ports = t.getIntArray("ports").orElse(new int[0]);
         freshPorts = ports.length == 4 ? ports[0] : 0;
         wastePorts = ports.length == 4 ? ports[1] : 0;
         freshMb = ports.length == 4 ? ports[2] : 0;
@@ -489,19 +492,24 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         org.overengineer.bettacraft.data.schema.Schemas.FILTER_PUMP_HEAD.stamp(tag);
         write(tag);
         energy.save(tag);
         spring.save(tag, "spring");
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         // M40: the schema stamp is only on the saved block entity, not on the sync tag (which carries "retrofit" itself)
-        CompoundTag tag = level != null && level.isClientSide ? raw : org.overengineer.bettacraft.data.schema.Schemas.FILTER_PUMP_HEAD.migrate(raw);
+        CompoundTag tag = level != null && level.isClientSide() ? raw : org.overengineer.bettacraft.data.schema.Schemas.FILTER_PUMP_HEAD.migrate(raw);
         read(tag);
         energy.load(tag);
         spring.load(tag, "spring");

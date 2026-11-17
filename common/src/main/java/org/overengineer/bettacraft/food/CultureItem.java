@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
@@ -63,8 +66,9 @@ public class CultureItem extends Item {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
-        if (level.isClientSide || (level.getGameTime() + slot) % 20 != 0) return;
+    public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, Entity entity, @javax.annotation.Nullable net.minecraft.world.entity.EquipmentSlot slot) {
+        // M52b: server only, no slot number any more (1.21.5): spread over the ticks by the stack instead
+        if ((level.getGameTime() + System.identityHashCode(stack)) % 20 != 0) return;
         ItemStack ripe = ripen(stack, level, entity);
         if (ripe == null || !(entity instanceof Player p)) return;
         var inv = p.getInventory();
@@ -77,7 +81,7 @@ public class CultureItem extends Item {
     }
 
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-        if (!entity.level().isClientSide && entity.tickCount % 20 == 0) {
+        if (!entity.level().isClientSide() && entity.tickCount % 20 == 0) {
             ItemStack ripe = ripen(stack, entity.level(), entity);
             if (ripe != null) entity.setItem(ripe);
         }
@@ -85,7 +89,8 @@ public class CultureItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         double days = ServerConfig.getOr(ServerConfig.FOOD_CULTURE_DAYS, 1.0);
         tooltip.add(Component.translatable(needsLight ? "tooltip.bettacraft.culture.light" : "tooltip.bettacraft.culture",
                 String.format(java.util.Locale.ROOT, "%.1f", days)).withStyle(ChatFormatting.GRAY));

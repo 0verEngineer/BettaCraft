@@ -31,12 +31,12 @@ public class InteriorWallBlock extends Block {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    protected int getLightBlock(BlockState state) {
         return 0;
     }
 

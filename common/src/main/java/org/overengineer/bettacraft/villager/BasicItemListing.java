@@ -1,10 +1,9 @@
 package org.overengineer.bettacraft.villager;
 
 import java.util.Optional;
-import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
@@ -42,10 +41,10 @@ public class BasicItemListing implements VillagerTrades.ItemListing {
     }
 
     @Override
-    public @Nullable MerchantOffer getOffer(Entity trader, RandomSource random) {
-        ItemCost cost = new ItemCost(price.getItemHolder(), price.getCount(), DataComponentPredicate.EMPTY, price);
+    public @Nullable MerchantOffer getOffer(net.minecraft.server.level.ServerLevel level, Entity trader, RandomSource random) {
+        ItemCost cost = new ItemCost(price.getItemHolder(), price.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price);
         Optional<ItemCost> second = price2.isEmpty() ? Optional.empty()
-                : Optional.of(new ItemCost(price2.getItemHolder(), price2.getCount(), DataComponentPredicate.EMPTY, price2));
+                : Optional.of(new ItemCost(price2.getItemHolder(), price2.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price2));
         return new MerchantOffer(cost, second, forSale, maxTrades, xp, priceMult);
     }
 }

@@ -123,7 +123,7 @@ public final class LiveFoodGameTests {
         ServerPlayer player = MockPlayers.serverPlayer(h);
         h.assertTrue(d.harvest(level, player, LiveCultureBlockEntity.NET_PORTIONS), "the net scoops worms");
         ItemStack caught = ItemStack.EMPTY;
-        for (ItemStack s : player.getInventory().items) if (s.is(ModItems.TUBIFEX.get())) caught = s;
+        for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (s.is(ModItems.TUBIFEX.get())) caught = s;
         h.assertTrue(caught.getCount() == LiveCultureBlockEntity.NET_PORTIONS && LiveFood.poor(caught), "four poor worms: " + caught);
         d.setWater(1000);
         double foul = d.model().foul;

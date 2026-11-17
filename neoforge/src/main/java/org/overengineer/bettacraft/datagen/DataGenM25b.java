@@ -9,7 +9,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -149,8 +149,8 @@ final class DataGenM25b {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(ModTags.CO2_GAS).addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "carbon_dioxide"))
-                    .addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "co2"));
+            tag(ModTags.CO2_GAS).addOptionalTag(Identifier.fromNamespaceAndPath("c", "carbon_dioxide"))
+                    .addOptionalTag(Identifier.fromNamespaceAndPath("c", "co2"));
         }
     }
 }

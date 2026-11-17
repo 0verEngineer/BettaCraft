@@ -81,7 +81,7 @@ final class DevClientSmokeM29 {
             partB();
             return;
         }
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 700, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 700, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(80, () -> server(this::pose));
@@ -131,7 +131,7 @@ final class DevClientSmokeM29 {
     private final java.util.Map<String, Vec3> bettaAt = new java.util.concurrent.ConcurrentHashMap<>();
 
     private void partC() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 820, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 820, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::buildC));
         then(1, () -> mc.options.hideGui = true);
         then(80, () -> server(this::poseC));
@@ -180,7 +180,7 @@ final class DevClientSmokeM29 {
     }
 
     private void buildC(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
@@ -223,7 +223,7 @@ final class DevClientSmokeM29 {
     }
 
     private void poseC(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity a = TankMultiblock.getController(level, dwarfs);
         if (a != null) row(level, a, 7, new double[]{1.35, 0.85, 0.35}, 0.8, firstOf);
         TankBlockEntity b = TankMultiblock.getController(level, big);
@@ -235,7 +235,7 @@ final class DevClientSmokeM29 {
         for (Entity e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(level, bt.getTank())) {
             if (!(e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity f)) continue;
             Vec3 at = new Vec3(w.box().minX + 0.45 + (i % 2) * 1.4, w.box().minY + (i < 2 ? 1.25 : 0.55), w.box().minZ + 0.6);
-            f.moveTo(at.x, at.y, at.z, -90F, 0F);
+            f.snapTo(at.x, at.y, at.z, -90F, 0F);
             SmokeFreeze.freeze(f, true);
             f.setDeltaMovement(Vec3.ZERO);
             f.setYRot(-90F);
@@ -256,7 +256,7 @@ final class DevClientSmokeM29 {
             TankmateSpecies.GARRA_RUFA, TankmateSpecies.GREEN_SPOTTED_PUFFER);
 
     private void partB() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 760, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 760, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::buildB));
         then(1, () -> mc.options.hideGui = true);
         then(80, () -> server(this::poseB));
@@ -288,7 +288,7 @@ final class DevClientSmokeM29 {
     }
 
     private void buildB(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
@@ -310,7 +310,7 @@ final class DevClientSmokeM29 {
     }
 
     private void poseB(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity a = TankMultiblock.getController(level, dwarfs);
         if (a != null) row(level, a, 6, new double[]{1.3, 0.55}, 0.95, firstOf);
         TankBlockEntity b = TankMultiblock.getController(level, big);
@@ -320,7 +320,7 @@ final class DevClientSmokeM29 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
@@ -354,7 +354,7 @@ final class DevClientSmokeM29 {
 
     /** Every fish frozen in a row (side view from the north), the brood pair at its eggs on the slate. */
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity d = TankMultiblock.getController(level, dwarfs);
         if (d != null) row(level, d, 7, new double[]{1.35, 0.85, 0.35}, 0.8, firstOf);
         TankBlockEntity b = TankMultiblock.getController(level, big);
@@ -394,7 +394,7 @@ final class DevClientSmokeM29 {
     }
 
     private static void freezeAt(TankmateEntity m, Vec3 at, float yaw) {
-        m.moveTo(at.x, at.y, at.z, yaw, 0F);
+        m.snapTo(at.x, at.y, at.z, yaw, 0F);
         SmokeFreeze.freeze(m, true);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
@@ -458,7 +458,7 @@ final class DevClientSmokeM29 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

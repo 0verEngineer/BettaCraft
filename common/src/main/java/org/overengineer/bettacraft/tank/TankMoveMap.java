@@ -105,7 +105,7 @@ public record TankMoveMap(BlockPos from, BlockPos to, int[] r) {
 
     public Direction direction(Direction d) {
         Vec3 v = vector(d.getStepX(), d.getStepY(), d.getStepZ());
-        return Direction.getNearest(v.x, v.y, v.z);
+        return Direction.getApproximateNearest(v.x, v.y, v.z);
     }
 
     /** An entity's yaw (degrees, 0 = facing south) after the move; unchanged when its heading would point up or down. */

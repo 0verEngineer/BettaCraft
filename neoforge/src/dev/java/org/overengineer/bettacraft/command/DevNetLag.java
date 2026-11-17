@@ -37,8 +37,8 @@ public final class DevNetLag {
         if (!ON || !(event.getEntity() instanceof ServerPlayer p) || p.connection == null) return;
         var channel = p.connection.getConnection().channel();
         if (channel == null || channel.pipeline().get("bettacraft_lag") != null || channel.pipeline().get("packet_handler") == null) return;
-        channel.pipeline().addBefore("packet_handler", "bettacraft_lag", new Lag(p.getGameProfile().getName().hashCode()));
-        LOGGER.info("[smoketest] MP lag on for {}: {}-{} ms both ways, every second interior delta dropped", p.getGameProfile().getName(), MIN_MS, MAX_MS);
+        channel.pipeline().addBefore("packet_handler", "bettacraft_lag", new Lag(p.getGameProfile().name().hashCode()));
+        LOGGER.info("[smoketest] MP lag on for {}: {}-{} ms both ways, every second interior delta dropped", p.getGameProfile().name(), MIN_MS, MAX_MS);
     }
 
     @SubscribeEvent

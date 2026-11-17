@@ -322,12 +322,12 @@ public final class FrogBreeding {
     /** A new froglet in the tank at {@code p}. */
     @Nullable
     public static DwarfFrogEntity froglet(ServerLevel level, TankBlockEntity c, Vec3 p) {
-        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
+        DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (f == null) return null;
         f.makeFroglet();
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         Vec3 at = w.clamp(p, 0.2, 0.05, 0.2);
-        f.moveTo(at.x, at.y, at.z, level.getRandom().nextFloat() * 360F, 0F);
+        f.snapTo(at.x, at.y, at.z, level.getRandom().nextFloat() * 360F, 0F);
         f.setPersistenceRequired();
         TankInhabitants.adopt(f, c);
         if (!level.addFreshEntity(f)) return null;

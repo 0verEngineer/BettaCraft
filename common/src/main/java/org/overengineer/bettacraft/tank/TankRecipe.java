@@ -28,7 +28,7 @@ public class TankRecipe extends ShapedRecipe {
     }
 
     public static TankRecipe of(ShapedRecipe base) {
-        return new TankRecipe(base.getGroup(), base.category(), base.pattern, base.getResultItem(null), base.showNotification());
+        return new TankRecipe(base.group(), base.category(), base.pattern, base.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, null), base.showNotification());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TankRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<TankRecipe> getSerializer() {
         return ModRecipes.TANK.get();
     }
 

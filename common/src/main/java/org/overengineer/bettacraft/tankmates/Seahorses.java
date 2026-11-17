@@ -83,7 +83,7 @@ public final class Seahorses {
         if (t.waterMb() <= 0) return List.of();
         var region = TankmateSpots.region(level.getServer(), t);
         if (region == null) return List.of();
-        TankTerrain terrain = new TankTerrain(t, level.getServer(), region, level.isDay());
+        TankTerrain terrain = new TankTerrain(t, level.getServer(), region, level.isBrightOutside());
         TankWaterVolume w = new TankWaterVolume(t);
         var box = w.box();
         double surface = w.surface();

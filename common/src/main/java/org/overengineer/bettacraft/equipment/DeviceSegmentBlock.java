@@ -42,7 +42,7 @@ public class DeviceSegmentBlock extends SegmentBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!Features.enabled(Feature.POWER_REGULATOR)) return InteractionResult.PASS;
-        if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
+        return InteractionResult.SUCCESS;
     }
 }

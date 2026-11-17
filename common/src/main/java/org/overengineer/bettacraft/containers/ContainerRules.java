@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.containers;
 
+import net.minecraft.world.InteractionResult;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MobBucketItem;
@@ -62,7 +62,7 @@ public final class ContainerRules {
      */
     public static boolean release(Level level, Player player, InteractionHand hand, ItemStack stack) {
         if (!holdsAnimals(stack)) return true;
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             confirmScreen.accept(hand, stack.copy());
             return false;
         }
@@ -79,7 +79,7 @@ public final class ContainerRules {
         if (!holdsAnimals(stack) || player.isSpectator()) return;
         CONFIRMED.add(player.getUUID());
         try {
-            player.gameMode.useItem(player, player.serverLevel(), stack, hand);
+            player.gameMode.useItem(player, player.level(), stack, hand);
             player.swing(hand, true);
         } finally {
             CONFIRMED.remove(player.getUUID());
@@ -108,7 +108,7 @@ public final class ContainerRules {
     }
 
     /** The result of a use that waits for the confirmation: nothing happens, no swing. */
-    public static InteractionResultHolder<ItemStack> waiting(ItemStack stack) {
-        return InteractionResultHolder.fail(stack);
+    public static InteractionResult waiting(ItemStack stack) {
+        return InteractionResult.FAIL;
     }
 }

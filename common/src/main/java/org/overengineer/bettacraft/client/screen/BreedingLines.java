@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,56 +43,56 @@ final class BreedingLines {
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
         }
         // M19: a tank without bettas but with tankmates shows their breeding only
-        int[] bs = b.getIntArray("stages");
+        int[] bs = b.getIntArray("stages").orElse(new int[0]);
         int bettas = 0;
         for (int x : bs) bettas += x;
-        if (bettas == 0 && !b.contains("nest", Tag.TAG_COMPOUND) && !b.getList("tankmates", Tag.TAG_COMPOUND).isEmpty()) {
+        if (bettas == 0 && !NbtCompat.has(b, "nest", Tag.TAG_COMPOUND) && !b.getListOrEmpty("tankmates").isEmpty()) {
             tankmates(b, out);
             return out;
         }
         // nest
-        if (b.contains("nest", Tag.TAG_COMPOUND)) {
-            CompoundTag n = b.getCompound("nest");
-            int pct = Math.round(n.getFloat("progress") * 100);
-            switch (n.getString("phase")) {
+        if (NbtCompat.has(b, "nest", Tag.TAG_COMPOUND)) {
+            CompoundTag n = b.getCompoundOrEmpty("nest");
+            int pct = Math.round(n.getFloatOr("progress", 0f) * 100);
+            switch (n.getStringOr("phase", "")) {
                 case "building" -> out.add(header("gui.bettacraft.breeding.nest.building", pct));
                 case "built" -> out.add(header("gui.bettacraft.breeding.nest.built"));
                 default -> {
-                    LifeStage stage = LifeStage.byId(n.getString("stage"));
+                    LifeStage stage = LifeStage.byId(n.getStringOr("stage", ""));
                     out.add(header(stage == LifeStage.LARVA ? "gui.bettacraft.breeding.nest.larva" : "gui.bettacraft.breeding.nest.egg",
-                            n.getInt("eggs")));
-                    out.add(Component.translatable("gui.bettacraft.breeding.nest.free_in", f1(n.getFloat("days_left")),
-                            Math.round(n.getFloat("care") * 100)).withStyle(ChatFormatting.GRAY));
+                            n.getIntOr("eggs", 0)));
+                    out.add(Component.translatable("gui.bettacraft.breeding.nest.free_in", f1(n.getFloatOr("days_left", 0f)),
+                            Math.round(n.getFloatOr("care", 0f) * 100)).withStyle(ChatFormatting.GRAY));
                 }
             }
         } else {
             out.add(header("gui.bettacraft.breeding.nest.none"));
-            CompoundTag c = b.getCompound("conditions");
-            out.add(check(c.getBoolean("male") && c.getBoolean("female"), Component.translatable("gui.bettacraft.breeding.cond.pair")));
-            out.add(check(c.getBoolean("temp"), Component.translatable("gui.bettacraft.breeding.cond.temp", f1(b.getFloat("min_temp")),
-                    f1(b.getFloat("max_temp")), f1(b.getFloat("temp")))));
-            out.add(check(c.getBoolean("male_fit"), Component.translatable("gui.bettacraft.breeding.cond.male_fit")));
-            out.add(check(c.getBoolean("female_fit") && c.getFloat("cooldown") <= 0,
-                    c.getFloat("cooldown") > 0 ? Component.translatable("gui.bettacraft.breeding.cond.cooldown", f1(c.getFloat("cooldown")))
+            CompoundTag c = b.getCompoundOrEmpty("conditions");
+            out.add(check(c.getBooleanOr("male", false) && c.getBooleanOr("female", false), Component.translatable("gui.bettacraft.breeding.cond.pair")));
+            out.add(check(c.getBooleanOr("temp", false), Component.translatable("gui.bettacraft.breeding.cond.temp", f1(b.getFloatOr("min_temp", 0f)),
+                    f1(b.getFloatOr("max_temp", 0f)), f1(b.getFloatOr("temp", 0f)))));
+            out.add(check(c.getBooleanOr("male_fit", false), Component.translatable("gui.bettacraft.breeding.cond.male_fit")));
+            out.add(check(c.getBooleanOr("female_fit", false) && c.getFloatOr("cooldown", 0f) <= 0,
+                    c.getFloatOr("cooldown", 0f) > 0 ? Component.translatable("gui.bettacraft.breeding.cond.cooldown", f1(c.getFloatOr("cooldown", 0f)))
                             : Component.translatable("gui.bettacraft.breeding.cond.female_fit")));
-            out.add(Component.translatable(c.getBoolean("live_food") ? "gui.bettacraft.breeding.cond.live_yes" : "gui.bettacraft.breeding.cond.live_no")
+            out.add(Component.translatable(c.getBooleanOr("live_food", false) ? "gui.bettacraft.breeding.cond.live_yes" : "gui.bettacraft.breeding.cond.live_no")
                     .withStyle(ChatFormatting.GRAY));
-            if (c.getBoolean("mirror")) {
+            if (c.getBooleanOr("mirror", false)) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.mirror").withStyle(ChatFormatting.GRAY));
             }
-            if (c.getBoolean("aquatic")) {
+            if (c.getBooleanOr("aquatic", false)) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.aquatic").withStyle(ChatFormatting.GRAY));
             }
-            if (c.getBoolean("plants")) {
+            if (c.getBooleanOr("plants", false)) {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.plants").withStyle(ChatFormatting.GRAY));
             }
-            if (c.getFloat("ready") > 0) {
-                out.add(Component.translatable("gui.bettacraft.breeding.cond.ready", Math.round(c.getFloat("ready") * 100))
+            if (c.getFloatOr("ready", 0f) > 0) {
+                out.add(Component.translatable("gui.bettacraft.breeding.cond.ready", Math.round(c.getFloatOr("ready", 0f) * 100))
                         .withStyle(ChatFormatting.AQUA));
             }
         }
         // young fish
-        int[] st = b.getIntArray("stages");
+        int[] st = b.getIntArray("stages").orElse(new int[0]);
         if (st.length == LifeStage.values().length) {
             int fry = st[LifeStage.FRY.ordinal()], juv = st[LifeStage.JUVENILE.ordinal()], sub = st[LifeStage.SUBADULT.ordinal()];
             out.add(Component.translatable("gui.bettacraft.breeding.young", fry, juv, sub)
@@ -99,28 +100,28 @@ final class BreedingLines {
             if (fry > 0) out.add(Component.translatable("gui.bettacraft.breeding.fry_food").withStyle(ChatFormatting.GRAY));
         }
         // parents + prediction
-        if (b.getBoolean("prediction_hidden")) {
+        if (b.getBooleanOr("prediction_hidden", false)) {
             // M22.3: the parents' genes are not analysed yet
-            out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getString("father")),
-                    TankCare.argComponent(b.getString("mother"))));
+            out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getStringOr("father", "")),
+                    TankCare.argComponent(b.getStringOr("mother", ""))));
             out.add(Component.translatable("gui.bettacraft.breeding.prediction_hidden").withStyle(ChatFormatting.GRAY));
-        } else if (b.contains("prediction", Tag.TAG_LIST)) {
-            out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getString("father")),
-                    TankCare.argComponent(b.getString("mother"))));
-            BettaGenotype father = BettaGenotype.load(b.getCompound("father_genome"));
-            BettaGenotype mother = BettaGenotype.load(b.getCompound("mother_genome"));
+        } else if (NbtCompat.has(b, "prediction", Tag.TAG_LIST)) {
+            out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getStringOr("father", "")),
+                    TankCare.argComponent(b.getStringOr("mother", ""))));
+            BettaGenotype father = BettaGenotype.load(b.getCompoundOrEmpty("father_genome"));
+            BettaGenotype mother = BettaGenotype.load(b.getCompoundOrEmpty("mother_genome"));
             out.add(header("gui.bettacraft.breeding.prediction"));
-            ListTag pred = b.getList("prediction", Tag.TAG_COMPOUND);
+            ListTag pred = b.getListOrEmpty("prediction");
             for (int i = 0; i < pred.size(); i++) {
-                CompoundTag l = pred.getCompound(i);
-                Locus locus = BettaLoci.byId(l.getString("locus"));
+                CompoundTag l = pred.getCompoundOrEmpty(i);
+                Locus locus = BettaLoci.byId(l.getStringOr("locus", ""));
                 if (locus == null) continue;
                 MutableComponent line = Component.translatable(BettaLoci.translationKey(locus)).append(": ");
-                ListTag outs = l.getList("o", Tag.TAG_COMPOUND);
+                ListTag outs = l.getListOrEmpty("o");
                 for (int k = 0; k < Math.min(4, outs.size()); k++) {
-                    CompoundTag o = outs.getCompound(k);
+                    CompoundTag o = outs.getCompoundOrEmpty(k);
                     if (k > 0) line.append(", ");
-                    line.append(GenotypeText.allele(locus, o.getString("a"))).append(" " + Math.round(o.getFloat("p") * 100) + "%");
+                    line.append(GenotypeText.allele(locus, o.getStringOr("a", ""))).append(" " + Math.round(o.getFloatOr("p", 0f) * 100) + "%");
                 }
                 if (outs.size() > 4) line.append(", ...");
                 out.add(line);
@@ -137,61 +138,61 @@ final class BreedingLines {
 
     /** M19: the tankmates' breeding, species by species, and the breeding box. */
     static void tankmates(CompoundTag b, List<Component> out) {
-        ListTag list = b.getList("tankmates", Tag.TAG_COMPOUND);
-        if (b.getBoolean("box")) {
-            out.add(header("gui.bettacraft.breeding.tm.box", b.getInt("box_fry"), b.getInt("box_cap")));
+        ListTag list = b.getListOrEmpty("tankmates");
+        if (b.getBooleanOr("box", false)) {
+            out.add(header("gui.bettacraft.breeding.tm.box", b.getIntOr("box_fry", 0), b.getIntOr("box_cap", 0)));
         }
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag d = list.getCompound(i);
-            var s = org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(d.getString("species"));
+            CompoundTag d = list.getCompoundOrEmpty(i);
+            var s = org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(d.getStringOr("species", ""));
             if (s == null) continue;
             out.add(header("gui.bettacraft.breeding.tm.species", Component.translatable(s.translationKey()), Component.translatable(s.breedingKey()),
-                    d.getInt("males"), d.getInt("females"), d.getInt("young")));
+                    d.getIntOr("males", 0), d.getIntOr("females", 0), d.getIntOr("young", 0)));
             if (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.NONE) {
                 out.add(Component.translatable("gui.bettacraft.breeding.tm.never").withStyle(ChatFormatting.GRAY));
                 continue;
             }
-            out.add(check(d.getBoolean("fit"), Component.translatable("gui.bettacraft.breeding.tm.pair")));
+            out.add(check(d.getBooleanOr("fit", false), Component.translatable("gui.bettacraft.breeding.tm.pair")));
             boolean cory = s.group() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Group.CORY;
             if (!cory) {
-                out.add(check(d.getBoolean("temp"), Component.translatable("gui.bettacraft.breeding.tm.temp", f1(s.breedMin()), f1(s.breedMax()))));
+                out.add(check(d.getBooleanOr("temp", false), Component.translatable("gui.bettacraft.breeding.tm.temp", f1(s.breedMin()), f1(s.breedMax()))));
             }
             switch (s.breeding()) {
                 case GLASS_EGGS -> {
-                    if (cory) out.add(check(d.getBoolean("cool"), Component.translatable("gui.bettacraft.breeding.tm.cool")));
+                    if (cory) out.add(check(d.getBooleanOr("cool", false), Component.translatable("gui.bettacraft.breeding.tm.cool")));
                 }
-                case CAVE, CICHLID_CAVE -> out.add(check(d.getInt("caves") > 0, Component.translatable("gui.bettacraft.breeding.tm.caves", d.getInt("caves"))));
-                case ANEMONE -> out.add(check(d.getInt("anemones") > 0, Component.translatable("gui.bettacraft.breeding.tm.anemones", d.getInt("anemones"))));
-                case SCATTER -> out.add(check(d.getInt("mops") > 0 || d.getFloat("plants") >= 0.005F, Component.translatable(
+                case CAVE, CICHLID_CAVE -> out.add(check(d.getIntOr("caves", 0) > 0, Component.translatable("gui.bettacraft.breeding.tm.caves", d.getIntOr("caves", 0))));
+                case ANEMONE -> out.add(check(d.getIntOr("anemones", 0) > 0, Component.translatable("gui.bettacraft.breeding.tm.anemones", d.getIntOr("anemones", 0))));
+                case SCATTER -> out.add(check(d.getIntOr("mops", 0) > 0 || d.getFloatOr("plants", 0f) >= 0.005F, Component.translatable(
                         s.broadLeafSpawner() ? "gui.bettacraft.breeding.tm.broad" : "gui.bettacraft.breeding.tm.medium",
-                        d.getInt("mops"), Math.round(d.getFloat("plants") * 1000) / 10.0F)));
+                        d.getIntOr("mops", 0), Math.round(d.getFloatOr("plants", 0f) * 1000) / 10.0F)));
                 case POUCH -> {
                     // M21.8 seahorses: hitching posts, full brood pouches
-                    out.add(check(d.getInt("posts") > 0, Component.translatable("gui.bettacraft.breeding.tm.posts", d.getInt("posts"))));
-                    if (d.getInt("gravid") > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.pouches", d.getInt("gravid"))
+                    out.add(check(d.getIntOr("posts", 0) > 0, Component.translatable("gui.bettacraft.breeding.tm.posts", d.getIntOr("posts", 0))));
+                    if (d.getIntOr("gravid", 0) > 0) out.add(Component.translatable("gui.bettacraft.breeding.tm.pouches", d.getIntOr("gravid", 0))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
                 }
                 case LIVEBEARER, MOUTH -> {
-                    if (d.getInt("gravid") > 0) out.add(Component.translatable(s.mouthbrooder() ? "gui.bettacraft.breeding.tm.mouth" : "gui.bettacraft.breeding.tm.gravid", d.getInt("gravid"))
+                    if (d.getIntOr("gravid", 0) > 0) out.add(Component.translatable(s.mouthbrooder() ? "gui.bettacraft.breeding.tm.mouth" : "gui.bettacraft.breeding.tm.gravid", d.getIntOr("gravid", 0))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
-                    if (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.LIVEBEARER && !d.getBoolean("box")) out.add(Component.translatable("gui.bettacraft.breeding.tm.no_box").withStyle(ChatFormatting.GRAY));
+                    if (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.LIVEBEARER && !d.getBooleanOr("box", false)) out.add(Component.translatable("gui.bettacraft.breeding.tm.no_box").withStyle(ChatFormatting.GRAY));
                 }
                 default -> {}
             }
             // M30 part c: a big species breeds only while the size rule leaves room for its young
-            if (s.isLarge() && d.contains("room")) out.add(check(d.getInt("room") > 0, Component.translatable("gui.bettacraft.breeding.tm.room", d.getInt("room"))));
-            ListTag cl = d.getList("clutches", Tag.TAG_COMPOUND);
+            if (s.isLarge() && d.contains("room")) out.add(check(d.getIntOr("room", 0) > 0, Component.translatable("gui.bettacraft.breeding.tm.room", d.getIntOr("room", 0))));
+            ListTag cl = d.getListOrEmpty("clutches");
             for (int k = 0; k < cl.size(); k++) {
-                CompoundTag c = cl.getCompound(k);
-                if (c.getBoolean("building")) {
+                CompoundTag c = cl.getCompoundOrEmpty(k);
+                if (c.getBooleanOr("building", false)) {
                     out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.tm.nest_building")).withStyle(ChatFormatting.AQUA));
                     continue;
                 }
-                if ("box".equals(c.getString("kind"))) continue;
-                String stage = c.getInt("stage") == 0 ? "eggs" : "larvae";
+                if ("box".equals(c.getStringOr("kind", ""))) continue;
+                String stage = c.getIntOr("stage", 0) == 0 ? "eggs" : "larvae";
                 out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.tm.clutch." + stage,
                         Component.translatable("gui.bettacraft.breeding.tm.kind." + (s.breeding() == org.overengineer.bettacraft.tankmates.TankmateSpecies.Breeding.ANEMONE
-                                ? "anemone" : c.getString("kind"))), c.getInt("count"), f1(c.getFloat("days"))))
+                                ? "anemone" : c.getStringOr("kind", ""))), c.getIntOr("count", 0), f1(c.getFloatOr("days", 0f))))
                         .withStyle(ChatFormatting.AQUA));
             }
         }

@@ -268,7 +268,7 @@ public final class TankPower {
         @Nullable
         private TankBlockEntity controller() {
             BlockPos p = tankPos.get();
-            if (level == null || level.isClientSide || p == null || !level.isLoaded(p)) return null;
+            if (level == null || level.isClientSide() || p == null || !level.isLoaded(p)) return null;
             return TankMultiblock.getController(level, p);
         }
 

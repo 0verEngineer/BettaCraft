@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -26,10 +27,10 @@ import org.overengineer.bettacraft.tankmates.TankmateBreeding;
  * box hanging inside the front glass with the young in it.
  */
 public final class ClutchRenderer {
-    private static final ResourceLocation EGGS = BettaCraft.id("textures/entity/tankmates/eggs.png");
-    private static final ResourceLocation BOX = BettaCraft.id("textures/entity/tankmates/breeding_box.png");
+    private static final Identifier EGGS = BettaCraft.id("textures/entity/tankmates/eggs.png");
+    private static final Identifier BOX = BettaCraft.id("textures/entity/tankmates/breeding_box.png");
     /** M30 part c: the leathery egg case of a shark. */
-    private static final ResourceLocation EGG_CASE = BettaCraft.id("textures/entity/tankmates/egg_case.png");
+    private static final Identifier EGG_CASE = BettaCraft.id("textures/entity/tankmates/egg_case.png");
     /** At most this many eggs of a clutch are drawn. */
     private static final int MAX_DRAWN = 40;
 
@@ -50,7 +51,7 @@ public final class ClutchRenderer {
                 eggCase(be, k, pose, buffers, light);
                 continue;
             }
-            if (eggs == null) eggs = buffers.getBuffer(RenderType.entityCutoutNoCull(EGGS));
+            if (eggs == null) eggs = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
             pose.pushPose();
             pose.translate(k.x - origin.getX(), k.y - origin.getY(), k.z - origin.getZ());
             clutch(pose, eggs, k, light);
@@ -127,8 +128,8 @@ public final class ClutchRenderer {
         pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees((k.id * 73) % 360));
         pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(((k.id * 31) % 15) - 7));
         PoseStack.Pose last = pose.last();
-        textured(last, buffers.getBuffer(RenderType.entityCutoutNoCull(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(EGGS));
+        textured(last, buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
         for (int sx = -1; sx <= 1; sx += 2) {
             for (int sz = -1; sz <= 1; sz += 2) {
                 // a tendril: out from the corner along the case, then bending sideways and up
@@ -166,13 +167,13 @@ public final class ClutchRenderer {
         pose.pushPose();
         pose.translate(p.x - origin.getX(), p.y - origin.getY(), p.z - origin.getZ());
         PoseStack.Pose last = pose.last();
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(BOX));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(BOX));
         boolean x = t.front().getAxis() == net.minecraft.core.Direction.Axis.X;
         float hw = 0.16F, hh = 0.09F, hd = 0.08F;
         textured(last, vc, x ? hd : hw, hh, x ? hw : hd, light);
         int n = Math.min(MAX_DRAWN, TankmateBreeding.boxFry(t));
         if (n > 0) {
-            VertexConsumer eggs = buffers.getBuffer(RenderType.entityCutoutNoCull(EGGS));
+            VertexConsumer eggs = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
             for (int i = 0; i < n; i++) {
                 long h = i * 0x9E3779B97F4A7C15L + 77;
                 h ^= h >>> 29;

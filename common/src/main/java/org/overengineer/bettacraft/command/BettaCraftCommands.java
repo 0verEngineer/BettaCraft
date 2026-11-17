@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.Perms;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -25,7 +26,7 @@ public final class BettaCraftCommands {
                             if (InteriorManager.isInterior(p.level())) InteriorManager.leave(p);
                             return 1;
                         }))
-                        .then(Commands.literal("bench").requires(s -> s.hasPermission(2)).executes(ctx -> {
+                        .then(Commands.literal("bench").requires(s -> Perms.has(s, 2)).executes(ctx -> {
                             for (InteriorBench.Result r : InteriorBench.runDefault()) {
                                 ctx.getSource().sendSuccess(() -> Component.literal(r.toString()), false);
                             }
@@ -35,7 +36,7 @@ public final class BettaCraftCommands {
                                     : "Real-region bench not started (already running or no interior dimension)"), false);
                             return 1;
                         }))
-                        .then(Commands.literal("resync").requires(s -> s.hasPermission(2)).executes(ctx -> {
+                        .then(Commands.literal("resync").requires(s -> Perms.has(s, 2)).executes(ctx -> {
                             int n = 0;
                             for (InteriorRegion r : InteriorRegions.get(ctx.getSource().getServer()).all()) {
                                 InteriorSync.markDirty(r.id());
@@ -53,7 +54,7 @@ public final class BettaCraftCommands {
                 .then(ForeignCommand.build())
                 .then(AquaristCommand.build()) // M51
                 // M16: every water animal of the loaded mods and whether tanks take it (table in bettacraft-water-animals.tsv)
-                .then(Commands.literal("wateranimals").requires(s -> s.hasPermission(2)).executes(ctx -> {
+                .then(Commands.literal("wateranimals").requires(s -> Perms.has(s, 2)).executes(ctx -> {
                     var src = ctx.getSource();
                     var all = org.overengineer.bettacraft.compat.AquaticSpecies.discover(src.getLevel());
                     var lines = org.overengineer.bettacraft.compat.AquaticSpecies.table(all);

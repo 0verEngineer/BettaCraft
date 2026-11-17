@@ -183,11 +183,11 @@ public interface Platform {
             BlockPos pos, @Nullable Entity entity);
 
     /** The spawn position check of a mob spawned by us (NeoForge: with its spawn events). */
-    boolean checkSpawnPosition(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.MobSpawnType type);
+    boolean checkSpawnPosition(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.EntitySpawnReason type);
 
     @Nullable
     net.minecraft.world.entity.SpawnGroupData finalizeMobSpawn(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level,
-            net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType type, @Nullable net.minecraft.world.entity.SpawnGroupData data);
+            net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.EntitySpawnReason type, @Nullable net.minecraft.world.entity.SpawnGroupData data);
 
     /** Empties a bucket-like item at a position (NeoForge: with the container stack). */
     boolean emptyContents(net.minecraft.world.item.DispensibleContainerItem item, @Nullable Player player, Level level, BlockPos pos,

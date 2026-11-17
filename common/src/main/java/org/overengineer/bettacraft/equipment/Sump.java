@@ -97,7 +97,7 @@ public final class Sump {
     public static float growth(ItemStack sump) {
         CustomData d = sump.get(DataComponents.CUSTOM_DATA);
         if (d == null) return 0;
-        float g = d.copyTag().getFloat("chaeto_growth");
+        float g = d.copyTag().getFloatOr("chaeto_growth", 0f);
         return Float.isFinite(g) ? Math.max(0, Math.min(1, g)) : 0;
     }
 

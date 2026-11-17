@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -232,20 +235,25 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putBoolean("water", water);
         tag.putInt("sugar", sugar);
         tag.putLong("start", start);
         tag.putDouble("days", days);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        water = tag.getBoolean("water");
-        sugar = Math.max(0, Math.min(MAX_SUGAR, tag.getInt("sugar")));
-        start = tag.contains("start") ? tag.getLong("start") : NONE;
-        days = tag.getDouble("days");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        water = tag.getBooleanOr("water", false);
+        sugar = Math.max(0, Math.min(MAX_SUGAR, tag.getIntOr("sugar", 0)));
+        start = tag.contains("start") ? tag.getLongOr("start", 0L) : NONE;
+        days = tag.getDoubleOr("days", 0d);
     }
 }

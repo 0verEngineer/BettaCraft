@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -353,24 +356,29 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putInt("doses", doses);
         tag.putInt("portions", portions);
         tag.putInt("pending", pending);
         tag.putInt("bottles", bottles);
         tag.putLong("last_event", lastEvent);
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        doses = tag.contains("doses") ? Math.max(0, Math.min(MAX_DOSES, tag.getInt("doses"))) : 2;
-        portions = tag.contains("portions") ? Math.max(1, Math.min(MAX_PORTIONS, tag.getInt("portions"))) : 1;
-        pending = Math.max(0, Math.min(MAX_PORTIONS, tag.getInt("pending")));
-        bottles = Math.max(0, Math.min(MAX_BOTTLES, tag.getInt("bottles")));
-        lastEvent = tag.contains("last_event") ? tag.getLong("last_event") : Long.MIN_VALUE;
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        doses = tag.contains("doses") ? Math.max(0, Math.min(MAX_DOSES, tag.getIntOr("doses", 0))) : 2;
+        portions = tag.contains("portions") ? Math.max(1, Math.min(MAX_PORTIONS, tag.getIntOr("portions", 0))) : 1;
+        pending = Math.max(0, Math.min(MAX_PORTIONS, tag.getIntOr("pending", 0)));
+        bottles = Math.max(0, Math.min(MAX_BOTTLES, tag.getIntOr("bottles", 0)));
+        lastEvent = tag.contains("last_event") ? tag.getLongOr("last_event", 0L) : Long.MIN_VALUE;
         energy.load(tag);
     }
 }

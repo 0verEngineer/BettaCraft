@@ -87,11 +87,11 @@ public final class Mangroves {
         @Nullable
         public static Tree load(CompoundTag t) {
             if (!t.contains("x")) return null;
-            Tree m = new Tree(t.getInt("x"), t.getInt("y"), t.getInt("z"), t.getLong("seed"));
-            m.stage = Math.max(0, Math.min(STAGES, t.getInt("stage")));
-            double p = t.getDouble("progress");
+            Tree m = new Tree(t.getIntOr("x", 0), t.getIntOr("y", 0), t.getIntOr("z", 0), t.getLongOr("seed", 0L));
+            m.stage = Math.max(0, Math.min(STAGES, t.getIntOr("stage", 0)));
+            double p = t.getDoubleOr("progress", 0d);
             m.progress = Double.isFinite(p) ? Math.max(0, Math.min(1, p)) : 0;
-            m.crownLogged = t.getBoolean("crown");
+            m.crownLogged = t.getBooleanOr("crown", false);
             return m;
         }
     }

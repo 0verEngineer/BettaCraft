@@ -100,7 +100,7 @@ public class MonitorEditorScreen extends Screen {
         String kind = t.kind();
         addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.monitor.type", typeName(kind)), b -> {
             int i = DashboardTile.TYPES.indexOf(kind);
-            setType(t, DashboardTile.TYPES.get((i + (hasShiftDown() ? DashboardTile.TYPES.size() - 1 : 1)) % DashboardTile.TYPES.size()));
+            setType(t, DashboardTile.TYPES.get((i + (Minecraft.getInstance().hasShiftDown() ? DashboardTile.TYPES.size() - 1 : 1)) % DashboardTile.TYPES.size()));
             changed();
         }).bounds(px, y, PANEL_W, BH).build());
         y += ROW;
@@ -137,7 +137,7 @@ public class MonitorEditorScreen extends Screen {
                 y += ROW;
             } else {
                 addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.monitor.value", Component.translatable(t.value().translationKey())), b -> {
-                    t.settings.putString("value", next(MonitorValue.ALL, t.value(), hasShiftDown()).id);
+                    t.settings.putString("value", next(MonitorValue.ALL, t.value(), Minecraft.getInstance().hasShiftDown()).id);
                     changed();
                 }).bounds(px, y, PANEL_W, BH).build());
                 y += ROW;
@@ -221,7 +221,7 @@ public class MonitorEditorScreen extends Screen {
         for (MonitorTank k : tanks()) ids.add(k.id);
         if (ids.isEmpty()) return;
         int i = ids.indexOf(t.tank);
-        int step = hasShiftDown() ? ids.size() - 1 : 1;
+        int step = Minecraft.getInstance().hasShiftDown() ? ids.size() - 1 : 1;
         t.tank = ids.get(i < 0 ? 0 : (i + step) % ids.size());
     }
 
@@ -256,7 +256,7 @@ public class MonitorEditorScreen extends Screen {
         for (MonitorValue v : MonitorValue.ALL) if (!vs.contains(v) || slot < vs.size() && vs.get(slot) == v) options.add(v);
         MonitorValue cur = slot < vs.size() ? vs.get(slot) : null;
         int i = options.indexOf(cur);
-        MonitorValue nv = options.get((i + (hasShiftDown() ? options.size() - 1 : 1)) % options.size());
+        MonitorValue nv = options.get((i + (Minecraft.getInstance().hasShiftDown() ? options.size() - 1 : 1)) % options.size());
         if (slot < vs.size()) {
             if (nv == null) vs.remove(slot);
             else vs.set(slot, nv);
@@ -273,7 +273,7 @@ public class MonitorEditorScreen extends Screen {
     private static int nextColour(int[] palette, int cur) {
         int i = 0;
         for (int k = 0; k < palette.length; k++) if (palette[k] == cur) i = k;
-        return palette[(i + (hasShiftDown() ? palette.length - 1 : 1)) % palette.length];
+        return palette[(i + (Minecraft.getInstance().hasShiftDown() ? palette.length - 1 : 1)) % palette.length];
     }
 
     private void resize(DashboardTile t, int dw, int dh) {
@@ -345,8 +345,10 @@ public class MonitorEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx, double my, int button) {
-        if (super.mouseClicked(mx, my, button)) return true;
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        double mx = event.x(), my = event.y();
+        int button = event.button();
+        if (super.mouseClicked(event, doubleClick)) return true;
         if (button != 0 || layout == null) return false;
         int cx = cellX(mx), cy = cellY(my);
         if (cx < 0 || cy < 0 || cx >= gw || cy >= gh) return false;
@@ -368,9 +370,11 @@ public class MonitorEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+    public boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent event, double dx, double dy) {
+        double mx = event.x(), my = event.y();
+        int button = event.button();
         DashboardTile t = tile();
-        if (drag == 0 || t == null || button != 0) return super.mouseDragged(mx, my, button, dx, dy);
+        if (drag == 0 || t == null || button != 0) return super.mouseDragged(event, dx, dy);
         int cx = cellX(mx), cy = cellY(my);
         if (drag == 1) {
             int nx = Math.max(0, Math.min(gw - t.w, cx - grabX)), ny = Math.max(0, Math.min(gh - t.h, cy - grabY));
@@ -389,9 +393,11 @@ public class MonitorEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(double mx, double my, int button) {
+    public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent event) {
+        double mx = event.x(), my = event.y();
+        int button = event.button();
         drag = 0;
-        return super.mouseReleased(mx, my, button);
+        return super.mouseReleased(event);
     }
 
     // ------------------------------------------------------------------ drawing
@@ -407,8 +413,8 @@ public class MonitorEditorScreen extends Screen {
         super.render(g, mouseX, mouseY, partialTick);
         MonitorBlockEntity c = controller();
         if (c == null || layout == null) return;
-        g.drawString(font, title, 12, 8, 0xFFFFFF, false);
-        g.drawString(font, Component.translatable("gui.bettacraft.monitor.info", bw, bh, c.clientTanks.size()).withStyle(ChatFormatting.GRAY), 12, 18, 0xA0A0A0, false);
+        g.drawString(font, title, 12, 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
+        g.drawString(font, Component.translatable("gui.bettacraft.monitor.info", bw, bh, c.clientTanks.size()).withStyle(ChatFormatting.GRAY), 12, 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
         // the grid
         g.fill(gx - 2, gy - 2, gx + gw * cell + 2, gy + gh * cell + 2, 0xFF05090B);
         for (int x = 0; x <= gw; x++) g.fill(gx + x * cell, gy, gx + x * cell + 1, gy + gh * cell, x % DashboardLayout.CELLS == 0 ? 0x60FFFFFF : 0x20FFFFFF);
@@ -426,15 +432,15 @@ public class MonitorEditorScreen extends Screen {
         if (tile() == null) {
             int y = 30;
             for (var line : font.split(Component.translatable("gui.bettacraft.monitor.help").withStyle(ChatFormatting.GRAY), PANEL_W)) {
-                g.drawString(font, line, px, y, 0xA0A0A0, false);
+                g.drawString(font, line, px, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
                 y += 10;
             }
         } else if (DashboardTile.GRAPH.equals(tile().kind())) {
             // the days between the -/+ buttons
             int y = 30 + ROW * 4;
-            g.drawCenteredString(font, Component.translatable("monitor.bettacraft.days", tile().days()), px + PANEL_W / 2, y + 4, 0xFFFFFF);
+            g.drawCenteredString(font, Component.translatable("monitor.bettacraft.days", tile().days()), px + PANEL_W / 2, y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
-        g.drawString(font, note, 12 + 2 * (Math.min(90, (width - 24) / 4 - 4) + 4), height - 18, 0xFFFFFF, false);
+        g.drawString(font, note, 12 + 2 * (Math.min(90, (width - 24) / 4 - 4) + 4), height - 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
     }
 
     /** The type, tank and value of a tile in the grid, small. */
@@ -451,18 +457,18 @@ public class MonitorEditorScreen extends Screen {
             lines.add(b.toString());
         }
         float scale = Math.max(0.5F, Math.min(1F, h / (lines.size() * 9F)));
-        g.pose().pushPose();
-        g.pose().translate(x, y, 0);
-        g.pose().scale(scale, scale, 1F);
+        g.pose().pushMatrix();
+        g.pose().translate(x, y);
+        g.pose().scale(scale, scale);
         int maxW = (int) (w / scale);
         int ly = 0;
         for (String s : lines) {
             if ((ly + 8) * scale > h) break;
             String cut = font.width(s) > maxW ? font.plainSubstrByWidth(s, Math.max(0, maxW - font.width("..."))) + "..." : s;
-            g.drawString(font, cut, 0, ly, ly == 0 ? 0xFFFFFF : 0xB0C8D0, false);
+            g.drawString(font, cut, 0, ly, org.overengineer.bettacraft.client.ClientCompat.textColor(ly == 0 ? 0xFFFFFF : 0xB0C8D0), false);
             ly += 9;
         }
-        g.pose().popPose();
+        g.pose().popMatrix();
     }
 
     @Override

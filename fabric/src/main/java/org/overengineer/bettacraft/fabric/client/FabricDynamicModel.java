@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.fabric.client;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.List;
 import java.util.function.Supplier;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
@@ -9,7 +10,7 @@ import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -74,7 +75,7 @@ public final class FabricDynamicModel extends ForwardingBakedModel {
             return;
         }
         // the item draws translucent (the tank's glass): one translucent material for all its quads
-        RenderMaterial material = material(RenderType.translucent());
+        RenderMaterial material = material(ChunkSectionLayer.TRANSLUCENT);
         QuadEmitter emitter = context.getEmitter();
         for (Direction side : SIDES) {
             for (BakedQuad q : wrapped.getQuads(null, side, random.get())) {

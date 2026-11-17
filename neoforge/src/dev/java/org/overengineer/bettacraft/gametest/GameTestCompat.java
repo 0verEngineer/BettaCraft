@@ -8,7 +8,7 @@ final class GameTestCompat {
 
     /** A part of a multipart mob (NeoForge: its PartEntity; vanilla: the dragon's parts). */
     static boolean isPart(Entity e) {
-        if (e instanceof net.minecraft.world.entity.boss.EnderDragonPart) return true;
+        if (e instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragonPart) return true;
         for (Class<?> c = e.getClass(); c != null; c = c.getSuperclass()) {
             if (c.getName().equals("net.neoforged.neoforge.entity.PartEntity")) return true;
         }
@@ -66,13 +66,13 @@ final class GameTestCompat {
         org.overengineer.bettacraft.api.ApiEvents.sink = new org.overengineer.bettacraft.api.ApiEvents.Sink() {
             @Override
             public void born(net.minecraft.server.level.ServerLevel level, net.minecraft.core.BlockPos tankPos, java.util.UUID tankId, String tankName,
-                    net.minecraft.resources.ResourceLocation species, int count, boolean hatched, boolean foreign, boolean critter) {
+                    net.minecraft.resources.Identifier species, int count, boolean hatched, boolean foreign, boolean critter) {
                 inner.born(level, tankPos, tankId, tankName, species, count, hatched, foreign, critter);
             }
 
             @Override
             public void died(net.minecraft.server.level.ServerLevel level, net.minecraft.core.BlockPos tankPos, java.util.UUID tankId, String tankName,
-                    net.minecraft.resources.ResourceLocation species, net.minecraft.world.entity.Entity entity, int count, String cause,
+                    net.minecraft.resources.Identifier species, net.minecraft.world.entity.Entity entity, int count, String cause,
                     net.minecraft.world.entity.Entity killer) {
                 causes.accept(cause);
                 inner.died(level, tankPos, tankId, tankName, species, entity, count, cause, killer);

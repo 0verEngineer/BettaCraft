@@ -16,7 +16,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -73,7 +73,7 @@ public final class CreateGameTests {
     }
 
     static Block block(String id) {
-        Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+        Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
         if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
         return b;
     }

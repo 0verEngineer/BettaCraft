@@ -47,7 +47,7 @@ public final class MonitorAlarms {
     private MonitorAlarms() {}
 
     private static String key(ServerLevel level, MonitorBlockEntity c, int tile) {
-        return level.dimension().location() + "@" + c.getBlockPos().asLong() + "#" + tile;
+        return level.dimension().identifier() + "@" + c.getBlockPos().asLong() + "#" + tile;
     }
 
     /** One cycle: {@code watching} false = the screen does not watch (all of its alarms clear). */
@@ -98,12 +98,12 @@ public final class MonitorAlarms {
         if (on) {
             if (!Features.enabled(Feature.ALARM_WAYPOINTS)) return;
             UUID owner = owner(level, w);
-            AlarmWaypointPayload add = new AlarmWaypointPayload(w.tank(), true, level.dimension().location(), w.tankPos(), w.tankName(), w.value());
+            AlarmWaypointPayload add = new AlarmWaypointPayload(w.tank(), true, level.dimension().identifier(), w.tankPos(), w.tankName(), w.value());
             Set<UUID> to = BOOK.open(w.tank(), key, owner, add, () -> recipients(level, w.tankPos(), owner));
             for (UUID p : to) send(level, p, add);
         } else {
             Set<UUID> to = BOOK.close(w.tank(), key);
-            for (UUID p : to) send(level, p, new AlarmWaypointPayload(w.tank(), false, level.dimension().location(), w.tankPos(), w.tankName(), w.value()));
+            for (UUID p : to) send(level, p, new AlarmWaypointPayload(w.tank(), false, level.dimension().identifier(), w.tankPos(), w.tankName(), w.value()));
         }
     }
 
@@ -121,7 +121,7 @@ public final class MonitorAlarms {
     public static void external(ServerLevel level, UUID tank, String key, BlockPos pos, String tankName, String value, boolean on, @javax.annotation.Nullable UUID player) {
         if (on) {
             if (!Features.enabled(Feature.ALARM_WAYPOINTS) || player == null) return;
-            AlarmWaypointPayload add = new AlarmWaypointPayload(tank, true, level.dimension().location(), pos, tankName, value);
+            AlarmWaypointPayload add = new AlarmWaypointPayload(tank, true, level.dimension().identifier(), pos, tankName, value);
             Set<UUID> to = BOOK.open(tank, key, player, add, () -> {
                 Set<UUID> s = new LinkedHashSet<>();
                 if (level.getServer().getPlayerList().getPlayer(player) != null) s.add(player);
@@ -133,7 +133,7 @@ public final class MonitorAlarms {
             Set<UUID> to = BOOK.close(tank, key);
             if (to.isEmpty()) return;
             BlockPos at = e != null && e.data instanceof AlarmWaypointPayload a ? a.pos() : pos;
-            for (UUID p : to) send(level, p, new AlarmWaypointPayload(tank, false, level.dimension().location(), at, tankName, value));
+            for (UUID p : to) send(level, p, new AlarmWaypointPayload(tank, false, level.dimension().identifier(), at, tankName, value));
         }
     }
 

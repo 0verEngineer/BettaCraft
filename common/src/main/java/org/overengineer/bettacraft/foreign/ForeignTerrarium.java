@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.util.Perms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,7 @@ public final class ForeignTerrarium {
 
     /** Server: whether the walker holds this animal now (no vanilla physics, no drowning in its tank). */
     public static boolean held(LivingEntity e) {
-        if (!(e instanceof Mob m) || e.level().isClientSide) return false;
+        if (!(e instanceof Mob m) || e.level().isClientSide()) return false;
         State s = STATES.get(m);
         return s != null && s.controller != null;
     }
@@ -219,7 +220,7 @@ public final class ForeignTerrarium {
                 org.overengineer.bettacraft.api.ApiEvents.diedData(level, c, BettaCraft.id(k.species.id()), 1, "eaten"); // M32 part d
                 TankCare.log(level, c, "log.bettacraft.tm.ate_prey", TankCare.nameArg(by), "0", "1");
             }
-            level.playSound(null, by.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.NEUTRAL, 0.6F, 0.8F);
+            level.playSound(null, by.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.6F, 0.8F);
             BettaHealth h = ForeignCare.health(by);
             h.feed(); // a meal
             ForeignCare.setHealth(by, h);
@@ -240,7 +241,7 @@ public final class ForeignTerrarium {
                 if (m.species().preyLength() <= 0 && !m.species().isLarge() && m.species().length() <= reach + 1e-6) out.add(m);
             } else if (e instanceof BettaEntity || e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) {
                 if (reach >= org.overengineer.bettacraft.tankmates.TankmateBreeding.BETTA_PREY_LENGTH - 1e-6) out.add(e);
-            } else if (e instanceof net.minecraft.world.entity.animal.AbstractFish && e.getBbWidth() <= reach + 1e-6
+            } else if (e instanceof net.minecraft.world.entity.animal.fish.AbstractFish && e.getBbWidth() <= reach + 1e-6
                     && org.overengineer.bettacraft.big.BigAnimals.length(e.getType(), e) <= 0) {
                 out.add(e);
             }
@@ -270,7 +271,7 @@ public final class ForeignTerrarium {
             if (p != null && p.land() != null && !p.land().box()) return Component.translatable("message.bettacraft.box.too_big", target.getDisplayName());
             return Component.translatable("message.bettacraft.box.refused", target.getDisplayName());
         }
-        if (target instanceof OwnableEntity o && o.getOwnerUUID() != null && !o.getOwnerUUID().equals(player.getUUID()) && !player.hasPermissions(2)) {
+        if (target instanceof OwnableEntity o && o.getOwnerReference() != null && !o.getOwnerReference().getUUID().equals(player.getUUID()) && !Perms.has(player, 2)) {
             return Component.translatable("message.bettacraft.box.not_yours", target.getDisplayName());
         }
         if (TankInhabitants.hasTankRef(target) && player.level() instanceof ServerLevel sl) {

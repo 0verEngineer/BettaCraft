@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.ScheduledTickAccess;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
@@ -37,7 +41,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * shines while the tank has FE for it. M18: 16 colours ({@link #COLOR}, white = the light of earlier versions, which
  * load as white because the property is new): right-click with a dye colours the whole bar; the colour is optics only.
  */
-public class TankLightBlock extends Block {
+public class TankLightBlock extends Block implements BlockRemoval {
     public static final MapCodec<TankLightBlock> CODEC = simpleCodec(TankLightBlock::new);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     /** Connected to a segment in the negative / positive axis direction. */
@@ -81,15 +85,15 @@ public class TankLightBlock extends Block {
 
     /** M18: a dye colours the whole bar (one dye for the bar); a bar that already has the colour keeps the dye. */
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(stack.getItem() instanceof DyeItem dye)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!player.mayUseItemAt(pos, hit.getDirection(), stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (dyeBar(level, pos, state, dye.getDyeColor(), level.isClientSide) == 0) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(stack.getItem() instanceof DyeItem dye)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (dyeBar(level, pos, state, dye.getDyeColor(), level.isClientSide()) == 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide()) {
             level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
             stack.consume(1, player);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     /**
@@ -109,7 +113,7 @@ public class TankLightBlock extends Block {
 
     /** M18: middle click gives the light in its colour. */
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return TankLightItem.of(this, state.getValue(COLOR), 1);
     }
 
@@ -139,7 +143,7 @@ public class TankLightBlock extends Block {
         return connect(s, level, pos);
     }
 
-    private BlockState connect(BlockState s, LevelAccessor level, BlockPos pos) {
+    private BlockState connect(BlockState s, net.minecraft.world.level.LevelReader level, BlockPos pos) {
         Direction.Axis axis = s.getValue(AXIS);
         Direction neg = Direction.fromAxisAndDirection(axis, Direction.AxisDirection.NEGATIVE);
         return s.setValue(NEG, joins(s, level.getBlockState(pos.relative(neg))))
@@ -153,14 +157,14 @@ public class TankLightBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (dir.getAxis() == state.getValue(AXIS)) return connect(state, level, pos);
         return state;
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos from, boolean moving) {
-        if (level.isClientSide) return;
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean moving) {
+        if (level.isClientSide()) return;
         boolean powered = level.hasNeighborSignal(pos);
         if (powered != state.getValue(POWERED)) {
             level.setBlock(pos, state.setValue(POWERED, powered), Block.UPDATE_CLIENTS);
@@ -170,13 +174,12 @@ public class TankLightBlock extends Block {
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
-        if (!level.isClientSide && !old.is(this)) level.scheduleTick(pos, this, 1);
+        if (!level.isClientSide() && !old.is(this)) level.scheduleTick(pos, this, 1);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!level.isClientSide() && !newState.is(this)) {
             for (Direction d : Direction.Plane.HORIZONTAL) {
                 BlockPos n = pos.relative(d);
                 Block b = level.getBlockState(n).getBlock();

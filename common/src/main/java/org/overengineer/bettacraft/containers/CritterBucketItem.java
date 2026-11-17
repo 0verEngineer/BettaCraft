@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.containers;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -10,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
@@ -42,32 +45,32 @@ public class CritterBucketItem extends BucketItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (animals(stack) == null) return InteractionResultHolder.pass(stack);
+        if (animals(stack) == null) return InteractionResult.PASS;
         BlockHitResult solid = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         BlockHitResult fluid = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
         boolean water = fluid.getType() == HitResult.Type.BLOCK && level.getFluidState(fluid.getBlockPos()).is(FluidTags.WATER);
-        if (!water && solid.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (!water && solid.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         if (!ContainerRules.release(level, player, hand, stack)) return ContainerRules.waiting(stack);
         if (water && (solid.getType() != HitResult.Type.BLOCK
                 || solid.getLocation().distanceToSqr(player.getEyePosition()) > fluid.getLocation().distanceToSqr(player.getEyePosition()) + 0.01)) {
             BlockPos pos = fluid.getBlockPos();
-            if (!level.mayInteract(player, pos)) return InteractionResultHolder.fail(stack);
+            if (!level.mayInteract(player, pos)) return InteractionResult.FAIL;
             checkExtraContent(player, level, stack, pos);
             playEmptySound(player, level, pos);
-            return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, getEmptySuccessItem(stack, player)), level.isClientSide());
+            return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(stack, player, getEmptySuccessItem(stack, player)));
         }
         return super.use(level, player, hand);
     }
 
     /** The animals crawl off where the water was poured. */
     @Override
-    public void checkExtraContent(@Nullable Player player, Level level, ItemStack stack, BlockPos pos) {
+    public void checkExtraContent(@Nullable net.minecraft.world.entity.LivingEntity player, Level level, ItemStack stack, BlockPos pos) {
         if (!(level instanceof ServerLevel server)) return;
         List<CompoundTag> a = animals(stack);
         if (a == null) return;
-        org.overengineer.bettacraft.entity.critter.WildCritterEntity.release(server, a, pos, player);
+        org.overengineer.bettacraft.entity.critter.WildCritterEntity.release(server, a, pos, player instanceof Player p ? p : null);
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.NEUTRAL, 0.8F, 1.3F);
         level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
     }
@@ -80,7 +83,8 @@ public class CritterBucketItem extends BucketItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         List<CompoundTag> a = animals(stack);
         if (a != null) CritterTooltip.append(a, tooltip);
     }

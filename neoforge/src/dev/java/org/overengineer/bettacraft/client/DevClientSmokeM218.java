@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -72,7 +72,7 @@ final class DevClientSmokeM218 {
     private int wait;
 
     DevClientSmokeM218() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 620, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 620, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         // 1. free swimming: the seahorses find their posts themselves
@@ -107,7 +107,7 @@ final class DevClientSmokeM218 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
         then(1, () -> {
-            if (mc.player != null) mc.player.getInventory().selected = 8;
+            if (mc.player != null) mc.player.getInventory().getSelectedSlot() = 8;
         });
         then(40, () -> {
             mc.getToasts().clear();
@@ -136,7 +136,7 @@ final class DevClientSmokeM218 {
         then(5, () -> mc.setScreen(null));
         then(1, () -> server(p -> p.setGameMode(net.minecraft.world.level.GameType.CREATIVE)));
         // 5. menus
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, 0F, 0F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         menu(1, "menu_seahorse", s -> s.showTankmateForTest("lined_seahorse"));
         menu(2, "menu_breeding", null);
         // 6. handbook
@@ -151,7 +151,7 @@ final class DevClientSmokeM218 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         serverStack = new ItemStack(ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
         base = p.blockPosition().offset(0, 0, -10);
@@ -210,7 +210,7 @@ final class DevClientSmokeM218 {
 
     /** Every seahorse frozen at a post of its own, tail curled; the pouch tank posed close up. */
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, reef);
         if (c == null) return;
         Seahorses.forget();
@@ -247,7 +247,7 @@ final class DevClientSmokeM218 {
     }
 
     private static void freezeAt(TankmateEntity m, Vec3 at, float yaw, int flags) {
-        m.moveTo(at.x, at.y, at.z, yaw, 0F);
+        m.snapTo(at.x, at.y, at.z, yaw, 0F);
         SmokeFreeze.freeze(m, true);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
@@ -263,14 +263,14 @@ final class DevClientSmokeM218 {
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
         p.getInventory().clearContent();
-        ResourceLocation glassId = ResourceLocation.withDefaultNamespace("glass");
+        Identifier glassId = Identifier.withDefaultNamespace("glass");
         ItemStack old = new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 3);
         old.set(DataComponents.DAMAGE, 5); // M35.1: an old jar; it reaches the client without its old uses
         ItemStack[] hotbar = {
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 1),
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 12),
                 TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.TEXTURED, 4),
-                TankBlockItem.of(ModItems.TANK.get(), ResourceLocation.withDefaultNamespace("light_blue_stained_glass"), TankStyle.TEXTURED, 1),
+                TankBlockItem.of(ModItems.TANK.get(), Identifier.withDefaultNamespace("light_blue_stained_glass"), TankStyle.TEXTURED, 1),
                 new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 16),
                 new ItemStack(ModItems.ARTEMIA_CYSTS.get()),
                 old,
@@ -281,8 +281,8 @@ final class DevClientSmokeM218 {
         p.getInventory().setItem(9, new ItemStack(ModItems.ARTEMIA_CYSTS.get(), 7));
         p.getInventory().setItem(10, new ItemStack(ModItems.ARTEMIA_NAUPLII.get(), 4));
         p.getInventory().setItem(11, TankBlockItem.of(ModItems.TANK.get(), glassId, TankStyle.CLEAN, 64));
-        p.getInventory().selected = 8;
-        p.teleportTo(p.serverLevel(), glass.getX() + 1.5, glass.getY() - 0.2, glass.getZ() - 3.0, 0F, 18F);
+        p.getInventory().getSelectedSlot() = 8;
+        p.teleportTo(p.level(), glass.getX() + 1.5, glass.getY() - 0.2, glass.getZ() - 3.0, java.util.Set.of(), 0F, 18F, false);
     }
 
     // ------------------------------------------------------------------ checks
@@ -345,7 +345,7 @@ final class DevClientSmokeM218 {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -463,7 +463,7 @@ final class DevClientSmokeM218 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

@@ -108,7 +108,7 @@ final class DevClientSmokeM45 {
                     String n = t.replaceAll(".*quest\\.bettacraft\\.([a-z0-9_]+)\\.title.*", "$1");
                     net.minecraft.nbt.CompoundTag d = new net.minecraft.nbt.CompoundTag();
                     call(q, "writeData", d, p.server.registryAccess());
-                    if (d.getBoolean("invisible")) {
+                    if (d.getBooleanOr("invisible", false)) {
                         hidden++;
                         hiddenNames.append(n).append(' ');
                     }
@@ -153,8 +153,8 @@ final class DevClientSmokeM45 {
                 if (!((String) call(q, "getRawTitle")).contains("quest.bettacraft." + name + ".title")) continue;
                 net.minecraft.nbt.CompoundTag d = new net.minecraft.nbt.CompoundTag();
                 call(q, "writeData", d, mc.level.registryAccess());
-                LOGGER.info("[smoketest] M45 client quest {} invisible {} (expected {}) {}", name, d.getBoolean("invisible"), hidden,
-                        d.getBoolean("invisible") == hidden ? "PASS" : "FAIL");
+                LOGGER.info("[smoketest] M45 client quest {} invisible {} (expected {}) {}", name, d.getBooleanOr("invisible", false), hidden,
+                        d.getBooleanOr("invisible", false) == hidden ? "PASS" : "FAIL");
                 return;
             }
             LOGGER.error("[smoketest] M45 client quest {} not found (FAIL)", name);

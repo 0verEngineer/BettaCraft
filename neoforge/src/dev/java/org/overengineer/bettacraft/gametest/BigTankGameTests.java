@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import net.minecraft.world.InteractionResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -102,7 +103,7 @@ public final class BigTankGameTests {
 
     /** The first filled transport tub in the inventory (a creative player keeps the empty one, like a bucket). */
     static ItemStack filledTub(ServerPlayer p) {
-        for (ItemStack s : p.getInventory().items) if (TransportTubItem.isFilled(s)) return s;
+        for (ItemStack s : p.getInventory().getNonEquipmentItems()) if (TransportTubItem.isFilled(s)) return s;
         return ItemStack.EMPTY;
     }
 
@@ -143,7 +144,7 @@ public final class BigTankGameTests {
     public static void bucketsAndBagsRefuseBigAnimals(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         TankmateEntity fish = org.overengineer.bettacraft.registry.ModEntities.TANKMATES.get(TankmateSpecies.PANGASIUS).get().create(level);
-        fish.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(5, 2, 5)));
+        fish.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(5, 2, 5)));
         level.addFreshEntity(fish);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
@@ -240,7 +241,7 @@ public final class BigTankGameTests {
         try {
             ItemStack cod = new ItemStack(Items.COD, 2);
             var r = DolphinCare.feed(cod, level, c.getBlockPos(), p, InteractionHand.MAIN_HAND);
-            h.assertTrue(r == net.minecraft.world.ItemInteractionResult.CONSUME, "fed: " + r);
+            h.assertTrue(r == net.minecraft.world.InteractionResult.CONSUME, "fed: " + r);
             h.assertTrue(DolphinCare.daysHungry(d, level.getGameTime()) < 0.01, "the hungry one ate");
         } finally {
             p.discard();

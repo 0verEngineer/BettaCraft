@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing.interior;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -39,19 +42,19 @@ public class PlumbingItem extends BlockItem {
     }
 
     private static void say(Player p, Level level, String key, Object... args) {
-        if (!level.isClientSide && p != null) p.displayClientMessage(Component.translatable(key, args).withStyle(ChatFormatting.GOLD), true);
+        if (!level.isClientSide() && p != null) p.displayClientMessage(Component.translatable(key, args).withStyle(ChatFormatting.GOLD), true);
     }
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
         if (kind == Plumb.PORT && level.getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock) {
-            if (level.isClientSide) return InteractionResult.SUCCESS;
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
             return installFromOutside((ServerLevel) level, ctx.getClickedPos(), ctx.getPlayer(), ctx.getItemInHand());
         }
         // M40: a guard used on the glass where a filter pipe docks goes behind that connection in the interior
         if ((kind == Plumb.INTAKE_GUARD || kind == Plumb.OUTLET_GUARD) && level.getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock) {
-            if (level.isClientSide) return InteractionResult.SUCCESS;
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
             return TankAnchors.installGuard((ServerLevel) level, ctx.getClickedPos(), ctx.getClickedFace(), ctx.getPlayer(), ctx.getItemInHand(), kind);
         }
         return super.useOn(ctx);
@@ -121,9 +124,9 @@ public class PlumbingItem extends BlockItem {
             say(ctx.getPlayer(), level, "message.bettacraft.bulkhead.floor_only");
             return InteractionResult.FAIL;
         }
-        if (!level.isClientSide && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;
+        if (!level.isClientSide() && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;
         // M40: no pipe that leads into the tank and out again
-        if (!level.isClientSide && kind == Plumb.PIPE && joinsTwoPorts((ServerLevel) level, ctx.getClickedPos())) {
+        if (!level.isClientSide() && kind == Plumb.PIPE && joinsTwoPorts((ServerLevel) level, ctx.getClickedPos())) {
             say(ctx.getPlayer(), level, "message.bettacraft.plumbing.pass_through");
             return InteractionResult.FAIL;
         }
@@ -146,7 +149,8 @@ public class PlumbingItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         String key = switch (kind) {
             case PORT -> "bulkhead";
             case INTAKE_GUARD, OUTLET_GUARD -> "guard"; // M40

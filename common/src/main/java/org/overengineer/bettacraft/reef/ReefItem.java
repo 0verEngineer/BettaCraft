@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -23,11 +27,12 @@ public class ReefItem extends Item {
             return net.minecraft.world.InteractionResult.PASS;
         }
         var r = ReefItems.useOnTank(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer(), ctx.getHand());
-        return r.result();
+        return r;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft." + name).withStyle(ChatFormatting.GRAY));
     }
 }

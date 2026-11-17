@@ -13,9 +13,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.inventory.MerchantContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -112,9 +112,9 @@ public final class AquaristGameTests {
                     if (level == 5) {
                         var fish = TankmateItems.bagFish(o.getResult());
                         check(fish.size() == 2, "a pair: " + fish.size());
-                        CompoundTag f = fish.getFirst().contains("tankmate") ? fish.getFirst().getCompound("tankmate") : fish.getFirst();
-                        TankmateSpecies s = TankmateSpecies.byId(f.getString("species"));
-                        TankmateGenes g = TankmateGenes.load(f.getCompound("genes"), s);
+                        CompoundTag f = fish.getFirst().contains("tankmate") ? fish.getFirst().getCompoundOrEmpty("tankmate") : fish.getFirst();
+                        TankmateSpecies s = TankmateSpecies.byId(f.getStringOr("species", ""));
+                        TankmateGenes g = TankmateGenes.load(f.getCompoundOrEmpty("genes"), s);
                         check(!g.phenotype(s).equals(s.variety(0)) && g.pure(), "a pure bred variety: " + s.id() + " " + g.text());
                     }
                 }
@@ -135,7 +135,7 @@ public final class AquaristGameTests {
     private static ItemStack tankmate(TankmateSpecies s, String a, String b, int generation) {
         ItemStack bag = TankmateBucketItem.withFish(new ItemStack(ModItems.FISH_BAG.get()), s, new TankmateGenes(a, b), false, LifeStage.ADULT);
         net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA, bag,
-                t -> t.getCompound("tankmate").putInt("gen", generation));
+                t -> t.getCompoundOrEmpty("tankmate").putInt("gen", generation));
         bag.set(org.overengineer.bettacraft.registry.ModDataComponents.BAG_ENTITY.get(),
                 net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(org.overengineer.bettacraft.registry.ModEntities.TANKMATES.get(s).get()));
         return bag;

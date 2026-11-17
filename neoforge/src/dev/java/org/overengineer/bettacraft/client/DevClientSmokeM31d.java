@@ -62,7 +62,7 @@ final class DevClientSmokeM31d {
     DevClientSmokeM31d() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(160, () -> server(pl -> place(pl.serverLevel())));
+        then(160, () -> server(pl -> place(pl.level())));
         then(1, () -> look(drowned.getX() + 2.0, drowned.getY() + 1.9, drowned.getZ() - 1.6, 0F, 22F));
         then(120, () -> {
             List<Mob> seen = mc.level.getEntitiesOfClass(Mob.class, new AABB(drowned).inflate(40), m -> m.getScale() < 0.5F);
@@ -115,7 +115,7 @@ final class DevClientSmokeM31d {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         level.setDayTime(6000);
         // --- drowned: an aquarium with a sand bottom and a ruined stone wall at the back
@@ -190,7 +190,7 @@ final class DevClientSmokeM31d {
         if (e == null) return;
         double x = min.getX() + dx, z = min.getZ() + dz;
         double gy = Double.isFinite(y) ? min.getY() + y : ter.ground(x, z) + 0.01;
-        e.moveTo(x, gy, z, yaw, 0F);
+        e.snapTo(x, gy, z, yaw, 0F);
         e.setYHeadRot(yaw);
         e.yBodyRot = yaw;
         SmokeFreeze.freeze(e, true);
@@ -245,7 +245,7 @@ final class DevClientSmokeM31d {
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
-        if (climber instanceof net.minecraft.world.entity.monster.Spider sp) server(p -> sp.setClimbing(true));
+        if (climber instanceof net.minecraft.world.entity.monster.spider.Spider sp) server(p -> sp.setClimbing(true));
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {

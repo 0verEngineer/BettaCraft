@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -51,12 +54,13 @@ public class Co2CylinderItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         float g = gas(stack);
         tooltip.add(Component.translatable("tooltip.bettacraft.co2_cylinder.gas", Math.round(100 * share(stack)),
                 String.format(java.util.Locale.ROOT, "%.0f", g)).withStyle(g > 0 ? ChatFormatting.AQUA : ChatFormatting.GRAY));
         if (Boolean.TRUE.equals(stack.get(ModDataComponents.CO2_SOLENOID.get())))
             tooltip.add(Component.translatable("tooltip.bettacraft.co2_cylinder.solenoid").withStyle(ChatFormatting.GRAY));
-        super.appendHoverText(stack, context, tooltip, flag);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

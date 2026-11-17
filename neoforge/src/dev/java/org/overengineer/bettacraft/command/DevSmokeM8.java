@@ -31,11 +31,11 @@ final class DevSmokeM8 {
         CompoundTag tank = InfoData.tank(level, tankPos);
         if (c == null || tank == null) throw new IllegalStateException("M8: no info data for the tank");
         List<Component> lines = InfoLines.tank(tank, true);
-        if (lines.size() < 3 || tank.getInt("count") != TankInhabitants.liveInhabitants(level, c.getTank()).size()) {
+        if (lines.size() < 3 || tank.getIntOr("count", 0) != TankInhabitants.liveInhabitants(level, c.getTank()).size()) {
             throw new IllegalStateException("M8: tank info " + tank);
         }
         CompoundTag filter = InfoData.filter(level, level.getBlockEntity(filterPos));
-        if (filter == null || !filter.getBoolean("attached")) throw new IllegalStateException("M8: filter info " + filter);
+        if (filter == null || !filter.getBooleanOr("attached", false)) throw new IllegalStateException("M8: filter info " + filter);
         BettaEntity b = (BettaEntity) TankInhabitants.liveInhabitants(level, c.getTank()).stream()
                 .filter(e -> e instanceof BettaEntity).findFirst().orElseThrow(() -> new IllegalStateException("M8: no betta"));
         List<Component> betta = InfoLines.betta(b, InfoData.betta(b), true);

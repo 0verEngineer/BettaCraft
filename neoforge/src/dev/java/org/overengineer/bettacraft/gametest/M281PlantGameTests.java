@@ -100,7 +100,7 @@ public final class M281PlantGameTests {
     }
 
     private static Holder<Biome> biome(ServerLevel level, ResourceKey<Biome> key) {
-        return level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
+        return level.registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(key);
     }
 
     private static boolean hasFeature(Holder<Biome> b, String id) {

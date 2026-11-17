@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.TypedDataComponent;
@@ -7,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import org.overengineer.bettacraft.registry.ModTags;
@@ -28,10 +29,10 @@ import org.overengineer.bettacraft.registry.ModTags;
  * shrinks there) and the item is given back empty. {@link #parse} is pure (unit-tested with the formats of the jars).
  */
 public final class MobCaptures {
-    public static final ResourceLocation SOUL_VIAL = ResourceLocation.fromNamespaceAndPath("enderio", "soul_vial");
-    public static final ResourceLocation SOUL = ResourceLocation.fromNamespaceAndPath("enderio", "soul");
-    public static final ResourceLocation IMPRISONMENT_TOOL = ResourceLocation.fromNamespaceAndPath("industrialforegoing", "mob_imprisonment_tool");
-    public static final ResourceLocation IMPRISONMENT = ResourceLocation.fromNamespaceAndPath("industrialforegoing", "mob_imprisonment");
+    public static final Identifier SOUL_VIAL = Identifier.fromNamespaceAndPath("enderio", "soul_vial");
+    public static final Identifier SOUL = Identifier.fromNamespaceAndPath("enderio", "soul");
+    public static final Identifier IMPRISONMENT_TOOL = Identifier.fromNamespaceAndPath("industrialforegoing", "mob_imprisonment_tool");
+    public static final Identifier IMPRISONMENT = Identifier.fromNamespaceAndPath("industrialforegoing", "mob_imprisonment");
 
     /** The formats. */
     public enum Format { SOUL_VIAL, IMPRISONMENT, GENERIC }
@@ -41,7 +42,7 @@ public final class MobCaptures {
     @Nullable
     public static Format format(ItemStack stack) {
         if (stack.isEmpty()) return null;
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (SOUL_VIAL.equals(id)) return Format.SOUL_VIAL;
         if (IMPRISONMENT_TOOL.equals(id)) return Format.IMPRISONMENT;
         if (stack.is(ModTags.MOB_CAPTURE_ITEMS)) return Format.GENERIC;
@@ -55,7 +56,7 @@ public final class MobCaptures {
         if (f == null) return null;
         try {
             for (TypedDataComponent<?> c : stack.getComponents()) {
-                ResourceLocation type = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.type());
+                Identifier type = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.type());
                 if (f == Format.SOUL_VIAL && !SOUL.equals(type) || f == Format.IMPRISONMENT && !IMPRISONMENT.equals(type)) continue;
                 Tag t = encode(c);
                 CompoundTag e = t == null ? null : parse(f, t);
@@ -78,7 +79,7 @@ public final class MobCaptures {
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getString("id")).orElse(null);
+        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
     }
 
     /** The item given back after its mob went into a tank: the same item, empty. */
@@ -96,10 +97,10 @@ public final class MobCaptures {
         switch (f) {
             case SOUL_VIAL -> {
                 for (String k : new String[]{"entity_tag", "entityTag"}) {
-                    if (c.contains(k, Tag.TAG_COMPOUND)) {
-                        CompoundTag e = c.getCompound(k).copy();
-                        if (!e.contains("id", Tag.TAG_STRING) && c.contains("entity_type", Tag.TAG_STRING)) e.putString("id", c.getString("entity_type"));
-                        return e.contains("id", Tag.TAG_STRING) ? e : null;
+                    if (NbtCompat.has(c, k, Tag.TAG_COMPOUND)) {
+                        CompoundTag e = c.getCompoundOrEmpty(k).copy();
+                        if (!NbtCompat.has(e, "id", Tag.TAG_STRING) && NbtCompat.has(c, "entity_type", Tag.TAG_STRING)) e.putString("id", c.getStringOr("entity_type", ""));
+                        return NbtCompat.has(e, "id", Tag.TAG_STRING) ? e : null;
                     }
                 }
                 return null;
@@ -116,10 +117,10 @@ public final class MobCaptures {
     /** The compound as entity data if it names its type in {@code id} or {@code entity}. */
     @Nullable
     private static CompoundTag named(CompoundTag c) {
-        if (c.contains("id", Tag.TAG_STRING) && ResourceLocation.tryParse(c.getString("id")) != null && looksLikeEntity(c)) return c.copy();
-        if (c.contains("entity", Tag.TAG_STRING) && ResourceLocation.tryParse(c.getString("entity")) != null) {
+        if (NbtCompat.has(c, "id", Tag.TAG_STRING) && Identifier.tryParse(c.getStringOr("id", "")) != null && looksLikeEntity(c)) return c.copy();
+        if (NbtCompat.has(c, "entity", Tag.TAG_STRING) && Identifier.tryParse(c.getStringOr("entity", "")) != null) {
             CompoundTag e = c.copy();
-            e.putString("id", e.getString("entity"));
+            e.putString("id", e.getStringOr("entity", ""));
             e.remove("entity");
             return e;
         }
@@ -136,7 +137,7 @@ public final class MobCaptures {
         CompoundTag self = named(c);
         if (self != null) return self;
         if (depth >= 3) return null;
-        for (String k : c.getAllKeys()) {
+        for (String k : c.keySet()) {
             if (c.get(k) instanceof CompoundTag sub) {
                 CompoundTag found = search(sub, depth + 1);
                 if (found != null) return found;

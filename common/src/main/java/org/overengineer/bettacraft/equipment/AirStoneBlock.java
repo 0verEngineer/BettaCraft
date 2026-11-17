@@ -61,15 +61,15 @@ public class AirStoneBlock extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return new ItemStack(ModItems.AIR_STONE.get());
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!Features.enabled(Feature.POWER_REGULATOR)) return InteractionResult.PASS;
-        if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable
@@ -81,6 +81,6 @@ public class AirStoneBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? createTickerHelper(type, ModBlockEntities.AIR_STONE.get(), AirStoneBlockEntity::clientTick) : null;
+        return level.isClientSide() ? createTickerHelper(type, ModBlockEntities.AIR_STONE.get(), AirStoneBlockEntity::clientTick) : null;
     }
 }

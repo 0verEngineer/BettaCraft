@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.model.FrogModel;
 import org.overengineer.bettacraft.client.model.GeckoModel;
@@ -30,7 +30,7 @@ import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
  * <b>buried</b> (sunk into the ground up to the eyes).
  */
 public class HerpRenderer extends MobRenderer<TerrariumAnimalEntity, EntityModel<TerrariumAnimalEntity>> {
-    private static final Map<String, ResourceLocation> TEXTURES = new ConcurrentHashMap<>();
+    private static final Map<String, Identifier> TEXTURES = new ConcurrentHashMap<>();
     private final HerpSpecies species;
     private final EntityModel<TerrariumAnimalEntity> main;
     @Nullable
@@ -67,7 +67,7 @@ public class HerpRenderer extends MobRenderer<TerrariumAnimalEntity, EntityModel
     }
 
     @Override
-    public ResourceLocation getTextureLocation(TerrariumAnimalEntity e) {
+    public Identifier getTextureLocation(TerrariumAnimalEntity e) {
         String name = tadpole != null && tadpole(e) ? species.id() + "_tadpole"
                 : species.texture(e instanceof HerpEntity h ? h.variety() : 0);
         return TEXTURES.computeIfAbsent(name, k -> BettaCraft.id("textures/entity/terrarium/" + k + ".png"));

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.entity.betta;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.Optional;
@@ -87,7 +88,7 @@ public record BettaData(BettaGenotype genotype, boolean female, String stage, do
 
     /** M22.3: the hidden genes were analysed with the magnifier (kept in {@code raw}; older bettas: migrated to true). */
     public boolean analysed() {
-        return raw.getBoolean("analysed");
+        return raw.getBooleanOr("analysed", false);
     }
 
     public BettaData withAnalysed(boolean a) {
@@ -108,9 +109,9 @@ public record BettaData(BettaGenotype genotype, boolean female, String stage, do
         t.putString("stage", stage);
         if (stageDays > 0) t.putDouble("stage_days", stageDays);
         else t.remove("stage_days");
-        t.putUUID("fish_id", fishId);
-        mother.ifPresentOrElse(u -> t.putUUID("mother", u), () -> t.remove("mother"));
-        father.ifPresentOrElse(u -> t.putUUID("father", u), () -> t.remove("father"));
+        NbtCompat.putUUID(t, "fish_id", fishId);
+        mother.ifPresentOrElse(u -> NbtCompat.putUUID(t, "mother", u), () -> t.remove("mother"));
+        father.ifPresentOrElse(u -> NbtCompat.putUUID(t, "father", u), () -> t.remove("father"));
         t.putInt("generation", generation);
         t.putLong("born", bornTime);
         t.put("health", health.copy());
@@ -121,19 +122,19 @@ public record BettaData(BettaGenotype genotype, boolean female, String stage, do
 
     public static BettaData load(CompoundTag in) {
         CompoundTag t = Schemas.BETTA.migrate(in);
-        BettaGenotype genotype = BettaGenotype.load(t.getCompound("genome"));
-        boolean female = "female".equals(t.getString("sex"));
-        String stage = t.contains("stage", Tag.TAG_STRING) ? t.getString("stage") : STAGE_ADULT;
-        UUID id = t.hasUUID("fish_id") ? t.getUUID("fish_id") : UUID.randomUUID();
-        Optional<UUID> mother = t.hasUUID("mother") ? Optional.of(t.getUUID("mother")) : Optional.empty();
-        Optional<UUID> father = t.hasUUID("father") ? Optional.of(t.getUUID("father")) : Optional.empty();
-        return new BettaData(genotype, female, stage, BettaHealth.days(t, "stage_days"), id, mother, father, Math.max(0, t.getInt("generation")),
-                t.getLong("born"), t.getCompound("health").copy(), t.getCompound("breeding").copy(), t);
+        BettaGenotype genotype = BettaGenotype.load(t.getCompoundOrEmpty("genome"));
+        boolean female = "female".equals(t.getStringOr("sex", ""));
+        String stage = NbtCompat.has(t, "stage", Tag.TAG_STRING) ? t.getStringOr("stage", "") : STAGE_ADULT;
+        UUID id = NbtCompat.hasUUID(t, "fish_id") ? NbtCompat.getUUID(t, "fish_id") : UUID.randomUUID();
+        Optional<UUID> mother = NbtCompat.hasUUID(t, "mother") ? Optional.of(NbtCompat.getUUID(t, "mother")) : Optional.empty();
+        Optional<UUID> father = NbtCompat.hasUUID(t, "father") ? Optional.of(NbtCompat.getUUID(t, "father")) : Optional.empty();
+        return new BettaData(genotype, female, stage, BettaHealth.days(t, "stage_days"), id, mother, father, Math.max(0, t.getIntOr("generation", 0)),
+                t.getLongOr("born", 0L), t.getCompoundOrEmpty("health").copy(), t.getCompoundOrEmpty("breeding").copy(), t);
     }
 
     /** Reads the betta data from a bucket's {@code bucket_entity_data} tag (null if there is none). */
     @Nullable
     public static BettaData fromBucketTag(CompoundTag bucketTag) {
-        return bucketTag.contains(KEY, Tag.TAG_COMPOUND) ? load(bucketTag.getCompound(KEY)) : null;
+        return NbtCompat.has(bucketTag, KEY, Tag.TAG_COMPOUND) ? load(bucketTag.getCompoundOrEmpty(KEY)) : null;
     }
 }

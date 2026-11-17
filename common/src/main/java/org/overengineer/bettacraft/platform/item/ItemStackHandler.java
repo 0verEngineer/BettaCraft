@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.platform.item;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -113,7 +114,7 @@ public class ItemStackHandler implements IItemHandlerModifiable {
             if (!stacks.get(i).isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
-                list.add(stacks.get(i).save(provider, itemTag));
+                list.add(NbtCompat.saveStack(provider, stacks.get(i), itemTag));
             }
         }
         CompoundTag nbt = new CompoundTag();
@@ -123,12 +124,12 @@ public class ItemStackHandler implements IItemHandlerModifiable {
     }
 
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        setSize(nbt.contains("Size", Tag.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-        ListTag list = nbt.getList("Items", Tag.TAG_COMPOUND);
+        setSize(NbtCompat.has(nbt, "Size", Tag.TAG_INT) ? nbt.getIntOr("Size", 0) : stacks.size());
+        ListTag list = nbt.getListOrEmpty("Items");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag itemTags = list.getCompound(i);
-            int slot = itemTags.getInt("Slot");
-            if (slot >= 0 && slot < stacks.size()) ItemStack.parse(provider, itemTags).ifPresent(stack -> stacks.set(slot, stack));
+            CompoundTag itemTags = list.getCompoundOrEmpty(i);
+            int slot = itemTags.getIntOr("Slot", 0);
+            if (slot >= 0 && slot < stacks.size()) NbtCompat.parseStack(provider, itemTags).ifPresent(stack -> stacks.set(slot, stack));
         }
         onLoad();
     }

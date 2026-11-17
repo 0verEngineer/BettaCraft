@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.chem;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -170,7 +171,7 @@ class WaterChemistryTest {
             // M29: the soft-water cichlids and the chocolate gourami came after the water chemistry (no old tank holds them): soft water only
             if (s == TankmateSpecies.DISCUS || s == TankmateSpecies.AGASSIZ_DWARF_CICHLID || s == TankmateSpecies.CHOCOLATE_GOURAMI) {
                 assertFalse(r.contains(ph, WaterChemistry.TAP_TDS), s + " needs soft water");
-                assertTrue(r.contains(6.2, 150), r.describe());
+                assertTrue(NbtCompat.has(r, 6.2, 150), r.describe());
                 continue;
             }
             assertTrue(r.contains(ph, WaterChemistry.TAP_TDS), s + " " + r.describe());
@@ -181,7 +182,7 @@ class WaterChemistryTest {
             // M25 part c: the Caridina came after the water chemistry and need soft water (no old tank holds them)
             if (s == CritterSpecies.CARIDINA) {
                 assertFalse(r.contains(ph, WaterChemistry.TAP_TDS), "Caridina need soft water");
-                assertTrue(r.contains(6.2, 150), r.describe());
+                assertTrue(NbtCompat.has(r, 6.2, 150), r.describe());
                 continue;
             }
             assertTrue(r.contains(ph, WaterChemistry.TAP_TDS), s + " " + r.describe());
@@ -205,7 +206,7 @@ class WaterChemistryTest {
         // salt water animals only mind the pH
         assertEquals(0, ChemTolerance.Range.MARINE.distance(8.2, 2000), 1e-9);
         // soft-water fish take reverse osmosis water, livebearers do not; Caridina (part c) need it softened
-        assertTrue(ChemTolerance.SOFT.contains(6.2, 0));
+        assertTrue(NbtCompat.has(ChemTolerance.SOFT, 6.2, 0));
         assertEquals(ChemTolerance.Fit.BAD, ChemTolerance.fit(ChemTolerance.LIVEBEARER.distance(6.2, 0)));
         assertEquals(ChemTolerance.Fit.BAD, ChemTolerance.fit(ChemTolerance.CARIDINA.distance(WaterChemistry.TAP_PH, WaterChemistry.TAP_TDS)));
         assertEquals("pH 5.5–6.8 · TDS 100–200 ppm", ChemTolerance.CARIDINA.describe());

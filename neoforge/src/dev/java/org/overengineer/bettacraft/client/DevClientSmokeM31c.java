@@ -59,7 +59,7 @@ final class DevClientSmokeM31c {
     DevClientSmokeM31c() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(160, () -> server(pl -> place(pl.serverLevel())));
+        then(160, () -> server(pl -> place(pl.level())));
         then(1, () -> look(frogs.getX() + 2.4, frogs.getY() + 2.2, frogs.getZ() - 0.35, 0F, 42F));
         then(120, () -> {
             int n = mc.level.getEntitiesOfClass(HerpEntity.class, new AABB(frogs).inflate(40)).size();
@@ -126,7 +126,7 @@ final class DevClientSmokeM31c {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         // --- dart frogs: a paludarium, water on the left, mossy land rising to the right
         frogs = p.blockPosition().offset(-12, 2, 200);
@@ -188,7 +188,7 @@ final class DevClientSmokeM31c {
     private static void at(HerpEntity e, BlockPos min, TankTerrain ter, double dx, double dz, double y, float yaw, LandWalker.Pose pose) {
         double x = min.getX() + dx, z = min.getZ() + dz;
         double gy = Double.isFinite(y) ? min.getY() + y : ter.ground(x, z) + 0.01;
-        e.moveTo(x, gy, z, yaw, 0F);
+        e.snapTo(x, gy, z, yaw, 0F);
         e.setYHeadRot(yaw);
         e.yBodyRot = yaw;
         e.setPoseForTest(pose);

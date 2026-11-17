@@ -19,7 +19,8 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * its biome modification API.
  */
 public final class WildSpawns {
-    public record Spawn(MobCategory category, MobSpawnSettings.SpawnerData data) {}
+    /** M52b: the weight is no longer part of the spawner data (1.21.5 weighted lists). */
+    public record Spawn(MobCategory category, MobSpawnSettings.SpawnerData data, int weight) {}
 
     private WildSpawns() {}
 
@@ -31,7 +32,7 @@ public final class WildSpawns {
         if (weight <= 0) return out;
         int min = CommonConfig.getOr(CommonConfig.SPAWN_MIN_GROUP, 1);
         int max = Math.max(min, CommonConfig.getOr(CommonConfig.SPAWN_MAX_GROUP, 2));
-        out.add(new Spawn(ModEntities.BETTA.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.BETTA.get(), weight, min, max)));
+        out.add(new Spawn(ModEntities.BETTA.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.BETTA.get(), min, max), weight));
         return out;
     }
 
@@ -43,7 +44,7 @@ public final class WildSpawns {
             for (var e : org.overengineer.bettacraft.terrarium.HerpSpawns.entries(org.overengineer.bettacraft.terrarium.HerpSpawns.home(biome))) {
                 var type = ModEntities.herp(e.species());
                 int[] g = org.overengineer.bettacraft.terrarium.HerpSpawns.group(e.species());
-                out.add(new Spawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, e.weight(), g[0], g[1])));
+                out.add(new Spawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, g[0], g[1]), e.weight()));
             }
         }
         NetCatching.Water w = Wildlife.water(biome);
@@ -55,16 +56,16 @@ public final class WildSpawns {
                 if (weight <= 0) continue;
                 int[] g = Wildlife.group(s);
                 var type = ModEntities.TANKMATES.get(s).get();
-                out.add(new Spawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, weight, g[0], g[1])));
+                out.add(new Spawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, g[0], g[1]), weight));
             }
         }
         if (Features.enabled(Feature.FROGS_WILD)) { // M33: the frogs have their own switch
             int frog = Wildlife.frogWeight(w);
-            if (frog > 0) out.add(new Spawn(ModEntities.DWARF_FROG.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.DWARF_FROG.get(), frog, 1, 2)));
+            if (frog > 0) out.add(new Spawn(ModEntities.DWARF_FROG.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.DWARF_FROG.get(), 1, 2), frog));
         }
         if (Features.enabled(Feature.INVERTEBRATES_WILD)) {
             int c = Wildlife.critterWeight(w);
-            if (c > 0) out.add(new Spawn(ModEntities.WILD_CRITTER.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.WILD_CRITTER.get(), c, 2, 5)));
+            if (c > 0) out.add(new Spawn(ModEntities.WILD_CRITTER.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.WILD_CRITTER.get(), 2, 5), c));
         }
         return out;
     }

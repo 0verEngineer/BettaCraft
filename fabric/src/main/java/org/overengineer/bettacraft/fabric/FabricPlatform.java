@@ -36,7 +36,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -262,7 +262,7 @@ public final class FabricPlatform implements Platform {
     @Override
     public void requestModelDataUpdate(BlockEntity be) {
         Level level = be.getLevel();
-        if (level != null && level.isClientSide) {
+        if (level != null && level.isClientSide()) {
             BlockState s = be.getBlockState();
             level.sendBlockUpdated(be.getBlockPos(), s, s, 8);
         }
@@ -330,12 +330,12 @@ public final class FabricPlatform implements Platform {
     }
 
     @Override
-    public boolean checkSpawnPosition(Mob mob, ServerLevelAccessor level, MobSpawnType type) {
+    public boolean checkSpawnPosition(Mob mob, ServerLevelAccessor level, EntitySpawnReason type) {
         return mob.checkSpawnRules(level, type) && mob.checkSpawnObstruction(level);
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeMobSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType type,
+    public @Nullable SpawnGroupData finalizeMobSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason type,
             @Nullable SpawnGroupData data) {
         return mob.finalizeSpawn(level, difficulty, type, data);
     }

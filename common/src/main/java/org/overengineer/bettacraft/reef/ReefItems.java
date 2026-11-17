@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -28,26 +28,26 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 public final class ReefItems {
     private ReefItems() {}
 
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         boolean salt = stack.is(ModItems.SEA_SALT.get()), calcium = stack.is(ModItems.CALCIUM_ADDITIVE.get());
-        if (!salt && !calcium) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (!salt && !calcium) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.CONSUME;
+        if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         ServerLevel server = (ServerLevel) level;
         if (salt) {
             if (t.salinity() >= Salinity.SEA - 0.5F) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.reef.salty_enough", fmt(t.salinity())).withStyle(ChatFormatting.GOLD), true);
-                return ItemInteractionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
             int n = 1;
             if (player.isShiftKeyDown()) n = Math.max(1, itemsToSea(t.salinity(), t.waterMb()));
@@ -69,7 +69,7 @@ public final class ReefItems {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.calcium", Math.round(t.calcium())), true);
         }
         c.markTankChanged();
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** Sea salt portions that bring {@code waterMb} of water from {@code ppt} to sea water. */

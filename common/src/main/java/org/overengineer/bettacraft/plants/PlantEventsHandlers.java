@@ -62,7 +62,7 @@ public final class PlantEventsHandlers {
             TankBlockEntity c = TankMultiblock.getController(level, pos);
             if (c == null || c.getTank() == null) return;
             e.setCanceled(true);
-            e.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
+            e.setCancellationResult(InteractionResult.SUCCESS);
             if (!(level instanceof ServerLevel server)) return;
             if (!TankInhabitants.canModify(player, c.getTank())) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
@@ -73,8 +73,8 @@ public final class PlantEventsHandlers {
         }
         if (state.is(Blocks.MOSS_BLOCK) && nextToWater(level, pos) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS)) { // M33
             e.setCanceled(true);
-            e.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
-            if (level.isClientSide) return;
+            e.setCancellationResult(InteractionResult.SUCCESS);
+            if (level.isClientSide()) return;
             level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 0.8F, 1.2F);
             if (!player.getAbilities().instabuild) {
                 stack.hurtAndBreak(1, player, e.getHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
@@ -96,7 +96,7 @@ public final class PlantEventsHandlers {
         TankBlockEntity c = TankMultiblock.getController(level, e.getPos());
         if (c == null || c.getTank() == null) return false;
         e.setCanceled(true);
-        e.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
+        e.setCancellationResult(InteractionResult.SUCCESS);
         if (!(level instanceof ServerLevel server)) return true;
         Player player = e.getEntity();
         if (!TankInhabitants.canModify(player, c.getTank())) {

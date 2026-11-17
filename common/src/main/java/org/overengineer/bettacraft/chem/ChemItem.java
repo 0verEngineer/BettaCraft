@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.chem;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.ChatFormatting;
@@ -11,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -56,7 +58,7 @@ public class ChemItem extends Item {
         if (ctx.getPlayer() == null || !(ctx.getLevel().getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock)) {
             return kind == Kind.ALMOND_LEAF || kind == Kind.ALDER_CONE ? placeLitter(ctx) : InteractionResult.PASS;
         }
-        return useOnTank(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer(), ctx.getHand()).result();
+        return useOnTank(ctx.getItemInHand(), ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer(), ctx.getHand());
     }
 
     /** M28: lays the leaf or cone on the floor as leaf litter (in a tank interior: with the right to build there). */
@@ -68,7 +70,7 @@ public class ChemItem extends Item {
                 ? org.overengineer.bettacraft.registry.ModBlocks.ALMOND_LEAF_LITTER : org.overengineer.bettacraft.registry.ModBlocks.ALDER_CONES).get().defaultBlockState();
         if (!place.canPlace() || !state.canSurvive(level, pos)) return InteractionResult.PASS;
         Player player = ctx.getPlayer();
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level) && player != null
                 && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, pos)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
@@ -82,24 +84,25 @@ public class ChemItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft." + kind.name().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
     }
 
     /** Right-click on a tank with one of the items (from {@link org.overengineer.bettacraft.tank.TankInteractions}). */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!(stack.getItem() instanceof ChemItem item)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!(stack.getItem() instanceof ChemItem item)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.CONSUME;
+        if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankChemistry.enabled()) {
             player.displayClientMessage(Component.translatable("message.bettacraft.chem.off").withStyle(ChatFormatting.GRAY), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         ServerLevel server = (ServerLevel) level;
         TankChemistry.Drivers d = TankChemistry.drivers(server, c);
@@ -116,13 +119,13 @@ public class ChemItem extends Item {
             case REMINERALISER, ALMOND_LEAF, ALDER_CONE -> {
                 if (!TankInhabitants.canModify(player, t)) {
                     player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-                    return ItemInteractionResult.CONSUME;
+                    return InteractionResult.CONSUME;
                 }
                 if (item.kind == Kind.REMINERALISER) remineralise(stack, server, pos, player, c);
                 else addLeaf(stack, server, pos, player, c);
             }
         }
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     private static void remineralise(ItemStack stack, ServerLevel level, BlockPos pos, Player player, TankBlockEntity c) {

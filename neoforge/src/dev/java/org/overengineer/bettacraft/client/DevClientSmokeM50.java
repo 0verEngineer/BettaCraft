@@ -13,12 +13,12 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RailBlock;
@@ -94,7 +94,7 @@ final class DevClientSmokeM50 {
             shot("cart");
         });
         then(1, this::waitForCurve);
-        then(1, () -> server(p -> airship(p.serverLevel())));
+        then(1, () -> server(p -> airship(p.level())));
         then(1, () -> look(shipPos.getX() + 1.0, shipPos.getY() + 2.6, shipPos.getZ() - 3.4, 0F, 24F));
         then(200, () -> {
             int live = 0, packed = 0;
@@ -176,11 +176,11 @@ final class DevClientSmokeM50 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
         bearingPos = p.blockPosition().offset(0, 6, 160);
-        var bearingBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create:mechanical_bearing"));
+        var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));
         if (bearingBlock == Blocks.AIR) {
             LOGGER.error("[smoketest] M50 needs Create (-Pcreate)");
             return;
@@ -202,7 +202,7 @@ final class DevClientSmokeM50 {
         for (int x = 0; x < 14; x++) level.setBlock(railStart.offset(x, 0, 0), ew, 2);
         level.setBlock(curve, Blocks.RAIL.defaultBlockState().setValue(RailBlock.SHAPE, RailShape.SOUTH_WEST), 2);
         for (int z = 1; z <= 9; z++) level.setBlock(curve.offset(0, 0, z), ns, 2);
-        var assembler = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create:cart_assembler"));
+        var assembler = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:cart_assembler"));
         BlockPos at = railStart.offset(3, 0, 0);
         level.setBlock(at, with(with(assembler.defaultBlockState(), "shape", RailShape.EAST_WEST), "powered", true), 3);
         level.setBlock(at.below(), Blocks.REDSTONE_BLOCK.defaultBlockState(), 3);
@@ -235,7 +235,7 @@ final class DevClientSmokeM50 {
     }
 
     private void startCart(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         cart = new Minecart(level, railStart.getX() + 0.5, railStart.getY() + 0.1, railStart.getZ() + 0.5);
         level.addFreshEntity(cart);
         pushing = true;

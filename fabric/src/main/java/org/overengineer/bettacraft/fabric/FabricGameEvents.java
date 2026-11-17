@@ -20,15 +20,14 @@ import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.platform.event.*;
 
@@ -75,7 +74,7 @@ public final class FabricGameEvents {
                 var stack = player.getItemInHand(hand);
                 var r = state.useItemOn(stack, level, player, hand, hit);
                 if (r.consumesAction()) return r.result();
-                if (r == net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
+                if (r == net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
                     var r2 = state.useWithoutItem(level, player, hit);
                     if (r2.consumesAction()) return r2;
                 }
@@ -93,7 +92,7 @@ public final class FabricGameEvents {
         });
         UseItemCallback.EVENT.register((player, level, hand) -> {
             var e = post(new PlayerInteractEvent.RightClickItem(player, hand));
-            if (!e.isCanceled()) return InteractionResultHolder.pass(player.getItemInHand(hand));
+            if (!e.isCanceled()) return InteractionResult.PASS;
             InteractionResult r = orFail(e.getCancellationResult());
             return new InteractionResultHolder<>(r, player.getItemInHand(hand));
         });
@@ -119,10 +118,10 @@ public final class FabricGameEvents {
         var e = post(new AddReloadListenerEvent());
         int i = 0;
         for (PreparableReloadListener l : e.getListeners()) {
-            ResourceLocation id = BettaCraft.id("reload_" + i++);
+            Identifier id = BettaCraft.id("reload_" + i++);
             ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
                 @Override
-                public ResourceLocation getFabricId() {
+                public Identifier getFabricId() {
                     return id;
                 }
 

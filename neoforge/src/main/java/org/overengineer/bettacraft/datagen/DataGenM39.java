@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.datagen;
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import org.overengineer.bettacraft.food.FoodDiet;
@@ -18,12 +18,12 @@ import org.overengineer.bettacraft.registry.ModTags;
  */
 final class DataGenM39 {
     /** Live food of other mods (live food, betta food, the live food group). */
-    static final List<ResourceLocation> LIVE = List.of(Compat.rl(Compat.FINTASTIC, "copepod"), Compat.rl(Compat.FINTASTIC, "daphnia"),
+    static final List<Identifier> LIVE = List.of(Compat.rl(Compat.FINTASTIC, "copepod"), Compat.rl(Compat.FINTASTIC, "daphnia"),
             Compat.rl(Compat.FINTASTIC, "fairy_shrimp"));
     /** Flake food of other mods. */
-    static final List<ResourceLocation> FLAKES = List.of(Compat.rl(Compat.FISH_EGGS, "fish_food"));
+    static final List<Identifier> FLAKES = List.of(Compat.rl(Compat.FISH_EGGS, "fish_food"));
     /** Protein-rich frozen food of other mods (fish and squid roe). */
-    static final List<ResourceLocation> FROZEN = List.of(Compat.rl(Compat.FISH_EGGS, "fish_eggs"), Compat.rl(Compat.FISH_EGGS, "squid_eggs"));
+    static final List<Identifier> FROZEN = List.of(Compat.rl(Compat.FISH_EGGS, "fish_eggs"), Compat.rl(Compat.FISH_EGGS, "squid_eggs"));
 
     private DataGenM39() {}
 

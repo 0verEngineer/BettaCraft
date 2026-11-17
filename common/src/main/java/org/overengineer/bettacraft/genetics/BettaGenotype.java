@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.genetics;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -236,24 +237,24 @@ public final class BettaGenotype {
     }
 
     public static BettaGenotype load(CompoundTag t) {
-        String species = t.contains(SPECIES_KEY, Tag.TAG_STRING) ? t.getString(SPECIES_KEY) : BettaGenome.SPECIES_BETTA;
+        String species = NbtCompat.has(t, SPECIES_KEY, Tag.TAG_STRING) ? t.getStringOr(SPECIES_KEY, "") : BettaGenome.SPECIES_BETTA;
         Map<Locus, AllelePair> m = new LinkedHashMap<>();
         BettaGenome def = BettaGenome.DEFAULT;
         CompoundTag extra = t.copy();
         extra.remove(SPECIES_KEY);
         extra.remove(ANCESTRY_KEY);
-        BettaSpecies.Ancestry ancestry = t.contains(ANCESTRY_KEY, Tag.TAG_COMPOUND) ? BettaSpecies.Ancestry.load(t.getCompound(ANCESTRY_KEY))
+        BettaSpecies.Ancestry ancestry = NbtCompat.has(t, ANCESTRY_KEY, Tag.TAG_COMPOUND) ? BettaSpecies.Ancestry.load(t.getCompoundOrEmpty(ANCESTRY_KEY))
                 : BettaSpecies.Ancestry.of(species);
         for (Locus l : BettaLoci.ALL) {
             extra.remove(l.id());
             String d = phenotypeValue(def, l);
-            if (t.contains(l.id(), Tag.TAG_LIST)) {
-                ListTag list = t.getList(l.id(), Tag.TAG_STRING);
-                String a = list.isEmpty() ? d : list.getString(0);
-                String b = list.size() < 2 ? a : list.getString(1);
+            if (NbtCompat.has(t, l.id(), Tag.TAG_LIST)) {
+                ListTag list = t.getListOrEmpty(l.id());
+                String a = list.isEmpty() ? d : list.getStringOr(0, "");
+                String b = list.size() < 2 ? a : list.getStringOr(1, "");
                 m.put(l, new AllelePair(a, b));
-            } else if (t.contains(l.id(), Tag.TAG_STRING)) {
-                String v = t.getString(l.id());
+            } else if (NbtCompat.has(t, l.id(), Tag.TAG_STRING)) {
+                String v = t.getStringOr(l.id(), "");
                 m.put(l, new AllelePair(v, v));
             } else {
                 m.put(l, new AllelePair(d, d));

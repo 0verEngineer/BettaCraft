@@ -22,7 +22,7 @@ public class TankStyleRecipe extends ShapelessRecipe {
     private final TankStyle from;
 
     public TankStyleRecipe(ShapelessRecipe base, TankStyle from) {
-        super(base.getGroup(), base.category(), base.getResultItem(null), base.getIngredients());
+        super(base.group(), base.category(), base.assemble(CraftingInput.EMPTY, null), base.placementInfo().ingredients());
         this.from = from;
     }
 
@@ -49,12 +49,13 @@ public class TankStyleRecipe extends ShapelessRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return getResultItem(registries).copy();
+        return super.assemble(input, registries);
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.TANK_STYLE.get();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public RecipeSerializer<ShapelessRecipe> getSerializer() {
+        return (RecipeSerializer) ModRecipes.TANK_STYLE.get();
     }
 
     public static class Serializer implements RecipeSerializer<TankStyleRecipe> {

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.behaviour.MovementContext;
@@ -71,11 +72,11 @@ public final class CreateTravel {
     public static void tick(Object context) {
         if (!(context instanceof MovementContext ctx) || !(ctx.world instanceof ServerLevel level)) return;
         CompoundTag nbt = ctx.blockEntityData;
-        if (nbt == null || !nbt.contains("tank", Tag.TAG_COMPOUND) || !TravelCare.enabled()) return;
+        if (nbt == null || !NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND) || !TravelCare.enabled()) return;
         try {
             State s = ctx.temporaryData instanceof State st ? st : new State();
             ctx.temporaryData = s;
-            if (s.adapters == null) s.adapters = around(level, TankData.load(nbt.getCompound("tank")), offset(ctx, nbt), ctx.contraption.getBlocks()).adapters();
+            if (s.adapters == null) s.adapters = around(level, TankData.load(nbt.getCompoundOrEmpty("tank")), offset(ctx, nbt), ctx.contraption.getBlocks()).adapters();
             // each drive adapter turns by how fast it moves through the world (on a bearing: by its distance from the axis)
             double full = Math.max(0.1, ServerConfig.getOr(ServerConfig.TRAVEL_DYNAMO_SPEED, 8.0));
             if (!s.adapters.isEmpty() && ctx.contraption.entity != null) {
@@ -87,20 +88,20 @@ public final class CreateTravel {
             }
             s.ticks++;
             long now = level.getGameTime();
-            CompoundTag trip = nbt.getCompound(TravelCare.TRIP_KEY);
-            if (!trip.contains("at", Tag.TAG_LONG) || now < trip.getLong("at")) {
+            CompoundTag trip = nbt.getCompoundOrEmpty(TravelCare.TRIP_KEY);
+            if (!NbtCompat.has(trip, "at", Tag.TAG_LONG) || now < trip.getLongOr("at", 0L)) {
                 trip.putLong("at", now);
                 nbt.put(TravelCare.TRIP_KEY, trip);
                 return;
             }
-            long dt = now - trip.getLong("at");
+            long dt = now - trip.getLongOr("at", 0L);
             if (dt >= STEP) {
                 if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, STEP * 5L);
                 double motion = s.ticks <= 0 ? 0 : s.motion / s.ticks;
                 s.motion = 0;
                 s.ticks = 0;
                 step(level, ctx, nbt, dt, motion);
-                nbt.getCompound(TravelCare.TRIP_KEY).putLong("at", now);
+                nbt.getCompoundOrEmpty(TravelCare.TRIP_KEY).putLong("at", now);
             }
             if (s.synced == Long.MIN_VALUE || now - s.synced >= SYNC || now < s.synced) {
                 s.synced = now;
@@ -119,8 +120,8 @@ public final class CreateTravel {
 
     /** Old world position -> contraption-local position of the tank's data (by the controller's own place). */
     private static BlockPos offset(MovementContext ctx, CompoundTag nbt) {
-        int[] c = nbt.getIntArray("controller");
-        BlockPos oldController = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : TankData.load(nbt.getCompound("tank")).anchor();
+        int[] c = nbt.getIntArray("controller").orElse(new int[0]);
+        BlockPos oldController = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : TankData.load(nbt.getCompoundOrEmpty("tank")).anchor();
         return ctx.localPos.subtract(oldController);
     }
 
@@ -129,7 +130,7 @@ public final class CreateTravel {
      * average over the ticks since the last step).
      */
     static TravelCare.Result step(ServerLevel level, MovementContext ctx, CompoundTag nbt, long ticks, double motion) {
-        TankData t = TankData.load(nbt.getCompound("tank"));
+        TankData t = TankData.load(nbt.getCompoundOrEmpty("tank"));
         BlockPos offset = offset(ctx, nbt);
         Contraption contraption = ctx.contraption;
         Map<BlockPos, StructureBlockInfo> blocks = contraption.getBlocks();
@@ -218,8 +219,8 @@ public final class CreateTravel {
             if (got <= 0) return 0;
             CompoundTag saved = be.saveWithFullMetadata(level.registryAccess());
             CompoundTag nbt = info.nbt();
-            for (String k : new ArrayList<>(nbt.getAllKeys())) if (!saved.contains(k)) nbt.remove(k);
-            for (String k : saved.getAllKeys()) nbt.put(k, saved.get(k));
+            for (String k : new ArrayList<>(nbt.keySet())) if (!saved.contains(k)) nbt.remove(k);
+            for (String k : saved.keySet()) nbt.put(k, saved.get(k));
             return got;
         } catch (RuntimeException e) {
             LOGGER.debug("A battery on a contraption gave no FE", e);
@@ -238,12 +239,12 @@ public final class CreateTravel {
     /** What a client's copy of the controller loads (like its update tag): the client view of the data and the packed animals. */
     @Nullable
     public static CompoundTag view(CompoundTag nbt) {
-        if (!nbt.contains("tank", Tag.TAG_COMPOUND)) return null;
+        if (!NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND)) return null;
         CompoundTag v = nbt.copy();
         v.remove("tank");
         v.remove("at");
         v.remove(TravelCare.TRIP_KEY);
-        v.put("tank_view", TankData.load(nbt.getCompound("tank")).saveClientView());
+        v.put("tank_view", TankData.load(nbt.getCompoundOrEmpty("tank")).saveClientView());
         return v;
     }
 }

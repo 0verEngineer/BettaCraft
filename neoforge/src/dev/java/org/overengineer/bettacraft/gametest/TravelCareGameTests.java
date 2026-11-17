@@ -66,7 +66,7 @@ public final class TravelCareGameTests {
     }
 
     private static double sinceFed(CompoundTag nbt, int i) {
-        return nbt.getList("stowed", Tag.TAG_COMPOUND).getCompound(i).getCompound(BettaData.KEY).getCompound("health").getDouble("days_since_fed");
+        return nbt.getListOrEmpty("stowed").getCompoundOrEmpty(i).getCompoundOrEmpty(BettaData.KEY).getCompoundOrEmpty("health").getDoubleOr("days_since_fed", 0d);
     }
 
     @GameTest(template = EMPTY, batch = "bettacraft_m50_travel", timeoutTicks = 100)
@@ -83,7 +83,7 @@ public final class TravelCareGameTests {
                 ron = TravelCare.step(level, on, env(true), 1000);
                 roff = TravelCare.step(level, off, env(false), 1000);
             }
-            TankData ton = TankData.load(on.getCompound("tank")), toff = TankData.load(off.getCompound("tank"));
+            TankData ton = TankData.load(on.getCompoundOrEmpty("tank")), toff = TankData.load(off.getCompoundOrEmpty("tank"));
             h.assertTrue(ron != null && ron.filterPowered() && ron.heatPowered() && ron.fromBattery() > 0, "with power the devices run: " + ron);
             h.assertTrue(roff != null && !roff.filterPowered() && !roff.heatPowered(), "without power they stand: " + roff);
             h.assertTrue(ton.waterTemp() > 25F, "the heater holds the water warm: " + ton.waterTemp());
@@ -91,19 +91,19 @@ public final class TravelCareGameTests {
             h.assertTrue(toff.waterQuality() < ton.waterQuality(), "without the filter the water gets dirtier: " + toff.waterQuality() + " / " + ton.waterQuality());
             for (int i = 0; i < 2; i++) {
                 h.assertTrue(Math.abs(sinceFed(on, i) - 1.0) < 0.05 && Math.abs(sinceFed(off, i) - 1.0) < 0.05, "a day without food on the road: " + sinceFed(on, i));
-                h.assertTrue(on.getList("stowed", Tag.TAG_COMPOUND).getCompound(i).getLong("last_sim") == level.getGameTime(), "the trip is not simulated twice");
+                h.assertTrue(on.getListOrEmpty("stowed").getCompoundOrEmpty(i).getLongOr("last_sim", 0L) == level.getGameTime(), "the trip is not simulated twice");
             }
-            CompoundTag trip = off.getCompound(TravelCare.TRIP_KEY);
-            h.assertTrue(trip.getLong("ticks") == 24000 && trip.getLong("unpowered") == 24000, "the trip summary: " + trip);
-            h.assertTrue(on.getCompound(TravelCare.TRIP_KEY).getLong("powered") == 24000, "the powered trip: " + on.getCompound(TravelCare.TRIP_KEY));
+            CompoundTag trip = off.getCompoundOrEmpty(TravelCare.TRIP_KEY);
+            h.assertTrue(trip.getLongOr("ticks", 0L) == 24000 && trip.getLongOr("unpowered", 0L) == 24000, "the trip summary: " + trip);
+            h.assertTrue(on.getCompoundOrEmpty(TravelCare.TRIP_KEY).getLongOr("powered", 0L) == 24000, "the powered trip: " + on.getCompoundOrEmpty(TravelCare.TRIP_KEY));
             // weeks on the road without power or food: sick, but nobody dies before the arrival
             for (int i = 0; i < 40; i++) TravelCare.step(level, off, env(false), 24000);
-            ListTag st = off.getList("stowed", Tag.TAG_COMPOUND);
+            ListTag st = off.getListOrEmpty("stowed");
             h.assertTrue(st.size() == 2, "both bettas still packed");
             for (int i = 0; i < 2; i++) {
-                CompoundTag care = st.getCompound(i).getCompound(TravelCare.CARE_KEY);
-                h.assertTrue(care.getBoolean("sick") && care.getFloat("hp") > 0F, "sick but alive: " + care);
-                h.assertTrue(TravelCare.satiation(st.getCompound(i)) < 0.01F, "starving: " + care);
+                CompoundTag care = st.getCompoundOrEmpty(i).getCompoundOrEmpty(TravelCare.CARE_KEY);
+                h.assertTrue(care.getBooleanOr("sick", false) && care.getFloatOr("hp", 0f) > 0F, "sick but alive: " + care);
+                h.assertTrue(TravelCare.satiation(st.getCompoundOrEmpty(i)) < 0.01F, "starving: " + care);
             }
         } finally {
             ServerConfig.POWER_HEATER.set(heater);
@@ -124,7 +124,7 @@ public final class TravelCareGameTests {
             TravelCare.Result r = null;
             for (int i = 0; i < 24; i++) r = TravelCare.step(h.getLevel(), nbt, env(false), 1000);
             h.assertTrue(r != null && r.filterPowered() && r.heatPowered() && r.demand() == 0 && r.fromBattery() == 0, "no FE needed: " + r);
-            h.assertTrue(TankData.load(nbt.getCompound("tank")).waterTemp() > 25F, "the heater runs");
+            h.assertTrue(TankData.load(nbt.getCompoundOrEmpty("tank")).waterTemp() > 25F, "the heater runs");
         } finally {
             ServerConfig.POWER_HEATER.set(heater);
             ServerConfig.POWER_FILTER.set(filter);

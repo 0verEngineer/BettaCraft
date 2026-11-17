@@ -58,7 +58,7 @@ final class DevClientSmokeM31b {
     DevClientSmokeM31b() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(160, () -> server(pl -> place(pl.serverLevel())));
+        then(160, () -> server(pl -> place(pl.level())));
         then(1, () -> look(palu.getX() + 2.5, palu.getY() + 2.1, palu.getZ() - 3.0, 0F, 18F));
         then(120, () -> {
             int n = mc.level.getEntitiesOfClass(HerpEntity.class, new AABB(palu).inflate(12)).size();
@@ -75,7 +75,7 @@ final class DevClientSmokeM31b {
         then(80, () -> shot("tortoises"));
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), palu);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), palu);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -132,7 +132,7 @@ final class DevClientSmokeM31b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         // --- the paludarium: water on the left, a sandy beach rising to the right, a log in the water
         palu = p.blockPosition().offset(-10, 2, 200);
@@ -224,7 +224,7 @@ final class DevClientSmokeM31b {
             double y = ter.ground(x, z);
             // the swimmer in the open water (the yellow-bellied slider), the others on the ground
             if (i == 1) y = Math.max(y, t.waterSurfaceY() - 0.3);
-            e.moveTo(x, y + 0.01, z, (float) spots[i][2], 0F);
+            e.snapTo(x, y + 0.01, z, (float) spots[i][2], 0F);
             e.setBaskingForTest(spots[i][3] > 0);
             SmokeFreeze.freeze(e, true);
             i++;
@@ -236,7 +236,7 @@ final class DevClientSmokeM31b {
         for (HerpEntity e : level.getEntitiesOfClass(HerpEntity.class, new AABB(terra).inflate(8), e -> TankInhabitants.inside(tt, e))) {
             if (j >= tspots.length) break;
             double x = terra.getX() + tspots[j][0], z = terra.getZ() + tspots[j][1];
-            e.moveTo(x, tter.ground(x, z) + 0.01, z, (float) tspots[j][2], 0F);
+            e.snapTo(x, tter.ground(x, z) + 0.01, z, (float) tspots[j][2], 0F);
             e.setBaskingForTest(tspots[j][3] > 0);
             SmokeFreeze.freeze(e, true);
             j++;

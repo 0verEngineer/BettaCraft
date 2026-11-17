@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -69,7 +69,7 @@ final class DevClientSmokeM16 {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(5, () -> look(base.getX() + 2.5, base.getY() + 1.1, base.getZ() - 3.4, 0F, 8F));
-        then(120, () -> server(p -> freezeAll(p.serverLevel())));
+        then(120, () -> server(p -> freezeAll(p.level())));
         then(30, () -> shot("mixed_tank"));
         then(1, () -> look(base.getX() + 1.3, base.getY() + 0.9, base.getZ() - 1.3, 0F, 10F));
         then(40, () -> shot("mixed_left"));
@@ -80,9 +80,9 @@ final class DevClientSmokeM16 {
         // the menu: animals tab with the foreign animals
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), base.getX() + 2.5, base.getY(), base.getZ() - 2.5, 0F, 20F);
+            p.teleportTo(p.level(), base.getX() + 2.5, base.getY(), base.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
             p.getInventory().add(new ItemStack(ModItems.FISH_BAG.get()));
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -94,12 +94,12 @@ final class DevClientSmokeM16 {
         then(1, () -> mc.setScreen(null));
         // a dolphin is refused (the message in the action bar)
         then(5, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), base.getX() + 2.5, base.getY() - 0.2, base.getZ() - 2.6, 0F, 12F);
-            Entity dolphin = EntityType.DOLPHIN.create(p.serverLevel());
+            p.teleportTo(p.level(), base.getX() + 2.5, base.getY() - 0.2, base.getZ() - 2.6, java.util.Set.of(), 0F, 12F, false);
+            Entity dolphin = EntityType.DOLPHIN.create(p.level());
             ItemStack bag = FishBagItem.fillWith(dolphin);
             dolphin.discard();
             p.setItemInHand(InteractionHand.MAIN_HAND, bag);
-            TankInhabitants.tryInsert(bag, p.serverLevel(), base.offset(2, 0, 0), p, InteractionHand.MAIN_HAND);
+            TankInhabitants.tryInsert(bag, p.level(), base.offset(2, 0, 0), p, InteractionHand.MAIN_HAND);
         }));
         then(10, () -> shot("refused_dolphin"));
         // no tank inside a tank: in the interior, try to place a tank block
@@ -134,7 +134,7 @@ final class DevClientSmokeM16 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(0, 2, 330);
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < 2; y++) for (int z = 0; z < 3; z++) for (int x = 0; x < 5; x++) blocks.add(base.offset(x, y, z));
@@ -159,7 +159,7 @@ final class DevClientSmokeM16 {
         List<String> in_ = new ArrayList<>();
         for (String id : MIX) {
             if (in_.size() >= MAX_MIX) break;
-            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElse(null);
+            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElse(null);
             if (type == null || TankInhabitants.accepts(type, null) != TankInhabitants.Acceptance.OK) continue;
             ItemStack stack = container(level, type);
             if (stack.isEmpty()) continue;
@@ -228,7 +228,7 @@ final class DevClientSmokeM16 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void shot(String name) {

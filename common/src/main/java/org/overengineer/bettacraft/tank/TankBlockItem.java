@@ -1,9 +1,12 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,12 +20,12 @@ public class TankBlockItem extends BlockItem {
         super(block, properties);
     }
 
-    public static ResourceLocation getGlass(ItemStack stack) {
-        ResourceLocation g = stack.get(ModDataComponents.GLASS.get());
+    public static Identifier getGlass(ItemStack stack) {
+        Identifier g = stack.get(ModDataComponents.GLASS.get());
         return g == null ? TankBlockEntity.DEFAULT_GLASS : g;
     }
 
-    public static ItemStack setGlass(ItemStack stack, ResourceLocation glass) {
+    public static ItemStack setGlass(ItemStack stack, Identifier glass) {
         stack.set(ModDataComponents.GLASS.get(), glass);
         return stack;
     }
@@ -39,14 +42,14 @@ public class TankBlockItem extends BlockItem {
     }
 
     /** A tank item of the given glass and style. */
-    public static ItemStack of(net.minecraft.world.level.ItemLike item, ResourceLocation glass, TankStyle style, int count) {
+    public static ItemStack of(net.minecraft.world.level.ItemLike item, Identifier glass, TankStyle style, int count) {
         ItemStack s = new ItemStack(item, count);
         setGlass(s, glass);
         return setStyle(s, style);
     }
 
     public static Block glassBlock(ItemStack stack) {
-        Block b = BuiltInRegistries.BLOCK.get(getGlass(stack));
+        Block b = BuiltInRegistries.BLOCK.getValue(getGlass(stack));
         return b == Blocks.AIR ? Blocks.GLASS : b;
     }
 
@@ -57,8 +60,9 @@ public class TankBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
         tooltip.add(Component.translatable("tooltip.bettacraft.tank").withStyle(net.minecraft.ChatFormatting.GRAY));
         if (PackedTank.isPacked(stack)) { // M32 part c
             tooltip.add(Component.translatable("tooltip.bettacraft.tank.packed", PackedTank.animals(stack)).withStyle(net.minecraft.ChatFormatting.GOLD));

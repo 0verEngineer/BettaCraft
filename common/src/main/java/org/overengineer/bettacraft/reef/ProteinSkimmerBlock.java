@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.reef;
 
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -13,7 +16,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -26,7 +29,7 @@ import org.overengineer.bettacraft.tank.TankBlock;
  */
 public class ProteinSkimmerBlock extends Block {
     public static final MapCodec<ProteinSkimmerBlock> CODEC = simpleCodec(ProteinSkimmerBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape[] SHAPES = new VoxelShape[4];
 
     static {
@@ -95,7 +98,7 @@ public class ProteinSkimmerBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         Direction f = state.getValue(FACING);
         if (!tankAt(level, pos, f)) {
             Direction d = findTank(level, pos, null);

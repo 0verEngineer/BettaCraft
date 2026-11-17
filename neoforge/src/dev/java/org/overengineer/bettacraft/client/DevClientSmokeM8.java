@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -90,7 +90,7 @@ final class DevClientSmokeM8 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos base = p.blockPosition().offset(0, 2, 70);
         // a row of cabinets, the tank on top (3x2x2), an external filter on the west side
         for (int x = 0; x < 3; x++) {
@@ -141,7 +141,7 @@ final class DevClientSmokeM8 {
             SmokeFreeze.freeze(b, true);
             if (i == 0) b.setCustomName(Component.literal("Indigo"));
             // the first one right on the view ray of the betta shot, the others further back
-            b.moveTo(tankMin.getX() + 2.5, tankMin.getY() + 0.3 + i * 0.5, tankMin.getZ() + 0.5 + i * 0.6, i == 0 ? 90F : -90F, 0F);
+            b.snapTo(tankMin.getX() + 2.5, tankMin.getY() + 0.3 + i * 0.5, tankMin.getZ() + 0.5 + i * 0.6, i == 0 ? 90F : -90F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -149,7 +149,7 @@ final class DevClientSmokeM8 {
         c.markTankChanged();
         // The One Probe shows its extended information with the probe in the main hand (default needsProbe = 3)
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("theoneprobe")) {
-            p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("theoneprobe", "probe"))));
+            p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("theoneprobe", "probe"))));
         }
         // hover without flying: sneaking crouches (details in Jade/WTHIT) instead of flying down
         p.getAbilities().flying = false;
@@ -160,7 +160,7 @@ final class DevClientSmokeM8 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void sneak(boolean on) {

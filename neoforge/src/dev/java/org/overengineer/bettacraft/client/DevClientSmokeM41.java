@@ -11,7 +11,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -67,11 +67,11 @@ final class DevClientSmokeM41 {
         then(40, () -> shot("cabinet"));
         // Create's goggles on the adapter: the overlay needs the GUI
         then(1, () -> mc.options.hideGui = false);
-        then(1, () -> server(p -> p.setItemSlot(EquipmentSlot.HEAD, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:goggles"))))));
+        then(1, () -> server(p -> p.setItemSlot(EquipmentSlot.HEAD, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse("create:goggles"))))));
         then(1, () -> look(base.getX() - 1.6, base.getY() + 1.0, base.getZ() - 1.4, -30F, 14F));
         then(60, () -> shot("goggles"));
         then(1, () -> server(p -> {
-            if (p.serverLevel().getBlockEntity(base.below().east()) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
+            if (p.level().getBlockEntity(base.below().east()) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
         }));
         then(30, () -> shot("cabinet_menu"));
         then(1, () -> mc.setScreen(null));
@@ -84,7 +84,7 @@ final class DevClientSmokeM41 {
     }
 
     private static Block block(String id) {
-        return BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+        return BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
     }
 
     /** A creative motor at {@code pos} whose shaft points {@code facing}, at {@code rpm}. */
@@ -116,10 +116,10 @@ final class DevClientSmokeM41 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         base = p.blockPosition().offset(0, 3, 40);
-        Block adapter = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("bettacraft", "drive_adapter"));
+        Block adapter = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("bettacraft", "drive_adapter"));
         if (block("create:creative_motor") == Blocks.AIR || adapter == Blocks.AIR) {
             LOGGER.error("[smoketest] M41 needs Create (-Pcreate)");
             return;

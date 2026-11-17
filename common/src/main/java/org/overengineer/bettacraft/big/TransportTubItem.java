@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.big;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -9,7 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -17,7 +21,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -57,7 +60,7 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
  */
 public class TransportTubItem extends Item {
     public static final String STORED_KEY = "BettacraftBigAnimal";
-    public static final ResourceLocation SLOW_ID = BettaCraft.id("transport_tub");
+    public static final Identifier SLOW_ID = BettaCraft.id("transport_tub");
 
     public TransportTubItem(Properties properties) {
         super(properties);
@@ -78,9 +81,9 @@ public class TransportTubItem extends Item {
     public static CompoundTag storedEntity(ItemStack stack) {
         if (!isFilled(stack)) return null;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd == null || !cd.contains(STORED_KEY)) return null;
-        CompoundTag t = cd.copyTag().getCompound(STORED_KEY);
-        return t.contains("id", Tag.TAG_STRING) ? t : null;
+        if (cd == null || !cd.copyTag().contains(STORED_KEY)) return null;
+        CompoundTag t = cd.copyTag().getCompoundOrEmpty(STORED_KEY);
+        return NbtCompat.has(t, "id", Tag.TAG_STRING) ? t : null;
     }
 
     /** A filled tub holding {@code e} (the entity itself is not removed). */
@@ -89,7 +92,7 @@ public class TransportTubItem extends Item {
         CompoundTag t = new CompoundTag();
         String id = e.getEncodeId();
         if (id != null) t.putString("id", id);
-        e.saveWithoutId(t);
+        t.merge(NbtCompat.saveEntityWithoutId(e));
         t.remove("UUID"); // a new one when it comes out (no clash with the old entity)
         CompoundTag data = new CompoundTag();
         data.put(STORED_KEY, t);
@@ -121,12 +124,12 @@ public class TransportTubItem extends Item {
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
         if (isFilled(stack) || !target.isAlive() || target instanceof Player) return InteractionResult.PASS;
         if (!BigAnimals.isBig(target)) {
-            if (!player.level().isClientSide && TankInhabitants.isWaterAnimal(target)) {
+            if (!player.level().isClientSide() && TankInhabitants.isWaterAnimal(target)) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.big.tub_small", target.getDisplayName()), true);
             }
             return InteractionResult.PASS;
         }
-        if (player.level().isClientSide) return InteractionResult.SUCCESS;
+        if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         // a wild one does not let itself be scooped up: the large net first
         if (!TankInhabitants.hasTankRef(target) && wild(target)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.big.needs_net", target.getDisplayName()), true);
@@ -152,41 +155,41 @@ public class TransportTubItem extends Item {
 
     /** Releases the animal into open water. Clicking a tank is handled by the tank block before this. */
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!isFilled(stack)) return InteractionResultHolder.pass(stack);
+        if (!isFilled(stack)) return InteractionResult.PASS;
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos();
-        if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResultHolder.pass(stack);
+        if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResult.PASS;
         // M39 part b: a big land animal of another mod (a lion, a komodo dragon ...) goes back onto the land, a water animal into water
         boolean land = !level.getFluidState(pos).is(FluidTags.WATER) && landAnimal(containedType(stack));
         if (land) {
-            if (!level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty()) return InteractionResultHolder.fail(stack);
+            if (!level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty()) return InteractionResult.FAIL;
             pos = pos.above();
         } else if (!level.getFluidState(pos).is(FluidTags.WATER)) {
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
-            return InteractionResultHolder.fail(stack);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            return InteractionResult.FAIL;
         }
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
-            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, en -> en);
+            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
             if (e == null) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
-            e.moveTo(pos.getX() + 0.5, pos.getY() + (land ? 0.0 : 0.1), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
+            e.snapTo(pos.getX() + 0.5, pos.getY() + (land ? 0.0 : 0.1), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
             if (e instanceof Bucketable b) b.setFromBucket(true);
             if (e instanceof Mob m) m.setPersistenceRequired();
             TankInhabitants.release(e);
             if (!server.tryAddFreshEntityWithPassengers(e)) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
             level.playSound(null, pos, land ? SoundEvents.ARMOR_EQUIP_LEATHER.value() : SoundEvents.BUCKET_EMPTY_FISH, SoundSource.PLAYERS, 1.0F, 0.7F);
-            return InteractionResultHolder.consume(new ItemStack(this));
+            return InteractionResult.CONSUME.heldItemTransformedTo(new ItemStack(this));
         }
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
     }
 
     /** M39 part b: whether the tub holds a land animal of another mod (a terrarium profile that does not live in the water part). */
@@ -203,8 +206,9 @@ public class TransportTubItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
         tooltip.add(Component.translatable(isFilled(stack) ? "tooltip.bettacraft.transport_tub.filled" : "tooltip.bettacraft.transport_tub")
                 .withStyle(ChatFormatting.GRAY));
     }
@@ -213,8 +217,8 @@ public class TransportTubItem extends Item {
 
     /** Whether the player carries a filled tub anywhere in the inventory. */
     public static boolean carries(Player p) {
-        for (ItemStack s : p.getInventory().items) if (isFilled(s)) return true;
-        for (ItemStack s : p.getInventory().offhand) if (isFilled(s)) return true;
+        for (ItemStack s : p.getInventory().getNonEquipmentItems()) if (isFilled(s)) return true;
+        for (ItemStack s : java.util.List.of(p.getInventory().getItem(net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND))) if (isFilled(s)) return true;
         return isFilled(p.containerMenu.getCarried());
     }
 

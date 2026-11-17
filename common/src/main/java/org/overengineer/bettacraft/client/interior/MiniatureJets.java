@@ -6,7 +6,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -131,7 +131,7 @@ public final class MiniatureJets {
 
     /** Client tick: bubbles at the outlets of nearby tanks (and the quiet filter sound). */
     public static void tickParticles(Minecraft mc, RandomSource rand, boolean sound) {
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
             TankData t = be.getTank();
             if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;

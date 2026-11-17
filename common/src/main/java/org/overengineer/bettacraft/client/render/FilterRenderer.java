@@ -26,7 +26,7 @@ import org.overengineer.bettacraft.tank.TankData;
  * Hose, outlet and water jet of an external filter (block next to a tank, or a filter in a cabinet under a tank).
  * The jet is skipped in the Iris shadow pass (translucent water must not cast a shadow); the hose is solid.
  */
-public class FilterRenderer<T extends BlockEntity & FilterHost> implements BlockEntityRenderer<T> {
+public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<T> {
     public FilterRenderer(BlockEntityRendererProvider.Context ctx) {}
 
     /** Path of this filter into its tank (client view of the tank), or null if it is not attached. */
@@ -77,7 +77,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
     }
 
     @Override
-    public boolean shouldRenderOffScreen(T be) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.genetics;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +49,7 @@ public final class GeneVisibility {
 
     /** The flag of an animal's data: a missing flag (older worlds) counts as analysed. */
     public static boolean analysed(CompoundTag animal) {
-        return !animal.contains(KEY, Tag.TAG_ANY_NUMERIC) || animal.getBoolean(KEY);
+        return !NbtCompat.has(animal, KEY, NbtCompat.ANY_NUMERIC) || animal.getBooleanOr(KEY, false);
     }
 
     public static void write(CompoundTag animal, boolean analysed) {

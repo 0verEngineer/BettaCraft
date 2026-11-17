@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public final class AxolotlCare {
     /** The genes of an axolotl (made from its colour and kept when it has none yet). */
     public static CritterGenes genes(Axolotl a) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(a);
-        if (d.contains(GENES, Tag.TAG_COMPOUND)) return CritterGenes.load(d.getCompound(GENES));
+        if (NbtCompat.has(d, GENES, Tag.TAG_COMPOUND)) return CritterGenes.load(d.getCompoundOrEmpty(GENES));
         long seed = a.getUUID().getMostSignificantBits() ^ a.getUUID().getLeastSignificantBits();
         CritterGenes g = genesFor(a.getVariant(), new java.util.SplittableRandom(seed));
         setGenes(a, g);
@@ -139,9 +140,9 @@ public final class AxolotlCare {
     public static void toBucket(Entity e, CompoundTag bucketData) {
         if (!(e instanceof Axolotl a)) return;
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(a);
-        if (d.contains(GENES, Tag.TAG_COMPOUND)) bucketData.put(BUCKET_KEY, genes(a).save());
-        if (d.getInt(GENERATION) > 0) bucketData.putInt(BUCKET_GENERATION, d.getInt(GENERATION)); // M42
-        if (d.getBoolean(ANALYSED)) bucketData.putBoolean(BUCKET_ANALYSED, true);
+        if (NbtCompat.has(d, GENES, Tag.TAG_COMPOUND)) bucketData.put(BUCKET_KEY, genes(a).save());
+        if (d.getIntOr(GENERATION, 0) > 0) bucketData.putInt(BUCKET_GENERATION, d.getIntOr(GENERATION, 0)); // M42
+        if (d.getBooleanOr(ANALYSED, false)) bucketData.putBoolean(BUCKET_ANALYSED, true);
     }
 
     /**
@@ -150,12 +151,12 @@ public final class AxolotlCare {
      */
     public static void fromBucket(Entity e, CompoundTag bucketData) {
         if (!(e instanceof Axolotl a)) return;
-        if (bucketData.getInt(BUCKET_GENERATION) > 0) org.overengineer.bettacraft.platform.Platform.get().persistentData(a).putInt(GENERATION, bucketData.getInt(BUCKET_GENERATION));
-        if (!bucketData.contains(BUCKET_KEY, Tag.TAG_COMPOUND)) return;
-        CritterGenes g = CritterGenes.load(bucketData.getCompound(BUCKET_KEY));
+        if (bucketData.getIntOr(BUCKET_GENERATION, 0) > 0) org.overengineer.bettacraft.platform.Platform.get().persistentData(a).putInt(GENERATION, bucketData.getIntOr(BUCKET_GENERATION, 0));
+        if (!NbtCompat.has(bucketData, BUCKET_KEY, Tag.TAG_COMPOUND)) return;
+        CritterGenes g = CritterGenes.load(bucketData.getCompoundOrEmpty(BUCKET_KEY));
         if (variant(g) == a.getVariant()) {
             setGenes(a, g);
-            if (bucketData.getBoolean(BUCKET_ANALYSED)) org.overengineer.bettacraft.platform.Platform.get().persistentData(a).putBoolean(ANALYSED, true);
+            if (bucketData.getBooleanOr(BUCKET_ANALYSED, false)) org.overengineer.bettacraft.platform.Platform.get().persistentData(a).putBoolean(ANALYSED, true);
         }
     }
 
@@ -171,15 +172,15 @@ public final class AxolotlCare {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof Axolotl a)) continue;
             CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(a);
-            if (!free && !d.getBoolean(ANALYSED)) {
+            if (!free && !d.getBooleanOr(ANALYSED, false)) {
                 if (magnifier.isEmpty()) break;
                 d.putBoolean(ANALYSED, true);
                 org.overengineer.bettacraft.genetics.MagnifierItem.wear(player, magnifier, slot);
                 n++;
             }
-            player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.magnifier.axolotl", a.getDisplayName(),
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.magnifier.axolotl", a.getDisplayName(),
                     net.minecraft.network.chat.Component.translatable("variety.bettacraft.axolotl." + a.getVariant().getSerializedName()),
-                    genotypeText(genes(a))));
+                    genotypeText(genes(a))), false);
         }
         return n;
     }
@@ -204,10 +205,10 @@ public final class AxolotlCare {
         for (Axolotl a : list) {
             genes(a);
             CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(a);
-            if (d.getDouble(REST) > 0) d.putDouble(REST, Math.max(0, d.getDouble(REST) - days));
+            if (d.getDoubleOr(REST, 0d) > 0) d.putDouble(REST, Math.max(0, d.getDoubleOr(REST, 0d) - days));
             double dmg = org.overengineer.bettacraft.config.Care.needs() ? heatDamagePerDay(temp, per) * days : 0; // M33 part c: DECOR
             if (dmg > 0) {
-                double pending = d.getDouble(HEAT) + dmg;
+                double pending = d.getDoubleOr(HEAT, 0d) + dmg;
                 if (pending >= 1) {
                     float hit = (float) Math.floor(pending);
                     pending -= hit;
@@ -225,7 +226,7 @@ public final class AxolotlCare {
 
     /** Whether an axolotl can lay or fertilise eggs now. */
     static boolean ready(Axolotl a) {
-        return a.isAlive() && !a.isBaby() && org.overengineer.bettacraft.platform.Platform.get().persistentData(a).getDouble(REST) <= 0;
+        return a.isAlive() && !a.isBaby() && org.overengineer.bettacraft.platform.Platform.get().persistentData(a).getDoubleOr(REST, 0d) <= 0;
     }
 
     private static void lay(ServerLevel level, TankBlockEntity c, List<Axolotl> list, float temp, double days, RandomGenerator rnd) {
@@ -262,7 +263,7 @@ public final class AxolotlCare {
         o.mother = genes(mother);
         o.father = genes(father);
         o.count = 3 + rnd.nextInt(4);
-        o.generation = Math.max(org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getInt(GENERATION), org.overengineer.bettacraft.platform.Platform.get().persistentData(father).getInt(GENERATION)) + 1;
+        o.generation = Math.max(org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getIntOr(GENERATION, 0), org.overengineer.bettacraft.platform.Platform.get().persistentData(father).getIntOr(GENERATION, 0)) + 1;
         o.yaw = (float) (rnd.nextDouble() * 360);
         t.critterObjects().add(o);
         org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).putDouble(REST, REST_DAYS);
@@ -304,13 +305,13 @@ public final class AxolotlCare {
     /** A baby axolotl with these genes in the tank (hatching, tests). */
     @Nullable
     public static Axolotl spawn(ServerLevel level, TankBlockEntity c, CritterGenes g, int generation, Vec3 p) {
-        Axolotl a = EntityType.AXOLOTL.create(level);
+        Axolotl a = EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (a == null) return null;
-        a.setVariant(variant(g));
+        a.setComponent(net.minecraft.core.component.DataComponents.AXOLOTL_VARIANT, variant(g));
         a.setAge(-24000);
         setGenes(a, g);
         org.overengineer.bettacraft.platform.Platform.get().persistentData(a).putInt(GENERATION, generation);
-        a.moveTo(p.x, p.y, p.z, level.getRandom().nextFloat() * 360F, 0F);
+        a.snapTo(p.x, p.y, p.z, level.getRandom().nextFloat() * 360F, 0F);
         TankInhabitants.adopt(a, c);
         if (!level.addFreshEntity(a)) return null;
         c.getTank().inhabitants().add(a.getUUID());

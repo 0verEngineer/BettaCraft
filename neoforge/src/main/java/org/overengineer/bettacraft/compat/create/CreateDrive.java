@@ -51,7 +51,7 @@ public final class CreateDrive {
             BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5F, 6F).sound(SoundType.WOOD).noOcclusion()));
     public static final DeferredItem<BlockItem> ADAPTER_ITEM = ITEMS.registerSimpleBlockItem(ADAPTER);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DriveAdapterBlockEntity>> ADAPTER_BE = BLOCK_ENTITIES.register("drive_adapter",
-            () -> BlockEntityType.Builder.of(DriveAdapterBlockEntity::new, ADAPTER.get()).build(null));
+            () -> new BlockEntityType<>(DriveAdapterBlockEntity::new, java.util.Set.of(ADAPTER.get())));
 
     /** Ticks after the last care step that served a cabinet's shaft before its stress is taken back. */
     static final long STALE = 60;

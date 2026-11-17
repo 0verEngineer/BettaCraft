@@ -41,8 +41,8 @@ public final class FrogSpawn {
 
     @Nullable
     public static FrogSpawn load(CompoundTag t) {
-        FrogSpawn s = new FrogSpawn(t.getInt("id"), t.getDouble("x"), t.getDouble("y"), t.getDouble("z"), Math.max(0, t.getInt("count")));
-        s.age = Math.max(0, t.getDouble("age"));
+        FrogSpawn s = new FrogSpawn(t.getIntOr("id", 0), t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d), Math.max(0, t.getIntOr("count", 0)));
+        s.age = Math.max(0, t.getDoubleOr("age", 0d));
         if (!Double.isFinite(s.x) || !Double.isFinite(s.y) || !Double.isFinite(s.z) || !Double.isFinite(s.age) || s.count <= 0) return null;
         return s;
     }

@@ -90,10 +90,10 @@ final class DevClientSmokeM224 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
         base = p.blockPosition().offset(-10, 0, 480);
         // a light floor and a white wall behind the row
         for (int x = -6; x < 4 * SPACING + 6; x++)
@@ -171,7 +171,7 @@ final class DevClientSmokeM224 {
     private void cabinetMenu(String name) {
         then(10, () -> server(p -> {
             BlockPos cp = base.offset(OutletSide.RIGHT.ordinal() * SPACING + 1, 0, 0);
-            if (p.serverLevel().getBlockEntity(cp) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cp);
+            if (p.level().getBlockEntity(cp) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen)) LOGGER.error("[smoketest] M22.4 no cabinet menu");
@@ -190,7 +190,7 @@ final class DevClientSmokeM224 {
         then(10, () -> {
             BlockPos cp = base.offset(OutletSide.RIGHT.ordinal() * SPACING + 1, 0, 0);
             server(p -> {
-                var be = p.serverLevel().getBlockEntity(cp);
+                var be = p.level().getBlockEntity(cp);
                 if (!(be instanceof CabinetBlockEntity cab) || cab.outletSide() != OutletSide.FRONT) {
                     LOGGER.error("[smoketest] M22.4 the outlet button did not set the next side: {}", be instanceof CabinetBlockEntity c2 ? c2.outletSide() : be);
                 } else {
@@ -213,7 +213,7 @@ final class DevClientSmokeM224 {
         // back to the right wall, the menu closed
         then(1, () -> server(p -> {
             BlockPos cp = base.offset(OutletSide.RIGHT.ordinal() * SPACING + 1, 0, 0);
-            if (p.serverLevel().getBlockEntity(cp) instanceof CabinetBlockEntity cab) cab.setOutletSide(OutletSide.RIGHT);
+            if (p.level().getBlockEntity(cp) instanceof CabinetBlockEntity cab) cab.setOutletSide(OutletSide.RIGHT);
             p.closeContainer();
         }));
         then(5, () -> mc.setScreen(null));
@@ -307,7 +307,7 @@ final class DevClientSmokeM224 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

@@ -8,9 +8,9 @@ import java.util.Map;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.renderer.fog.FogRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -80,10 +80,10 @@ public final class TankAwareWaterExtensions implements IClientFluidTypeExtension
     // ---- everything else is delegated unchanged ----
 
     @Override public int getTintColor() { return delegate.getTintColor(); }
-    @Override public ResourceLocation getStillTexture() { return delegate.getStillTexture(); }
-    @Override public ResourceLocation getFlowingTexture() { return delegate.getFlowingTexture(); }
-    @Override public ResourceLocation getOverlayTexture() { return delegate.getOverlayTexture(); }
-    @Override public ResourceLocation getRenderOverlayTexture(Minecraft mc) { return delegate.getRenderOverlayTexture(mc); }
+    @Override public Identifier getStillTexture() { return delegate.getStillTexture(); }
+    @Override public Identifier getFlowingTexture() { return delegate.getFlowingTexture(); }
+    @Override public Identifier getOverlayTexture() { return delegate.getOverlayTexture(); }
+    @Override public Identifier getRenderOverlayTexture(Minecraft mc) { return delegate.getRenderOverlayTexture(mc); }
     @Override public void renderOverlay(Minecraft mc, PoseStack poseStack) { delegate.renderOverlay(mc, poseStack); }
 
     @Override
@@ -96,12 +96,12 @@ public final class TankAwareWaterExtensions implements IClientFluidTypeExtension
         delegate.modifyFogRender(camera, mode, renderDistance, partialTick, nearDistance, farDistance, shape);
     }
 
-    @Override public ResourceLocation getStillTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getStillTexture(state, getter, pos); }
-    @Override public ResourceLocation getFlowingTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getFlowingTexture(state, getter, pos); }
-    @Override public ResourceLocation getOverlayTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getOverlayTexture(state, getter, pos); }
+    @Override public Identifier getStillTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getStillTexture(state, getter, pos); }
+    @Override public Identifier getFlowingTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getFlowingTexture(state, getter, pos); }
+    @Override public Identifier getOverlayTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getOverlayTexture(state, getter, pos); }
     @Override public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) { return delegate.getTintColor(state, getter, pos); }
     @Override public int getTintColor(FluidStack stack) { return delegate.getTintColor(stack); }
-    @Override public ResourceLocation getStillTexture(FluidStack stack) { return delegate.getStillTexture(stack); }
-    @Override public ResourceLocation getFlowingTexture(FluidStack stack) { return delegate.getFlowingTexture(stack); }
-    @Override public ResourceLocation getOverlayTexture(FluidStack stack) { return delegate.getOverlayTexture(stack); }
+    @Override public Identifier getStillTexture(FluidStack stack) { return delegate.getStillTexture(stack); }
+    @Override public Identifier getFlowingTexture(FluidStack stack) { return delegate.getFlowingTexture(stack); }
+    @Override public Identifier getOverlayTexture(FluidStack stack) { return delegate.getOverlayTexture(stack); }
 }

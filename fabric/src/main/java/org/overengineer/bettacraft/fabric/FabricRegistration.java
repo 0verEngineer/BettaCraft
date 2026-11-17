@@ -12,7 +12,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import org.overengineer.bettacraft.platform.Attachment;
 import org.overengineer.bettacraft.platform.registry.DeferredRegister;
@@ -31,7 +31,7 @@ final class FabricRegistration {
         for (Registry<?> registry : BuiltInRegistries.REGISTRY) {
             for (DeferredRegister<?> reg : regs) {
                 if (!reg.getRegistryKey().location().equals(registry.key().location())) continue;
-                for (Map.Entry<ResourceLocation, ? extends Supplier<?>> e : reg.takeEntries().entrySet()) {
+                for (Map.Entry<Identifier, ? extends Supplier<?>> e : reg.takeEntries().entrySet()) {
                     Object value = e.getValue().get();
                     var holder = Registry.registerForHolder((Registry) registry, e.getKey(), value);
                     // NeoForge maps the block states of a point of interest type when it is registered; vanilla only
@@ -44,7 +44,7 @@ final class FabricRegistration {
             }
         }
         for (DeferredRegister<?> reg : regs) {
-            if (BuiltInRegistries.REGISTRY.get(reg.getRegistryKey().location()) == null) {
+            if (BuiltInRegistries.REGISTRY.getValue(reg.getRegistryKey().location()) == null) {
                 throw new IllegalStateException("Bettacraft: no registry " + reg.getRegistryKey().location() + " on Fabric");
             }
         }

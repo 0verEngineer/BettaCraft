@@ -88,7 +88,7 @@ final class DevClientSmokeM15 {
         // 4. the interior with the leave hint at the bottom left
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), base.getX() + 1.5, base.getY(), base.getZ() - 2.0, 0F, 20F);
+            p.teleportTo(p.level(), base.getX() + 1.5, base.getY(), base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false);
             enteredAt = p.position();
             InteriorManager.enter(p, base);
         }));
@@ -190,7 +190,7 @@ final class DevClientSmokeM15 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(0, 2, 290);
         // A: the name sign (and the interior with the leave hint)
         place(level, cuboid(base, 3, 2, 1));
@@ -267,7 +267,7 @@ final class DevClientSmokeM15 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void language(String code) {

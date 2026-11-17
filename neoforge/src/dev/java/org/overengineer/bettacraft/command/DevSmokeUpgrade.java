@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,7 +18,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -279,7 +280,7 @@ public final class DevSmokeUpgrade {
         net.minecraft.world.entity.item.ItemEntity drop = new net.minecraft.world.entity.item.ItemEntity(level, base.getX() + 0.5, base.getY() + 4, base.getZ() + 0.5,
                 new ItemStack(org.overengineer.bettacraft.registry.ModItems.ARTEMIA_CYSTS.get()));
         net.minecraft.nbt.CompoundTag et = new net.minecraft.nbt.CompoundTag();
-        drop.saveWithoutId(et);
+        et.merge(NbtCompat.saveEntityWithoutId(drop));
         et.put("Item", oldJars(16, 9, -1));
         net.minecraft.world.entity.item.ItemEntity loaded = new net.minecraft.world.entity.item.ItemEntity(net.minecraft.world.entity.EntityType.ITEM, level);
         loaded.load(et);
@@ -584,7 +585,7 @@ public final class DevSmokeUpgrade {
         BlockPos lo = t.min().offset(-1, -1, -1), hi = t.max().offset(1, 1, 1);
         for (BlockPos p : BlockPos.betweenClosed(lo, hi)) {
             BlockState s = level.getBlockState(p);
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
+            Identifier id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
             if (!id.getNamespace().equals(BettaCraft.MOD_ID) || s.is(ModBlocks.TANK.get())) continue;
             JsonObject e = new JsonObject();
             e.addProperty("pos", p.asLong());
@@ -652,11 +653,11 @@ public final class DevSmokeUpgrade {
         var critters = s.get(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get());
         if (critters != null) for (var t : critters) if (!org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t)) return false;
         var group = s.get(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get());
-        if (group != null) for (var t : group) if (!org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompound(TankmateEntity.KEY))) return false;
+        if (group != null) for (var t : group) if (!org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompoundOrEmpty(TankmateEntity.KEY))) return false;
         var bucket = s.get(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA);
         if (bucket != null) {
             var t = bucket.copyTag();
-            if (t.contains(TankmateEntity.KEY) && !org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompound(TankmateEntity.KEY))) return false;
+            if (t.contains(TankmateEntity.KEY) && !org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t.getCompoundOrEmpty(TankmateEntity.KEY))) return false;
             if (t.contains(org.overengineer.bettacraft.entity.betta.BettaData.KEY)
                     && !org.overengineer.bettacraft.entity.betta.BettaData.load(t.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY)).analysed()) return false;
         }

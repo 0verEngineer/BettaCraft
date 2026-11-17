@@ -173,7 +173,7 @@ public enum BettaSpecies {
         }
 
         public static Ancestry load(CompoundTag t) {
-            return new Ancestry(t.getInt("imbellis"), t.getInt("smaragdina"));
+            return new Ancestry(t.getIntOr("imbellis", 0), t.getIntOr("smaragdina", 0));
         }
     }
 }

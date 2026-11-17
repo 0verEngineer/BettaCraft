@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.data.schema;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -16,7 +17,7 @@ public final class Schema {
 
     /** Reads the schema version; missing or non-numeric values count as version 0. */
     public static int read(CompoundTag tag) {
-        return tag.contains(KEY, Tag.TAG_ANY_NUMERIC) ? tag.getInt(KEY) : 0;
+        return NbtCompat.has(tag, KEY, NbtCompat.ANY_NUMERIC) ? tag.getIntOr(KEY, 0) : 0;
     }
 
     public static CompoundTag write(CompoundTag tag, int version) {

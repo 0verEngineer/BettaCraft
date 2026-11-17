@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -150,7 +151,7 @@ class TankmateDataTest {
         }
         assertTrue(TankmateSpecies.PEARL_GOURAMI.territorial() && !TankmateSpecies.HONEY_GOURAMI.territorial());
         assertTrue(TankmateSpecies.CHOCOLATE_GOURAMI.mouthbrooder() && !TankmateSpecies.PLATY.mouthbrooder());
-        assertTrue(!org.overengineer.bettacraft.chem.ChemTolerance.tankmate(TankmateSpecies.CHOCOLATE_GOURAMI).contains(7.5, 300), "soft water only");
+        assertTrue(!NbtCompat.has(org.overengineer.bettacraft.chem.ChemTolerance.tankmate(TankmateSpecies.CHOCOLATE_GOURAMI), 7.5, 300), "soft water only");
         for (TankmateSpecies s : java.util.List.of(TankmateSpecies.ZEBRA_DANIO, TankmateSpecies.CELESTIAL_PEARL_DANIO, TankmateSpecies.FORKTAIL_RAINBOW,
                 TankmateSpecies.NEON_DWARF_RAINBOW, TankmateSpecies.EMPEROR_TETRA, TankmateSpecies.RUMMY_NOSE_TETRA, TankmateSpecies.BLACK_PHANTOM_TETRA,
                 TankmateSpecies.BLACK_MOLLY, TankmateSpecies.SWORDTAIL)) {

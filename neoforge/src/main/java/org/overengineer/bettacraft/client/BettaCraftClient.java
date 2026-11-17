@@ -213,13 +213,13 @@ public final class BettaCraftClient {
     private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions waterLook(int tint) {
         return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
             @Override
-            public net.minecraft.resources.ResourceLocation getStillTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_still");
+            public net.minecraft.resources.Identifier getStillTexture() {
+                return net.minecraft.resources.Identifier.withDefaultNamespace("block/water_still");
             }
 
             @Override
-            public net.minecraft.resources.ResourceLocation getFlowingTexture() {
-                return net.minecraft.resources.ResourceLocation.withDefaultNamespace("block/water_flow");
+            public net.minecraft.resources.Identifier getFlowingTexture() {
+                return net.minecraft.resources.Identifier.withDefaultNamespace("block/water_flow");
             }
 
             @Override

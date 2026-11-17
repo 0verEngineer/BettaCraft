@@ -131,12 +131,12 @@ final class DevClientSmokeM221 {
         then(1, () -> server(p -> {
             Spot z = spots.stream().filter(sp -> sp.species() == PlantSpecies.ZOANTHUS).findFirst().orElseThrow();
             InteriorRegion r = regions[2];
-            var c = TankMultiblock.getController(p.serverLevel(), tanks[2]);
+            var c = TankMultiblock.getController(p.level(), tanks[2]);
             float m = 0.5F / 16F;
             double f = (widths[2] - 2 * m) / (double) r.sizeX();
             Vec3 at = new Vec3(tanks[2].getX() + m + (z.x() + 0.5) * f, tanks[2].getY() + m + (top(z) + 3) * f, tanks[2].getZ() + m + (z.z() + 0.5) * f);
-            var fish = org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(p.serverLevel(), c.getTank());
-            if (!fish.isEmpty()) fish.getFirst().moveTo(at.x, at.y, at.z);
+            var fish = org.overengineer.bettacraft.tankmates.TankmateBreeding.tankmates(p.level(), c.getTank());
+            if (!fish.isEmpty()) fish.getFirst().snapTo(at.x, at.y, at.z);
         }));
         for (int i = 0; i < 20; i++) {
             then(10, () -> maxClosedOutside = Math.max(maxClosedOutside, MiniaturePlants.closedMeshes(regions[2].id(), time())));
@@ -305,7 +305,7 @@ final class DevClientSmokeM221 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         base = p.blockPosition().offset(-30, 2, 360);
         int x0 = 0;
@@ -380,7 +380,7 @@ final class DevClientSmokeM221 {
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
-            else p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.Perms;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
@@ -26,7 +27,7 @@ public final class PresetCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
         return Commands.literal("preset")
                 .executes(ctx -> show(ctx.getSource()))
-                .then(Commands.argument("name", StringArgumentType.word()).requires(s -> s.hasPermission(3))
+                .then(Commands.argument("name", StringArgumentType.word()).requires(s -> Perms.has(s, 3))
                         .suggests((ctx, b) -> SharedSuggestionProvider.suggest(java.util.Arrays.stream(Preset.values()).map(Preset::id), b))
                         .executes(ctx -> {
                             String name = StringArgumentType.getString(ctx, "name");
@@ -52,8 +53,8 @@ public final class PresetCommand {
         int n = Presets.inEffect().size();
         src.sendSuccess(() -> Component.translatable("command.bettacraft.preset.set", name(p), n), true);
         Component reload = Component.literal("/reload").withStyle(s -> s.withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/reload"))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("/reload"))));
+                .withClickEvent(new ClickEvent.SuggestCommand("/reload"))
+                .withHoverEvent(new HoverEvent.ShowText(Component.literal("/reload"))));
         src.sendSuccess(() -> Component.translatable("command.bettacraft.preset.reload", reload), false);
     }
 

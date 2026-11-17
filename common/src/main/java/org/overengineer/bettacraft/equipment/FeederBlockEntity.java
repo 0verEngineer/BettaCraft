@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -240,25 +243,30 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     // ------------------------------------------------------------------ NBT
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         Schemas.FEEDER.stamp(tag);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("feedings", feedingsPerDay);
         tag.putLong("last_event", lastEvent);
         tag.putDouble("credit", virtualCredit);
         if (turn != 0) tag.putInt("turn", turn); // M26 part b
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.FEEDER.migrate(raw);
-        items.deserializeNBT(registries, tag.getCompound("items"));
-        feedingsPerDay = Math.max(1, Math.min(3, tag.getInt("feedings")));
-        lastEvent = tag.contains("last_event") ? tag.getLong("last_event") : Long.MIN_VALUE;
-        double credit = tag.getDouble("credit");
+        items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        feedingsPerDay = Math.max(1, Math.min(3, tag.getIntOr("feedings", 0)));
+        lastEvent = tag.contains("last_event") ? tag.getLongOr("last_event", 0L) : Long.MIN_VALUE;
+        double credit = tag.getDoubleOr("credit", 0d);
         virtualCredit = Double.isFinite(credit) ? Math.max(0, Math.min(1, credit)) : 0;
-        turn = Math.floorMod(tag.getInt("turn"), Math.max(1, slots));
+        turn = Math.floorMod(tag.getIntOr("turn", 0), Math.max(1, slots));
     }
 }

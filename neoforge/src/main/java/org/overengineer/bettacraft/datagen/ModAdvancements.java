@@ -6,12 +6,12 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.FilledBucketTrigger;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.criterion.FilledBucketTrigger;
+import net.minecraft.advancements.criterion.InventoryChangeTrigger;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -60,7 +60,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         out = saver;
         AdvancementHolder root = Advancement.Builder.advancement()
                 .display(ModItems.BETTA_BUCKET.get(), title("root"), desc("root"),
-                        ResourceLocation.withDefaultNamespace("textures/block/mud.png"), AdvancementType.TASK, false, false, false)
+                        Identifier.withDefaultNamespace("textures/block/mud.png"), AdvancementType.TASK, false, false, false)
                 .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(
                         ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get(), ModItems.TANK.get(), ModItems.SWAMP_WATER_BOTTLE.get(),
                         ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.HEATER_SMALL.get(), ModItems.SALT_WATER_BOTTLE.get())))

@@ -18,7 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -50,11 +50,11 @@ import org.slf4j.LoggerFactory;
  * They never grow, spread or change, and they have no needs: no light minimum, no fertilizer (M37), no reef elements, no
  * salinity. At most {@code interiorPlants.maxPlantsPerTank} of them count per tank. Switch: {@code features.aquaticPlants.foreignPlants}.
  */
-public final class ForeignPlants extends SimplePreparableReloadListener<Map<ResourceLocation, ForeignPlantProfile>> {
+public final class ForeignPlants extends SimplePreparableReloadListener<Map<Identifier, ForeignPlantProfile>> {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign_plants");
     private static final FileToIdConverter FILES = FileToIdConverter.json("bettacraft/foreign_plants");
     /** The files of the last {@link #set} (GameTests add their own and restore these). */
-    private static volatile Map<ResourceLocation, ForeignPlantProfile> files = Map.of();
+    private static volatile Map<Identifier, ForeignPlantProfile> files = Map.of();
     /** Block -> its profile (resolved lazily: tags are bound after the reload). */
     private static final Map<Block, Entry> BY_BLOCK = new ConcurrentHashMap<>();
     private static final Entry NO_PROFILE = new Entry(null, null);
@@ -66,10 +66,10 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
     public static int renamedWarnings;
 
     /** The profile of a block with the file that maps it. */
-    public record Entry(@Nullable ForeignPlantProfile profile, @Nullable ResourceLocation file) {}
+    public record Entry(@Nullable ForeignPlantProfile profile, @Nullable Identifier file) {}
 
     /** One plant of a tank: its first block (the lowest), the profile file, its blocks and the plant mass it counts with. */
-    public record Group(Block block, ResourceLocation file, ForeignPlantRole role, int blocks, double mass) {}
+    public record Group(Block block, Identifier file, ForeignPlantRole role, int blocks, double mass) {}
 
     /**
      * What the plants of other mods in a region do: the plants that count (at most maxPlantsPerTank), their plant mass
@@ -97,7 +97,7 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
     }
 
     /** The profile files as loaded (by id). */
-    public static Map<ResourceLocation, ForeignPlantProfile> files() {
+    public static Map<Identifier, ForeignPlantProfile> files() {
         return files;
     }
 
@@ -124,15 +124,15 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
 
     private static Entry resolve(Block b) {
         if (b instanceof AquaticPlantBlock) return NO_PROFILE;
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(b);
         if (BettaCraft.MOD_ID.equals(id.getNamespace())) return NO_PROFILE;
         Entry found = NO_PROFILE;
         BlockState st = b.defaultBlockState();
-        for (Map.Entry<ResourceLocation, ForeignPlantProfile> f : files.entrySet()) {
+        for (Map.Entry<Identifier, ForeignPlantProfile> f : files.entrySet()) {
             ForeignPlantProfile p = f.getValue();
             boolean match = p.blocks().contains(id);
             if (!match) {
-                for (ResourceLocation t : p.tags()) {
+                for (Identifier t : p.tags()) {
                     if (st.is(TagKey.create(Registries.BLOCK, t))) {
                         match = true;
                         break;
@@ -169,10 +169,10 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
     }
 
     @Override
-    protected Map<ResourceLocation, ForeignPlantProfile> prepare(ResourceManager rm, ProfilerFiller profiler) {
-        Map<ResourceLocation, ForeignPlantProfile> out = new LinkedHashMap<>();
-        for (Map.Entry<ResourceLocation, Resource> e : FILES.listMatchingResources(rm).entrySet()) {
-            ResourceLocation id = FILES.fileToId(e.getKey());
+    protected Map<Identifier, ForeignPlantProfile> prepare(ResourceManager rm, ProfilerFiller profiler) {
+        Map<Identifier, ForeignPlantProfile> out = new LinkedHashMap<>();
+        for (Map.Entry<Identifier, Resource> e : FILES.listMatchingResources(rm).entrySet()) {
+            Identifier id = FILES.fileToId(e.getKey());
             try (Reader r = e.getValue().openAsReader()) {
                 JsonElement json = JsonParser.parseReader(r);
                 out.put(id, ForeignPlantProfile.parse(json.getAsJsonObject(), w -> LOGGER.warn("{}: {}", id, w)));
@@ -184,18 +184,18 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, ForeignPlantProfile> files, ResourceManager rm, ProfilerFiller profiler) {
+    protected void apply(Map<Identifier, ForeignPlantProfile> files, ResourceManager rm, ProfilerFiller profiler) {
         set(files);
     }
 
     /** Puts the profiles in place (reload, GameTests) and warns about block ids that are missing. Returns the ids missing. */
-    public static synchronized List<ResourceLocation> set(Map<ResourceLocation, ForeignPlantProfile> files) {
+    public static synchronized List<Identifier> set(Map<Identifier, ForeignPlantProfile> files) {
         ForeignPlants.files = java.util.Collections.unmodifiableMap(new LinkedHashMap<>(files));
         changed();
-        List<ResourceLocation> missing = new ArrayList<>();
+        List<Identifier> missing = new ArrayList<>();
         int known = 0;
-        for (Map.Entry<ResourceLocation, ForeignPlantProfile> f : files.entrySet()) {
-            for (ResourceLocation bid : f.getValue().blocks()) {
+        for (Map.Entry<Identifier, ForeignPlantProfile> f : files.entrySet()) {
+            for (Identifier bid : f.getValue().blocks()) {
                 if (BuiltInRegistries.BLOCK.containsKey(bid)) {
                     known++;
                     continue;
@@ -226,7 +226,7 @@ public final class ForeignPlants extends SimplePreparableReloadListener<Map<Reso
 
     static List<String> pathsOf(String namespace) {
         List<String> out = new ArrayList<>();
-        for (ResourceLocation id : BuiltInRegistries.BLOCK.keySet()) if (id.getNamespace().equals(namespace)) out.add(id.getPath());
+        for (Identifier id : BuiltInRegistries.BLOCK.keySet()) if (id.getNamespace().equals(namespace)) out.add(id.getPath());
         return out;
     }
 

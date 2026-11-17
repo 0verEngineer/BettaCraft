@@ -36,21 +36,21 @@ public class StoneCabinetRecipe extends ShapedRecipe {
 
     /** The shown result is a cabinet of stone bricks (JEI without the extension, recipe book, handbook); {@link #assemble} sets the real stone. */
     public static StoneCabinetRecipe of(ShapedRecipe base) {
-        ItemStack shown = base.getResultItem(null).copy();
+        ItemStack shown = base.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, null);
         if (!shown.has(org.overengineer.bettacraft.registry.ModDataComponents.WOOD.get())) {
-            CabinetBlockItem.setWood(shown, net.minecraft.resources.ResourceLocation.withDefaultNamespace("stone_bricks"));
+            CabinetBlockItem.setWood(shown, net.minecraft.resources.Identifier.withDefaultNamespace("stone_bricks"));
         }
-        return new StoneCabinetRecipe(base.getGroup(), base.category(), base.pattern, shown, base.showNotification());
+        return new StoneCabinetRecipe(base.group(), base.category(), base.pattern, shown, base.showNotification());
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return findStone(input, level.getRecipeManager(), level.registryAccess()) != null;
+        return level instanceof net.minecraft.server.level.ServerLevel sl && findStone(input, sl.recipeAccess(), level.registryAccess()) != null;
     }
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = getResultItem(registries).copy();
+        ItemStack result = super.assemble(input, registries);
         Item stone = input.width() == 3 && input.height() == 3 ? input.getItem(0, 2).getItem() : null;
         if (stone instanceof BlockItem bi) CabinetBlockItem.setWood(result, BuiltInRegistries.BLOCK.getKey(bi.getBlock()));
         return result;
@@ -82,7 +82,7 @@ public class StoneCabinetRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<StoneCabinetRecipe> getSerializer() {
         return ModRecipes.STONE_CABINET.get();
     }
 

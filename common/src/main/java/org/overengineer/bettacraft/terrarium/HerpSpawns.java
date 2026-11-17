@@ -13,7 +13,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
@@ -121,7 +121,7 @@ public final class HerpSpawns {
      * c: one of the wild varieties at random (the three dart frogs, the horned frog's green and brown); the morphs bred in
      * captivity never come from a spawn.
      */
-    public static int variety(HerpSpecies s, Holder<Biome> biome, RandomSource r, MobSpawnType spawnType) {
+    public static int variety(HerpSpecies s, Holder<Biome> biome, RandomSource r, EntitySpawnReason spawnType) {
         if (s.varieties().size() < 2) return 0;
         if (s == HerpSpecies.SLIDER) {
             double scripta = BiomeWaters.swamp(biome) ? 0.75 : BiomeWaters.river(biome) ? 0.15 : 0.4;
@@ -144,8 +144,8 @@ public final class HerpSpawns {
     // ------------------------------------------------------------------ spawn rule
 
     /** Spawn rule of the wild turtles (natural spawns and new chunks; spawn eggs and buckets always). */
-    public static boolean check(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (spawnType != MobSpawnType.NATURAL && spawnType != MobSpawnType.CHUNK_GENERATION) return true;
+    public static boolean check(EntityType<?> type, ServerLevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
+        if (spawnType != EntitySpawnReason.NATURAL && spawnType != EntitySpawnReason.CHUNK_GENERATION) return true;
         HerpSpecies s = of(type);
         if (s == null || !enabled(s) || Wildlife.inTank(level, pos)) return false;
         BlockPos below = pos.below();
@@ -212,16 +212,16 @@ public final class HerpSpawns {
         for (int i = 0; i < count * 3 && made < count; i++) {
             BlockPos p = i == 0 ? at : at.offset(r.nextInt(5) - 2, 0, r.nextInt(5) - 2);
             if (i > 0) p = new BlockPos(p.getX(), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p.getX(), p.getZ()), p.getZ());
-            if (!SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, p, r)) continue;
+            if (!SpawnPlacements.checkSpawnRules(type, level, EntitySpawnReason.NATURAL, p, r)) continue;
             if (!level.noCollision(type.getSpawnAABB(p.getX() + 0.5, p.getY(), p.getZ() + 0.5))) continue;
-            HerpEntity t = type.create(level);
+            HerpEntity t = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (t == null) return made;
-            t.moveTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, r.nextFloat() * 360F, 0F);
-            if (!org.overengineer.bettacraft.platform.Platform.get().checkSpawnPosition(t, level, MobSpawnType.NATURAL)) {
+            t.snapTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, r.nextFloat() * 360F, 0F);
+            if (!org.overengineer.bettacraft.platform.Platform.get().checkSpawnPosition(t, level, EntitySpawnReason.NATURAL)) {
                 t.discard();
                 continue;
             }
-            org.overengineer.bettacraft.platform.Platform.get().finalizeMobSpawn(t, level, level.getCurrentDifficultyAt(p), MobSpawnType.NATURAL, null);
+            org.overengineer.bettacraft.platform.Platform.get().finalizeMobSpawn(t, level, level.getCurrentDifficultyAt(p), EntitySpawnReason.NATURAL, null);
             if (level.tryAddFreshEntityWithPassengers(t)) made++;
         }
         return made;

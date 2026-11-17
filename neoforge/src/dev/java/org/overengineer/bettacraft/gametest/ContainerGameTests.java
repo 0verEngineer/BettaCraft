@@ -68,21 +68,21 @@ public final class ContainerGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 0;
+        sp.getInventory().getSelectedSlot() = 0;
         return sp;
     }
 
     /** The player stands at {@code rel} (relative) looking straight down (or up). */
     private static void stand(GameTestHelper h, ServerPlayer sp, BlockPos rel, float pitch) {
         Vec3 at = Vec3.atBottomCenterOf(h.absolutePos(rel));
-        sp.moveTo(at.x, at.y, at.z, 0F, pitch);
+        sp.snapTo(at.x, at.y, at.z, 0F, pitch);
         sp.setYHeadRot(0F);
     }
 
     /** A right-click with the stack in the main hand into the air or the world (the item's own use). */
     private static ItemStack use(ServerPlayer sp, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        sp.gameMode.useItem(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND);
+        sp.gameMode.useItem(sp, sp.level(), stack, InteractionHand.MAIN_HAND);
         return sp.getItemInHand(InteractionHand.MAIN_HAND);
     }
 
@@ -90,7 +90,7 @@ public final class ContainerGameTests {
     private static ItemStack useOn(ServerPlayer sp, GameTestHelper h, BlockPos rel, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         BlockPos pos = h.absolutePos(rel);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND,
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false));
         return sp.getItemInHand(InteractionHand.MAIN_HAND);
     }

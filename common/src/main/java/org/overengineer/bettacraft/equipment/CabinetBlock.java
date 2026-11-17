@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -24,7 +27,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -41,9 +43,9 @@ import net.minecraft.world.phys.HitResult;
  * resistance, sound and map colour come from the stone block; without the right tool it drops nothing (its contents
  * still drop). Wooden cabinets keep the properties of this block.
  */
-public class CabinetBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound, org.overengineer.bettacraft.platform.PositionalBlock.Blast, org.overengineer.bettacraft.platform.PositionalBlock.Harvest {
+public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound, org.overengineer.bettacraft.platform.PositionalBlock.Blast, org.overengineer.bettacraft.platform.PositionalBlock.Harvest {
     public static final MapCodec<CabinetBlock> CODEC = simpleCodec(CabinetBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
     /**
@@ -161,13 +163,13 @@ public class CabinetBlock extends BaseEntityBlock implements org.overengineer.be
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
-        if (!level.isClientSide && (!oldState.is(this) || oldState.getValue(FACING) != state.getValue(FACING))) refreshAround(level, pos);
+        if (!level.isClientSide() && (!oldState.is(this) || oldState.getValue(FACING) != state.getValue(FACING))) refreshAround(level, pos);
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (!level.isClientSide) refresh(level, pos); // the menu setting came with the item
+        if (!level.isClientSide()) refresh(level, pos); // the menu setting came with the item
     }
 
     /** M44: scheduled when the block entity loads (cabinets of older versions, a feature switch changed meanwhile). */
@@ -183,7 +185,7 @@ public class CabinetBlock extends BaseEntityBlock implements org.overengineer.be
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         return dir.getAxis().isHorizontal() ? connect(state, level, pos) : state;
     }
 
@@ -207,14 +209,14 @@ public class CabinetBlock extends BaseEntityBlock implements org.overengineer.be
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
             for (int i = 0; i < be.items().getSlots(); i++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
@@ -223,9 +225,8 @@ public class CabinetBlock extends BaseEntityBlock implements org.overengineer.be
                     new ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_SPONGE.get())); // M23
             level.updateNeighbourForOutputSignal(pos, this);
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
         // M44: the rows on both sides get their fronts again
-        if (!level.isClientSide && (!newState.is(this) || newState.getValue(FACING) != state.getValue(FACING))) {
+        if (!level.isClientSide() && (!newState.is(this) || newState.getValue(FACING) != state.getValue(FACING))) {
             for (Direction d : Direction.Plane.HORIZONTAL) refreshRow(level, pos.relative(d));
         }
     }
@@ -259,7 +260,7 @@ public class CabinetBlock extends BaseEntityBlock implements org.overengineer.be
     }
 
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        ItemStack s = super.getCloneItemStack(level, pos, state);
+        ItemStack s = super.getCloneItemStack(level, pos, state, false);
         if (level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
             CabinetBlockItem.setWood(s, be.woodId());
             if (be.outletSetting() != OutletSide.BACK) s.set(org.overengineer.bettacraft.registry.ModDataComponents.OUTLET_SIDE.get(), be.outletSetting().id());

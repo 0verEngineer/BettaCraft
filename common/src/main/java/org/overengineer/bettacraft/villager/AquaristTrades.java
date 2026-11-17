@@ -10,7 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -65,7 +65,7 @@ public final class AquaristTrades {
         public VillagerTrades.ItemListing listing() {
             return LISTINGS.computeIfAbsent(id, k -> {
                 VillagerTrades.ItemListing l = factory.get();
-                return (trader, random) -> Features.enabled(Feature.AQUARIST_VILLAGER) ? l.getOffer(trader, random) : null;
+                return (traderLevel, trader, random) -> Features.enabled(Feature.AQUARIST_VILLAGER) ? l.getOffer(traderLevel, trader, random) : null;
             });
         }
     }
@@ -148,7 +148,7 @@ public final class AquaristTrades {
     }
 
     private static VillagerTrades.ItemListing rareVarietyListing() {
-        return (trader, random) -> {
+        return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
             for (TankmateSpecies s : varietySpecies()) if (s.available() && s.randomBred(rnd) != null) pool.add(s); // M48: forms switched off
@@ -163,7 +163,7 @@ public final class AquaristTrades {
 
     /** A selling offer: one of the products whose features are on (by their shares). */
     private static Offer sell(String id, int level, List<Product> products, int xp, int uses) {
-        return new Offer(id, level, false, () -> products, () -> (trader, random) -> {
+        return new Offer(id, level, false, () -> products, () -> (traderLevel, trader, random) -> {
             List<Product> on = new ArrayList<>();
             double total = 0;
             for (Product p : products) {
@@ -208,7 +208,7 @@ public final class AquaristTrades {
                 yield TankCritters.bagOf(s, p.count(), () -> CritterGenes.WILD, rnd, false);
             }
             case "item" -> {
-                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(BettaCraft.id(id));
+                var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(BettaCraft.id(id));
                 yield item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, p.count());
             }
             default -> ItemStack.EMPTY;
@@ -232,11 +232,11 @@ public final class AquaristTrades {
     public static boolean isAppraisal(ItemStack s) {
         if (!s.is(Items.EMERALD)) return false;
         CustomData d = s.get(DataComponents.CUSTOM_DATA);
-        return d != null && d.contains(APPRAISE);
+        return d != null && d.copyTag().contains(APPRAISE);
     }
 
     private static VillagerTrades.ItemListing buy(net.minecraft.world.item.Item pays, int shown, int xp) {
-        return (trader, random) -> new MerchantOffer(new ItemCost(pays), Optional.empty(), appraisalResult(shown), 6, xp, 0F);
+        return (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(pays), Optional.empty(), appraisalResult(shown), 6, xp, 0F);
     }
 
     /** The emeralds a buying offer gives for the fish in the trade slot (0: the aquarist does not take it). */

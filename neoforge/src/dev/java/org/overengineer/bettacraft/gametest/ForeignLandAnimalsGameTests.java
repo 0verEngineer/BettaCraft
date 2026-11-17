@@ -16,7 +16,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -77,7 +77,7 @@ public final class ForeignLandAnimalsGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
     }
 
     private static ForeignProfile profile(EntityType<?> t) {
@@ -324,11 +324,11 @@ public final class ForeignLandAnimalsGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.LARGE_NET.get()));
         player.getInventory().add(new ItemStack(ModItems.TRANSPORT_TUB.get()));
         LivingEntity k = wild(h, komodo, new Vec3(16, 2, 26));
-        player.moveTo(k.getX() + 1.5, k.getY(), k.getZ());
+        player.snapTo(k.getX() + 1.5, k.getY(), k.getZ());
         player.interactOn(k, InteractionHand.MAIN_HAND);
         h.assertFalse(k.isAlive(), "the net caught it");
         ItemStack tub = ItemStack.EMPTY;
-        for (ItemStack s : player.getInventory().items) if (TransportTubItem.isFilled(s)) tub = s;
+        for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TransportTubItem.isFilled(s)) tub = s;
         h.assertTrue(TransportTubItem.containedType(tub) == komodo, "a tub with the komodo dragon");
         h.assertTrue(says(insert(h, small, tub.copy()), TOO_SMALL), "still too small");
         LivingEntity in = put(h, big, tub.copy());
@@ -342,8 +342,8 @@ public final class ForeignLandAnimalsGameTests {
         ItemStack held = tub.copy();
         player.setItemInHand(InteractionHand.MAIN_HAND, held);
         BlockPos ground = h.absolutePos(new BlockPos(20, 4, 28));
-        while (h.getLevel().getBlockState(ground).isAir() && ground.getY() > h.getLevel().getMinBuildHeight()) ground = ground.below();
-        player.moveTo(ground.getX() + 0.5, ground.getY() + 1.0, ground.getZ() + 0.5, 0F, 90F); // looking straight down onto the ground
+        while (h.getLevel().getBlockState(ground).isAir() && ground.getY() > h.getLevel().getMinY()) ground = ground.below();
+        player.snapTo(ground.getX() + 0.5, ground.getY() + 1.0, ground.getZ() + 0.5, 0F, 90F); // looking straight down onto the ground
         var r = held.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         h.assertTrue(r.getResult().consumesAction(), "let go on the land: " + r.getResult());
         h.assertFalse(TransportTubItem.isFilled(r.getObject()), "the tub is empty again");
@@ -400,11 +400,11 @@ public final class ForeignLandAnimalsGameTests {
         ServerPlayer player = MockPlayers.serverPlayer(h);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.TERRARIUM_BOX.get(), 2));
         LivingEntity f = wild(h, type("crittersandcompanions:ferret"), new Vec3(6, 2, 26));
-        player.moveTo(f.getX() + 1, f.getY(), f.getZ());
+        player.snapTo(f.getX() + 1, f.getY(), f.getZ());
         player.interactOn(f, InteractionHand.MAIN_HAND);
         h.assertFalse(f.isAlive(), "the ferret went into the box");
         boolean boxed = false;
-        for (ItemStack s : player.getInventory().items) if (TerrariumBoxItem.containedType(s) == f.getType()) boxed = true;
+        for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.containedType(s) == f.getType()) boxed = true;
         h.assertTrue(boxed, "a box with the ferret");
         player.discard();
         h.succeed();
@@ -478,12 +478,12 @@ public final class ForeignLandAnimalsGameTests {
             ServerPlayer player = MockPlayers.serverPlayer(h);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.LARGE_NET.get()));
             player.getInventory().add(new ItemStack(ModItems.TRANSPORT_TUB.get()));
-            player.moveTo(a.getX(), t.max().getY() + 1.5, a.getZ());
+            player.snapTo(a.getX(), t.max().getY() + 1.5, a.getZ());
             player.interactOn(a, InteractionHand.MAIN_HAND);
             h.assertFalse(a.isAlive(), "caught");
             h.assertFalse(t.inhabitants().contains(a.getUUID()), "no inhabitant any more");
             ItemStack back = ItemStack.EMPTY;
-            for (ItemStack s : player.getInventory().items) if (TransportTubItem.isFilled(s)) back = s;
+            for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TransportTubItem.isFilled(s)) back = s;
             h.assertTrue(TransportTubItem.containedType(back) == arapaima, "in the tub");
             h.assertTrue(h.getLevel().getEntities((Entity) null, box.inflate(4), x -> GameTestCompat.isPart(x)).isEmpty(),
                     "no part left behind");

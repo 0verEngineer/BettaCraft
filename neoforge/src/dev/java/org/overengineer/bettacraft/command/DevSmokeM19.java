@@ -144,7 +144,7 @@ final class DevSmokeM19 {
         TankData view = TankData.loadClientView(t.saveClientView());
         if (view.clutches().size() != t.clutches().size() || !view.breedingBox()) throw new IllegalStateException("M19: clutches or box not in the client view");
         var info = org.overengineer.bettacraft.compat.info.InfoData.tank(level, p);
-        if (info == null || info.getList("tankmates", 10).size() != 3) throw new IllegalStateException("M19: the overlay does not list the three species");
+        if (info == null || info.getListOrEmpty("tankmates").size() != 3) throw new IllegalStateException("M19: the overlay does not list the three species");
         // the guppies bred
         TankBlockEntity g = TankMultiblock.getController(level, p.offset(5, 0, 0));
         // (the first young are grown up after ten days)

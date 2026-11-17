@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +37,7 @@ public class AirStoneBlockEntity extends BlockEntity {
         if (!Float.isNaN(surfaceY) && Math.abs(surfaceY - y) < 0.01F) return;
         surfaceY = y;
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     static void clientTick(Level level, BlockPos pos, BlockState state, AirStoneBlockEntity be) {
@@ -42,15 +45,20 @@ public class AirStoneBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         if (!Float.isNaN(surfaceY)) tag.putFloat("surface", surfaceY);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        surfaceY = tag.contains("surface") ? tag.getFloat("surface") : Float.NaN;
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        surfaceY = tag.contains("surface") ? tag.getFloatOr("surface", 0f) : Float.NaN;
     }
 
     @Override

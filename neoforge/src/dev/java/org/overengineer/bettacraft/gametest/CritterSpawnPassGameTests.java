@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -82,7 +82,7 @@ public final class CritterSpawnPassGameTests {
     /** Fills the fish limit with wild guppies spread over the pool. */
     private static void fillFish(ServerLevel level, BlockPos top, int sx, int sz, int n) {
         var type = ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get();
-        for (int i = 0; i < n; i++) type.spawn(level, top.offset(i % sx, 0, (i / sx) % sz), MobSpawnType.NATURAL);
+        for (int i = 0; i < n; i++) type.spawn(level, top.offset(i % sx, 0, (i / sx) % sz), EntitySpawnReason.NATURAL);
     }
 
     /** With as many fish as the pass allows small animals still spawn; with the small animals at their limit fish still do. */
@@ -107,11 +107,11 @@ public final class CritterSpawnPassGameTests {
             // the other way round: the small animals at their limit, no fish
             for (Entity e : WildSpawnPass.wildAround(level, top, 40)) e.discard();
             var critter = ModEntities.WILD_CRITTER.get();
-            for (int i = 0; i < critterLimit; i++) critter.spawn(level, top.offset(i % sx, -2, (i / sx) % sz), MobSpawnType.NATURAL);
+            for (int i = 0; i < critterLimit; i++) critter.spawn(level, top.offset(i % sx, -2, (i / sx) % sz), EntitySpawnReason.NATURAL);
             check(WildSpawnPass.critterRoom(level, top) == 0, "room for small animals at their limit: " + WildSpawnPass.critterRoom(level, top));
             check(WildSpawnPass.room(level, top) == fishLimit, "the small animals take the fish's room: " + WildSpawnPass.room(level, top));
             check(WildSpawnPass.tryCrittersFor(level, top, r) == 0, "the small animals' try went over its limit");
-            var river = WildSpawnPass.fish(WildSpawnPass.ours(level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.RIVER)));
+            var river = WildSpawnPass.fish(WildSpawnPass.ours(level.registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.RIVER)));
             check(!river.isEmpty() && river.stream().noneMatch(d -> d.type == critter), "river fish entries " + river);
             int fish = 0;
             for (int i = 0; i < 16 && fish == 0; i++) {

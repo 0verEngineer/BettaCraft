@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.tank;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,15 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +48,7 @@ import org.overengineer.bettacraft.tank.TankStyle;
  * The concave and corner masks need the neighbours' block states, which {@link #getModelData} reads while the chunk is
  * meshed; Sodium 0.8 and Embeddium call that method as well (checked in their jars).
  */
-public class TankBakedModel implements BakedModel, DynamicModel {
+public class TankBakedModel implements DynamicModel {
     private static final float EPS = 0.001F;
 
     /** Per side (6 bits each, side.ordinal() * 6): edge directions with a concave crease. */
@@ -62,7 +62,6 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
     private final TextureAtlasSprite clearIcon;
     private final TextureAtlasSprite fallbackParticle;
-    private final ItemTransforms transforms;
     @Nullable
     private final BlockState fixedGlass;
     private final TankStyle fixedStyle;
@@ -78,31 +77,29 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     /** Connected / cut glass quads: original quad -> (hidden slots, water behind it) -> the pieces. */
     private final Map<BakedQuad, Map<Integer, BakedQuad[]>> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
-    private final Map<ResourceLocation, Float> frameCache = new ConcurrentHashMap<>();
-    private final Map<String, BakedModel> itemVariants;
-    private final ItemOverrides overrides;
+    private final Map<Identifier, Float> frameCache = new ConcurrentHashMap<>();
+    /** M52b: the item models of each glass and style (TankItemModel), shared by all variants. */
+    private final Map<String, TankBakedModel> itemVariants;
 
-    public TankBakedModel(TextureAtlasSprite edge, TextureAtlasSprite clearIcon, TextureAtlasSprite fallbackParticle, ItemTransforms transforms,
-                          @Nullable BlockState fixedGlass, TankStyle fixedStyle, @Nullable Map<String, BakedModel> sharedVariants) {
+    public TankBakedModel(TextureAtlasSprite edge, TextureAtlasSprite clearIcon, TextureAtlasSprite fallbackParticle,
+                          @Nullable BlockState fixedGlass, TankStyle fixedStyle, @Nullable Map<String, TankBakedModel> sharedVariants) {
         this.edge = edge;
         this.clearIcon = clearIcon;
         this.fallbackParticle = fallbackParticle;
-        this.transforms = transforms;
         this.fixedGlass = fixedGlass;
         this.fixedStyle = fixedStyle;
         this.itemVariants = sharedVariants != null ? sharedVariants : new ConcurrentHashMap<>();
-        this.overrides = new ItemOverrides() {
-            @Override
-            public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
-                TankStyle style = TankBlockItem.getStyle(stack);
-                String key = TankBlockItem.getGlass(stack) + "|" + style.getSerializedName();
-                return itemVariants.computeIfAbsent(key, k -> ClientPlatform.get().wrap(new TankBakedModel(edge, clearIcon, fallbackParticle, transforms,
-                        TankBlockItem.glassBlock(stack).defaultBlockState(), style, itemVariants)));
-            }
-        };
     }
 
-    private static BakedModel glassModel(BlockState glass) {
+    /** M52b: the model of a tank item (its glass and style; 1.21.1 did this with item overrides), see {@code TankItemModel}. */
+    public TankBakedModel forItem(ItemStack stack) {
+        TankStyle style = TankBlockItem.getStyle(stack);
+        String key = TankBlockItem.getGlass(stack) + "|" + style.getSerializedName();
+        return itemVariants.computeIfAbsent(key, k -> new TankBakedModel(edge, clearIcon, fallbackParticle,
+                TankBlockItem.glassBlock(stack).defaultBlockState(), style, itemVariants));
+    }
+
+    private static BlockStateModel glassModel(BlockState glass) {
         return Minecraft.getInstance().getBlockRenderer().getBlockModel(glass);
     }
 
@@ -129,15 +126,10 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        return quads(state, side, rand, ModelValues.EMPTY, null);
-    }
-
-    @Override
-    public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable RenderType renderType) {
+    public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer renderType) {
         if (side == null) {
             // with a shader pack the water is part of the block model (shaders then treat it like tinted glass)
-            if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent()) && !waterDynamic(data)
+            if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == ChunkSectionLayer.TRANSLUCENT) && !waterDynamic(data)
                     && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) {
                 return waterQuads(state, data);
             }
@@ -150,14 +142,14 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         List<BakedQuad> out = new ArrayList<>();
         if (styleOf(data) == TankStyle.TEXTURED) {
             BlockState glass = glassOf(data);
-            BakedModel gm = glassModel(glass);
+            BlockStateModel gm = glassModel(glass);
             if (renderType == null || ClientPlatform.get().layers(gm, glass, rand).contains(renderType)) {
                 List<BakedQuad> quads = ClientPlatform.get().quads(gm, glass, side, rand, renderType);
                 int hidden = ClientConfig.CONNECTED_GLASS.get() ? ConnectedGlass.hiddenSlots(mask, concave, side) : 0;
                 // translucent glass in front of water is cut where the water face behind it ends (the water height and
                 // INSET from the outer edges), so every water face sorts behind its glass piece (see TankWaterGeometry)
                 int water = 0; // 0 = no cut, else fill | mask << 5 | above << 11
-                if (state != null && !TankWaterRenderer.m10Look && (renderType == null || renderType == RenderType.translucent())) {
+                if (state != null && !TankWaterRenderer.m10Look && (renderType == null || renderType == ChunkSectionLayer.TRANSLUCENT)) {
                     int fill = state.getValue(TankBlock.FILL);
                     if (fill > 0) {
                         Integer cd = data.get(CORNERS);
@@ -179,7 +171,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
             out.addAll(edgeQuads(side, 0, 0, 0, ITEM_EDGE_WIDTH));
             return out;
         }
-        if (renderType == null || renderType == RenderType.cutout()) {
+        if (renderType == null || renderType == ChunkSectionLayer.CUTOUT) {
             int width = edgeWidth();
             if (width > 0) {
                 Integer cornerData = data.get(CORNERS);
@@ -191,24 +183,19 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     }
 
     @Override
-    public java.util.Collection<RenderType> layers(BlockState state, RandomSource rand, ModelValues data) {
-        java.util.Set<RenderType> own = new java.util.LinkedHashSet<>();
-        own.add(RenderType.cutout());
+    public java.util.Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data) {
+        java.util.Set<ChunkSectionLayer> own = new java.util.LinkedHashSet<>();
+        own.add(ChunkSectionLayer.CUTOUT);
         if (state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0 && !waterDynamic(data)
-                && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) own.add(RenderType.translucent());
+                && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) own.add(ChunkSectionLayer.TRANSLUCENT);
         if (styleOf(data) == TankStyle.CLEAN) return own;
         BlockState glass = glassOf(data);
         // in the order of the chunk layers (NeoForge's render type set is ordered so)
-        java.util.Set<RenderType> all = new java.util.LinkedHashSet<>(ClientPlatform.get().layers(glassModel(glass), glass, rand));
+        java.util.Set<ChunkSectionLayer> all = new java.util.LinkedHashSet<>(ClientPlatform.get().layers(glassModel(glass), glass, rand));
         all.addAll(own);
-        List<RenderType> ordered = new ArrayList<>();
-        for (RenderType rt : RenderType.chunkBufferLayers()) if (all.contains(rt)) ordered.add(rt);
+        List<ChunkSectionLayer> ordered = new ArrayList<>();
+        for (ChunkSectionLayer rt : ChunkSectionLayer.values()) if (all.contains(rt)) ordered.add(rt);
         return ordered;
-    }
-
-    @Override
-    public List<RenderType> itemLayers(boolean fabulous) {
-        return List.of(fabulous ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet());
     }
 
     @Override
@@ -278,7 +265,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         int key = hidden | water << 4;
         BakedQuad[] r = variants.get(key);
         if (r == null) {
-            float frame = hidden == 0 ? 0 : frameOf(q.getSprite());
+            float frame = hidden == 0 ? 0 : frameOf(q.sprite());
             float[] cuts = water == 0 ? new float[]{Float.NaN}
                     : TankWaterGeometry.glassCuts((water >> 5) & 63, water & 31, (water & (1 << 11)) != 0, side);
             List<Float> sc = new ArrayList<>(), tc = new ArrayList<>();
@@ -311,7 +298,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         boolean clip = sMin > Float.NEGATIVE_INFINITY || sMax < Float.POSITIVE_INFINITY || tMin > Float.NEGATIVE_INFINITY
                 || tMax < Float.POSITIVE_INFINITY;
         if (frame <= 0 && !clip) return q;
-        int[] data = q.getVertices();
+        int[] data = ClientPlatform.get().vertices(q);
         int stride = data.length / 4;
         if (stride < 6) return q;
         float[] s = new float[4], t = new float[4], u = new float[4], v = new float[4];
@@ -342,7 +329,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
             copy[i * stride + 4] = Float.floatToRawIntBits(u[i]);
             copy[i * stride + 5] = Float.floatToRawIntBits(v[i]);
         }
-        return ClientPlatform.get().quad(copy, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade(), ClientPlatform.get().quadAo(q));
+        return ClientPlatform.get().quad(copy, q.tintIndex(), q.direction(), q.sprite(), q.shade(), ClientPlatform.get().quadAo(q));
     }
 
     /** Inverse of {@link BoxFaces#u} / {@link BoxFaces#v}: sets the in-plane coordinates of {@code p} on face {@code side}. */
@@ -514,43 +501,16 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
+    public boolean ambientOcclusion() {
         return false;
     }
 
-    @Override
-    public boolean isGui3d() {
-        return true;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return true;
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return false;
-    }
-
+    /** M52b: the particle of the item (its glass) or of the block (the glass of its block entity). */
     @Override
     @SuppressWarnings("deprecation")
-    public TextureAtlasSprite getParticleIcon() {
-        return fixedGlass != null ? glassModel(fixedGlass).getParticleIcon() : fallbackParticle;
-    }
-
-    @Override
     public TextureAtlasSprite particle(ModelValues data) {
-        return glassModel(glassOf(data)).getParticleIcon();
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return transforms;
-    }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return overrides;
+        if (fixedGlass != null) return glassModel(fixedGlass).particleIcon();
+        BlockState g = data.get(TankBlockEntity.GLASS_STATE);
+        return g != null ? glassModel(g).particleIcon() : fallbackParticle;
     }
 }

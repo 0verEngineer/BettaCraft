@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.fertilizer;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -11,7 +12,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -41,9 +41,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * a water bucket (or any fluid container of other mods) fills its water tank; the crank winds its spring
  * ({@link FertilizerMakerBlockEntity}).
  */
-public class FertilizerMakerBlock extends BaseEntityBlock {
+public class FertilizerMakerBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<FertilizerMakerBlock> CODEC = simpleCodec(FertilizerMakerBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Position of the crank handle (quarter turns). */
     public static final IntegerProperty CRANK = IntegerProperty.create("crank", 0, 3);
     public static final BooleanProperty WORKING = BooleanProperty.create("working");
@@ -80,23 +80,23 @@ public class FertilizerMakerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // a water bucket (or a tank item of another mod) fills the water tank
         if (!stack.isEmpty() && FluidUtil.getFluidHandler(stack).isPresent()) {
-            if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof FertilizerMakerBlockEntity be)) return InteractionResult.PASS;
         if (player.isSecondaryUseActive()) {
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.crank.use_crank"), true);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.crank.use_crank"), true);
+            return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide() && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -105,16 +105,15 @@ public class FertilizerMakerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof FertilizerMakerBlockEntity be ? be.comparator() : 0;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!newState.is(this) && level.getBlockEntity(pos) instanceof FertilizerMakerBlockEntity be) {
             for (int i = 0; i < FertilizerMakerBlockEntity.SLOTS; i++) Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
         }
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
@@ -133,6 +132,6 @@ public class FertilizerMakerBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.FERTILIZER_MAKER.get(), FertilizerMakerBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.FERTILIZER_MAKER.get(), FertilizerMakerBlockEntity::serverTick);
     }
 }

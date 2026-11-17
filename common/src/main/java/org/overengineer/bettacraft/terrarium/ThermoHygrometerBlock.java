@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.terrarium;
 
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -20,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -36,7 +38,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  */
 public class ThermoHygrometerBlock extends BaseEntityBlock {
     public static final MapCodec<ThermoHygrometerBlock> CODEC = simpleCodec(ThermoHygrometerBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape NORTH = box(4, 4, 15, 12, 12, 16), SOUTH = box(4, 4, 0, 12, 12, 1), WEST = box(15, 4, 4, 16, 12, 12),
             EAST = box(0, 4, 4, 1, 12, 12);
 
@@ -77,7 +79,7 @@ public class ThermoHygrometerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (dir == state.getValue(FACING).getOpposite() && !canSurvive(state, level, pos)) return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         return state;
     }
@@ -106,7 +108,7 @@ public class ThermoHygrometerBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = tank(level, pos, state);
         player.displayClientMessage(readout(c == null ? null : c.getTank()), true);
         return InteractionResult.CONSUME;
@@ -128,7 +130,7 @@ public class ThermoHygrometerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         TankBlockEntity c = tank(level, pos, state);
         if (c == null || !c.getTank().hasClimate()) return 0;
         return Math.max(0, Math.min(15, Math.round(c.getTank().humidity() * 15 / 100F)));

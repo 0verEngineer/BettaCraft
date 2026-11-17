@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -59,7 +59,7 @@ final class DevClientSmokeM39a {
     DevClientSmokeM39a() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(200, () -> server(pl -> place(pl.serverLevel())));
+        then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(big.getX() + 8, big.getY() + 4.2, big.getZ() - 9.0, 0F, 20F));
         then(140, () -> shot("big"));
         then(1, () -> look(sea.getX() + 5, sea.getY() + 3.2, sea.getZ() - 6.0, 0F, 20F));
@@ -108,7 +108,7 @@ final class DevClientSmokeM39a {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         // --- the big freshwater tank: 16 x 4 x 8, gravel, a few stones and plants
@@ -137,7 +137,7 @@ final class DevClientSmokeM39a {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElse(null);
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElse(null);
     }
 
     /** Puts a new animal of the type in by its container (as a player would); the animal, or null with an error logged. */
@@ -145,7 +145,7 @@ final class DevClientSmokeM39a {
         Entity e = type.create(level);
         if (e == null) return null;
         if (baby && e instanceof Mob m) m.setBaby(true);
-        e.moveTo(c.getBlockPos().getX(), c.getBlockPos().getY(), c.getBlockPos().getZ());
+        e.snapTo(c.getBlockPos().getX(), c.getBlockPos().getY(), c.getBlockPos().getZ());
         ItemStack stack = kind == 0 ? TransportTubItem.fillWith(e) : kind == 1 ? TerrariumBoxItem.fillWith(e)
                 : org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(e);
         e.discard();
@@ -166,7 +166,7 @@ final class DevClientSmokeM39a {
         TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), true);
         double x = t.min().getX() + dx, z = t.min().getZ() + dz;
         double g = Double.isNaN(y) ? ter.ground(x, z) + 0.01 : y;
-        e.moveTo(x, g, z, yaw, 0F);
+        e.snapTo(x, g, z, yaw, 0F);
         e.setYHeadRot(yaw);
         e.yBodyRot = yaw;
         if (e instanceof Mob m) SmokeFreeze.freeze(m, true);

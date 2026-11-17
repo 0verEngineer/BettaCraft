@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -74,7 +74,7 @@ public final class StoneCabinetGameTests {
         return r.map(h -> h.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
     }
 
-    private static ResourceLocation blockId(Item item) {
+    private static Identifier blockId(Item item) {
         return BuiltInRegistries.BLOCK.getKey(((BlockItem) item).getBlock());
     }
 

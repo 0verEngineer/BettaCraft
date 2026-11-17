@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.equipment;
 
+import net.minecraft.core.component.DataComponentGetter;
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -98,7 +102,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
 
     private void m23Changed() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
     }
 
     private void saveM23(CompoundTag tag) {
@@ -107,8 +111,8 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
     }
 
     private void loadM23(CompoundTag tag) {
-        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getInt("regulator"))) : 10;
-        intakeSponge = tag.getBoolean("intake_sponge");
+        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getIntOr("regulator", 0))) : 10;
+        intakeSponge = tag.getBooleanOr("intake_sponge", false);
     }
 
     // ------------------------------------------------------------------ FilterHost
@@ -144,7 +148,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
 
     public void onLoad() {
         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this); // NeoForge's default onLoad
-        if (level != null && level.isClientSide) CLIENT_LOADED.add(this);
+        if (level != null && level.isClientSide()) CLIENT_LOADED.add(this);
     }
 
     @Override
@@ -173,20 +177,25 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
     // ------------------------------------------------------------------ NBT / components
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         Schemas.EXTERNAL_FILTER.stamp(tag);
         tag.put("heaters", heaters.serializeNBT(registries));
         saveM23(tag);
         spring.save(tag, "spring");
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.EXTERNAL_FILTER.migrate(raw);
         if (tag.contains("heaters")) {
-            heaters.deserializeNBT(registries, tag.getCompound("heaters"));
+            heaters.deserializeNBT(registries, tag.getCompoundOrEmpty("heaters"));
             if (heaters.getSlots() != FilterHeaters.SLOTS) heaters.setSize(FilterHeaters.SLOTS);
         }
         loadM23(tag);
@@ -211,7 +220,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput input) {
+    protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
         ItemContainerContents c = input.get(DataComponents.CONTAINER);
         if (c != null) {
@@ -234,7 +243,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        tag.remove("heaters");
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("heaters");
     }
 }

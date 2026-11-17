@@ -256,7 +256,7 @@ public final class BettaHealth {
 
     /** M17: NaN, infinite or negative days (corrupt data) froze a fish: it never got sick, recovered or died. */
     static double days(CompoundTag t, String key) {
-        double v = t.getDouble(key);
+        double v = t.getDoubleOr(key, 0d);
         return Double.isFinite(v) ? Math.max(0, v) : 0;
     }
 
@@ -268,9 +268,9 @@ public final class BettaHealth {
         h.crowdStress = days(t, "crowd_stress");
         h.waterStress = days(t, "water_stress"); // M9; 0 for older fish
         h.saltShock = Math.min(1, days(t, "salt_shock")); // M20
-        h.sick = t.getBoolean("sick");
+        h.sick = t.getBooleanOr("sick", false);
         h.sickDays = days(t, "sick_days");
-        CompoundTag diet = t.getCompound("diet"); // M26 part b; empty for older fish
+        CompoundTag diet = t.getCompoundOrEmpty("diet"); // M26 part b; empty for older fish
         for (int i = 0; i < FOOD_GROUPS; i++) if (diet.contains(String.valueOf(i))) h.ateAgo[i] = Math.min(30, days(diet, String.valueOf(i)));
         h.ageDays = t.contains("age_days") ? days(t, "age_days") : -1; // M33 part d; older animals: counted from their stage
         return h;

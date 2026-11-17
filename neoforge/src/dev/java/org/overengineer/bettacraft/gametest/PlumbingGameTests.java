@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -154,7 +154,7 @@ public final class PlumbingGameTests {
         ServerLevel level = h.getLevel();
         ItemStack ours = new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get());
         h.assertTrue(ours.is(ModTags.STAINLESS_STEEL_INGOTS), "our ingot carries #c:ingots/stainless_steel");
-        var steelTag = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "ingots/steel"));
+        var steelTag = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", "ingots/steel"));
         h.assertTrue(!ours.is(steelTag), "our ingot is no plain steel");
         var pipeRecipe = level.getRecipeManager().byKey(BettaCraft.id("stainless_steel_pipe")).orElseThrow();
         var ok = net.minecraft.world.item.crafting.CraftingInput.of(3, 1, List.of(ours.copy(), ours.copy(), ours.copy()));
@@ -256,7 +256,7 @@ public final class PlumbingGameTests {
     /** With Mekanism (-Ppower): a Mekanism fluid tank at the end of a pipe takes our water and gives it back. */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void pipesReachAMekanismTank(GameTestHelper h) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath("mekanism", "basic_fluid_tank");
+        Identifier id = Identifier.fromNamespaceAndPath("mekanism", "basic_fluid_tank");
         if (!BuiltInRegistries.BLOCK.containsKey(id)) {
             h.succeed(); // only with the power mods
             return;
@@ -267,7 +267,7 @@ public final class PlumbingGameTests {
         long before = a.getTank().waterMb();
         WaterPumpBlockEntity p = pump(h, new BlockPos(3, 2, 1), Direction.EAST);
         pipe(h, true, new BlockPos(4, 2, 1));
-        h.setBlock(new BlockPos(5, 2, 1), BuiltInRegistries.BLOCK.get(id).defaultBlockState());
+        h.setBlock(new BlockPos(5, 2, 1), BuiltInRegistries.BLOCK.getValue(id).defaultBlockState());
         h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 1))).getValue(PipeBlock.SIDES.get(Direction.EAST)), "the pipe joins the Mekanism tank");
         int moved = batch(h, p);
         var cap = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, h.absolutePos(new BlockPos(5, 2, 1)), Direction.WEST);

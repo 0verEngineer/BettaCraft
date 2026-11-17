@@ -1,10 +1,13 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -18,22 +21,22 @@ public class CabinetBlockItem extends BlockItem {
         super(block, properties);
     }
 
-    public static ResourceLocation getWood(ItemStack stack) {
-        ResourceLocation w = stack.get(ModDataComponents.WOOD.get());
+    public static Identifier getWood(ItemStack stack) {
+        Identifier w = stack.get(ModDataComponents.WOOD.get());
         return w == null ? CabinetBlockEntity.DEFAULT_WOOD : w;
     }
 
-    public static ItemStack setWood(ItemStack stack, ResourceLocation wood) {
+    public static ItemStack setWood(ItemStack stack, Identifier wood) {
         stack.set(ModDataComponents.WOOD.get(), wood);
         return stack;
     }
 
     public static Block woodBlock(ItemStack stack) {
-        Block b = BuiltInRegistries.BLOCK.get(getWood(stack));
+        Block b = BuiltInRegistries.BLOCK.getValue(getWood(stack));
         return b == Blocks.AIR ? Blocks.OAK_PLANKS : b;
     }
 
-    static Component nameFor(ResourceLocation wood) {
+    static Component nameFor(Identifier wood) {
         return Component.translatable("block.bettacraft.cabinet.with_wood", woodName(wood));
     }
 
@@ -43,12 +46,12 @@ public class CabinetBlockItem extends BlockItem {
      * Name of the wood, not of the planks: "Oak" / "Eichenholz". Vanilla woods have translations ({@code wood.minecraft.oak});
      * other mods fall back to their planks name without "Planks" / "bretter" in the current language.
      */
-    public static Component woodName(ResourceLocation planks) {
-        Block b = BuiltInRegistries.BLOCK.get(planks);
+    public static Component woodName(Identifier planks) {
+        Block b = BuiltInRegistries.BLOCK.getValue(planks);
         if (b == Blocks.AIR) b = Blocks.OAK_PLANKS;
         // M21.7: a stone cabinet carries the name of its stone ("Stone Bricks", "Steinziegel")
         if (CabinetStones.isStoneMaterial(b)) return Component.translatable(b.getDescriptionId());
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(b);
         String base = id.getPath().endsWith("_planks") ? id.getPath().substring(0, id.getPath().length() - "_planks".length()) : id.getPath();
         String full = net.minecraft.locale.Language.getInstance().getOrDefault(b.getDescriptionId());
         String stripped = PLANKS_SUFFIX.matcher(full).replaceAll("").trim();
@@ -61,7 +64,8 @@ public class CabinetBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.cabinet").withStyle(ChatFormatting.GRAY));
         // M22.4: a cabinet that remembers another outlet side than the back
         String side = stack.get(ModDataComponents.OUTLET_SIDE.get());

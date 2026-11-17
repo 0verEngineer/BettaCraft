@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import org.overengineer.bettacraft.BettaCraft;
 
@@ -60,7 +60,7 @@ public final class JourneyMapWaypoints {
     }
 
     /** Puts the waypoint of {@code tank} (again). Returns false without JourneyMap. */
-    public static boolean add(UUID tank, ResourceLocation dimension, BlockPos pos, String label) {
+    public static boolean add(UUID tank, Identifier dimension, BlockPos pos, String label) {
         if (!init()) return false;
         remove(tank);
         try {

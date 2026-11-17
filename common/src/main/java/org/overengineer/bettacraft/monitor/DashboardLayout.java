@@ -190,11 +190,11 @@ public final class DashboardLayout {
     public static DashboardLayout load(CompoundTag c) {
         DashboardLayout l = new DashboardLayout();
         if (c.isEmpty()) return l;
-        l.auto = !c.contains("auto") || c.getBoolean("auto");
-        l.nextId = Math.max(1, c.getInt("next"));
-        ListTag list = c.getList("tiles", Tag.TAG_COMPOUND);
+        l.auto = !c.contains("auto") || c.getBooleanOr("auto", false);
+        l.nextId = Math.max(1, c.getIntOr("next", 0));
+        ListTag list = c.getListOrEmpty("tiles");
         for (int i = 0; i < list.size() && l.tiles.size() < MAX_TILES; i++) {
-            DashboardTile t = DashboardTile.load(list.getCompound(i));
+            DashboardTile t = DashboardTile.load(list.getCompoundOrEmpty(i));
             l.tiles.add(t);
             l.nextId = Math.max(l.nextId, t.id + 1);
         }

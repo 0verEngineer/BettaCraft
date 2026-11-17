@@ -1,5 +1,13 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.util.RandomSource;
+import java.util.function.Consumer;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -51,7 +59,7 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * <p>
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
-public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PositionalBlock.Sound {
+public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockTooltip, BlockRemoval, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
     public static final MapCodec<FilterPipeBlock> CODEC = simpleCodec(p -> new FilterPipeBlock(PipeLine.INTAKE, p));
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.SIDES;
     /** A T-piece (joins up to all six sides). */
@@ -157,7 +165,7 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         version++;
         return state.setValue(SIDES.get(dir), FilterPipes.side(line, slot(state), level, pos, dir));
     }
@@ -166,7 +174,7 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
         version++;
-        if (level.isClientSide || old.is(this)) return;
+        if (level.isClientSide() || old.is(this)) return;
         if (old.getBlock() instanceof FilterPipeBundleBlock) return; // a bundle down to its last line: its sides stay as they were
         // set directly (a structure, a command, the GameTests): join as if it had been placed by hand
         BlockState now = count(state) == 0 ? connect(state, level, pos, List.of(Direction.values())) : state;
@@ -175,15 +183,14 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         version++;
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos from, boolean moving) {
-        super.neighborChanged(state, level, pos, block, from, moving);
-        if (level.isClientSide) return;
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean moving) {
+        super.neighborChanged(state, level, pos, block, orientation, moving);
+        if (level.isClientSide()) return;
         version++;
         if (line.water()) {
             // part b: another mod's block next to it may get its fluid handler only after it was placed
@@ -199,25 +206,25 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     // ------------------------------------------------------------------ the T-piece, a second line (part b)
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         // part b: the pipe of another line goes into this block: it becomes a bundle that carries both
         if (stack.getItem() instanceof net.minecraft.world.item.BlockItem bi && bi.getBlock() instanceof FilterPipeBlock other && other.line != line) {
-            if (!level.isClientSide) FilterPipeBundleBlock.addLine(level, pos, other.line, player, stack);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide()) FilterPipeBundleBlock.addLine(level, pos, other.line, player, stack);
+            return InteractionResult.SUCCESS;
         }
-        ItemInteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
+        InteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
         if (facade != null) return facade;
-        if (!(stack.getItem() instanceof PipeTeeItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!(stack.getItem() instanceof PipeTeeItem)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (state.getValue(JUNCTION)) {
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
+            return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             makeJunction(level, pos);
             if (!player.getAbilities().instabuild) stack.shrink(1);
             level.playSound(null, pos, net.minecraft.sounds.SoundEvents.COPPER_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 0.8F, 1.1F);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     /** Turns the pipe at {@code pos} into a T-piece and joins every neighbour that fits (public for the GameTests; part b: a bundle's first line without one). */
@@ -244,7 +251,7 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true; // part c: also under a cover (the light engine reads no block entities off the main thread)
     }
 
@@ -285,8 +292,9 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
         return c != null ? c : state;
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
+    @Override // BlockTooltip (M52b)
+    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable(line.water() ? "tooltip.bettacraft.filter_water_pipe.usage" : "tooltip.bettacraft.filter_pipe.usage").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.filter_pipe.bundle").withStyle(ChatFormatting.DARK_GRAY)); // part b
     }

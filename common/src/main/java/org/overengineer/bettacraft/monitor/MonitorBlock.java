@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -23,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
@@ -33,9 +34,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * {@link MonitorScreens#MAX_W} x {@link MonitorScreens#MAX_H} blocks ({@link MonitorScreens}); the four flags say on which
  * sides (as the viewer sees it) the block continues into the same screen, so the frame is only drawn around the screen.
  */
-public class MonitorBlock extends BaseEntityBlock {
+public class MonitorBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<MonitorBlock> CODEC = simpleCodec(MonitorBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
@@ -90,13 +91,11 @@ public class MonitorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (newState.is(this) || !(level instanceof ServerLevel server)) {
-            super.onRemove(state, level, pos, newState, moving);
             return;
         }
         MonitorScreens.Old old = level.getBlockEntity(pos) instanceof MonitorBlockEntity be && be.isController() ? MonitorScreens.Old.of(be) : null;
-        super.onRemove(state, level, pos, newState, moving);
         Direction facing = state.getValue(FACING);
         Direction right = MonitorScreens.right(facing);
         java.util.List<BlockPos> seeds = java.util.List.of(pos.above(), pos.below(), pos.relative(right), pos.relative(right.getOpposite()));
@@ -123,7 +122,7 @@ public class MonitorBlock extends BaseEntityBlock {
 
     /** Comparator: the number of triggered alarm tiles with redstone (at most 15). */
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof MonitorBlockEntity be ? Math.min(15, be.alarms()) : 0;
     }
 
@@ -132,10 +131,10 @@ public class MonitorBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof MonitorBlockEntity be)) return InteractionResult.PASS;
         if (!player.isShiftKeyDown() && player.mayBuild()) {
-            if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openMonitor(pos);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openMonitor(pos);
+            return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             MonitorBlockEntity c = be.controller();
             if (c == null) c = be;
             Component status = Component.translatable("monitor.bettacraft.status." + switch (c.status()) {
@@ -146,7 +145,7 @@ public class MonitorBlock extends BaseEntityBlock {
             player.displayClientMessage(Component.translatable("message.bettacraft.monitor.info", c.width(), c.height(),
                     c.tanks().size(), MonitorSync.range(), status).withStyle(ChatFormatting.AQUA), true);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable
@@ -158,6 +157,6 @@ public class MonitorBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.MONITOR.get(), MonitorBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.MONITOR.get(), MonitorBlockEntity::serverTick);
     }
 }

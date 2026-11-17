@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,7 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public final class BetterFishTanksCompat {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/compat");
     public static final String MOD_ID = "betterfishtanks";
-    public static final ResourceLocation TANK_BLOCK = ResourceLocation.fromNamespaceAndPath(MOD_ID, "fish_tank_block");
+    public static final Identifier TANK_BLOCK = Identifier.fromNamespaceAndPath(MOD_ID, "fish_tank_block");
     private static final String CLASSIFIER = "net.mint_gaming_studios.betterfishtanksmod.datagen.custom.FishClassifier";
 
     @Nullable
@@ -72,7 +72,7 @@ public final class BetterFishTanksCompat {
             Component error = release(server, pos, player, hand, stack);
             if (error != null) player.displayClientMessage(error, true);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     /** Releases the animal of {@code stack} into the BFT tank at {@code pos}; returns an error or null. */
@@ -90,9 +90,9 @@ public final class BetterFishTanksCompat {
         Entity e;
         if (stored != null) {
             e = org.overengineer.bettacraft.compat.FishContainers.create(level, stored);
-            if (e != null) e.moveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0);
+            if (e != null) e.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0);
         } else {
-            e = anyType.create(level, config, pos, MobSpawnType.BUCKET, false, false);
+            e = anyType.create(level, config, pos, EntitySpawnReason.BUCKET, false, false);
         }
         if (e == null) return Component.translatable("message.bettacraft.compat.bft_failed");
         if (e instanceof Bucketable b) {

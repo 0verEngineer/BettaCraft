@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -31,7 +35,7 @@ public class SeaWaterBucketItem extends BucketItem {
     }
 
     @Override
-    public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
+    public net.minecraft.world.InteractionResult use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
                                                                     net.minecraft.world.InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         var solid = getPlayerPOVHitResult(level, player, net.minecraft.world.level.ClipContext.Fluid.NONE);
@@ -42,20 +46,20 @@ public class SeaWaterBucketItem extends BucketItem {
                 || solid.getLocation().distanceToSqr(eye) > fluid.getLocation().distanceToSqr(eye) + 0.01)) {
             // into the water the player looks at: no new block (a flowing water block becomes a source, as a bucket would)
             net.minecraft.core.BlockPos pos = fluid.getBlockPos();
-            if (!level.mayInteract(player, pos)) return net.minecraft.world.InteractionResultHolder.fail(stack);
-            if (!level.isClientSide && !level.getFluidState(pos).isSource() && level.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.LiquidBlock) {
+            if (!level.mayInteract(player, pos)) return net.minecraft.world.InteractionResult.FAIL;
+            if (!level.isClientSide() && !level.getFluidState(pos).isSource() && level.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.LiquidBlock) {
                 level.setBlock(pos, net.minecraft.world.level.block.Blocks.WATER.defaultBlockState(), 11);
             }
             playEmptySound(player, level, pos);
             level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.FLUID_PLACE, pos);
-            return net.minecraft.world.InteractionResultHolder.sidedSuccess(
-                    net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, getEmptySuccessItem(stack, player)), level.isClientSide());
+            return net.minecraft.world.InteractionResult.SUCCESS.heldItemTransformedTo(net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, getEmptySuccessItem(stack, player)));
         }
         return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable(this.tooltip).withStyle(ChatFormatting.GRAY));
     }
 }

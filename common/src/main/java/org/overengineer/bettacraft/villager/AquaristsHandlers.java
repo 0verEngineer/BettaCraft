@@ -2,8 +2,8 @@ package org.overengineer.bettacraft.villager;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.item.trading.MerchantOffers;
 import org.overengineer.bettacraft.platform.event.SubscribeEvent;
 import org.overengineer.bettacraft.platform.event.TradeWithVillagerEvent;

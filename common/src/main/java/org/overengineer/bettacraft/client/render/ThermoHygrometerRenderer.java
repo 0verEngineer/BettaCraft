@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.terrarium.ThermoHygrometerBlockEntity;
  * M31: the LCD of the thermo-hygrometer: the air temperature and the humidity of the terrarium behind it (from the tank's
  * client view, synced by the climate step), on an aquarium the water temperature, without a tank dashes.
  */
-public class ThermoHygrometerRenderer implements BlockEntityRenderer<ThermoHygrometerBlockEntity> {
+public class ThermoHygrometerRenderer extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<ThermoHygrometerBlockEntity> {
     private static final int LCD_TEXT = 0xFF1E2A1E;
     private final Font font;
 

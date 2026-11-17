@@ -227,7 +227,7 @@ final class TankmateBehaviour {
             large(server, w, s);
             return;
         }
-        boolean night = !server.isDay();
+        boolean night = !server.isBrightOutside();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;
         if (eel(s)) {
             // M21.5: kuhli loaches: by day mostly lying still, often half hidden under the decoration; at night calm gliding
@@ -301,7 +301,7 @@ final class TankmateBehaviour {
         if (s.shoaling() && school(server, w, s, len)) return;
         // M30 part b: a stingray (and a night hunter by day) glides down to a spot ahead and lies on the ground for a while
         double rest = l.restShare();
-        if (s.nocturnal()) rest *= server.isDay() ? 2.0 : 0.3;
+        if (s.nocturnal()) rest *= server.isBrightOutside() ? 2.0 : 0.3;
         if (rest > 0 && r.nextDouble() < rest) {
             double ahead = len * (0.5 + r.nextDouble());
             double ang = heading + (r.nextDouble() - 0.5) * Math.PI / 3;
@@ -350,7 +350,7 @@ final class TankmateBehaviour {
      */
     private boolean lurk(ServerLevel server, TankWaterVolume w) {
         RandomSource r = r();
-        if (r.nextDouble() >= (server.isDay() ? 0.9 : 0.45)) return false;
+        if (r.nextDouble() >= (server.isBrightOutside() ? 0.9 : 0.45)) return false;
         if (lair == null || !w.box().inflate(0.05).contains(lair)) {
             TankTerrain t = terrain(server);
             double[] spot = t == null ? null : t.shelter(fish.getX(), fish.getY(), fish.getZ(), 3.0, new java.util.Random(r.nextLong()));
@@ -701,7 +701,7 @@ final class TankmateBehaviour {
         if (c == null) return null;
         TankData t = c.getTank();
         var region = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(server.getServer()).get(t.regionId());
-        terrain = new TankTerrain(t, server.getServer(), region, server.isDay());
+        terrain = new TankTerrain(t, server.getServer(), region, server.isBrightOutside());
         terrainAt = now;
         return terrain;
     }

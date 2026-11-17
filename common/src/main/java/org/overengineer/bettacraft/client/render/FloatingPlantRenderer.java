@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -7,10 +8,10 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,19 +34,19 @@ import org.overengineer.bettacraft.tank.plants.TankPlants;
  */
 public final class FloatingPlantRenderer {
     private static final String DIR = "textures/entity/plants/";
-    private static final ResourceLocation DUCKWEED = BettaCraft.id(DIR + "duckweed.png");
-    private static final ResourceLocation FROGBIT = BettaCraft.id(DIR + "frogbit_leaf.png");
-    private static final ResourceLocation SALVINIA = BettaCraft.id(DIR + "salvinia.png");
-    private static final ResourceLocation RED_ROOT = BettaCraft.id(DIR + "red_root_floater_leaf.png");
-    private static final ResourceLocation ROOTS = BettaCraft.id(DIR + "roots.png");
+    private static final Identifier DUCKWEED = BettaCraft.id(DIR + "duckweed.png");
+    private static final Identifier FROGBIT = BettaCraft.id(DIR + "frogbit_leaf.png");
+    private static final Identifier SALVINIA = BettaCraft.id(DIR + "salvinia.png");
+    private static final Identifier RED_ROOT = BettaCraft.id(DIR + "red_root_floater_leaf.png");
+    private static final Identifier ROOTS = BettaCraft.id(DIR + "roots.png");
     // M28
-    private static final ResourceLocation WATER_LETTUCE = BettaCraft.id(DIR + "water_lettuce_leaf.png");
-    private static final ResourceLocation HORNWORT = BettaCraft.id(DIR + "hornwort.png");
-    private static final ResourceLocation HORNWORT_SHOOTS = BettaCraft.id(DIR + "hornwort_shoots.png");
-    private static final ResourceLocation RICCIA = BettaCraft.id(DIR + "riccia.png");
+    private static final Identifier WATER_LETTUCE = BettaCraft.id(DIR + "water_lettuce_leaf.png");
+    private static final Identifier HORNWORT = BettaCraft.id(DIR + "hornwort.png");
+    private static final Identifier HORNWORT_SHOOTS = BettaCraft.id(DIR + "hornwort_shoots.png");
+    private static final Identifier RICCIA = BettaCraft.id(DIR + "riccia.png");
     private static final int LETTUCE_ROOTS = 0xFFD8DCCC, HORNWORT_TINT = 0xFF4E8A34;
     /** The vanilla lily pad texture (a game asset read at runtime, tinted like the lily pad block). */
-    private static final ResourceLocation LILY_PAD = ResourceLocation.withDefaultNamespace("textures/block/lily_pad.png");
+    private static final Identifier LILY_PAD = Identifier.withDefaultNamespace("textures/block/lily_pad.png");
     private static final int LILY_TINT = 0xFF3A9A3E;
     private static final int FROGBIT_ROOTS = 0xFFE6E2D2, SALVINIA_ROOTS = 0xFF7A6142;
     /** Height of the leaves above the drawn water surface (no z-fighting with the water quad) and the bobbing. */
@@ -130,48 +131,48 @@ public final class FloatingPlantRenderer {
         float grow = 0.5F + 0.5F * p.size;
         switch (p.type) {
             case DUCKWEED -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(DUCKWEED));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(DUCKWEED));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 // a second, smaller patch turned against the first: looks less like a square
                 flat(pose, vc, r * 0.35F, -r * 0.2F, r * 0.7F, LEAF_STEP * 3, 0xFFFFFFFF, light, 0.9F);
             }
             case FROGBIT -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(FROGBIT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(FROGBIT));
                 rosette(pose, vc, p, r, 3 + Math.floorMod(p.id, 3), 0.55F, 0.5F, 0xFFFFFFFF, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.55F, 3, FROGBIT_ROOTS, light);
             }
             case SALVINIA -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(SALVINIA));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(SALVINIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 flat(pose, vc, r * 0.25F, r * 0.3F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 1.4F);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light);
             }
             case RED_ROOT_FLOATER -> {
                 int tint = FloatingPlantSim.redRootLeafTint(p.red);
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(RED_ROOT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(RED_ROOT));
                 rosette(pose, vc, p, r, 4 + Math.floorMod(p.id, 3), 0.5F, 0.42F, tint, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, FloatingPlantSim.redRootRootTint(p.red), light);
             }
             case LILY_PAD -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(LILY_PAD));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(LILY_PAD));
                 flat(pose, vc, 0, 0, r, 0, LILY_TINT, light);
             }
             // M28: water lettuce: a cup of velvety leaves standing up a little, long feathery roots
             case WATER_LETTUCE -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(WATER_LETTUCE));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(WATER_LETTUCE));
                 cup(pose, vc, p, r, 5 + Math.floorMod(p.id, 3), 0.62F, 0.45F, 0xFFFFFFFF, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 3, LETTUCE_ROOTS, light);
             }
             // hornwort: a loose tuft at the surface, its shoots hanging deep into the water
             case HORNWORT -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(HORNWORT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(HORNWORT));
                 flat(pose, vc, 0, 0, r, 0, HORNWORT_TINT, light);
                 flat(pose, vc, -r * 0.3F, r * 0.25F, r * 0.7F, LEAF_STEP * 3, HORNWORT_TINT, light, 1.1F);
                 strips(pose, buffers, HORNWORT_SHOOTS, (float) (p.type.rootLength() * (dry ? 0.0 : grow)), r * 0.75F, 3, HORNWORT_TINT, light);
             }
             // floating Riccia: a bright cushion of forked thalli
             case RICCIA -> {
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(RICCIA));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(RICCIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 flat(pose, vc, r * 0.3F, -r * 0.25F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 0.7F);
             }
@@ -240,9 +241,9 @@ public final class FloatingPlantRenderer {
     }
 
     /** Crossed vertical strips of a texture hanging down {@code length} blocks (M28: also the hornwort shoots). */
-    private static void strips(PoseStack pose, MultiBufferSource buffers, ResourceLocation tex, float length, float width, int planes, int argb, int light) {
+    private static void strips(PoseStack pose, MultiBufferSource buffers, Identifier tex, float length, float width, int planes, int argb, int light) {
         if (length <= 0.01F) return;
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(tex));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(tex));
         PoseStack.Pose last = pose.last();
         Matrix4f m = last.pose();
         float v1 = Math.min(1, length / 0.45F);

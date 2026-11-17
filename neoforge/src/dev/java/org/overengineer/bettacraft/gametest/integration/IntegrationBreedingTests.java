@@ -6,7 +6,7 @@ import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -41,7 +41,7 @@ public final class IntegrationBreedingTests {
         if (IntegrationSuite.lacks(h, "crittersandcompanions")) return;
         ServerLevel level = h.getLevel();
         ServerPlayer sp = GenerationsGameTests.breeder(h);
-        EntityType<?> koi = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("crittersandcompanions:koi_fish"));
+        EntityType<?> koi = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse("crittersandcompanions:koi_fish"));
         TankBlockEntity c = pond(h, 1);
         GenerationsGameTests.addAnimal(h, c, koi, t -> t.putInt("Variant", 0));
         GenerationsGameTests.addAnimal(h, c, koi, t -> t.putInt("Variant", 3));

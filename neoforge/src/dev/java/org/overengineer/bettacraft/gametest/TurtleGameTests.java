@@ -11,8 +11,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.animal.turtle.Turtle;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biomes;
@@ -164,7 +164,7 @@ public final class TurtleGameTests {
                 "a paludarium refuses the tortoise");
         // the vanilla sea turtle (M35: a big animal): neither a grown one nor a hatchling fits a small paludarium
         Turtle grown = EntityType.TURTLE.create(level);
-        grown.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(20, 2, 20)));
+        grown.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(20, 2, 20)));
         ItemStack bigBag = FishBagItem.fillWith(grown);
         grown.discard();
         h.assertTrue(TankInhabitants.insert(level, palu, bigBag, EntityType.TURTLE, null, true) != null, "a grown sea turtle is refused");
@@ -199,7 +199,7 @@ public final class TurtleGameTests {
             }
             h.assertTrue(f.nestTarget() != null, "she found a nest in the sand");
             h.assertTrue(f.nestTarget().y > t.waterSurfaceY(), "on the land");
-            f.moveTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
+            f.snapTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
             HerpBreeding.step(level, c, 0.001);
             h.assertTrue(t.herpClutches().size() == 1, "one clutch, got " + t.herpClutches().size());
             HerpClutch k = t.herpClutches().getFirst();
@@ -307,7 +307,7 @@ public final class TurtleGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void wildTurtles(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        var biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
+        var biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.SWAMP)) == HerpSpawns.Home.SWAMP, "swamp");
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.RIVER)) == HerpSpawns.Home.RIVER, "river");
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.SAVANNA)) == HerpSpawns.Home.DRY_LAND, "savanna");
@@ -322,15 +322,15 @@ public final class TurtleGameTests {
         BlockPos shore = new BlockPos(8, 2, 8), water = new BlockPos(9, 1, 8);
         h.setBlock(shore.below(), Blocks.STONE);
         h.setBlock(water, Blocks.WATER);
-        h.assertTrue(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, MobSpawnType.NATURAL, h.absolutePos(shore), level.random), "a slider on the shore");
+        h.assertTrue(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(shore), level.random), "a slider on the shore");
         BlockPos field = new BlockPos(20, 2, 20);
         h.setBlock(field.below(), Blocks.GRASS_BLOCK);
-        h.assertTrue(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, MobSpawnType.NATURAL, h.absolutePos(field), level.random), "a tortoise on grass");
+        h.assertTrue(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.random), "a tortoise on grass");
         h.setBlock(field.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, MobSpawnType.NATURAL, h.absolutePos(field), level.random), "not on stone");
+        h.assertFalse(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.random), "not on stone");
         BlockPos dryLand = new BlockPos(26, 2, 26);
         h.setBlock(dryLand.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, MobSpawnType.NATURAL, h.absolutePos(dryLand), level.random), "a slider far from water: no");
+        h.assertFalse(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(dryLand), level.random), "a slider far from water: no");
         // a wild source for each turtle: its bucket or box
         for (HerpSpecies s : HerpSpecies.ALL) {
             List<Source> src = Sources.of(Target.item(s.containerId()));

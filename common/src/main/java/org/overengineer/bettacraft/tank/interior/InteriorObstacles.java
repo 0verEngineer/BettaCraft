@@ -122,7 +122,7 @@ public final class InteriorObstacles {
                     long now = interior.getGameTime();
                     if (now - g.ticketTime.getOrDefault(key, -1000L) > 200) {
                         g.ticketTime.put(key, now);
-                        interior.getChunkSource().addRegionTicket(InteriorPreparation.TICKET, new ChunkPos(key), 0, new ChunkPos(key));
+                        interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), new ChunkPos(key), 0);
                     }
                     return UNKNOWN;
                 }

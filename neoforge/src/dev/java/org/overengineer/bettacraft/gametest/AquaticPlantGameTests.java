@@ -11,8 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -112,9 +112,9 @@ public final class AquaticPlantGameTests {
 
     private static ServerPlayer playerIn(GameTestHelper h, ServerLevel level, BlockPos at) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        sp.teleportTo(level, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 0F);
+        sp.teleportTo(level, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         return sp;
     }
 
@@ -192,8 +192,7 @@ public final class AquaticPlantGameTests {
             use(sp, in, stone2, Direction.EAST, item(PlantSpecies.JAVA_MOSS));
             h.assertTrue(r.plants().at(21, 0, 10) != null, "moss on the side of the stone");
             // outside of a tank interior: nothing
-            sp.teleportTo(h.getLevel(), h.absolutePos(new BlockPos(20, 2, 20)).getX(), h.absolutePos(new BlockPos(20, 2, 20)).getY(),
-                    h.absolutePos(new BlockPos(20, 2, 20)).getZ(), 0F, 0F);
+            sp.teleportTo(h.getLevel(), h.absolutePos(new BlockPos(20, 2, 20)).getX(), h.absolutePos(new BlockPos(20, 2, 20)).getY(), h.absolutePos(new BlockPos(20, 2, 20)).getZ(), java.util.Set.of(), 0F, 0F, false);
             h.setBlock(new BlockPos(20, 1, 20), Blocks.SAND);
             use(sp, h.getLevel(), h.absolutePos(new BlockPos(20, 1, 20)), Direction.UP, item(PlantSpecies.VALLISNERIA));
             h.assertTrue(h.getLevel().getBlockState(h.absolutePos(new BlockPos(20, 2, 20))).isAir(), "nothing planted outside");
@@ -305,7 +304,7 @@ public final class AquaticPlantGameTests {
                     t.min().getY() + InteriorPlants.MARGIN + (r.localY(target.getY()) + 0.5) * fy,
                     t.min().getZ() + InteriorPlants.MARGIN + (r.localZ(target.getZ()) + 0.5) * fz);
             Vec3 eye = new Vec3(point.x, point.y, t.min().getZ() - 1.2);
-            sp.teleportTo(level, eye.x, eye.y - sp.getEyeHeight(), eye.z, 0F, 0F);
+            sp.teleportTo(level, eye.x, eye.y - sp.getEyeHeight(), eye.z, java.util.Set.of(), 0F, 0F, false);
             sp.setYRot(0F);
             sp.setXRot(0F);
             sp.setYHeadRot(0F); // the view vector of a living entity follows its head
@@ -318,7 +317,7 @@ public final class AquaticPlantGameTests {
                     + sp.getViewVector(1.0F) + " at " + point + ", in " + sp.level().dimension().location() + ")");
             h.assertTrue(!(sp.containerMenu instanceof TankMenu), "no menu");
             // looking at an empty part of the tank: nothing happens
-            sp.teleportTo(level, t.min().getX() + 0.2, eye.y - sp.getEyeHeight(), eye.z, 0F, 0F);
+            sp.teleportTo(level, t.min().getX() + 0.2, eye.y - sp.getEyeHeight(), eye.z, java.util.Set.of(), 0F, 0F, false);
             sp.setYHeadRot(0F);
             sp.gameMode.useItemOn(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND,
                     new BlockHitResult(new Vec3(t.min().getX() + 0.2, eye.y, t.min().getZ()), Direction.NORTH, t.min(), false));
@@ -445,7 +444,7 @@ public final class AquaticPlantGameTests {
                 var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
                 level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (at.getX() - 4) + " " + (at.getY() - 1) + " " + (at.getZ() - 4) + " "
                         + (at.getX() + 4) + " " + (at.getY() + 4) + " " + (at.getZ() + 4) + " " + biome);
-                h.assertTrue(level.getBiome(at).is(net.minecraft.resources.ResourceLocation.parse(biome)), "biome set: " + level.getBiome(at));
+                h.assertTrue(level.getBiome(at).is(net.minecraft.resources.Identifier.parse(biome)), "biome set: " + level.getBiome(at));
                 java.util.Set<PlantSpecies> seen = java.util.EnumSet.noneOf(PlantSpecies.class);
                 int plants = 0, rolls = 300;
                 for (int i = 0, n = rolls; i < n; i++) {
@@ -553,16 +552,16 @@ public final class AquaticPlantGameTests {
         for (int x = water.getX() - 4; x <= water.getX() + 4; x += 4) for (int z = water.getZ() - 4; z <= water.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
         // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells, also the cell below), inside the loaded template
-        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + Math.max(level.getMinBuildHeight(), water.getY() - 5) + " " + (water.getZ() - 4) + " "
+        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + Math.max(level.getMinY(), water.getY() - 5) + " " + (water.getZ() - 4) + " "
                 + (water.getX() + 4) + " " + (water.getY() + 4) + " " + (water.getZ() + 4) + " minecraft:swamp");
     }
 
     private static void bottleCheck(GameTestHelper h, ServerLevel level, BlockPos water) {
         double saved = ServerConfig.AQUATIC_BOTTLE_CHANCE.get(), savedDuck = ServerConfig.PLANTS_BOTTLE_CHANCE.get();
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        sp.teleportTo(level, water.getX() + 0.5, water.getY() + 2.6 - sp.getEyeHeight(), water.getZ() + 0.5, 0F, 90F);
+        sp.teleportTo(level, water.getX() + 0.5, water.getY() + 2.6 - sp.getEyeHeight(), water.getZ() + 0.5, java.util.Set.of(), 0F, 90F, false);
         sp.setXRot(90F);
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         try {
             ServerConfig.AQUATIC_BOTTLE_CHANCE.set(1.0);
             ServerConfig.PLANTS_BOTTLE_CHANCE.set(0.0);

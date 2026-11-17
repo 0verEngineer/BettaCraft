@@ -47,9 +47,9 @@ final class DevClientSmokeM26 {
         then(100, () -> shot("cultures"));
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            if (p.serverLevel().getBlockEntity(base.offset(4, 0, 0)) instanceof LiveFoodPumpBlockEntity pump) {
+            if (p.level().getBlockEntity(base.offset(4, 0, 0)) instanceof LiveFoodPumpBlockEntity pump) {
                 pump.doseNow();
-                pump.step(p.serverLevel());
+                pump.step(p.level());
                 if (pump.status() != LiveFoodPumpBlockEntity.PUMPED) LOGGER.error("[smoketest] M26 the live food pump does not pump: {}", pump.status());
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, pump, base.offset(4, 0, 0));
             } else LOGGER.error("[smoketest] M26 no live food pump");
@@ -69,8 +69,8 @@ final class DevClientSmokeM26 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             BlockPos at = base.offset(10, 0, 0);
-            if (p.serverLevel().getBlockEntity(at) instanceof org.overengineer.bettacraft.food.FoodMakerBlockEntity m) {
-                for (int i = 0; i < 120; i++) m.tick(p.serverLevel(), at, p.serverLevel().getBlockState(at));
+            if (p.level().getBlockEntity(at) instanceof org.overengineer.bettacraft.food.FoodMakerBlockEntity m) {
+                for (int i = 0; i < 120; i++) m.tick(p.level(), at, p.level().getBlockState(at));
                 if (m.status() != org.overengineer.bettacraft.food.FoodMakerBlockEntity.WORKING) LOGGER.error("[smoketest] M26 the food maker does not work: {}", m.status());
                 LOGGER.info("[smoketest] M26 food maker progress {} of {}", m.progress(), org.overengineer.bettacraft.food.FoodMakerBlockEntity.batchTicks());
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, m, at);
@@ -89,7 +89,7 @@ final class DevClientSmokeM26 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int x = -4; x <= 12; x++)
             for (int z = -6; z <= 6; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -167,7 +167,7 @@ final class DevClientSmokeM26 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

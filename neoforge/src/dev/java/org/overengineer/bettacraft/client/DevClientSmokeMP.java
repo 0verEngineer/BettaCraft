@@ -269,7 +269,7 @@ final class DevClientSmokeMP {
                     }
                     // M31 part d: the smallest zombie there (the one in glass)
                     float zombie = 9F;
-                    for (var z : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
+                    for (var z : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) {
                         zombie = Math.min(zombie, z.getScale());
                     }
                     send("m31 " + t.terrariumMode().id() + " " + t.hasClimate() + " " + Math.round(t.uv()) + " " + variety + " " + Math.round(growth) + " " + pose + " "
@@ -362,8 +362,8 @@ final class DevClientSmokeMP {
                 for (int k = 0; k < 100; k++) {
                     then(1, () -> {
                         Minecraft mc = Minecraft.getInstance();
-                        net.minecraft.world.entity.monster.Zombie z = null;
-                        for (var e : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
+                        net.minecraft.world.entity.monster.zombie.Zombie z = null;
+                        for (var e : mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
                             if (z == null || e.getScale() < z.getScale()) z = e;
                         }
                         if (z == null) return;

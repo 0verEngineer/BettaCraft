@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.equipment;
 
+import net.minecraft.core.component.DataComponentGetter;
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.Collections;
@@ -17,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +44,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * that drives the air stones and sponge filters of the tank above (its hose goes up with the filter hose).
  */
 public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource, org.overengineer.bettacraft.winding.Windable, org.overengineer.bettacraft.platform.model.ModelDataSource, org.overengineer.bettacraft.platform.BlockEntityLifecycle, org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
-    public static final ResourceLocation DEFAULT_WOOD = ResourceLocation.withDefaultNamespace("oak_planks");
+    public static final Identifier DEFAULT_WOOD = Identifier.withDefaultNamespace("oak_planks");
     public static final org.overengineer.bettacraft.platform.model.ModelKey<BlockState> WOOD_STATE = new org.overengineer.bettacraft.platform.model.ModelKey<>("wood_state");
     public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SUMP_SLOT = 2 + STORAGE, SLOTS = 3 + STORAGE;
     /** Client-side cabinets currently loaded with a filter (bubbles and sound; never touched on the server). */
@@ -60,7 +64,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
             loaded = java.util.List.copyOf(SERVER_LOADED);
         }
         for (CabinetBlockEntity c : loaded) {
-            if (c.isRemoved() || c.level == null || c.level.isClientSide || !c.level.isLoaded(c.worldPosition)) {
+            if (c.isRemoved() || c.level == null || c.level.isClientSide() || !c.level.isLoaded(c.worldPosition)) {
                 SERVER_LOADED.remove(c);
                 continue;
             }
@@ -68,7 +72,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         }
     }
 
-    private ResourceLocation wood = DEFAULT_WOOD;
+    private Identifier wood = DEFAULT_WOOD;
     /** M22.4: the side the filter hose goes up (server: as set; client: the effective side the server sent). */
     private OutletSide outlet = OutletSide.BACK;
     /** M41: the side that takes a Create shaft (server: as set; client: the effective side the server sent). */
@@ -102,7 +106,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         protected void onContentsChanged(int slot) {
             setChanged();
             if (slot == AIR_PUMP_SLOT && getStackInSlot(AIR_PUMP_SLOT).isEmpty()) airDriven = 0;
-            if ((slot == FILTER_SLOT || slot == AIR_PUMP_SLOT || slot == SUMP_SLOT) && level != null && !level.isClientSide) {
+            if ((slot == FILTER_SLOT || slot == AIR_PUMP_SLOT || slot == SUMP_SLOT) && level != null && !level.isClientSide()) {
                 boolean had = slot == SUMP_SLOT && clientHasSump; // M49: the chambers change every few seconds: update the client only when it comes or goes
                 clientHasSump = !getStackInSlot(SUMP_SLOT).isEmpty();
                 if (slot != SUMP_SLOT || had != clientHasSump) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
@@ -145,18 +149,18 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         return storage;
     }
 
-    public ResourceLocation woodId() {
+    public Identifier woodId() {
         return wood;
     }
 
-    public void setWood(ResourceLocation wood) {
+    public void setWood(Identifier wood) {
         this.wood = wood;
         setChanged();
     }
 
     /** The planks block (oak for unknown ids; the id itself is kept). */
     public BlockState woodState() {
-        Block b = BuiltInRegistries.BLOCK.get(wood);
+        Block b = BuiltInRegistries.BLOCK.getValue(wood);
         return b == Blocks.AIR ? Blocks.OAK_PLANKS.defaultBlockState() : b.defaultBlockState();
     }
 
@@ -165,7 +169,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
      * setting is kept); on the client the side the server sent.
      */
     public OutletSide outletSide() {
-        if (level != null && level.isClientSide) return outlet;
+        if (level != null && level.isClientSide()) return outlet;
         return Features.enabled(Feature.CABINET_OUTLET_SIDE) ? outlet : OutletSide.BACK;
     }
 
@@ -178,7 +182,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (side == null || side == outlet) return;
         outlet = side;
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             var tank = FilterHost.tankOf(level, tankBlockPos());
             if (tank != null) org.overengineer.bettacraft.tank.TankCurrents.invalidate(tank);
@@ -211,7 +215,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     private void frontChanged() {
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             CabinetBlock.refresh(level, worldPosition);
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
@@ -225,7 +229,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
      * kept); on the client the side the server sent.
      */
     public DriveSide driveSide() {
-        if (level != null && level.isClientSide) return drive;
+        if (level != null && level.isClientSide()) return drive;
         if (drive == DriveSide.NONE || !org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()
                 || !org.overengineer.bettacraft.tank.TankDrive.sideAllowed(drive)) return DriveSide.NONE;
         return drive;
@@ -248,7 +252,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (side == null || side == drive) return;
         drive = side;
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             org.overengineer.bettacraft.tank.TankDrive.Bridge b = org.overengineer.bettacraft.tank.TankDrive.BRIDGE;
             if (b != null) b.release(level, this); // the next care step charges the new side
@@ -272,14 +276,14 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     /** Whether a sump sits in the cabinet (client: as the server sent it). */
     public boolean hasSump() {
-        return level != null && level.isClientSide ? clientHasSump : !sumpItem().isEmpty();
+        return level != null && level.isClientSide() ? clientHasSump : !sumpItem().isEmpty();
     }
 
     // ------------------------------------------------------------------ M29.1 air pump
 
     /** Whether an air pump sits in the cabinet (client: as the server sent it). */
     public boolean hasAirPump() {
-        return level != null && level.isClientSide ? clientHasAirPump : !items.getStackInSlot(AIR_PUMP_SLOT).isEmpty();
+        return level != null && level.isClientSide() ? clientHasAirPump : !items.getStackInSlot(AIR_PUMP_SLOT).isEmpty();
     }
 
     @Override
@@ -302,7 +306,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (n == airDriven) return;
         airDriven = n;
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     // ------------------------------------------------------------------ M23 regulator and intake sponge
@@ -337,7 +341,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     private void m23Changed() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
     }
 
     private void saveM23(CompoundTag tag) {
@@ -346,15 +350,15 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     private void loadM23(CompoundTag tag) {
-        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getInt("regulator"))) : 10;
-        intakeSponge = tag.getBoolean("intake_sponge");
+        regulator = tag.contains("regulator") ? Math.max(0, Math.min(10, tag.getIntOr("regulator", 0))) : 10;
+        intakeSponge = tag.getBooleanOr("intake_sponge", false);
     }
 
     // ------------------------------------------------------------------ FilterHost
 
     @Override
     public boolean hasFilter() {
-        return level != null && level.isClientSide ? clientHasFilter : !filterItem().isEmpty();
+        return level != null && level.isClientSide() ? clientHasFilter : !filterItem().isEmpty();
     }
 
     @Override
@@ -402,8 +406,10 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     // ------------------------------------------------------------------ NBT / sync / components
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         Schemas.CABINET.stamp(tag);
         tag.putString("wood", wood.toString());
         if (outlet != OutletSide.BACK) tag.putString("outlet", outlet.id()); // M22.4
@@ -414,21 +420,24 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         if (airDriven > 0) tag.putInt("air_driven", airDriven); // M29.1
         saveM23(tag);
         spring.save(tag, "spring"); // M37
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.CABINET.migrate(raw);
-        ResourceLocation w = ResourceLocation.tryParse(tag.getString("wood"));
-        ResourceLocation old = wood;
+        Identifier w = Identifier.tryParse(tag.getStringOr("wood", ""));
+        Identifier old = wood;
         wood = w == null ? DEFAULT_WOOD : w;
-        outlet = OutletSide.byId(tag.getString("outlet")); // M22.4: old cabinets keep the back wall
-        drive = DriveSide.byId(tag.getString("drive")); // M41: old cabinets take no shaft
-        front = CabinetFrontSetting.byId(tag.getString("front")); // M44: old cabinets: AUTO, with joints
-        joints = !tag.contains("joints") || tag.getBoolean("joints");
+        outlet = OutletSide.byId(tag.getStringOr("outlet", "")); // M22.4: old cabinets keep the back wall
+        drive = DriveSide.byId(tag.getStringOr("drive", "")); // M41: old cabinets take no shaft
+        front = CabinetFrontSetting.byId(tag.getStringOr("front", "")); // M44: old cabinets: AUTO, with joints
+        joints = !tag.contains("joints") || tag.getBooleanOr("joints", false);
         if (tag.contains("items")) {
-            items.deserializeNBT(registries, tag.getCompound("items"));
+            items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
             if (items.getSlots() != SLOTS) {
                 // M29.1: cabinets of older versions have no air pump slot: keep their items, add the slot
                 java.util.List<ItemStack> kept = new java.util.ArrayList<>();
@@ -437,13 +446,13 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
                 for (int i = 0; i < Math.min(kept.size(), SLOTS); i++) items.setStackInSlot(i, kept.get(i));
             }
         }
-        airDriven = Math.max(0, tag.getInt("air_driven"));
-        if (tag.contains("has_filter")) clientHasFilter = tag.getBoolean("has_filter");
-        if (tag.contains("has_air_pump")) clientHasAirPump = tag.getBoolean("has_air_pump");
-        clientHasSump = tag.contains("has_sump") ? tag.getBoolean("has_sump") : !items.getStackInSlot(SUMP_SLOT).isEmpty(); // M49
+        airDriven = Math.max(0, tag.getIntOr("air_driven", 0));
+        if (tag.contains("has_filter")) clientHasFilter = tag.getBooleanOr("has_filter", false);
+        if (tag.contains("has_air_pump")) clientHasAirPump = tag.getBooleanOr("has_air_pump", false);
+        clientHasSump = tag.contains("has_sump") ? tag.getBooleanOr("has_sump", false) : !items.getStackInSlot(SUMP_SLOT).isEmpty(); // M49
         loadM23(tag);
-        if (level == null || !level.isClientSide) spring.load(tag, "spring"); // M37 (not in the client copy)
-        if (level != null && level.isClientSide) afterClientUpdate(old);
+        if (level == null || !level.isClientSide()) spring.load(tag, "spring"); // M37 (not in the client copy)
+        if (level != null && level.isClientSide()) afterClientUpdate(old);
     }
 
     @Override
@@ -474,23 +483,23 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        ResourceLocation old = wood;
-        ResourceLocation w = ResourceLocation.tryParse(tag.getString("wood"));
+        Identifier old = wood;
+        Identifier w = Identifier.tryParse(tag.getStringOr("wood", ""));
         wood = w == null ? DEFAULT_WOOD : w;
-        clientHasFilter = tag.getBoolean("has_filter");
-        clientHasAirPump = tag.getBoolean("has_air_pump"); // M29.1
-        clientHasSump = tag.getBoolean("has_sump"); // M49
-        airDriven = Math.max(0, tag.getInt("air_driven"));
-        outlet = OutletSide.byId(tag.getString("outlet"));
-        drive = DriveSide.byId(tag.getString("drive")); // M41
-        front = CabinetFrontSetting.byId(tag.getString("front")); // M44
-        joints = !tag.contains("joints") || tag.getBoolean("joints");
+        clientHasFilter = tag.getBooleanOr("has_filter", false);
+        clientHasAirPump = tag.getBooleanOr("has_air_pump", false); // M29.1
+        clientHasSump = tag.getBooleanOr("has_sump", false); // M49
+        airDriven = Math.max(0, tag.getIntOr("air_driven", 0));
+        outlet = OutletSide.byId(tag.getStringOr("outlet", ""));
+        drive = DriveSide.byId(tag.getStringOr("drive", "")); // M41
+        front = CabinetFrontSetting.byId(tag.getStringOr("front", "")); // M44
+        joints = !tag.contains("joints") || tag.getBooleanOr("joints", false);
         loadM23(tag);
         afterClientUpdate(old);
     }
 
-    private void afterClientUpdate(ResourceLocation oldWood) {
-        if (level == null || !level.isClientSide) return;
+    private void afterClientUpdate(Identifier oldWood) {
+        if (level == null || !level.isClientSide()) return;
         if (clientHasFilter && !isRemoved()) CLIENT_FILTERS.add(this);
         else CLIENT_FILTERS.remove(this);
         if (clientHasAirPump && !isRemoved()) CLIENT_AIR_PUMPS.add(this);
@@ -503,17 +512,17 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     public void onLoad() {
         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this); // NeoForge's default onLoad
-        if (level != null && level.isClientSide && clientHasFilter) CLIENT_FILTERS.add(this);
-        if (level != null && level.isClientSide && clientHasAirPump) CLIENT_AIR_PUMPS.add(this);
+        if (level != null && level.isClientSide() && clientHasFilter) CLIENT_FILTERS.add(this);
+        if (level != null && level.isClientSide() && clientHasAirPump) CLIENT_AIR_PUMPS.add(this);
         // M44: the front of a cabinet of an older version (or after the feature switch changed) is set a tick later
         if (level instanceof net.minecraft.server.level.ServerLevel sl) sl.scheduleTick(worldPosition, getBlockState().getBlock(), 1);
-        if (level != null && !level.isClientSide) SERVER_LOADED.add(this);
+        if (level != null && !level.isClientSide()) SERVER_LOADED.add(this);
     }
 
     @Override
     public void setLevel(net.minecraft.world.level.Level level) {
         super.setLevel(level);
-        if (!level.isClientSide) SERVER_LOADED.add(this); // M44.1: also a cabinet placed in this tick
+        if (!level.isClientSide()) SERVER_LOADED.add(this); // M44.1: also a cabinet placed in this tick
     }
 
     @Override
@@ -521,7 +530,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         super.setRemoved();
         // M41: a shaft at this cabinet stops costing stress
         org.overengineer.bettacraft.tank.TankDrive.Bridge b = org.overengineer.bettacraft.tank.TankDrive.BRIDGE;
-        if (b != null && level != null && !level.isClientSide) b.release(level, this);
+        if (b != null && level != null && !level.isClientSide()) b.release(level, this);
         CLIENT_FILTERS.remove(this);
         CLIENT_AIR_PUMPS.remove(this);
         SERVER_LOADED.remove(this);
@@ -539,9 +548,9 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput input) {
+    protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
-        ResourceLocation w = input.get(ModDataComponents.WOOD.get());
+        Identifier w = input.get(ModDataComponents.WOOD.get());
         if (w != null) wood = w;
         outlet = OutletSide.byId(input.get(ModDataComponents.OUTLET_SIDE.get())); // M22.4
         drive = DriveSide.byId(input.get(ModDataComponents.DRIVE_SIDE.get())); // M41
@@ -560,11 +569,11 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        tag.remove("wood");
-        tag.remove("outlet");
-        tag.remove("drive");
-        tag.remove("front");
-        tag.remove("joints");
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("wood");
+        output.discard("outlet");
+        output.discard("drive");
+        output.discard("front");
+        output.discard("joints");
     }
 }

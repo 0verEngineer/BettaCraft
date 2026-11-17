@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.foreign;
 
+import net.minecraft.world.InteractionResult;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Method;
@@ -50,7 +51,7 @@ public final class ForeignBreedingHandlers {
     /** A foreign inhabitant cannot be fed its breeding food by hand (that would make it fall in love). */
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onInteract(PlayerInteractEvent.EntityInteract event) {
-        if (event.getLevel().isClientSide || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
+        if (event.getLevel().isClientSide() || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
         Entity e = event.getTarget();
         if (!TankInhabitants.hasTankRef(e) || !foreign(e) || !isBreedingFood(e, event.getItemStack())) return;
         Player p = event.getEntity();
@@ -67,7 +68,7 @@ public final class ForeignBreedingHandlers {
     /** A vanilla baby of two parents in a tank. */
     @SubscribeEvent
     public static void onBaby(BabyEntitySpawnEvent event) {
-        if (!Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING) || event.getParentA().level().isClientSide) return;
+        if (!Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING) || event.getParentA().level().isClientSide()) return;
         Mob a = event.getParentA(), b = event.getParentB();
         if (foreign(a) && TankInhabitants.hasTankRef(a) || b != null && foreign(b) && TankInhabitants.hasTankRef(b)) {
             event.setCanceled(true);
@@ -82,7 +83,7 @@ public final class ForeignBreedingHandlers {
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onJoin(EntityJoinLevelEvent event) {
-        if (ours > 0 || event.loadedFromDisk() || event.getLevel().isClientSide || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
+        if (ours > 0 || event.loadedFromDisk() || event.getLevel().isClientSide() || !Features.enabled(Feature.SUPPRESS_FOREIGN_BREEDING)) return;
         Entity e = event.getEntity();
         if (!(e instanceof LivingEntity le) || !le.isBaby() || TankInhabitants.hasTankRef(e) || !foreign(e) || ForeignProfiles.ownCare(e.getType())) return;
         if (!(event.getLevel() instanceof ServerLevel level)) return;

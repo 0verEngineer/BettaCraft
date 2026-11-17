@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayList;
@@ -10,13 +14,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +60,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * <p>
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
-public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
+public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
     public static final MapCodec<FilterPipeBundleBlock> CODEC = simpleCodec(FilterPipeBundleBlock::new);
     /** The manifold in the middle (in pixels). */
     public static final float HUB_MIN = 3.5F, HUB_MAX = 12.5F;
@@ -154,7 +157,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true; // part c: also under a cover (the light engine reads no block entities off the main thread)
     }
 
@@ -214,7 +217,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     // ------------------------------------------------------------------ joining
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         FilterPipeBlock.touch();
         if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be)) return state;
         int lines = be.lines(), now = lines;
@@ -229,9 +232,9 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos from, boolean moving) {
-        super.neighborChanged(state, level, pos, block, from, moving);
-        if (level.isClientSide || !(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be)) return;
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean moving) {
+        super.neighborChanged(state, level, pos, block, orientation, moving);
+        if (level.isClientSide() || !(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be)) return;
         FilterPipeBlock.touch();
         int lines = be.lines(), now = lines;
         for (PipeLine l : PipeLine.values()) {
@@ -249,9 +252,8 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         FilterPipeBlock.touch();
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     /** After the lines of the block changed: its neighbours look at it again, other mods see its fluid handler change. */
@@ -347,17 +349,17 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.getItem() instanceof net.minecraft.world.item.BlockItem bi && bi.getBlock() instanceof FilterPipeBlock f) {
-            if (!level.isClientSide) addLine(level, pos, f.line(), player, stack);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide()) addLine(level, pos, f.line(), player, stack);
+            return InteractionResult.SUCCESS;
         }
-        ItemInteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
+        InteractionResult facade = PipeCovers.useForeign(stack, level, pos, player, hand); // part c: another mod's facade
         if (facade != null) return facade;
         if (stack.getItem() instanceof PipeTeeItem) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
-                if (l == null) return ItemInteractionResult.FAIL;
+                if (l == null) return InteractionResult.FAIL;
                 if (FilterPipes.junction(FilterPipes.at(level, pos, l))) {
                     player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
                 } else if (makeJunction(level, pos, l)) {
@@ -365,15 +367,15 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
                     level.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 0.8F, 1.1F);
                 }
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!player.isShiftKeyDown()) return InteractionResult.PASS;
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
             if (l == null) return InteractionResult.FAIL;
             for (ItemStack it : removeLine(level, pos, l)) {
@@ -381,7 +383,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
                 if (!player.addItem(it)) player.drop(it, false);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     // ------------------------------------------------------------------ drops, pick block
@@ -412,11 +414,11 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overen
     }
 
     /** The id of the item of a line's pipe (for texts). */
-    public static ResourceLocation pipeId(PipeLine l) {
+    public static Identifier pipeId(PipeLine l) {
         return BettaCraft.id(l.blockId());
     }
 
     static Item item(PipeLine l) {
-        return BuiltInRegistries.ITEM.get(pipeId(l));
+        return BuiltInRegistries.ITEM.getValue(pipeId(l));
     }
 }

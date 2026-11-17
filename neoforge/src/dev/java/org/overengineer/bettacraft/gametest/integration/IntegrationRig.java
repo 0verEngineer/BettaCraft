@@ -7,7 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,13 +28,13 @@ final class IntegrationRig {
     private IntegrationRig() {}
 
     static Block block(String id) {
-        Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+        Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
         if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
         return b;
     }
 
     static Item item(String id) {
-        Item i = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
+        Item i = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
         if (i == Items.AIR) throw new GameTestAssertException("no item " + id);
         return i;
     }
@@ -205,6 +205,6 @@ final class IntegrationRig {
     }
 
     static Direction towards(BlockPos from, BlockPos to) {
-        return Direction.getNearest(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ());
+        return Direction.getApproximateNearest(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ());
     }
 }

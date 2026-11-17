@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -18,13 +19,13 @@ public record TankRef(BlockPos controller, UUID tankId) {
 
     public CompoundTag save() {
         CompoundTag t = new CompoundTag();
-        t.put("controller", NbtUtils.writeBlockPos(controller));
-        t.putUUID("tank", tankId);
+        t.put("controller", NbtCompat.writeBlockPos(controller));
+        NbtCompat.putUUID(t, "tank", tankId);
         return t;
     }
 
     public static TankRef load(CompoundTag t) {
-        if (!t.hasUUID("tank")) return NONE;
-        return new TankRef(NbtUtils.readBlockPos(t, "controller").orElse(BlockPos.ZERO), t.getUUID("tank"));
+        if (!NbtCompat.hasUUID(t, "tank")) return NONE;
+        return new TankRef(NbtCompat.readBlockPos(t, "controller").orElse(BlockPos.ZERO), NbtCompat.getUUID(t, "tank"));
     }
 }

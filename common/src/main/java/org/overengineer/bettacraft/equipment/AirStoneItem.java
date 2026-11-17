@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -22,21 +25,22 @@ public class AirStoneItem extends BlockItem {
     @Override
     public InteractionResult place(BlockPlaceContext ctx) {
         if (!InteriorManager.isInterior(ctx.getLevel())) {
-            if (!ctx.getLevel().isClientSide && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
+            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
                     Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD), true);
             return InteractionResult.FAIL;
         }
         if (!Features.enabled(Feature.AERATION)) {
-            if (!ctx.getLevel().isClientSide && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
+            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
                     Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
             return InteractionResult.FAIL;
         }
-        if (!ctx.getLevel().isClientSide && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;
+        if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;
         return super.place(ctx);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.air_stone.usage").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

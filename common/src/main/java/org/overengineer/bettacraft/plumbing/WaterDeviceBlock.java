@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -34,11 +34,11 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * the level sensor (tops off evaporated water) and the water change controller (changes a share of the water at an
  * interval). The sensor and the controller sit next to a tank (or the sensor at a multiblock filter); pipes join all three.
  */
-public class WaterDeviceBlock extends BaseEntityBlock {
+public class WaterDeviceBlock extends BaseEntityBlock implements BlockRemoval {
     public enum Kind { RESERVOIR, LEVEL_SENSOR, WATER_CHANGER }
 
     public static final MapCodec<WaterDeviceBlock> CODEC = simpleCodec(p -> new WaterDeviceBlock(Kind.RESERVOIR, p));
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Reservoir: how full it is (0..8). */
     public static final IntegerProperty FILL = IntegerProperty.create("fill", 0, 8);
     private static final VoxelShape SENSOR = box(4, 0, 4, 12, 10, 12), CHANGER = box(2, 0, 2, 14, 12, 14);
@@ -84,28 +84,28 @@ public class WaterDeviceBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (kind == Kind.RESERVOIR && FluidUtil.getFluidHandler(stack).isPresent()) {
             return FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())
-                    ? ItemInteractionResult.sidedSuccess(level.isClientSide) : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         switch (kind) {
             case WATER_CHANGER -> {
-                if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openWaterChanger(pos);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openWaterChanger(pos);
+                return InteractionResult.SUCCESS;
             }
             case LEVEL_SENSOR -> {
-                if (!level.isClientSide && level.getBlockEntity(pos) instanceof LevelSensorBlockEntity s) s.cycleTarget(player);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                if (!level.isClientSide() && level.getBlockEntity(pos) instanceof LevelSensorBlockEntity s) s.cycleTarget(player);
+                return InteractionResult.SUCCESS;
             }
             default -> {
-                if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReservoirBlockEntity r) r.tellFill(player);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ReservoirBlockEntity r) r.tellFill(player);
+                return InteractionResult.SUCCESS;
             }
         }
     }
@@ -117,8 +117,7 @@ public class WaterDeviceBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         PipeNetwork.invalidate(level);
     }
 
@@ -128,7 +127,7 @@ public class WaterDeviceBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof ReservoirBlockEntity r ? (int) Math.ceil(15.0 * r.water().amount() / r.water().capacity()) : 0;
     }
 
@@ -145,7 +144,7 @@ public class WaterDeviceBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) return null;
+        if (level.isClientSide()) return null;
         return switch (kind) {
             case RESERVOIR -> null;
             case LEVEL_SENSOR -> createTickerHelper(type, ModBlockEntities.LEVEL_SENSOR.get(), LevelSensorBlockEntity::serverTick);

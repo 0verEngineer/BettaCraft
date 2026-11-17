@@ -13,7 +13,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -80,7 +80,7 @@ final class DevClientSmokeM32b {
         });
         then(1, () -> hold = 70F);
         then(60, () -> shot("bearing_turned"));
-        then(1, () -> server(p -> airship(p.serverLevel())));
+        then(1, () -> server(p -> airship(p.level())));
         then(1, () -> look(shipPos.getX() + 1.0, shipPos.getY() + 2.4, shipPos.getZ() - 3.4, 0F, 22F));
         then(200, () -> {
             for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
@@ -157,10 +157,10 @@ final class DevClientSmokeM32b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         bearingPos = p.blockPosition().offset(0, 6, 160);
-        var bearingBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create:mechanical_bearing"));
+        var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));
         if (bearingBlock == Blocks.AIR) {
             LOGGER.error("[smoketest] M32b needs Create (-Pcreate)");
             return;

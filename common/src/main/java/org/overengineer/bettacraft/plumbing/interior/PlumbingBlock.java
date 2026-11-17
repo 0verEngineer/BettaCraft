@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.plumbing.interior;
 
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
@@ -15,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -29,7 +31,7 @@ import org.overengineer.bettacraft.plumbing.PipeBlock;
  */
 public class PlumbingBlock extends Block {
     public static final MapCodec<PlumbingBlock> CODEC = simpleCodec(p -> new PlumbingBlock(Plumb.PIPE, p));
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape CORE = box(6, 6, 6, 10, 10, 10);
     private static final Map<Direction, VoxelShape> ARMS = new EnumMap<>(Map.of(
@@ -86,7 +88,7 @@ public class PlumbingBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (kind == Plumb.PIPE) return state.setValue(PipeBlock.SIDES.get(dir), neighbor.getBlock() instanceof PlumbingBlock);
         return state;
     }
@@ -111,7 +113,7 @@ public class PlumbingBlock extends Block {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 

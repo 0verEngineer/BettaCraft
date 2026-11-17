@@ -16,7 +16,7 @@ import org.overengineer.bettacraft.BettaCraft;
 
 /** Geometry loader {@code bettacraft:tank}: model JSON needs textures {@code edge}, {@code particle} and (M21.8) {@code clear_icon}. */
 public final class TankModelLoader implements IGeometryLoader<TankModelLoader.Geometry> {
-    public static final net.minecraft.resources.ResourceLocation ID = BettaCraft.id("tank");
+    public static final net.minecraft.resources.Identifier ID = BettaCraft.id("tank");
     public static final TankModelLoader INSTANCE = new TankModelLoader();
 
     @Override

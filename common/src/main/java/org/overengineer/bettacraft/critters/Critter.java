@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -174,31 +175,31 @@ public final class Critter {
     /** Null for an unknown species. */
     @Nullable
     public static Critter load(CompoundTag t) {
-        Critter c = loadAnimal(t, t.getInt("id"), t.getDouble("x"), t.getDouble("y"), t.getDouble("z"));
+        Critter c = loadAnimal(t, t.getIntOr("id", 0), t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d));
         if (c == null) return null;
         if (!Double.isFinite(c.x) || !Double.isFinite(c.y) || !Double.isFinite(c.z)) return null;
-        c.yaw = t.getFloat("yaw");
-        c.face = t.getByte("face");
+        c.yaw = t.getFloatOr("yaw", 0f);
+        c.face = t.getByteOr("face", (byte) 0);
         if (c.face < 0 || c.face > SWIM) c.face = FLOOR;
         if (c.face == SWIM) c.face = FLOOR;
-        c.buried = t.getBoolean("buried");
+        c.buried = t.getBooleanOr("buried", false);
         return c;
     }
 
     @Nullable
     public static Critter loadAnimal(CompoundTag t, int id, double x, double y, double z) {
-        CritterSpecies s = CritterSpecies.byIdOrNull(t.getString("species"));
+        CritterSpecies s = CritterSpecies.byIdOrNull(t.getStringOr("species", ""));
         if (s == null) return null;
-        Critter c = new Critter(id, s, t.getBoolean("female"), CritterGenes.load(t.getCompound("genes")), x, y, z);
-        c.generation = Math.max(0, t.getInt("gen"));
+        Critter c = new Critter(id, s, t.getBooleanOr("female", false), CritterGenes.load(t.getCompoundOrEmpty("genes")), x, y, z);
+        c.generation = Math.max(0, t.getIntOr("gen", 0));
         // M17: NaN or infinite numbers (hand-edited or corrupt data) fall back to defaults (NaN broke sorting and hunger death)
-        c.age = Math.max(0, finite(t.contains("age", Tag.TAG_ANY_NUMERIC) ? t.getDouble("age") : s.juvenileDays(), s.juvenileDays()));
-        c.hunger = Math.max(0, finite(t.getDouble("hunger"), 0));
-        c.eggs = finite(t.contains("eggs", Tag.TAG_ANY_NUMERIC) ? t.getDouble("eggs") : -1, -1);
-        c.father = t.contains("father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("father")) : null;
-        c.sinceMolt = finite(t.contains("molt", Tag.TAG_ANY_NUMERIC) ? t.getDouble("molt") : 10, 10);
-        c.dead = finite(t.contains("dead", Tag.TAG_ANY_NUMERIC) ? t.getDouble("dead") : -1, -1);
-        c.look = t.getInt("look") & 0xFFFF; // M21.5: missing in older worlds -> 0, the look they had
+        c.age = Math.max(0, finite(NbtCompat.has(t, "age", NbtCompat.ANY_NUMERIC) ? t.getDoubleOr("age", 0d) : s.juvenileDays(), s.juvenileDays()));
+        c.hunger = Math.max(0, finite(t.getDoubleOr("hunger", 0d), 0));
+        c.eggs = finite(NbtCompat.has(t, "eggs", NbtCompat.ANY_NUMERIC) ? t.getDoubleOr("eggs", 0d) : -1, -1);
+        c.father = NbtCompat.has(t, "father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompoundOrEmpty("father")) : null;
+        c.sinceMolt = finite(NbtCompat.has(t, "molt", NbtCompat.ANY_NUMERIC) ? t.getDoubleOr("molt", 0d) : 10, 10);
+        c.dead = finite(NbtCompat.has(t, "dead", NbtCompat.ANY_NUMERIC) ? t.getDoubleOr("dead", 0d) : -1, -1);
+        c.look = t.getIntOr("look", 0) & 0xFFFF; // M21.5: missing in older worlds -> 0, the look they had
         c.analysed = org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t); // M22.3: older worlds: analysed
         return c;
     }

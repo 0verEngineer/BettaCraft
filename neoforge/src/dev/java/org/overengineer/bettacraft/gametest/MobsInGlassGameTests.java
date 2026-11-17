@@ -9,7 +9,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
@@ -154,7 +154,7 @@ public final class MobsInGlassGameTests {
         Mob sk = put(h, c, EntityType.SKELETON);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
-        p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(3.5, 2, 3)));
+        p.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(3.5, 2, 3)));
         double x0 = z.getX(), z0 = z.getZ();
         TankData t = c.getTank();
         h.runAfterDelay(200, () -> {
@@ -185,7 +185,7 @@ public final class MobsInGlassGameTests {
         in.hurt(level.damageSources().playerAttack(p), 100F);
         Mob out = put(h, c, EntityType.HUSK);
         TankInhabitants.release(out);
-        out.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(25.5, 2, 20.5)));
+        out.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(25.5, 2, 20.5)));
         out.hurt(level.damageSources().inFire(), 100F);
         h.runAfterDelay(5, () -> {
             AABB wildBox = new AABB(h.absolutePos(new BlockPos(0, 0, 17))).inflate(5);
@@ -209,7 +209,7 @@ public final class MobsInGlassGameTests {
         TankBlockEntity dry = terrarium(h, 14, 2);
         Mob wz = put(h, wet, EntityType.ZOMBIE);
         Mob dz = put(h, dry, EntityType.ZOMBIE);
-        wz.moveTo(wz.getX(), wet.getTank().min().getY() + 0.05, wz.getZ());
+        wz.snapTo(wz.getX(), wet.getTank().min().getY() + 0.05, wz.getZ());
         for (int i = 0; i < GlassMobs.DROWN_TICKS / 20 + 2; i++) {
             GlassMobs.step(level, wet, 0.001);
             GlassMobs.step(level, dry, 0.001);
@@ -291,12 +291,12 @@ public final class MobsInGlassGameTests {
             return;
         }
         TankBlockEntity c = terrarium(h, 4, 2);
-        ItemStack vial = new ItemStack(BuiltInRegistries.ITEM.get(MobCaptures.SOUL_VIAL));
+        ItemStack vial = new ItemStack(BuiltInRegistries.ITEM.getValue(MobCaptures.SOUL_VIAL));
         @SuppressWarnings("unchecked")
-        DataComponentType<Object> soul = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.get(MobCaptures.SOUL);
+        DataComponentType<Object> soul = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(MobCaptures.SOUL);
         if (soul == null || soul.codec() == null) throw new GameTestAssertException("no enderio:soul component");
         try {
-            Object value = soul.codec().parse(NbtOps.INSTANCE, TagParser.parseTag("{entity_type:\"minecraft:spider\",entity_tag:{id:\"minecraft:spider\",Health:4.0f}}"))
+            Object value = soul.codec().parse(NbtOps.INSTANCE, TagParser.parseCompoundFully("{entity_type:\"minecraft:spider\",entity_tag:{id:\"minecraft:spider\",Health:4.0f}}"))
                     .getOrThrow();
             vial.set(soul, value);
         } catch (Exception e) {
@@ -309,7 +309,7 @@ public final class MobsInGlassGameTests {
         var r = TankInhabitants.tryInsert(vial, h.getLevel(), c.getBlockPos(), p, InteractionHand.MAIN_HAND);
         h.assertTrue(r.consumesAction() && mobs(h, c, EntityType.SPIDER).size() == 1, "the spider is in the tank");
         ItemStack back = p.getMainHandItem();
-        h.assertTrue(BuiltInRegistries.ITEM.getKey(back.getItem()).equals(ResourceLocation.fromNamespaceAndPath("enderio", "soul_vial"))
+        h.assertTrue(BuiltInRegistries.ITEM.getKey(back.getItem()).equals(Identifier.fromNamespaceAndPath("enderio", "soul_vial"))
                 && MobCaptures.storedEntity(back) == null, "the vial came back empty");
         h.succeed();
     }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank.menu;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public final class TankView {
 
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
-            t.putUUID("id", uuid);
+            NbtCompat.putUUID(t, "id", uuid);
             t.putString("name", customName);
             t.putString("type", typeKey);
             t.putBoolean("betta", betta);
@@ -103,12 +104,12 @@ public final class TankView {
         }
 
         static Inhabitant load(CompoundTag t) {
-            BettaGenome g = BettaGenome.CODEC.parse(NbtOps.INSTANCE, t.getCompound("genome")).result().orElse(BettaGenome.DEFAULT);
-            return new Inhabitant(t.getUUID("id"), t.getString("name"), t.getString("type"), t.getBoolean("betta"), t.getBoolean("female"),
-                    t.getString("stage"), t.getBoolean("adult"), t.getFloat("health"), t.getFloat("sat"), t.getBoolean("sick"),
-                    t.getBoolean("bucketable"), g, BettaGenotype.load(t.getCompound("genotype")), t.getFloat("hp"), t.getFloat("progress"),
-                    t.getInt("gen"), t.getBoolean("frog"), t.getFloat("air"), t.getBoolean("no_air"), t.getCompound("tm"),
-                    !t.contains("analysed") || t.getBoolean("analysed"), !t.contains("genes_visible") || t.getBoolean("genes_visible"));
+            BettaGenome g = BettaGenome.CODEC.parse(NbtOps.INSTANCE, t.getCompoundOrEmpty("genome")).result().orElse(BettaGenome.DEFAULT);
+            return new Inhabitant(NbtCompat.getUUID(t, "id"), t.getStringOr("name", ""), t.getStringOr("type", ""), t.getBooleanOr("betta", false), t.getBooleanOr("female", false),
+                    t.getStringOr("stage", ""), t.getBooleanOr("adult", false), t.getFloatOr("health", 0f), t.getFloatOr("sat", 0f), t.getBooleanOr("sick", false),
+                    t.getBooleanOr("bucketable", false), g, BettaGenotype.load(t.getCompoundOrEmpty("genotype")), t.getFloatOr("hp", 0f), t.getFloatOr("progress", 0f),
+                    t.getIntOr("gen", 0), t.getBooleanOr("frog", false), t.getFloatOr("air", 0f), t.getBooleanOr("no_air", false), t.getCompoundOrEmpty("tm"),
+                    !t.contains("analysed") || t.getBooleanOr("analysed", false), !t.contains("genes_visible") || t.getBooleanOr("genes_visible", false));
         }
     }
 
@@ -244,11 +245,11 @@ public final class TankView {
         }
 
         static CritterInfo load(CompoundTag c) {
-            int[] n = c.getIntArray("n");
+            int[] n = c.getIntArray("n").orElse(new int[0]);
             if (n.length != 3 || n[1] < 0 || n[1] >= org.overengineer.bettacraft.critters.CritterSpecies.values().length) return null;
-            byte f = c.getByte("f");
-            return new CritterInfo(n[0], n[1], c.getString("v"), (f & 1) != 0, (f & 2) != 0, c.getFloat("age"), c.getFloat("g"), c.getString("genes"),
-                    (f & 4) != 0, (f & 8) != 0, c.getString("look"), n[2]);
+            byte f = c.getByteOr("f", (byte) 0);
+            return new CritterInfo(n[0], n[1], c.getStringOr("v", ""), (f & 1) != 0, (f & 2) != 0, c.getFloatOr("age", 0f), c.getFloatOr("g", 0f), c.getStringOr("genes", ""),
+                    (f & 4) != 0, (f & 8) != 0, c.getStringOr("look", ""), n[2]);
         }
     }
 
@@ -289,20 +290,20 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            ListTag l = t.getList("groups", Tag.TAG_COMPOUND);
+            ListTag l = t.getListOrEmpty("groups");
             int species = org.overengineer.bettacraft.critters.CritterSpecies.values().length;
             for (int i = 0; i < l.size(); i++) {
-                CompoundTag c = l.getCompound(i);
-                int[] n = c.getIntArray("n");
+                CompoundTag c = l.getCompoundOrEmpty(i);
+                int[] n = c.getIntArray("n").orElse(new int[0]);
                 if (n.length != 7 || n[0] < 0 || n[0] >= species) continue;
-                groups.add(new CritterGroup(n[0], c.getString("v"), n[1], n[2], n[3], n[4], n[5], n[6], c.getFloat("ga"), c.getFloat("gx"), c.getFloat("gn")));
+                groups.add(new CritterGroup(n[0], c.getStringOr("v", ""), n[1], n[2], n[3], n[4], n[5], n[6], c.getFloatOr("ga", 0f), c.getFloatOr("gx", 0f), c.getFloatOr("gn", 0f)));
             }
-            ListTag a = t.getList("animals", Tag.TAG_COMPOUND);
+            ListTag a = t.getListOrEmpty("animals");
             for (int i = 0; i < a.size(); i++) {
-                CritterInfo k = CritterInfo.load(a.getCompound(i));
+                CritterInfo k = CritterInfo.load(a.getCompoundOrEmpty(i));
                 if (k != null) animals.add(k);
             }
-            int[] n = t.getIntArray("n");
+            int[] n = t.getIntArray("n").orElse(new int[0]);
             if (n.length == 5) {
                 total = n[0];
                 max = n[1];
@@ -310,13 +311,13 @@ public final class TankView {
                 clutches = n[3];
                 molts = n[4];
             }
-            stock = t.getDouble("stock");
-            algae = t.getDouble("algae");
-            algaeGrowth = t.getDouble("growth");
-            grazing = t.getDouble("grazing");
-            foodDays = t.getDouble("food");
-            hiding = t.getDouble("hiding");
-            hunting = t.getBoolean("hunting");
+            stock = t.getDoubleOr("stock", 0d);
+            algae = t.getDoubleOr("algae", 0d);
+            algaeGrowth = t.getDoubleOr("growth", 0d);
+            grazing = t.getDoubleOr("grazing", 0d);
+            foodDays = t.getDoubleOr("food", 0d);
+            hiding = t.getDoubleOr("hiding", 0d);
+            hunting = t.getBooleanOr("hunting", false);
         }
     }
 
@@ -418,16 +419,16 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            int[] fo = t.getIntArray("foreign");
+            int[] fo = t.getIntArray("foreign").orElse(new int[0]);
             if (fo.length == 2) {
                 foreign = fo[0];
                 foreignMass = fo[1];
             }
-            int[] c = t.getIntArray("counts");
+            int[] c = t.getIntArray("counts").orElse(new int[0]);
             if (c.length == counts.length) counts = c;
-            int[] ti = t.getIntArray("tints");
+            int[] ti = t.getIntArray("tints").orElse(new int[0]);
             if (ti.length == tints.length) tints = ti;
-            int[] n = t.getIntArray("n");
+            int[] n = t.getIntArray("n").orElse(new int[0]);
             if (n.length == 8) {
                 total = n[0];
                 maxPlants = n[1];
@@ -438,15 +439,15 @@ public final class TankView {
                 dark = n[6];
                 dry = n[7];
             }
-            share = t.getFloat("share");
-            surfaceCover = t.getFloat("surface");
-            growthSpeed = t.getFloat("speed");
-            hiding = t.getFloat("hiding");
-            temp = t.getFloat("temp");
-            uptakePerDay = t.getDouble("uptake");
-            bonus = t.getBoolean("bonus");
-            overgrown = t.getBoolean("overgrown");
-            built = t.getBoolean("built");
+            share = t.getFloatOr("share", 0f);
+            surfaceCover = t.getFloatOr("surface", 0f);
+            growthSpeed = t.getFloatOr("speed", 0f);
+            hiding = t.getFloatOr("hiding", 0f);
+            temp = t.getFloatOr("temp", 0f);
+            uptakePerDay = t.getDoubleOr("uptake", 0d);
+            bonus = t.getBooleanOr("bonus", false);
+            overgrown = t.getBooleanOr("overgrown", false);
+            built = t.getBooleanOr("built", false);
         }
     }
 
@@ -508,17 +509,17 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            int[] c = t.getIntArray("counts");
+            int[] c = t.getIntArray("counts").orElse(new int[0]);
             if (c.length == counts.length) counts = c;
-            total = t.getInt("total");
-            light = t.getInt("light");
-            maxPlants = t.getInt("max");
-            coverage = t.getFloat("cov");
-            maxCoverage = t.getFloat("max_cov");
-            denseFrom = t.getFloat("dense_from");
-            growthSpeed = t.getFloat("speed");
-            uptakePerDay = t.getDouble("uptake");
-            dense = t.getBoolean("dense");
+            total = t.getIntOr("total", 0);
+            light = t.getIntOr("light", 0);
+            maxPlants = t.getIntOr("max", 0);
+            coverage = t.getFloatOr("cov", 0f);
+            maxCoverage = t.getFloatOr("max_cov", 0f);
+            denseFrom = t.getFloatOr("dense_from", 0f);
+            growthSpeed = t.getFloatOr("speed", 0f);
+            uptakePerDay = t.getDoubleOr("uptake", 0d);
+            dense = t.getBooleanOr("dense", false);
         }
     }
 
@@ -584,36 +585,36 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            oxygenOn = t.getBoolean("o2_on");
-            aerationOn = t.getBoolean("air_on");
-            timerFeature = t.getBoolean("timer_feature");
-            tiersOn = t.getBoolean("tiers_on");
-            fry = t.getBoolean("fry");
-            oxygen = t.contains("o2") ? t.getFloat("o2") : Float.NaN;
-            saturation = t.getDouble("sat");
-            target = t.getDouble("target");
-            exchange = t.getDouble("exchange");
-            use = t.getDouble("use");
-            co2Strip = t.getDouble("co2");
-            int[] a = t.getIntArray("air");
+            oxygenOn = t.getBooleanOr("o2_on", false);
+            aerationOn = t.getBooleanOr("air_on", false);
+            timerFeature = t.getBooleanOr("timer_feature", false);
+            tiersOn = t.getBooleanOr("tiers_on", false);
+            fry = t.getBooleanOr("fry", false);
+            oxygen = t.contains("o2") ? t.getFloatOr("o2", 0f) : Float.NaN;
+            saturation = t.getDoubleOr("sat", 0d);
+            target = t.getDoubleOr("target", 0d);
+            exchange = t.getDoubleOr("exchange", 0d);
+            use = t.getDoubleOr("use", 0d);
+            co2Strip = t.getDoubleOr("co2", 0d);
+            int[] a = t.getIntArray("air").orElse(new int[0]);
             if (a.length == 6) {
                 pumps = a[0]; pumpsRunning = a[1]; stones = a[2]; spongeFilters = a[3]; outlets = a[4]; driven = a[5];
             }
-            airPowered = t.getBoolean("air_ok");
-            airPower = t.getBoolean("air_power");
-            light = t.getDouble("light");
-            ledLight = t.getDouble("led");
-            factor = t.getDouble("factor");
-            int[] l = t.getIntArray("lights");
+            airPowered = t.getBooleanOr("air_ok", false);
+            airPower = t.getBooleanOr("air_power", false);
+            light = t.getDoubleOr("light", 0d);
+            ledLight = t.getDoubleOr("led", 0d);
+            factor = t.getDoubleOr("factor", 0d);
+            int[] l = t.getIntArray("lights").orElse(new int[0]);
             if (l.length == 4) {
                 bars = l[0]; panels = l[1]; highPower = l[2]; lit = l[3];
             }
-            int[] ts = t.getIntArray("timer_set");
+            int[] ts = t.getIntArray("timer_set").orElse(new int[0]);
             if (ts.length == 3) {
                 dimmer = ts[0]; lightOn = ts[1]; lightOff = ts[2];
             }
-            timer = t.getBoolean("timer");
-            unprotected = t.getInt("unprotected");
+            timer = t.getBooleanOr("timer", false);
+            unprotected = t.getIntOr("unprotected", 0);
         }
     }
 
@@ -675,34 +676,34 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            mode = t.getInt("mode");
-            land = t.contains("land") ? t.getFloat("land") : -1;
-            air = t.contains("air") ? t.getFloat("air") : Float.NaN;
-            ground = t.contains("ground") ? t.getFloat("ground") : Float.NaN;
-            bask = t.contains("bask") ? t.getFloat("bask") : Float.NaN;
-            humidity = t.contains("rh") ? t.getFloat("rh") : Float.NaN;
-            uv = t.getFloat("uv");
-            duty = t.getFloat("duty");
-            ambient = t.getFloat("ambient");
-            roomHumidity = t.getFloat("room_rh");
-            target = t.getFloat("target");
-            int[] d = t.getIntArray("dev");
+            mode = t.getIntOr("mode", 0);
+            land = t.contains("land") ? t.getFloatOr("land", 0f) : -1;
+            air = t.contains("air") ? t.getFloatOr("air", 0f) : Float.NaN;
+            ground = t.contains("ground") ? t.getFloatOr("ground", 0f) : Float.NaN;
+            bask = t.contains("bask") ? t.getFloatOr("bask", 0f) : Float.NaN;
+            humidity = t.contains("rh") ? t.getFloatOr("rh", 0f) : Float.NaN;
+            uv = t.getFloatOr("uv", 0f);
+            duty = t.getFloatOr("duty", 0f);
+            ambient = t.getFloatOr("ambient", 0f);
+            roomHumidity = t.getFloatOr("room_rh", 0f);
+            target = t.getFloatOr("target", 0f);
+            int[] d = t.getIntArray("dev").orElse(new int[0]);
             if (d.length == 11) {
                 matsUnder = d[0]; matsWall = d[1]; lamps = d[2]; lampsLit = d[3]; misters = d[4]; misting = d[5]; mistWater = d[6]; mistSetting = d[7];
                 openTops = d[8]; tops = d[9]; animals = d[10];
             }
-            devicesOn = !t.contains("dev_on") || t.getBoolean("dev_on");
-            heatPowered = !t.contains("heat_ok") || t.getBoolean("heat_ok");
-            misterPowered = !t.contains("mist_ok") || t.getBoolean("mist_ok");
-            setting = t.getInt("type");
-            settingOn = t.getBoolean("type_on");
-            maxWater = t.contains("max_water") ? t.getLong("max_water") : -1;
+            devicesOn = !t.contains("dev_on") || t.getBooleanOr("dev_on", false);
+            heatPowered = !t.contains("heat_ok") || t.getBooleanOr("heat_ok", false);
+            misterPowered = !t.contains("mist_ok") || t.getBooleanOr("mist_ok", false);
+            setting = t.getIntOr("type", 0);
+            settingOn = t.getBooleanOr("type_on", false);
+            maxWater = t.contains("max_water") ? t.getLongOr("max_water", 0L) : -1;
             problems.clear();
-            ListTag p = t.getList("problems", Tag.TAG_STRING);
-            for (int i = 0; i < p.size(); i++) problems.add(p.getString(i));
+            ListTag p = t.getListOrEmpty("problems");
+            for (int i = 0; i < p.size(); i++) problems.add(p.getStringOr(i, ""));
             eggs.clear();
-            ListTag e = t.getList("eggs", Tag.TAG_STRING);
-            for (int i = 0; i < e.size(); i++) eggs.add(e.getString(i));
+            ListTag e = t.getListOrEmpty("eggs");
+            for (int i = 0; i < e.size(); i++) eggs.add(e.getStringOr(i, ""));
         }
     }
 
@@ -953,74 +954,74 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            nitrate = t.getFloat("no3");
-            nitrateRate = t.getDouble("no3_rate");
-            nitrateStress = t.getDouble("no3_stress");
-            nitrateLethal = t.getDouble("no3_lethal");
-            nitrateInterval = t.getInt("no3_interval");
-            chemOn = t.getBoolean("chem_on"); // M25
-            tds = t.getFloat("tds");
-            ph = t.getFloat("ph");
-            co2 = t.getFloat("co2");
-            phTarget = t.getDouble("ph_target");
-            hardness = t.getString("hardness");
-            acid = t.getDouble("acid");
-            alkaline = t.getDouble("alkaline");
-            peat = t.getDouble("peat");
-            tannin = t.getDouble("tannin");
-            wood = t.getDouble("wood");
+            nitrate = t.getFloatOr("no3", 0f);
+            nitrateRate = t.getDoubleOr("no3_rate", 0d);
+            nitrateStress = t.getDoubleOr("no3_stress", 0d);
+            nitrateLethal = t.getDoubleOr("no3_lethal", 0d);
+            nitrateInterval = t.getIntOr("no3_interval", 0);
+            chemOn = t.getBooleanOr("chem_on", false); // M25
+            tds = t.getFloatOr("tds", 0f);
+            ph = t.getFloatOr("ph", 0f);
+            co2 = t.getFloatOr("co2", 0f);
+            phTarget = t.getDoubleOr("ph_target", 0d);
+            hardness = t.getStringOr("hardness", "");
+            acid = t.getDoubleOr("acid", 0d);
+            alkaline = t.getDoubleOr("alkaline", 0d);
+            peat = t.getDoubleOr("peat", 0d);
+            tannin = t.getDoubleOr("tannin", 0d);
+            wood = t.getDoubleOr("wood", 0d);
             chemOff = new ArrayList<>();
-            for (net.minecraft.nbt.Tag x : t.getList("chem_off", net.minecraft.nbt.Tag.TAG_STRING)) chemOff.add(x.getAsString());
-            co2On = t.getBoolean("co2_on");
-            co2Bubbles = t.getDouble("co2_bubbles");
-            co2Target = t.getDouble("co2_target");
-            co2Sources = t.getInt("co2_sources");
-            co2State = t.getString("co2_state");
-            salinity = t.getFloat("salinity");
-            calcium = t.getFloat("calcium");
-            kh = t.getFloat("kh");
-            magnesium = t.getFloat("magnesium");
-            trace = t.getFloat("trace");
-            dosingOn = t.getBoolean("dosing_on");
-            fertilizerOn = t.getBoolean("fert_on"); // M37
-            fertilizer = t.getFloat("fert");
-            fertilizerOver = t.contains("fert_over") ? t.getFloat("fert_over") : 1.5F;
-            springUnits = t.getDouble("spring_units");
-            skimmers = t.getInt("skimmers");
-            pumps = t.getInt("pumps");
-            liveRock = t.getInt("live_rock");
-            copepods = t.getDouble("copepods"); // M48 part b
-            copepodCap = t.getDouble("copepod_cap");
-            rotifers = t.getDouble("rotifers");
-            phytoplankton = t.getDouble("phytoplankton");
-            flow = t.getDouble("flow");
-            spectrum = t.getDouble("spectrum");
-            qualityEnabled = t.getBoolean("q_on");
-            evaporationEnabled = t.getBoolean("e_on");
-            quality = t.getFloat("q");
-            badBelow = t.getFloat("bad");
-            state = t.getString("state");
-            declinePerDay = t.getDouble("decline");
-            filterShare = t.getDouble("filter_share");
-            animalsPerBlock = t.getDouble("animals");
-            filterCapacity = t.getDouble("filter_cap");
+            for (net.minecraft.nbt.Tag x : t.getListOrEmpty("chem_off")) chemOff.add(NbtCompat.asString(x));
+            co2On = t.getBooleanOr("co2_on", false);
+            co2Bubbles = t.getDoubleOr("co2_bubbles", 0d);
+            co2Target = t.getDoubleOr("co2_target", 0d);
+            co2Sources = t.getIntOr("co2_sources", 0);
+            co2State = t.getStringOr("co2_state", "");
+            salinity = t.getFloatOr("salinity", 0f);
+            calcium = t.getFloatOr("calcium", 0f);
+            kh = t.getFloatOr("kh", 0f);
+            magnesium = t.getFloatOr("magnesium", 0f);
+            trace = t.getFloatOr("trace", 0f);
+            dosingOn = t.getBooleanOr("dosing_on", false);
+            fertilizerOn = t.getBooleanOr("fert_on", false); // M37
+            fertilizer = t.getFloatOr("fert", 0f);
+            fertilizerOver = t.contains("fert_over") ? t.getFloatOr("fert_over", 0f) : 1.5F;
+            springUnits = t.getDoubleOr("spring_units", 0d);
+            skimmers = t.getIntOr("skimmers", 0);
+            pumps = t.getIntOr("pumps", 0);
+            liveRock = t.getIntOr("live_rock", 0);
+            copepods = t.getDoubleOr("copepods", 0d); // M48 part b
+            copepodCap = t.getDoubleOr("copepod_cap", 0d);
+            rotifers = t.getDoubleOr("rotifers", 0d);
+            phytoplankton = t.getDoubleOr("phytoplankton", 0d);
+            flow = t.getDoubleOr("flow", 0d);
+            spectrum = t.getDoubleOr("spectrum", 0d);
+            qualityEnabled = t.getBooleanOr("q_on", false);
+            evaporationEnabled = t.getBooleanOr("e_on", false);
+            quality = t.getFloatOr("q", 0f);
+            badBelow = t.getFloatOr("bad", 0f);
+            state = t.getStringOr("state", "");
+            declinePerDay = t.getDoubleOr("decline", 0d);
+            filterShare = t.getDoubleOr("filter_share", 0d);
+            animalsPerBlock = t.getDoubleOr("animals", 0d);
+            filterCapacity = t.getDoubleOr("filter_cap", 0d);
             filterWarnings.clear();
-            ListTag fw = t.getList("filter_warn", Tag.TAG_STRING);
-            for (int i = 0; i < fw.size(); i++) filterWarnings.add(fw.getString(i));
-            evaporationPerDay = t.getDouble("evap");
-            openTop = t.getInt("open");
-            totalTop = t.getInt("top");
-            internalFilters = t.getInt("internal_filters");
-            lastFreshWater = t.getLong("fresh");
-            heaterPower = t.getBoolean("p_heat");
-            filterPower = t.getBoolean("p_filter");
-            lightPower = t.getBoolean("p_light");
-            heatPowered = t.getBoolean("ok_heat");
-            filterPowered = t.getBoolean("ok_filter");
-            lightPowered = t.getBoolean("ok_light");
-            buffer = t.getLong("buffer");
-            bufferCap = t.getLong("buffer_cap");
-            demand = t.getInt("demand");
+            ListTag fw = t.getListOrEmpty("filter_warn");
+            for (int i = 0; i < fw.size(); i++) filterWarnings.add(fw.getStringOr(i, ""));
+            evaporationPerDay = t.getDoubleOr("evap", 0d);
+            openTop = t.getIntOr("open", 0);
+            totalTop = t.getIntOr("top", 0);
+            internalFilters = t.getIntOr("internal_filters", 0);
+            lastFreshWater = t.getLongOr("fresh", 0L);
+            heaterPower = t.getBooleanOr("p_heat", false);
+            filterPower = t.getBooleanOr("p_filter", false);
+            lightPower = t.getBooleanOr("p_light", false);
+            heatPowered = t.getBooleanOr("ok_heat", false);
+            filterPowered = t.getBooleanOr("ok_filter", false);
+            lightPowered = t.getBooleanOr("ok_light", false);
+            buffer = t.getLongOr("buffer", 0L);
+            bufferCap = t.getLongOr("buffer_cap", 0L);
+            demand = t.getIntOr("demand", 0);
         }
 
         public boolean anyPower() {
@@ -1029,7 +1030,7 @@ public final class TankView {
     }
 
     public static CompoundTag build(ServerPlayer player, TankBlockEntity controller) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         TankData t = controller.getTank();
         CompoundTag out = new CompoundTag();
         out.putLong("pos", controller.getBlockPos().asLong());
@@ -1047,9 +1048,8 @@ public final class TankView {
         String ownerName = "";
         if (t.owner() != null) {
             var sp = level.getServer().getPlayerList().getPlayer(t.owner());
-            if (sp != null) ownerName = sp.getGameProfile().getName();
-            else ownerName = level.getServer().getProfileCache() == null ? "" : level.getServer().getProfileCache().get(t.owner())
-                    .map(com.mojang.authlib.GameProfile::getName).orElse("");
+            if (sp != null) ownerName = sp.getGameProfile().name();
+            else ownerName = level.getServer().services().nameToIdCache().get(t.owner()).map(net.minecraft.server.players.NameAndId::name).orElse("");
         }
         out.putString("owner_name", ownerName);
         out.putLong("water", t.waterMb());
@@ -1070,7 +1070,7 @@ public final class TankView {
         out.putInt("lights_lit", lights[1]);
         // M22.3: also a bucket of water, of the same species or of small animals (the server picks the fitting one)
         boolean anyBucket = TankInhabitants.findContainer(player, false) >= 0;
-        for (var st : player.getInventory().items) {
+        for (var st : player.getInventory().getNonEquipmentItems()) {
             if (org.overengineer.bettacraft.containers.AnimalContainers.waterBucket(st) || st.getItem() instanceof org.overengineer.bettacraft.tankmates.TankmateBucketItem
                     || st.getItem() instanceof org.overengineer.bettacraft.containers.CritterBucketItem) anyBucket = true;
         }
@@ -1324,102 +1324,102 @@ public final class TankView {
 
     public static TankView read(CompoundTag t) {
         TankView v = new TankView();
-        v.pos = BlockPos.of(t.getLong("pos"));
-        v.name = t.getString("name");
-        v.signVisible = t.getBoolean("sign");
-        v.signPos = SignPosition.byName(t.getString("sign_pos"));
-        Direction f = Direction.byName(t.getString("front"));
+        v.pos = BlockPos.of(t.getLongOr("pos", 0L));
+        v.name = t.getStringOr("name", "");
+        v.signVisible = t.getBooleanOr("sign", false);
+        v.signPos = SignPosition.byName(t.getStringOr("sign_pos", ""));
+        Direction f = Direction.byName(t.getStringOr("front", ""));
         v.front = f == null ? Direction.SOUTH : f;
-        v.locked = t.getBoolean("locked");
-        v.breakProtected = t.getBoolean("break_protected");
-        v.protectionFeature = t.getBoolean("protection_feature");
-        v.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(t.getString("aquarist_access")); // M51
-        v.aquaristFeature = t.getBoolean("aquarist_feature");
-        v.canModify = t.getBoolean("can_modify");
-        v.isOwner = t.getBoolean("owner");
-        v.ownerName = t.getString("owner_name");
-        v.waterMb = t.getLong("water");
-        v.capacityMb = t.getLong("cap");
-        v.glass = t.getString("glass");
-        v.style = org.overengineer.bettacraft.tank.TankStyle.byId(t.getString("style"));
-        int[] s = t.getIntArray("size");
+        v.locked = t.getBooleanOr("locked", false);
+        v.breakProtected = t.getBooleanOr("break_protected", false);
+        v.protectionFeature = t.getBooleanOr("protection_feature", false);
+        v.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(t.getStringOr("aquarist_access", "")); // M51
+        v.aquaristFeature = t.getBooleanOr("aquarist_feature", false);
+        v.canModify = t.getBooleanOr("can_modify", false);
+        v.isOwner = t.getBooleanOr("owner", false);
+        v.ownerName = t.getStringOr("owner_name", "");
+        v.waterMb = t.getLongOr("water", 0L);
+        v.capacityMb = t.getLongOr("cap", 0L);
+        v.glass = t.getStringOr("glass", "");
+        v.style = org.overengineer.bettacraft.tank.TankStyle.byId(t.getStringOr("style", ""));
+        int[] s = t.getIntArray("size").orElse(new int[0]);
         if (s.length == 3) {
             v.sizeX = s[0];
             v.sizeY = s[1];
             v.sizeZ = s[2];
         }
-        v.waterTemp = t.getFloat("temp");
-        v.targetTemp = t.getFloat("target");
-        v.ambient = t.getFloat("ambient");
-        v.heaterBlocks = t.getDouble("heaters");
-        v.coolerBlocks = t.getDouble("coolers");
-        v.feederFood = t.getInt("feeder");
-        v.feederPerDay = t.getInt("feeder_per_day");
-        v.lights = t.getInt("lights");
-        v.lightsLit = t.getInt("lights_lit");
-        v.hasBucket = t.getBoolean("has_bucket");
-        v.hasMagnifier = t.getBoolean("has_magnifier");
-        v.genesFree = t.getBoolean("genes_free");
-        v.hasBag = t.getBoolean("has_bag");
-        v.bagMb = t.getLong("bag_mb");
-        v.minInsertMb = t.getLong("min_insert");
-        ListTag inh = t.getList("inhabitants", Tag.TAG_COMPOUND);
-        for (int i = 0; i < inh.size(); i++) v.inhabitants.add(Inhabitant.load(inh.getCompound(i)));
-        v.adults = t.getInt("adults");
-        v.hardCap = t.getInt("hard_cap");
-        v.stock = t.getDouble("stock");
-        v.stockAdults = t.getDouble("stock_adults");
-        v.stockYoung = t.getDouble("stock_young");
-        v.stockCritters = t.getDouble("stock_critters");
-        v.stockNest = t.getDouble("stock_nest");
-        v.young = t.getInt("young");
-        v.critters.load(t.getCompound("critters"));
-        v.crowded = t.getBoolean("crowded");
-        ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
+        v.waterTemp = t.getFloatOr("temp", 0f);
+        v.targetTemp = t.getFloatOr("target", 0f);
+        v.ambient = t.getFloatOr("ambient", 0f);
+        v.heaterBlocks = t.getDoubleOr("heaters", 0d);
+        v.coolerBlocks = t.getDoubleOr("coolers", 0d);
+        v.feederFood = t.getIntOr("feeder", 0);
+        v.feederPerDay = t.getIntOr("feeder_per_day", 0);
+        v.lights = t.getIntOr("lights", 0);
+        v.lightsLit = t.getIntOr("lights_lit", 0);
+        v.hasBucket = t.getBooleanOr("has_bucket", false);
+        v.hasMagnifier = t.getBooleanOr("has_magnifier", false);
+        v.genesFree = t.getBooleanOr("genes_free", false);
+        v.hasBag = t.getBooleanOr("has_bag", false);
+        v.bagMb = t.getLongOr("bag_mb", 0L);
+        v.minInsertMb = t.getLongOr("min_insert", 0L);
+        ListTag inh = t.getListOrEmpty("inhabitants");
+        for (int i = 0; i < inh.size(); i++) v.inhabitants.add(Inhabitant.load(inh.getCompoundOrEmpty(i)));
+        v.adults = t.getIntOr("adults", 0);
+        v.hardCap = t.getIntOr("hard_cap", 0);
+        v.stock = t.getDoubleOr("stock", 0d);
+        v.stockAdults = t.getDoubleOr("stock_adults", 0d);
+        v.stockYoung = t.getDoubleOr("stock_young", 0d);
+        v.stockCritters = t.getDoubleOr("stock_critters", 0d);
+        v.stockNest = t.getDoubleOr("stock_nest", 0d);
+        v.young = t.getIntOr("young", 0);
+        v.critters.load(t.getCompoundOrEmpty("critters"));
+        v.crowded = t.getBooleanOr("crowded", false);
+        ListTag lg = t.getListOrEmpty("log");
         for (int i = 0; i < lg.size(); i++) {
-            CompoundTag c = lg.getCompound(i);
+            CompoundTag c = lg.getCompoundOrEmpty(i);
             List<String> args = new ArrayList<>();
-            ListTag a = c.getList("a", Tag.TAG_STRING);
-            for (int k = 0; k < a.size(); k++) args.add(a.getString(k));
-            v.log.add(new LogLine(c.getLong("t"), c.getString("k"), args));
+            ListTag a = c.getListOrEmpty("a");
+            for (int k = 0; k < a.size(); k++) args.add(a.getStringOr(k, ""));
+            v.log.add(new LogLine(c.getLongOr("t", 0L), c.getStringOr("k", ""), args));
         }
-        CompoundTag in = t.getCompound("interior");
-        v.scale = in.getInt("scale");
-        int[] is = in.getIntArray("size");
+        CompoundTag in = t.getCompoundOrEmpty("interior");
+        v.scale = in.getIntOr("scale", 0);
+        int[] is = in.getIntArray("size").orElse(new int[0]);
         if (is.length == 3) {
             v.interiorX = is[0];
             v.interiorY = is[1];
             v.interiorZ = is[2];
         }
-        v.renderLimit = in.getInt("limit");
-        v.interiorBuilt = in.getBoolean("built");
-        v.interiorBlocks = in.contains("blocks") ? in.getInt("blocks") : -1;
-        v.interiorTruncated = in.getBoolean("truncated");
-        v.substrate = in.getInt("substrate");
-        v.heatersInside = in.getInt("heaters");
-        v.heaterCapWet = in.getInt("heat_wet");
-        v.heaterCapDry = in.getInt("heat_dry");
-        v.filters = in.getInt("filters");
-        v.floating = in.getInt("floating");
-        v.coolersInside = in.getInt("coolers");
-        v.coolerCapWet = in.getInt("cool_wet");
-        CompoundTag eq = t.getCompound("equipment");
-        v.filterBlocks = eq.getInt("filter_blocks");
-        v.cabinetFilters = eq.getInt("cabinet_filters");
-        v.cabinets = eq.getInt("cabinets");
-        v.filterHeaters = eq.getInt("filter_heaters");
-        v.filterHeaterBlocks = eq.getInt("filter_heat");
-        v.legacyHeaters = eq.getInt("legacy");
-        v.filterCoolers = eq.getInt("filter_coolers");
-        v.water.load(t.getCompound("water_care"));
-        v.tech.load(t.getCompound("tech"));
-        v.climate.load(t.getCompound("climate")); // M31
-        v.sump = t.getCompound("sump"); // M49
-        v.plants.load(t.getCompound("plants"));
-        v.aquatic.load(t.getCompound("aquatic"));
-        v.breeding = t.getCompound("breeding");
-        ListTag w = v.breeding.getList("warnings", Tag.TAG_STRING);
-        for (int i = 0; i < w.size(); i++) v.warnings.add(w.getString(i));
+        v.renderLimit = in.getIntOr("limit", 0);
+        v.interiorBuilt = in.getBooleanOr("built", false);
+        v.interiorBlocks = in.contains("blocks") ? in.getIntOr("blocks", 0) : -1;
+        v.interiorTruncated = in.getBooleanOr("truncated", false);
+        v.substrate = in.getIntOr("substrate", 0);
+        v.heatersInside = in.getIntOr("heaters", 0);
+        v.heaterCapWet = in.getIntOr("heat_wet", 0);
+        v.heaterCapDry = in.getIntOr("heat_dry", 0);
+        v.filters = in.getIntOr("filters", 0);
+        v.floating = in.getIntOr("floating", 0);
+        v.coolersInside = in.getIntOr("coolers", 0);
+        v.coolerCapWet = in.getIntOr("cool_wet", 0);
+        CompoundTag eq = t.getCompoundOrEmpty("equipment");
+        v.filterBlocks = eq.getIntOr("filter_blocks", 0);
+        v.cabinetFilters = eq.getIntOr("cabinet_filters", 0);
+        v.cabinets = eq.getIntOr("cabinets", 0);
+        v.filterHeaters = eq.getIntOr("filter_heaters", 0);
+        v.filterHeaterBlocks = eq.getIntOr("filter_heat", 0);
+        v.legacyHeaters = eq.getIntOr("legacy", 0);
+        v.filterCoolers = eq.getIntOr("filter_coolers", 0);
+        v.water.load(t.getCompoundOrEmpty("water_care"));
+        v.tech.load(t.getCompoundOrEmpty("tech"));
+        v.climate.load(t.getCompoundOrEmpty("climate")); // M31
+        v.sump = t.getCompoundOrEmpty("sump"); // M49
+        v.plants.load(t.getCompoundOrEmpty("plants"));
+        v.aquatic.load(t.getCompoundOrEmpty("aquatic"));
+        v.breeding = t.getCompoundOrEmpty("breeding");
+        ListTag w = v.breeding.getListOrEmpty("warnings");
+        for (int i = 0; i < w.size(); i++) v.warnings.add(w.getStringOr(i, ""));
         return v;
     }
 }

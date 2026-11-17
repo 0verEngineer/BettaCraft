@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -71,20 +72,20 @@ public final class ForeignGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
     }
 
     /** An animal of {@code type} as an inhabitant of the tank (at its middle). */
     static LivingEntity add(GameTestHelper h, TankBlockEntity c, EntityType<?> type, Consumer<CompoundTag> data) {
         Entity e = type.create(h.getLevel());
         if (!(e instanceof LivingEntity le)) throw new GameTestAssertException("no living " + type);
-        CompoundTag t = e.saveWithoutId(new CompoundTag());
+        CompoundTag t = NbtCompat.saveEntityWithoutId(e);
         data.accept(t);
         t.remove("UUID");
         e.load(t);
         TankData tank = c.getTank();
         Vec3 mid = new TankWaterVolume(tank).clamp(TankInhabitants.tankBox(tank).getCenter(), 0.3, 0.1, 0.3);
-        e.moveTo(mid.x, mid.y, mid.z, 0, 0);
+        e.snapTo(mid.x, mid.y, mid.z, 0, 0);
         TankInhabitants.adopt(e, c);
         if (!h.getLevel().addFreshEntity(e)) throw new GameTestAssertException("not added");
         tank.inhabitants().add(e.getUUID());
@@ -99,8 +100,8 @@ public final class ForeignGameTests {
 
     /** Runs {@code body} with an extra test profile (and the shipped ones), restoring the profiles afterwards. */
     static void withProfile(String json, Runnable body) {
-        Map<ResourceLocation, ForeignProfile> saved = ForeignProfiles.files();
-        Map<ResourceLocation, ForeignProfile> files = new LinkedHashMap<>(saved);
+        Map<Identifier, ForeignProfile> saved = ForeignProfiles.files();
+        Map<Identifier, ForeignProfile> files = new LinkedHashMap<>(saved);
         files.put(BettaCraft.id("gametest_stand_in"), profile(json));
         ForeignProfiles.set(files);
         try {
@@ -121,7 +122,7 @@ public final class ForeignGameTests {
     }
 
     private static int variant(Entity e) {
-        return e.saveWithoutId(new CompoundTag()).getInt("Variant");
+        return NbtCompat.saveEntityWithoutId(e).getIntOr("Variant", 0);
     }
 
     static final String TROPICAL = """
@@ -153,7 +154,7 @@ public final class ForeignGameTests {
             h.assertTrue(menu != null && menu[1] > 0.9F, "the menu shows it fed");
             // a fish of the same kind outside any tank gets nothing
             Entity wild = EntityType.TROPICAL_FISH.create(level);
-            wild.moveTo(h.absoluteVec(new Vec3(20, 3, 20)));
+            wild.snapTo(h.absoluteVec(new Vec3(20, 3, 20)));
             level.addFreshEntity(wild);
             ForeignCare.step(level, c, 5.0);
             h.assertTrue(!org.overengineer.bettacraft.platform.Platform.get().persistentData(wild).contains(ForeignCare.KEY), "no needs outside our tanks");
@@ -336,10 +337,10 @@ public final class ForeignGameTests {
         for (Entity e : ofType(h, c, guppy)) if (e != a && e != b) young.add(e);
         h.assertTrue(!young.isEmpty(), "young guppies were born");
         for (Entity e : young) {
-            CompoundTag t = e.saveWithoutId(new CompoundTag());
+            CompoundTag t = NbtCompat.saveEntityWithoutId(e);
             h.assertTrue(((LivingEntity) e).isBaby(), "a baby guppy");
-            h.assertTrue(t.getInt("FinColor") == 1 || t.getInt("FinColor") == 5, "fin colour of a parent: " + t.getInt("FinColor"));
-            h.assertTrue(t.getInt("TailColor") == 2 || t.getInt("TailColor") == 6, "tail colour of a parent: " + t.getInt("TailColor"));
+            h.assertTrue(t.getIntOr("FinColor", 0) == 1 || t.getIntOr("FinColor", 0) == 5, "fin colour of a parent: " + t.getIntOr("FinColor", 0));
+            h.assertTrue(t.getIntOr("TailColor", 0) == 2 || t.getIntOr("TailColor", 0) == 6, "tail colour of a parent: " + t.getIntOr("TailColor", 0));
         }
         h.succeed();
     }

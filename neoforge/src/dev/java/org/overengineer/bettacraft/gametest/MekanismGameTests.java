@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -37,7 +37,7 @@ public final class MekanismGameTests {
     private MekanismGameTests() {}
 
     private static IFluidHandler mekTank(GameTestHelper h, BlockPos rel) {
-        Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("mekanism:basic_fluid_tank"));
+        Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse("mekanism:basic_fluid_tank"));
         if (b == Blocks.AIR) throw new GameTestAssertException("no Mekanism fluid tank");
         h.setBlock(rel, b.defaultBlockState());
         IFluidHandler cap = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(h.getLevel(), h.absolutePos(rel), Direction.UP);

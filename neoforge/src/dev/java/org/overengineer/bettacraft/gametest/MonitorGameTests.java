@@ -270,15 +270,15 @@ public final class MonitorGameTests {
         c.setLayout(l);
         MonitorSync.refresh(level, c);
         h.assertTrue(!k.detail.isEmpty(), "detail now");
-        var dev = k.detail.getList("dev", net.minecraft.nbt.Tag.TAG_COMPOUND);
-        h.assertTrue(dev.size() >= 4 && "filter".equals(dev.getCompound(0).getString("k")), "devices: " + dev);
+        var dev = k.detail.getListOrEmpty("dev");
+        h.assertTrue(dev.size() >= 4 && "filter".equals(dev.getCompoundOrEmpty(0).getStringOr("k", "")), "devices: " + dev);
         boolean noFilter = false;
-        var warn = k.detail.getList("warn", net.minecraft.nbt.Tag.TAG_COMPOUND);
-        for (int i = 0; i < warn.size(); i++) noFilter |= "monitor.bettacraft.warn.no_filter".equals(warn.getCompound(i).getString("k"));
+        var warn = k.detail.getListOrEmpty("warn");
+        for (int i = 0; i < warn.size(); i++) noFilter |= "monitor.bettacraft.warn.no_filter".equals(warn.getCompoundOrEmpty(i).getStringOr("k", ""));
         h.assertTrue(noFilter || !org.overengineer.bettacraft.tank.TankWater.qualityEnabled(), "a tank without filter warns: " + warn);
-        var log = k.detail.getList("log", net.minecraft.nbt.Tag.TAG_COMPOUND);
-        h.assertTrue(!log.isEmpty() && "log.bettacraft.critters_born".equals(log.getCompound(log.size() - 1).getString("k")), "the log: " + log);
-        h.assertTrue(k.detail.getList("animals", net.minecraft.nbt.Tag.TAG_COMPOUND).isEmpty(), "no animals");
+        var log = k.detail.getListOrEmpty("log");
+        h.assertTrue(!log.isEmpty() && "log.bettacraft.critters_born".equals(log.getCompound(log.size() - 1).getStringOr("k", "")), "the log: " + log);
+        h.assertTrue(k.detail.getListOrEmpty("animals").isEmpty(), "no animals");
         h.succeed();
     }
 
@@ -290,7 +290,7 @@ public final class MonitorGameTests {
         MonitorBlockEntity c = be(h, tl);
         net.minecraft.server.level.ServerPlayer p = LoaderHooks.get().fakePlayer(h.getLevel(),
                 new com.mojang.authlib.GameProfile(new java.util.UUID(27, 2), "MonitorEditor"));
-        p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 5.5)));
+        p.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 5.5)));
         DashboardLayout l = new DashboardLayout();
         l.auto = false;
         java.util.UUID id = new java.util.UUID(7, 7);
@@ -308,7 +308,7 @@ public final class MonitorGameTests {
         DashboardTile g = got.tiles.get(7);
         h.assertTrue(g.w == 2 && g.h == 4 && g.days() == 3, "clipped graph " + g.w + "x" + g.h);
         // too far away: refused
-        p.moveTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 30.5)));
+        p.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(9.5, 2, 30.5)));
         h.assertTrue(!MonitorBlockEntity.applyLayout(p, h.absolutePos(tl), new DashboardLayout().save()), "too far");
         h.succeed();
     }

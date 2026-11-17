@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 import org.overengineer.bettacraft.BettaCraft;
@@ -25,7 +26,7 @@ import org.overengineer.bettacraft.tank.TankData;
  * tools/assetgen/critters.py}).
  */
 public final class FrogBroodRenderer {
-    private static final ResourceLocation TEX = BettaCraft.id("textures/entity/critters/frog_brood.png");
+    private static final Identifier TEX = BettaCraft.id("textures/entity/critters/frog_brood.png");
     /** At most this many eggs of a clump are drawn. */
     private static final int MAX_DRAWN = 36;
     /** Cells of the texture (4 x 4 texels each, column in the first row): yolk, jelly, body, tail, legs, eye. */
@@ -36,7 +37,7 @@ public final class FrogBroodRenderer {
     static void render(TankBlockEntity be, TankData t, float partialTick, PoseStack pose, MultiBufferSource buffers) {
         if (t.frogSpawn().isEmpty() && t.tadpoles().isEmpty()) return;
         BlockPos origin = be.getBlockPos();
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(TEX));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(TEX));
         float time = be.getLevel() == null ? 0 : be.getLevel().getGameTime() + partialTick;
         for (FrogSpawn s : t.frogSpawn()) {
             int light = light(be, s.x, s.y - 0.05, s.z);

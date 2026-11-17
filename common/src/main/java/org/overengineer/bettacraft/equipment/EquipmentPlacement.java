@@ -38,12 +38,12 @@ public final class EquipmentPlacement {
         Level level = ctx.getLevel();
         Player player = ctx.getPlayer();
         if (!InteriorManager.isInterior(level)) {
-            if (!level.isClientSide && player != null) {
+            if (!level.isClientSide() && player != null) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD), true);
             }
             return InteractionResult.FAIL;
         }
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         BlockPlaceContext place = new BlockPlaceContext(ctx);
         BlockPos base = place.getClickedPos();

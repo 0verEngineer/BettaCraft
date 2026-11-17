@@ -5,7 +5,11 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityAccessor",
+    "LevelChunkRemovalMixin",
     "interior.ChunkGenerationTaskMixin",
+    "registry.BlockItemMixin",
+    "registry.BlockPropertiesMixin",
+    "registry.ItemPropertiesMixin",
     "interior.ChunkMapMixin",
     "interior.CoralBlockMixin",
     "interior.CoralMixin",

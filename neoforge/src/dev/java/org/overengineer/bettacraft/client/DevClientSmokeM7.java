@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -69,26 +69,26 @@ final class DevClientSmokeM7 {
         then(30, () -> server(this::fillBft));
         then(1, () -> mc.options.hideGui = true);
         // our tank with the fish of other mods (and Fintastic plants in the miniature)
-        then(40, () -> server(p -> p.teleportTo(p.serverLevel(), mixMin.getX() + 2.5, mixMin.getY() + 0.1, mixMin.getZ() - 2.0, 0F, 8F)));
+        then(40, () -> server(p -> p.teleportTo(p.level(), mixMin.getX() + 2.5, mixMin.getY() + 0.1, mixMin.getZ() - 2.0, java.util.Set.of(), 0F, 8F, false)));
         then(60, () -> shot("bettacraft_m7_foreign_fish"));
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) {
-            then(1, () -> server(p -> p.teleportTo(p.serverLevel(), bftMin.getX() + 1.5, bftMin.getY() + 0.1, bftMin.getZ() - 1.9, 0F, 10F)));
+            then(1, () -> server(p -> p.teleportTo(p.level(), bftMin.getX() + 1.5, bftMin.getY() + 0.1, bftMin.getZ() - 1.9, java.util.Set.of(), 0F, 10F, false)));
             then(60, () -> {
                 LOGGER.info("[smoketest] M7 BFT client state {} fluid {}", mc.level.getBlockState(bftMin), mc.level.getFluidState(bftMin));
-                server(p -> LOGGER.info("[smoketest] M7 BFT server state {} fluid {}", p.serverLevel().getBlockState(bftMin), p.serverLevel().getFluidState(bftMin)));
+                server(p -> LOGGER.info("[smoketest] M7 BFT server state {} fluid {}", p.level().getBlockState(bftMin), p.level().getFluidState(bftMin)));
                 shot("bettacraft_m7_bft_tank");
             });
         }
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("fishofthieves")) {
-            then(1, () -> server(p -> p.teleportTo(p.serverLevel(), plaquePos.getX() + 0.5, plaquePos.getY() - 1.12, plaquePos.getZ() - 0.85, 0F, 0F)));
+            then(1, () -> server(p -> p.teleportTo(p.level(), plaquePos.getX() + 0.5, plaquePos.getY() - 1.12, plaquePos.getZ() - 0.85, java.util.Set.of(), 0F, 0F, false)));
             then(60, () -> shot("bettacraft_m7_plaque"));
         }
         // tank menu, animals tab, with a Better Fish Tanks bag in the inventory
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), mixMin.getX() + 2.5, mixMin.getY() + 0.5, mixMin.getZ() - 2.5, 0F, 20F);
-            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.get(FishContainers.BFT_FISH_BAG)));
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), mixMin);
+            p.teleportTo(p.level(), mixMin.getX() + 2.5, mixMin.getY() + 0.5, mixMin.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
+            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG)));
+            TankBlockEntity c = TankMultiblock.getController(p.level(), mixMin);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -106,7 +106,7 @@ final class DevClientSmokeM7 {
                 InteriorRegion r = InteriorManager.regionAt(p.server, p.blockPosition());
                 if (r == null) return;
                 BlockPos eye = r.toWorld(30, 2, 14);
-                p.teleportTo(p.serverLevel(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, 0F, 12F);
+                p.teleportTo(p.level(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, java.util.Set.of(), 0F, 12F, false);
             }));
             then(1, () -> mc.options.hideGui = true);
             then(50, () -> shot("bettacraft_m7_interior_plants"));
@@ -119,10 +119,10 @@ final class DevClientSmokeM7 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos feet = p.blockPosition();
         BlockPos base = feet.offset(0, 0, 40);
-        p.teleportTo(level, base.getX() + 0.5, base.getY(), base.getZ() - 3.0, 0F, 0F);
+        p.teleportTo(level, base.getX() + 0.5, base.getY(), base.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
         mixMin = base.offset(-8, 0, 0);
         for (int x = 0; x < 5; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
             BlockPos pos = mixMin.offset(x, y, z);
@@ -136,7 +136,7 @@ final class DevClientSmokeM7 {
         c.getTank().setFront(Direction.NORTH);
         List<String> in = new ArrayList<>();
         for (String id : FOREIGN) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
             if (item == Items.AIR) continue;
             ItemStack stack = org.overengineer.bettacraft.command.DevSmokeM7.foreignBucket(item);
             var err = TankInhabitants.insert(level, c, stack, TankInhabitants.containedType(stack), p, 0L);
@@ -155,21 +155,21 @@ final class DevClientSmokeM7 {
             if (e instanceof Mob m) SmokeFreeze.freeze(m, false);
             double x = mixMin.getX() + 0.5 + (i % 5);
             double y = mixMin.getY() + 0.35 + (i / 5) * 0.8;
-            e.moveTo(x, y, mixMin.getZ() + 0.9, i % 2 == 0 ? -90F : 90F, 0F);
+            e.snapTo(x, y, mixMin.getZ() + 0.9, i % 2 == 0 ? -90F : 90F, 0F);
             e.setDeltaMovement(Vec3.ZERO);
         }
         LOGGER.info("[smoketest] M7 community tank: {} + 2 bettas ({} animals)", in, live.size());
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("fintastic")) plants(level, c);
         bftMin = base.offset(0, 0, 0);
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) {
-            Block bft = BuiltInRegistries.BLOCK.get(BetterFishTanksCompat.TANK_BLOCK);
+            Block bft = BuiltInRegistries.BLOCK.getValue(BetterFishTanksCompat.TANK_BLOCK);
             for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
                 level.setBlockAndUpdate(bftMin.offset(x, y, z), bft.defaultBlockState());
         }
         plaquePos = base.offset(6, 1, 0);
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("fishofthieves")) {
             level.setBlockAndUpdate(plaquePos.south(), Blocks.STONE_BRICKS.defaultBlockState());
-            Block oak = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
+            Block oak = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
             BlockState s = oak.defaultBlockState();
             Property<?> facing = oak.getStateDefinition().getProperty("facing");
             if (facing != null) s = setNorth(s, facing);
@@ -199,13 +199,13 @@ final class DevClientSmokeM7 {
         String[] floor = {"hornwort", "anubias", "amazon_sword", "hornwort", "blue_hypnea", "anubias", "mermaid_fan", "hornwort"};
         int placed = 0;
         for (int i = 0; i < 40; i++) {
-            Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fintastic", floor[i % floor.length]));
+            Block b = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fintastic", floor[i % floor.length]));
             if (b == Blocks.AIR) continue;
             BlockPos pos = r.toWorld(2 + (i * 2) % 76, 0, 22 + (i * 7) % 9);
             in.setBlockAndUpdate(pos, b.defaultBlockState());
             placed++;
         }
-        Block duckweed = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fintastic", "duckweed"));
+        Block duckweed = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fintastic", "duckweed"));
         for (int i = 0; i < 24; i++) in.setBlockAndUpdate(r.toWorld(4 + (i * 3) % 72, r.sizeY() - 2, 8 + (i * 5) % 20), duckweed.defaultBlockState());
         InteriorSync.markAllDirty(r.id());
         LOGGER.info("[smoketest] M7 {} Fintastic plants and 24 duckweed in the interior", placed);
@@ -213,7 +213,7 @@ final class DevClientSmokeM7 {
 
     private void fillBft(ServerPlayer p) {
         if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) return;
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         var be = level.getBlockEntity(bftMin);
         try {
             Object cap = be.getClass().getMethod("getCapacity").invoke(be);

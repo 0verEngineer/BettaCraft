@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.progression;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.registry.ModAttachments;
  * after the delivery (inventory or drop). Without GuideME there is no book and nothing happens.
  */
 public final class GuideBook {
-    public static final ResourceLocation GUIDE_ID = BettaCraft.id("guide");
+    public static final Identifier GUIDE_ID = BettaCraft.id("guide");
     public static final int OWNER_ONLY_TICKS = 60 * 20;
     /** Item entity data: game time until which only the target player may pick the dropped book up. */
     public static final String OWNER_UNTIL = "bettacraft:owner_until";
@@ -35,9 +35,9 @@ public final class GuideBook {
         /** The mod id of the handbook mod. */
         String modId();
 
-        ItemStack createBook(net.minecraft.resources.ResourceLocation guideId);
+        ItemStack createBook(net.minecraft.resources.Identifier guideId);
 
-        boolean isBook(ItemStack stack, net.minecraft.resources.ResourceLocation guideId);
+        boolean isBook(ItemStack stack, net.minecraft.resources.Identifier guideId);
     }
 
     public static Backend backend;

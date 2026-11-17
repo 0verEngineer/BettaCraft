@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.entity.betta;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -36,7 +39,8 @@ public class BettaBucketItem extends org.overengineer.bettacraft.containers.Anim
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         BettaData d = data(stack);
         if (d != null) BettaTooltip.append(d, tooltip);
     }

@@ -17,14 +17,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.StructureTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
@@ -121,7 +121,7 @@ final class DevClientSmokeM47 {
     // ------------------------------------------------------------------ setup
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
         level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
@@ -132,7 +132,7 @@ final class DevClientSmokeM47 {
 
     /** The nearest village: the player goes there; a basin on the ground at the edge of the village street. */
     private void village(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos found = level.findNearestMapStructure(StructureTags.VILLAGE, p.blockPosition(), 100, false);
         LOGGER.info("[m47] village at {}", found);
         if (found == null) {
@@ -142,12 +142,12 @@ final class DevClientSmokeM47 {
         level.getChunk(found);
         int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, found.getX(), found.getZ());
         village = new BlockPos(found.getX(), y, found.getZ());
-        p.teleportTo(level, village.getX() + 0.5, village.getY() + 6, village.getZ() - 6, 0F, 30F);
+        p.teleportTo(level, village.getX() + 0.5, village.getY() + 6, village.getZ() - 6, java.util.Set.of(), 0F, 30F, false);
     }
 
     /** A basin next to the village centre and an unemployed villager beside it; the villager takes the job by himself. */
     private void hire(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos b = village.offset(3, 0, 3);
         int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, b.getX(), b.getZ());
         basin = new BlockPos(b.getX(), y, b.getZ());
@@ -158,7 +158,7 @@ final class DevClientSmokeM47 {
         level.setBlock(basin, ModBlocks.BREEDING_BASIN.get().defaultBlockState().setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING,
                 Direction.NORTH), 3);
         Villager v = EntityType.VILLAGER.create(level);
-        v.moveTo(basin.getX() + 1.5, basin.getY(), basin.getZ() + 0.5, 90F, 0F);
+        v.snapTo(basin.getX() + 1.5, basin.getY(), basin.getZ() + 0.5, 90F, 0F);
         v.setPersistenceRequired();
         level.addFreshEntity(v);
         aquarist = v;
@@ -169,14 +169,14 @@ final class DevClientSmokeM47 {
     private void pose(ServerPlayer p) {
         Villager v = aquarist;
         // ours or a villager of the village (the first unemployed one to reach the basin claims it)
-        List<Villager> near = p.serverLevel().getEntitiesOfClass(Villager.class, new net.minecraft.world.phys.AABB(basin).inflate(24), Aquarists::isAquarist);
+        List<Villager> near = p.level().getEntitiesOfClass(Villager.class, new net.minecraft.world.phys.AABB(basin).inflate(24), Aquarists::isAquarist);
         boolean hired = !near.isEmpty();
         LOGGER.info("[smoketest] M47 an unemployed villager took the breeding basin: {} ({} aquarists near, ours {}) {}", hired, near.size(),
                 Aquarists.isAquarist(v), hired ? "PASS" : "FAIL");
         for (Villager o : near) if (o != v) o.discard(); // the scene shows ours
         if (!Aquarists.isAquarist(v)) v.setVillagerData(v.getVillagerData().setProfession(ModVillagers.AQUARIST.get()));
         v.setVillagerData(v.getVillagerData().setLevel(3));
-        v.moveTo(basin.getX() - 0.4, basin.getY(), basin.getZ() - 0.9, 180F, 0F);
+        v.snapTo(basin.getX() - 0.4, basin.getY(), basin.getZ() - 0.9, 180F, 0F);
         v.setYHeadRot(180F);
         v.setYBodyRot(180F);
         SmokeFreeze.freeze(v, false);
@@ -241,7 +241,7 @@ final class DevClientSmokeM47 {
     }
 
     private void tanks(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         home = p.blockPosition().offset(0, 30, 12);
         for (int x = -3; x < 13; x++) for (int z = -4; z < 5; z++) {
             for (int y = 0; y < 6; y++) level.setBlock(home.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
@@ -299,7 +299,7 @@ final class DevClientSmokeM47 {
         DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
         if (f == null) return null;
         f.setFemale(female);
-        f.moveTo(at.x, at.y, at.z, 0F, 0F);
+        f.snapTo(at.x, at.y, at.z, 0F, 0F);
         f.setYRot(0F);
         TankInhabitants.adopt(f, c);
         level.addFreshEntity(f);

@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.tank.plants;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -7,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,28 +34,29 @@ public class AquariumNetItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos();
-        if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResultHolder.pass(stack);
+        if (level.getBlockState(pos).getBlock() instanceof TankBlock) return InteractionResult.PASS;
         // M28.1: a wild floating plant on the water is scooped up
         if (level.getBlockState(pos).getBlock() instanceof org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock) {
             if (level instanceof ServerLevel) org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock.scoop(level, pos, player);
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+            return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
         }
-        if (!level.getFluidState(pos).is(FluidTags.WATER)) return InteractionResultHolder.pass(stack);
+        if (!level.getFluidState(pos).is(FluidTags.WATER)) return InteractionResult.PASS;
         if (level instanceof ServerLevel server) {
             boolean used = org.overengineer.bettacraft.critters.NetCatching.tryCatch(server, player, hand, pos);
-            return used ? InteractionResultHolder.consume(stack) : InteractionResultHolder.pass(stack);
+            return used ? InteractionResult.CONSUME.heldItemTransformedTo(stack) : InteractionResult.PASS;
         }
-        return player.getCooldowns().isOnCooldown(this) ? InteractionResultHolder.pass(stack) : InteractionResultHolder.success(stack);
+        return player.getCooldowns().isOnCooldown(stack) ? InteractionResult.PASS : InteractionResult.SUCCESS.heldItemTransformedTo(stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
         tooltip.add(Component.translatable("tooltip.bettacraft.tank_net").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.tank_net.sneak").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.tank_net.water").withStyle(ChatFormatting.DARK_GRAY));

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.filter;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -105,7 +108,7 @@ public class FilterChamberBlockEntity extends BlockEntity {
 
     private void changed() {
         setChanged();
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState s = getBlockState();
         FilterMedium k = kind();
         if (s.hasProperty(FilterPartBlock.MEDIUM) && s.getValue(FilterPartBlock.MEDIUM) != k) level.setBlock(worldPosition, s.setValue(FilterPartBlock.MEDIUM, k), Block.UPDATE_ALL);
@@ -113,23 +116,28 @@ public class FilterChamberBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        if (!medium.isEmpty()) tag.put("medium", medium.save(registries));
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
+        if (!medium.isEmpty()) tag.put("medium", NbtCompat.saveStack(registries, medium));
         tag.putDouble("carry", carry);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        medium = tag.contains("medium") ? ItemStack.parse(registries, tag.getCompound("medium")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
-        carry = tag.getDouble("carry");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        medium = tag.contains("medium") ? NbtCompat.parseStack(registries, tag.getCompoundOrEmpty("medium")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
+        carry = tag.getDoubleOr("carry", 0d);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag t = new CompoundTag();
-        if (!medium.isEmpty()) t.put("medium", medium.save(registries));
+        if (!medium.isEmpty()) t.put("medium", NbtCompat.saveStack(registries, medium));
         return t;
     }
 

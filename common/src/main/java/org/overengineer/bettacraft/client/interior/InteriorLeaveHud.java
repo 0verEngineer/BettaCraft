@@ -77,15 +77,15 @@ public final class InteriorLeaveHud {
         int boxH = lines.size() * lineH + barH + 3;
         int x = 3, y = h - 3 - boxH;
         g.fill(x, y, x + boxW, y + boxH, 0x70000000);
-        g.pose().pushPose();
-        g.pose().translate(x + 2, y + 2, 0);
-        g.pose().scale(SCALE, SCALE, 1F);
+        g.pose().pushMatrix();
+        g.pose().translate((float) (x + 2), (float) (y + 2));
+        g.pose().scale(SCALE, SCALE);
         int ty = 0;
         for (FormattedCharSequence l : lines) {
-            g.drawString(font, l, 0, ty, p > 0 ? 0xFFFFFFFF : 0xFFD8D8D8, true);
+            g.drawString(font, l, 0, ty, org.overengineer.bettacraft.client.ClientCompat.textColor(p > 0 ? 0xFFFFFFFF : 0xFFD8D8D8), true);
             ty += font.lineHeight;
         }
-        g.pose().popPose();
+        g.pose().popMatrix();
         if (p > 0) {
             int bx = x + 2, by = y + 2 + lines.size() * lineH + 1, bw = boxW - 4;
             g.fill(bx, by, bx + bw, by + 2, 0xA0303030);

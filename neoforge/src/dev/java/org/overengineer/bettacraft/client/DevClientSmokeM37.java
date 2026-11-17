@@ -67,7 +67,7 @@ final class DevClientSmokeM37 {
         then(20, () -> server(p -> {
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.CRANK.get()));
             for (int i = 0; i < 3; i++) {
-                var r = Winding.wind(p.serverLevel(), base.offset(1, 0, 2), p);
+                var r = Winding.wind(p.level(), base.offset(1, 0, 2), p);
                 if (r != Winding.Result.WOUND) LOGGER.error("[smoketest] M37 the crank does not wind the cabinet: {}", r);
             }
         }));
@@ -75,8 +75,8 @@ final class DevClientSmokeM37 {
         // the fertilizer maker works on its spring (the power options are on, no FE)
         then(1, () -> server(p -> {
             BlockPos at = base.offset(5, 1, 3);
-            if (p.serverLevel().getBlockEntity(at) instanceof FertilizerMakerBlockEntity m) {
-                for (int i = 0; i < 120; i++) m.tick(p.serverLevel(), at, p.serverLevel().getBlockState(at));
+            if (p.level().getBlockEntity(at) instanceof FertilizerMakerBlockEntity m) {
+                for (int i = 0; i < 120; i++) m.tick(p.level(), at, p.level().getBlockState(at));
                 if (m.status() != FertilizerMakerBlockEntity.WORKING) LOGGER.error("[smoketest] M37 the fertilizer maker does not work: {}", m.status());
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, m, at);
             } else LOGGER.error("[smoketest] M37 no fertilizer maker");
@@ -95,7 +95,7 @@ final class DevClientSmokeM37 {
         // the cabinet's window with its spring
         then(1, () -> server(p -> {
             BlockPos at = base.offset(1, 0, 2);
-            if (p.serverLevel().getBlockEntity(at) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, at);
+            if (p.level().getBlockEntity(at) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, at);
             else LOGGER.error("[smoketest] M37 no cabinet");
         }));
         then(30, () -> {
@@ -110,8 +110,8 @@ final class DevClientSmokeM37 {
         then(5, () -> mc.setScreen(null));
         // the water tab: the fertilizer level and the devices on the spring
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(0, 1, 2));
-            org.overengineer.bettacraft.tank.TankCare.care(p.serverLevel(), c, 20);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 2));
+            org.overengineer.bettacraft.tank.TankCare.care(p.level(), c, 20);
             if (!c.filterPowered() || c.springUnits() <= 0) LOGGER.error("[smoketest] M37 the cabinet does not power the tank: filter {}, devices {}",
                     c.filterPowered(), c.springUnits());
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
@@ -135,7 +135,7 @@ final class DevClientSmokeM37 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerConfig.POWER_HEATER.set(true);
         ServerConfig.POWER_FILTER.set(true);
         ServerConfig.POWER_LIGHT.set(true);
@@ -211,7 +211,7 @@ final class DevClientSmokeM37 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

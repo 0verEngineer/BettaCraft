@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -85,14 +85,14 @@ public final class CompatGameTests {
     }
 
     private static Item item(String ns, String path) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(ns, path);
-        Item i = BuiltInRegistries.ITEM.get(id);
+        Identifier id = Identifier.fromNamespaceAndPath(ns, path);
+        Item i = BuiltInRegistries.ITEM.getValue(id);
         if (i == Items.AIR) throw new GameTestAssertException("missing item " + id);
         return i;
     }
 
     private static EntityType<?> entity(String ns, String path) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(ns, path);
+        Identifier id = Identifier.fromNamespaceAndPath(ns, path);
         return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElseThrow(() -> new GameTestAssertException("missing entity " + id));
     }
 
@@ -129,7 +129,7 @@ public final class CompatGameTests {
     }
 
     private static ItemStack findFilled(ServerPlayer sp, Item item) {
-        for (ItemStack s : sp.getInventory().items) if (s.is(item) && FishContainers.storedEntity(s) != null) return s;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (s.is(item) && FishContainers.storedEntity(s) != null) return s;
         throw new GameTestAssertException("no filled " + BuiltInRegistries.ITEM.getKey(item) + " in the inventory");
     }
 
@@ -148,7 +148,7 @@ public final class CompatGameTests {
         source.discard();
         CompoundTag fishData = (CompoundTag) call("net.mint_gaming_studios.betterfishtanksmod.item.custom.FishBagItem", "getFishData",
                 new Class<?>[]{ItemStack.class}, bag);
-        h.assertTrue(fishData != null && "bettacraft:betta".equals(fishData.getString("id")), "BFT reads our bag format");
+        h.assertTrue(fishData != null && "bettacraft:betta".equals(fishData.getStringOr("id", "")), "BFT reads our bag format");
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             ok(insert(h, c, bag, sp));
@@ -165,8 +165,8 @@ public final class CompatGameTests {
             h.assertTrue(c.getTank().waterMb() == 5000, "BFT bag removes 100 mB, got " + c.getTank().waterMb());
             ItemStack filled = findFilled(sp, bagItem);
             CompoundTag stored = FishContainers.storedEntity(filled);
-            h.assertTrue("bettacraft:betta".equals(stored.getString("id")) && stored.contains(BettaData.KEY), "full entity NBT in StoredEntity");
-            h.assertTrue(!stored.getCompound("neoforge:attachments").contains(BettaCraft.id("tank_ref").toString()), "tank_ref released");
+            h.assertTrue("bettacraft:betta".equals(stored.getStringOr("id", "")) && stored.contains(BettaData.KEY), "full entity NBT in StoredEntity");
+            h.assertTrue(!stored.getCompoundOrEmpty("neoforge:attachments").contains(BettaCraft.id("tank_ref").toString()), "tank_ref released");
             h.succeed();
         } finally {
             sp.getServer().getPlayerList().remove(sp);
@@ -177,7 +177,7 @@ public final class CompatGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 200)
     public static void bettaIntoBetterFishTanksTank(GameTestHelper h) {
         if (skip(h, "betterfishtanks")) return;
-        Block bft = BuiltInRegistries.BLOCK.get(BetterFishTanksCompat.TANK_BLOCK);
+        Block bft = BuiltInRegistries.BLOCK.getValue(BetterFishTanksCompat.TANK_BLOCK);
         for (int x = 0; x < 3; x++)
             for (int y = 0; y < 2; y++)
                 for (int z = 0; z < 3; z++) h.setBlock(new BlockPos(4 + x, 1 + y, 4 + z), bft.defaultBlockState());
@@ -236,9 +236,9 @@ public final class CompatGameTests {
         h.assertTrue(entity("fintastic", "freshwater_shark").is(ModTags.PREDATORS), "sharkminnow is a predator");
         h.assertTrue(BettaFood.kind(new ItemStack(item("fintastic", "regular_feed"))) == BettaFood.Kind.NORMAL, "fish feed feeds bettas");
         h.assertTrue(Blocks.LILY_PAD.defaultBlockState().is(ModTags.FLOATING_PLANTS)
-                && BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fintastic", "duckweed")).defaultBlockState().is(ModTags.FLOATING_PLANTS),
+                && BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fintastic", "duckweed")).defaultBlockState().is(ModTags.FLOATING_PLANTS),
                 "duckweed floats like a lily pad");
-        h.assertTrue(BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fintastic", "hornwort")).defaultBlockState()
+        h.assertTrue(BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fintastic", "hornwort")).defaultBlockState()
                 .is(ModTags.INTERIOR_WATER_PLANTS), "hornwort is an interior water plant");
         h.succeed();
     }
@@ -281,14 +281,14 @@ public final class CompatGameTests {
         // fish plaque on a wall
         BlockPos wall = new BlockPos(10, 2, 11), plaque = new BlockPos(10, 2, 10);
         h.setBlock(wall, Blocks.STONE);
-        Block oak = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
+        Block oak = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
         h.setBlock(plaque, oak.defaultBlockState());
         ItemStack bucket = bettaBucket(41);
         p.setItemInHand(InteractionHand.MAIN_HAND, bucket);
         h.useBlock(plaque, p);
         CompoundTag nbt = h.getBlockEntity(plaque).saveWithoutMetadata(h.getLevel().registryAccess());
-        CompoundTag data = nbt.getCompound("PlaqueData");
-        h.assertTrue("bettacraft:betta".equals(data.getString("id")), "betta on the plaque, got " + nbt);
+        CompoundTag data = nbt.getCompoundOrEmpty("PlaqueData");
+        h.assertTrue("bettacraft:betta".equals(data.getStringOr("id", "")), "betta on the plaque, got " + nbt);
         h.assertTrue(data.contains(BettaData.KEY), "with its genome");
         h.assertTrue(p.getMainHandItem().is(Items.WATER_BUCKET), "water bucket back");
         h.succeed();

@@ -312,7 +312,7 @@ public final class TankPlants {
         }
         if (!player.getAbilities().instabuild) stack.shrink(1);
         level.playSound(null, p.x, t.waterSurfaceY(), p.z, SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 0.8F, 1.1F);
-        TankCare.log(level, c, "log.bettacraft.plant_added", TankCare.nameArg(player), "@" + item(type).getDescriptionId());
+        TankCare.log(level, c, "log.bettacraft.plant_added", TankCare.nameArg(player), "@" + item(type).getItem().getDescriptionId());
         sync(level, c);
         return true;
     }

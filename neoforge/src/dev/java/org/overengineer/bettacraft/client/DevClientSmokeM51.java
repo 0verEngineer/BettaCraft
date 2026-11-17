@@ -71,7 +71,7 @@ final class DevClientSmokeM51 {
     private volatile BlockPos own1, own2, rearing, foreign;
 
     DevClientSmokeM51() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX() + 1300, p.getY() + 2, p.getZ(), 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX() + 1300, p.getY() + 2, p.getZ(), java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(60, () -> mc.options.hideGui = false);
         // the arrival and his offer
@@ -100,7 +100,7 @@ final class DevClientSmokeM51 {
         then(5, () -> mc.setScreen(null));
         // the tank menu with the aquarist button
         then(5, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), own1);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), own1);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -135,11 +135,11 @@ final class DevClientSmokeM51 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(1500);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, level.getServer());
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS).set(false, level.getServer());
         level.setWeatherParameters(12000, 0, false, false);
         reach(p, false);
         base = p.blockPosition().offset(0, -2, 0);
@@ -199,7 +199,7 @@ final class DevClientSmokeM51 {
         }
         // the player owns tanks and bred something: an aquarist may come
         Progress.award(p, Progress.SPAWNED);
-        p.teleportTo(level, base.getX() + 2.5, base.getY(), base.getZ() - 7.5, 200F, 5F);
+        p.teleportTo(level, base.getX() + 2.5, base.getY(), base.getZ() - 7.5, java.util.Set.of(), 200F, 5F, false);
         LOGGER.info("[m51] scene at {}: why not: {}", base, AquaristArrival.whyNot(p, true));
     }
 
@@ -210,7 +210,7 @@ final class DevClientSmokeM51 {
             LOGGER.error("[smoketest] M51 no aquarist came (FAIL)");
             return;
         }
-        npc.moveTo(base.getX() - 6.5, base.getY(), base.getZ() - 9.5, 0F, 0F);
+        npc.snapTo(base.getX() - 6.5, base.getY(), base.getZ() - 9.5, 0F, 0F);
         LOGGER.info("[m51] {} comes ({})", npc.getName().getString(), npc.getUUID());
     }
 
@@ -219,34 +219,34 @@ final class DevClientSmokeM51 {
         Vec3 d = npc.getEyePosition().subtract(p.getEyePosition());
         float yaw = (float) (Math.atan2(d.z, d.x) * 180 / Math.PI) - 90F;
         float pitch = (float) (-Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * 180 / Math.PI);
-        p.teleportTo(p.serverLevel(), p.getX(), p.getY(), p.getZ(), yaw, pitch);
+        p.teleportTo(p.level(), p.getX(), p.getY(), p.getZ(), java.util.Set.of(), yaw, pitch, false);
     }
 
     private void hire(ServerPlayer p) {
         Component err = AquaristArrival.hire(p);
         if (err != null) LOGGER.error("[smoketest] M51 hire failed: {}", err.getString());
         npc.alwaysDay = true;
-        npc.setRearingTank(TankMultiblock.getController(p.serverLevel(), rearing).getTank().id());
+        npc.setRearingTank(TankMultiblock.getController(p.level(), rearing).getTank().id());
         if (!npc.housed()) LOGGER.error("[smoketest] M51 no home found: workplace {}, bed {}", npc.workplace(), npc.bed());
-        LOGGER.info("[m51] hired: workplace {}, bed {}, tanks {}", npc.workplace(), npc.bed(), AquaristWork.tanks(p.serverLevel(), npc).size());
+        LOGGER.info("[m51] hired: workplace {}, bed {}, tanks {}", npc.workplace(), npc.bed(), AquaristWork.tanks(p.level(), npc).size());
     }
 
     /** The camera follows him at a little distance. */
     private void followJob(ServerPlayer p) {
         if (npc == null || !npc.isAlive()) return;
         Vec3 at = npc.position();
-        p.teleportTo(p.serverLevel(), at.x - 2.6, at.y + 1.2, at.z - 3.2, -40F, 22F);
+        p.teleportTo(p.level(), at.x - 2.6, at.y + 1.2, at.z - 3.2, java.util.Set.of(), -40F, 22F, false);
     }
 
     private void lineUp(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int i = 0; i < AquaristEntity.VARIANTS; i++) {
             AquaristEntity e = ModEntities.HIRED_AQUARIST.get().create(level);
             if (e == null) continue;
             e.setVariant(i);
             e.setCustomName(null);
             e.setNoAi(true);
-            e.moveTo(base.getX() + i * 1.2, base.getY(), base.getZ() + 12.5, 180F, 0F);
+            e.snapTo(base.getX() + i * 1.2, base.getY(), base.getZ() + 12.5, 180F, 0F);
             e.setYHeadRot(180F);
             e.setYBodyRot(180F);
             if (i == 1) e.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new ItemStack(ModItems.FISH_BAG.get()));
@@ -256,12 +256,12 @@ final class DevClientSmokeM51 {
     }
 
     private void night(ServerPlayer p) {
-        p.serverLevel().setDayTime(13800);
+        p.level().setDayTime(13800);
         if (npc != null) npc.alwaysDay = false;
     }
 
     private void report(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         int work = 0;
         for (BlockPos t : List.of(own1, own2, rearing)) {
             TankBlockEntity c = TankMultiblock.getController(level, t);
@@ -320,7 +320,7 @@ final class DevClientSmokeM51 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

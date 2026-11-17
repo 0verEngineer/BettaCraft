@@ -67,8 +67,8 @@ public final class ForeignTerrariumHandlers {
                 && ForeignProfiles.refusal(target.getType()) == null) return; // M39: a refused one hears why
         Player player = event.getEntity();
         event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
-        if (event.getLevel().isClientSide) return;
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (event.getLevel().isClientSide()) return;
         Component no = boxRefusal(player, target);
         if (no != null) {
             player.displayClientMessage(no, true);
@@ -98,13 +98,13 @@ public final class ForeignTerrariumHandlers {
         if (l == null || !l.big() || l.box()) return; // the box catches the small ones
         event.setCanceled(true);
         InteractionResult r = stack.getItem().interactLivingEntity(stack, event.getEntity(), le, event.getHand());
-        event.setCancellationResult(r == InteractionResult.PASS ? InteractionResult.sidedSuccess(event.getLevel().isClientSide) : r);
+        event.setCancellationResult(r == InteractionResult.PASS ? InteractionResult.SUCCESS : r);
     }
 
     /** M35 part b: a mother that dies in her tank loses her laid eggs (the egg block goes, no empty shell stays). */
     @SubscribeEvent
     public static void onDeath(org.overengineer.bettacraft.platform.event.LivingDeathEvent event) {
         LivingEntity e = event.getEntity();
-        if (!e.level().isClientSide && TankInhabitants.hasTankRef(e)) ForeignNests.died(e);
+        if (!e.level().isClientSide() && TankInhabitants.hasTankRef(e)) ForeignNests.died(e);
     }
 }

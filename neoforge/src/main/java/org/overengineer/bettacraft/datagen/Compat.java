@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.datagen;
 
 import java.util.List;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Ids of other mods used in our tags (M7). All entries are optional ({@code "required": false}); the versions checked
@@ -24,17 +24,17 @@ public final class Compat {
      * 4.8 (ATM10AA), Oh The Biomes We've Gone 2.5.1 (ATM10), Biomes O' Plenty 19 and Terralith 2.5 (1.20.1, same ids).
      */
     public static final String RU = "regions_unexplored", BWG = "biomeswevegone", BOP = "biomesoplenty", TF = "twilightforest";
-    public static final List<ResourceLocation> WARM_OCEAN_BIOMES = List.of(rl(RU, "rocky_reef"));
-    public static final List<ResourceLocation> MANGROVE_BIOMES = List.of(rl(BWG, "white_mangrove_marshes"));
-    public static final List<ResourceLocation> SWAMP_BIOMES = List.of(rl(TF, "swamp"));
-    public static final List<ResourceLocation> RIVER_BIOMES = List.of(rl(TF, "stream"));
-    public static final List<ResourceLocation> JUNGLE_BIOMES = List.of(rl(RU, "tropics"), rl(BOP, "tropics"));
+    public static final List<Identifier> WARM_OCEAN_BIOMES = List.of(rl(RU, "rocky_reef"));
+    public static final List<Identifier> MANGROVE_BIOMES = List.of(rl(BWG, "white_mangrove_marshes"));
+    public static final List<Identifier> SWAMP_BIOMES = List.of(rl(TF, "swamp"));
+    public static final List<Identifier> RIVER_BIOMES = List.of(rl(TF, "stream"));
+    public static final List<Identifier> JUNGLE_BIOMES = List.of(rl(RU, "tropics"), rl(BOP, "tropics"));
     /** M31 part b: dry shrubland and steppe of the biome mods (#bettacraft:tortoise_lands; their savannas come with #c:is_savanna). */
-    public static final List<ResourceLocation> TORTOISE_BIOMES = List.of(rl(RU, "shrubland"), rl(RU, "dry_bushland"), rl(RU, "steppe"),
+    public static final List<Identifier> TORTOISE_BIOMES = List.of(rl(RU, "shrubland"), rl(RU, "dry_bushland"), rl(RU, "steppe"),
             rl(BWG, "allium_shrubland"), rl(BWG, "firecracker_chaparral"));
 
     /** Predators: kill bettas and small inhabitants (PLAN 4.3). */
-    public static final List<ResourceLocation> PREDATORS = List.of(
+    public static final List<Identifier> PREDATORS = List.of(
             rl(NATURALIST, "piranha"), rl(NATURALIST, "anglerfish"),
             rl(FOT, "battlegill"), rl(FOT, "wrecker"), rl(FOT, "devilfish"),
             rl(AQUACULTURE, "piranha"),
@@ -52,7 +52,7 @@ public final class Compat {
      * Never in our tanks. M39: the giant fish of Fintastic, Aquaculture and the manta ray of Living Things left the list: their
      * profiles give them their real length, so they go into big tanks by the size rule (M30).
      */
-    public static final List<ResourceLocation> BLACKLIST = List.of(
+    public static final List<Identifier> BLACKLIST = List.of(
             // M16: the tuna of Sushi Go Crafting; land and lava pets of Cataclysm in buckets (the baby leviathan follows and teleports to its
             // owner) and the frogs (no tank animals; M35 part b: the otter of Critters and Companions has a paludarium profile now and
             // left the list: the profile keeps it out of aquariums). Fintastic gouramis go by the size
@@ -62,19 +62,19 @@ public final class Compat {
             rl(SHINY, "shiny_frog"));
 
     /** Typical aquarium animals that are a bit larger than the size rule allows. */
-    public static final List<ResourceLocation> INHABITANTS = List.of(rl(FINTASTIC, "pleco"));
+    public static final List<Identifier> INHABITANTS = List.of(rl(FINTASTIC, "pleco"));
 
     /** Live prey that hungry bettas eat in our tanks. */
-    public static final List<ResourceLocation> PREY = List.of(
+    public static final List<Identifier> PREY = List.of(
             rl(FINTASTIC, "artemia"), rl(FINTASTIC, "daphnia"), rl(FINTASTIC, "copepod"));
 
     /** Fish food of other mods that bettas eat like pellets. */
-    public static final List<ResourceLocation> FOOD = List.of(
+    public static final List<Identifier> FOOD = List.of(
             rl(FINTASTIC, "regular_feed"), rl(FINTASTIC, "quality_feed"), rl(FINTASTIC, "great_feed"),
             rl(FINTASTIC, "premium_feed"), rl(BFT, "pellet_mix"));
 
     /** Live food of other mods (conditions for breeding like mosquito larvae). */
-    public static final List<ResourceLocation> LIVE_FOOD = List.of(
+    public static final List<Identifier> LIVE_FOOD = List.of(
             rl(AQUACULTURE, "worm"), rl(FOT, "earthworms"), rl(BFT, "raw_minishrimp"));
 
     /** Fintastic water plants that may stand in the dry interior. */
@@ -87,7 +87,7 @@ public final class Compat {
 
     private Compat() {}
 
-    public static ResourceLocation rl(String ns, String path) {
-        return ResourceLocation.fromNamespaceAndPath(ns, path);
+    public static Identifier rl(String ns, String path) {
+        return Identifier.fromNamespaceAndPath(ns, path);
     }
 }

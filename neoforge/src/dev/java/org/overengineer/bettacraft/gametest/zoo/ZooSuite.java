@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestAssertException;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
@@ -47,7 +47,7 @@ public final class ZooSuite {
         LOGGER.info("[zoo] registered {} zoo test classes", CLASSES.size());
     }
 
-    static String id(ResourceLocation rl) {
+    static String id(Identifier rl) {
         return rl.toString();
     }
 

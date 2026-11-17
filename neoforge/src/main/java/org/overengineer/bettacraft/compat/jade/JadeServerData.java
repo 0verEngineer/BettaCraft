@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.compat.jade;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
@@ -26,7 +26,7 @@ final class JadeServerData {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.TANK;
         }
     }
@@ -41,7 +41,7 @@ final class JadeServerData {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.FILTER;
         }
     }
@@ -56,7 +56,7 @@ final class JadeServerData {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.SPRING;
         }
     }
@@ -71,7 +71,7 @@ final class JadeServerData {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.CULTURE;
         }
     }
@@ -85,7 +85,7 @@ final class JadeServerData {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.BETTA;
         }
     }

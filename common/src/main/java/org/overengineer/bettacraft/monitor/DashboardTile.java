@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -67,12 +68,12 @@ public final class DashboardTile {
 
     /** The value of a value tile (temperature when unknown). */
     public MonitorValue value() {
-        MonitorValue v = MonitorValue.byId(settings.getString("value"));
+        MonitorValue v = MonitorValue.byId(settings.getStringOr("value", ""));
         return v == null ? MonitorValue.TEMPERATURE : v;
     }
 
     public boolean spark() {
-        return settings.getBoolean("spark");
+        return settings.getBooleanOr("spark", false);
     }
 
     /** A history graph of up to three values over {@code days}. */
@@ -101,14 +102,14 @@ public final class DashboardTile {
 
     /** Graph: game days shown (1-7). */
     public int days() {
-        int d = settings.contains("days") ? settings.getInt("days") : 1;
+        int d = settings.contains("days") ? settings.getIntOr("days", 0) : 1;
         return Math.max(1, Math.min(7, d));
     }
 
     /** Graph: the values (at most {@link #MAX_GRAPH_VALUES}, the value tile's value if none are set). */
     public List<MonitorValue> graphValues() {
         List<MonitorValue> out = new ArrayList<>();
-        for (String s : settings.getString("history").split(",")) {
+        for (String s : settings.getStringOr("history", "").split(",")) {
             MonitorValue v = MonitorValue.byId(s.trim());
             if (v != null && !out.contains(v) && out.size() < MAX_GRAPH_VALUES) out.add(v);
         }
@@ -128,16 +129,16 @@ public final class DashboardTile {
 
     /** Alarm: true = alarm below the limit, false = above. */
     public boolean below() {
-        return settings.getBoolean("below");
+        return settings.getBooleanOr("below", false);
     }
 
     public float limit() {
-        return settings.getFloat("limit");
+        return settings.getFloatOr("limit", 0f);
     }
 
     /** Alarm: the screen gives a redstone signal while it is on. */
     public boolean redstone() {
-        return ALARM.equals(type) && settings.getBoolean("redstone");
+        return ALARM.equals(type) && settings.getBooleanOr("redstone", false);
     }
 
     /** Alarm: the value of the tank is past the limit (an unknown tank or value, or a tank not loaded, is no alarm). */
@@ -161,7 +162,7 @@ public final class DashboardTile {
         if (GRAPH.equals(type)) {
             for (MonitorValue v : graphValues()) if (!out.contains(v)) out.add(v);
         } else if (settings.contains("history")) {
-            for (String s : settings.getString("history").split(",")) {
+            for (String s : settings.getStringOr("history", "").split(",")) {
                 MonitorValue v = MonitorValue.byId(s.trim());
                 if (v != null && !out.contains(v)) out.add(v);
             }
@@ -176,11 +177,11 @@ public final class DashboardTile {
     public void sanitizeSettings() {
         CompoundTag in = settings, out = new CompoundTag();
         for (String k : new String[]{"value", "history"}) {
-            if (in.contains(k, net.minecraft.nbt.Tag.TAG_STRING) && in.getString(k).length() <= MAX_SETTING_LENGTH) out.putString(k, in.getString(k));
+            if (NbtCompat.has(in, k, net.minecraft.nbt.Tag.TAG_STRING) && in.getStringOr(k, "").length() <= MAX_SETTING_LENGTH) out.putString(k, in.getStringOr(k, ""));
         }
-        for (String k : new String[]{"spark", "below", "redstone"}) if (in.contains(k, net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) out.putBoolean(k, in.getBoolean(k));
-        if (in.contains("days", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) out.putInt("days", Math.max(1, Math.min(7, in.getInt("days"))));
-        if (in.contains("limit", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC) && Float.isFinite(in.getFloat("limit"))) out.putFloat("limit", in.getFloat("limit"));
+        for (String k : new String[]{"spark", "below", "redstone"}) if (NbtCompat.has(in, k, org.overengineer.bettacraft.util.NbtCompat.ANY_NUMERIC)) out.putBoolean(k, in.getBooleanOr(k, false));
+        if (NbtCompat.has(in, "days", org.overengineer.bettacraft.util.NbtCompat.ANY_NUMERIC)) out.putInt("days", Math.max(1, Math.min(7, in.getIntOr("days", 0))));
+        if (NbtCompat.has(in, "limit", org.overengineer.bettacraft.util.NbtCompat.ANY_NUMERIC) && Float.isFinite(in.getFloatOr("limit", 0f))) out.putFloat("limit", in.getFloatOr("limit", 0f));
         settings = out;
     }
 
@@ -197,7 +198,7 @@ public final class DashboardTile {
         c.putInt("id", id);
         c.putIntArray("rect", new int[]{x, y, w, h});
         c.putString("type", type);
-        if (tank != null) c.putUUID("tank", tank);
+        if (tank != null) NbtCompat.putUUID(c, "tank", tank);
         if (!settings.isEmpty()) c.put("settings", settings.copy());
         if (background != 0) c.putInt("bg", background);
         if (foreground != 0) c.putInt("fg", foreground);
@@ -206,20 +207,20 @@ public final class DashboardTile {
 
     public static DashboardTile load(CompoundTag c) {
         DashboardTile t = new DashboardTile();
-        t.id = c.getInt("id");
-        int[] r = c.getIntArray("rect");
+        t.id = c.getIntOr("id", 0);
+        int[] r = c.getIntArray("rect").orElse(new int[0]);
         if (r.length == 4) {
             t.x = r[0];
             t.y = r[1];
             t.w = r[2];
             t.h = r[3];
         }
-        String type = c.getString("type");
+        String type = c.getStringOr("type", "");
         t.type = type.isEmpty() || type.length() > MAX_TYPE_LENGTH ? VALUE : type;
-        t.tank = c.hasUUID("tank") ? c.getUUID("tank") : null;
-        t.settings = c.getCompound("settings").copy();
-        t.background = c.getInt("bg");
-        t.foreground = c.getInt("fg");
+        t.tank = NbtCompat.hasUUID(c, "tank") ? NbtCompat.getUUID(c, "tank") : null;
+        t.settings = c.getCompoundOrEmpty("settings").copy();
+        t.background = c.getIntOr("bg", 0);
+        t.foreground = c.getIntOr("fg", 0);
         return t;
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +16,12 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -111,7 +112,7 @@ public final class GenerationsGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         return sp;
     }
 
@@ -126,7 +127,7 @@ public final class GenerationsGameTests {
         if (err != null) throw new GameTestAssertException("take out " + e.getType().getDescriptionId() + ": " + err.getString());
         h.assertTrue(!e.isAlive() || e.isRemoved(), "the animal left the tank");
         h.assertTrue(!from.getTank().inhabitants().contains(e.getUUID()), "no longer an inhabitant");
-        for (ItemStack s : sp.getInventory().items) if (TankInhabitants.containedType(s) != null) return s.copy();
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (TankInhabitants.containedType(s) != null) return s.copy();
         throw new GameTestAssertException("no filled container after taking out " + e.getType().getDescriptionId());
     }
 
@@ -136,8 +137,8 @@ public final class GenerationsGameTests {
         List<Entity> before = TankInhabitants.liveInhabitants(level, to.getTank());
         sp.getInventory().clearContent();
         sp.setItemInHand(InteractionHand.MAIN_HAND, filled);
-        ItemInteractionResult r = TankInhabitants.tryInsert(filled, level, to.getBlockPos(), sp, InteractionHand.MAIN_HAND);
-        h.assertTrue(r == ItemInteractionResult.CONSUME, "inserted: " + r);
+        InteractionResult r = TankInhabitants.tryInsert(filled, level, to.getBlockPos(), sp, InteractionHand.MAIN_HAND);
+        h.assertTrue(r == InteractionResult.CONSUME, "inserted: " + r);
         for (Entity e : TankInhabitants.liveInhabitants(level, to.getTank())) if (!before.contains(e)) return e;
         throw new GameTestAssertException("nothing came into the tank from " + filled);
     }
@@ -508,10 +509,10 @@ public final class GenerationsGameTests {
         for (TankmateEntity m : mates(h, c)) {
             TankView.Inhabitant i = row(v, m);
             h.assertTrue(i.isTankmate() && i.generation() == m.generation(), "the menu's generation");
-            h.assertTrue(i.tankmate().getString("variety").equals(m.variety()), "the menu's variety " + i.tankmate().getString("variety"));
+            h.assertTrue(i.tankmate().getStringOr("variety", "").equals(m.variety()), "the menu's variety " + i.tankmate().getStringOr("variety", ""));
             h.assertTrue(i.female() == m.isFemale(), "the menu's sex");
-            if (i.genesVisible()) h.assertTrue(i.tankmate().getString("genes").equals(m.genes().text()), "the menu's genes");
-            else h.assertTrue(i.tankmate().getString("genes").isEmpty(), "hidden genes");
+            if (i.genesVisible()) h.assertTrue(i.tankmate().getStringOr("genes", "").equals(m.genes().text()), "the menu's genes");
+            else h.assertTrue(i.tankmate().getStringOr("genes", "").isEmpty(), "hidden genes");
         }
     }
 
@@ -557,7 +558,7 @@ public final class GenerationsGameTests {
         sp.getInventory().setItem(0, new ItemStack(ModItems.FISH_BAG.get()));
         Component err = TankCritters.takeOutById(h.getLevel(), c, sp, k.id, false);
         if (err != null) throw new GameTestAssertException("take out " + k.species.id() + ": " + err.getString());
-        for (ItemStack s : sp.getInventory().items) if (TankCritters.bagged(s) != null) return s.copy();
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (TankCritters.bagged(s) != null) return s.copy();
         throw new GameTestAssertException("no filled bag");
     }
 
@@ -687,7 +688,7 @@ public final class GenerationsGameTests {
         k.face = Critter.FLOOR;
         sp.getInventory().clearContent();
         sp.getInventory().setItem(5, new ItemStack(ModItems.FISH_BAG.get())); // the net puts the catch into a bag
-        sp.teleportTo(h.getLevel(), mid.getX() + 0.5, mid.getY() + 0.6 - sp.getEyeHeight() + 1.0, mid.getZ() - 3.0, 0F, 0F);
+        sp.teleportTo(h.getLevel(), mid.getX() + 0.5, mid.getY() + 0.6 - sp.getEyeHeight() + 1.0, mid.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
         sp.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, new Vec3(k.x, k.y + 0.04, k.z));
         int before = alive(c, s, x -> true).size();
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
@@ -695,7 +696,7 @@ public final class GenerationsGameTests {
         sp.gameMode.useItemOn(sp, h.getLevel(), sp.getMainHandItem(), InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(front).add(0, 0, -0.5), Direction.NORTH, front, false));
         h.assertTrue(alive(c, s, x -> true).size() == before - 1, "the net caught one");
-        ItemStack netted = sp.getInventory().items.stream().filter(x -> TankCritters.bagged(x) != null).findFirst().orElseThrow().copy();
+        ItemStack netted = sp.getInventory().getNonEquipmentItems().stream().filter(x -> TankCritters.bagged(x) != null).findFirst().orElseThrow().copy();
         Critter caught = Critter.loadAnimal(TankCritters.bagged(netted).getFirst(), 0, 0, 0, 0);
         h.assertTrue("pink".equals(caught.genes.variety(s)) && caught.generation == k.generation, "the net caught the pink snail: " + caught.genes.variety(s));
         use(h, sp, n, netted);
@@ -722,7 +723,7 @@ public final class GenerationsGameTests {
     }
 
     private static int generation(Axolotl a) {
-        return org.overengineer.bettacraft.platform.Platform.get().persistentData(a).getInt(AxolotlCare.GENERATION);
+        return org.overengineer.bettacraft.platform.Platform.get().persistentData(a).getIntOr(AxolotlCare.GENERATION, 0);
     }
 
     /** Lays and hatches one clutch of the axolotls in {@code c} (seeded), grows the larvae up; returns the young. */
@@ -788,13 +789,13 @@ public final class GenerationsGameTests {
         List<Axolotl> moved = new ArrayList<>();
         for (Axolotl x : carriers) {
             CritterGenes g = AxolotlCare.genes(x);
-            boolean analysed = org.overengineer.bettacraft.platform.Platform.get().persistentData(x).getBoolean(AxolotlCare.ANALYSED);
+            boolean analysed = org.overengineer.bettacraft.platform.Platform.get().persistentData(x).getBooleanOr(AxolotlCare.ANALYSED, false);
             Axolotl y = (Axolotl) move(h, sp, a, x, b, new ItemStack(Items.WATER_BUCKET), false);
             h.assertTrue(y.isBaby(), "a larva in the bucket stays a larva");
             y.setAge(0);
             h.assertTrue(AxolotlCare.genes(y).equals(g), "the bucket keeps the genes");
             h.assertTrue(generation(y) == 1, "the bucket keeps the generation (was " + generation(y) + ")");
-            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(y).getBoolean(AxolotlCare.ANALYSED) == analysed, "and the magnifier's analysis");
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(y).getBooleanOr(AxolotlCare.ANALYSED, false) == analysed, "and the magnifier's analysis");
             moved.add(y);
         }
         List<Axolotl> f2 = new ArrayList<>(axolotlBrood(h, b, 4260L));
@@ -834,7 +835,7 @@ public final class GenerationsGameTests {
         Axolotl y = (Axolotl) putIn(h, sp, b, bucket);
         h.assertTrue(y.getVariant() == Axolotl.Variant.GOLD && AxolotlCare.genes(y).equals(g), "the colour genes");
         h.assertTrue(generation(y) == 3, "the generation: " + generation(y));
-        h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(y).getBoolean(AxolotlCare.ANALYSED), "the magnifier's analysis");
+        h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(y).getBooleanOr(AxolotlCare.ANALYSED, false), "the magnifier's analysis");
         h.succeed();
     }
 
@@ -905,7 +906,7 @@ public final class GenerationsGameTests {
         f.setNextLayForTest(0);
         HerpBreeding.step(level, c, 0.001);
         h.assertTrue(f.nestTarget() != null, f.species().id() + ": she found a nest; log " + t.log().stream().map(TankData.LogEntry::key).toList());
-        f.moveTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
+        f.snapTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
         HerpBreeding.step(level, c, 0.001);
         h.assertTrue(t.herpClutches().size() == 1, "one clutch");
         HerpClutch k = t.herpClutches().getFirst();
@@ -1167,7 +1168,7 @@ public final class GenerationsGameTests {
         }
         ServerLevel level = h.getLevel();
         ServerPlayer sp = breeder(h);
-        EntityType<?> box = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("aquaculture:box_turtle"));
+        EntityType<?> box = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse("aquaculture:box_turtle"));
         Climate.State home = new Climate.State(28, 28, 40, 75, 5, 0);
         TankBlockEntity c = ForeignTerrariumGameTests.terrarium(h, 1, 18, 6, 3, 4);
         c.getTank().setClimate(home);
@@ -1227,7 +1228,7 @@ public final class GenerationsGameTests {
     }
 
     public static int variant(Entity e) {
-        return e.saveWithoutId(new CompoundTag()).getInt("Variant");
+        return NbtCompat.saveEntityWithoutId(e).getIntOr("Variant", 0);
     }
 
     private static void fintasticGuppies(GameTestHelper h) {
@@ -1237,7 +1238,7 @@ public final class GenerationsGameTests {
         }
         ServerLevel level = h.getLevel();
         ServerPlayer sp = breeder(h);
-        EntityType<?> guppy = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("fintastic:guppy"));
+        EntityType<?> guppy = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse("fintastic:guppy"));
         TankBlockEntity c = ForeignGameTests.tank(h, 1, 10, 3, 2, 2, 25F);
         ForeignGameTests.add(h, c, guppy, t -> {
             t.putInt("FinColor", 1);
@@ -1258,8 +1259,8 @@ public final class GenerationsGameTests {
             List<Entity> young = TankInhabitants.liveInhabitants(level, c.getTank()).stream().filter(e -> !before.contains(e)).toList();
             h.assertTrue(!young.isEmpty(), "young Fintastic guppies in generation " + gen);
             for (Entity e : young) {
-                CompoundTag t = e.saveWithoutId(new CompoundTag());
-                h.assertTrue(fins.contains(t.getInt("FinColor")) && tails.contains(t.getInt("TailColor")), "the colours of a parent: " + t.getInt("FinColor") + "/" + t.getInt("TailColor"));
+                CompoundTag t = NbtCompat.saveEntityWithoutId(e);
+                h.assertTrue(fins.contains(t.getIntOr("FinColor", 0)) && tails.contains(t.getIntOr("TailColor", 0)), "the colours of a parent: " + t.getIntOr("FinColor", 0) + "/" + t.getIntOr("TailColor", 0));
                 if (e instanceof AgeableMob a) a.setAge(0);
                 else if (e instanceof net.minecraft.world.entity.Mob mob) mob.setBaby(false); // Fintastic's own age (BreedableWaterAnimal)
             }
@@ -1271,9 +1272,9 @@ public final class GenerationsGameTests {
             tails = new java.util.HashSet<>();
             for (Entity e : pair) {
                 Entity m = move(h, sp, c, e, n, new ItemStack(ModItems.FISH_BAG.get()), true);
-                CompoundTag t = m.saveWithoutId(new CompoundTag());
-                fins.add(t.getInt("FinColor"));
-                tails.add(t.getInt("TailColor"));
+                CompoundTag t = NbtCompat.saveEntityWithoutId(m);
+                fins.add(t.getIntOr("FinColor", 0));
+                tails.add(t.getIntOr("TailColor", 0));
             }
             c = n;
         }

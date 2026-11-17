@@ -17,10 +17,7 @@ neoForge {
     neoFormVersion = project.neo_form_version
     // the vanilla members NeoForge's access transformer opens and the common code uses (compile only)
     accessTransformers.from(file('accesstransformer.cfg'))
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
+    // M52b: no Parchment for 1.21.11 (plain Mojang names; Parchment only adds parameter names)
 }
 
 sourceSets.main.resources {

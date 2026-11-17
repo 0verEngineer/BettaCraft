@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public final class ConfigStressGameTests {
     static void nonFinite(Tag t, String path, List<String> out) {
         if (t instanceof FloatTag f && !Float.isFinite(f.getAsFloat())) out.add(path + "=" + f.getAsFloat());
         else if (t instanceof DoubleTag d && !Double.isFinite(d.getAsDouble())) out.add(path + "=" + d.getAsDouble());
-        else if (t instanceof CompoundTag c) for (String k : c.getAllKeys()) nonFinite(c.get(k), path + "." + k, out);
+        else if (t instanceof CompoundTag c) for (String k : c.keySet()) nonFinite(c.get(k), path + "." + k, out);
         else if (t instanceof CollectionTag<?> l) for (int i = 0; i < l.size(); i++) nonFinite(l.get(i), path + "[" + i + "]", out);
     }
 
@@ -143,7 +144,7 @@ public final class ConfigStressGameTests {
         nonFinite(t.save(), "tank", bad);
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), t)) {
             CompoundTag tag = new CompoundTag();
-            e.saveWithoutId(tag);
+            tag.merge(NbtCompat.saveEntityWithoutId(e));
             nonFinite(tag, e.getType().toShortString(), bad);
             if (e instanceof LivingEntity le && !Float.isFinite(le.getHealth())) bad.add(e.getType().toShortString() + " health " + le.getHealth());
         }

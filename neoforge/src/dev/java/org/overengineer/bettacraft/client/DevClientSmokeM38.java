@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
@@ -76,7 +76,7 @@ final class DevClientSmokeM38 {
         then(1, this::swayTable);
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(0, 1, 0));
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 0));
             var e = ForeignPlants.effect(p.server, org.overengineer.bettacraft.plants.InteriorPlants.region(p.server, c.getTank()));
             LOGGER.info("[smoketest] M38 fresh tank: {} plants of other mods, mass {}, floating {}, over the limit {}", e.plants(), Math.round(e.mass()),
                     e.floating(), e.overLimit());
@@ -99,7 +99,7 @@ final class DevClientSmokeM38 {
     /** Whether every block of the default profiles sways in the miniature (logged as a table for the report). */
     private void swayTable() {
         for (var f : ForeignPlants.files().entrySet()) {
-            for (ResourceLocation id : f.getValue().blocks()) {
+            for (Identifier id : f.getValue().blocks()) {
                 var b = BuiltInRegistries.BLOCK.getOptional(id);
                 if (b.isEmpty()) {
                     LOGGER.info("[smoketest] M38 sway {}: not loaded", id);
@@ -112,7 +112,7 @@ final class DevClientSmokeM38 {
                         || id.getPath().endsWith("_block") || id.getPath().equals("sea_pickle");
                 if (!sways && !flat) LOGGER.error("[smoketest] M38 {} does not sway in the miniature", id);
             }
-            for (ResourceLocation tag : f.getValue().tags()) {
+            for (Identifier tag : f.getValue().tags()) {
                 var key = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, tag);
                 for (var h : BuiltInRegistries.BLOCK.getTagOrEmpty(key)) {
                     boolean sways = MiniatureSway.candidate(h.value().defaultBlockState());
@@ -127,7 +127,7 @@ final class DevClientSmokeM38 {
 
     @javax.annotation.Nullable
     private static BlockState state(String id) {
-        return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(id)).map(Block::defaultBlockState).orElse(null);
+        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).map(Block::defaultBlockState).orElse(null);
     }
 
     private static void put(ServerLevel in, InteriorRegion r, int x, int y, int z, @javax.annotation.Nullable BlockState s) {
@@ -141,7 +141,7 @@ final class DevClientSmokeM38 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         for (int x = -4; x <= 14; x++)
             for (int z = -6; z <= 6; z++) {
@@ -278,7 +278,7 @@ final class DevClientSmokeM38 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

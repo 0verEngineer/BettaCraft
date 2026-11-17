@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.entity.betta;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -10,7 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -21,7 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -29,7 +32,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -51,11 +54,11 @@ import org.overengineer.bettacraft.registry.ModItems;
  */
 public class BettaEntity extends AbstractFish {
     /** Genome, sex and stage for the renderer (server -> client). */
-    private static final EntityDataAccessor<CompoundTag> DATA_LOOK = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.COMPOUND_TAG);
+    private static final EntityDataAccessor<String> DATA_LOOK = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.STRING); // M52b: SNBT
     private static final EntityDataAccessor<Boolean> DATA_SICK = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.BOOLEAN);
     /** Bit 0: flaring, bit 1: breeding colours (female bars). */
     private static final EntityDataAccessor<Byte> DATA_FLAGS = SynchedEntityData.defineId(BettaEntity.class, EntityDataSerializers.BYTE);
-    private static final ResourceLocation SICK_SLOW = BettaCraft.id("sick_slowness");
+    private static final Identifier SICK_SLOW = BettaCraft.id("sick_slowness");
     public static final int FLAG_FLARE = 1, FLAG_MOOD = 2, FLAG_VARIED = 4;
     /** M26 part b: a varied diet (stronger colours), server side; synced in the flags. */
     boolean varied;
@@ -126,7 +129,7 @@ public class BettaEntity extends AbstractFish {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_LOOK, new CompoundTag());
+        builder.define(DATA_LOOK, "");
         builder.define(DATA_SICK, false);
         builder.define(DATA_FLAGS, (byte) 0);
     }
@@ -151,9 +154,9 @@ public class BettaEntity extends AbstractFish {
     // ------------------------------------------------------------------ data
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData groupData) {
-        boolean wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+        boolean wild = spawnType == EntitySpawnReason.NATURAL || spawnType == EntitySpawnReason.CHUNK_GENERATION;
         // M22.3: now and then a wild betta shows bred colours openly
         BettaGenotype genotype = wild ? org.overengineer.bettacraft.world.Wildlife.betta(random) : BettaGenotype.randomDomestic(random);
         setBettaData(BettaData.create(genotype, random.nextBoolean(), level.getLevel().getGameTime()));
@@ -189,7 +192,7 @@ public class BettaEntity extends AbstractFish {
         BettaGenome.CODEC.encodeStart(NbtOps.INSTANCE, data.genome()).result().ifPresent(t -> look.put("genome", t));
         look.putBoolean("female", data.female());
         look.putString("stage", liveStage.id());
-        entityData.set(DATA_LOOK, look);
+        entityData.set(DATA_LOOK, NbtCompat.syncTag(look));
         entityData.set(DATA_SICK, health.isSick());
         AttributeInstance speed = getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
@@ -205,17 +208,17 @@ public class BettaEntity extends AbstractFish {
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (DATA_LOOK.equals(key)) {
-            CompoundTag look = entityData.get(DATA_LOOK);
-            lookGenome = BettaGenome.CODEC.parse(NbtOps.INSTANCE, look.getCompound("genome")).result().orElse(BettaGenome.DEFAULT);
-            lookFemale = look.getBoolean("female");
-            lookStage = look.contains("stage", Tag.TAG_STRING) ? LifeStage.byId(look.getString("stage")) : LifeStage.ADULT;
+            CompoundTag look = NbtCompat.unsyncTag(entityData.get(DATA_LOOK));
+            lookGenome = BettaGenome.CODEC.parse(NbtOps.INSTANCE, look.getCompoundOrEmpty("genome")).result().orElse(BettaGenome.DEFAULT);
+            lookFemale = look.getBooleanOr("female", false);
+            lookStage = NbtCompat.has(look, "stage", Tag.TAG_STRING) ? LifeStage.byId(look.getStringOr("stage", "")) : LifeStage.ADULT;
             refreshDimensions();
         }
     }
 
     /** Genome as known on this side (server: authoritative, client: synced). */
     public BettaGenome genome() {
-        if (level().isClientSide) return lookGenome;
+        if (level().isClientSide()) return lookGenome;
         // M17: expressing the genotype every tick (aiStep, extents) allocated a genome per fish and tick; it only
         // changes with the data or the genetics (datapack reload)
         org.overengineer.bettacraft.genetics.GeneticsData g = org.overengineer.bettacraft.genetics.GeneticsData.get();
@@ -237,11 +240,11 @@ public class BettaEntity extends AbstractFish {
     }
 
     public boolean isFemale() {
-        return level().isClientSide ? lookFemale : data.female();
+        return level().isClientSide() ? lookFemale : data.female();
     }
 
     public LifeStage lifeStage() {
-        LifeStage s = level() != null && level().isClientSide ? lookStage : liveStage;
+        LifeStage s = level() != null && level().isClientSide() ? lookStage : liveStage;
         return s == null ? LifeStage.ADULT : s;
     }
 
@@ -399,19 +402,23 @@ public class BettaEntity extends AbstractFish {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.put(BettaData.KEY, getBettaData().save());
         tag.putLong("last_sim", lastSimTime);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        if (tag.contains(BettaData.KEY, Tag.TAG_COMPOUND)) {
-            setBettaData(BettaData.load(tag.getCompound(BettaData.KEY)));
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        if (NbtCompat.has(tag, BettaData.KEY, Tag.TAG_COMPOUND)) {
+            setBettaData(BettaData.load(tag.getCompoundOrEmpty(BettaData.KEY)));
         }
-        lastSimTime = tag.contains("last_sim") ? tag.getLong("last_sim") : -1;
+        lastSimTime = tag.contains("last_sim") ? tag.getLongOr("last_sim", 0L) : -1;
         simStarted = false;
     }
 
@@ -440,7 +447,7 @@ public class BettaEntity extends AbstractFish {
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
         boolean wasPresent = !isRemoved();
         net.minecraft.world.InteractionResult r = super.mobInteract(player, hand);
-        if (!level().isClientSide && wasPresent && isRemoved() && r.consumesAction()) {
+        if (!level().isClientSide() && wasPresent && isRemoved() && r.consumesAction()) {
             org.overengineer.bettacraft.progression.Progress.onBettaCaught(player);
         }
         return r;
@@ -468,7 +475,7 @@ public class BettaEntity extends AbstractFish {
             sizeFactor = f;
             refreshDimensions();
         }
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             // fins spread and fold smoothly (~8 ticks) instead of jumping when the synced flare flag toggles
             flareAmountO = flareAmount;
             flareAmount = net.minecraft.util.Mth.approach(flareAmount, isFlaring() ? 1F : 0F, 0.125F);
@@ -492,7 +499,7 @@ public class BettaEntity extends AbstractFish {
         super.aiStep();
         if (tankWater != null && !tankWater.near(position())) tankWater = null; // M50: moved by another mod, the care finds the tank again
         var water = tankWater;
-        if (water != null && !level().isClientSide && isInWater()) {
+        if (water != null && !level().isClientSide() && isInWater()) {
             // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface and, in a
             // free-shape tank, out of the notches).
             Vec3 p = position();
@@ -574,8 +581,8 @@ public class BettaEntity extends AbstractFish {
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-        return tankWater == null && super.shouldDropLoot(); // tank deaths: no drops (PLAN 5.5)
+    protected boolean shouldDropLoot(ServerLevel serverLevel) {
+        return tankWater == null && super.shouldDropLoot(serverLevel); // tank deaths: no drops (PLAN 5.5)
     }
 
     @Override

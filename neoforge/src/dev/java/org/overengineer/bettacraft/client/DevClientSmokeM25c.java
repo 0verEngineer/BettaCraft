@@ -62,8 +62,8 @@ final class DevClientSmokeM25c {
         then(1, () -> mc.options.hideGui = false);
         // the dosing pump next to the reef tank: its window en + de
         then(1, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), base.getX() + 14.5, base.getY() + 0.2, base.getZ() - 1.5, 0F, 20F);
-            if (p.serverLevel().getBlockEntity(base.offset(15, 0, 0)) instanceof DosingPumpBlockEntity pump) {
+            p.teleportTo(p.level(), base.getX() + 14.5, base.getY() + 0.2, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false);
+            if (p.level().getBlockEntity(base.offset(15, 0, 0)) instanceof DosingPumpBlockEntity pump) {
                 pump.step(1.0);
                 if (pump.status() != DosingPumpBlockEntity.RUNNING) LOGGER.error("[smoketest] M25c the dosing pump does not run: {}", pump.status());
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, pump, base.offset(15, 0, 0));
@@ -80,7 +80,7 @@ final class DevClientSmokeM25c {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int x = -4; x <= 22; x++)
             for (int z = -8; z <= 8; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -125,7 +125,7 @@ final class DevClientSmokeM25c {
     }
 
     private void arrange(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity soft = TankMultiblock.getController(level, base), hard = TankMultiblock.getController(level, base.offset(6, 0, 0));
         if (soft == null || hard == null) {
             LOGGER.error("[smoketest] M25c tanks missing");
@@ -200,7 +200,7 @@ final class DevClientSmokeM25c {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

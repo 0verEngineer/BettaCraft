@@ -136,7 +136,7 @@ public final class Progress {
     private Progress() {}
 
     public static void award(@Nullable Player player, String event, int value) {
-        if (player instanceof ServerPlayer sp && !(sp.level().isClientSide)) {
+        if (player instanceof ServerPlayer sp && !(sp.level().isClientSide())) {
             if (BREEDING_EVENTS.contains(event)) org.overengineer.bettacraft.aquarist.AquaristArrival.onBreeding(sp); // M51
             try {
                 ModTriggers.EVENT.get().trigger(sp, event, value);
@@ -231,19 +231,19 @@ public final class Progress {
     public static void onMenuOpened(ServerPlayer player, TankBlockEntity controller) {
         TankData t = controller.getTank();
         award(player, TANK_BUILT, t.memberCount());
-        if (!org.overengineer.bettacraft.tank.TankCare.bettas(player.serverLevel(), t).isEmpty()
+        if (!org.overengineer.bettacraft.tank.TankCare.bettas(player.level(), t).isEmpty()
                 && TankTemperature.isOptimal(t.waterTemp())) {
             award(player, IDEAL_TEMPERATURE);
         }
         if (!TankEquipment.filters(player.level(), controller).isEmpty()) award(player, FILTER);
         if (!org.overengineer.bettacraft.equipment.Sump.hosts(player.level(), controller).isEmpty()) award(player, SUMP); // M49
-        if (org.overengineer.bettacraft.terrarium.Mudskippers.happy(player.serverLevel(), t)) award(player, MUDSKIPPER); // M49
+        if (org.overengineer.bettacraft.terrarium.Mudskippers.happy(player.level(), t)) award(player, MUDSKIPPER); // M49
         // M45: states of the tank
         if (t.terrariumMode() == org.overengineer.bettacraft.terrarium.TerrariumMode.PALUDARIUM) award(player, PALUDARIUM);
         if (org.overengineer.bettacraft.tank.TankPower.anyRequired() && t.powerBuffer() > 0) award(player, POWERED);
         if (org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FOOD_VARIETY)) {
             var diet = org.overengineer.bettacraft.food.FoodDiet.params();
-            for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(player.serverLevel(), t)) {
+            for (var e : org.overengineer.bettacraft.tank.TankInhabitants.liveInhabitants(player.level(), t)) {
                 org.overengineer.bettacraft.entity.betta.BettaHealth h = e instanceof BettaEntity b ? b.health()
                         : e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m ? m.health() : null;
                 if (h != null && h.varied(diet)) {

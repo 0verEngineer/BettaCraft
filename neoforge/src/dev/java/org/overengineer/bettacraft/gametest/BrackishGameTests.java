@@ -88,12 +88,12 @@ public final class BrackishGameTests {
         // a player leaning over the open tank
         ServerPlayer p = MockPlayers.serverPlayer(h);
         BlockPos top = h.absolutePos(new BlockPos(2, 4, 2));
-        p.moveTo(top.getX() + 0.5, top.getY() + 0.2, top.getZ() + 0.5);
+        p.snapTo(top.getX() + 0.5, top.getY() + 0.2, top.getZ() + 0.5);
         check(Archerfish.leansOver(p, Archerfish.openTops(level, open.getTank())), "the player's head is over the tank");
         p.igniteForSeconds(5);
         Archerfish.splash(level, open, a, p);
         check(!p.isOnFire(), "the splash put the fire out");
-        p.moveTo(top.getX() + 6.5, top.getY() + 0.2, top.getZ() + 0.5);
+        p.snapTo(top.getX() + 6.5, top.getY() + 0.2, top.getZ() + 0.5);
         check(!Archerfish.leansOver(p, Archerfish.openTops(level, open.getTank())), "beside the tank: not over it");
         h.succeed();
     }
@@ -158,7 +158,7 @@ public final class BrackishGameTests {
         check(f.adjust(TerrariumNeeds.Assessment.FINE).problems().contains(TerrariumNeeds.Problem.FRESH_WATER), "fresh water stresses it");
         check(Mudskippers.happy(level, brackish.getTank()) && !Mudskippers.happy(level, fresh.getTank()), "happy in brackish water only");
         check(HerpSpecies.MUDSKIPPER.gait().style() == org.overengineer.bettacraft.terrarium.LandWalker.Style.CLIMB, "it climbs");
-        var mangrove = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME)
+        var mangrove = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
                 .getHolderOrThrow(net.minecraft.world.level.biome.Biomes.MANGROVE_SWAMP);
         check(HerpSpawns.home(mangrove) == HerpSpawns.Home.MANGROVE, "the mangrove swamp is its home");
         check(HerpSpawns.entries(HerpSpawns.Home.MANGROVE).stream().anyMatch(e -> e.species() == HerpSpecies.MUDSKIPPER)

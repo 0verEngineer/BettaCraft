@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
@@ -11,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,7 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -41,9 +43,9 @@ import org.overengineer.bettacraft.registry.ModTags;
  * M21.5: clip-on feeder, hung on a side face of a top tank block (FACING points away from the glass). Right-click with
  * food: fills its one slot; with an empty hand: 1 -> 2 -> 3 feedings a day; sneaking with an empty hand: takes the food out.
  */
-public class ClipFeederBlock extends BaseEntityBlock {
+public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<ClipFeederBlock> CODEC = simpleCodec(ClipFeederBlock::new);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     /** A small box at the top edge, against the glass behind it. */
     private static final VoxelShape NORTH = box(5, 7, 11, 11, 16, 16), SOUTH = box(5, 7, 0, 11, 16, 5),
             WEST = box(11, 7, 5, 16, 16, 11), EAST = box(0, 7, 5, 5, 16, 11);
@@ -89,7 +91,7 @@ public class ClipFeederBlock extends BaseEntityBlock {
         Direction face = ctx.getClickedFace();
         Player player = ctx.getPlayer();
         if (!Features.enabled(Feature.CLIP_FEEDER)) {
-            if (player != null && !ctx.getLevel().isClientSide) {
+            if (player != null && !ctx.getLevel().isClientSide()) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.clip_feeder.off").withStyle(ChatFormatting.RED), true);
             }
             return null;
@@ -97,7 +99,7 @@ public class ClipFeederBlock extends BaseEntityBlock {
         if (face.getAxis().isHorizontal() && canHangOn(ctx.getLevel(), ctx.getClickedPos().relative(face.getOpposite()))) {
             return defaultBlockState().setValue(FACING, face);
         }
-        if (player != null && !ctx.getLevel().isClientSide) {
+        if (player != null && !ctx.getLevel().isClientSide()) {
             player.displayClientMessage(Component.translatable("message.bettacraft.clip_feeder.where").withStyle(ChatFormatting.RED), true);
         }
         return null;
@@ -109,9 +111,9 @@ public class ClipFeederBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbour, LevelAccessor level, BlockPos pos, BlockPos neighbourPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighbourPos, BlockState neighbour, RandomSource random) {
         if (!canSurvive(state, level, pos)) return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
-        return super.updateShape(state, dir, neighbour, level, pos, neighbourPos);
+        return super.updateShape(state, level, tickAccess, pos, dir, neighbourPos, neighbour, random);
     }
 
     @Override
@@ -128,24 +130,24 @@ public class ClipFeederBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.CLIP_FEEDER.get(), FeederBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.CLIP_FEEDER.get(), FeederBlockEntity::serverTick);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(ModTags.BETTA_FOOD)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(ModTags.BETTA_FOOD)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             ItemStack rest = be.items().insertItem(0, stack.copy(), false);
             int moved = stack.getCount() - rest.getCount();
             if (moved > 0 && !player.getAbilities().instabuild) stack.shrink(moved);
             player.displayClientMessage(moved > 0 ? status(be) : Component.translatable("message.bettacraft.clip_feeder.full").withStyle(ChatFormatting.RED), true);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             if (player.isShiftKeyDown()) {
                 ItemStack out = be.items().extractItem(0, 64, false);
                 if (!out.isEmpty() && !player.getInventory().add(out)) player.drop(out, false);
@@ -154,7 +156,7 @@ public class ClipFeederBlock extends BaseEntityBlock {
             }
             player.displayClientMessage(status(be), true);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     public static Component status(ClipFeederBlockEntity be) {
@@ -162,10 +164,9 @@ public class ClipFeederBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(0));
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

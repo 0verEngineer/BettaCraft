@@ -31,7 +31,7 @@ public class CabinetRecipe extends ShapedRecipe {
     }
 
     public static CabinetRecipe of(ShapedRecipe base) {
-        return new CabinetRecipe(base.getGroup(), base.category(), base.pattern, base.getResultItem(null), base.showNotification());
+        return new CabinetRecipe(base.group(), base.category(), base.pattern, base.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, null), base.showNotification());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CabinetRecipe extends ShapedRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = getResultItem(registries).copy();
+        ItemStack result = super.assemble(input, registries);
         Item wood = findWood(input);
         if (wood instanceof BlockItem bi) CabinetBlockItem.setWood(result, BuiltInRegistries.BLOCK.getKey(bi.getBlock()));
         return result;
@@ -70,7 +70,7 @@ public class CabinetRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<CabinetRecipe> getSerializer() {
         return ModRecipes.CABINET.get();
     }
 

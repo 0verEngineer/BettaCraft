@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.model.TankmateModel;
@@ -38,7 +39,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     /** M21.6: the guppy and endler model of the livebearer genetics (one part per tail shape). */
     public static final ModelLayerLocation GUPPY_LAYER = new ModelLayerLocation(BettaCraft.id("tankmate_guppy"), "main");
 
-    private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
+    private static final Map<String, Identifier> TEXTURES = new HashMap<>();
     private final Map<TankmateSpecies.Model, TankmateModel> models = new EnumMap<>(TankmateSpecies.Model.class);
     private final org.overengineer.bettacraft.client.model.GuppyModel guppyModel;
 
@@ -58,7 +59,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
         return m.name().toLowerCase(java.util.Locale.ROOT);
     }
 
-    public static ResourceLocation texture(TankmateSpecies s, String variety, boolean female) {
+    public static Identifier texture(TankmateSpecies s, String variety, boolean female) {
         return TEXTURES.computeIfAbsent(s.texture(variety, female), n -> BettaCraft.id("textures/entity/tankmates/" + n + ".png"));
     }
 
@@ -93,10 +94,10 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
     }
 
     @Override
-    public ResourceLocation getTextureLocation(TankmateEntity fish) {
+    public Identifier getTextureLocation(TankmateEntity fish) {
         var lb = fish.livebearerPhenotype();
         if (lb != null) {
-            ResourceLocation skin = BettaSkins.get(GuppyLook.layers(lb, adultLook(fish), fish.isGravid()));
+            Identifier skin = BettaSkins.get(GuppyLook.layers(lb, adultLook(fish), fish.isGravid()));
             if (skin != null) return skin;
         }
         return texture(fish.species(), fish.variety(), fish.isFemale());
@@ -104,9 +105,9 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, TankmateModel>
 
     @Override
     protected RenderType getRenderType(TankmateEntity fish, boolean bodyVisible, boolean translucent, boolean glowing) {
-        ResourceLocation tex = getTextureLocation(fish);
-        if (!bodyVisible && !translucent) return glowing ? RenderType.outline(tex) : null;
-        return RenderType.entityCutout(tex);
+        Identifier tex = getTextureLocation(fish);
+        if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(tex) : null;
+        return RenderTypes.entityCutout(tex);
     }
 
     @Override

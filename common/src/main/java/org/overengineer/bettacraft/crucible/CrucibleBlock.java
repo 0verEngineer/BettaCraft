@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.crucible;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -23,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -31,9 +32,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** M24: the crucible (stainless steel). Glows while it melts. */
-public class CrucibleBlock extends BaseEntityBlock {
+public class CrucibleBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<CrucibleBlock> CODEC = simpleCodec(CrucibleBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final VoxelShape SHAPE = Shapes.or(box(1, 0, 1, 15, 3, 15), box(2, 3, 2, 14, 13, 14));
 
@@ -69,18 +70,17 @@ public class CrucibleBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CrucibleBlockEntity be) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CrucibleBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!newState.is(this) && level.getBlockEntity(pos) instanceof CrucibleBlockEntity be) {
             for (int i = 0; i < CrucibleBlockEntity.SLOTS; i++) Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
         }
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
@@ -100,6 +100,6 @@ public class CrucibleBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.CRUCIBLE.get(), CrucibleBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.CRUCIBLE.get(), CrucibleBlockEntity::serverTick);
     }
 }

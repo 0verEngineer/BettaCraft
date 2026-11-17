@@ -140,7 +140,7 @@ public final class DevSmokeTest {
                         .setValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING, net.minecraft.core.Direction.NORTH);
                 level.setBlockAndUpdate(p, state);
                 if (level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
-                    cab.setWood(net.minecraft.resources.ResourceLocation.withDefaultNamespace(x % 2 == 0 ? "oak_planks" : "spruce_planks"));
+                    cab.setWood(net.minecraft.resources.Identifier.withDefaultNamespace(x % 2 == 0 ? "oak_planks" : "spruce_planks"));
                     if (first) {
                         var f = new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.EXTERNAL_FILTER.get());
                         org.overengineer.bettacraft.equipment.FilterHeaters.write(f, java.util.List.of(
@@ -188,7 +188,7 @@ public final class DevSmokeTest {
         ticks++;
         try {
             if (ticks == 20) {
-                base = level.getSharedSpawnPos().above(40);
+                base = level.getRespawnData().pos().above(40);
                 for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
                     level.setBlockAndUpdate(base.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
             } else if (ticks == 30) {

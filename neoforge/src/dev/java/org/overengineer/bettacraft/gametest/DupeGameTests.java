@@ -55,7 +55,7 @@ public final class DupeGameTests {
 
     private static int filledBags(ServerPlayer p) {
         int n = 0;
-        for (ItemStack s : p.getInventory().items) if (s.is(ModItems.FISH_BAG.get()) && TankInhabitants.containedType(s) != null) n += s.getCount();
+        for (ItemStack s : p.getInventory().getNonEquipmentItems()) if (s.is(ModItems.FISH_BAG.get()) && TankInhabitants.containedType(s) != null) n += s.getCount();
         return n;
     }
 

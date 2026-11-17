@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.fabric.mixin;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
@@ -30,6 +31,6 @@ public abstract class EntityPersistentDataMixin implements PersistentDataHolder 
 
     @Inject(method = "load", at = @At("HEAD"))
     private void bettacraft$load(CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains("NeoForgeData", Tag.TAG_COMPOUND)) bettacraft$data = tag.getCompound("NeoForgeData").copy();
+        if (NbtCompat.has(tag, "NeoForgeData", Tag.TAG_COMPOUND)) bettacraft$data = tag.getCompoundOrEmpty("NeoForgeData").copy();
     }
 }

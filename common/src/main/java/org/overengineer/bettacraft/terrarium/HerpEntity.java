@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -19,7 +22,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -132,7 +135,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
 
     /** 0 = just hatched .. 1 = grown (synced). */
     public float growth() {
-        if (level().isClientSide) return entityData.get(DATA_GROWTH);
+        if (level().isClientSide()) return entityData.get(DATA_GROWTH);
         return isBaby() ? (float) Mth.clamp(1.0 + getAge() / (double) growTicks(), 0, 1) : 1F;
     }
 
@@ -152,7 +155,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide && isBaby() && tickCount % 100 == 0) {
+        if (!level().isClientSide() && isBaby() && tickCount % 100 == 0) {
             float g = growth();
             if (Math.abs(g - entityData.get(DATA_GROWTH)) > 0.005F) {
                 entityData.set(DATA_GROWTH, g);
@@ -346,11 +349,11 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData data) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData data) {
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, spawnType, data);
         female = random.nextBoolean();
         if (species.varieties().size() > 1) setVariety(HerpSpawns.variety(species, level.getBiome(blockPosition()), random, spawnType));
-        wild = spawnType == MobSpawnType.NATURAL;
+        wild = spawnType == EntitySpawnReason.NATURAL;
         if (isBaby()) makeHatchling();
         return out;
     }
@@ -380,11 +383,11 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
 
     public void loadTurtle(CompoundTag t) {
         loadTerrarium(t);
-        if (t.contains("female")) female = t.getBoolean("female");
-        setVariety(t.getInt("variety"));
-        if (t.contains("age")) setAge(t.getInt("age"));
-        generation = t.getInt("gen");
-        setBrumating(t.getBoolean("brumating"));
+        if (t.contains("female")) female = t.getBooleanOr("female", false);
+        setVariety(t.getIntOr("variety", 0));
+        if (t.contains("age")) setAge(t.getIntOr("age", 0));
+        generation = t.getIntOr("gen", 0);
+        setBrumating(t.getBooleanOr("brumating", false));
         if (isBaby()) entityData.set(DATA_GROWTH, growth());
         refreshDimensions();
     }
@@ -400,7 +403,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
         wild = false;
-        if (tag.contains("terrarium")) loadTurtle(tag.getCompound("terrarium"));
+        if (tag.contains("terrarium")) loadTurtle(tag.getCompoundOrEmpty("terrarium"));
     }
 
     @Override
@@ -419,25 +422,29 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.putBoolean("FromBucket", fromBucket);
         tag.putBoolean("Female", female);
         tag.putInt("Variety", variety());
         tag.putInt("Generation", generation);
         tag.putLong("NextLay", nextLay);
         tag.putBoolean("Brumating", isBrumating());
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        fromBucket = tag.getBoolean("FromBucket");
-        if (tag.contains("Female")) female = tag.getBoolean("Female");
-        setVariety(tag.getInt("Variety"));
-        generation = tag.getInt("Generation");
-        nextLay = tag.getLong("NextLay");
-        setBrumating(tag.getBoolean("Brumating"));
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        fromBucket = tag.getBooleanOr("FromBucket", false);
+        if (tag.contains("Female")) female = tag.getBooleanOr("Female", false);
+        setVariety(tag.getIntOr("Variety", 0));
+        generation = tag.getIntOr("Generation", 0);
+        nextLay = tag.getLongOr("NextLay", 0L);
+        setBrumating(tag.getBooleanOr("Brumating", false));
         if (isBaby()) entityData.set(DATA_GROWTH, growth());
     }
 

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -79,7 +80,7 @@ public final class HiredAquaristGameTests {
 
     static ServerPlayer player(GameTestHelper h) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        sp.moveTo(h.absoluteVec(new Vec3(16, 1, 16)));
+        sp.snapTo(h.absoluteVec(new Vec3(16, 1, 16)));
         return sp;
     }
 
@@ -153,7 +154,7 @@ public final class HiredAquaristGameTests {
             AquaristRecords.get(h.getLevel().getServer()).reset(p);
             // the mock players leave again: they would stand near the tests of later batches (alarm waypoints count players nearby)
             ServerPlayer sp = list.getPlayer(p);
-            if (sp != null && "test-mock-player".equals(sp.getGameProfile().getName())) list.remove(sp);
+            if (sp != null && "test-mock-player".equals(sp.getGameProfile().name())) list.remove(sp);
         }
         for (Entity e : h.getLevel().getEntities(ModEntities.HIRED_AQUARIST.get(), new net.minecraft.world.phys.AABB(h.absolutePos(BlockPos.ZERO)).inflate(40), x -> true)) e.discard();
     }
@@ -206,7 +207,7 @@ public final class HiredAquaristGameTests {
         Progress.award(sp, Progress.SPAWNED);
         AquaristEntity first = AquaristArrival.arrive(sp);
         check(first != null, "one came");
-        first.moveTo(h.absoluteVec(new Vec3(8, 1, 8))); // inside the test's forced chunks, so he ticks
+        first.snapTo(h.absoluteVec(new Vec3(8, 1, 8))); // inside the test's forced chunks, so he ticks
         check(AquaristArrival.decline(sp) == null, "refused");
         check(first.phase() == AquaristEntity.Phase.LEAVING, "he leaves");
         AquaristRecords.PlayerRecord r = AquaristRecords.get(s.server()).player(sp.getUUID());
@@ -222,7 +223,7 @@ public final class HiredAquaristGameTests {
         check(AquaristArrival.whyNot(sp, true) == null, "after another breeding: " + AquaristArrival.whyNot(sp, true));
         AquaristEntity second = AquaristArrival.arrive(sp);
         check(second != null && second != first, "the next one came");
-        second.moveTo(h.absoluteVec(new Vec3(10, 1, 10)));
+        second.snapTo(h.absoluteVec(new Vec3(10, 1, 10)));
         // he waits for an answer only so long
         second.setNoAi(false);
         r.offerUntil = now - 1;
@@ -791,7 +792,7 @@ public final class HiredAquaristGameTests {
             check(!TankInhabitants.bagTakes(npc), "no fish bag takes him");
             check(TankInhabitants.accepts(npc.getType(), npc) != TankInhabitants.Acceptance.OK, "no tank takes him");
             ServerPlayer stranger = MockPlayers.serverPlayer(h);
-            stranger.moveTo(npc.position().add(1, 0, 0));
+            stranger.snapTo(npc.position().add(1, 0, 0));
             var r = npc.interact(stranger, net.minecraft.world.InteractionHand.MAIN_HAND);
             check(r == net.minecraft.world.InteractionResult.CONSUME, "a stranger only gets told whose he is: " + r);
             h.getLevel().getServer().getPlayerList().remove(stranger);

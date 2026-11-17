@@ -93,16 +93,16 @@ final class DevClientSmokeM14 {
         then(1, () -> look(base.getX() + 9.5, base.getY() + 0.9, base.getZ() - 2.2, 0F, 12F));
         then(80, () -> shot("algae_before"));
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(8, 0, 0));
-            int n = c == null ? 0 : TankAlgae.scrape(p.serverLevel(), c, base.offset(8, 0, 0), Direction.NORTH, true);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(8, 0, 0));
+            int n = c == null ? 0 : TankAlgae.scrape(p.level(), c, base.offset(8, 0, 0), Direction.NORTH, true);
             LOGGER.info("[smoketest] M14 scraped {} faces", n);
         }));
         then(60, () -> shot("algae_after"));
         // the menu: small animals page (English, German), a frog in the animals tab
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), base.getX() + 2.0, base.getY() + 1.0, base.getZ() - 2.5, 0F, 0F);
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base);
+            p.teleportTo(p.level(), base.getX() + 2.0, base.getY() + 1.0, base.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -136,7 +136,7 @@ final class DevClientSmokeM14 {
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base);
             if (c == null) return;
             LOGGER.info("[smoketest] M14 colony: {} animals, {} objects, algae {}", c.getTank().critters().size(), c.getTank().critterObjects().size(),
                     TankAlgae.mean(c.getTank()));
@@ -188,7 +188,7 @@ final class DevClientSmokeM14 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         base = p.blockPosition().offset(0, 2, 260);
         // A: the colony tank
@@ -238,7 +238,7 @@ final class DevClientSmokeM14 {
 
     /** Places the animals for the pictures and holds them still. */
     private void arrange(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, base);
         if (c == null) return;
         TankData t = c.getTank();
@@ -303,7 +303,7 @@ final class DevClientSmokeM14 {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (e instanceof BettaEntity b) {
                 SmokeFreeze.freeze(b, true);
-                b.moveTo(bx + 1.2, by + 1.0, bz + 1.1, 120F, 0F);
+                b.snapTo(bx + 1.2, by + 1.0, bz + 1.1, 120F, 0F);
                 b.setYBodyRot(120F);
                 b.setYHeadRot(120F);
             }
@@ -316,14 +316,14 @@ final class DevClientSmokeM14 {
 
     /** The frog at the surface, breathing, held still. */
     private void placeFrog(ServerPlayer p) {
-        TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base);
+        TankBlockEntity c = TankMultiblock.getController(p.level(), base);
         if (c == null) return;
         TankData t = c.getTank();
-        for (Entity e : TankInhabitants.liveInhabitants(p.serverLevel(), t)) {
+        for (Entity e : TankInhabitants.liveInhabitants(p.level(), t)) {
             if (e instanceof BettaEntity b) {
                 SmokeFreeze.freeze(b, true);
                 b.setDeltaMovement(Vec3.ZERO);
-                b.moveTo(base.getX() + 2.3, base.getY() + 1.05, base.getZ() + 1.2, 120F, 0F);
+                b.snapTo(base.getX() + 2.3, base.getY() + 1.05, base.getZ() + 1.2, 120F, 0F);
                 b.setYBodyRot(120F);
                 b.setYHeadRot(120F);
             }
@@ -331,7 +331,7 @@ final class DevClientSmokeM14 {
             SmokeFreeze.freeze(f, true);
             f.setBreathForTest(10);
             f.setDeltaMovement(Vec3.ZERO);
-            f.moveTo(base.getX() + 1.2, t.waterSurfaceY() - f.getBbHeight() + 0.03, base.getZ() + 0.45, 200F, 0F);
+            f.snapTo(base.getX() + 1.2, t.waterSurfaceY() - f.getBbHeight() + 0.03, base.getZ() + 0.45, 200F, 0F);
             f.setYBodyRot(200F);
             f.setYHeadRot(200F);
             LOGGER.info("[smoketest] M14 frog placed at {}", f.position());
@@ -359,7 +359,7 @@ final class DevClientSmokeM14 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void language(String code) {

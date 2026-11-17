@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.client.interior;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -22,10 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
@@ -63,8 +61,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class MiniatureRenderer {
     static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/miniature");
-    private static final List<RenderType> OPAQUE = List.of(RenderType.solid(), RenderType.cutoutMipped(), RenderType.cutout());
-    private static final List<RenderType> LAYERS = List.of(RenderType.solid(), RenderType.cutoutMipped(), RenderType.cutout(), RenderType.translucent());
+    private static final List<ChunkSectionLayer> OPAQUE = List.of(ChunkSectionLayer.SOLID, ChunkSectionLayer.CUTOUT);
+    private static final List<ChunkSectionLayer> LAYERS = List.of(ChunkSectionLayer.SOLID, ChunkSectionLayer.CUTOUT, ChunkSectionLayer.TRANSLUCENT);
     /** Keeps the miniature 0.5 px inside the glass. */
     static final float MARGIN = 0.5F / 16F;
     private static final int MAX_IN_FLIGHT = 6;
@@ -82,8 +80,8 @@ public final class MiniatureRenderer {
     /** Render-thread time spent on miniatures in the last frame (scheduling + uploads + draws), for the bench. */
     public static volatile long lastFrameNanos;
 
-    private record Result(int regionId, long cell, int generation, Map<RenderType, MeshData> data, Map<RenderType, MeshData> plantData,
-                          Map<RenderType, MeshData> swayData, MiniatureSway.Data sway,
+    private record Result(int regionId, long cell, int generation, Map<ChunkSectionLayer, MeshData> data, Map<ChunkSectionLayer, MeshData> plantData,
+                          Map<ChunkSectionLayer, MeshData> swayData, MiniatureSway.Data sway,
                           List<ByteBufferBuilder> memory, int quads, int blocks, long workerNanos, int minX, int minY, int minZ) {
         void free() {
             for (ByteBufferBuilder m : memory) m.close();
@@ -122,7 +120,7 @@ public final class MiniatureRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
         long t0 = System.nanoTime();
-        Vec3 cam = event.getCamera().getPosition();
+        Vec3 cam = event.getCamera().position();
         double maxDist = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
         if (opaque) {
             MiniaturePlants.beginFrame();
@@ -164,7 +162,7 @@ public final class MiniatureRenderer {
             if (opaque) region.plantMeshesShown = MiniaturePlants.prepare(mc.level, region, t, distSq);
             // M22.1: close enough, kelp, seagrass, corals and the water plants of other mods sway
             if (opaque) region.swaying = MiniatureSway.wanted(distSq);
-            draw(event, region, t, cam, opaque ? OPAQUE : List.of(RenderType.translucent()), region.plantMeshesShown, region.swaying);
+            draw(event, region, t, cam, opaque ? OPAQUE : List.of(ChunkSectionLayer.TRANSLUCENT), region.plantMeshesShown, region.swaying);
             float time = mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
             if (opaque && region.plantMeshesShown) MiniaturePlants.draw(event.getPoseStack(), cam, region, t, mc.renderBuffers().bufferSource(), time);
             if (opaque && region.swaying) MiniatureSway.draw(event.getPoseStack(), cam, region, t, mc.renderBuffers().bufferSource(), time);
@@ -178,8 +176,7 @@ public final class MiniatureRenderer {
             if (region == null) continue;
             if (opaque) schedule(mc.level, region, tr.tank(), true);
             if (!region.meshes.isEmpty()) {
-                drawTravelling(region, tr, new Matrix4f(event.getModelViewMatrix()), event.getProjectionMatrix(),
-                        opaque ? OPAQUE : List.of(RenderType.translucent()));
+                drawTravelling(region, tr, new Matrix4f(event.getModelViewMatrix()), opaque ? OPAQUE : List.of(ChunkSectionLayer.TRANSLUCENT));
             }
         }
         if (!opaque) TRAVELLING.clear();
@@ -303,14 +300,14 @@ public final class MiniatureRenderer {
         BlockRenderDispatcher brd = Minecraft.getInstance().getBlockRenderer();
         RandomSource rand = RandomSource.create();
         PoseStack ps = new PoseStack();
-        Map<RenderType, ByteBufferBuilder> memory = new IdentityHashMap<>();
-        Map<RenderType, BufferBuilder> builders = new IdentityHashMap<>();
+        Map<ChunkSectionLayer, ByteBufferBuilder> memory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> builders = new java.util.EnumMap<>(ChunkSectionLayer.class);
         // M21.1: the mesh plants into buffers of their own (left out while the tank shows their meshes)
-        Map<RenderType, ByteBufferBuilder> plantMemory = new IdentityHashMap<>();
-        Map<RenderType, BufferBuilder> plantBuilders = new IdentityHashMap<>();
+        Map<ChunkSectionLayer, ByteBufferBuilder> plantMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> plantBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
         // M22.1: the swaying water plants into buffers of their own, and their quads once more for drawing them swaying
-        Map<RenderType, ByteBufferBuilder> swayMemory = new IdentityHashMap<>();
-        Map<RenderType, BufferBuilder> swayBuilders = new IdentityHashMap<>();
+        Map<ChunkSectionLayer, ByteBufferBuilder> swayMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> swayBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
         MiniatureSway.Data swayData = null;
         MiniatureSway.Capture capture = null;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -340,9 +337,8 @@ public final class MiniatureRenderer {
                 int lz = (s.sz() << 4) + ((i >> 4) & 15);
                 pos.set(lx, ly, lz);
                 try {
-                    BakedModel model = brd.getBlockModel(state);
+                    BlockStateModel model = brd.getBlockModel(state);
                     Object md = org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelData(model, getter, pos, state);
-                    rand.setSeed(state.getSeed(pos));
                     boolean plant = !floor && MiniaturePlants.meshBlock(state);
                     boolean sway = !floor && !plant && MiniatureSway.candidate(state);
                     if (sway) {
@@ -350,44 +346,48 @@ public final class MiniatureRenderer {
                         capture.footY = MiniatureSway.footOf(getter, lx, ly, lz);
                         capture.phase = (float) ((Math.floorMod(lx, 64) * 0.37 + Math.floorMod(lz, 64) * 0.61) % (Math.PI * 2));
                     }
-                    for (RenderType rt : org.overengineer.bettacraft.platform.client.ClientPlatform.get().renderTypes(model, state, rand, md)) {
-                        RenderType layer = LAYERS.contains(rt) ? rt : RenderType.translucent();
-                        Map<RenderType, ByteBufferBuilder> mems = plant ? plantMemory : sway ? swayMemory : memory;
-                        BufferBuilder bb = (plant ? plantBuilders : sway ? swayBuilders : builders).computeIfAbsent(layer, k -> {
+                    Map<ChunkSectionLayer, ByteBufferBuilder> mems = plant ? plantMemory : sway ? swayMemory : memory;
+                    Map<ChunkSectionLayer, BufferBuilder> bbs = plant ? plantBuilders : sway ? swayBuilders : builders;
+                    java.util.function.Function<ChunkSectionLayer, com.mojang.blaze3d.vertex.VertexConsumer> buffers = rt -> {
+                        ChunkSectionLayer layer = LAYERS.contains(rt) ? rt : ChunkSectionLayer.TRANSLUCENT;
+                        return bbs.computeIfAbsent(layer, k -> {
                             ByteBufferBuilder mem = new ByteBufferBuilder(plant || sway ? 1 << 12 : 1 << 16);
                             mems.put(k, mem);
                             return new BufferBuilder(mem, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
                         });
-                        if (sway && layer != RenderType.translucent()) {
-                            ps.pushPose();
-                            ps.translate(lx, ly, lz);
-                            rand.setSeed(state.getSeed(pos));
-                            org.overengineer.bettacraft.platform.client.ClientPlatform.get().renderBatched(brd, state, pos, getter, ps, capture, true, rand, md, rt);
-                            ps.popPose();
-                            rand.setSeed(state.getSeed(pos));
-                        }
+                    };
+                    if (sway) {
+                        // the swaying copy (everything but the translucent parts, drawn with their sway)
+                        MiniatureSway.Capture cap = capture;
                         ps.pushPose();
-                        if (floor) {
-                            // substrate: flattened to 1/16 of an interior block just below the floor
-                            ps.translate(lx, -1F / 16F, lz);
-                            ps.scale(1F, 1F / 16F, 1F);
-                        } else {
-                            ps.translate(lx, ly, lz);
-                        }
-                        org.overengineer.bettacraft.platform.client.ClientPlatform.get().renderBatched(brd, state, pos, getter, ps, bb, true, rand, md, rt);
+                        ps.translate(lx, ly, lz);
+                        rand.setSeed(state.getSeed(pos));
+                        org.overengineer.bettacraft.platform.client.ClientPlatform.get().tesselate(state, pos, getter, ps,
+                                rt -> rt == ChunkSectionLayer.TRANSLUCENT ? com.mojang.blaze3d.vertex.VertexMultiConsumer.create() : cap, true, rand, md, null);
                         ps.popPose();
                     }
+                    rand.setSeed(state.getSeed(pos));
+                    ps.pushPose();
+                    if (floor) {
+                        // substrate: flattened to 1/16 of an interior block just below the floor
+                        ps.translate(lx, -1F / 16F, lz);
+                        ps.scale(1F, 1F / 16F, 1F);
+                    } else {
+                        ps.translate(lx, ly, lz);
+                    }
+                    org.overengineer.bettacraft.platform.client.ClientPlatform.get().tesselate(state, pos, getter, ps, buffers, true, rand, md, null);
+                    ps.popPose();
                     blocks++;
                 } catch (RuntimeException e) {
                     // a broken model of another mod must not kill the whole miniature
                 }
             }
         }
-        Map<RenderType, MeshData> data = new IdentityHashMap<>();
-        Map<RenderType, MeshData> plantData = new IdentityHashMap<>();
-        Map<RenderType, MeshData> swayStatic = new IdentityHashMap<>();
+        Map<ChunkSectionLayer, MeshData> data = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, MeshData> plantData = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, MeshData> swayStatic = new java.util.EnumMap<>(ChunkSectionLayer.class);
         int quads = 0;
-        for (RenderType layer : LAYERS) {
+        for (ChunkSectionLayer layer : LAYERS) {
             for (int pass = 0; pass < 3; pass++) {
                 BufferBuilder bb = (pass == 0 ? builders : pass == 1 ? plantBuilders : swayBuilders).get(layer);
                 if (bb == null) continue;
@@ -427,15 +427,12 @@ public final class MiniatureRenderer {
                     mesh.extent = 32;
                     mesh.sway = r.sway;
                     for (int pass = 0; pass < 3; pass++) {
-                        for (RenderType layer : LAYERS) {
+                        for (ChunkSectionLayer layer : LAYERS) {
                             MeshData d = (pass == 0 ? r.data : pass == 1 ? r.plantData : r.swayData).get(layer);
                             if (d == null) continue;
                             mesh.quads += d.drawState().vertexCount() / 4;
                             mesh.vertexBytes += d.vertexBuffer().remaining();
-                            VertexBuffer vb = new VertexBuffer(VertexBuffer.Usage.STATIC);
-                            vb.bind();
-                            vb.upload(d); // closes the mesh data
-                            VertexBuffer.unbind();
+                            MiniatureMesh.Buffer vb = MiniatureMesh.Buffer.upload(d, "Bettacraft miniature " + r.regionId); // closes the mesh data
                             (pass == 0 ? mesh.buffers : pass == 1 ? mesh.plantBuffers : mesh.swayBuffers).put(layer, vb);
                         }
                     }
@@ -473,61 +470,83 @@ public final class MiniatureRenderer {
 
     // ------------------------------------------------------------------ drawing
 
-    private static void draw(RenderLevelStageEvent event, ClientRegion region, TankData t, Vec3 cam, List<RenderType> layers, boolean noPlants,
+    private static void draw(RenderLevelStageEvent event, ClientRegion region, TankData t, Vec3 cam, List<ChunkSectionLayer> layers, boolean noPlants,
                              boolean noSway) {
         BlockPos min = t.min();
         float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
         float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
         float fz = (t.sizeZ() - 2 * MARGIN) / region.sizeZ;
-        Matrix4f mv = new Matrix4f(event.getModelViewMatrix())
-                .translate((float) (min.getX() - cam.x) + MARGIN, (float) (min.getY() - cam.y) + MARGIN, (float) (min.getZ() - cam.z) + MARGIN)
-                .scale(fx, fy, fz);
-        Matrix4f proj = event.getProjectionMatrix();
-        for (RenderType rt : layers) {
-            boolean any = false;
+        List<MiniatureMesh.Buffer> todo = new ArrayList<>();
+        java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        for (ChunkSectionLayer rt : layers) {
+            List<MiniatureMesh.Buffer> l = new ArrayList<>();
             for (MiniatureMesh m : region.meshes.values()) {
-                if (m.buffers.containsKey(rt) || !noPlants && m.plantBuffers.containsKey(rt) || !noSway && m.swayBuffers.containsKey(rt)) {
-                    any = true;
-                    break;
+                MiniatureMesh.Buffer vb = m.buffers.get(rt);
+                MiniatureMesh.Buffer pb = noPlants ? null : m.plantBuffers.get(rt);
+                MiniatureMesh.Buffer sb = noSway ? null : m.swayBuffers.get(rt);
+                if (vb == null && pb == null && sb == null) continue;
+                double x0 = min.getX() + m.minX * fx, y0 = min.getY() + Math.max(-1, m.minY) * fy, z0 = min.getZ() + m.minZ * fz;
+                if (!event.getFrustum().isVisible(new AABB(x0, y0, z0, x0 + m.extent * fx + 0.1, y0 + (m.extent + 1) * fy + 0.1, z0 + m.extent * fz + 0.1))) {
+                    continue;
+                }
+                if (vb != null) l.add(vb);
+                if (pb != null) l.add(pb);
+                if (sb != null) l.add(sb);
+            }
+            if (!l.isEmpty()) byLayer.put(rt, l);
+        }
+        if (byLayer.isEmpty()) return;
+        drawBuffers(event.getModelViewMatrix(), cam, min.getX(), min.getY(), min.getZ(), fx, fy, fz, byLayer);
+    }
+
+    /**
+     * M52b: draws miniature buffers with the terrain pipelines of 1.21.11, like {@code ChunkSectionsToRender}: the
+     * terrain shader computes {@code Position + (ChunkPosition - CameraBlockPos) + CameraOffset}; with the chunk position at
+     * the camera's block that is the interior-local position plus the camera's fraction, which the model-view matrix takes
+     * back out before scaling the interior into the tank (the fog then sees interior-local distances, as in 1.21.1).
+     */
+    static void drawBuffers(org.joml.Matrix4fc view, Vec3 cam, double originX, double originY, double originZ, float fx, float fy, float fz,
+                            java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
+        int bx = net.minecraft.util.Mth.floor(cam.x), by = net.minecraft.util.Mth.floor(cam.y), bz = net.minecraft.util.Mth.floor(cam.z);
+        float ox = (float) (bx - cam.x), oy = (float) (by - cam.y), oz = (float) (bz - cam.z);
+        Matrix4f mv = new Matrix4f(view)
+                .translate((float) (originX - cam.x) + MARGIN, (float) (originY - cam.y) + MARGIN, (float) (originZ - cam.z) + MARGIN)
+                .scale(fx, fy, fz)
+                .translate(-ox, -oy, -oz);
+        drawWithModelView(mv, bx, by, bz, byLayer);
+    }
+
+    /** The draw itself: one render pass on the main target, a terrain pipeline per layer. */
+    static void drawWithModelView(Matrix4f mv, int chunkX, int chunkY, int chunkZ, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
+        Minecraft mc = Minecraft.getInstance();
+        var atlas = mc.getTextureManager().getTexture(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).getTextureView();
+        var section = RenderSystem.getDynamicUniforms().writeChunkSections(new net.minecraft.client.renderer.DynamicUniforms.ChunkSectionInfo(
+                mv, chunkX, chunkY, chunkZ, 1.0F, atlas.getWidth(0), atlas.getHeight(0)))[0];
+        int maxIndices = 0;
+        for (List<MiniatureMesh.Buffer> l : byLayer.values()) for (MiniatureMesh.Buffer b : l) maxIndices = Math.max(maxIndices, b.indexCount());
+        RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+        com.mojang.blaze3d.buffers.GpuBuffer indices = quads.getBuffer(maxIndices);
+        var target = mc.getMainRenderTarget();
+        try (com.mojang.blaze3d.systems.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                () -> "Bettacraft miniature", target.getColorTextureView(), java.util.OptionalInt.empty(),
+                target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
+            RenderSystem.bindDefaultUniforms(pass);
+            pass.bindTexture("Sampler2", mc.gameRenderer.lightTexture().getTextureView(),
+                    RenderSystem.getSamplerCache().getClampToEdge(com.mojang.blaze3d.textures.FilterMode.LINEAR));
+            pass.setUniform("ChunkSection", section);
+            for (var e : byLayer.entrySet()) {
+                pass.setPipeline(e.getKey().pipeline());
+                pass.bindTexture("Sampler0", atlas, RenderSystem.getSamplerCache().getSampler(com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE,
+                        com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE, com.mojang.blaze3d.textures.FilterMode.LINEAR, com.mojang.blaze3d.textures.FilterMode.LINEAR, true));
+                pass.setIndexBuffer(indices, quads.type());
+                for (MiniatureMesh.Buffer b : e.getValue()) {
+                    pass.setVertexBuffer(0, b.vertices());
+                    pass.drawIndexed(0, 0, b.indexCount(), 1);
                 }
             }
-            if (!any) continue;
-            rt.setupRenderState();
-            ShaderInstance shader = RenderSystem.getShader();
-            if (shader != null) {
-                shader.setDefaultUniforms(VertexFormat.Mode.QUADS, mv, proj, Minecraft.getInstance().getWindow());
-                if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(0F, 0F, 0F);
-                shader.apply();
-                for (MiniatureMesh m : region.meshes.values()) {
-                    VertexBuffer vb = m.buffers.get(rt);
-                    VertexBuffer pb = noPlants ? null : m.plantBuffers.get(rt);
-                    VertexBuffer sb = noSway ? null : m.swayBuffers.get(rt);
-                    if (vb == null && pb == null && sb == null) continue;
-                    double x0 = min.getX() + m.minX * fx, y0 = min.getY() + Math.max(-1, m.minY) * fy, z0 = min.getZ() + m.minZ * fz;
-                    if (!event.getFrustum().isVisible(new AABB(x0, y0, z0, x0 + m.extent * fx + 0.1, y0 + (m.extent + 1) * fy + 0.1, z0 + m.extent * fz + 0.1))) {
-                        continue;
-                    }
-                    if (vb != null) {
-                        vb.bind();
-                        vb.draw();
-                    }
-                    if (pb != null) {
-                        pb.bind();
-                        pb.draw();
-                    }
-                    if (sb != null) {
-                        sb.bind();
-                        sb.draw();
-                    }
-                }
-                shader.clear();
-                VertexBuffer.unbind();
-            }
-            rt.clearRenderState();
         }
     }
 
-    /** M32 part b: a travelling tank's meshes at its recorded pose (no culling per mesh: the pose is not the world's). */
     /**
      * M32 part b: the miniature of a tank on a Create contraption, drawn at once from its block entity renderer (the
      * entity pass): Create (Flywheel) draws the contraption's blocks, the tank water among them, before the miniature
@@ -540,46 +559,35 @@ public final class MiniatureRenderer {
         if (region == null) return;
         schedule(mc.level, region, t, true);
         if (region.meshes.isEmpty()) return;
-        drawTravelling(region, new Travelling(t, origin, pose), new Matrix4f(RenderSystem.getModelViewMatrix()), RenderSystem.getProjectionMatrix(),
-                LAYERS);
+        drawTravelling(region, new Travelling(t, origin, pose), new Matrix4f(RenderSystem.getModelViewMatrix()), LAYERS);
     }
 
-    private static void drawTravelling(ClientRegion region, Travelling tr, Matrix4f modelView, Matrix4f proj, List<RenderType> layers) {
+    /** M32 part b: a travelling tank's meshes at its recorded pose (no culling per mesh: the pose is not the world's). */
+    private static void drawTravelling(ClientRegion region, Travelling tr, Matrix4f modelView, List<ChunkSectionLayer> layers) {
         TankData t = tr.tank();
         BlockPos min = t.min(), o = tr.origin();
         float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
         float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
         float fz = (t.sizeZ() - 2 * MARGIN) / region.sizeZ;
+        java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        for (ChunkSectionLayer rt : layers) {
+            List<MiniatureMesh.Buffer> l = new ArrayList<>();
+            for (MiniatureMesh m : region.meshes.values()) {
+                for (MiniatureMesh.Buffer vb : new MiniatureMesh.Buffer[]{m.buffers.get(rt), m.plantBuffers.get(rt), m.swayBuffers.get(rt)}) {
+                    if (vb != null) l.add(vb);
+                }
+            }
+            if (!l.isEmpty()) byLayer.put(rt, l);
+        }
+        if (byLayer.isEmpty()) return;
+        // the pose is camera-relative at the controller block: the chunk position is 0, the camera fraction is in the pose
         Matrix4f mv = modelView.mul(tr.pose())
                 .translate(min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN)
                 .scale(fx, fy, fz);
-        for (RenderType rt : layers) {
-            boolean any = false;
-            for (MiniatureMesh m : region.meshes.values()) {
-                if (m.buffers.containsKey(rt) || m.plantBuffers.containsKey(rt) || m.swayBuffers.containsKey(rt)) {
-                    any = true;
-                    break;
-                }
-            }
-            if (!any) continue;
-            rt.setupRenderState();
-            ShaderInstance shader = RenderSystem.getShader();
-            if (shader != null) {
-                shader.setDefaultUniforms(VertexFormat.Mode.QUADS, mv, proj, Minecraft.getInstance().getWindow());
-                if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(0F, 0F, 0F);
-                shader.apply();
-                for (MiniatureMesh m : region.meshes.values()) {
-                    for (VertexBuffer vb : new VertexBuffer[]{m.buffers.get(rt), m.plantBuffers.get(rt), m.swayBuffers.get(rt)}) {
-                        if (vb == null) continue;
-                        vb.bind();
-                        vb.draw();
-                    }
-                }
-                shader.clear();
-                VertexBuffer.unbind();
-            }
-            rt.clearRenderState();
-        }
+        Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        int bx = net.minecraft.util.Mth.floor(cam.x), by = net.minecraft.util.Mth.floor(cam.y), bz = net.minecraft.util.Mth.floor(cam.z);
+        mv.translate((float) (cam.x - bx), (float) (cam.y - by), (float) (cam.z - bz));
+        drawWithModelView(mv, bx, by, bz, byLayer);
     }
 
     /** Releases everything of a region (render thread). */

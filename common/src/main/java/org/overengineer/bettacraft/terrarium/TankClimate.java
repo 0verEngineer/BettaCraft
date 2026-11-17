@@ -66,7 +66,7 @@ public final class TankClimate {
 
     /** A heat mat, mister or lamp at a tank changed: the equipment is scanned again at once. */
     public static void equipmentChanged(Level level, BlockPos tankPos) {
-        if (level.isClientSide || !level.isLoaded(tankPos)) return;
+        if (level.isClientSide() || !level.isLoaded(tankPos)) return;
         TankBlockEntity c = TankMultiblock.getController(level, tankPos);
         if (c != null) TankEquipment.invalidate(c);
     }
@@ -125,7 +125,7 @@ public final class TankClimate {
     static boolean plant(BlockState s) {
         if (s.isAir()) return false;
         Block b = s.getBlock();
-        return b instanceof net.minecraft.world.level.block.BushBlock || b instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
+        return b instanceof net.minecraft.world.level.block.VegetationBlock || b instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
                 || s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.is(BlockTags.SAPLINGS) || s.is(net.minecraft.world.level.block.Blocks.MOSS_BLOCK)
                 || s.is(net.minecraft.world.level.block.Blocks.MOSS_CARPET) || s.is(BlockTags.CAVE_VINES) || b instanceof net.minecraft.world.level.block.VineBlock
                 || b instanceof net.minecraft.world.level.block.GrowingPlantBlock;
@@ -157,7 +157,7 @@ public final class TankClimate {
 
     /** 0..1 sunlight UV through open tops that see the sky (only by day; rain lets a third through). */
     public static double sky(ServerLevel level, TankData t) {
-        if (!level.dimensionType().hasSkyLight() || !level.isDay()) return 0;
+        if (!level.dimensionType().hasSkyLight() || !level.isBrightOutside()) return 0;
         int n = 0, open = 0;
         for (BlockPos top : t.openTops()) {
             if (!level.isLoaded(top)) continue;
@@ -189,7 +189,7 @@ public final class TankClimate {
         List<Vec3> out = new java.util.ArrayList<>();
         if (!Features.enabled(Feature.TERRARIUM_DEVICES)) return out;
         var terrain = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(),
-                InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
+                InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside());
         double surface = t.waterMb() <= 0 ? Double.NEGATIVE_INFINITY : t.waterSurfaceY();
         for (BlockPos lamp : litLamps(level, t)) {
             double x = lamp.getX() + 0.5, z = lamp.getZ() + 0.5;

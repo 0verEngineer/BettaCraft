@@ -15,12 +15,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.BaseCoralPlantTypeBlock;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.GrowingPlantBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -86,7 +86,7 @@ public final class MiniatureSway {
             String e = s.trim();
             if (e.isEmpty()) continue;
             if (e.startsWith("#")) {
-                ResourceLocation rl = ResourceLocation.tryParse(e.substring(1));
+                Identifier rl = Identifier.tryParse(e.substring(1));
                 if (rl != null) tags.add(TagKey.create(net.minecraft.core.registries.Registries.BLOCK, rl));
             } else if (e.endsWith(":*")) {
                 mods.add(e.substring(0, e.length() - 2));
@@ -112,7 +112,7 @@ public final class MiniatureSway {
 
     private static boolean decide(BlockState s) {
         if (s.getRenderShape() != RenderShape.MODEL) return false;
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
+        Identifier id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
         if (excludeIds.contains(id.toString()) || excludeMods.contains(id.getNamespace())) return false;
         for (TagKey<net.minecraft.world.level.block.Block> t : excludeTags) if (s.is(t)) return false;
         if (s.is(ModTags.SWAYING_PLANTS)) return true;
@@ -125,7 +125,7 @@ public final class MiniatureSway {
      */
     static boolean autoDetect(BlockState s) {
         var b = s.getBlock();
-        boolean plant = b instanceof BushBlock || b instanceof GrowingPlantBlock || b instanceof BaseCoralPlantTypeBlock
+        boolean plant = b instanceof VegetationBlock || b instanceof GrowingPlantBlock || b instanceof BaseCoralPlantTypeBlock
                 || s.is(BlockTags.CORALS) || s.is(BlockTags.WALL_CORALS) || s.is(BlockTags.REPLACEABLE_BY_TREES) && !s.canOcclude();
         if (!plant || s.canOcclude()) return false;
         // a water plant (its fluid is water), one that can stand in water (waterlogged), or one allowed in the dry interior
@@ -196,6 +196,11 @@ public final class MiniatureSway {
             d.v.set(n * STRIDE + 6, y);
             d.v.set(n * STRIDE + 7, z);
             return this;
+        }
+
+        @Override
+        public VertexConsumer setLineWidth(float width) {
+            return this; // M52b: quads only
         }
     }
 

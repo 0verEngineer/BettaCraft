@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.overengineer.bettacraft.platform.event.SubscribeEvent;
 import org.overengineer.bettacraft.platform.event.ServerTickEvent;
@@ -48,7 +48,7 @@ public final class AquaristArrivalHandlers {
         }
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (org.overengineer.bettacraft.platform.Platform.get().isFakePlayer(p instanceof net.minecraft.world.entity.player.Player fp ? fp : null)) continue;
-            rec.player(p.getUUID()).name = p.getGameProfile().getName();
+            rec.player(p.getUUID()).name = p.getGameProfile().name();
             if (whyNot(p, false) == null) arrive(p);
         }
     }

@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.criterion.LocationPredicate;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -25,7 +25,7 @@ import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
@@ -809,7 +809,7 @@ public final class ModDataGen {
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
                                 org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, to, 1))
                         .requires(net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
-                                net.minecraft.core.component.DataComponentPredicate.builder()
+                                net.minecraft.core.component.predicates.DataComponentPredicate.builder()
                                         .expect(ModDataComponents.GLASS.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS)
                                         .expect(ModDataComponents.TANK_STYLE.get(), from).build(), ModItems.TANK.get()))
                         .group("bettacraft:tank_style")
@@ -1016,7 +1016,7 @@ public final class ModDataGen {
         private static RecipeOutput featureGated(RecipeOutput parent) {
             return new RecipeOutput() {
                 @Override
-                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     String result = null;
                     try {
                         var stack = recipe.getResultItem(net.minecraft.core.RegistryAccess.EMPTY);
@@ -1044,7 +1044,7 @@ public final class ModDataGen {
         private static RecipeOutput as(RecipeOutput parent, java.util.function.Function<ShapedRecipe, Recipe<?>> wrap) {
             return new RecipeOutput() {
                 @Override
-                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, wrap.apply((ShapedRecipe) recipe), advancement, conditions);
                 }
 
@@ -1156,7 +1156,7 @@ public final class ModDataGen {
         private static RecipeOutput asStyleRecipe(RecipeOutput parent, org.overengineer.bettacraft.tank.TankStyle from) {
             return new RecipeOutput() {
                 @Override
-                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, new org.overengineer.bettacraft.tank.TankStyleRecipe((net.minecraft.world.item.crafting.ShapelessRecipe) recipe, from),
                             advancement, conditions);
                 }
@@ -1171,7 +1171,7 @@ public final class ModDataGen {
         private static RecipeOutput asTankRecipe(RecipeOutput parent) {
             return new RecipeOutput() {
                 @Override
-                public void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
+                public void accept(Identifier id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     parent.accept(id, TankRecipe.of((ShapedRecipe) recipe), advancement, conditions);
                 }
 
@@ -1241,9 +1241,9 @@ public final class ModDataGen {
         }
     }
 
-    private static net.minecraft.advancements.Criterion<net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance> hasIt(
+    private static net.minecraft.advancements.Criterion<net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance> hasIt(
             net.minecraft.world.level.ItemLike item) {
-        return net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(item);
+        return net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(item);
     }
 
     static final class BlockLoot extends BlockLootSubProvider {
@@ -1267,7 +1267,7 @@ public final class ModDataGen {
                     .add(LootItem.lootTableItem(ModBlocks.TANK_LIGHT.get())
                             .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(ModBlocks.TANK_LIGHT.get()).copy(TankLightBlock.COLOR)
                                     .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.TANK_LIGHT.get())
-                                            .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                            .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
                                                     .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
@@ -1282,7 +1282,7 @@ public final class ModDataGen {
                         .add(LootItem.lootTableItem(led)
                                 .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(led).copy(TankLightBlock.COLOR)
                                         .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(led)
-                                                .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
                                                         .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             }
             dropSelf(ModBlocks.REEF_ROCK.get());
@@ -1307,7 +1307,7 @@ public final class ModDataGen {
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
                                 .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(b)
-                                        .setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                        .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
                                                 .hasProperty(org.overengineer.bettacraft.plumbing.FilterPipeBlock.JUNCTION, true))))));
             }
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
@@ -1387,14 +1387,14 @@ public final class ModDataGen {
             // M33: every modifier only while its feature is on (bettacraft:feature)
             add("mud_mosquito_larvae", new AddItemLootModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD),
-                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
+                    LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
             }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
             // M26: and tubifex worms (the start of a tubifex dish)
             add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES),
-                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("blocks/mud")).build(),
+                    LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
             }, new ItemStack(ModItems.TUBIFEX.get())));
@@ -1404,12 +1404,12 @@ public final class ModDataGen {
             // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
             add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS),
-                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
+                    LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
             }));
             // M13: fishing in jungles, rivers and swamps sometimes brings up an aquarium plant
             add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS),
-                    LootTableIdCondition.builder(ResourceLocation.withDefaultNamespace("gameplay/fishing")).build()
+                    LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
             }));
         }
     }
@@ -1501,7 +1501,7 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK)
                     .addOptional(Compat.rl("create", "limestone")).addOptional(Compat.rl("create", "cut_limestone"))
-                    .addOptional(Compat.rl("create", "polished_cut_limestone")).addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "stones/limestone"));
+                    .addOptional(Compat.rl("create", "polished_cut_limestone")).addOptionalTag(Identifier.fromNamespaceAndPath("c", "stones/limestone"));
             tag(ModTags.DRIFTWOOD).addTag(BlockTags.LOGS).add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS);
             tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
@@ -1565,9 +1565,9 @@ public final class ModDataGen {
             for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
             tag(ModTags.PLASTIC_SHEETS)
-                    .addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "plastics"))
-                    .addOptionalTag(ResourceLocation.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets"))
-                    .addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "hdpe_sheet"));
+                    .addOptionalTag(Identifier.fromNamespaceAndPath("c", "plastics"))
+                    .addOptionalTag(Identifier.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets"))
+                    .addOptional(Identifier.fromNamespaceAndPath("mekanism", "hdpe_sheet"));
             // raw fish for pellets: cod, salmon and the raw fish of other mods (Aquaculture, Fish of Thieves, ...)
             tag(ModTags.PELLET_FISH).add(Items.COD, Items.SALMON).addOptionalTag(Tags.Items.FOODS_RAW_FISH)
                     .addOptional(Compat.rl(Compat.AQUACULTURE, "fish_fillet_raw"));

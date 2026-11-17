@@ -1,17 +1,18 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -32,8 +33,8 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * the floor and over the floor to the air stones and sponge filters (to the nearest one first, then from one to the
  * next); an air pump in the cabinet sends its hose up next to the filter hose at the cabinet's outlet side.
  */
-public class AirHoseRenderer implements BlockEntityRenderer<AirPumpBlockEntity> {
-    public static final ResourceLocation TEXTURE = BettaCraft.id("textures/entity/filter/air_hose.png");
+public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<AirPumpBlockEntity> {
+    public static final Identifier TEXTURE = BettaCraft.id("textures/entity/filter/air_hose.png");
     private static final float HALF = 0.02F;
     /** At most this many stones are joined by one hose (more would only clutter the floor). */
     private static final int MAX_TARGETS = 6;
@@ -50,14 +51,14 @@ public class AirHoseRenderer implements BlockEntityRenderer<AirPumpBlockEntity> 
         TankBlockEntity c = TankMultiblock.getController(level, tb);
         if (c == null || c.getTank() == null) return;
         TankData t = c.getTank();
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURE));
         int l = LevelRenderer.getLightColor(level, pos);
         Vec3 o = new Vec3(pos.getX(), pos.getY(), pos.getZ());
         Vec3 out = new Vec3(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5);
         List<Vec3> pts = new ArrayList<>();
         pts.add(out);
         if (!tb.equals(pos.below())) {
-            Direction d = Direction.getNearest(tb.getX() - pos.getX(), 0, tb.getZ() - pos.getZ());
+            Direction d = Direction.getApproximateNearest(tb.getX() - pos.getX(), 0, tb.getZ() - pos.getZ());
             double rim = t.max().getY() + 1.06;
             Vec3 a = new Vec3(out.x + d.getStepX() * 0.3, out.y, out.z + d.getStepZ() * 0.3);
             pts.add(a);
@@ -154,11 +155,11 @@ public class AirHoseRenderer implements BlockEntityRenderer<AirPumpBlockEntity> 
         pts.add(top.add(in.scale(Math.max(0.12, reach - 0.18))));
         inWater(pts, t);
         int light = LevelRenderer.getLightColor(level, BlockPos.containing(p.top()));
-        draw(ps, buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE)), new Vec3(pos.getX(), pos.getY(), pos.getZ()), pts, light);
+        draw(ps, buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURE)), new Vec3(pos.getX(), pos.getY(), pos.getZ()), pts, light);
     }
 
     @Override
-    public boolean shouldRenderOffScreen(AirPumpBlockEntity be) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 

@@ -9,7 +9,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -137,7 +137,7 @@ public final class ForeignTerrariumBGameTests {
             h.succeed();
             return;
         }
-        EntityType<?> bunny = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse("crittersandcompanions:sea_bunny")).orElseThrow();
+        EntityType<?> bunny = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse("crittersandcompanions:sea_bunny")).orElseThrow();
         ForeignProfile p = ForeignProfiles.of(bunny);
         h.assertTrue(p != null && p.land() == null && p.salinity().min() >= 20, "a sea water aquarium profile");
         TankBlockEntity sea = ForeignGameTests.tank(h, 2, 2, 3, 3, 3, 25F);
@@ -195,7 +195,7 @@ public final class ForeignTerrariumBGameTests {
     private static Entity firstOf(GameTestHelper h, String file) {
         ForeignProfile p = ForeignProfiles.files().get(BettaCraft.id(file));
         if (p == null) throw new GameTestAssertException("no shipped profile " + file);
-        for (ResourceLocation id : p.entities()) {
+        for (Identifier id : p.entities()) {
             var t = BuiltInRegistries.ENTITY_TYPE.getOptional(id);
             if (t.isPresent()) return t.get().create(h.getLevel());
         }
@@ -246,7 +246,7 @@ public final class ForeignTerrariumBGameTests {
         fish.sort(java.util.Comparator.comparing(e -> BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString()));
         for (int i = 0; i < fish.size(); i++) {
             Entity e = fish.get(i);
-            e.moveTo(t.min().getX() + 8.0 + (i % 3) * 1.2, Math.max(t.min().getY() + 0.3, t.waterSurfaceY() - 0.45), t.min().getZ() + 1.5 + (i / 3) * 1.5, 90F * i, 0F);
+            e.snapTo(t.min().getX() + 8.0 + (i % 3) * 1.2, Math.max(t.min().getY() + 0.3, t.waterSurfaceY() - 0.45), t.min().getZ() + 1.5 + (i / 3) * 1.5, 90F * i, 0F);
             e.setDeltaMovement(Vec3.ZERO);
             if (e instanceof net.minecraft.world.entity.LivingEntity le) le.getRandom().setSeed(35_200L + i);
         }
@@ -261,12 +261,12 @@ public final class ForeignTerrariumBGameTests {
         Entity pushed = null;
         for (Entity e : fish) if (!(e instanceof BettaEntity)) pushed = e;
         Entity victim = pushed;
-        TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
+        TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside());
         Vec3 inLand = new Vec3(t.min().getX() + 1.5, t.min().getY() + 0.5, t.min().getZ() + 3.0); // x < half: the land part
         h.assertFalse(ForeignWaterPart.inWaterPart(ter, inLand), "the spot is in the land");
         victim.setPos(inLand.x, inLand.y, inLand.z);
         h.runAfterDelay(100, () -> {
-            TankTerrain now = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
+            TankTerrain now = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside());
             double surface = t.waterSurfaceY();
             for (Entity e : fish) {
                 h.assertTrue(e.isAlive(), e.getType().toShortString() + " alive");
@@ -303,31 +303,31 @@ public final class ForeignTerrariumBGameTests {
             LivingEntity mother = layEggs(h, c, a.type());
             BlockPos egg = ForeignNests.eggBlockOf(mother);
             h.assertTrue(egg != null && interior(h).getBlockState(egg).is(ModBlocks.TURTLE_EGGS.get()), "the eggs in the interior");
-            int eggs = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getCompound(ForeignBreeding.BROOD).getCompound("nest").getInt("eggs");
+            int eggs = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest").getIntOr("eggs", 0);
             c.getTank().setClimate(new Climate.State(30, 31, 42, 50, 5, 0));
             ForeignBreeding.step(level, c, 1.0);
-            double progress = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getCompound(ForeignBreeding.BROOD).getCompound("nest").getDouble("progress");
+            double progress = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest").getDoubleOr("progress", 0d);
             h.assertTrue(progress > 0.05 && progress < 1, "half way: " + progress);
             ServerPlayer player = MockPlayers.serverPlayer(h);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.TERRARIUM_BOX.get()));
             c.getTank().inhabitants().remove(mother.getUUID());
             ForeignTerrarium.catchInto(player, InteractionHand.MAIN_HAND, mother);
             ItemStack box = ItemStack.EMPTY;
-            for (ItemStack s : player.getInventory().items) if (TerrariumBoxItem.isFilled(s)) box = s;
+            for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.isFilled(s)) box = s;
             if (TerrariumBoxItem.isFilled(player.getItemInHand(InteractionHand.MAIN_HAND))) box = player.getItemInHand(InteractionHand.MAIN_HAND);
             h.assertTrue(TerrariumBoxItem.isFilled(box), "the mother in the box");
             h.assertFalse(interior(h).getBlockState(egg).is(ModBlocks.TURTLE_EGGS.get()), "no empty egg shell stays");
             CompoundTag stored = TerrariumBoxItem.storedEntity(box);
-            CompoundTag brood = stored.getCompound("NeoForgeData").getCompound(ForeignBreeding.BROOD);
-            h.assertTrue(brood.getInt("carried_eggs") == eggs && !brood.contains("nest"), "the clutch goes with her: " + brood);
+            CompoundTag brood = stored.getCompoundOrEmpty("NeoForgeData").getCompoundOrEmpty(ForeignBreeding.BROOD);
+            h.assertTrue(brood.getIntOr("carried_eggs", 0) == eggs && !brood.contains("nest"), "the clutch goes with her: " + brood);
             player.discard();
             TankBlockEntity next = terrarium(h, 2, 14, 12, 3, 6);
             LivingEntity back = put(h, next, box.copy());
             ForeignBreeding.step(level, next, ForeignNests.WALK_DAYS + 0.01);
             BlockPos again = ForeignNests.eggBlockOf(back);
             h.assertTrue(again != null && interior(h).getBlockState(again).is(ModBlocks.TURTLE_EGGS.get()), "laid again in the new terrarium");
-            CompoundTag nest = org.overengineer.bettacraft.platform.Platform.get().persistentData(back).getCompound(ForeignBreeding.BROOD).getCompound("nest");
-            h.assertTrue(nest.getInt("eggs") == eggs && Math.abs(nest.getDouble("progress") - progress) < 1e-6, "the same eggs, the progress kept: " + nest);
+            CompoundTag nest = org.overengineer.bettacraft.platform.Platform.get().persistentData(back).getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest");
+            h.assertTrue(nest.getIntOr("eggs", 0) == eggs && Math.abs(nest.getDoubleOr("progress", 0d) - progress) < 1e-6, "the same eggs, the progress kept: " + nest);
             next.getTank().setClimate(new Climate.State(30, 31, 42, 50, 5, 0));
             ForeignBreeding.step(level, next, 4.0);
             long babies = ofType(h, next, a.type()).stream().filter(LivingEntity::isBaby).count();

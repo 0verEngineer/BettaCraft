@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -41,7 +42,7 @@ public final class PackedTank {
     public static boolean claim(net.minecraft.server.level.ServerLevel level, ItemStack stack) {
         CompoundTag t = data(stack);
         if (t == null) return false;
-        java.util.UUID token = t.hasUUID(TOKEN) ? t.getUUID(TOKEN) : t.getCompound("tank").hasUUID("id") ? t.getCompound("tank").getUUID("id") : null;
+        java.util.UUID token = NbtCompat.hasUUID(t, TOKEN) ? NbtCompat.getUUID(t, TOKEN) : NbtCompat.hasUUID(t.getCompoundOrEmpty("tank"), "id") ? NbtCompat.getUUID(t.getCompoundOrEmpty("tank"), "id") : null;
         return token == null || Claims.get(level.getServer()).claim(token);
     }
 
@@ -51,7 +52,7 @@ public final class PackedTank {
         private final java.util.Set<java.util.UUID> used = new java.util.HashSet<>();
 
         static Claims get(net.minecraft.server.MinecraftServer server) {
-            return server.overworld().getDataStorage().computeIfAbsent(new Factory<>(Claims::new, Claims::load, null), NAME);
+            return server.overworld().getDataStorage().computeIfAbsent(org.overengineer.bettacraft.util.NbtCompat.savedData(NAME, Claims::new, Claims::load, Claims::save));
         }
 
         boolean claim(java.util.UUID token) {
@@ -60,17 +61,16 @@ public final class PackedTank {
             return true;
         }
 
-        @Override
         public CompoundTag save(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
             net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
-            for (java.util.UUID u : used) list.add(net.minecraft.nbt.NbtUtils.createUUID(u));
+            for (java.util.UUID u : used) list.add(org.overengineer.bettacraft.util.NbtCompat.createUUID(u));
             tag.put("used", list);
             return tag;
         }
 
         private static Claims load(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
             Claims c = new Claims();
-            for (Tag u : tag.getList("used", Tag.TAG_INT_ARRAY)) c.used.add(net.minecraft.nbt.NbtUtils.loadUUID(u));
+            for (Tag u : tag.getListOrEmpty("used")) c.used.add(org.overengineer.bettacraft.util.NbtCompat.loadUUID(u));
             return c;
         }
     }
@@ -83,26 +83,26 @@ public final class PackedTank {
         data.remove("z");
         data.remove("id");
         data.putBoolean(MARK, true);
-        data.putUUID(TOKEN, java.util.UUID.randomUUID()); // M42 part b: the item is placed once
-        BlockItem.setBlockEntityData(stack, ModBlockEntities.TANK.get(), data);
+        NbtCompat.putUUID(data, TOKEN, java.util.UUID.randomUUID()); // M42 part b: the item is placed once
+        stack.set(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(ModBlockEntities.TANK.get(), data));
         return restyle(stack, data);
     }
 
     /** Gives a tank item the glass and style of a tank block's data (a mover's drop has neither). */
     public static ItemStack restyle(ItemStack stack, CompoundTag data) {
-        ResourceLocation glass = ResourceLocation.tryParse(data.getString("glass"));
-        if (glass != null && !data.getString("glass").isEmpty()) TankBlockItem.setGlass(stack, glass);
-        if (data.contains("style", Tag.TAG_STRING)) TankBlockItem.setStyle(stack, TankStyle.byId(data.getString("style")));
+        Identifier glass = Identifier.tryParse(data.getStringOr("glass", ""));
+        if (glass != null && !data.getStringOr("glass", "").isEmpty()) TankBlockItem.setGlass(stack, glass);
+        if (NbtCompat.has(data, "style", Tag.TAG_STRING)) TankBlockItem.setStyle(stack, TankStyle.byId(data.getStringOr("style", "")));
         return stack;
     }
 
     /** The tank data the item carries, or null (a plain tank item). */
     @Nullable
     public static CompoundTag data(ItemStack stack) {
-        CustomData d = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        var d = stack.get(DataComponents.BLOCK_ENTITY_DATA);
         if (d == null) return null;
-        CompoundTag t = d.copyTag();
-        return t.getBoolean(MARK) && t.contains("tank", Tag.TAG_COMPOUND) ? t : null;
+        CompoundTag t = d.copyTagWithoutId();
+        return t.getBooleanOr(MARK, false) && NbtCompat.has(t, "tank", Tag.TAG_COMPOUND) ? t : null;
     }
 
     public static boolean isPacked(ItemStack stack) {
@@ -112,6 +112,6 @@ public final class PackedTank {
     /** How many animals travel packed in the item. */
     public static int animals(ItemStack stack) {
         CompoundTag t = data(stack);
-        return t == null ? 0 : t.getList("stowed", Tag.TAG_COMPOUND).size();
+        return t == null ? 0 : t.getListOrEmpty("stowed").size();
     }
 }

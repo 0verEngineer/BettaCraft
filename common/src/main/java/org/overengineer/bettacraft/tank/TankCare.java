@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -341,7 +341,7 @@ public final class TankCare {
             if (!org.overengineer.bettacraft.critters.TankCritters.wantFood(controller.getTank())) return 0;
             org.overengineer.bettacraft.critters.TankCritters.addFood(controller.getTank(),
                     BettaFood.FISH_PER_FOOD * ServerConfig.getOr(ServerConfig.DIET_SHRIMP_FOOD_FACTOR, 2.0));
-            log(level, controller, "log.bettacraft.critters_fed", "@" + food.getDescriptionId());
+            log(level, controller, "log.bettacraft.critters_fed", "@" + food.getItem().getDescriptionId());
             return 1;
         }
         // M19: algae wafers sink straight to the bottom fish (the bettas do not eat them)
@@ -382,7 +382,7 @@ public final class TankCare {
             b.syncDiet();
             if (round != null) round.add(b.getUUID());
         }
-        if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getDescriptionId());
+        if (fed > 0) log(level, controller, "log.bettacraft.fed", String.valueOf(fed), "@" + food.getItem().getDescriptionId());
         int left = items * per - fed;
         left -= org.overengineer.bettacraft.tankmates.TankmateFeeding.feed(level, controller, mates, food, kind, Math.min(left, mates.size()), !fish.isEmpty(), wafer, round);
         int frogsFed = TankFrogs.feed(level, controller, kind, Math.min(left, frogs.size()), !fish.isEmpty(), false);
@@ -390,12 +390,12 @@ public final class TankCare {
         left -= frogsFed;
         if (tadpoles) { // M47 part c: one item's share for the tadpoles (at least one portion)
             int took = org.overengineer.bettacraft.entity.frog.FrogBreeding.feed(controller.getTank(), kind, Math.max(1, Math.min(Math.max(0, left), per)));
-            if (took > 0) log(level, controller, "log.bettacraft.frog.tadpoles_fed", "@" + food.getDescriptionId());
+            if (took > 0) log(level, controller, "log.bettacraft.frog.tadpoles_fed", "@" + food.getItem().getDescriptionId());
             left -= took;
         }
         if (larvae) { // M48 part b: one portion of the item goes into the plankton of the water
             int took = org.overengineer.bettacraft.reef.ClownLarvae.feed(controller.getTank(), food, 1);
-            if (took > 0) log(level, controller, "log.bettacraft.reef.plankton_fed", "@" + food.getDescriptionId());
+            if (took > 0) log(level, controller, "log.bettacraft.reef.plankton_fed", "@" + food.getItem().getDescriptionId());
             left -= took;
         }
         left -= org.overengineer.bettacraft.terrarium.TerrariumFeeding.feed(terra, Math.max(0, Math.min(left, terra.size())), round); // M31
@@ -426,12 +426,12 @@ public final class TankCare {
     }
 
     /** Right-click on the tank with betta food: one item, food sinks down, bettas swim to it. */
-    public static ItemInteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand, Vec3 hit) {
-        if (BettaFood.kind(stack) == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand, Vec3 hit) {
+        if (BettaFood.kind(stack) == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
-        if (controller == null) return ItemInteractionResult.CONSUME;
+        if (controller == null) return InteractionResult.CONSUME;
         TankData tank = controller.getTank();
         boolean wafer = org.overengineer.bettacraft.tankmates.TankmateFeeding.bottomFood(stack);
         List<BettaEntity> fish = wafer ? new ArrayList<>() : eaters(server, tank, BettaFood.kind(stack));
@@ -446,9 +446,9 @@ public final class TankCare {
         if (fish.isEmpty() && !others) {
             player.displayClientMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
                     : "message.bettacraft.tank.nobody_eats", stack.getHoverName()), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        if (feed(server, controller, stack, 1) <= 0) return ItemInteractionResult.CONSUME;
+        if (feed(server, controller, stack, 1) <= 0) return InteractionResult.CONSUME;
         ItemStack remainder = org.overengineer.bettacraft.platform.Platform.get().craftingRemainder(stack);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
@@ -462,7 +462,7 @@ public final class TankCare {
         long until = level.getGameTime() + 120;
         for (BettaEntity b : fish) b.setFoodTarget(spot, until);
         for (var m : mates) m.setFoodTarget(spot, until); // M19
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     // ------------------------------------------------------------------ log

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.genetics.livebearer.LbPhenotype;
 
@@ -19,9 +19,9 @@ import org.overengineer.bettacraft.genetics.livebearer.LbPhenotype;
 public final class GuppyLook {
     private GuppyLook() {}
 
-    private static final Map<String, ResourceLocation> MASKS = new HashMap<>();
+    private static final Map<String, Identifier> MASKS = new HashMap<>();
 
-    public static ResourceLocation mask(String name) {
+    public static Identifier mask(String name) {
         return MASKS.computeIfAbsent(name, n -> BettaCraft.id("textures/entity/tankmates/guppy/" + n + ".png"));
     }
 

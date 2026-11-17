@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.Perms;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -52,7 +53,7 @@ public final class ForeignCommand {
     private ForeignCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
-        return Commands.literal("foreign").requires(s -> s.hasPermission(2))
+        return Commands.literal("foreign").requires(s -> Perms.has(s, 2))
                 .then(Commands.literal("list").executes(ctx -> list(ctx.getSource(), DEFAULT_RADIUS))
                         .then(Commands.argument("radius", IntegerArgumentType.integer(1, 256))
                                 .executes(ctx -> list(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))))
@@ -64,7 +65,7 @@ public final class ForeignCommand {
     // ------------------------------------------------------------------ M38: plants
 
     /** One kind of foreign plant in a tank: block, profile file, role, how many plants, their blocks and their plant mass. */
-    public record PlantRow(ResourceLocation block, ResourceLocation profile, String role, int plants, int blocks, double mass) {}
+    public record PlantRow(Identifier block, Identifier profile, String role, int plants, int blocks, double mass) {}
 
     /** The plants of other mods in a tank by block and profile (GameTests). */
     public static List<PlantRow> plantRows(ServerLevel level, TankBlockEntity c) {
@@ -75,7 +76,7 @@ public final class ForeignCommand {
         for (var g : effect.groups()) {
             // shown by the first block of its profile (kelp, not kelp_plant), the blocks of a tag by their own id
             var prof = org.overengineer.bettacraft.plants.foreign.ForeignPlants.files().get(g.file());
-            ResourceLocation id = prof != null && !prof.blocks().isEmpty() ? prof.blocks().get(0) : BuiltInRegistries.BLOCK.getKey(g.block());
+            Identifier id = prof != null && !prof.blocks().isEmpty() ? prof.blocks().get(0) : BuiltInRegistries.BLOCK.getKey(g.block());
             String k = id + " " + g.file();
             PlantRow o = rows.get(k);
             rows.put(k, o == null ? new PlantRow(id, g.file(), g.role().id(), 1, g.blocks(), g.mass())
@@ -87,15 +88,15 @@ public final class ForeignCommand {
     }
 
     /** Plant-like blocks of other mods (not vanilla, not ours) in the interior of a tank without a profile, with their count. */
-    public static Map<ResourceLocation, Integer> unprofiledPlants(ServerLevel level, TankBlockEntity c) {
-        Map<ResourceLocation, Integer> out = new java.util.TreeMap<>();
+    public static Map<Identifier, Integer> unprofiledPlants(ServerLevel level, TankBlockEntity c) {
+        Map<Identifier, Integer> out = new java.util.TreeMap<>();
         var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), c.getTank());
         ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
         if (r == null || in == null) return out;
         int x0 = r.originX(), z0 = r.originZ(), y0 = org.overengineer.bettacraft.tank.interior.InteriorRegion.BASE_Y;
         org.overengineer.bettacraft.tank.interior.InteriorWorldOps.forEachBlock(in, x0, y0, z0, x0 + r.sizeX() - 1, y0 + r.sizeY() - 1, z0 + r.sizeZ() - 1,
                 (x, y, z, s) -> {
-                    ResourceLocation id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
+                    Identifier id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
                     if ("minecraft".equals(id.getNamespace()) || BettaCraft.MOD_ID.equals(id.getNamespace())) return;
                     if (!plantLike(s) || org.overengineer.bettacraft.plants.foreign.ForeignPlants.entry(s.getBlock()).file() != null) return;
                     out.merge(id, 1, Integer::sum);
@@ -106,7 +107,7 @@ public final class ForeignCommand {
     /** A plant (bush, kelp-like, coral) or a block in our water plant tags. */
     static boolean plantLike(net.minecraft.world.level.block.state.BlockState s) {
         var b = s.getBlock();
-        return b instanceof net.minecraft.world.level.block.BushBlock || b instanceof net.minecraft.world.level.block.GrowingPlantBlock
+        return b instanceof net.minecraft.world.level.block.VegetationBlock || b instanceof net.minecraft.world.level.block.GrowingPlantBlock
                 || b instanceof net.minecraft.world.level.block.BaseCoralPlantTypeBlock || s.is(net.minecraft.tags.BlockTags.CORALS)
                 || s.is(org.overengineer.bettacraft.registry.ModTags.SWAYING_PLANTS) || s.is(org.overengineer.bettacraft.registry.ModTags.INTERIOR_WATER_PLANTS)
                 || s.is(org.overengineer.bettacraft.registry.ModTags.FLOATING_PLANTS);
@@ -118,10 +119,10 @@ public final class ForeignCommand {
         List<TankBlockEntity> tanks = looked != null ? List.of(looked) : tanksNear(level, src.getPosition(), radius);
         if (!org.overengineer.bettacraft.plants.foreign.ForeignPlants.enabled()) say(src, Component.translatable("command.bettacraft.foreign.plants_off").withStyle(ChatFormatting.GOLD));
         int shown = 0, total = 0;
-        Map<ResourceLocation, Integer> missing = new java.util.TreeMap<>();
+        Map<Identifier, Integer> missing = new java.util.TreeMap<>();
         for (TankBlockEntity c : tanks) {
             List<PlantRow> rows = plantRows(level, c);
-            Map<ResourceLocation, Integer> un = unprofiledPlants(level, c);
+            Map<Identifier, Integer> un = unprofiledPlants(level, c);
             un.forEach((k, v) -> missing.merge(k, v, Integer::sum));
             var r = org.overengineer.bettacraft.plants.InteriorPlants.region(level.getServer(), c.getTank());
             var effect = org.overengineer.bettacraft.plants.foreign.ForeignPlants.effect(level.getServer(), r);
@@ -151,7 +152,7 @@ public final class ForeignCommand {
             say(src, Component.translatable("command.bettacraft.foreign.plants_unprofiled.none"));
         } else {
             StringBuilder b = new StringBuilder();
-            for (Map.Entry<ResourceLocation, Integer> e : missing.entrySet()) b.append(b.length() > 0 ? ", " : "").append(e.getKey()).append(" (").append(e.getValue()).append(')');
+            for (Map.Entry<Identifier, Integer> e : missing.entrySet()) b.append(b.length() > 0 ? ", " : "").append(e.getKey()).append(" (").append(e.getValue()).append(')');
             say(src, Component.translatable("command.bettacraft.foreign.plants_unprofiled", b.toString()).withStyle(ChatFormatting.GOLD));
         }
         return total;
@@ -159,12 +160,12 @@ public final class ForeignCommand {
 
     /** Whether an animal in a tank counts as foreign: not ours and without Bettacraft's own care. */
     public static boolean foreign(Entity e) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType());
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType());
         return !BettaCraft.MOD_ID.equals(id.getNamespace()) && !ForeignProfiles.ownCare(e.getType());
     }
 
     /** One foreign animal of a tank: its type and the file of its profile (null: none). */
-    public record Row(EntityType<?> type, Component name, @Nullable ResourceLocation profile) {}
+    public record Row(EntityType<?> type, Component name, @Nullable Identifier profile) {}
 
     /** The foreign animals of a tank (GameTests). */
     public static List<Row> rows(ServerLevel level, TankBlockEntity c) {
@@ -178,10 +179,10 @@ public final class ForeignCommand {
     }
 
     /** The types of other mods (not vanilla) without a profile among these rows, with their count. */
-    public static Map<ResourceLocation, Integer> unprofiled(List<Row> rows) {
-        Map<ResourceLocation, Integer> out = new LinkedHashMap<>();
+    public static Map<Identifier, Integer> unprofiled(List<Row> rows) {
+        Map<Identifier, Integer> out = new LinkedHashMap<>();
         for (Row r : rows) {
-            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(r.type());
+            Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(r.type());
             if (r.profile() == null && !"minecraft".equals(id.getNamespace())) out.merge(id, 1, Integer::sum);
         }
         return out;
@@ -256,12 +257,12 @@ public final class ForeignCommand {
                     : Component.translatable("command.bettacraft.foreign.none", radius));
             return 0;
         }
-        Map<ResourceLocation, Integer> missing = unprofiled(all);
+        Map<Identifier, Integer> missing = unprofiled(all);
         if (missing.isEmpty()) {
             say(src, Component.translatable("command.bettacraft.foreign.unprofiled.none"));
         } else {
             StringBuilder b = new StringBuilder();
-            for (Map.Entry<ResourceLocation, Integer> e : missing.entrySet()) b.append(b.length() > 0 ? ", " : "").append(e.getKey()).append(" (").append(e.getValue()).append(')');
+            for (Map.Entry<Identifier, Integer> e : missing.entrySet()) b.append(b.length() > 0 ? ", " : "").append(e.getKey()).append(" (").append(e.getValue()).append(')');
             say(src, Component.translatable("command.bettacraft.foreign.unprofiled", b.toString()).withStyle(ChatFormatting.GOLD));
         }
         return all.size();

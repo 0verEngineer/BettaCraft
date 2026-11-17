@@ -28,15 +28,15 @@ public abstract class LivingEntityGlassMixin {
     @Inject(method = "calculateEntityAnimation", at = @At("HEAD"), cancellable = true)
     private void bettacraft$tankWalk(boolean includeHeight, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (!self.level().isClientSide || self instanceof net.minecraft.world.entity.player.Player
-                || self instanceof net.minecraft.world.entity.animal.WaterAnimal) return;
+        if (!self.level().isClientSide() || self instanceof net.minecraft.world.entity.player.Player
+                || self instanceof net.minecraft.world.entity.animal.fish.WaterAnimal) return;
         float boost = org.overengineer.bettacraft.config.ClientConfig.walkAnimationBoost();
         if (boost == 0) return;
         if (!(self.level().getBlockState(net.minecraft.core.BlockPos.containing(self.getX(), self.getY() + 0.05, self.getZ())).getBlock()
                 instanceof org.overengineer.bettacraft.tank.TankBlock)) return;
         if (net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(self.getType()).getNamespace().equals(org.overengineer.bettacraft.BettaCraft.MOD_ID)) return;
         double h = Math.hypot(self.getX() - self.xo, self.getZ() - self.zo), v = self.getY() - self.yo;
-        boolean climb = includeHeight || self instanceof net.minecraft.world.entity.monster.Spider
+        boolean climb = includeHeight || self instanceof net.minecraft.world.entity.monster.spider.Spider
                 || org.overengineer.bettacraft.terrarium.WalkAnimation.mostlyVertical(h, v);
         float scale = self.getScale();
         updateWalkAnimation(org.overengineer.bettacraft.terrarium.WalkAnimation.distance(h, v, climb, scale,

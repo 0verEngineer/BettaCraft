@@ -96,7 +96,7 @@ public final class DeviceEffects {
             return;
         }
         if (mc.isPaused()) return;
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
         spongeFilters(mc);
         if (volume(Regulator.Sound.AIR_PUMP) <= 0.001) { // M29.1: the hum is off by default
             HUMS.values().forEach(PumpHum::silence);
@@ -151,7 +151,7 @@ public final class DeviceEffects {
         public void tick() {
             Minecraft mc = Minecraft.getInstance();
             if (be.isRemoved() || !air.airRunning() || mc.level == null || be.getLevel() != mc.level
-                    || be.getBlockPos().getCenter().distanceToSqr(mc.gameRenderer.getMainCamera().getPosition()) > 18 * 18) {
+                    || be.getBlockPos().getCenter().distanceToSqr(mc.gameRenderer.getMainCamera().position()) > 18 * 18) {
                 stop();
                 return;
             }

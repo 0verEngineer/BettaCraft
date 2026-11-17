@@ -10,7 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -102,7 +102,7 @@ public final class PipeCoverGameTests {
     /** A right-click on {@code pos} (from above) like a player's: block first, then the item. */
     private static InteractionResult click(ServerPlayer p, BlockPos pos, Direction face) {
         Vec3 hit = Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(face.getNormal()).scale(0.5));
-        return p.gameMode.useItemOn(p, p.serverLevel(), p.getMainHandItem(), InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
+        return p.gameMode.useItemOn(p, p.level(), p.getMainHandItem(), InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
     }
 
     @javax.annotation.Nullable
@@ -205,12 +205,12 @@ public final class PipeCoverGameTests {
     }
 
     private static Item item(String id) {
-        return BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
+        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
     }
 
     @SuppressWarnings("unchecked")
     private static void set(ItemStack stack, String component, Object value) {
-        DataComponentType<Object> t = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(component));
+        DataComponentType<Object> t = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(Identifier.parse(component));
         if (t == null) throw new GameTestAssertException("no data component " + component);
         stack.set(t, value);
     }
@@ -236,8 +236,8 @@ public final class PipeCoverGameTests {
             click(p, r.pipe(), Direction.UP);
             p.setShiftKeyDown(false);
             h.assertTrue(cover(h, r.pipe()) == null, "the facade is off");
-            h.assertTrue(p.getInventory().items.stream().anyMatch(s -> s.is(facade.getItem()) && PipeCovers.foreign(s, level) != null),
-                    "the facade is back, with its block: " + p.getInventory().items.stream().filter(s -> !s.isEmpty()).toList());
+            h.assertTrue(p.getInventory().getNonEquipmentItems().stream().anyMatch(s -> s.is(facade.getItem()) && PipeCovers.foreign(s, level) != null),
+                    "the facade is back, with its block: " + p.getInventory().getNonEquipmentItems().stream().filter(s -> !s.isEmpty()).toList());
             List<ItemStack> drops = Block.getDrops(level.getBlockState(r.bundle()), level, r.bundle(), level.getBlockEntity(r.bundle()));
             h.assertTrue(drops.stream().anyMatch(s -> s.is(facade.getItem())), "breaking the bundle drops the facade: " + drops);
         } finally {
@@ -298,7 +298,7 @@ public final class PipeCoverGameTests {
         }
         ServerLevel level = h.getLevel();
         Rig r = rig(h);
-        TagKey<Block> tag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("cable_facades", "supports_facade"));
+        TagKey<Block> tag = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("cable_facades", "supports_facade"));
         for (Block b : List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
                 ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get())) {
             h.assertTrue(b.defaultBlockState().is(tag), BuiltInRegistries.BLOCK.getKey(b) + " is in cable_facades:supports_facade");

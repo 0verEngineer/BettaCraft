@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /** M52: fires the common game event NeoForge fires here (Fabric API has no callback for it). */
-@Mixin(net.minecraft.world.entity.npc.AbstractVillager.class)
+@Mixin(net.minecraft.world.entity.npc.villager.AbstractVillager.class)
 public abstract class VillagerTradeMixin {
 
     @Inject(method = "notifyTrade", at = @At("HEAD"))
     private void bettacraft$trade(net.minecraft.world.item.trading.MerchantOffer offer, CallbackInfo ci) {
-        var self = (net.minecraft.world.entity.npc.AbstractVillager) (Object) this;
+        var self = (net.minecraft.world.entity.npc.villager.AbstractVillager) (Object) this;
         if (self.getTradingPlayer() != null) FabricGameEvents.post(new TradeWithVillagerEvent(self.getTradingPlayer(), self));
     }
 }

@@ -135,7 +135,7 @@ final class DevClientShowcaseTour {
         var server = mc.getSingleplayerServer();
         return server.submit(() -> {
             var level = server.overworld();
-            var spawn = level.getSharedSpawnPos();
+            var spawn = level.getRespawnData().pos();
             int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
             java.util.List<Integer> out = new java.util.ArrayList<>();
             for (int row = 0; row < 30; row++) {
@@ -194,9 +194,9 @@ final class DevClientShowcaseTour {
     /** Camera relative to the showcase origin (spawn + (3, 0, 6)), eye height above the ground. */
     private void look(double x, double z, double eyeUp, float yaw, float pitch) {
         server(p -> {
-            var spawn = p.serverLevel().getSharedSpawnPos();
-            int ground = p.serverLevel().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
-            p.teleportTo(p.serverLevel(), spawn.getX() + 3 + x, ground + eyeUp - p.getEyeHeight(), spawn.getZ() + 6 + z, yaw, pitch);
+            var spawn = p.level().getRespawnData().pos();
+            int ground = p.level().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
+            p.teleportTo(p.level(), spawn.getX() + 3 + x, ground + eyeUp - p.getEyeHeight(), spawn.getZ() + 6 + z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

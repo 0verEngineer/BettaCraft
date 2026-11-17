@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.genetics.livebearer;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.Arrays;
 import java.util.random.RandomGenerator;
 import net.minecraft.nbt.CompoundTag;
@@ -209,17 +210,17 @@ public final class LivebearerGenome {
     public static LivebearerGenome load(CompoundTag t, boolean endlerDefault) {
         Builder bd = builder(endlerDefault);
         for (LbLocus l : LbLocus.values()) {
-            if (!t.contains(l.id(), Tag.TAG_STRING)) continue;
-            String[] p = split(t.getString(l.id()), l.wild());
+            if (!NbtCompat.has(t, l.id(), Tag.TAG_STRING)) continue;
+            String[] p = split(t.getStringOr(l.id(), ""), l.wild());
             bd.pair(l, p[0], p[1]);
         }
-        if (t.contains("x", Tag.TAG_STRING)) {
-            String[] p = split(t.getString("x"), "none");
+        if (NbtCompat.has(t, "x", Tag.TAG_STRING)) {
+            String[] p = split(t.getStringOr("x", ""), "none");
             bd.x(p[0], p[1]);
         }
-        if (t.contains("y", Tag.TAG_STRING)) bd.y(t.getString("y").isEmpty() ? "none" : t.getString("y"));
-        if (t.contains("endler", Tag.TAG_ANY_NUMERIC)) {
-            float e = t.getFloat("endler");
+        if (NbtCompat.has(t, "y", Tag.TAG_STRING)) bd.y(t.getStringOr("y", "").isEmpty() ? "none" : t.getStringOr("y", ""));
+        if (NbtCompat.has(t, "endler", NbtCompat.ANY_NUMERIC)) {
+            float e = t.getFloatOr("endler", 0f);
             bd.endler(Float.isFinite(e) ? e : endlerDefault ? 1F : 0F);
         }
         return bd.build();

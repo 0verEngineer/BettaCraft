@@ -243,7 +243,7 @@ public final class FluidStack {
         return components.has(type);
     }
 
-    public <T> @Nullable T set(DataComponentType<? super T> type, @Nullable T value) {
+    public <T> @Nullable T set(DataComponentType<T> type, @Nullable T value) {
         return components.set(type, value);
     }
 

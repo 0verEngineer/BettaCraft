@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -166,23 +166,23 @@ public final class Fertilizer {
     }
 
     /** A bottle of liquid fertilizer used on a tank: one portion into the water. */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!stack.is(ModItems.LIQUID_FERTILIZER.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!stack.is(ModItems.LIQUID_FERTILIZER.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.CONSUME;
+        if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (!enabled()) {
             player.displayClientMessage(Component.translatable("message.bettacraft.fertilizer.off").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         boolean wasOver = overdosed(t);
         dose(t, 1);
@@ -194,7 +194,7 @@ public final class Fertilizer {
                 .withStyle(over ? ChatFormatting.GOLD : ChatFormatting.GREEN), true);
         if (over && !wasOver) TankCare.log((ServerLevel) level, c, "log.bettacraft.fertilizer_overdosed", String.valueOf(pct));
         c.markTankChanged();
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** An empty glass bottle for a used-up fertilizer bottle. */

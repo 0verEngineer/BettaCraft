@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.data.schema;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -110,12 +111,12 @@ public final class Schemas {
      * Missing loci stay missing (defaults apply on load), unknown keys and unknown ids are kept.
      */
     static CompoundTag bettaV1toV2(CompoundTag data) {
-        if (!data.contains("genome", Tag.TAG_COMPOUND)) return data;
-        CompoundTag g = data.getCompound("genome");
+        if (!NbtCompat.has(data, "genome", Tag.TAG_COMPOUND)) return data;
+        CompoundTag g = data.getCompoundOrEmpty("genome");
         for (String[] locus : BETTA_LOCI) {
             String now = locus[0], old = locus[1];
-            if (g.contains(old, Tag.TAG_STRING)) {
-                String v = g.getString(old);
+            if (NbtCompat.has(g, old, Tag.TAG_STRING)) {
+                String v = g.getStringOr(old, "");
                 g.remove(old);
                 net.minecraft.nbt.ListTag pair = new net.minecraft.nbt.ListTag();
                 pair.add(net.minecraft.nbt.StringTag.valueOf(v));
@@ -143,7 +144,7 @@ public final class Schemas {
      * A genome without finform gets no fin_length (defaults apply on load); an existing fin_length is left alone.
      */
     static CompoundTag bettaV2toV3(CompoundTag data) {
-        if (data.contains("genome", Tag.TAG_COMPOUND)) genomeV2toV3(data.getCompound("genome"));
+        if (NbtCompat.has(data, "genome", Tag.TAG_COMPOUND)) genomeV2toV3(data.getCompoundOrEmpty("genome"));
         return data;
     }
 
@@ -152,17 +153,17 @@ public final class Schemas {
      * split as the betta data ({@link #bettaV2toV3}).
      */
     static CompoundTag tankV3toV4(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("nest", Tag.TAG_COMPOUND)) return data;
-        CompoundTag nest = tank.getCompound("nest");
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "nest", Tag.TAG_COMPOUND)) return data;
+        CompoundTag nest = tank.getCompoundOrEmpty("nest");
         for (String k : new String[]{"father_genome", "mother_genome"}) {
-            if (nest.contains(k, Tag.TAG_COMPOUND)) genomeV2toV3(nest.getCompound(k));
+            if (NbtCompat.has(nest, k, Tag.TAG_COMPOUND)) genomeV2toV3(nest.getCompoundOrEmpty(k));
         }
-        net.minecraft.nbt.ListTag eggs = nest.getList("eggs", Tag.TAG_COMPOUND);
+        net.minecraft.nbt.ListTag eggs = nest.getListOrEmpty("eggs");
         for (int i = 0; i < eggs.size(); i++) {
-            CompoundTag e = eggs.getCompound(i);
-            if (e.contains("genome", Tag.TAG_COMPOUND)) genomeV2toV3(e.getCompound("genome"));
+            CompoundTag e = eggs.getCompoundOrEmpty(i);
+            if (NbtCompat.has(e, "genome", Tag.TAG_COMPOUND)) genomeV2toV3(e.getCompoundOrEmpty("genome"));
         }
         return data;
     }
@@ -174,15 +175,15 @@ public final class Schemas {
      * negative {@code power} buffer 0, and {@code last_fresh_water} -1 (never). Everything else is kept.
      */
     static CompoundTag tankV4toV5(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
         tank.remove("evaporation");
-        if (!tank.contains("evaporation_carry", Tag.TAG_ANY_NUMERIC)) tank.putDouble("evaporation_carry", 0.0);
-        float q = tank.contains("water_quality", Tag.TAG_ANY_NUMERIC) ? tank.getFloat("water_quality") : 1.0F;
+        if (!NbtCompat.has(tank, "evaporation_carry", NbtCompat.ANY_NUMERIC)) tank.putDouble("evaporation_carry", 0.0);
+        float q = NbtCompat.has(tank, "water_quality", NbtCompat.ANY_NUMERIC) ? tank.getFloatOr("water_quality", 0f) : 1.0F;
         if (Float.isNaN(q) || q < 0 || q > 1) q = Float.isNaN(q) || q > 1 ? 1.0F : 0.0F;
         tank.putFloat("water_quality", q);
-        if (tank.getLong("power") < 0) tank.putLong("power", 0L);
-        if (!tank.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_fresh_water", -1L);
+        if (tank.getLongOr("power", 0L) < 0) tank.putLong("power", 0L);
+        if (!NbtCompat.has(tank, "last_fresh_water", NbtCompat.ANY_NUMERIC)) tank.putLong("last_fresh_water", -1L);
         return data;
     }
 
@@ -191,7 +192,7 @@ public final class Schemas {
      * becomes {@code style: "textured"}; the glass id stays as it is (also ids of removed mods).
      */
     static CompoundTag tankV5toV6(CompoundTag data) {
-        if (!data.contains("style", Tag.TAG_STRING)) data.putString("style", "textured");
+        if (!NbtCompat.has(data, "style", Tag.TAG_STRING)) data.putString("style", "textured");
         return data;
     }
 
@@ -201,10 +202,10 @@ public final class Schemas {
      * interior stay blocks of the interior and are not converted.
      */
     static CompoundTag tankV6toV7(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("plants", Tag.TAG_LIST)) tank.put("plants", new net.minecraft.nbt.ListTag());
-        if (!tank.contains("next_plant_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_plant_id", 1);
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "plants", Tag.TAG_LIST)) tank.put("plants", new net.minecraft.nbt.ListTag());
+        if (!NbtCompat.has(tank, "next_plant_id", NbtCompat.ANY_NUMERIC)) tank.putInt("next_plant_id", 1);
         return data;
     }
 
@@ -213,69 +214,69 @@ public final class Schemas {
      * empty food pool and no algae.
      */
     static CompoundTag tankV7toV8(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("critters", Tag.TAG_LIST)) tank.put("critters", new net.minecraft.nbt.ListTag());
-        if (!tank.contains("critter_objects", Tag.TAG_LIST)) tank.put("critter_objects", new net.minecraft.nbt.ListTag());
-        if (!tank.contains("next_critter_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_critter_id", 1);
-        if (!tank.contains("critter_food", Tag.TAG_ANY_NUMERIC)) tank.putDouble("critter_food", 0.0);
-        if (!tank.contains("algae", Tag.TAG_LIST)) tank.put("algae", new net.minecraft.nbt.ListTag());
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "critters", Tag.TAG_LIST)) tank.put("critters", new net.minecraft.nbt.ListTag());
+        if (!NbtCompat.has(tank, "critter_objects", Tag.TAG_LIST)) tank.put("critter_objects", new net.minecraft.nbt.ListTag());
+        if (!NbtCompat.has(tank, "next_critter_id", NbtCompat.ANY_NUMERIC)) tank.putInt("next_critter_id", 1);
+        if (!NbtCompat.has(tank, "critter_food", NbtCompat.ANY_NUMERIC)) tank.putDouble("critter_food", 0.0);
+        if (!NbtCompat.has(tank, "algae", Tag.TAG_LIST)) tank.put("algae", new net.minecraft.nbt.ListTag());
         return data;
     }
 
     /** M19: tankmate clutches, the breeding box and the water change bookkeeping (empty / none). */
     static CompoundTag tankV8toV9(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("clutches", Tag.TAG_LIST)) tank.put("clutches", new net.minecraft.nbt.ListTag());
-        if (!tank.contains("next_clutch_id", Tag.TAG_ANY_NUMERIC)) tank.putInt("next_clutch_id", 1);
-        if (!tank.contains("breeding_box", Tag.TAG_ANY_NUMERIC)) tank.putBoolean("breeding_box", false);
-        if (!tank.contains("last_cool_change", Tag.TAG_ANY_NUMERIC)) tank.putLong("last_cool_change", -1L);
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "clutches", Tag.TAG_LIST)) tank.put("clutches", new net.minecraft.nbt.ListTag());
+        if (!NbtCompat.has(tank, "next_clutch_id", NbtCompat.ANY_NUMERIC)) tank.putInt("next_clutch_id", 1);
+        if (!NbtCompat.has(tank, "breeding_box", NbtCompat.ANY_NUMERIC)) tank.putBoolean("breeding_box", false);
+        if (!NbtCompat.has(tank, "last_cool_change", NbtCompat.ANY_NUMERIC)) tank.putLong("last_cool_change", -1L);
         return data;
     }
 
     /** M20: salt water: every tank of an older world is a freshwater tank (salinity 0, no calcium). */
     static CompoundTag tankV9toV10(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("salinity", Tag.TAG_ANY_NUMERIC)) tank.putFloat("salinity", 0.0F);
-        if (!tank.contains("calcium", Tag.TAG_ANY_NUMERIC)) tank.putFloat("calcium", 0.0F);
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "salinity", NbtCompat.ANY_NUMERIC)) tank.putFloat("salinity", 0.0F);
+        if (!NbtCompat.has(tank, "calcium", NbtCompat.ANY_NUMERIC)) tank.putFloat("calcium", 0.0F);
         return data;
     }
 
     /** M37: liquid fertilizer: every tank of an older world has none in its water. */
     static CompoundTag tankV10toV11(CompoundTag data) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return data;
-        CompoundTag tank = data.getCompound("tank");
-        if (!tank.contains("fertilizer", Tag.TAG_ANY_NUMERIC)) tank.putFloat("fertilizer", 0.0F);
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return data;
+        CompoundTag tank = data.getCompoundOrEmpty("tank");
+        if (!NbtCompat.has(tank, "fertilizer", NbtCompat.ANY_NUMERIC)) tank.putFloat("fertilizer", 0.0F);
         return data;
     }
 
     /** M37: external filters and cabinets of an older world have an unwound spring. */
     static CompoundTag pumpHeadV0toV1(CompoundTag data) {
-        if (!data.contains("retrofit", Tag.TAG_ANY_NUMERIC)) data.putBoolean("retrofit", true);
+        if (!NbtCompat.has(data, "retrofit", NbtCompat.ANY_NUMERIC)) data.putBoolean("retrofit", true);
         return data;
     }
 
     /** M41: cabinets from before M41 take no Create shaft ({@code drive: none}). */
     static CompoundTag cabinetDriveV2toV3(CompoundTag data) {
-        if (!data.contains("drive", Tag.TAG_STRING)) data.putString("drive", "none");
+        if (!NbtCompat.has(data, "drive", Tag.TAG_STRING)) data.putString("drive", "none");
         return data;
     }
 
     static CompoundTag springV1toV2(CompoundTag data) {
-        if (!data.contains("spring", Tag.TAG_ANY_NUMERIC)) data.putLong("spring", 0L);
+        if (!NbtCompat.has(data, "spring", NbtCompat.ANY_NUMERIC)) data.putLong("spring", 0L);
         return data;
     }
 
     /** M5 fin-form split of one genotype compound (in place). */
     static void genomeV2toV3(CompoundTag g) {
-        if (!g.contains("finform", Tag.TAG_LIST)) return;
-        net.minecraft.nbt.ListTag fin = g.getList("finform", Tag.TAG_STRING);
+        if (!NbtCompat.has(g, "finform", Tag.TAG_LIST)) return;
+        net.minecraft.nbt.ListTag fin = g.getListOrEmpty("finform");
         net.minecraft.nbt.ListTag tails = new net.minecraft.nbt.ListTag();
         net.minecraft.nbt.ListTag lengths = new net.minecraft.nbt.ListTag();
         for (int i = 0; i < fin.size(); i++) {
-            String a = fin.getString(i);
+            String a = fin.getStringOr(i, "");
             boolean plakat = "plakat".equals(a);
             tails.add(net.minecraft.nbt.StringTag.valueOf(plakat ? "round" : a));
             lengths.add(net.minecraft.nbt.StringTag.valueOf(plakat ? "short" : "long"));
@@ -290,10 +291,10 @@ public final class Schemas {
      * standing in them is counted from the world the first time it is needed. Everything else is kept.
      */
     static CompoundTag regionsV1toV2(CompoundTag data) {
-        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        net.minecraft.nbt.ListTag list = data.getListOrEmpty("regions");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag r = list.getCompound(i);
-            if (!r.contains("equipment", Tag.TAG_COMPOUND)) {
+            CompoundTag r = list.getCompoundOrEmpty(i);
+            if (!NbtCompat.has(r, "equipment", Tag.TAG_COMPOUND)) {
                 CompoundTag eq = new CompoundTag();
                 eq.putBoolean("rescan", true);
                 r.put("equipment", eq);
@@ -308,12 +309,12 @@ public final class Schemas {
      * written before M10 belongs to a cuboid tank, so it gets all cells set. Everything else is kept.
      */
     static CompoundTag regionsV2toV3(CompoundTag data) {
-        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        net.minecraft.nbt.ListTag list = data.getListOrEmpty("regions");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag r = list.getCompound(i);
-            if (r.contains("cells", Tag.TAG_BYTE_ARRAY)) continue;
-            int[] size = r.getIntArray("size");
-            int scale = Math.max(1, r.getInt("scale"));
+            CompoundTag r = list.getCompoundOrEmpty(i);
+            if (NbtCompat.has(r, "cells", Tag.TAG_BYTE_ARRAY)) continue;
+            int[] size = r.getIntArray("size").orElse(new int[0]);
+            int scale = Math.max(1, r.getIntOr("scale", 0));
             int cx = size.length == 3 ? Math.max(1, size[0] / scale) : 1;
             int cy = size.length == 3 ? Math.max(1, size[1] / scale) : 1;
             int cz = size.length == 3 ? Math.max(1, size[2] / scale) : 1;
@@ -327,10 +328,10 @@ public final class Schemas {
      * growth progress). Older regions have no aquarium plants, so they get an empty index. Everything else is kept.
      */
     static CompoundTag regionsV3toV4(CompoundTag data) {
-        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        net.minecraft.nbt.ListTag list = data.getListOrEmpty("regions");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag r = list.getCompound(i);
-            if (r.contains("plants", Tag.TAG_COMPOUND)) continue;
+            CompoundTag r = list.getCompoundOrEmpty(i);
+            if (NbtCompat.has(r, "plants", Tag.TAG_COMPOUND)) continue;
             CompoundTag plants = new CompoundTag();
             plants.put("list", new net.minecraft.nbt.ListTag());
             plants.putInt("next_id", 1);
@@ -346,12 +347,12 @@ public final class Schemas {
      * taken out in the tank menu.
      */
     static CompoundTag tankV2toV3(CompoundTag data) {
-        if (data.contains("tank", Tag.TAG_COMPOUND)) {
-            CompoundTag tank = data.getCompound("tank");
-            if (tank.contains("heaters", Tag.TAG_LIST)) {
-                net.minecraft.nbt.ListTag old = tank.getList("heaters", Tag.TAG_STRING);
+        if (NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) {
+            CompoundTag tank = data.getCompoundOrEmpty("tank");
+            if (NbtCompat.has(tank, "heaters", Tag.TAG_LIST)) {
+                net.minecraft.nbt.ListTag old = tank.getListOrEmpty("heaters");
                 tank.remove("heaters");
-                if (!tank.contains("legacy_heaters", Tag.TAG_LIST)) tank.put("legacy_heaters", old);
+                if (!NbtCompat.has(tank, "legacy_heaters", Tag.TAG_LIST)) tank.put("legacy_heaters", old);
             }
         }
         return data;
@@ -362,12 +363,12 @@ public final class Schemas {
      * gets the historical default 16, and a missing water volume becomes 0 mB. Everything else is kept.
      */
     static CompoundTag tankV0toV1(CompoundTag data) {
-        if (data.contains("tank", Tag.TAG_COMPOUND)) {
-            CompoundTag tank = data.getCompound("tank");
-            if (!tank.contains("scale", Tag.TAG_ANY_NUMERIC)) {
+        if (NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) {
+            CompoundTag tank = data.getCompoundOrEmpty("tank");
+            if (!NbtCompat.has(tank, "scale", NbtCompat.ANY_NUMERIC)) {
                 tank.putInt("scale", 16);
             }
-            if (!tank.contains("water_mb", Tag.TAG_ANY_NUMERIC)) {
+            if (!NbtCompat.has(tank, "water_mb", NbtCompat.ANY_NUMERIC)) {
                 tank.putLong("water_mb", 0L);
             }
         }
@@ -379,13 +380,13 @@ public final class Schemas {
      * their defaults: target 27 C, water at the target temperature, sign visible at top centre, front south, unlocked.
      */
     static CompoundTag tankV1toV2(CompoundTag data) {
-        if (data.contains("tank", Tag.TAG_COMPOUND)) {
-            CompoundTag tank = data.getCompound("tank");
-            if (!tank.contains("target_temp", Tag.TAG_ANY_NUMERIC)) tank.putFloat("target_temp", 27.0F);
-            if (!tank.contains("water_temp", Tag.TAG_ANY_NUMERIC)) tank.putFloat("water_temp", tank.getFloat("target_temp"));
+        if (NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) {
+            CompoundTag tank = data.getCompoundOrEmpty("tank");
+            if (!NbtCompat.has(tank, "target_temp", NbtCompat.ANY_NUMERIC)) tank.putFloat("target_temp", 27.0F);
+            if (!NbtCompat.has(tank, "water_temp", NbtCompat.ANY_NUMERIC)) tank.putFloat("water_temp", tank.getFloatOr("target_temp", 0f));
             if (!tank.contains("sign_visible")) tank.putBoolean("sign_visible", true);
-            if (!tank.contains("sign_pos", Tag.TAG_STRING)) tank.putString("sign_pos", "top_center");
-            if (!tank.contains("front", Tag.TAG_STRING)) tank.putString("front", "south");
+            if (!NbtCompat.has(tank, "sign_pos", Tag.TAG_STRING)) tank.putString("sign_pos", "top_center");
+            if (!NbtCompat.has(tank, "front", Tag.TAG_STRING)) tank.putString("front", "south");
         }
         return data;
     }

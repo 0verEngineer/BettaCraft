@@ -40,12 +40,12 @@ public final class BettaCraftNeoForge {
             }
 
             @Override
-            public net.minecraft.world.item.ItemStack createBook(net.minecraft.resources.ResourceLocation guideId) {
+            public net.minecraft.world.item.ItemStack createBook(net.minecraft.resources.Identifier guideId) {
                 return org.overengineer.bettacraft.compat.guideme.GuideMECompat.createBook(guideId);
             }
 
             @Override
-            public boolean isBook(net.minecraft.world.item.ItemStack stack, net.minecraft.resources.ResourceLocation guideId) {
+            public boolean isBook(net.minecraft.world.item.ItemStack stack, net.minecraft.resources.Identifier guideId) {
                 return org.overengineer.bettacraft.compat.guideme.GuideMECompat.isBook(stack, guideId);
             }
         };

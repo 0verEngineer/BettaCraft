@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -33,8 +36,8 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
     @Nullable
     public static CompoundTag data(ItemStack stack) {
         CustomData cd = stack.get(DataComponents.BUCKET_ENTITY_DATA);
-        if (cd == null || !cd.contains(TankmateEntity.KEY)) return null;
-        return cd.copyTag().getCompound(TankmateEntity.KEY);
+        if (cd == null || !cd.copyTag().contains(TankmateEntity.KEY)) return null;
+        return cd.copyTag().getCompoundOrEmpty(TankmateEntity.KEY);
     }
 
     /** A bucket (or bag) holding a fish of this species with the given genes, sex and stage (creative tab, tests, trades). */
@@ -54,7 +57,8 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         if (stack.has(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get())) {
             TankmateItems.appendBag(stack, tooltip); // M22.3: several fish
             return;
@@ -82,16 +86,16 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
                 tooltip.add(Component.translatable("tooltip.bettacraft.critters.more", fish.size() - LINES).withStyle(ChatFormatting.DARK_GRAY));
                 break;
             }
-            tooltip.add(line(s, f.getCompound(TankmateEntity.KEY)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(line(s, f.getCompoundOrEmpty(TankmateEntity.KEY)).withStyle(ChatFormatting.GRAY));
         }
     }
 
     /** One fish of a container (its "tankmate" data). */
     public static net.minecraft.network.chat.MutableComponent line(TankmateSpecies s, CompoundTag fish) {
-        var stage = org.overengineer.bettacraft.entity.betta.LifeStage.byId(fish.getString("stage"));
-        boolean female = fish.getBoolean("female");
+        var stage = org.overengineer.bettacraft.entity.betta.LifeStage.byId(fish.getStringOr("stage", ""));
+        boolean female = fish.getBooleanOr("female", false);
         net.minecraft.network.chat.MutableComponent c = Component.literal(female ? "♀ " : "♂ ").append(Component.translatable(stage.translationKey()));
-        TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
+        TankmateGenes g = TankmateGenes.load(fish.getCompoundOrEmpty("genes"), s);
         Component lb = livebearerName(s, fish);
         if (lb != null) c.append(", ").append(lb.copy().withStyle(ChatFormatting.GRAY));
         else if (s.varieties().size() > 1) c.append(", ").append(Component.translatable(s.varietyKey(g.phenotype(s))));
@@ -103,18 +107,18 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
         } else {
             c.append(Component.translatable("tooltip.bettacraft.genes.unknown_short"));
         }
-        if (fish.getDouble("gravid") > 0) c.append(Component.translatable("tooltip.bettacraft.critters.eggs"));
+        if (fish.getDoubleOr("gravid", 0d) > 0) c.append(Component.translatable("tooltip.bettacraft.critters.eggs"));
         return c;
     }
 
     /** M22.3: the genes of one fish in a bucket (or a note that they are not analysed). */
     public static void genesLine(TankmateSpecies s, CompoundTag bucketData, List<Component> tooltip) {
-        CompoundTag fish = bucketData.getCompound(TankmateEntity.KEY);
+        CompoundTag fish = bucketData.getCompoundOrEmpty(TankmateEntity.KEY);
         if (s.varieties().size() < 2 && !TankmateGenes.livebearer(s)) return; // one colour form: nothing hidden
         if (!org.overengineer.bettacraft.genetics.GeneVisibility.visible(org.overengineer.bettacraft.genetics.GeneVisibility.analysed(fish))) {
             tooltip.add(Component.translatable("tooltip.bettacraft.genes.unknown").withStyle(ChatFormatting.DARK_GRAY));
         } else if (s.varieties().size() > 1 && livebearerName(s, fish) == null) {
-            tooltip.add(Component.translatable("tooltip.bettacraft.genes", TankmateGenes.load(fish.getCompound("genes"), s).text()).withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable("tooltip.bettacraft.genes", TankmateGenes.load(fish.getCompoundOrEmpty("genes"), s).text()).withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 
@@ -122,27 +126,27 @@ public class TankmateBucketItem extends org.overengineer.bettacraft.containers.A
     @Nullable
     public static Component livebearerName(TankmateSpecies s, CompoundTag fish) {
         if (!TankmateGenes.livebearer(s) || !Features.enabled(Feature.LIVEBEARER_GENETICS)) return null;
-        TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
+        TankmateGenes g = TankmateGenes.load(fish.getCompoundOrEmpty("genes"), s);
         if (g.lb() == null) return null;
-        return org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(g.lb().express(fish.getBoolean("female"))).withStyle(ChatFormatting.GOLD);
+        return org.overengineer.bettacraft.genetics.livebearer.LivebearerText.name(g.lb().express(fish.getBooleanOr("female", false))).withStyle(ChatFormatting.GOLD);
     }
 
     /** Tooltip lines of one tankmate: latin name, sex and stage, variety (shared with the fish bag). */
     public static void append(TankmateSpecies s, @Nullable CompoundTag fish, List<Component> tooltip) {
         tooltip.add(Component.literal(s.latin()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         if (fish == null) return;
-        var stage = org.overengineer.bettacraft.entity.betta.LifeStage.byId(fish.getString("stage"));
-        Component sex = org.overengineer.bettacraft.entity.betta.BettaTooltip.sex(fish.getBoolean("female"));
+        var stage = org.overengineer.bettacraft.entity.betta.LifeStage.byId(fish.getStringOr("stage", ""));
+        Component sex = org.overengineer.bettacraft.entity.betta.BettaTooltip.sex(fish.getBooleanOr("female", false));
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.sex_stage", sex, Component.translatable(stage.translationKey()))
                 .withStyle(ChatFormatting.GRAY));
         Component lb = livebearerName(s, fish);
         if (lb != null) {
             tooltip.add(lb);
         } else if (s.varieties().size() > 1) {
-            TankmateGenes g = TankmateGenes.load(fish.getCompound("genes"), s);
+            TankmateGenes g = TankmateGenes.load(fish.getCompoundOrEmpty("genes"), s);
             tooltip.add(Component.translatable(s.varietyKey(g.phenotype(s))).withStyle(ChatFormatting.GOLD));
         }
-        if (fish.getDouble("gravid") > 0 || fish.contains("gravid_father") && fish.getDouble("gravid") >= 0) {
+        if (fish.getDoubleOr("gravid", 0d) > 0 || fish.contains("gravid_father") && fish.getDoubleOr("gravid", 0d) >= 0) {
             tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.gravid").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
     }

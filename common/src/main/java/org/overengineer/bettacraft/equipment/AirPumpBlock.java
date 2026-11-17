@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -30,9 +31,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * (or with {@code aeration.airPumpRequiresEnergy} off) it simply runs; otherwise it needs FE per outlet. Right-click:
  * power regulator; sneak + mouse wheel too.
  */
-public class AirPumpBlock extends BaseEntityBlock {
+public class AirPumpBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<AirPumpBlock> CODEC = simpleCodec(AirPumpBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE_X = box(4, 0, 2.5, 12, 5, 13.5), SHAPE_Z = box(2.5, 0, 4, 13.5, 5, 12);
 
     public AirPumpBlock(Properties properties) {
@@ -67,20 +68,19 @@ public class AirPumpBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
-        if (!level.isClientSide && !old.is(this)) invalidateTank(level, pos);
+        if (!level.isClientSide() && !old.is(this)) invalidateTank(level, pos);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) invalidateTank(level, pos);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!level.isClientSide() && !newState.is(this)) invalidateTank(level, pos);
     }
 
     private static void invalidateTank(Level level, BlockPos pos) {
@@ -97,6 +97,6 @@ public class AirPumpBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? createTickerHelper(type, ModBlockEntities.AIR_PUMP.get(), AirPumpBlockEntity::clientTick) : null;
+        return level.isClientSide() ? createTickerHelper(type, ModBlockEntities.AIR_PUMP.get(), AirPumpBlockEntity::clientTick) : null;
     }
 }

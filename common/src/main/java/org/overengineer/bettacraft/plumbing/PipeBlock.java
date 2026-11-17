@@ -1,5 +1,11 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
@@ -25,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * whatever pulls from one gets water from them. Joins other pipes, every block with a fluid handler on that face (our
  * tanks, the reservoir, cauldrons, other mods' tanks and pipes) and our pumps and filter connectors.
  */
-public class PipeBlock extends Block {
+public class PipeBlock extends Block implements BlockRemoval {
     public static final MapCodec<PipeBlock> CODEC = simpleCodec(p -> new PipeBlock(false, p));
     public static final Map<Direction, BooleanProperty> SIDES = new EnumMap<>(Map.of(
             Direction.NORTH, BlockStateProperties.NORTH, Direction.SOUTH, BlockStateProperties.SOUTH, Direction.EAST, BlockStateProperties.EAST,
@@ -76,7 +82,7 @@ public class PipeBlock extends Block {
     }
 
     /** Whether the pipe at {@code pos} joins whatever is on side {@code d}. */
-    public static boolean connects(LevelAccessor level, BlockPos pos, Direction d) {
+    public static boolean connects(net.minecraft.world.level.BlockGetter level, BlockPos pos, Direction d) {
         BlockPos n = pos.relative(d);
         BlockState ns = level.getBlockState(n);
         if (ns.getBlock() instanceof PipeBlock) return true;
@@ -87,7 +93,7 @@ public class PipeBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (level instanceof Level l) PipeNetwork.invalidate(l);
         return state.setValue(SIDES.get(dir), connects(level, pos, dir));
     }
@@ -98,22 +104,21 @@ public class PipeBlock extends Block {
         PipeNetwork.invalidate(level);
         // tanks and other blocks with a fluid handler do not tell us when they appear: look once more after placing (also when
         // the state was set directly, e.g. by a structure or a command)
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockState now = withConnections(state, level, pos);
             if (now != state) level.setBlock(pos, now, Block.UPDATE_CLIENTS);
         }
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         PipeNetwork.invalidate(level);
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos from, boolean moving) {
-        super.neighborChanged(state, level, pos, block, from, moving);
-        if (level.isClientSide) return;
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean moving) {
+        super.neighborChanged(state, level, pos, block, orientation, moving);
+        if (level.isClientSide()) return;
         PipeNetwork.invalidate(level);
         BlockState now = withConnections(state, level, pos);
         if (now != state) level.setBlock(pos, now, Block.UPDATE_CLIENTS);
@@ -127,7 +132,7 @@ public class PipeBlock extends Block {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 }

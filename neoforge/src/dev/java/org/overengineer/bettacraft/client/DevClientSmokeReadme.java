@@ -10,7 +10,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientSmokeReadme {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final ResourceLocation WOOD = ResourceLocation.withDefaultNamespace("spruce_planks");
+    private static final Identifier WOOD = Identifier.withDefaultNamespace("spruce_planks");
 
     private record Step(int delay, Runnable action) {}
 
@@ -131,7 +131,7 @@ final class DevClientSmokeReadme {
             server(this::build);
         });
         then(1, () -> server(p -> {
-            p.serverLevel().setDayTime(media ? 6000 : 5000);
+            p.level().setDayTime(media ? 6000 : 5000);
             reach(p, false);
         }));
         // the room: let the chunks, miniatures and plant meshes build
@@ -160,8 +160,8 @@ final class DevClientSmokeReadme {
             then(80, () -> shot("varieties"));
             // inside the planted tank (scale 16)
             then(1, () -> server(p -> {
-                TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(0, 1, 0));
-                InteriorRegion r = InteriorManager.ensureRegion(p.serverLevel(), c);
+                TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 0));
+                InteriorRegion r = InteriorManager.ensureRegion(p.level(), c);
                 BlockPos at = r.toWorld(48, 16, 1);
                 p.teleportTo(InteriorManager.interiorLevel(p.server), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 18F);
             }));
@@ -202,7 +202,7 @@ final class DevClientSmokeReadme {
     // ------------------------------------------------------------------ building
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         RandomSource r = RandomSource.create(1800);
         base = p.blockPosition().offset(-4, 0, 24);
@@ -285,7 +285,7 @@ final class DevClientSmokeReadme {
                     .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 4).setValue(TankLightBlock.LIT, true));
         String[] varieties = {"koi_galaxy", "black_orchid", "mustard_gas", "samurai", "avatar", "hellboy"};
         for (String v : varieties) betta(level, gal, v, false);
-        server(pl -> arrangeGallery(pl.serverLevel(), varieties.length));
+        server(pl -> arrangeGallery(pl.level(), varieties.length));
         if (this.media) buildExtras(level, in);
         built = true;
         LOGGER.info("[smoketest] README scene at {}, varieties at {}", base, gallery);
@@ -320,14 +320,14 @@ final class DevClientSmokeReadme {
      * moved to the free ground west of the showcase where the room is built.
      */
     private void prepareShowcase(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         var rules = level.getGameRules();
-        rules.getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
-        rules.getRule(net.minecraft.world.level.GameRules.RULE_WEATHER_CYCLE).set(false, p.server);
-        rules.getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, p.server);
+        rules.getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        rules.getRule(net.minecraft.world.level.gamerules.GameRules.RULE_WEATHER_CYCLE).set(false, p.server);
+        rules.getRule(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS).set(false, p.server);
         level.setWeatherParameters(1_000_000, 0, false, false);
         level.setDayTime(6000);
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         showcaseGround = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
         showcaseOrigin = new BlockPos(spawn.getX() + 3, showcaseGround, spawn.getZ() + 6);
         int hidden = 0;
@@ -348,7 +348,7 @@ final class DevClientSmokeReadme {
         LOGGER.info("[smoketest] media: {} showcase tanks, {} named, origin {}", hidden, named.size(), showcaseOrigin);
         int x = spawn.getX() - 70, z = spawn.getZ() - 40;
         int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, x, z);
-        p.teleportTo(level, x + 0.5, y, z + 0.5, 0F, 0F);
+        p.teleportTo(level, x + 0.5, y, z + 0.5, java.util.Set.of(), 0F, 0F, false);
     }
 
     /** The extra tanks of the media run, in a line behind the varieties tank (each against its own back wall). */
@@ -453,7 +453,7 @@ final class DevClientSmokeReadme {
     /** The flaring male side on in the middle of its tank, frozen. */
     private void arrangeFlare(ServerLevel level) {
         for (BettaEntity b : level.getEntitiesOfClass(BettaEntity.class, new AABB(flareAt).inflate(2, 1, 1))) {
-            b.moveTo(flareAt.getX() + 1.0, flareAt.getY() + 0.48, flareAt.getZ() + 0.5, 90F, 0F);
+            b.snapTo(flareAt.getX() + 1.0, flareAt.getY() + 0.48, flareAt.getZ() + 0.5, 90F, 0F);
             b.setYBodyRot(90F);
             b.setYHeadRot(90F);
             SmokeFreeze.freeze(b, true);
@@ -468,16 +468,16 @@ final class DevClientSmokeReadme {
         then(1, () -> { if (!shaders) sequence("amazon", 100); });
         then(20, () -> {});
         // the flaring male: zoomed in, flaring on and off
-        then(1, () -> server(p -> arrangeFlare(p.serverLevel())));
+        then(1, () -> server(p -> arrangeFlare(p.level())));
         then(1, () -> {
             mc.options.fov().set(30);
             look(flareAt.getX() + 1.0, flareAt.getY() + 0.52, flareAt.getZ() - 1.25, 0F, 1F);
         });
-        then(60, () -> server(p -> flareAll(p.serverLevel(), 40)));
+        then(60, () -> server(p -> flareAll(p.level(), 40)));
         then(20, () -> shot("flare"));
         then(60, () -> {
             if (shaders) return;
-            seqHook = (p, i) -> { if (i >= 12 && i < 52 || i >= 76) flareAll(p.serverLevel(), 2); };
+            seqHook = (p, i) -> { if (i >= 12 && i < 52 || i >= 76) flareAll(p.level(), 2); };
             sequence("flare", 100);
         });
         then(20, () -> {
@@ -488,7 +488,7 @@ final class DevClientSmokeReadme {
         then(1, () -> lookAt(new Box("grow", growAt.below(), growAt.offset(2, 1, 1)), 0F, 6F, 0.72));
         then(120, () -> {
             if (shaders) return;
-            seqHook = (p, i) -> grow(p.serverLevel(), i, 70);
+            seqHook = (p, i) -> grow(p.level(), i, 70);
             sequence("grow", 96);
         });
         then(20, () -> {
@@ -604,7 +604,7 @@ final class DevClientSmokeReadme {
         for (int i = 0; i < fish.size(); i++) {
             BettaEntity b = fish.get(i);
             float yaw = i % 2 == 0 ? 90F : -90F;
-            b.moveTo(gallery.getX() + 0.45 + i * 0.82, gallery.getY() + 0.42 + (i % 3) * 0.08, gallery.getZ() + 0.5, yaw, 0F);
+            b.snapTo(gallery.getX() + 0.45 + i * 0.82, gallery.getY() + 0.42 + (i % 3) * 0.08, gallery.getZ() + 0.5, yaw, 0F);
             b.setYBodyRot(yaw);
             b.setYHeadRot(yaw);
             SmokeFreeze.freeze(b, true);
@@ -798,7 +798,7 @@ final class DevClientSmokeReadme {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -808,7 +808,7 @@ final class DevClientSmokeReadme {
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
-            else p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

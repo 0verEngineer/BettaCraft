@@ -42,7 +42,7 @@ public final class FabricDevSmoke implements ModInitializer {
 
     private static void build(MinecraftServer server) {
         ServerLevel level = server.overworld();
-        BASE = level.getSharedSpawnPos().above(60);
+        BASE = level.getRespawnData().pos().above(60);
         for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
             level.setBlockAndUpdate(BASE.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
         }

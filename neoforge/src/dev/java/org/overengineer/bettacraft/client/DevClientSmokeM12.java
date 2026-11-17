@@ -59,8 +59,8 @@ final class DevClientSmokeM12 {
         then(1, () -> mc.options.hideGui = true);
         // once the light engine has caught up: the red of the red root floaters as their light makes it
         then(40, () -> server(p -> {
-            settleRed(p.serverLevel(), TankMultiblock.getController(p.serverLevel(), base));
-            settleRed(p.serverLevel(), TankMultiblock.getController(p.serverLevel(), base.offset(0, 0, 14)));
+            settleRed(p.level(), TankMultiblock.getController(p.level(), base));
+            settleRed(p.level(), TankMultiblock.getController(p.level(), base.offset(0, 0, 14)));
         }));
         // overview of the main tank, slightly from above
         then(80, () -> look(base.getX() + 2.5, base.getY() + 4.4, base.getZ() - 3.2, 0F, 40F));
@@ -82,7 +82,7 @@ final class DevClientSmokeM12 {
         then(1, () -> look(base.getX() + 2.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
         then(60, () -> shot("overlay"));
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -147,11 +147,11 @@ final class DevClientSmokeM12 {
         then(5, () -> mc.setScreen(null));
         then(1, () -> server(p -> {
             for (BlockPos at : List.of(base, base.offset(0, 0, 14), base.offset(9, 0, 0))) {
-                TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+                TankBlockEntity c = TankMultiblock.getController(p.level(), at);
                 if (c == null) continue;
                 TankData t = c.getTank();
                 LOGGER.info("[smoketest] M12 tank {}: {} plants, cover {} %, light {}", at, t.plants().size(),
-                        Math.round(TankPlants.coverage(t) * 100), TankPlants.light(p.serverLevel(), c));
+                        Math.round(TankPlants.coverage(t) * 100), TankPlants.light(p.level(), c));
             }
         }));
     }
@@ -193,7 +193,7 @@ final class DevClientSmokeM12 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(0, 2, 190);
         RandomSource r = RandomSource.create(1212);
         // main tank 5x2x3 with a lit light bar along the middle row
@@ -250,7 +250,7 @@ final class DevClientSmokeM12 {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof BettaEntity b) || i >= spots.length) continue;
             SmokeFreeze.freeze(b, true);
-            b.moveTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
+            b.snapTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -259,7 +259,7 @@ final class DevClientSmokeM12 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     /** Switches the client language without a full resource reload (only the translations), re-inits the open screen. */

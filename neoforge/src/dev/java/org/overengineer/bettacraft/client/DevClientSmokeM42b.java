@@ -60,7 +60,7 @@ final class DevClientSmokeM42b {
     DevClientSmokeM42b() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(200, () -> server(pl -> place(pl.serverLevel())));
+        then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(water.getX() + 5, water.getY() + 3.0, water.getZ() - 6.5, 0F, 18F));
         then(140, () -> shot("water"));
         then(1, () -> look(water.getX() + 2.5, water.getY() + 2.0, water.getZ() - 2.5, 0F, 18F));
@@ -102,7 +102,7 @@ final class DevClientSmokeM42b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         water = base;
         TankBlockEntity wc = tank(level, p, water, 10, 3, 6);
@@ -186,7 +186,7 @@ final class DevClientSmokeM42b {
                 Entity e = c.type().create(level);
                 if (e == null) continue;
                 Vec3 at = Vec3.atCenterOf(land).add(0, 6, 0);
-                e.moveTo(at.x, at.y, at.z, 0, 0);
+                e.snapTo(at.x, at.y, at.z, 0, 0);
                 if (!ForeignTerrarium.boxTakes(e)) {
                     e.discard();
                     continue;
@@ -219,7 +219,7 @@ final class DevClientSmokeM42b {
 
     private static void pose(LivingEntity e, double x, double y, double z) {
         if (e == null) return;
-        e.moveTo(x, y, z, 180F, 0F);
+        e.snapTo(x, y, z, 180F, 0F);
         e.setYHeadRot(180F);
         e.yBodyRot = 180F;
         if (e instanceof Mob m) SmokeFreeze.freeze(m, true);

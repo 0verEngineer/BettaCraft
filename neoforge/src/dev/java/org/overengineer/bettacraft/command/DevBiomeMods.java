@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.NetCatching;
@@ -46,9 +46,9 @@ public final class DevBiomeMods {
     /** The problems found (empty = all right). */
     public static List<String> problems(RegistryAccess access) {
         List<String> out = new ArrayList<>();
-        var reg = access.registryOrThrow(Registries.BIOME);
+        var reg = access.lookupOrThrow(Registries.BIOME);
         for (Want w : WANTS) {
-            var key = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(w.id()));
+            var key = ResourceKey.create(Registries.BIOME, Identifier.parse(w.id()));
             var holder = reg.getHolder(key);
             if (holder.isEmpty()) {
                 out.add(w.id() + " missing");
@@ -71,7 +71,7 @@ public final class DevBiomeMods {
             if (plants != null && !hasFeature(b, "wild_plants")) out.add(w.id() + ": no wild plants feature");
         }
         // the lush caves of Regions Unexplored by the common tags (#c:is_lush and #c:is_cave)
-        reg.getHolder(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("regions_unexplored:ancient_delta"))).ifPresent(b -> {
+        reg.getHolder(ResourceKey.create(Registries.BIOME, Identifier.parse("regions_unexplored:ancient_delta"))).ifPresent(b -> {
             if (!BiomeWaters.lushCave(b) || NetCatching.water(b, false) != NetCatching.Water.CAVE) out.add("regions_unexplored:ancient_delta is no lush cave");
         });
         return out;

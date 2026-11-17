@@ -29,6 +29,6 @@ final class SpringGauge {
 
     static void tooltip(GuiGraphics g, Font font, int mouseX, int mouseY, int pct) {
         if (pct < 0) return;
-        g.renderTooltip(font, font.split(Component.translatable("gui.bettacraft.spring.tooltip", pct), 200), mouseX, mouseY);
+        g.setTooltipForNextFrame(font, font.split(Component.translatable("gui.bettacraft.spring.tooltip", pct), 200), mouseX, mouseY);
     }
 }

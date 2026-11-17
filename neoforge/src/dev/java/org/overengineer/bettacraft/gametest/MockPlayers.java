@@ -9,7 +9,7 @@ import java.util.UUID;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 
@@ -22,19 +22,19 @@ final class MockPlayers {
     private MockPlayers() {}
 
     /** The connection claims to listen on every channel; the packets just end up in the embedded channel. */
-    private static final class AnyChannel extends AbstractSet<ResourceLocation> {
+    private static final class AnyChannel extends AbstractSet<Identifier> {
         @Override
         public boolean contains(Object o) {
             return true;
         }
 
         @Override
-        public boolean add(ResourceLocation id) {
+        public boolean add(Identifier id) {
             return false;
         }
 
         @Override
-        public Iterator<ResourceLocation> iterator() {
+        public Iterator<Identifier> iterator() {
             return Collections.emptyIterator();
         }
 

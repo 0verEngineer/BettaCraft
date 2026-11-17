@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -23,8 +26,9 @@ public class TurtleBucketItem extends AnimalBucketItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> lines, TooltipFlag flag) {
-        super.appendHoverText(stack, ctx, lines, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> lines = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, ctx, tooltipDisplay, tooltipAdder, flag);
         describe(stack, lines);
     }
 
@@ -32,16 +36,16 @@ public class TurtleBucketItem extends AnimalBucketItem {
     public static void describe(ItemStack stack, List<Component> lines) {
         CompoundTag tag = stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag();
         if (!tag.contains("terrarium")) return;
-        CompoundTag t = tag.getCompound("terrarium");
+        CompoundTag t = tag.getCompoundOrEmpty("terrarium");
         HerpSpecies s = speciesOf(stack);
-        if (s != null && s.varieties().size() > 1) lines.add(Component.translatable(s.varietyKey(t.getInt("variety"))).withStyle(ChatFormatting.GRAY));
-        int age = t.getInt("age");
+        if (s != null && s.varieties().size() > 1) lines.add(Component.translatable(s.varietyKey(t.getIntOr("variety", 0))).withStyle(ChatFormatting.GRAY));
+        int age = t.getIntOr("age", 0);
         if (s != null && s.tadpoles() && age < 0 && 1.0 + age / (s.growDays() * 24000.0) < HerpEntity.METAMORPHOSIS) { // part c
             lines.add(Component.translatable("tooltip.bettacraft.herp.tadpole").withStyle(ChatFormatting.AQUA));
         } else if (age < 0) lines.add(Component.translatable("tooltip.bettacraft.turtle.young").withStyle(ChatFormatting.GRAY));
-        else if (t.contains("female")) lines.add(Component.translatable(t.getBoolean("female") ? "tooltip.bettacraft.turtle.female"
+        else if (t.contains("female")) lines.add(Component.translatable(t.getBooleanOr("female", false) ? "tooltip.bettacraft.turtle.female"
                 : "tooltip.bettacraft.turtle.male").withStyle(ChatFormatting.GRAY));
-        if (t.getBoolean("brumating")) lines.add(Component.translatable("tooltip.bettacraft.turtle.brumating").withStyle(ChatFormatting.AQUA));
+        if (t.getBooleanOr("brumating", false)) lines.add(Component.translatable("tooltip.bettacraft.turtle.brumating").withStyle(ChatFormatting.AQUA));
     }
 
     private static HerpSpecies speciesOf(ItemStack stack) {

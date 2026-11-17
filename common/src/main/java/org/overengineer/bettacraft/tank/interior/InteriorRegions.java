@@ -23,7 +23,7 @@ public final class InteriorRegions extends SavedData {
 
     public static InteriorRegions get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(InteriorRegions::new, InteriorRegions::load, null), NAME);
+                org.overengineer.bettacraft.util.NbtCompat.savedData(NAME, InteriorRegions::new, InteriorRegions::load, InteriorRegions::save));
     }
 
     @Nullable
@@ -60,7 +60,6 @@ public final class InteriorRegions extends SavedData {
         return regions.size();
     }
 
-    @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         Schemas.INTERIOR_REGIONS.stamp(tag);
         tag.putInt("next_id", nextId);
@@ -73,8 +72,8 @@ public final class InteriorRegions extends SavedData {
     private static InteriorRegions load(CompoundTag raw, HolderLookup.Provider registries) {
         CompoundTag tag = Schemas.INTERIOR_REGIONS.migrate(raw);
         InteriorRegions d = new InteriorRegions();
-        d.nextId = tag.getInt("next_id");
-        for (Tag t : tag.getList("regions", Tag.TAG_COMPOUND)) {
+        d.nextId = tag.getIntOr("next_id", 0);
+        for (Tag t : tag.getListOrEmpty("regions")) {
             InteriorRegion r = InteriorRegion.load((CompoundTag) t);
             d.regions.put(r.id(), r);
             d.nextId = Math.max(d.nextId, r.id() + 1);

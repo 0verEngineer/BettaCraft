@@ -41,9 +41,9 @@ public final class Tadpole {
 
     @Nullable
     public static Tadpole load(CompoundTag t) {
-        Tadpole k = new Tadpole(t.getInt("id"), t.getDouble("x"), t.getDouble("y"), t.getDouble("z"));
-        k.age = Math.max(0, t.getDouble("age"));
-        k.hunger = Math.max(0, t.getDouble("hunger"));
+        Tadpole k = new Tadpole(t.getIntOr("id", 0), t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d));
+        k.age = Math.max(0, t.getDoubleOr("age", 0d));
+        k.hunger = Math.max(0, t.getDoubleOr("hunger", 0d));
         if (!Double.isFinite(k.x) || !Double.isFinite(k.y) || !Double.isFinite(k.z) || !Double.isFinite(k.age) || !Double.isFinite(k.hunger)) return null;
         return k;
     }
@@ -63,8 +63,8 @@ public final class Tadpole {
     public float clientGrowth;
 
     public static Tadpole loadClientView(CompoundTag t) {
-        Tadpole k = new Tadpole(t.getInt("id"), t.getFloat("x"), t.getFloat("y"), t.getFloat("z"));
-        k.clientGrowth = t.getFloat("g");
+        Tadpole k = new Tadpole(t.getIntOr("id", 0), t.getFloatOr("x", 0f), t.getFloatOr("y", 0f), t.getFloatOr("z", 0f));
+        k.clientGrowth = t.getFloatOr("g", 0f);
         return k;
     }
 }

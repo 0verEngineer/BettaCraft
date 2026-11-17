@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -149,19 +149,19 @@ public final class AquaristPrices {
 
     /** The emeralds for one tankmate (its bucket data: the fish tag or a tag holding it under "tankmate"). */
     public static int tankmate(CompoundTag tag) {
-        CompoundTag fish = tag.contains("tankmate") ? tag.getCompound("tankmate") : tag;
-        TankmateSpecies s = TankmateSpecies.byId(fish.getString("species"));
+        CompoundTag fish = tag.contains("tankmate") ? tag.getCompoundOrEmpty("tankmate") : tag;
+        TankmateSpecies s = TankmateSpecies.byId(fish.getStringOr("species", ""));
         if (s == null) return 0;
-        String stage = fish.getString("stage");
+        String stage = fish.getStringOr("stage", "");
         if (!stage.isEmpty() && !LifeStage.ADULT.id().equals(stage)) return 0;
-        int generation = fish.getInt("gen");
+        int generation = fish.getIntOr("gen", 0);
         if (generation <= 0 && get("tankmate.only_bred") > 0) return 0;
         double p = switch (s.trade()) {
             case COMMON -> get("tankmate.common");
             case RARE -> get("tankmate.rare");
             default -> get("tankmate.other");
         };
-        TankmateGenes genes = TankmateGenes.load(fish.getCompound("genes"), s);
+        TankmateGenes genes = TankmateGenes.load(fish.getCompoundOrEmpty("genes"), s);
         if (!genes.phenotype(s).equals(s.variety(0))) p += get("tankmate.bred_variety");
         p += get("species." + s.id());
         return clamp(p, get("tankmate.max"));
@@ -200,7 +200,7 @@ public final class AquaristPrices {
             Map<String, Double> m = DEFAULTS;
             // ours first, then the other namespaces (a modpack's datapack overrides single values)
             for (String ns : rm.getNamespaces().stream().sorted(java.util.Comparator.comparing((String n) -> !n.equals(BettaCraft.MOD_ID)).thenComparing(n -> n)).toList()) {
-                for (Resource r : rm.getResourceStack(ResourceLocation.fromNamespaceAndPath(ns, FILE))) {
+                for (Resource r : rm.getResourceStack(Identifier.fromNamespaceAndPath(ns, FILE))) {
                     try (Reader reader = r.openAsReader()) {
                         JsonElement json = JsonParser.parseReader(reader);
                         if (json.isJsonObject()) m = parse(json.getAsJsonObject(), m);

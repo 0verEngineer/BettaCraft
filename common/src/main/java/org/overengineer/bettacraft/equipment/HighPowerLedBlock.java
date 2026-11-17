@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
@@ -68,7 +71,7 @@ public class HighPowerLedBlock extends TankLightBlock {
         return connectAll(s, ctx.getLevel(), ctx.getClickedPos());
     }
 
-    private BlockState connectAll(BlockState s, LevelAccessor level, BlockPos pos) {
+    private BlockState connectAll(BlockState s, net.minecraft.world.level.LevelReader level, BlockPos pos) {
         return s.setValue(NEG, joinsLed(s, level.getBlockState(pos.west()))).setValue(POS, joinsLed(s, level.getBlockState(pos.east())))
                 .setValue(NORTH, joinsLed(s, level.getBlockState(pos.north()))).setValue(SOUTH, joinsLed(s, level.getBlockState(pos.south())));
     }
@@ -78,7 +81,7 @@ public class HighPowerLedBlock extends TankLightBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (dir.getAxis().isHorizontal()) return connectAll(state, level, pos);
         return state;
     }

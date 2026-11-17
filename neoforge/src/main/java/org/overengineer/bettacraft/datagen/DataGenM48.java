@@ -38,12 +38,12 @@ final class DataGenM48 {
         // rotifers: a starter from an infusoria culture (rotifers live in it) on phytoplankton ...
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get())
                 .requires(ModItems.PHYTOPLANKTON.get()).requires(ModItems.INFUSORIA.get())
-                .unlockedBy("has_phytoplankton", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PHYTOPLANKTON.get()))
+                .unlockedBy("has_phytoplankton", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PHYTOPLANKTON.get()))
                 .save(out, BettaCraft.id("rotifer_culture_start"));
         // ... then the culture goes on: a bottle of rotifers on two of phytoplankton makes two cultures
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get(), 2)
                 .requires(ModItems.ROTIFERS.get()).requires(ModItems.PHYTOPLANKTON.get(), 2)
-                .unlockedBy("has_rotifers", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.ROTIFERS.get()))
+                .unlockedBy("has_rotifers", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.ROTIFERS.get()))
                 .save(out, BettaCraft.id("rotifer_culture"));
     }
 

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.Locale;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -181,8 +182,8 @@ public final class Clutch {
         t.put("mother", mother.save());
         t.put("father", father.save());
         t.putInt("gen", generation);
-        if (guardian != null) t.putUUID("guardian", guardian);
-        if (partner != null) t.putUUID("partner", partner);
+        if (guardian != null) NbtCompat.putUUID(t, "guardian", guardian);
+        if (partner != null) NbtCompat.putUUID(t, "partner", partner);
         t.putDouble("cover", cover);
         if (building) t.putBoolean("building", true);
         t.putDouble("progress", progress);
@@ -194,22 +195,22 @@ public final class Clutch {
     /** Null for a species that no longer exists (data of a newer version or a broken entry). */
     @Nullable
     public static Clutch load(CompoundTag t) {
-        TankmateSpecies s = TankmateSpecies.byId(t.getString("species"));
+        TankmateSpecies s = TankmateSpecies.byId(t.getStringOr("species", ""));
         if (s == null) return null;
-        double x = t.getDouble("x"), y = t.getDouble("y"), z = t.getDouble("z");
+        double x = t.getDoubleOr("x", 0d), y = t.getDoubleOr("y", 0d), z = t.getDoubleOr("z", 0d);
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) return null;
-        Clutch c = new Clutch(t.getInt("id"), s, Kind.byId(t.getString("kind")), x, y, z, Math.max(0, t.getInt("count")),
-                TankmateGenes.load(t.getCompound("mother"), s), TankmateGenes.load(t.getCompound("father"), s));
-        c.face = t.contains("face", Tag.TAG_ANY_NUMERIC) ? t.getInt("face") : -1;
-        c.age = Math.max(0, t.getDouble("age"));
-        c.generation = t.getInt("gen");
-        c.guardian = t.hasUUID("guardian") ? t.getUUID("guardian") : null;
-        c.partner = t.hasUUID("partner") ? t.getUUID("partner") : null;
-        c.cover = Math.max(0, Math.min(1, t.getDouble("cover")));
-        c.building = t.getBoolean("building");
-        c.progress = t.getDouble("progress");
-        c.unguarded = t.getDouble("unguarded");
-        c.rotifers = t.getBoolean("rotifers");
+        Clutch c = new Clutch(t.getIntOr("id", 0), s, Kind.byId(t.getStringOr("kind", "")), x, y, z, Math.max(0, t.getIntOr("count", 0)),
+                TankmateGenes.load(t.getCompoundOrEmpty("mother"), s), TankmateGenes.load(t.getCompoundOrEmpty("father"), s));
+        c.face = NbtCompat.has(t, "face", NbtCompat.ANY_NUMERIC) ? t.getIntOr("face", 0) : -1;
+        c.age = Math.max(0, t.getDoubleOr("age", 0d));
+        c.generation = t.getIntOr("gen", 0);
+        c.guardian = NbtCompat.hasUUID(t, "guardian") ? NbtCompat.getUUID(t, "guardian") : null;
+        c.partner = NbtCompat.hasUUID(t, "partner") ? NbtCompat.getUUID(t, "partner") : null;
+        c.cover = Math.max(0, Math.min(1, t.getDoubleOr("cover", 0d)));
+        c.building = t.getBooleanOr("building", false);
+        c.progress = t.getDoubleOr("progress", 0d);
+        c.unguarded = t.getDoubleOr("unguarded", 0d);
+        c.rotifers = t.getBooleanOr("rotifers", false);
         return c;
     }
 
@@ -232,15 +233,15 @@ public final class Clutch {
 
     @Nullable
     public static Clutch loadClientView(CompoundTag t) {
-        TankmateSpecies s = TankmateSpecies.byId(t.getString("species"));
+        TankmateSpecies s = TankmateSpecies.byId(t.getStringOr("species", ""));
         if (s == null) return null;
         TankmateGenes w = TankmateGenes.wild(s);
-        Clutch c = new Clutch(t.getInt("id"), s, Kind.byId(t.getString("kind")), t.getFloat("x"), t.getFloat("y"), t.getFloat("z"),
-                t.getShort("count"), w, w);
-        c.face = t.getByte("face");
-        c.clientStage = t.getByte("stage");
-        c.building = t.getBoolean("building");
-        c.progress = t.getFloat("progress");
+        Clutch c = new Clutch(t.getIntOr("id", 0), s, Kind.byId(t.getStringOr("kind", "")), t.getFloatOr("x", 0f), t.getFloatOr("y", 0f), t.getFloatOr("z", 0f),
+                t.getShortOr("count", (short) 0), w, w);
+        c.face = t.getByteOr("face", (byte) 0);
+        c.clientStage = t.getByteOr("stage", (byte) 0);
+        c.building = t.getBooleanOr("building", false);
+        c.progress = t.getFloatOr("progress", 0f);
         return c;
     }
 }

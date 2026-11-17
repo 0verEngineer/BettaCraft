@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.guide;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

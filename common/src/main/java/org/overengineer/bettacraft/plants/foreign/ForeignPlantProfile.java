@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.plants.foreign;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * M38: one profile file {@code data/<ns>/bettacraft/foreign_plants/<name>.json}: the blocks (ids, or {@code #tags}) of a
@@ -23,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
  * @param role   what the plant is in our tanks
  * @param factor on top of {@code interiorPlants.foreignPlantFactor} (default 1)
  */
-public record ForeignPlantProfile(List<ResourceLocation> blocks, List<ResourceLocation> tags, ForeignPlantRole role, double factor, boolean required) {
+public record ForeignPlantProfile(List<Identifier> blocks, List<Identifier> tags, ForeignPlantRole role, double factor, boolean required) {
     /** A profile that cannot be read. */
     public static final class Invalid extends RuntimeException {
         public Invalid(String m) {
@@ -33,7 +34,7 @@ public record ForeignPlantProfile(List<ResourceLocation> blocks, List<ResourceLo
 
     /** Pure: reads a profile; problems that do not stop it go to {@code warn}. */
     public static ForeignPlantProfile parse(JsonObject o, Consumer<String> warn) {
-        List<ResourceLocation> blocks = new ArrayList<>(), tags = new ArrayList<>();
+        List<Identifier> blocks = new ArrayList<>(), tags = new ArrayList<>();
         JsonElement b = o.get("blocks");
         if (b == null) b = o.get("block");
         if (b == null) throw new Invalid("no \"blocks\"");
@@ -42,7 +43,7 @@ public record ForeignPlantProfile(List<ResourceLocation> blocks, List<ResourceLo
         else raw.add(b.getAsString());
         for (String s : raw) {
             boolean tag = s.startsWith("#");
-            ResourceLocation id = ResourceLocation.tryParse(tag ? s.substring(1) : s);
+            Identifier id = Identifier.tryParse(tag ? s.substring(1) : s);
             if (id == null) {
                 warn.accept("not a block id: " + s);
                 continue;

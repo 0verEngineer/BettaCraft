@@ -72,12 +72,12 @@ final class DevClientSmokeM30b {
         int rays = 0;
         for (TankmateEntity m : level.getEntitiesOfClass(TankmateEntity.class, new AABB(base).inflate(40), e -> e.species().isLarge())) {
             switch (m.species()) {
-                case ARAPAIMA -> m.moveTo(x + 7.0, y + 3.4, z + 6.0, -90F, 0F);
-                case REDTAIL_CATFISH -> m.moveTo(x + 15.5, y + 1.6, z + 4.5, 90F, 0F);
-                case WELS_CATFISH -> m.moveTo(x + 8.5, y + 0.4, z + 8.0, -95F, 0F);
+                case ARAPAIMA -> m.snapTo(x + 7.0, y + 3.4, z + 6.0, -90F, 0F);
+                case REDTAIL_CATFISH -> m.snapTo(x + 15.5, y + 1.6, z + 4.5, 90F, 0F);
+                case WELS_CATFISH -> m.snapTo(x + 8.5, y + 0.4, z + 8.0, -95F, 0F);
                 case MOTORO_STINGRAY -> {
-                    if (rays++ == 0) m.moveTo(x + 19.5, y + 0.05, z + 6.5, 25F, 0F);
-                    else m.moveTo(x + 3.5, y + 0.05, z + 3.0, -60F, 0F);
+                    if (rays++ == 0) m.snapTo(x + 19.5, y + 0.05, z + 6.5, 25F, 0F);
+                    else m.snapTo(x + 3.5, y + 0.05, z + 3.0, -60F, 0F);
                 }
                 default -> {}
             }
@@ -104,7 +104,7 @@ final class DevClientSmokeM30b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         base = p.blockPosition().offset(-12, 2, 300);
         TankBlockEntity c = tank(level, p, base, 24, 6, 12);

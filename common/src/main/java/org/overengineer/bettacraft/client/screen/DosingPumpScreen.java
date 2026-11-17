@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -40,7 +41,7 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
     }
 
     private void click(int ch, boolean up) {
-        int k = (up ? 1 : 0) + (Screen.hasShiftDown() ? 2 : 0);
+        int k = (up ? 1 : 0) + (Minecraft.getInstance().hasShiftDown() ? 2 : 0);
         if (minecraft != null && minecraft.gameMode != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ch * 4 + k);
     }
 
@@ -63,8 +64,8 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY, TEXT, false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, TEXT, false);
+        g.drawString(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         for (int ch = 0; ch < DosingPumpBlockEntity.CHANNELS; ch++) {
             int cx = 3 + ch * 43 + 21;
             ItemStack s = menu.slots.get(ch).getItem();
@@ -91,11 +92,11 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
-        g.pose().pushPose();
-        g.pose().translate(cx, y, 0);
-        g.pose().scale(s, s, 1);
-        g.drawString(font, c, -w / 2, 0, color, false);
-        g.pose().popPose();
+        g.pose().pushMatrix();
+        g.pose().translate(cx, y);
+        g.pose().scale(s, s);
+        g.drawString(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+        g.pose().popMatrix();
     }
 
     @Override

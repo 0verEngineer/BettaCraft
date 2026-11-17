@@ -48,8 +48,8 @@ public final class ReefEventsHandlers {
         if (!(state.getBlock() instanceof BucketPickup pickup)) return;
         if (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos.relative(hit.getDirection()), hit.getDirection(), stack)) return;
         event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
-        if (level.isClientSide) return;
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (level.isClientSide()) return;
         ItemStack picked = pickup.pickupBlock(player, level, pos, state);
         if (picked.isEmpty()) return;
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BUCKET_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);

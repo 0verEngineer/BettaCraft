@@ -29,7 +29,7 @@ final class FilterEffects {
     static void tick() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.isPaused()) return;
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
         List<BlockEntity> filters = new ArrayList<>(ExternalFilterBlockEntity.CLIENT_LOADED);
         filters.addAll(CabinetBlockEntity.CLIENT_FILTERS);
         boolean sound = ClientConfig.FILTER_SOUND.get();

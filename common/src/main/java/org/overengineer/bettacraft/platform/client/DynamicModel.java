@@ -2,10 +2,10 @@ package org.overengineer.bettacraft.platform.client;
 
 import java.util.Collection;
 import java.util.List;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -26,22 +26,21 @@ public interface DynamicModel {
     }
 
     /** The quads of one side (null: the unculled ones) in one render layer (null: all layers). */
-    List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable RenderType layer);
+    List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer layer);
 
     /** The chunk render layers the block is drawn in. */
-    Collection<RenderType> layers(BlockState state, RandomSource rand, ModelValues data);
+    Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data);
 
-    default TextureAtlasSprite particle(ModelValues data) {
-        return ((BakedModel) this).getParticleIcon();
+    /** The particle sprite (breaking particles). */
+    TextureAtlasSprite particle(ModelValues data);
+
+    /** Whether the parts use ambient occlusion (the loader's adapter asks). */
+    default boolean ambientOcclusion() {
+        return true;
     }
 
-    /** The render types of the item, null for the loader's default. */
-    default @Nullable List<RenderType> itemLayers(boolean fabulous) {
-        return null;
-    }
-
-    /** The model this one wraps (its item render types and transforms are the loader's defaults), or null. */
-    default @Nullable BakedModel original() {
+    /** The model this one wraps, or null. */
+    default @Nullable BlockStateModel original() {
         return null;
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
@@ -193,7 +194,7 @@ public final class CreateTravelGameTests {
         if (!(h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x - 1, 2, z))) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter");
         f.insertHeater(new ItemStack(ModItems.HEATER_SMALL.get()));
         if (adapter) {
-            var b = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(BettaCraft.id("drive_adapter"));
+            var b = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(BettaCraft.id("drive_adapter"));
             h.setBlock(new BlockPos(x + 2, 2, z), CreateDeviceGameTests.with(b.defaultBlockState(), "facing", Direction.EAST));
         }
         glue(h, new BlockPos(x - 1, 2, z), new BlockPos(x + 2, 2, z + 1));
@@ -208,7 +209,7 @@ public final class CreateTravelGameTests {
             Map<BlockPos, Object> blocks = (Map<BlockPos, Object>) CreateGameTests.method(c.getClass(), "getBlocks", 0).invoke(c);
             for (Object info : blocks.values()) {
                 CompoundTag nbt = (CompoundTag) info.getClass().getMethod("nbt").invoke(info);
-                if (nbt != null && nbt.contains("tank", Tag.TAG_COMPOUND) && TankData.load(nbt.getCompound("tank")).id().equals(tank)) return nbt;
+                if (nbt != null && NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND) && TankData.load(nbt.getCompoundOrEmpty("tank")).id().equals(tank)) return nbt;
             }
         } catch (ReflectiveOperationException e) {
             throw new GameTestAssertException("contraption data: " + e);
@@ -217,9 +218,9 @@ public final class CreateTravelGameTests {
     }
 
     private static double sinceFed(CompoundTag nbt) {
-        ListTag st = nbt.getList("stowed", Tag.TAG_COMPOUND);
+        ListTag st = nbt.getListOrEmpty("stowed");
         double min = Double.MAX_VALUE;
-        for (int i = 0; i < st.size(); i++) min = Math.min(min, st.getCompound(i).getCompound(BettaData.KEY).getCompound("health").getDouble("days_since_fed"));
+        for (int i = 0; i < st.size(); i++) min = Math.min(min, st.getCompoundOrEmpty(i).getCompoundOrEmpty(BettaData.KEY).getCompoundOrEmpty("health").getDoubleOr("days_since_fed", 0d));
         return st.isEmpty() ? -1 : min;
     }
 
@@ -270,12 +271,12 @@ public final class CreateTravelGameTests {
         });
         h.runAfterDelay(150, () -> {
             CompoundTag da = controllerData(ca, ida), db = controllerData(cb, idb);
-            CompoundTag ta = da.getCompound(TravelCare.TRIP_KEY), tb = db.getCompound(TravelCare.TRIP_KEY);
-            h.assertTrue(ta.getLong("ticks") >= 100 && tb.getLong("ticks") >= 100, "the trip is simulated: " + ta + " / " + tb);
-            h.assertTrue(ta.getLong("dynamo") > 0 && ta.getLong("powered") > 0, "the adapter turns with the trip and powers the devices: " + ta);
-            h.assertTrue(tb.getLong("unpowered") > 0 && tb.getLong("powered") == 0, "without a source the filter and heater stand: " + tb);
+            CompoundTag ta = da.getCompoundOrEmpty(TravelCare.TRIP_KEY), tb = db.getCompoundOrEmpty(TravelCare.TRIP_KEY);
+            h.assertTrue(ta.getLongOr("ticks", 0L) >= 100 && tb.getLongOr("ticks", 0L) >= 100, "the trip is simulated: " + ta + " / " + tb);
+            h.assertTrue(ta.getLongOr("dynamo", 0L) > 0 && ta.getLongOr("powered", 0L) > 0, "the adapter turns with the trip and powers the devices: " + ta);
+            h.assertTrue(tb.getLongOr("unpowered", 0L) > 0 && tb.getLongOr("powered", 0L) == 0, "without a source the filter and heater stand: " + tb);
             h.assertTrue(sinceFed(da) > 0.003 && sinceFed(db) > 0.003, "the packed bettas get hungry: " + sinceFed(da));
-            TankData tda = TankData.load(da.getCompound("tank")), tdb = TankData.load(db.getCompound("tank"));
+            TankData tda = TankData.load(da.getCompoundOrEmpty("tank")), tdb = TankData.load(db.getCompoundOrEmpty("tank"));
             h.assertTrue(tda.waterTemp() > tdb.waterTemp(), "the powered heater warms: " + tda.waterTemp() + " / " + tdb.waterTemp());
             for (UUID u : bettas) h.assertTrue(CreateGameTests.alive(level, u) == 0, "packed, not in the world");
             try {
@@ -318,20 +319,20 @@ public final class CreateTravelGameTests {
         long[] before = new long[1];
         h.runAfterDelay(50, () -> {
             CompoundTag d = controllerData(now[0], id);
-            before[0] = d.getCompound(TravelCare.TRIP_KEY).getLong("ticks");
-            h.assertTrue(before[0] > 0, "the care ran before the save: " + d.getCompound(TravelCare.TRIP_KEY));
+            before[0] = d.getCompoundOrEmpty(TravelCare.TRIP_KEY).getLongOr("ticks", 0L);
+            h.assertTrue(before[0] > 0, "the care ran before the save: " + d.getCompoundOrEmpty(TravelCare.TRIP_KEY));
             // the chunk is saved and unloaded with the contraption, later loaded again
             CompoundTag saved = new CompoundTag();
             h.assertTrue(now[0].saveAsPassenger(saved), "the contraption saves");
             now[0].remove(Entity.RemovalReason.UNLOADED_TO_CHUNK);
-            Entity again = EntityType.loadEntityRecursive(saved, level, e -> e);
+            Entity again = EntityType.loadEntityRecursive(saved, level, net.minecraft.world.entity.EntitySpawnReason.LOAD, e -> e);
             h.assertTrue(again != null && level.addFreshEntity(again), "the contraption comes back from its data");
             now[0] = again;
             h.runAfterDelay(50, () -> {
                 CompoundTag d2 = controllerData(now[0], id);
-                long after = d2.getCompound(TravelCare.TRIP_KEY).getLong("ticks");
+                long after = d2.getCompoundOrEmpty(TravelCare.TRIP_KEY).getLongOr("ticks", 0L);
                 h.assertTrue(after > before[0], "the care goes on after loading: " + before[0] + " -> " + after);
-                h.assertTrue(d2.getList("stowed", Tag.TAG_COMPOUND).size() == 2, "both bettas still packed");
+                h.assertTrue(d2.getListOrEmpty("stowed").size() == 2, "both bettas still packed");
                 for (UUID u : bettas) h.assertTrue(CreateGameTests.alive(level, u) == 0, "no betta in the world");
                 try {
                     Object moved = CreateGameTests.field(bearing.getClass(), "movedContraption").get(bearing);
@@ -375,7 +376,7 @@ public final class CreateTravelGameTests {
         h.onEachTick(() -> CreateGameTests.hold(bearing));
         h.runAfterDelay(60, () -> {
             CompoundTag d = controllerData(contraption, id);
-            h.assertTrue(!d.contains(TravelCare.TRIP_KEY) && sinceFed(d) < 0.001, "no care on the road: " + d.getCompound(TravelCare.TRIP_KEY));
+            h.assertTrue(!d.contains(TravelCare.TRIP_KEY) && sinceFed(d) < 0.001, "no care on the road: " + d.getCompoundOrEmpty(TravelCare.TRIP_KEY));
             try {
                 CreateGameTests.disassemble(bearing, contraption, BlockPos.ZERO, 0F);
             } catch (Exception e) {

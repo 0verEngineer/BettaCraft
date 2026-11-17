@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.client.model;
 
-import net.minecraft.client.model.HierarchicalModel;
+import org.overengineer.bettacraft.client.render.MobState;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.terrarium.LandWalker;
@@ -12,11 +13,11 @@ import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
  * arc) they stretch out behind and the arms reach forward; in the water the hind legs kick. The throat pumps while it
  * breathes; a buried horned frog sits with its legs pulled in.
  */
-public class FrogModel extends HierarchicalModel<TerrariumAnimalEntity> {
-    private final ModelPart root, body, head, legFr, legFl, legBr, legBl;
+public class FrogModel extends EntityModel<MobState<TerrariumAnimalEntity>> {
+    private final ModelPart body, head, legFr, legFl, legBr, legBl;
 
     public FrogModel(ModelPart root) {
-        this.root = root;
+        super(root);
         ModelPart animal = root.getChild("animal");
         this.body = animal.getChild("body");
         this.head = animal.getChild("head");
@@ -27,12 +28,9 @@ public class FrogModel extends HierarchicalModel<TerrariumAnimalEntity> {
     }
 
     @Override
-    public ModelPart root() {
-        return root;
-    }
-
-    @Override
-    public void setupAnim(TerrariumAnimalEntity e, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<TerrariumAnimalEntity> state) {
+        TerrariumAnimalEntity e = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, ageInTicks = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         root().getAllParts().forEach(ModelPart::resetPose);
         float rise = (float) (e.getY() - e.yo);
         boolean airborne = Math.abs(rise) > 0.002 && !e.isInWater() && limbSwingAmount > 0.01;

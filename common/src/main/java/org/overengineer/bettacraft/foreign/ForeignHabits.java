@@ -142,7 +142,7 @@ public final class ForeignHabits {
         TankCare.log(level, c, "log.bettacraft.foreign.flew_out", TankCare.nameArg(m));
         t.inhabitants().remove(m.getUUID());
         TankInhabitants.release(m);
-        m.moveTo(open.getX() + 0.5, open.getY() + 0.6, open.getZ() + 0.5, m.getYRot(), 0F);
+        m.snapTo(open.getX() + 0.5, open.getY() + 0.6, open.getZ() + 0.5, m.getYRot(), 0F);
         m.setDeltaMovement(0, 0.2, 0);
         c.markTankChanged();
     }
@@ -201,7 +201,7 @@ public final class ForeignHabits {
 
     /** Whether the tank is dark for a glowing animal now (night). */
     public static boolean dark(ServerLevel level) {
-        return !level.isDay();
+        return !level.isBrightOutside();
     }
 
     /** One tick of a glowing animal held by the walker in its tank: no sun that drives it away, a flash now and then in the dark. */

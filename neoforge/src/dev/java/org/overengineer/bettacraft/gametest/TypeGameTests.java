@@ -165,7 +165,7 @@ public final class TypeGameTests {
     @GameTest(template = EMPTY)
     public static void m4BucketMigratesFinform(GameTestHelper h) throws Exception {
         TankBlockEntity c = tank(h, 2, 2, 2, 6000);
-        CompoundTag v2 = TagParser.parseTag("{betta:{schema:2,genome:{species:\"bettacraft:betta\",finform:[\"plakat\",\"veil\"],"
+        CompoundTag v2 = TagParser.parseCompoundFully("{betta:{schema:2,genome:{species:\"bettacraft:betta\",finform:[\"plakat\",\"veil\"],"
                 + "pectoral:[\"normal\",\"normal\"],body_color:[\"navy\",\"navy\"],fin_color:[\"mustard\",\"mustard\"],pattern:[\"none\",\"none\"],"
                 + "pattern_color:[\"black\",\"black\"],iridescence:[\"high\",\"low\"],iridescence_color:[\"royal_blue\",\"royal_blue\"]},"
                 + "sex:\"male\",stage:\"adult\",generation:4,born:5L,health:{}},Health:6.0f}");
@@ -180,7 +180,7 @@ public final class TypeGameTests {
         h.assertTrue(b.genome().isShortFinned() && "round".equals(b.genome().shape()), "still a plakat");
         h.assertTrue("mustard_gas".equals(BettaTypes.variety(b.genome()).id()), "named Mustard Gas");
         h.assertTrue(b.getBettaData().generation() == 4, "other data kept");
-        h.assertTrue(b.getBettaData().save().getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.BETTA.currentVersion(), "saved in the current version");
+        h.assertTrue(b.getBettaData().save().getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.BETTA.currentVersion(), "saved in the current version");
         h.succeed();
     }
 
@@ -209,7 +209,7 @@ public final class TypeGameTests {
             eggs.add(e);
         }
         nest.put("eggs", eggs);
-        tag.getCompound("tank").put("nest", nest);
+        tag.getCompoundOrEmpty("tank").put("nest", nest);
         c.loadWithComponents(tag, level.registryAccess());
         BubbleNest n = c.getTank().nest();
         h.assertTrue(n != null && n.eggCount() == 3, "three eggs survive the load");
@@ -219,7 +219,7 @@ public final class TypeGameTests {
         }
         h.assertTrue("crowntail".equals(n.eggs().get(1).genotype().pair(BettaLoci.FINFORM).b())
                 && "long".equals(n.eggs().get(1).genotype().pair(BettaLoci.FIN_LENGTH).b()), "carrier allele kept");
-        h.assertTrue(c.saveWithFullMetadata(level.registryAccess()).getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved as the current version");
+        h.assertTrue(c.saveWithFullMetadata(level.registryAccess()).getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved as the current version");
         h.succeed();
     }
 }

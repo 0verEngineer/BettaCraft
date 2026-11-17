@@ -67,7 +67,7 @@ public final class HardeningGameTests {
         InteriorRegion r = InteriorGameTests.region(h, c);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(h.getLevel(), c.getBlockPos().getX() + 0.5, c.getBlockPos().getY() + 2, c.getBlockPos().getZ() + 0.5, 0, 0);
+            p.teleportTo(h.getLevel(), c.getBlockPos().getX() + 0.5, c.getBlockPos().getY() + 2, c.getBlockPos().getZ() + 0.5, java.util.Set.of(), 0, 0, false);
             int before = InteriorSync.fullSends;
             for (int i = 0; i < 10; i++) InteriorSync.handleRequest(p, new InteriorRequestPayload(r.id(), c.getBlockPos(), -1));
             h.assertTrue(InteriorSync.fullSends - before == 1, "one full send for 10 requests, got " + (InteriorSync.fullSends - before));
@@ -240,11 +240,11 @@ public final class HardeningGameTests {
         CompoundTag data = new CompoundTag();
         data.put(FishBagItem.STORED_KEY, stored);
         bag.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
-        bag.set(ModDataComponents.BAG_ENTITY.get(), net.minecraft.resources.ResourceLocation.withDefaultNamespace("squid"));
+        bag.set(ModDataComponents.BAG_ENTITY.get(), net.minecraft.resources.Identifier.withDefaultNamespace("squid"));
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             BlockPos w = h.absolutePos(water);
-            p.teleportTo(level, w.getX() + 0.5, w.getY() + 1.2, w.getZ() + 0.5, 0, 90);
+            p.teleportTo(level, w.getX() + 0.5, w.getY() + 1.2, w.getZ() + 0.5, java.util.Set.of(), 0, 90, false);
             p.setItemInHand(InteractionHand.MAIN_HAND, bag);
             var result = bag.getItem().use(level, p, InteractionHand.MAIN_HAND);
             h.assertTrue(FishBagItem.isFilled(result.getObject()), "bag still holds its animal");

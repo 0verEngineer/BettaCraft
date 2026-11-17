@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -35,10 +38,10 @@ public class IntakeSpongeItem extends Item {
         Regulator.Device d = Regulator.find(level, pos);
         if (d == null || !d.takesSponge()) return InteractionResult.PASS;
         if (d.hasSponge()) {
-            if (!level.isClientSide && player != null) player.displayClientMessage(Component.translatable("message.bettacraft.intake_sponge.already"), true);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide() && player != null) player.displayClientMessage(Component.translatable("message.bettacraft.intake_sponge.already"), true);
+            return InteractionResult.SUCCESS;
         }
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (player != null && !player.mayUseItemAt(pos, ctx.getClickedFace(), ctx.getItemInHand())) return InteractionResult.FAIL;
         d.setSponge(true);
         if (player == null || !player.getAbilities().instabuild) ctx.getItemInHand().shrink(1);
@@ -48,7 +51,8 @@ public class IntakeSpongeItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.intake_sponge.usage").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

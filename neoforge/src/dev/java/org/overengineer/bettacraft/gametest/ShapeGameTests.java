@@ -368,10 +368,10 @@ public final class ShapeGameTests {
         list.add(reg);
         old.put("regions", list);
         CompoundTag migrated = org.overengineer.bettacraft.data.schema.Schemas.INTERIOR_REGIONS.migrate(old);
-        InteriorRegion loaded = InteriorRegion.load(migrated.getList("regions", 10).getCompound(0));
+        InteriorRegion loaded = InteriorRegion.load(migrated.getListOrEmpty("regions").getCompoundOrEmpty(0));
         h.assertTrue(loaded.fullBox() && loaded.cellsX() == 2 && loaded.cellsZ() == 1, "pre-M10 region: full box of 2x1x1 cells");
         CompoundTag be = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(be.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "tank block entity saved with the current schema (M10: 5, M11: 6)");
+        h.assertTrue(be.getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "tank block entity saved with the current schema (M10: 5, M11: 6)");
         c.loadWithComponents(be, level.registryAccess());
         h.assertTrue(c.getTank().memberCount() == 2 && c.getTank().waterMb() == 1500, "loaded M9 tank");
         // grow into an L

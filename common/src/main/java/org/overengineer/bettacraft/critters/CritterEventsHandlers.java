@@ -52,7 +52,7 @@ public final class CritterEventsHandlers {
                     player.displayClientMessage(Component.translatable("message.bettacraft.algae.clean"), true);
                     return;
                 }
-                if (!player.getAbilities().instabuild) stack.hurtAndBreak(n, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(e.getHand()));
+                if (!player.getAbilities().instabuild) stack.hurtAndBreak(n, player, e.getHand().asEquipmentSlot());
                 level.playSound(null, pos, SoundEvents.BRUSH_GENERIC, SoundSource.BLOCKS, 0.8F, 1.2F);
                 player.displayClientMessage(Component.translatable("message.bettacraft.algae.scraped", n).withStyle(ChatFormatting.GREEN), true);
                 org.overengineer.bettacraft.tank.TankCare.log(server, c, "log.bettacraft.algae_scraped", org.overengineer.bettacraft.tank.TankCare.nameArg(player),
@@ -78,8 +78,8 @@ public final class CritterEventsHandlers {
         if (stack.getItem() instanceof ShovelItem && level.getBlockState(pos).is(Blocks.MUD) && level instanceof ServerLevel server) {
             var biome = level.getBiome(pos);
             if (!org.overengineer.bettacraft.world.BiomeWaters.swamp(biome) && !org.overengineer.bettacraft.world.BiomeWaters.mangrove(biome)) return;
-            if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
-            player.getCooldowns().addCooldown(stack.getItem(), 20);
+            if (player.getCooldowns().isOnCooldown(stack)) return;
+            player.getCooldowns().addCooldown(stack, 20);
             if (!CritterSpecies.TRUMPET_SNAIL.available()) return; // M33: features.invertebrates
             if (server.getRandom().nextDouble() >= ServerConfig.getOr(ServerConfig.CRITTERS_MUD_CHANCE, 0.08)) return;
             var rnd = NetCatching.random(server);
@@ -90,6 +90,6 @@ public final class CritterEventsHandlers {
 
     static void handled(PlayerInteractEvent.RightClickBlock e) {
         e.setCanceled(true);
-        e.setCancellationResult(InteractionResult.sidedSuccess(e.getLevel().isClientSide));
+        e.setCancellationResult(InteractionResult.SUCCESS);
     }
 }

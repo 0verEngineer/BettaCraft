@@ -8,7 +8,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -218,10 +218,10 @@ public final class BigMarineGameTests {
         // M39 part c (flaky before): the tubs put the rays at spots and headings of the level's random (shared by every test
         // running at the time), so the paths differed from run to run; now fixed spots, headings and seeds
         Vec3 ca = new TankWaterVolume(a.getTank()).box().getCenter();
-        eagle.moveTo(ca.x, ca.y, ca.z, 0F, 0F);
+        eagle.snapTo(ca.x, ca.y, ca.z, 0F, 0F);
         Vec3 cb = new TankWaterVolume(b.getTank()).box().getCenter();
         for (int i = 0; i < school.size(); i++) {
-            school.get(i).moveTo(cb.x - 3 + 3 * i, cb.y, cb.z, 90F, 0F);
+            school.get(i).snapTo(cb.x - 3 + 3 * i, cb.y, cb.z, 90F, 0F);
             school.get(i).setDeltaMovement(Vec3.ZERO);
             school.get(i).getRandom().setSeed(30_5L + i);
         }

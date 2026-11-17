@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -91,29 +91,29 @@ public final class TankmateItems {
     // ------------------------------------------------------------------ right-click on a tank
 
     /** Group bags, clutch bags and the breeding box on a tank; PASS for anything else. */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         boolean box = stack.is(ModItems.BREEDING_BOX.get());
         // M22.3: a bucket with several fish of one species too
         boolean group = (stack.getItem() instanceof FishBagItem || stack.getItem() instanceof TankmateBucketItem) && stack.has(ModDataComponents.TANKMATE_GROUP.get());
         boolean clutch = stack.getItem() instanceof FishBagItem && stack.has(ModDataComponents.TANKMATE_CLUTCH.get());
-        if (!box && !group && !clutch) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (!box && !group && !clutch) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (!TankInhabitants.canModify(player, c.getTank())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         Component msg;
         if (box) msg = installBox(server, c, player, stack);
         else if (group) msg = insertGroup(server, c, player, hand, stack);
         else msg = insertClutch(server, c, player, hand, stack);
         if (msg != null) player.displayClientMessage(msg, true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     @Nullable
@@ -292,20 +292,20 @@ public final class TankmateItems {
         if (s == null) return false;
         List<CompoundTag> fish = bagFish(stack);
         if (fish.size() <= 1) {
-            TankmateBucketItem.append(s, fish.isEmpty() ? null : fish.getFirst().getCompound(TankmateEntity.KEY), tooltip);
+            TankmateBucketItem.append(s, fish.isEmpty() ? null : fish.getFirst().getCompoundOrEmpty(TankmateEntity.KEY), tooltip);
             if (!fish.isEmpty()) TankmateBucketItem.genesLine(s, fish.getFirst(), tooltip); // M22.3
             return true;
         }
         tooltip.add(Component.literal(s.latin()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         int females = 0;
-        for (CompoundTag f : fish) if (f.getCompound(TankmateEntity.KEY).getBoolean("female")) females++;
+        for (CompoundTag f : fish) if (f.getCompoundOrEmpty(TankmateEntity.KEY).getBooleanOr("female", false)) females++;
         tooltip.add(Component.translatable("tooltip.bettacraft.tankmate.group", fish.size() - females, females).withStyle(ChatFormatting.GRAY));
         if (TankmateGenes.livebearer(s) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
             // M21.6: the strains in the bag
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
             java.util.Map<String, Component> names = new java.util.HashMap<>();
             for (CompoundTag f : fish) {
-                Component n = TankmateBucketItem.livebearerName(s, f.getCompound(TankmateEntity.KEY));
+                Component n = TankmateBucketItem.livebearerName(s, f.getCompoundOrEmpty(TankmateEntity.KEY));
                 if (n == null) continue;
                 v.merge(n.getString(), 1, Integer::sum);
                 names.putIfAbsent(n.getString(), n);
@@ -317,7 +317,7 @@ public final class TankmateItems {
             }
         } else if (s.varieties().size() > 1) {
             java.util.Map<String, Integer> v = new java.util.LinkedHashMap<>();
-            for (CompoundTag f : fish) v.merge(TankmateGenes.load(f.getCompound(TankmateEntity.KEY).getCompound("genes"), s).phenotype(s), 1, Integer::sum);
+            for (CompoundTag f : fish) v.merge(TankmateGenes.load(f.getCompoundOrEmpty(TankmateEntity.KEY).getCompoundOrEmpty("genes"), s).phenotype(s), 1, Integer::sum);
             for (var e : v.entrySet()) tooltip.add(Component.literal(e.getValue() + " × ").append(Component.translatable(s.varietyKey(e.getKey())))
                     .withStyle(ChatFormatting.GOLD));
         }
@@ -332,9 +332,9 @@ public final class TankmateItems {
         if (s == null) return 0;
         int n = 0;
         for (CompoundTag f : bagFish(stack)) {
-            TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level);
+            TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e == null) continue;
-            e.moveTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4, pos.getY() + 0.2, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4,
+            e.snapTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4, pos.getY() + 0.2, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4,
                     player == null ? level.random.nextFloat() * 360F : player.getYRot(), 0);
             e.loadFromBucketTag(f);
             e.setFromBucket(true);

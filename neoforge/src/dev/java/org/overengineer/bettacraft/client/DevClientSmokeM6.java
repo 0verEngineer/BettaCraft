@@ -43,7 +43,7 @@ final class DevClientSmokeM6 {
         // English world shots for the handbook, without HUD
         then(1, () -> mc.options.hideGui = true);
         for (Spot s : worldShots) {
-            then(1, () -> server(p -> p.teleportTo(p.serverLevel(), s.x(), s.y(), s.z(), s.yaw(), s.pitch())));
+            then(1, () -> server(p -> p.teleportTo(p.level(), s.x(), s.y(), s.z(), java.util.Set.of(), s.yaw(), s.pitch(), false)));
             then(45, () -> shot("guide_" + s.name()));
         }
         menus("", overviewTank, typesTank, breedTank);
@@ -82,8 +82,8 @@ final class DevClientSmokeM6 {
         then(5, () -> server(p -> {
             p.closeContainer();
             // close enough for the menu (stillValid), the tank behind the screen
-            p.teleportTo(p.serverLevel(), tank.getX() + 1.0, tank.getY() + 1.0, tank.getZ() - 2.5, 0F, 20F);
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+            p.teleportTo(p.level(), tank.getX() + 1.0, tank.getY() + 1.0, tank.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));

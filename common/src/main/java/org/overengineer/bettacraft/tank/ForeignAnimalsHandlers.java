@@ -51,11 +51,11 @@ public final class ForeignAnimalsHandlers {
     /** The frog is added after the conversion event and placed where the tadpole was: move it out of the tank. */
     @SubscribeEvent
     public static void onJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide) return;
+        if (event.getLevel().isClientSide()) return;
         if (capture != null) capture.add(event.getEntity());
         if (FROGS_OUT.isEmpty()) return;
         Vec3 to = FROGS_OUT.remove(event.getEntity().getUUID());
-        if (to != null) event.getEntity().moveTo(to.x, to.y, to.z, event.getEntity().getYRot(), 0);
+        if (to != null) event.getEntity().snapTo(to.x, to.y, to.z, event.getEntity().getYRot(), 0);
     }
 
     @SubscribeEvent

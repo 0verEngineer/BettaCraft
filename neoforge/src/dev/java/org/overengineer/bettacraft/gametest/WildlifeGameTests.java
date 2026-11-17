@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -16,7 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -87,7 +88,7 @@ public final class WildlifeGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 0;
+        sp.getInventory().getSelectedSlot() = 0;
         return sp;
     }
 
@@ -110,20 +111,20 @@ public final class WildlifeGameTests {
     private static ItemStack useOn(ServerPlayer sp, GameTestHelper h, BlockPos rel, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         BlockPos pos = h.absolutePos(rel);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND,
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(pos).add(0, 0.5, 0), Direction.UP, pos, false));
         return sp.getItemInHand(InteractionHand.MAIN_HAND);
     }
 
     private static ItemStack use(ServerPlayer sp, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        sp.gameMode.useItem(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND);
+        sp.gameMode.useItem(sp, sp.level(), stack, InteractionHand.MAIN_HAND);
         return sp.getItemInHand(InteractionHand.MAIN_HAND);
     }
 
     private static void stand(GameTestHelper h, ServerPlayer sp, BlockPos rel, float pitch) {
         Vec3 at = Vec3.atBottomCenterOf(h.absolutePos(rel));
-        sp.moveTo(at.x, at.y, at.z, 0F, pitch);
+        sp.snapTo(at.x, at.y, at.z, 0F, pitch);
         sp.setYHeadRot(0F);
     }
 
@@ -150,7 +151,7 @@ public final class WildlifeGameTests {
     /** The biome lists: tankmates in their waters, the frog in swamps, the small animals, all in the water ambient group. */
     @GameTest(template = EMPTY, timeoutTicks = 60)
     public static void wildSpawnsInTheirBiomes(GameTestHelper h) {
-        var biomes = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        var biomes = h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
         record Want(net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> biome, EntityType<?> type) {}
         for (Want w : List.of(new Want(Biomes.JUNGLE, ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get()),
                 new Want(Biomes.SWAMP, ModEntities.TANKMATES.get(TankmateSpecies.HARLEQUIN_RASBORA).get()),
@@ -183,21 +184,21 @@ public final class WildlifeGameTests {
         level.setBlock(base.below(), Blocks.STONE.defaultBlockState(), 2);
         BlockPos spot = base.above(1);
         try {
-            check(Wildlife.checkFish(type, level, MobSpawnType.NATURAL, spot, level.random), "no wild fish in open water");
-            check(!Wildlife.checkFish(type, level, MobSpawnType.NATURAL, base.above(10), level.random), "a wild fish in the air");
-            check(Wildlife.checkFish(type, level, MobSpawnType.SPAWN_EGG, base.above(10), level.random), "spawn eggs are not limited");
+            check(Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.random), "no wild fish in open water");
+            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, base.above(10), level.random), "a wild fish in the air");
+            check(Wildlife.checkFish(type, level, EntitySpawnReason.SPAWN_ITEM_USE, base.above(10), level.random), "spawn eggs are not limited");
             // the cap: as many wild fish as allowed nearby, then no more
             int cap = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.WILD_FISH_NEARBY, 6);
             List<TankmateEntity> made = new java.util.ArrayList<>();
             for (int i = 0; i < cap; i++) {
-                TankmateEntity e = type.spawn(level, spot, MobSpawnType.NATURAL);
+                TankmateEntity e = type.spawn(level, spot, EntitySpawnReason.NATURAL);
                 check(e != null && e.isWild(), "a natural spawn is not wild");
                 made.add(e);
             }
-            check(!Wildlife.checkFish(type, level, MobSpawnType.NATURAL, spot, level.random), "more wild fish than the cap nearby");
+            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.random), "more wild fish than the cap nearby");
             made.forEach(e -> e.discard());
             // a wild one despawns far away, a caught one never; its genes are not analysed
-            TankmateEntity wild = type.spawn(level, spot, MobSpawnType.NATURAL);
+            TankmateEntity wild = type.spawn(level, spot, EntitySpawnReason.NATURAL);
             check(wild.removeWhenFarAway(100) && !wild.analysed(), "a wild fish does not despawn or knows its genes");
             ItemStack b = wild.getBucketItemStack();
             wild.saveToBucketTag(b);
@@ -213,7 +214,7 @@ public final class WildlifeGameTests {
         TankBlockEntity c = tank(h, 10, 2, 10, 18000, 0F);
         BlockPos inTank = h.absolutePos(new BlockPos(11, 2, 11));
         check(Wildlife.inTank(level, inTank), "the tank is not seen");
-        check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, MobSpawnType.NATURAL, inTank, level.random), "a wild critter in a tank");
+        check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.NATURAL, inTank, level.random), "a wild critter in a tank");
         check(c.getTank().waterMb() > 0, "tank");
         h.succeed();
     }
@@ -224,8 +225,8 @@ public final class WildlifeGameTests {
         var level = h.getLevel();
         pool(h, 4, 4, 4, 3);
         BlockPos bottom = h.absolutePos(new BlockPos(5, 2, 5));
-        check(Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, MobSpawnType.SPAWN_EGG, bottom, level.random), "not natural: allowed");
-        WildCritterEntity e = ModEntities.WILD_CRITTER.get().spawn(level, bottom, MobSpawnType.NATURAL);
+        check(Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.SPAWN_ITEM_USE, bottom, level.random), "not natural: allowed");
+        WildCritterEntity e = ModEntities.WILD_CRITTER.get().spawn(level, bottom, EntitySpawnReason.NATURAL);
         check(e != null && e.isWild() && e.animal().adult() && !e.animal().analysed, "a wild critter is no full animal: " + (e == null ? null : e.saveAnimal()));
         check(e.removeWhenFarAway(100), "a wild critter does not despawn");
         e.setPersistenceRequired(); // the mock players of other tests are far away: it would despawn at once
@@ -252,13 +253,13 @@ public final class WildlifeGameTests {
         WildCritterEntity e = WildCritterEntity.of(level, original);
         check(e != null && e.saveAnimal().equals(original), "the entity changed the animal: " + (e == null ? null : e.saveAnimal()) + " vs " + original);
         CompoundTag saved = new CompoundTag();
-        e.saveWithoutId(saved);
+        saved.merge(NbtCompat.saveEntityWithoutId(e));
         WildCritterEntity loaded = ModEntities.WILD_CRITTER.get().create(level);
         loaded.load(saved);
         check(loaded.saveAnimal().equals(original), "saving the entity lost data: " + loaded.saveAnimal());
         // caught with a bucket of water in the world: the bucket holds exactly that animal
         pool(h, 4, 4, 4, 3);
-        loaded.moveTo(h.absolutePos(new BlockPos(5, 2, 5)), 0, 0);
+        loaded.snapTo(h.absolutePos(new BlockPos(5, 2, 5)), 0, 0);
         level.addFreshEntity(loaded);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
         sp.interactOn(loaded, InteractionHand.MAIN_HAND);
@@ -267,7 +268,7 @@ public final class WildlifeGameTests {
                 "the bucket did not take the animal: " + bucket);
         // the next one of the same species goes into the same bucket
         WildCritterEntity second = WildCritterEntity.of(level, critter(CritterSpecies.NEOCARIDINA, false, CritterGenes.WILD, 9).saveAnimal());
-        second.moveTo(h.absolutePos(new BlockPos(6, 2, 6)), 0, 0);
+        second.snapTo(h.absolutePos(new BlockPos(6, 2, 6)), 0, 0);
         level.addFreshEntity(second);
         sp.interactOn(second, InteractionHand.MAIN_HAND);
         check(CritterBucketItem.animals(sp.getItemInHand(InteractionHand.MAIN_HAND)).size() == 2, "the second shrimp is not in the same bucket");
@@ -282,7 +283,7 @@ public final class WildlifeGameTests {
         sp.getInventory().add(new ItemStack(ModItems.FISH_BAG.get()));
         check(TankCritters.takeOutById(level, c, sp, inTank.id, false) == null, "could not take the animal out");
         ItemStack bag = null;
-        for (ItemStack s : sp.getInventory().items) if (AnimalContainers.critters(s) != null) bag = s;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (AnimalContainers.critters(s) != null) bag = s;
         check(bag != null && AnimalContainers.critters(bag).getFirst().equals(original), "the bag changed the animal: " + bag);
         stand(h, sp, new BlockPos(5, 6, 5), 90F);
         ItemStack held = use(sp, bag.copy());
@@ -376,7 +377,7 @@ public final class WildlifeGameTests {
         sp.getInventory().add(new ItemStack(Items.BUCKET));
         check(TankInhabitants.takeOut(sp, c, inTank.getUUID(), false) == null, "the betta could not be taken out");
         ItemStack bettaBucket = null;
-        for (ItemStack s : sp.getInventory().items) if (s.is(ModItems.BETTA_BUCKET.get())) bettaBucket = s;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (s.is(ModItems.BETTA_BUCKET.get())) bettaBucket = s;
         check(bettaBucket != null && org.overengineer.bettacraft.entity.betta.BettaBucketItem.data(bettaBucket).analysed(), "the bucket lost the analysis");
         useOn(sp, h, new BlockPos(13, 2, 13), bettaBucket.copy());
         BettaEntity moved = (BettaEntity) TankInhabitants.liveInhabitants(level, other.getTank()).stream().filter(e -> e instanceof BettaEntity).findFirst()
@@ -390,7 +391,7 @@ public final class WildlifeGameTests {
         check(TankCritters.takeOut(level, c, sp, c.getTank().critters().getFirst().species.id() + ":" + c.getTank().critters().getFirst().genes.variety(CritterSpecies.NEOCARIDINA),
                 false, 1, TankCritters.SEX_ANY, true) == null, "the shrimp could not be taken out");
         boolean bagOk = false, bucketOk = false;
-        for (ItemStack s : sp.getInventory().items) {
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) {
             if (s.getItem() instanceof FishBagItem && FishBagItem.isFilled(s)) {
                 CompoundTag fish = TankmateBucketItem.data(s);
                 bagOk = fish != null && GeneVisibility.analysed(fish) && fish.contains(GeneVisibility.KEY);
@@ -452,7 +453,7 @@ public final class WildlifeGameTests {
         check(TankCritters.takeOutById(level, c, sp, m2.id, false) == null && !c.getTank().critters().contains(m2), "not exactly the chosen male");
         // both went into the same bag (one species), which used 100 mB once
         int bags = 0;
-        for (ItemStack s : sp.getInventory().items) if (AnimalContainers.critters(s) != null) bags++;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (AnimalContainers.critters(s) != null) bags++;
         check(bags == 1, "the second animal did not join the bag: " + bags);
         check(TankCritters.takeOut(level, c, sp, kind, false, 1, TankCritters.SEX_MALE, false) == null && !c.getTank().critters().contains(m1), "no male");
         check(TankCritters.takeOut(level, c, sp, kind, false, 1, TankCritters.SEX_MALE, false) != null, "a male from a tank without males");
@@ -471,7 +472,7 @@ public final class WildlifeGameTests {
         long w = fresh.getTank().waterMb();
         check(TankCritters.takeOut(level, fresh, sp, kind, false, 40, TankCritters.SEX_ANY, true) == null, "no snails into the bucket");
         ItemStack bucket = null;
-        for (ItemStack s : sp.getInventory().items) if (s.getItem() instanceof CritterBucketItem) bucket = s;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (s.getItem() instanceof CritterBucketItem) bucket = s;
         check(bucket != null && CritterBucketItem.animals(bucket).size() == AnimalContainers.bucket(CritterSpecies.RAMSHORN), "the bucket does not hold "
                 + AnimalContainers.bucket(CritterSpecies.RAMSHORN) + ": " + (bucket == null ? 0 : CritterBucketItem.animals(bucket).size()));
         check(fresh.getTank().waterMb() == w - 1000, "the empty bucket did not take 1000 mB: " + (w - fresh.getTank().waterMb()));
@@ -480,7 +481,7 @@ public final class WildlifeGameTests {
         sp.getInventory().add(new ItemStack(Items.WATER_BUCKET));
         w = fresh.getTank().waterMb();
         check(TankCritters.takeOut(level, fresh, sp, kind, false, 1, TankCritters.SEX_ANY, true) == null && fresh.getTank().waterMb() == w, "the water bucket took tank water");
-        check(sp.getInventory().items.stream().anyMatch(s -> s.getItem() instanceof CritterBucketItem), "the water bucket was not used");
+        check(sp.getInventory().getNonEquipmentItems().stream().anyMatch(s -> s.getItem() instanceof CritterBucketItem), "the water bucket was not used");
         // a reef animal: plain water refused, sea water fine
         TankBlockEntity reef = tank(h, 14, 1, 14, 18000, 35F);
         TankCritters.add(level, reef, CritterSpecies.CLEANER_SHRIMP, CritterGenes.WILD, false, 20);
@@ -502,7 +503,7 @@ public final class WildlifeGameTests {
         w = fish.getTank().waterMb();
         for (TankmateEntity n : neons) check(TankInhabitants.takeOut(sp, fish, n.getUUID(), false) == null, "a neon could not be taken out");
         ItemStack nb = null;
-        for (ItemStack s : sp.getInventory().items) if (s.getItem() instanceof TankmateBucketItem) nb = s;
+        for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (s.getItem() instanceof TankmateBucketItem) nb = s;
         check(nb != null && AnimalContainers.fish(nb).size() == 3, "the neons are not in one bucket: " + nb);
         check(fish.getTank().waterMb() == w - 1000, "the neons took more than one bucket of water");
         // into the tank again: all of them, with the water of the bucket
@@ -518,25 +519,25 @@ public final class WildlifeGameTests {
         ServerPlayer sp = player(h);
         pool(h, 4, 4, 6, 3);
         BlockPos at = h.absolutePos(new BlockPos(6, 3, 6));
-        var cod = EntityType.COD.spawn(level, at, MobSpawnType.SPAWN_EGG);
+        var cod = EntityType.COD.spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         sp.interactOn(cod, InteractionHand.MAIN_HAND);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(Items.COD_BUCKET), "the sea water bucket did not catch a cod: " + sp.getItemInHand(InteractionHand.MAIN_HAND));
-        var clown = ModEntities.TANKMATES.get(TankmateSpecies.OCELLARIS_CLOWNFISH).get().spawn(level, at, MobSpawnType.SPAWN_EGG);
+        var clown = ModEntities.TANKMATES.get(TankmateSpecies.OCELLARIS_CLOWNFISH).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
         sp.interactOn(clown, InteractionHand.MAIN_HAND);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(Items.WATER_BUCKET) && clown.isAlive(), "a reef fish went into plain water");
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         sp.interactOn(clown, InteractionHand.MAIN_HAND);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.TANKMATE_BUCKETS.get(TankmateSpecies.OCELLARIS_CLOWNFISH).get()), "the clownfish did not go into sea water");
-        var neon = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, MobSpawnType.SPAWN_EGG);
+        var neon = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         sp.interactOn(neon, InteractionHand.MAIN_HAND);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.SEA_WATER_BUCKET.get()) && neon.isAlive(), "a freshwater fish went into sea water");
         // a bucket of neons takes the next one of its species
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
         sp.interactOn(neon, InteractionHand.MAIN_HAND);
-        var neon2 = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, MobSpawnType.SPAWN_EGG);
+        var neon2 = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.interactOn(neon2, InteractionHand.MAIN_HAND);
         check(AnimalContainers.fish(sp.getItemInHand(InteractionHand.MAIN_HAND)).size() == 2 && neon2.isRemoved(), "the second neon did not join the bucket");
         h.succeed();
@@ -570,7 +571,7 @@ public final class WildlifeGameTests {
     public static void wildCoralsGrowOnReefsAndGiveFrags(GameTestHelper h) {
         var level = h.getLevel();
         // the feature is in the warm ocean
-        var warm = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.WARM_OCEAN).value();
+        var warm = level.registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.WARM_OCEAN).value();
         boolean listed = warm.getGenerationSettings().features().stream().anyMatch(set -> set.stream()
                 .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id("wild_coral"))).orElse(false)));
         check(listed, "the wild corals are not in the warm ocean");

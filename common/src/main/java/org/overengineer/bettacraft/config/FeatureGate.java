@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.overengineer.bettacraft.BettaCraft;
@@ -26,7 +26,7 @@ public final class FeatureGate {
     /** The features of an item of ours (empty: core, or another mod's item). */
     public static List<Feature> of(Item item) {
         return ITEMS.computeIfAbsent(item, i -> {
-            ResourceLocation id = BuiltInRegistries.ITEM.getKey(i);
+            Identifier id = BuiltInRegistries.ITEM.getKey(i);
             return BettaCraft.MOD_ID.equals(id.getNamespace()) ? FeatureContent.ofItem(id.getPath()) : List.of();
         });
     }
@@ -49,11 +49,11 @@ public final class FeatureGate {
         List<CompoundTag> critters = stack.get(ModDataComponents.CRITTERS.get());
         if (critters != null) {
             for (CompoundTag t : critters) {
-                CritterSpecies s = CritterSpecies.byIdOrNull(t.getString("species"));
+                CritterSpecies s = CritterSpecies.byIdOrNull(t.getStringOr("species", ""));
                 if (s != null && !Features.all(FeatureContent.ofCritter(s))) return false;
             }
         }
-        ResourceLocation entity = stack.get(ModDataComponents.BAG_ENTITY.get());
+        Identifier entity = stack.get(ModDataComponents.BAG_ENTITY.get());
         if (entity != null && BettaCraft.MOD_ID.equals(entity.getNamespace())) {
             if (entity.getPath().equals("betta") && !Features.enabled(Feature.BETTAS)) return false;
             if (entity.getPath().equals("dwarf_frog") && !Features.enabled(Feature.FROGS)) return false;

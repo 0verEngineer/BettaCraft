@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,14 +40,14 @@ public class AquaristScreen extends Screen {
     private final Button[] levelButtons = new Button[AquaristTask.ALL.length];
 
     public AquaristScreen(CompoundTag view) {
-        super(Component.literal(view.getString("name")));
+        super(Component.literal(view.getStringOr("name", "")));
         this.view = view;
     }
 
     /** A view from the server: opens the menu, or refreshes the open one of the same aquarist. */
     public static void accept(CompoundTag view) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen instanceof AquaristScreen s && s.view.getInt("id") == view.getInt("id")) {
+        if (mc.screen instanceof AquaristScreen s && s.view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
             s.view = view;
             s.refresh();
             return;
@@ -55,7 +56,7 @@ public class AquaristScreen extends Screen {
     }
 
     private boolean offering() {
-        return "offering".equals(view.getString("phase"));
+        return "offering".equals(view.getStringOr("phase", ""));
     }
 
     @Override
@@ -93,7 +94,7 @@ public class AquaristScreen extends Screen {
         hiredButtons.add(home);
         Button dismiss = addRenderableWidget(new TankScreen.FitButton(left + W - 88, top + H - 20, 80, 14,
                 Component.translatable("gui.bettacraft.aquarist.dismiss").withStyle(ChatFormatting.RED), b -> {
-            if (hasShiftDown()) {
+            if (Minecraft.getInstance().hasShiftDown()) {
                 send(AquaristMenu.DISMISS, 0, "");
                 onClose();
             }
@@ -104,12 +105,12 @@ public class AquaristScreen extends Screen {
     }
 
     private int[] levels() {
-        int[] lv = view.getIntArray("tasks");
+        int[] lv = view.getIntArray("tasks").orElse(new int[0]);
         return lv.length == AquaristTask.ALL.length ? lv : new int[AquaristTask.ALL.length];
     }
 
     private void refresh() {
-        boolean offer = offering(), boss = view.getBoolean("boss");
+        boolean offer = offering(), boss = view.getBooleanOr("boss", false);
         for (Button b : offerButtons) {
             b.visible = offer;
             b.active = boss;
@@ -134,9 +135,9 @@ public class AquaristScreen extends Screen {
     /** The tanks of the list he may work at (the choice for the rearing tank). */
     private List<CompoundTag> workable() {
         List<CompoundTag> out = new ArrayList<>();
-        for (Tag t : view.getList("tanks", Tag.TAG_COMPOUND)) {
+        for (Tag t : view.getListOrEmpty("tanks")) {
             CompoundTag c = (CompoundTag) t;
-            String v = c.getString("verdict");
+            String v = c.getStringOr("verdict", "");
             if (v.equals("own") || v.equals("team") || v.equals("released")) out.add(c);
         }
         return out;
@@ -144,16 +145,16 @@ public class AquaristScreen extends Screen {
 
     private void cycleRearing(int dir) {
         List<CompoundTag> w = workable();
-        UUID cur = view.hasUUID("rearing") ? view.getUUID("rearing") : null;
+        UUID cur = NbtCompat.hasUUID(view, "rearing") ? NbtCompat.getUUID(view, "rearing") : null;
         int idx = -1; // -1 = none
-        for (int i = 0; i < w.size(); i++) if (w.get(i).getUUID("id").equals(cur)) idx = i;
+        for (int i = 0; i < w.size(); i++) if (NbtCompat.getUUID(w.get(i), "id").equals(cur)) idx = i;
         int n = w.size() + 1;
         int next = Math.floorMod(idx + 1 + dir, n) - 1;
-        send(AquaristMenu.SET_REARING, 0, next < 0 ? "" : w.get(next).getUUID("id").toString());
+        send(AquaristMenu.SET_REARING, 0, next < 0 ? "" : NbtCompat.getUUID(w.get(next), "id").toString());
     }
 
     private void send(int action, int value, String text) {
-        PacketDistributor.sendToServer(new AquaristActionPayload(view.getInt("id"), action, value, text));
+        PacketDistributor.sendToServer(new AquaristActionPayload(view.getIntOr("id", 0), action, value, text));
     }
 
     @Override
@@ -163,13 +164,13 @@ public class AquaristScreen extends Screen {
             onClose();
             return;
         }
-        var e = mc.level.getEntity(view.getInt("id"));
+        var e = mc.level.getEntity(view.getIntOr("id", 0));
         if (e == null || !e.isAlive() || mc.player.distanceToSqr(e) > 8 * 8) onClose();
     }
 
     @Override
     public boolean mouseScrolled(double mx, double my, double sx, double sy) {
-        int n = view.getList("tanks", Tag.TAG_COMPOUND).size();
+        int n = view.getListOrEmpty("tanks").size();
         scroll = Math.max(0, Math.min(Math.max(0, n - ROWS), scroll - (int) Math.signum(sy)));
         return true;
     }
@@ -191,92 +192,92 @@ public class AquaristScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
-        MutableComponent head = Component.literal(view.getString("name")).withStyle(ChatFormatting.AQUA)
+        MutableComponent head = Component.literal(view.getStringOr("name", "")).withStyle(ChatFormatting.AQUA)
                 .append(Component.literal(" – ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.translatable("entity.bettacraft.hired_aquarist").withStyle(ChatFormatting.GRAY));
-        g.drawCenteredString(font, head, left + W / 2, top + 7, 0xFFFFFF);
+        g.drawCenteredString(font, head, left + W / 2, top + 7, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         if (offering()) renderOffer(g);
         else renderHired(g);
     }
 
     private void renderOffer(GuiGraphics g) {
         int y = top + 26;
-        Component text = Component.translatable("gui.bettacraft.aquarist.offer_text", view.getString("employer"));
+        Component text = Component.translatable("gui.bettacraft.aquarist.offer_text", view.getStringOr("employer", ""));
         for (FormattedCharSequence line : font.split(text, W - 20)) {
             g.drawString(font, line, left + 10, y, 0xFFE0E0E0);
             y += 10;
         }
         y += 6;
-        Component pay = !view.getBoolean("wage") ? Component.translatable("message.bettacraft.aquarist.offer.free")
-                : Component.translatable("message.bettacraft.aquarist.offer.wage", view.getInt("wage_emeralds"), view.getInt("wage_food"));
+        Component pay = !view.getBooleanOr("wage", false) ? Component.translatable("message.bettacraft.aquarist.offer.free")
+                : Component.translatable("message.bettacraft.aquarist.offer.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0));
         for (FormattedCharSequence line : font.split(pay.copy().withStyle(ChatFormatting.GOLD), W - 20)) {
-            g.drawString(font, line, left + 10, y, 0xFFFFFF);
+            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         y += 6;
         for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.offer_home").withStyle(ChatFormatting.GRAY), W - 20)) {
-            g.drawString(font, line, left + 10, y, 0xFFFFFF);
+            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         if (view.contains("offer_left")) {
-            double days = view.getLong("offer_left") / 24000.0;
+            double days = view.getLongOr("offer_left", 0L) / 24000.0;
             g.drawString(font, Component.translatable("gui.bettacraft.aquarist.offer_left", String.format(java.util.Locale.ROOT, "%.1f", days))
-                    .withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 48, 0xFFFFFF);
+                    .withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 48, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
-        if (!view.getBoolean("boss")) {
-            g.drawCenteredString(font, Component.translatable("message.bettacraft.aquarist.not_yours").withStyle(ChatFormatting.RED), left + W / 2, top + H - 10, 0xFFFFFF);
+        if (!view.getBooleanOr("boss", false)) {
+            g.drawCenteredString(font, Component.translatable("message.bettacraft.aquarist.not_yours").withStyle(ChatFormatting.RED), left + W / 2, top + H - 10, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
     }
 
     private void renderHired(GuiGraphics g) {
-        String status = view.getString("status");
+        String status = view.getStringOr("status", "");
         boolean bad = status.equals("no_workplace") || status.equals("no_bed") || status.equals("unpaid") || status.equals("off");
         Component st = Component.translatable("gui.bettacraft.aquarist.status", Component.translatable("gui.bettacraft.aquarist.status." + status)
-                .withStyle(bad ? ChatFormatting.RED : ChatFormatting.GREEN), view.getString("employer"));
+                .withStyle(bad ? ChatFormatting.RED : ChatFormatting.GREEN), view.getStringOr("employer", ""));
         g.drawString(font, st, left + 8, top + 20, 0xFFE0E0E0);
-        Component wp = view.contains("workplace") ? Component.translatable("gui.bettacraft.aquarist.workplace", pos(view.getLong("workplace")))
+        Component wp = view.contains("workplace") ? Component.translatable("gui.bettacraft.aquarist.workplace", pos(view.getLongOr("workplace", 0L)))
                 : Component.translatable("gui.bettacraft.aquarist.no_workplace").withStyle(ChatFormatting.RED);
-        Component bed = view.contains("bed") ? Component.translatable("gui.bettacraft.aquarist.bed", pos(view.getLong("bed")))
+        Component bed = view.contains("bed") ? Component.translatable("gui.bettacraft.aquarist.bed", pos(view.getLongOr("bed", 0L)))
                 : Component.translatable("gui.bettacraft.aquarist.no_bed").withStyle(ChatFormatting.RED);
         fit(g, wp, left + 8, top + 32, W - 100);
         fit(g, bed, left + 8, top + 42, W - 100);
         Component wage;
-        if (!view.getBoolean("wage")) wage = Component.translatable("gui.bettacraft.aquarist.wage_off").withStyle(ChatFormatting.GRAY);
-        else if (view.getInt("unpaid") > 0) wage = Component.translatable("gui.bettacraft.aquarist.unpaid", view.getInt("unpaid"), view.getInt("leave_days")).withStyle(ChatFormatting.RED);
-        else wage = Component.translatable("gui.bettacraft.aquarist.wage", view.getInt("wage_emeralds"), view.getInt("wage_food")).withStyle(ChatFormatting.GOLD);
+        if (!view.getBooleanOr("wage", false)) wage = Component.translatable("gui.bettacraft.aquarist.wage_off").withStyle(ChatFormatting.GRAY);
+        else if (view.getIntOr("unpaid", 0) > 0) wage = Component.translatable("gui.bettacraft.aquarist.unpaid", view.getIntOr("unpaid", 0), view.getIntOr("leave_days", 0)).withStyle(ChatFormatting.RED);
+        else wage = Component.translatable("gui.bettacraft.aquarist.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0)).withStyle(ChatFormatting.GOLD);
         fit(g, wage, left + 8, top + 53, W - 16);
-        Component chest = view.getInt("chests") == 0 ? Component.translatable("gui.bettacraft.aquarist.no_chest").withStyle(ChatFormatting.GOLD)
-                : view.getBoolean("food") ? Component.translatable("gui.bettacraft.aquarist.chest_food").withStyle(ChatFormatting.GRAY)
+        Component chest = view.getIntOr("chests", 0) == 0 ? Component.translatable("gui.bettacraft.aquarist.no_chest").withStyle(ChatFormatting.GOLD)
+                : view.getBooleanOr("food", false) ? Component.translatable("gui.bettacraft.aquarist.chest_food").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.aquarist.chest_no_food").withStyle(ChatFormatting.GOLD);
         fit(g, chest, left + 8, top + 64, W - 16);
         // rearing tank
         String rearing = "-";
-        if (view.hasUUID("rearing")) {
-            UUID id = view.getUUID("rearing");
-            for (Tag t : view.getList("tanks", Tag.TAG_COMPOUND)) {
+        if (NbtCompat.hasUUID(view, "rearing")) {
+            UUID id = NbtCompat.getUUID(view, "rearing");
+            for (Tag t : view.getListOrEmpty("tanks")) {
                 CompoundTag c = (CompoundTag) t;
-                if (c.getUUID("id").equals(id)) rearing = name(c);
+                if (NbtCompat.getUUID(c, "id").equals(id)) rearing = name(c);
             }
         }
         fit(g, Component.translatable("gui.bettacraft.aquarist.rearing", rearing), left + 46, top + 134, W - 54);
         // the tanks around
-        fit(g, Component.translatable("gui.bettacraft.aquarist.tanks", view.getInt("cared"), view.getInt("max_tanks"), view.getInt("radius"))
+        fit(g, Component.translatable("gui.bettacraft.aquarist.tanks", view.getIntOr("cared", 0), view.getIntOr("max_tanks", 0), view.getIntOr("radius", 0))
                 .withStyle(ChatFormatting.AQUA), left + 8, top + 150, W - 16);
-        var list = view.getList("tanks", Tag.TAG_COMPOUND);
+        var list = view.getListOrEmpty("tanks");
         int y = top + 161;
         for (int i = scroll; i < Math.min(list.size(), scroll + ROWS); i++) {
-            CompoundTag c = list.getCompound(i);
-            String v = c.getString("verdict");
+            CompoundTag c = list.getCompoundOrEmpty(i);
+            String v = c.getStringOr("verdict", "");
             fit(g, Component.literal(name(c)), left + 12, y, 150);
             fit(g, Component.translatable("gui.bettacraft.aquarist.tank." + v).withStyle(verdictColor(v)), left + 166, y, 120);
             y += 9;
         }
-        if (list.isEmpty()) g.drawString(font, Component.translatable("gui.bettacraft.aquarist.no_tanks").withStyle(ChatFormatting.GRAY), left + 12, y, 0xFFFFFF);
+        if (list.isEmpty()) g.drawString(font, Component.translatable("gui.bettacraft.aquarist.no_tanks").withStyle(ChatFormatting.GRAY), left + 12, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
     }
 
     private static String name(CompoundTag c) {
-        String n = c.getString("name");
-        return n.isEmpty() ? pos(c.getLong("pos")) : n + " (" + pos(c.getLong("pos")) + ")";
+        String n = c.getStringOr("name", "");
+        return n.isEmpty() ? pos(c.getLongOr("pos", 0L)) : n + " (" + pos(c.getLongOr("pos", 0L)) + ")";
     }
 
     /** A line that is drawn smaller when it does not fit. */
@@ -287,11 +288,11 @@ public class AquaristScreen extends Screen {
             return;
         }
         float s = Math.max(0.6F, room / (float) w);
-        g.pose().pushPose();
-        g.pose().translate(x, y + (1 - s) * 4, 0);
-        g.pose().scale(s, s, 1);
+        g.pose().pushMatrix();
+        g.pose().translate(x, (float) (y + (1 - s) * 4));
+        g.pose().scale(s, s);
         g.drawString(font, c, 0, 0, 0xFFE0E0E0);
-        g.pose().popPose();
+        g.pose().popMatrix();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.Perms;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -207,7 +208,7 @@ public final class TankModeGameTests {
         boolean before = Features.own(Feature.TANK_MODE);
         BlockPos near = h.absolutePos(new BlockPos(1, 2, 1));
         try {
-            sp.teleportTo(h.getLevel(), near.getX() + 0.5, near.getY(), near.getZ() + 0.5, 0F, 0F);
+            sp.teleportTo(h.getLevel(), near.getX() + 0.5, near.getY(), near.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
             sp.setGameMode(GameType.SURVIVAL);
             check(TankModePayload.apply(sp, new TankModePayload(0, 1)) == TankModePayload.Result.NO_MENU, "no menu open");
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, c), Component.literal("tank")),
@@ -245,7 +246,7 @@ public final class TankModeGameTests {
                 var r = TankModePayload.apply(sp, new TankModePayload(id, TankModeSetting.PALUDARIUM.ordinal()));
                 check(r == TankModePayload.Result.SET && t.tankMode() == TankModeSetting.PALUDARIUM, "after the rate limit: " + r);
                 // a locked tank of someone else
-                if (!sp.hasPermissions(2)) {
+                if (!Perms.has(sp, 2)) {
                     UUID other = UUID.randomUUID();
                     t.setOwner(other);
                     t.setLocked(true);
@@ -256,7 +257,7 @@ public final class TankModeGameTests {
                 }
                 // too far away: the menu is no longer valid
                 c.modeSetTime = Long.MIN_VALUE;
-                sp.teleportTo(h.getLevel(), near.getX() + 40.5, near.getY(), near.getZ() + 0.5, 0F, 0F);
+                sp.teleportTo(h.getLevel(), near.getX() + 40.5, near.getY(), near.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
                 check(TankModePayload.apply(sp, new TankModePayload(id, TankModeSetting.AUTO.ordinal())) == TankModePayload.Result.NO_MENU
                         && t.tankMode() == TankModeSetting.PALUDARIUM, "out of reach: refused");
             } finally {

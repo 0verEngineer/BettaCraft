@@ -85,8 +85,8 @@ final class DevClientSmokeM44 {
     DevClientSmokeM44() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(200, () -> server(pl -> place(pl.serverLevel())));
-        then(40, () -> server(pl -> force(pl.serverLevel())));
+        then(200, () -> server(pl -> place(pl.level())));
+        then(40, () -> server(pl -> force(pl.level())));
         for (String cond : new String[]{"0", "auto"}) {
             then(1, () -> {
                 ClientConfig.WALK_ANIMATION_BOOST.set(cond);
@@ -132,10 +132,10 @@ final class DevClientSmokeM44 {
         then(1, () -> look(cab.getX() + 88, cab.getY() + 1.2, cab.getZ() - 1.6, 0F, 8F));
         then(40, () -> shot("cab_joints_close"));
         // the switch off: every cabinet with its old two doors
-        then(1, () -> server(p -> fronts(p.serverLevel(), false)));
+        then(1, () -> server(p -> fronts(p.level(), false)));
         then(1, () -> look(cab.getX() + 24.5, cab.getY() + 1.9, cab.getZ() - 8.0, 0F, 10F));
         then(60, () -> shot("cab_off"));
-        then(1, () -> server(p -> fronts(p.serverLevel(), true)));
+        then(1, () -> server(p -> fronts(p.level(), true)));
         then(40, () -> {});
         // the menu of a cabinet in a row (auto) and of the one with the single door
         then(1, () -> mc.options.hideGui = false);
@@ -187,7 +187,7 @@ final class DevClientSmokeM44 {
     }
 
     private void cabinets(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         cab = glass.offset(0, 0, 40);
         for (int x = -6; x < 100; x++) for (int z = -16; z < 8; z++) {
             level.setBlock(cab.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState(), 2);
@@ -232,7 +232,7 @@ final class DevClientSmokeM44 {
     }
 
     private static void open(ServerPlayer p, BlockPos pos) {
-        if (p.serverLevel().getBlockEntity(pos) instanceof CabinetBlockEntity be) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, be, be.getBlockPos());
+        if (p.level().getBlockEntity(pos) instanceof CabinetBlockEntity be) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, be, be.getBlockPos());
     }
 
     // ------------------------------------------------------------------ the walk scene
@@ -272,7 +272,7 @@ final class DevClientSmokeM44 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos at = p.blockPosition().offset(-12, 0, 120);
         int gy = level.getChunk(at).getHeight(Heightmap.Types.MOTION_BLOCKING, at.getX(), at.getZ()) + 1;
         BlockPos base = new BlockPos(at.getX(), Math.max(gy, p.blockPosition().getY() - 2), at.getZ());
@@ -296,7 +296,7 @@ final class DevClientSmokeM44 {
         TankBlockEntity bc = tank(level, p, big, 24, 6, 12);
         floor(level, bc, Blocks.GRASS_BLOCK.defaultBlockState());
         pen = base.offset(0, 0, -14);
-        p.teleportTo(level, base.getX() + 4, base.getY() + 3, base.getZ() - 6, 0F, 20F);
+        p.teleportTo(level, base.getX() + 4, base.getY() + 3, base.getZ() - 6, java.util.Set.of(), 0F, 20F, false);
         LOGGER.info("[m44] glass {} pets {} herps {} big {} pen {}", glass, pets, herps, big, pen);
     }
 
@@ -349,7 +349,7 @@ final class DevClientSmokeM44 {
     private Mob outside(ServerLevel level, EntityType<? extends Mob> type, double dx, double dz) {
         Mob m = type.create(level);
         if (m == null) return null;
-        m.moveTo(pen.getX() + dx, pen.getY(), pen.getZ() + dz, 0F, 0F);
+        m.snapTo(pen.getX() + dx, pen.getY(), pen.getZ() + dz, 0F, 0F);
         m.setPersistenceRequired();
         m.goalSelector.removeAllGoals(g -> true);
         m.targetSelector.removeAllGoals(g -> true);
@@ -398,7 +398,7 @@ final class DevClientSmokeM44 {
             if (c == null) continue;
             TankData td = c.getTank();
             double fx = 0.2 + 0.6 * ((k * 0.37) % 1.0), fz = 0.3 + 0.4 * ((k * 0.61) % 1.0);
-            e.moveTo(td.min().getX() + fx * td.sizeX(), e.getY(), td.min().getZ() + fz * td.sizeZ(), e.getYRot(), 0F);
+            e.snapTo(td.min().getX() + fx * td.sizeX(), e.getY(), td.min().getZ() + fz * td.sizeZ(), e.getYRot(), 0F);
             k++;
         }
         LOGGER.info("[m44] tracked {}", tracked);

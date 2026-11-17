@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Bucketable;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
@@ -40,7 +40,7 @@ public final class AquaticSpecies {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/aquatic");
 
     /** One water animal type as found at runtime. */
-    public record Species(EntityType<?> type, ResourceLocation id, String kind, MobCategory category, float width, float height,
+    public record Species(EntityType<?> type, Identifier id, String kind, MobCategory category, float width, float height,
                           boolean bucketable, List<Item> buckets, TankInhabitants.Acceptance acceptance) {
         public String line() {
             return String.join("\t", id.toString(), kind, category.getName(), fmt(width) + " x " + fmt(height),
@@ -102,7 +102,7 @@ public final class AquaticSpecies {
             if (org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type)) continue;
             Entity e;
             try {
-                e = type.create(level);
+                e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             } catch (Throwable t) {
                 LOGGER.warn("cannot create {}: {}", BuiltInRegistries.ENTITY_TYPE.getKey(type), t.toString());
                 continue;

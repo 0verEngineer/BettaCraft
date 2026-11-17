@@ -10,7 +10,7 @@ import guideme.layout.LayoutContext;
 import guideme.layout.MinecraftFontMetrics;
 import guideme.navigation.NavigationNode;
 import guideme.navigation.NavigationTree;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +89,7 @@ public final class DeepNavigation {
             rows.clear();
             guideme.PageCollection pages = guide instanceof guideme.PageCollection pc ? pc : null;
             for (NavigationNode root : tree.getRootNodes()) add(navbar, rows, root, null, pages);
-            ResourceLocation current = currentPage(screen);
+            Identifier current = currentPage(screen);
             if (current != null) {
                 for (Object r : rows) {
                     if (contains((NavigationNode) nodeF.get(r), current) && !((NavigationNode) nodeF.get(r)).children().isEmpty()) {
@@ -119,15 +119,15 @@ public final class DeepNavigation {
         }
     }
 
-    private static boolean contains(NavigationNode node, ResourceLocation page) {
+    private static boolean contains(NavigationNode node, Identifier page) {
         if (page.equals(node.pageId())) return true;
         for (NavigationNode c : node.children()) if (contains(c, page)) return true;
         return false;
     }
 
-    private static ResourceLocation currentPage(Object screen) {
+    private static Identifier currentPage(Object screen) {
         try {
-            return (ResourceLocation) screen.getClass().getMethod("getCurrentPageId").invoke(screen);
+            return (Identifier) screen.getClass().getMethod("getCurrentPageId").invoke(screen);
         } catch (ReflectiveOperationException | RuntimeException e) {
             return null;
         }
@@ -204,7 +204,7 @@ public final class DeepNavigation {
             Object navbar = navbar(guideScreen);
             if (navbar == null || !init(navbar)) return;
             List<Object> rows = (List<Object>) rowsF.get(navbar);
-            ResourceLocation current = currentPage(guideScreen);
+            Identifier current = currentPage(guideScreen);
             if (rows.isEmpty() || current == null) return;
             Object row = null;
             for (Object r : rows) {
@@ -225,7 +225,7 @@ public final class DeepNavigation {
 
     /** Dev smoke: opens (or closes) every row of the navigation bar of the open guide screen. */
     @SuppressWarnings("unchecked")
-    public static boolean expandAll(Object guideScreen, boolean open, java.util.function.Predicate<ResourceLocation> which) {
+    public static boolean expandAll(Object guideScreen, boolean open, java.util.function.Predicate<Identifier> which) {
         try {
             Object navbar = navbar(guideScreen);
             if (navbar == null || !init(navbar)) return false;

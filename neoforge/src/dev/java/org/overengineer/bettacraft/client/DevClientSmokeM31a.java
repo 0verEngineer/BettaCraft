@@ -60,7 +60,7 @@ final class DevClientSmokeM31a {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         // the turtles: one on the basking spot, one on the bottom of the water (once the interior is there)
-        then(150, () -> server(pl -> place(pl.serverLevel())));
+        then(150, () -> server(pl -> place(pl.level())));
         then(1, () -> look(terra.getX() + 2.0, terra.getY() + 2.2, terra.getZ() - 3.4, 0F, 18F));
         then(120, () -> {
             int n = mc.level.getEntitiesOfClass(MuskTurtleEntity.class, new AABB(palu).inflate(20)).size();
@@ -78,7 +78,7 @@ final class DevClientSmokeM31a {
         then(40, () -> shot("turtle"));
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), palu);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), palu);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -142,7 +142,7 @@ final class DevClientSmokeM31a {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         // --- the dry terrarium: two grassy hills, ferns and flowers, a stone in the middle
         terra = p.blockPosition().offset(-8, 2, 200);
@@ -205,7 +205,7 @@ final class DevClientSmokeM31a {
         int i = 0;
         for (MuskTurtleEntity m : level.getEntitiesOfClass(MuskTurtleEntity.class, new AABB(palu).inflate(8))) {
             double x = i == 0 ? palu.getX() + 3.5 : palu.getX() + 1.0, z = i == 0 ? palu.getZ() + 1.5 : palu.getZ() + 1.2;
-            m.moveTo(x, ter.ground(x, z) + 0.01, z, i == 0 ? 160F : 250F, 0F);
+            m.snapTo(x, ter.ground(x, z) + 0.01, z, i == 0 ? 160F : 250F, 0F);
             m.setBaskingForTest(i == 0);
             SmokeFreeze.freeze(m, true);
             i++;

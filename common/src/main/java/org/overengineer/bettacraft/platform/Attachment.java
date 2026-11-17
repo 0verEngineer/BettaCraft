@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,13 +39,13 @@ public final class Attachment<T> {
 
     private static final List<Attachment<?>> ALL = new ArrayList<>();
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final Supplier<T> defaultValue;
     private final @Nullable Serializer<T> serializer;
     private final boolean copyOnDeath;
     private Backend<T> backend;
 
-    private Attachment(ResourceLocation id, Supplier<T> defaultValue, @Nullable Serializer<T> serializer, boolean copyOnDeath) {
+    private Attachment(Identifier id, Supplier<T> defaultValue, @Nullable Serializer<T> serializer, boolean copyOnDeath) {
         this.id = id;
         this.defaultValue = defaultValue;
         this.serializer = serializer;
@@ -55,11 +55,11 @@ public final class Attachment<T> {
         }
     }
 
-    public static <T> Attachment<T> saved(ResourceLocation id, Supplier<T> defaultValue, Serializer<T> serializer, boolean copyOnDeath) {
+    public static <T> Attachment<T> saved(Identifier id, Supplier<T> defaultValue, Serializer<T> serializer, boolean copyOnDeath) {
         return new Attachment<>(id, defaultValue, serializer, copyOnDeath);
     }
 
-    public static <T> Attachment<T> transientData(ResourceLocation id, Supplier<T> defaultValue) {
+    public static <T> Attachment<T> transientData(Identifier id, Supplier<T> defaultValue) {
         return new Attachment<>(id, defaultValue, null, false);
     }
 
@@ -69,7 +69,7 @@ public final class Attachment<T> {
         }
     }
 
-    public ResourceLocation id() {
+    public Identifier id() {
         return id;
     }
 

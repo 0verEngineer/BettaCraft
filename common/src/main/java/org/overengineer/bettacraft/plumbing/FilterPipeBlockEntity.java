@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -97,31 +100,36 @@ public class FilterPipeBlockEntity extends BlockEntity implements org.overengine
     private void changed() {
         setChanged();
         if (level != null) {
-            if (!level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            if (!level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             else org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
         }
     }
 
     private void write(CompoundTag t, HolderLookup.Provider registries) {
         if (cover != null) t.put("cover", NbtUtils.writeBlockState(cover));
-        if (cover != null && !coverItem.isEmpty()) t.put("cover_item", coverItem.save(registries)); // part c
+        if (cover != null && !coverItem.isEmpty()) t.put("cover_item", NbtCompat.saveStack(registries, coverItem)); // part c
         if (lines != 0) t.putInt("lines", lines);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         write(tag, registries);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        cover = tag.contains("cover") ? NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), tag.getCompound("cover")) : null;
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        cover = tag.contains("cover") ? NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), tag.getCompoundOrEmpty("cover")) : null;
         if (cover != null && cover.isAir()) cover = null;
-        coverItem = cover != null && tag.contains("cover_item") ? ItemStack.parseOptional(registries, tag.getCompound("cover_item")) : ItemStack.EMPTY;
-        lines = tag.getInt("lines");
-        if (level != null && level.isClientSide) {
+        coverItem = cover != null && tag.contains("cover_item") ? NbtCompat.parseOptionalStack(registries, tag.getCompoundOrEmpty("cover_item")) : ItemStack.EMPTY;
+        lines = tag.getIntOr("lines", 0);
+        if (level != null && level.isClientSide()) {
             org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
             light();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);

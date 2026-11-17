@@ -87,15 +87,15 @@ final class DevClientSmokeM30c {
         int rays = 0;
         for (TankmateEntity m : level.getEntitiesOfClass(TankmateEntity.class, new AABB(base).inflate(40), e -> e.species().isLarge())) {
             switch (m.species()) {
-                case BAMBOO_SHARK -> m.moveTo(x + 8.6, ground(x + 8.6, z + 1.9) + 0.02, z + 1.9, -90F, 0F);
-                case BLACKTIP_REEF_SHARK -> m.moveTo(x + 11.5, y + 3.2, z + 4.5, 90F, 0F);
-                case SPOTTED_EAGLE_RAY -> m.moveTo(x + 5.6, y + 3.4, z + 3.0, -65F, 0F);
+                case BAMBOO_SHARK -> m.snapTo(x + 8.6, ground(x + 8.6, z + 1.9) + 0.02, z + 1.9, -90F, 0F);
+                case BLACKTIP_REEF_SHARK -> m.snapTo(x + 11.5, y + 3.2, z + 4.5, 90F, 0F);
+                case SPOTTED_EAGLE_RAY -> m.snapTo(x + 5.6, y + 3.4, z + 3.0, -65F, 0F);
                 case COWNOSE_RAY -> {
-                    if (rays++ == 0) m.moveTo(x + 8.8, y + 2.5, z + 2.6, -75F, 0F);
-                    else m.moveTo(x + 10.8, y + 3.0, z + 3.8, -75F, 0F);
+                    if (rays++ == 0) m.snapTo(x + 8.8, y + 2.5, z + 2.6, -75F, 0F);
+                    else m.snapTo(x + 10.8, y + 3.0, z + 3.8, -75F, 0F);
                 }
                 // the head out of the west mouth of the cave, the body inside
-                case HONEYCOMB_MORAY -> m.moveTo(x + 18.9, ground(x + 15.0, z + 3.4) + 0.03, z + 3.4, 105F, 0F);
+                case HONEYCOMB_MORAY -> m.snapTo(x + 18.9, ground(x + 15.0, z + 3.4) + 0.03, z + 3.4, 105F, 0F);
                 default -> {}
             }
             SmokeFreeze.freeze(m, true);
@@ -121,7 +121,7 @@ final class DevClientSmokeM30c {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         base = p.blockPosition().offset(-14, 2, 300);
         TankBlockEntity c = tank(level, p, base, 28, 6, 14);

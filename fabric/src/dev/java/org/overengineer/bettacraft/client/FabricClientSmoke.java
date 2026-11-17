@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.WorldDataConfiguration;
@@ -78,10 +78,10 @@ public final class FabricClientSmoke implements ClientModInitializer {
         }
 
         private static void open(String entry, int page) {
-            net.minecraft.resources.ResourceLocation bookId = org.overengineer.bettacraft.BettaCraft.id("handbook");
+            net.minecraft.resources.Identifier bookId = org.overengineer.bettacraft.BettaCraft.id("handbook");
             var api = vazkii.patchouli.api.PatchouliAPI.get();
             if (entry == null) api.openBookGUI(bookId);
-            else api.openBookEntry(bookId, net.minecraft.resources.ResourceLocation.parse(entry), page);
+            else api.openBookEntry(bookId, net.minecraft.resources.Identifier.parse(entry), page);
         }
 
         private static void shot(String name) {
@@ -123,11 +123,11 @@ public final class FabricClientSmoke implements ClientModInitializer {
         Minecraft mc = Minecraft.getInstance();
         GameRules rules = new GameRules();
         rules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
-        rules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false, null);
+        rules.getRule(GameRules.SPAWN_MOBS).set(false, null);
         LevelSettings settings = new LevelSettings("bettacraft_fabric_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
                 Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
         mc.execute(() -> mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, false, false),
-                ra -> ra.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
+                ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
                 screen));
     }
 

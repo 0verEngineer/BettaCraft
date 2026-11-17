@@ -11,7 +11,7 @@ import dev.emi.emi.api.widget.WidgetHolder;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -65,7 +65,7 @@ public final class BettaCraftEmiPlugin implements EmiPlugin {
     private static final class Simple extends BasicEmiRecipe {
         private final boolean heat;
 
-        Simple(EmiRecipeCategory cat, ResourceLocation id, List<SizedIngredient> in, ItemStack out, boolean heat) {
+        Simple(EmiRecipeCategory cat, Identifier id, List<SizedIngredient> in, ItemStack out, boolean heat) {
             super(cat, id, 120, 38);
             this.heat = heat;
             for (SizedIngredient s : in) inputs.add(ingredient(s));

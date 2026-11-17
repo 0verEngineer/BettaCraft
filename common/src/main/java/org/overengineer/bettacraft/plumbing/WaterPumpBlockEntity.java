@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
@@ -107,7 +110,7 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
         if (p == power) return;
         power = p;
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     @Override
@@ -128,19 +131,24 @@ public class WaterPumpBlockEntity extends BlockEntity implements Regulator.Devic
     // ------------------------------------------------------------------ save / sync
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putInt("power", power);
         tag.putInt("moved", moved);
         energy.save(tag);
         spring.save(tag, "spring");
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getInt("power"))) : 10;
-        moved = Math.max(0, tag.getInt("moved"));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getIntOr("power", 0))) : 10;
+        moved = Math.max(0, tag.getIntOr("moved", 0));
         energy.load(tag);
         spring.load(tag, "spring");
     }

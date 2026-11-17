@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +29,13 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * block entity), filter pipes and bundles (covers, arms), the interior floor (its substrate) and the meshed plants.
  */
 public final class ModelSwaps {
-    private static volatile Map<ModelResourceLocation, Function<BakedModel, DynamicModel>> swaps;
+    private static volatile Map<ModelResourceLocation, Function<BlockStateModel, DynamicModel>> swaps;
 
     private ModelSwaps() {}
 
     /** The extra (standalone) models to load: the arms of the pipe bundle. */
-    public static List<ResourceLocation> extraModels() {
-        List<ResourceLocation> out = new ArrayList<>();
+    public static List<Identifier> extraModels() {
+        List<Identifier> out = new ArrayList<>();
         for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) for (boolean tee : new boolean[]{false, true})
             out.add(FilterBundleModel.armModel(l, d, tee));
         return out;
@@ -47,15 +47,15 @@ public final class ModelSwaps {
     }
 
     /** The model that replaces the baked one at {@code loc}, or null to keep it. */
-    public static @Nullable BakedModel swap(ModelResourceLocation loc, BakedModel baked) {
+    public static @Nullable BlockStateModel swap(ModelResourceLocation loc, BlockStateModel baked) {
         if (baked instanceof DynamicModel) return null;
-        Function<BakedModel, DynamicModel> f = targets().get(loc);
+        Function<BlockStateModel, DynamicModel> f = targets().get(loc);
         if (f == null) return null;
         return ClientPlatform.get().wrap(f.apply(baked));
     }
 
-    private static Map<ModelResourceLocation, Function<BakedModel, DynamicModel>> targets() {
-        Map<ModelResourceLocation, Function<BakedModel, DynamicModel>> m = swaps;
+    private static Map<ModelResourceLocation, Function<BlockStateModel, DynamicModel>> targets() {
+        Map<ModelResourceLocation, Function<BlockStateModel, DynamicModel>> m = swaps;
         if (m != null) return m;
         m = new HashMap<>();
         for (BlockState s : ModBlocks.CABINET.get().getStateDefinition().getPossibleStates()) {

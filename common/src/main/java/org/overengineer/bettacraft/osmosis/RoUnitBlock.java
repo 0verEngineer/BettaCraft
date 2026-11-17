@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.osmosis;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -36,9 +36,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * makes it faster. Membrane and prefilter wear out and are replaced (right-click with a new one). Pipes and buckets take
  * the reverse osmosis water out. Empty hand: what it does; sneaking: take the worn parts out.
  */
-public class RoUnitBlock extends BaseEntityBlock {
+public class RoUnitBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<RoUnitBlock> CODEC = simpleCodec(RoUnitBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape SHAPE = box(1, 0, 3, 15, 14, 13), SHAPE_X = box(3, 0, 1, 13, 14, 15);
 
@@ -73,19 +73,19 @@ public class RoUnitBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof RoUnitBlockEntity be) || !be.accepts(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide) be.use(player, hand, stack);
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof RoUnitBlockEntity be) || !be.accepts(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide()) be.use(player, hand, stack);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof RoUnitBlockEntity be) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof RoUnitBlockEntity be) {
             if (player.isShiftKeyDown()) be.takeParts(player);
             else be.tell(player);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -95,14 +95,13 @@ public class RoUnitBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof RoUnitBlockEntity be) {
             for (int i = 0; i < be.parts().getSlots(); i++) {
                 net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.parts().getStackInSlot(i).copy());
                 be.parts().setStackInSlot(i, ItemStack.EMPTY);
             }
         }
-        super.onRemove(state, level, pos, newState, moving);
         org.overengineer.bettacraft.plumbing.PipeNetwork.invalidate(level);
     }
 
@@ -115,6 +114,6 @@ public class RoUnitBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.RO_UNIT.get(), RoUnitBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.RO_UNIT.get(), RoUnitBlockEntity::serverTick);
     }
 }

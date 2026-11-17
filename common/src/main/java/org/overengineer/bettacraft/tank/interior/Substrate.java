@@ -51,7 +51,7 @@ public final class Substrate {
 
     /** Handles a shift + right-click on a floor block. Returns true if it was consumed. */
     public static boolean use(ServerPlayer player, InteractionHand hand, BlockPos pos) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         BlockState floor = level.getBlockState(pos);
         if (!isFloor(floor) || InteriorManager.regionAt(level.getServer(), pos) == null) return false;
         if (!InteriorManager.canBuild(player, pos)) {

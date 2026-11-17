@@ -117,7 +117,7 @@ public final class CreateDriveGameTests {
     }
 
     private static Block adapterBlock() {
-        Block b = BuiltInRegistries.BLOCK.get(BettaCraft.id("drive_adapter"));
+        Block b = BuiltInRegistries.BLOCK.getValue(BettaCraft.id("drive_adapter"));
         if (b == Blocks.AIR) throw new GameTestAssertException("no drive adapter with Create");
         return b;
     }

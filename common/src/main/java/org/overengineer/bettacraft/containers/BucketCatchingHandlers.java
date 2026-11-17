@@ -42,8 +42,8 @@ public final class BucketCatchingHandlers {
             int cap = held.getItem() instanceof TankmateBucketItem ? AnimalContainers.bucket(s) : AnimalContainers.bag(s);
             List<CompoundTag> fish = AnimalContainers.fish(held);
             event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.sidedSuccess(player.level().isClientSide));
-            if (player.level().isClientSide) return;
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            if (player.level().isClientSide()) return;
             if (fish.size() >= cap) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.container.full", cap).withStyle(ChatFormatting.GOLD), true);
                 return;
@@ -61,11 +61,11 @@ public final class BucketCatchingHandlers {
         if (!water && !sea) return;
         // our animals: the water must suit them
         var range = SaltTolerance.of(mob);
-        boolean ours = mob.getType().builtInRegistryHolder().key().location().getNamespace().equals(BettaCraft.MOD_ID);
+        boolean ours = mob.getType().builtInRegistryHolder().key().identifier().getNamespace().equals(BettaCraft.MOD_ID);
         if (ours && range != null && !AnimalContainers.suits(range, sea)) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.FAIL);
-            if (!player.level().isClientSide) {
+            if (!player.level().isClientSide()) {
                 player.displayClientMessage(Component.translatable(sea ? "message.bettacraft.container.needs_fresh_water"
                         : "message.bettacraft.container.needs_sea_water").withStyle(ChatFormatting.GOLD), true);
             }

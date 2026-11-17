@@ -15,7 +15,7 @@ public abstract class TadpoleAgeMixin {
     @Inject(method = "ageUp()V", at = @At("HEAD"), cancellable = true)
     private void bettacraft$convertPre(CallbackInfo ci) {
         Tadpole self = (Tadpole) (Object) this;
-        if (self.level().isClientSide) return;
+        if (self.level().isClientSide()) return;
         if (FabricGameEvents.post(new LivingConversionEvent.Pre(self, EntityType.FROG)).isCanceled()) ci.cancel();
     }
 }

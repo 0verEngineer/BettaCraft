@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.platform.event;
 
+import net.minecraft.world.InteractionResult;
 import org.jetbrains.annotations.Nullable;
 
 /** M52: the game event of NeoForge's name and getters, fired by each loader (see {@link GameEvents}). */

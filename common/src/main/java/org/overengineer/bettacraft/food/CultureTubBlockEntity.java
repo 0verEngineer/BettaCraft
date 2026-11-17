@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -259,7 +262,7 @@ public class CultureTubBlockEntity extends BlockEntity {
     public double speed(Level level) {
         if (artemia()) return 1.0;
         double f = 1.0;
-        if (level.dimensionType().hasSkyLight() && level.isNight()) f *= 1.5;
+        if (level.dimensionType().hasSkyLight() && level.isDarkOutside()) f *= 1.5;
         if (level.getBiome(worldPosition).is(ModTags.BETTA_SPAWN_BIOMES)) f *= 1.3;
         if (level.isRainingAt(worldPosition.above())) f *= 1.3;
         return f;
@@ -335,7 +338,7 @@ public class CultureTubBlockEntity extends BlockEntity {
     }
 
     void updateState() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState s = getBlockState();
         if (!(s.getBlock() instanceof CultureTubBlock)) return;
         int w = water <= 0 ? 0 : Math.min(4, (water + WATER_PER_BATCH - 1) / WATER_PER_BATCH);
@@ -453,26 +456,31 @@ public class CultureTubBlockEntity extends BlockEntity {
     // ------------------------------------------------------------------ NBT
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         Schemas.CULTURE_TUB.stamp(tag);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("water", water);
         tag.putDouble("progress", progress);
-        if (!opened.isEmpty()) tag.put("opened_jar", opened.save(registries));
+        if (!opened.isEmpty()) tag.put("opened_jar", NbtCompat.saveStack(registries, opened));
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.CULTURE_TUB.migrate(raw);
         if (tag.contains("items")) {
-            items.deserializeNBT(registries, tag.getCompound("items"));
+            items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
             if (items.getSlots() != SLOTS) items.setSize(SLOTS);
         }
-        water = Math.max(0, Math.min(WATER_CAPACITY, tag.getInt("water")));
-        progress = Math.max(0, Math.min(1, tag.getDouble("progress")));
-        opened = tag.contains("opened_jar") ? ItemStack.parseOptional(registries, tag.getCompound("opened_jar")) : ItemStack.EMPTY;
+        water = Math.max(0, Math.min(WATER_CAPACITY, tag.getIntOr("water", 0)));
+        progress = Math.max(0, Math.min(1, tag.getDoubleOr("progress", 0d)));
+        opened = tag.contains("opened_jar") ? NbtCompat.parseOptionalStack(registries, tag.getCompoundOrEmpty("opened_jar")) : ItemStack.EMPTY;
         if (!opened.isEmpty()) {
             // M35.1: the open jar of an old world (its old uses are gone on load) goes back onto the jars in the input slot
             ItemStack in = items.getStackInSlot(INPUT);

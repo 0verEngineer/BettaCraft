@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plants;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

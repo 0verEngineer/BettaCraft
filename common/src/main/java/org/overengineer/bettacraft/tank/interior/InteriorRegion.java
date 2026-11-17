@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 /**
@@ -164,10 +165,10 @@ public final class InteriorRegion {
         t.putInt("id", id);
         t.putIntArray("size", new int[]{sizeX, sizeY, sizeZ});
         t.putInt("scale", scale);
-        t.putString("tank_dim", tankDimension.location().toString());
+        t.putString("tank_dim", tankDimension.identifier().toString());
         t.putIntArray("tank_min", new int[]{tankMin.getX(), tankMin.getY(), tankMin.getZ()});
-        if (tankId != null) t.putUUID("tank_id", tankId);
-        if (owner != null) t.putUUID("owner", owner);
+        if (tankId != null) NbtCompat.putUUID(t, "tank_id", tankId);
+        if (owner != null) NbtCompat.putUUID(t, "owner", owner);
         t.putBoolean("built", built);
         t.put("equipment", equipment.save());
         t.putByteArray("cells", cells.clone());
@@ -176,20 +177,20 @@ public final class InteriorRegion {
     }
 
     public static InteriorRegion load(CompoundTag t) {
-        int[] s = t.getIntArray("size");
-        int[] m = t.getIntArray("tank_min");
-        ResourceLocation dim = ResourceLocation.tryParse(t.getString("tank_dim"));
-        InteriorRegion r = new InteriorRegion(t.getInt("id"),
+        int[] s = t.getIntArray("size").orElse(new int[0]);
+        int[] m = t.getIntArray("tank_min").orElse(new int[0]);
+        Identifier dim = Identifier.tryParse(t.getStringOr("tank_dim", ""));
+        InteriorRegion r = new InteriorRegion(t.getIntOr("id", 0),
                 s.length == 3 ? s[0] : 16, s.length == 3 ? s[1] : 16, s.length == 3 ? s[2] : 16,
-                t.getInt("scale"),
-                ResourceKey.create(Registries.DIMENSION, dim == null ? Level.OVERWORLD.location() : dim),
+                t.getIntOr("scale", 0),
+                ResourceKey.create(Registries.DIMENSION, dim == null ? Level.OVERWORLD.identifier() : dim),
                 m.length == 3 ? new BlockPos(m[0], m[1], m[2]) : BlockPos.ZERO,
-                t.hasUUID("tank_id") ? t.getUUID("tank_id") : null,
-                t.hasUUID("owner") ? t.getUUID("owner") : null,
-                t.contains("cells", net.minecraft.nbt.Tag.TAG_BYTE_ARRAY) ? t.getByteArray("cells") : null);
-        r.built = t.getBoolean("built");
-        r.equipment.load(t.getCompound("equipment"));
-        r.plants.load(t.getCompound("plants"));
+                NbtCompat.hasUUID(t, "tank_id") ? NbtCompat.getUUID(t, "tank_id") : null,
+                NbtCompat.hasUUID(t, "owner") ? NbtCompat.getUUID(t, "owner") : null,
+                NbtCompat.has(t, "cells", net.minecraft.nbt.Tag.TAG_BYTE_ARRAY) ? t.getByteArray("cells").orElse(new byte[0]) : null);
+        r.built = t.getBooleanOr("built", false);
+        r.equipment.load(t.getCompoundOrEmpty("equipment"));
+        r.plants.load(t.getCompoundOrEmpty("plants"));
         return r;
     }
 }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tankmates;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.random.RandomGenerator;
@@ -114,11 +115,11 @@ public record TankmateGenes(String a, String b, @Nullable LivebearerGenome lb) {
 
     public static TankmateGenes load(CompoundTag t, TankmateSpecies s) {
         String w = s.variety(0);
-        String a = t.getString("a"), b = t.getString("b");
+        String a = t.getStringOr("a", ""), b = t.getStringOr("b", "");
         a = a.isEmpty() ? w : a;
         b = b.isEmpty() ? w : b;
         if (!livebearer(s)) return new TankmateGenes(a, b, null);
-        if (t.contains("lb", Tag.TAG_COMPOUND)) return new TankmateGenes(a, b, LivebearerGenome.load(t.getCompound("lb"), s == TankmateSpecies.ENDLER_GUPPY));
+        if (NbtCompat.has(t, "lb", Tag.TAG_COMPOUND)) return new TankmateGenes(a, b, LivebearerGenome.load(t.getCompoundOrEmpty("lb"), s == TankmateSpecies.ENDLER_GUPPY));
         return withLegacy(s, a, b);
     }
 

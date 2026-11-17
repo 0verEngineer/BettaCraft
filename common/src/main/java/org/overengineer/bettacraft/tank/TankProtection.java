@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -56,7 +57,7 @@ public final class TankProtection {
     public static Component toggle(Player player, TankBlockEntity c) {
         if (!Features.enabled(Feature.BREAK_PROTECTION)) return Component.translatable("message.bettacraft.tank.break_protection_off");
         TankData t = c.getTank();
-        boolean owner = player.getUUID().equals(t.owner()) || player.hasPermissions(2) || t.owner() == null;
+        boolean owner = player.getUUID().equals(t.owner()) || Perms.has(player, 2) || t.owner() == null;
         if (!owner) return Component.translatable("message.bettacraft.tank.only_owner");
         if (t.owner() == null) t.setOwner(player.getUUID());
         t.setBreakProtected(!t.breakProtected());

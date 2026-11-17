@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.client.screen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity;
 import org.overengineer.bettacraft.fertilizer.FertilizerMakerMenu;
@@ -14,7 +14,7 @@ import org.overengineer.bettacraft.fertilizer.FertilizerMakerMenu;
  * the far left (with power: the FE bar and the spring beside it) and the status.
  */
 public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMakerMenu> {
-    private static final ResourceLocation BURN = ResourceLocation.withDefaultNamespace("container/furnace/burn_progress");
+    private static final Identifier BURN = Identifier.withDefaultNamespace("container/furnace/burn_progress");
     private static final int BG = 0xFFC6C6C6, DARK = 0xFF555555, LIGHT = 0xFFFFFFFF, SLOT = 0xFF8B8B8B, TEXT = 0x404040;
     private static final int BAR_X = 9, BAR_Y = 24, BAR_H = 38, WATER_X = 88, FERT_X = 108, TANK_Y = 18, TANK_H = 50, TANK_W = 12;
 
@@ -52,7 +52,7 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
         g.fill(ax + 1, ay + 6, ax + 16, ay + 10, SLOT);
         for (int i = 0; i < 8; i++) g.fill(ax + 15 + i, ay + 1 + i, ax + 16 + i, ay + 15 - i, SLOT);
         int w = (int) Math.ceil(24.0 * menu.progress() / menu.batchTicks());
-        if (w > 0) g.blitSprite(BURN, 24, 16, 0, 0, ax, ay, Math.min(24, w), 16);
+        if (w > 0) g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, BURN, 24, 16, 0, 0, ax, ay, Math.min(24, w), 16);
         tank(g, x + WATER_X, y + TANK_Y, menu.water(), 0xFF3A70C8);
         tank(g, x + FERT_X, y + TANK_Y, menu.fertilizer(), 0xFF7A9A2A);
     }
@@ -75,15 +75,15 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, 5, TEXT, false);
+        g.drawString(font, title, titleLabelX, 5, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         Component st = FertilizerMakerBlockEntity.statusText(menu.status());
         float s = Math.min(0.75F, (imageWidth - 16) / (float) Math.max(1, font.width(st)));
-        g.pose().pushPose();
-        g.pose().translate(8, 72, 0);
-        g.pose().scale(s, s, 1);
+        g.pose().pushMatrix();
+        g.pose().translate(8, 72);
+        g.pose().scale(s, s);
         int col = menu.status() == FertilizerMakerBlockEntity.WORKING ? 0x206020 : menu.status() == FertilizerMakerBlockEntity.IDLE ? TEXT : 0x9A5A10;
-        g.drawString(font, st, 0, 0, col, false);
-        g.pose().popPose();
+        g.drawString(font, st, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(col), false);
+        g.pose().popMatrix();
     }
 
     @Override
@@ -93,14 +93,14 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
         int bx = leftPos + BAR_X, by = topPos + BAR_Y;
         if (mouseX >= bx - 1 && mouseX < bx + 7 && mouseY >= by - 1 && mouseY < by + BAR_H + 1) {
             int pct = (int) Math.round(100.0 * menu.drive() / menu.driveMax());
-            g.renderTooltip(font, menu.powered() ? Component.translatable("gui.bettacraft.food_maker.energy", menu.drive(), menu.driveMax())
+            g.setTooltipForNextFrame(font, menu.powered() ? Component.translatable("gui.bettacraft.food_maker.energy", menu.drive(), menu.driveMax())
                     : Component.translatable("gui.bettacraft.spring.tooltip", pct), mouseX, mouseY);
         } else if (menu.powered() && SpringGauge.over(mouseX, mouseY, bx + 9, by, BAR_H)) {
             SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
         } else if (over(mouseX, mouseY, leftPos + WATER_X, topPos + TANK_Y)) {
-            g.renderTooltip(font, Component.translatable("gui.bettacraft.fertilizer_maker.water", menu.water(), FertilizerMakerBlockEntity.TANK_MB), mouseX, mouseY);
+            g.setTooltipForNextFrame(font, Component.translatable("gui.bettacraft.fertilizer_maker.water", menu.water(), FertilizerMakerBlockEntity.TANK_MB), mouseX, mouseY);
         } else if (over(mouseX, mouseY, leftPos + FERT_X, topPos + TANK_Y)) {
-            g.renderTooltip(font, Component.translatable("gui.bettacraft.fertilizer_maker.fertilizer", menu.fertilizer(), FertilizerMakerBlockEntity.TANK_MB), mouseX, mouseY);
+            g.setTooltipForNextFrame(font, Component.translatable("gui.bettacraft.fertilizer_maker.fertilizer", menu.fertilizer(), FertilizerMakerBlockEntity.TANK_MB), mouseX, mouseY);
         }
     }
 

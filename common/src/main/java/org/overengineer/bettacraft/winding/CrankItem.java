@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.winding;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -23,19 +26,20 @@ public class CrankItem extends Item implements org.overengineer.bettacraft.platf
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext ctx) {
         Level level = ctx.getLevel();
         if (Winding.find(level, ctx.getClickedPos()) == null) return InteractionResult.PASS;
-        if (!level.isClientSide) Winding.wind(level, ctx.getClickedPos(), ctx.getPlayer());
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide()) Winding.wind(level, ctx.getClickedPos(), ctx.getPlayer());
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         // a block without a spring: say so (server), so a player knows the crank is not broken
-        if (!ctx.getLevel().isClientSide) Winding.wind(ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer());
+        if (!ctx.getLevel().isClientSide()) Winding.wind(ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer());
         return InteractionResult.PASS;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.crank").withStyle(ChatFormatting.GRAY));
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -167,29 +167,29 @@ public final class AmanoLarvae {
     }
 
     /** A bag of larvae on a tank: they drift in its water (they keep their age). */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!(stack.getItem() instanceof FishBagItem) || !stack.has(ModDataComponents.CRITTER_LARVAE.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!(stack.getItem() instanceof FishBagItem) || !stack.has(ModDataComponents.CRITTER_LARVAE.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (!TankInhabitants.canModify(player, c.getTank())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         TankData t = c.getTank();
         if (t.waterMb() <= 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.breeding_box.no_water").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         CritterObject o = CritterObject.load(stack.get(ModDataComponents.CRITTER_LARVAE.get()));
-        if (o == null || o.kind != CritterObject.Kind.LARVAE) return ItemInteractionResult.CONSUME;
+        if (o == null || o.kind != CritterObject.Kind.LARVAE) return InteractionResult.CONSUME;
         Component msg = insert((ServerLevel) level, c, o, player);
         if (!player.getAbilities().instabuild) player.setItemInHand(hand, new ItemStack(ModItems.FISH_BAG.get()));
         player.displayClientMessage(msg, true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** Lets a cloud of larvae out into the tank (keeps its age); the message for the player. */

@@ -26,7 +26,7 @@ public abstract class BlockEntityLoadMixin {
 
     @Inject(method = "loadWithComponents", at = @At("HEAD"), cancellable = true)
     private void bettacraft$clientLoad(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
-        if (!(this instanceof ClientSyncedBlockEntity synced) || level == null || !level.isClientSide || bettacraft$inside.get()) return;
+        if (!(this instanceof ClientSyncedBlockEntity synced) || level == null || !level.isClientSide() || bettacraft$inside.get()) return;
         bettacraft$inside.set(true);
         try {
             synced.handleUpdateTag(tag, registries);

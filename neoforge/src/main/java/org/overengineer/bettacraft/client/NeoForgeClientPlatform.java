@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -65,7 +65,7 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public BakedModel standaloneModel(net.minecraft.resources.ResourceLocation id) {
+    public BakedModel standaloneModel(net.minecraft.resources.Identifier id) {
         return net.minecraft.client.Minecraft.getInstance().getModelManager()
                 .getModel(net.minecraft.client.resources.model.ModelResourceLocation.standalone(id));
     }

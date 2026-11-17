@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.serialization.MapCodec;
@@ -98,16 +101,16 @@ public class LedPanelBlock extends TankLightBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         Direction d = partnerDir(state);
         BlockPos other = pos.relative(d);
         BlockState half = state.setValue(PARTNER_POS, !state.getValue(PARTNER_POS))
                 .setValue(POWERED, level.hasNeighborSignal(other));
         level.setBlock(other, connectPanel(half, level, other), Block.UPDATE_ALL);
-        level.blockUpdated(pos, Blocks.AIR);
+        level.updateNeighborsAt(pos, Blocks.AIR);
     }
 
-    private BlockState connectPanel(BlockState s, LevelAccessor level, BlockPos pos) {
+    private BlockState connectPanel(BlockState s, net.minecraft.world.level.LevelReader level, BlockPos pos) {
         Direction neg = Direction.fromAxisAndDirection(s.getValue(AXIS), Direction.AxisDirection.NEGATIVE);
         return s.setValue(NEG, joinsPanel(s, level.getBlockState(pos.relative(neg))))
                 .setValue(POS, joinsPanel(s, level.getBlockState(pos.relative(neg.getOpposite()))));
@@ -119,7 +122,7 @@ public class LedPanelBlock extends TankLightBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (dir == partnerDir(state)) {
             // the other half is gone: this one goes too (it drops nothing, the broken half dropped the panel)
             boolean partner = neighbor.getBlock() == this && neighbor.getValue(PARTNER_POS) != state.getValue(PARTNER_POS)

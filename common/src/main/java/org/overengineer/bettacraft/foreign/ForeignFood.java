@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -48,24 +48,24 @@ public final class ForeignFood {
     }
 
     /** Item food by hand on a tank: the hungriest animal of another mod that eats it eats one. PASS if nobody does. */
-    public static ItemInteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (stack.isEmpty() || BettaFood.kind(stack) != null || !(level instanceof ServerLevel server) || !Features.enabled(Feature.FOREIGN_CARE)) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         List<LivingEntity> eaters = ForeignCare.eaters(server, c.getTank(), stack, null);
-        if (eaters.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (eaters.isEmpty()) return InteractionResult.TRY_WITH_EMPTY_HAND;
         LivingEntity pick = eaters.getFirst();
         ForeignCare.feed(List.of(pick), 1, null);
         ItemStack one = stack.copyWithCount(1);
-        String id = stack.getDescriptionId();
+        String id = stack.getItem().getDescriptionId();
         if (!player.getAbilities().instabuild) stack.shrink(1);
         server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, one), pick.getX(), pick.getY() + pick.getBbHeight() * 0.5, pick.getZ(), 6, 0.1, 0.05, 0.1, 0.02);
-        level.playSound(null, pick.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.NEUTRAL, 0.5F, 1.2F);
+        level.playSound(null, pick.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.5F, 1.2F);
         TankCare.log(server, c, "log.bettacraft.turtle.greens", TankCare.nameArg(pick), "@" + id);
         player.displayClientMessage(Component.translatable("message.bettacraft.terrarium.ate", pick.getDisplayName(), one.getHoverName()), true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** The feeder: one item each for every hungry animal of another mod that eats an item food of the slots. Returns the items used. */
@@ -82,7 +82,7 @@ public final class ForeignFood {
                 ItemStack got = items.extractItem(i, 1, false);
                 if (got.isEmpty()) continue;
                 ForeignCare.feed(List.of(le), 1, null);
-                TankCare.log(level, c, "log.bettacraft.turtle.greens", TankCare.nameArg(le), "@" + got.getDescriptionId());
+                TankCare.log(level, c, "log.bettacraft.turtle.greens", TankCare.nameArg(le), "@" + got.getItem().getDescriptionId());
                 used++;
                 break;
             }

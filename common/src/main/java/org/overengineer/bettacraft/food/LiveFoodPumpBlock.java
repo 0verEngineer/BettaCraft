@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * dish) and pumps the food as a suspension through the pipes into the tanks, on a schedule set in its window
  * ({@link LiveFoodPumpBlockEntity}). Pipes join it on every side; a tank right next to it is fed directly.
  */
-public class LiveFoodPumpBlock extends BaseEntityBlock implements PipeConnectable {
+public class LiveFoodPumpBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
     public static final MapCodec<LiveFoodPumpBlock> CODEC = simpleCodec(LiveFoodPumpBlock::new);
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 9, 13);
 
@@ -59,8 +60,8 @@ public class LiveFoodPumpBlock extends BaseEntityBlock implements PipeConnectabl
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof LiveFoodPumpBlockEntity be) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof LiveFoodPumpBlockEntity be) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -70,11 +71,10 @@ public class LiveFoodPumpBlock extends BaseEntityBlock implements PipeConnectabl
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof LiveFoodPumpBlockEntity be && be.bottles() > 0) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(Items.GLASS_BOTTLE, be.bottles()));
         }
-        super.onRemove(state, level, pos, newState, moving);
         org.overengineer.bettacraft.plumbing.PipeNetwork.invalidate(level);
     }
 
@@ -87,6 +87,6 @@ public class LiveFoodPumpBlock extends BaseEntityBlock implements PipeConnectabl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.LIVE_FOOD_PUMP.get(), LiveFoodPumpBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.LIVE_FOOD_PUMP.get(), LiveFoodPumpBlockEntity::serverTick);
     }
 }

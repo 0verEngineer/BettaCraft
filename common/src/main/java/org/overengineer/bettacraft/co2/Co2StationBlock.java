@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
@@ -32,9 +32,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * {@code #bettacraft:co2_gas}) goes in through pipes. Right-click with a cylinder: put it in; empty hand: take it out;
  * sneaking: what it does. Hoppers take full cylinders out and put empty ones in.
  */
-public class Co2StationBlock extends BaseEntityBlock {
+public class Co2StationBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<Co2StationBlock> CODEC = simpleCodec(Co2StationBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** It is filling right now. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     /** A cylinder is in it. */
@@ -66,28 +66,27 @@ public class Co2StationBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(stack.getItem() instanceof Co2CylinderItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) be.insert(player, hand, stack);
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(stack.getItem() instanceof Co2CylinderItem)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) be.insert(player, hand, stack);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) {
             if (player.isShiftKeyDown() || !be.hasCylinder()) be.tell(player);
             else be.takeOut(player);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) {
             net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(0).copy());
             be.items().setStackInSlot(0, ItemStack.EMPTY);
         }
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class Co2StationBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         if (!(level.getBlockEntity(pos) instanceof Co2StationBlockEntity be) || !be.hasCylinder()) return 0;
         return Math.max(1, Math.round(15 * Co2CylinderItem.share(be.items().getStackInSlot(0))));
     }
@@ -110,6 +109,6 @@ public class Co2StationBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.CO2_STATION.get(), Co2StationBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.CO2_STATION.get(), Co2StationBlockEntity::serverTick);
     }
 }

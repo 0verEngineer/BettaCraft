@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.UUID;
@@ -68,9 +69,9 @@ public final class PolishGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(mode);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         BlockPos at = h.absolutePos(new BlockPos(1, 2, 1));
-        sp.teleportTo(h.getLevel(), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0F, 0F);
+        sp.teleportTo(h.getLevel(), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), 0F, 0F, false);
         return sp;
     }
 
@@ -164,7 +165,7 @@ public final class PolishGameTests {
         TankBlockEntity c = tank(h, 3, 1, 3, 1, 1, 1);
         c.getTank().setOwner(UUID.randomUUID());
         ServerPlayer other = player(h, GameType.CREATIVE);
-        h.assertTrue(!other.hasPermissions(2), "the mock player is no OP");
+        h.assertTrue(!Perms.has(other, 2), "the mock player is no OP");
         h.assertTrue(TankProtection.toggle(other, c) != null && !c.getTank().breakProtected(), "another player cannot switch it on");
         c.getTank().setOwner(other.getUUID());
         h.assertTrue(TankProtection.toggle(other, c) == null && c.getTank().breakProtected(), "the owner can");
@@ -299,6 +300,6 @@ public final class PolishGameTests {
     private static void use(ServerPlayer sp, BlockPos pos, Direction face, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         Vec3 hit = Vec3.atCenterOf(pos).add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
     }
 }

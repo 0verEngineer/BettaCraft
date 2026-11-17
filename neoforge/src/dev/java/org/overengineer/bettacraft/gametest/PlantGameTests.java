@@ -13,8 +13,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -81,10 +81,10 @@ public final class PlantGameTests {
     /** A player standing above the tank and looking straight down at (x, z) (absolute). */
     private static ServerPlayer lookingDown(GameTestHelper h, double x, double y, double z) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        sp.teleportTo(h.getLevel(), x, y - sp.getEyeHeight(), z, 0F, 90F);
+        sp.teleportTo(h.getLevel(), x, y - sp.getEyeHeight(), z, java.util.Set.of(), 0F, 90F, false);
         sp.setXRot(90F);
         sp.setYRot(0F);
-        sp.getInventory().selected = 8; // the hand slot stays apart from the items the player gets
+        sp.getInventory().getSelectedSlot() = 8; // the hand slot stays apart from the items the player gets
         return sp;
     }
 
@@ -247,7 +247,7 @@ public final class PlantGameTests {
             h.assertTrue(rrf.red > 0.9F, "red root floater red under the tank light: " + rrf.red);
             // the info overlay line (Jade / The One Probe / WTHIT share it)
             var d = org.overengineer.bettacraft.compat.info.InfoData.tank(level, c.getBlockPos());
-            h.assertTrue(d.getInt("plants") == t.plants().size(), "overlay data: plant count");
+            h.assertTrue(d.getIntOr("plants", 0) == t.plants().size(), "overlay data: plant count");
             boolean line = false;
             for (var l : org.overengineer.bettacraft.compat.info.InfoLines.tank(d, false)) {
                 if (l.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc && tc.getKey().equals("jade.bettacraft.tank.plants")) {
@@ -353,10 +353,10 @@ public final class PlantGameTests {
     /** A player standing beside the tank at (x, eyeY, z) (absolute), looking in {@code yaw} with {@code pitch}. */
     private static ServerPlayer looking(GameTestHelper h, double x, double eyeY, double z, float yaw, float pitch) {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
-        sp.teleportTo(h.getLevel(), x, eyeY - sp.getEyeHeight(), z, yaw, pitch);
+        sp.teleportTo(h.getLevel(), x, eyeY - sp.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         sp.setYRot(yaw);
         sp.setXRot(pitch);
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         return sp;
     }
 
@@ -586,7 +586,7 @@ public final class PlantGameTests {
                 var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
                 level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (at.getX() - 8) + " " + at.getY() + " " + (at.getZ() - 8) + " "
                         + (at.getX() + 8) + " " + (at.getY() + 8) + " " + (at.getZ() + 8) + " " + biome);
-                h.assertTrue(level.getBiome(at).is(net.minecraft.resources.ResourceLocation.parse(biome)), "biome set: " + level.getBiome(at));
+                h.assertTrue(level.getBiome(at).is(net.minecraft.resources.Identifier.parse(biome)), "biome set: " + level.getBiome(at));
                 int plants = 0, rolls = 200;
                 for (int i = 0, n = rolls; i < n; i++) {
                     LootParams params = new LootParams.Builder(level).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(at))
@@ -659,7 +659,7 @@ public final class PlantGameTests {
         for (int x = water.getX() - 4; x <= water.getX() + 4; x += 4) for (int z = water.getZ() - 4; z <= water.getZ() + 4; z += 4) level.getChunk(x >> 4, z >> 4);
         var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
         // a few blocks around the water (the biome lookup is fuzzy across neighbouring 4x4x4 cells, also the cell below), inside the loaded template
-        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + Math.max(level.getMinBuildHeight(), water.getY() - 5) + " " + (water.getZ() - 4) + " "
+        level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (water.getX() - 4) + " " + Math.max(level.getMinY(), water.getY() - 5) + " " + (water.getZ() - 4) + " "
                 + (water.getX() + 4) + " " + (water.getY() + 4) + " " + (water.getZ() + 4) + " minecraft:swamp");
     }
 
@@ -690,7 +690,7 @@ public final class PlantGameTests {
         TankBlockEntity c = box(h, 4, 1, 4, 2, 1, 2, 4000);
         CompoundTag tag = c.saveWithFullMetadata(level.registryAccess());
         tag.putInt("schema", 6);
-        CompoundTag tank = tag.getCompound("tank");
+        CompoundTag tank = tag.getCompoundOrEmpty("tank");
         tank.remove("plants");
         tank.remove("next_plant_id");
         c.loadWithComponents(tag, level.registryAccess());
@@ -700,8 +700,8 @@ public final class PlantGameTests {
         FloatingPlant p = TankPlants.add(c, FloatingPlantType.DUCKWEED, o.getX() + 1, o.getZ() + 1, 0.5F, 0F);
         h.assertTrue(p != null && p.id >= 1, "new plants get ids");
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-        h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved in the current schema: " + saved.getInt("schema"));
-        h.assertTrue(saved.getCompound("tank").getList("plants", 10).size() == 1, "plant saved");
+        h.assertTrue(saved.getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion(), "saved in the current schema: " + saved.getIntOr("schema", 0));
+        h.assertTrue(saved.getCompoundOrEmpty("tank").getListOrEmpty("plants").size() == 1, "plant saved");
         h.succeed();
     }
 }

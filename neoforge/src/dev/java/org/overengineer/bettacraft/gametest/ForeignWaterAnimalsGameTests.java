@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -9,13 +10,13 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -75,11 +76,11 @@ public final class ForeignWaterAnimalsGameTests {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no entity " + id));
     }
 
     private static Item item(String id) {
-        return BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
+        return BuiltInRegistries.ITEM.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no item " + id));
     }
 
     private static ForeignProfile profile(EntityType<?> t) {
@@ -311,10 +312,10 @@ public final class ForeignWaterAnimalsGameTests {
         for (LivingEntity e : ofType(h, c, splash)) if (e != a && e != b) young.add(e);
         h.assertTrue(!young.isEmpty(), "young splashtails");
         for (LivingEntity y : young) {
-            CompoundTag d = y.saveWithoutId(new CompoundTag());
-            String v = d.getString("variant");
+            CompoundTag d = NbtCompat.saveEntityWithoutId(y);
+            String v = d.getStringOr("variant", "");
             h.assertTrue(v.equals("fishofthieves:ruby") || v.equals("fishofthieves:sunny"), "the variant of a parent: " + v);
-            h.assertFalse(d.getBoolean("Trophy"), "no young trophy");
+            h.assertFalse(d.getBooleanOr("Trophy", false), "no young trophy");
         }
         h.succeed();
     }
@@ -342,7 +343,7 @@ public final class ForeignWaterAnimalsGameTests {
         h.assertTrue(ForeignCare.conditions(cold, i, profile(iso)).tempBad(), "24 °C is too warm for it");
         for (String[] r : new String[][]{{"naturalist:anglerfish", "deep_sea"}, {"naturalist:blobfish", "deep_sea"},
                 {"naturalist:great_white_shark", "too_big"}, {"naturalist:whale", "too_big"}, {"aquaculture:brown_shrooma", "fungus"}}) {
-            if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(ResourceLocation.parse(r[0]).getNamespace())) continue;
+            if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(Identifier.parse(r[0]).getNamespace())) continue;
             EntityType<?> t = type(r[0]);
             h.assertTrue(r[1].equals(ForeignProfiles.refusal(t)), r[0] + " refused for " + r[1]);
             h.assertTrue(TankInhabitants.accepts(t, null) == TankInhabitants.Acceptance.REFUSED, r[0] + " is refused");
@@ -388,7 +389,7 @@ public final class ForeignWaterAnimalsGameTests {
         for (LivingEntity e : ofType(h, st, horse)) if (e != a && e != b) young.add(e);
         h.assertTrue(!young.isEmpty(), "young seahorses");
         for (LivingEntity y : young) {
-            int v = y.saveWithoutId(new CompoundTag()).getInt("SeahorseVariant");
+            int v = NbtCompat.saveEntityWithoutId(y).getIntOr("SeahorseVariant", 0);
             h.assertTrue(v == 1 || v == 3, "the colour of a parent: " + v);
         }
         // the big ones
@@ -475,13 +476,13 @@ public final class ForeignWaterAnimalsGameTests {
     public static void shinyLeavesOursAndKeepsItsOwn(GameTestHelper h) {
         if (skip(h, "shiny")) return;
         ServerLevel level = h.getLevel();
-        for (ResourceLocation id : BuiltInRegistries.ENTITY_TYPE.keySet()) {
+        for (Identifier id : BuiltInRegistries.ENTITY_TYPE.keySet()) {
             if (!id.getNamespace().equals(BettaCraft.MOD_ID)) continue;
-            h.assertTrue(BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath("shiny", "shiny_" + id.getPath())).isEmpty(),
+            h.assertTrue(BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.fromNamespaceAndPath("shiny", "shiny_" + id.getPath())).isEmpty(),
                     "no shiny type for " + id);
         }
         for (int x = 19; x <= 21; x++) for (int z = 19; z <= 21; z++) for (int y = 2; y <= 3; y++) h.setBlock(new BlockPos(x, y, z), Blocks.WATER.defaultBlockState());
-        Entity spawned = ModEntities.BETTA.get().spawn(level, h.absolutePos(new BlockPos(20, 2, 20)), MobSpawnType.SPAWN_EGG);
+        Entity spawned = ModEntities.BETTA.get().spawn(level, h.absolutePos(new BlockPos(20, 2, 20)), EntitySpawnReason.SPAWN_ITEM_USE);
         h.assertTrue(spawned instanceof BettaEntity, "a betta from a spawn egg");
         ((BettaEntity) spawned).setPersistenceRequired(); // no player near: a water mob would despawn on its own
         java.util.UUID id = spawned.getUUID();

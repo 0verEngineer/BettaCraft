@@ -29,7 +29,7 @@ class M28DecorTest {
     void sizesMatchTheStructures() throws Exception {
         for (DecorType t : DecorType.values()) {
             assertTrue(Files.exists(STRUCTURES.resolve(t.id() + ".nbt")), "structure of " + t);
-            ListTag size = read(t.id()).getList("size", Tag.TAG_INT);
+            ListTag size = read(t.id()).getListOrEmpty("size");
             assertEquals(t.sizeX, size.getInt(0), t + " x");
             assertEquals(t.sizeY, size.getInt(1), t + " y");
             assertEquals(t.sizeZ, size.getInt(2), t + " z");
@@ -37,11 +37,11 @@ class M28DecorTest {
     }
 
     private static int count(CompoundTag nbt, String block) {
-        ListTag palette = nbt.getList("palette", Tag.TAG_COMPOUND);
+        ListTag palette = nbt.getListOrEmpty("palette");
         int n = 0;
-        ListTag blocks = nbt.getList("blocks", Tag.TAG_COMPOUND);
+        ListTag blocks = nbt.getListOrEmpty("blocks");
         for (int i = 0; i < blocks.size(); i++) {
-            if (palette.getCompound(blocks.getCompound(i).getInt("state")).getString("Name").equals(block)) n++;
+            if (palette.getCompound(blocks.getCompoundOrEmpty(i).getIntOr("state", 0)).getStringOr("Name", "").equals(block)) n++;
         }
         return n;
     }

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.decor;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.HashMap;
@@ -9,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
@@ -31,8 +32,8 @@ import org.overengineer.bettacraft.network.DecorTemplatePayload;
  * structure is drawn translucent where it would be placed (tinted red where a block is in the way).
  */
 public final class DecorPreview {
-    private static final Map<ResourceLocation, DecorTemplate> TEMPLATES = new HashMap<>();
-    private static final Set<ResourceLocation> REQUESTED = new HashSet<>();
+    private static final Map<Identifier, DecorTemplate> TEMPLATES = new HashMap<>();
+    private static final Set<Identifier> REQUESTED = new HashSet<>();
 
     private DecorPreview() {}
 
@@ -55,7 +56,7 @@ public final class DecorPreview {
         if (mc.player == null || mc.level == null || !(mc.hitResult instanceof BlockHitResult hit) || hit.getType() != HitResult.Type.BLOCK) return;
         ItemStack stack = mc.player.getMainHandItem();
         if (!(stack.getItem() instanceof DecorItem item)) return;
-        ResourceLocation id = item.type().structure();
+        Identifier id = item.type().structure();
         DecorTemplate t = TEMPLATES.get(id);
         if (t == null) {
             if (REQUESTED.add(id)) {
@@ -68,10 +69,10 @@ public final class DecorPreview {
         BlockPos base = mc.level.getBlockState(clicked).canBeReplaced() ? clicked : clicked.relative(hit.getDirection());
         Rotation rot = DecorTemplate.rotationFor(mc.player.getDirection());
         List<DecorTemplate.Placed> blocks = t.layout(base, rot);
-        Vec3 cam = event.getCamera().getPosition();
+        Vec3 cam = event.getCamera().position();
         PoseStack ps = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        RenderType rt = Sheets.translucentCullBlockSheet();
+        RenderType rt = Sheets.translucentBlockItemSheet();
         // M5: more visible - stronger alpha, a slight cyan glow and an outline of the whole footprint
         float pulse = 0.68F + 0.12F * (float) Math.sin((mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) * 0.2);
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
@@ -99,10 +100,10 @@ public final class DecorPreview {
             ps.pushPose();
             ps.translate(-cam.x, -cam.y, -cam.z);
             net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1).inflate(0.01);
-            net.minecraft.client.renderer.LevelRenderer.renderLineBox(ps, buffers.getBuffer(RenderType.lines()), box,
+            net.minecraft.client.renderer.LevelRenderer.renderLineBox(ps, buffers.getBuffer(RenderTypes.lines()), box,
                     blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F, 0.9F);
             ps.popPose();
-            buffers.endBatch(RenderType.lines());
+            buffers.endBatch(RenderTypes.lines());
         }
         if (!drawnLogged) {
             drawnLogged = true;

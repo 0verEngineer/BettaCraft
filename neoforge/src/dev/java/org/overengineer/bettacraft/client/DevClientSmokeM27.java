@@ -71,7 +71,7 @@ final class DevClientSmokeM27 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int x = -10; x <= 10; x++)
             for (int z = -8; z <= 8; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -103,7 +103,7 @@ final class DevClientSmokeM27 {
 
     /** Every widget type on the 3 x 2 wall (12 x 8 cells); the alarm (Reef above 24 °C) is triggered and blinks. */
     private void dashboard(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos tl = base.offset(2, 2, 1);
         if (!(level.getBlockEntity(tl) instanceof MonitorBlockEntity c)) return;
         java.util.UUID nano = null, reef = null;
@@ -190,7 +190,7 @@ final class DevClientSmokeM27 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

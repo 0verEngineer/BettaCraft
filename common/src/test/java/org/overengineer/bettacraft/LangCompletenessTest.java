@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

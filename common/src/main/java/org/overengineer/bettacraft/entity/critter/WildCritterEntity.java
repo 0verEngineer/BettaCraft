@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.entity.critter;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.List;
@@ -23,12 +26,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -96,7 +99,7 @@ public class WildCritterEntity extends WaterAnimal {
     }
 
     public CritterSpecies species() {
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             int i = entityData.get(DATA_SPECIES);
             CritterSpecies[] all = CritterSpecies.values();
             return all[Math.floorMod(i, all.length)];
@@ -150,7 +153,7 @@ public class WildCritterEntity extends WaterAnimal {
     @Override
     protected EntityDimensions getDefaultDimensions(Pose pose) {
         CritterSpecies s = species();
-        float size = level() != null && level().isClientSide ? drawnSize() : (float) animal.size();
+        float size = level() != null && level().isClientSide() ? drawnSize() : (float) animal.size();
         float l = (float) (s.length() * Math.max(0.3F, size));
         return EntityDimensions.scalable(Math.max(0.12F, Math.min(0.5F, l * 0.9F)), Math.max(0.08F, Math.min(0.3F, l * 0.5F)));
     }
@@ -163,7 +166,7 @@ public class WildCritterEntity extends WaterAnimal {
     @Override
     public Component getName() {
         if (hasCustomName()) return super.getName();
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             Critter d = drawn();
             String v = CritterGenes.varietyOf(d.species, d.clientColor, d.clientGrade); // M25 part c: also Wine Red
             return TankCritters.name(d.species, v);
@@ -182,9 +185,9 @@ public class WildCritterEntity extends WaterAnimal {
     public record Group(CritterSpecies species) implements SpawnGroupData {}
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData groupData) {
-        wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
-        if (spawnType != MobSpawnType.BUCKET) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType, @Nullable SpawnGroupData groupData) {
+        wild = spawnType == EntitySpawnReason.NATURAL || spawnType == EntitySpawnReason.CHUNK_GENERATION;
+        if (spawnType != EntitySpawnReason.BUCKET) {
             CritterSpecies s = groupData instanceof Group g ? g.species() : null;
             var rnd = NetCatching.random(level.getLevel());
             if (s == null) {
@@ -207,7 +210,7 @@ public class WildCritterEntity extends WaterAnimal {
     public static WildCritterEntity of(ServerLevel level, CompoundTag animal) {
         Critter k = Critter.loadAnimal(animal, 0, 0, 0, 0);
         if (k == null) return null;
-        WildCritterEntity e = ModEntities.WILD_CRITTER.get().create(level);
+        WildCritterEntity e = ModEntities.WILD_CRITTER.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         e.setAnimal(k);
         return e;
@@ -228,7 +231,7 @@ public class WildCritterEntity extends WaterAnimal {
             if (k == null || !k.alive()) continue;
             WildCritterEntity e = of(level, a);
             if (e == null) continue;
-            e.moveTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6, pos.getY() + 0.3, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6,
+            e.snapTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6, pos.getY() + 0.3, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6,
                     level.random.nextFloat() * 360F, 0);
             e.setPersistenceRequired();
             if (level.addFreshEntity(e)) n++;
@@ -250,8 +253,8 @@ public class WildCritterEntity extends WaterAnimal {
     // ------------------------------------------------------------------ crawling
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (!isInWater()) return;
         if (target == null || --idle <= 0) {
             target = null;
@@ -289,9 +292,9 @@ public class WildCritterEntity extends WaterAnimal {
     }
 
     @Override
-    protected void handleAirSupply(int air) {
+    protected void handleAirSupply(net.minecraft.server.level.ServerLevel level, int air) {
         // snails and crabs keep a while on land, slowly drying out like fish
-        super.handleAirSupply(air);
+        super.handleAirSupply(level, air);
     }
 
     // ------------------------------------------------------------------ catching
@@ -303,7 +306,7 @@ public class WildCritterEntity extends WaterAnimal {
         boolean bag = held.getItem() instanceof org.overengineer.bettacraft.entity.betta.FishBagItem;
         boolean bucket = AnimalContainers.waterBucket(held) || held.getItem() instanceof org.overengineer.bettacraft.containers.CritterBucketItem;
         if (!net && !bag && !bucket) return super.mobInteract(player, hand);
-        if (level().isClientSide) return InteractionResult.SUCCESS;
+        if (level().isClientSide()) return InteractionResult.SUCCESS;
         Component err = catchBy(player, hand, held, bucket);
         if (err != null) player.displayClientMessage(err, true);
         return InteractionResult.CONSUME;
@@ -315,7 +318,7 @@ public class WildCritterEntity extends WaterAnimal {
         if (!isAlive()) return null;
         CritterSpecies s = animal.species;
         var inv = player.getInventory();
-        int handSlot = hand == InteractionHand.MAIN_HAND ? inv.selected : -1;
+        int handSlot = hand == InteractionHand.MAIN_HAND ? inv.getSelectedSlot() : -1;
         AnimalContainers.Found found = null;
         if (handSlot >= 0) {
             // the container in the hand when it fits
@@ -335,7 +338,7 @@ public class WildCritterEntity extends WaterAnimal {
                     TankCritters.name(animal)).withStyle(ChatFormatting.GOLD);
         }
         if (held.getItem() instanceof org.overengineer.bettacraft.tank.plants.AquariumNetItem && !player.getAbilities().instabuild) {
-            held.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
+            held.hurtAndBreak(1, player, hand.asEquipmentSlot());
         }
         AnimalContainers.putCritter(player, found, saveAnimal(), bucket);
         level().playSound(null, blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.NEUTRAL, 0.7F, 1.4F);
@@ -347,20 +350,24 @@ public class WildCritterEntity extends WaterAnimal {
     // ------------------------------------------------------------------ save
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.put("critter", animal.saveAnimal());
         if (wild) tag.putBoolean("wild", true);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        if (tag.contains("critter", Tag.TAG_COMPOUND)) {
-            Critter k = Critter.loadAnimal(tag.getCompound("critter"), 0, 0, 0, 0);
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        if (NbtCompat.has(tag, "critter", Tag.TAG_COMPOUND)) {
+            Critter k = Critter.loadAnimal(tag.getCompoundOrEmpty("critter"), 0, 0, 0, 0);
             if (k != null) setAnimal(k);
         }
-        wild = tag.getBoolean("wild");
+        wild = tag.getBooleanOr("wild", false);
     }
 
     @Override

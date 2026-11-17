@@ -21,7 +21,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -167,12 +167,12 @@ final class DevClientSmokeM46 {
     // ------------------------------------------------------------------ setup
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
         level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, level.getServer());
         level.setWeatherParameters(12000, 0, false, false);
-        level.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, level.getServer());
+        level.getGameRules().getRule(GameRules.SPAWN_MOBS).set(false, level.getServer());
         home = p.blockPosition().offset(0, 40, 0);
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -189,7 +189,7 @@ final class DevClientSmokeM46 {
     // ------------------------------------------------------------------ part 1: the heat mat
 
     private void heatMat(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         wall = home.offset(0, 0, 0);
         platform(level, wall.offset(-4, 0, -4), 10, 8, Blocks.SMOOTH_STONE);
         for (int x = -2; x <= 3; x++) for (int y = 0; y < 3; y++) level.setBlock(wall.offset(x, y, 1), Blocks.STONE_BRICKS.defaultBlockState(), 2);
@@ -214,7 +214,7 @@ final class DevClientSmokeM46 {
         inv.setItem(3, new ItemStack(Items.WHITE_CARPET));
         inv.setItem(4, new ItemStack(ModBlocks.BASKING_LAMP.get()));
         inv.setItem(9, new ItemStack(ModItems.HEAT_MAT.get(), 4));
-        inv.selected = 0;
+        inv.getSelectedSlot() = 0;
         p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
         p.inventoryMenu.broadcastChanges();
         LOGGER.info("[m46] heat mat scene at {}", wall);
@@ -262,7 +262,7 @@ final class DevClientSmokeM46 {
 
     /** A pool 14 x 9 in the nearest biome of the kind {@code k}: a bank in the north, two blocks of water, carpet patches on the bed. */
     private void pool(ServerPlayer p, int k) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ResourceKey<Biome> biome = k == 0 ? Biomes.RIVER : k == 1 ? Biomes.SWAMP : Biomes.JUNGLE;
         BlockPos from = home.offset(k * 600, 0, 0);
         Pair<BlockPos, Holder<Biome>> found = level.findClosestBiome3d(h -> h.is(biome), from.atY(62), 6400, 32, 64);
@@ -297,7 +297,7 @@ final class DevClientSmokeM46 {
         if (k == 1) for (int[] c : new int[][]{{1, 1}, {5, 4}, {12, 7}}) level.setBlock(b.offset(c[0], 1, c[1]), Blocks.LILY_PAD.defaultBlockState(), 2);
         pools.add(b);
         if (k == 0) comparisonTank(p, b.offset(15, 1, 2));
-        p.teleportTo(level, b.getX() + 7, b.getY() + 3, b.getZ() - 2, 0F, 38F);
+        p.teleportTo(level, b.getX() + 7, b.getY() + 3, b.getZ() - 2, java.util.Set.of(), 0F, 38F, false);
     }
 
     /**
@@ -305,7 +305,7 @@ final class DevClientSmokeM46 {
      * ({@link WildSpawnPass#pickCritterColumn}), groups spawn there ({@link WildSpawnPass#spawnCritters}), frozen for the shot.
      */
     private void critters(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos b = pools.get(0);
         net.minecraft.util.RandomSource r = net.minecraft.util.RandomSource.create(4646);
         int made = 0, room = WildSpawnPass.critterRoom(level, b);
@@ -330,7 +330,7 @@ final class DevClientSmokeM46 {
 
     /** A 2 x 1 x 2 tank on the river bank with the interior carpets (Hemianthus, Marsilea, Staurogyne) for comparison. */
     private static void comparisonTank(ServerPlayer p, BlockPos min) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         List<BlockPos> blocks = new ArrayList<>();
         for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, 0, z));
         for (BlockPos pos : blocks) level.setBlock(pos, ModBlocks.TANK.get().defaultBlockState(), 2);
@@ -357,7 +357,7 @@ final class DevClientSmokeM46 {
     // ------------------------------------------------------------------ part 3: the herps
 
     private void herps(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         herps = home.offset(40, 0, 0);
         platform(level, herps.offset(-5, 0, -5), 11, 11, Blocks.SMOOTH_STONE);
         // the leopard gecko: normal, tangerine, albino; adults in front, the young behind them
@@ -389,7 +389,7 @@ final class DevClientSmokeM46 {
 
     private static void herp(ServerLevel level, EntityType<?> type, int variety, boolean young, double x, double y, double z, float yaw) {
         if (!(type.create(level) instanceof net.minecraft.world.entity.Mob m)) return;
-        m.moveTo(x, y, z, yaw, 0F);
+        m.snapTo(x, y, z, yaw, 0F);
         m.setYHeadRot(yaw);
         m.setYBodyRot(yaw);
         if (m instanceof HerpEntity h) h.setVariety(variety);

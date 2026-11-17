@@ -71,7 +71,7 @@ final class DevClientSmokeM19 {
 
     DevClientSmokeM19() {
         // stand near the scene first: its chunks must stay loaded until the fish are posed
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 440, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 440, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         // let them swim into place, then freeze them in their poses
@@ -123,7 +123,7 @@ final class DevClientSmokeM19 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), community.getX() + 2.5, community.getY() + 0.5, community.getZ() - 2.5, 0F, 0F);
+            p.teleportTo(p.level(), community.getX() + 2.5, community.getY() + 0.5, community.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         }));
         then(10, () -> openMenu(community));
         then(30, () -> {
@@ -138,8 +138,7 @@ final class DevClientSmokeM19 {
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));
-        then(5, () -> server(p -> p.teleportTo(p.serverLevel(), breedTanks.getFirst().getX() + 1.5, breedTanks.getFirst().getY() + 0.5,
-                breedTanks.getFirst().getZ() - 2.5, 0F, 0F)));
+        then(5, () -> server(p -> p.teleportTo(p.level(), breedTanks.getFirst().getX() + 1.5, breedTanks.getFirst().getY() + 0.5, breedTanks.getFirst().getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         then(10, () -> openMenu(breedTanks.get(2)));
         then(30, () -> {
             if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
@@ -172,7 +171,7 @@ final class DevClientSmokeM19 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         reach(p, false);
         level.setDayTime(6000);
         base = p.blockPosition().offset(0, 0, -10);
@@ -301,7 +300,7 @@ final class DevClientSmokeM19 {
 
     /** Lines the fish of every tank up in their zone in front, side-on to the camera, and freezes them. */
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         List<BlockPos> all = new ArrayList<>(gallery);
         all.addAll(breedTanks);
         for (BlockPos min : all) {
@@ -335,7 +334,7 @@ final class DevClientSmokeM19 {
                     // on the back glass (shows its back to the camera)
                     z = w.box().maxZ - m.sideMargin() - 0.005;
                     y = w.box().minY + 0.3 + 0.2 * slot / Math.max(1, slots);
-                    m.moveTo(x, y, z, 0F, 0F); // facing south: the back glass
+                    m.snapTo(x, y, z, 0F, 0F); // facing south: the back glass
                     freeze(m, 0F, TankmateEntity.FLAG_GLASS);
                     continue;
                 }
@@ -348,7 +347,7 @@ final class DevClientSmokeM19 {
                     y = mid + (slot % 2 == 0 ? -0.08 : 0.08) * Math.max(1, s.length() * 3);
                 }
                 float yaw = slot % 2 == 0 ? -90F : 90F;
-                m.moveTo(x, y, z, yaw, 0F);
+                m.snapTo(x, y, z, yaw, 0F);
                 freeze(m, yaw, flags);
                 if (!back) {
                     fx += x;
@@ -402,11 +401,11 @@ final class DevClientSmokeM19 {
             LOGGER.info("[smoketest] M19 client: {} at {} (tank min {})", ((TankmateEntity) e).species().id(), e.position(), g0);
         }
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), g0);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), g0);
             if (c == null) return;
-            for (TankmateEntity m : TankmateBreeding.tankmates(p.serverLevel(), c.getTank())) {
+            for (TankmateEntity m : TankmateBreeding.tankmates(p.level(), c.getTank())) {
                 LOGGER.info("[smoketest] M19 server now: {} at {} noAi {} ({} ticks after posing)", m.species().id(), m.position(), m.isNoAi(),
-                        p.serverLevel().getGameTime() - posedAt);
+                        p.level().getGameTime() - posedAt);
             }
         });
         if (clutches < 5) LOGGER.error("[smoketest] M19 the client sees too few clutches: {}", clutches);
@@ -500,7 +499,7 @@ final class DevClientSmokeM19 {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -579,7 +578,7 @@ final class DevClientSmokeM19 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void language(String code) {

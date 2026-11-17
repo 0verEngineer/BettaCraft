@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -85,10 +86,10 @@ public final class BubbleNest {
     public CompoundTag save() {
         CompoundTag t = new CompoundTag();
         t.putString("phase", phase.name().toLowerCase(java.util.Locale.ROOT));
-        if (male != null) t.putUUID("male", male);
-        if (female != null) t.putUUID("female", female);
-        if (fatherFishId != null) t.putUUID("father_id", fatherFishId);
-        if (motherFishId != null) t.putUUID("mother_id", motherFishId);
+        if (male != null) NbtCompat.putUUID(t, "male", male);
+        if (female != null) NbtCompat.putUUID(t, "female", female);
+        if (fatherFishId != null) NbtCompat.putUUID(t, "father_id", fatherFishId);
+        if (motherFishId != null) NbtCompat.putUUID(t, "mother_id", motherFishId);
         t.putString("father_name", fatherName);
         t.putString("mother_name", motherName);
         if (fatherGenotype != null) t.put("father_genome", fatherGenotype.save());
@@ -115,28 +116,28 @@ public final class BubbleNest {
 
     public static BubbleNest load(CompoundTag t) {
         BubbleNest n = new BubbleNest();
-        String ph = t.getString("phase");
+        String ph = t.getStringOr("phase", "");
         n.phase = "eggs".equals(ph) ? Phase.EGGS : "built".equals(ph) ? Phase.BUILT : Phase.BUILDING;
-        n.male = t.hasUUID("male") ? t.getUUID("male") : new UUID(0, 0);
-        n.female = t.hasUUID("female") ? t.getUUID("female") : null;
-        n.fatherFishId = t.hasUUID("father_id") ? t.getUUID("father_id") : null;
-        n.motherFishId = t.hasUUID("mother_id") ? t.getUUID("mother_id") : null;
-        n.fatherName = t.getString("father_name");
-        n.motherName = t.getString("mother_name");
-        n.fatherGenotype = t.contains("father_genome", Tag.TAG_COMPOUND) ? BettaGenotype.load(t.getCompound("father_genome")) : null;
-        n.motherGenotype = t.contains("mother_genome", Tag.TAG_COMPOUND) ? BettaGenotype.load(t.getCompound("mother_genome")) : null;
-        n.generation = t.getInt("generation");
-        n.pos = new Vec3(t.getDouble("x"), t.getDouble("y"), t.getDouble("z"));
-        n.progress = t.getDouble("progress");
-        n.waiting = t.getDouble("waiting");
-        ListTag el = t.getList("eggs", Tag.TAG_COMPOUND);
+        n.male = NbtCompat.hasUUID(t, "male") ? NbtCompat.getUUID(t, "male") : new UUID(0, 0);
+        n.female = NbtCompat.hasUUID(t, "female") ? NbtCompat.getUUID(t, "female") : null;
+        n.fatherFishId = NbtCompat.hasUUID(t, "father_id") ? NbtCompat.getUUID(t, "father_id") : null;
+        n.motherFishId = NbtCompat.hasUUID(t, "mother_id") ? NbtCompat.getUUID(t, "mother_id") : null;
+        n.fatherName = t.getStringOr("father_name", "");
+        n.motherName = t.getStringOr("mother_name", "");
+        n.fatherGenotype = NbtCompat.has(t, "father_genome", Tag.TAG_COMPOUND) ? BettaGenotype.load(t.getCompoundOrEmpty("father_genome")) : null;
+        n.motherGenotype = NbtCompat.has(t, "mother_genome", Tag.TAG_COMPOUND) ? BettaGenotype.load(t.getCompoundOrEmpty("mother_genome")) : null;
+        n.generation = t.getIntOr("generation", 0);
+        n.pos = new Vec3(t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d));
+        n.progress = t.getDoubleOr("progress", 0d);
+        n.waiting = t.getDoubleOr("waiting", 0d);
+        ListTag el = t.getListOrEmpty("eggs");
         for (int i = 0; i < el.size(); i++) {
-            CompoundTag c = el.getCompound(i);
-            n.eggs.add(new Egg(BettaGenotype.load(c.getCompound("genome")), c.getBoolean("female")));
+            CompoundTag c = el.getCompoundOrEmpty(i);
+            n.eggs.add(new Egg(BettaGenotype.load(c.getCompoundOrEmpty("genome")), c.getBooleanOr("female", false)));
         }
-        n.careSum = t.getDouble("care_sum");
-        n.careTime = t.getDouble("care_time");
-        n.hatchedLogged = t.getBoolean("hatched");
+        n.careSum = t.getDoubleOr("care_sum", 0d);
+        n.careTime = t.getDoubleOr("care_time", 0d);
+        n.hatchedLogged = t.getBooleanOr("hatched", false);
         return n;
     }
 
@@ -156,12 +157,12 @@ public final class BubbleNest {
     /** Client view: no genotypes, {@link #clientEggCount} instead of the egg list. */
     public static BubbleNest loadClientView(CompoundTag t) {
         BubbleNest n = new BubbleNest();
-        String ph = t.getString("phase");
+        String ph = t.getStringOr("phase", "");
         n.phase = "eggs".equals(ph) ? Phase.EGGS : "built".equals(ph) ? Phase.BUILT : Phase.BUILDING;
-        n.pos = new Vec3(t.getDouble("x"), t.getDouble("y"), t.getDouble("z"));
-        n.progress = t.getDouble("progress");
-        n.clientEggCount = t.getInt("egg_count");
-        n.clientStage = LifeStage.byId(t.getString("stage"));
+        n.pos = new Vec3(t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d));
+        n.progress = t.getDoubleOr("progress", 0d);
+        n.clientEggCount = t.getIntOr("egg_count", 0);
+        n.clientStage = LifeStage.byId(t.getStringOr("stage", ""));
         return n;
     }
 

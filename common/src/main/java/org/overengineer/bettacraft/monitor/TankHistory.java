@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.monitor;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayDeque;
@@ -62,7 +63,7 @@ public final class TankHistory extends SavedData {
     private long lastPrune = Long.MIN_VALUE;
 
     public static TankHistory get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(TankHistory::new, TankHistory::load, null), NAME);
+        return level.getDataStorage().computeIfAbsent(org.overengineer.bettacraft.util.NbtCompat.savedData(NAME, TankHistory::new, TankHistory::load, TankHistory::save));
     }
 
     public static long hour(long gameTime) {
@@ -116,7 +117,6 @@ public final class TankHistory extends SavedData {
 
     // ------------------------------------------------------------------ saving
 
-    @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("version", 1);
         ListTag ids = new ListTag();
@@ -125,7 +125,7 @@ public final class TankHistory extends SavedData {
         ListTag list = new ListTag();
         for (Map.Entry<UUID, Series> e : tanks.entrySet()) {
             CompoundTag c = new CompoundTag();
-            c.putUUID("id", e.getKey());
+            NbtCompat.putUUID(c, "id", e.getKey());
             c.putLong("last", e.getValue().lastHour);
             int m = MonitorValue.ALL.length;
             int[] data = new int[e.getValue().points.size() * m];
@@ -140,20 +140,20 @@ public final class TankHistory extends SavedData {
 
     public static TankHistory load(CompoundTag tag, HolderLookup.Provider registries) {
         TankHistory h = new TankHistory();
-        ListTag ids = tag.getList("values", Tag.TAG_STRING);
+        ListTag ids = tag.getListOrEmpty("values");
         int saved = ids.size();
         int[] map = new int[saved];
         for (int k = 0; k < saved; k++) {
-            MonitorValue v = MonitorValue.byId(ids.getString(k));
+            MonitorValue v = MonitorValue.byId(ids.getStringOr(k, ""));
             map[k] = v == null ? -1 : v.ordinal();
         }
-        ListTag list = tag.getList("tanks", Tag.TAG_COMPOUND);
+        ListTag list = tag.getListOrEmpty("tanks");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag c = list.getCompound(i);
-            if (!c.hasUUID("id") || saved == 0) continue;
+            CompoundTag c = list.getCompoundOrEmpty(i);
+            if (!NbtCompat.hasUUID(c, "id") || saved == 0) continue;
             Series s = new Series();
-            s.lastHour = c.getLong("last");
-            int[] data = c.getIntArray("data");
+            s.lastHour = c.getLongOr("last", 0L);
+            int[] data = c.getIntArray("data").orElse(new int[0]);
             for (int p = 0; p + saved <= data.length; p += saved) {
                 float[] point = new float[MonitorValue.ALL.length];
                 java.util.Arrays.fill(point, Float.NaN);
@@ -161,7 +161,7 @@ public final class TankHistory extends SavedData {
                 s.points.addLast(point);
             }
             while (s.points.size() > HOURS) s.points.removeFirst();
-            if (!s.points.isEmpty()) h.tanks.put(c.getUUID("id"), s);
+            if (!s.points.isEmpty()) h.tanks.put(NbtCompat.getUUID(c, "id"), s);
         }
         return h;
     }

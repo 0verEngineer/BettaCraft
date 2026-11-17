@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -40,11 +40,13 @@ public final class BettaCraft {
         ModCreativeTabs.register();
         org.overengineer.bettacraft.progression.ModTriggers.register();
         org.overengineer.bettacraft.registry.ModSounds.register();
+        org.overengineer.bettacraft.registry.ModTickets.register(); // M52b
         org.overengineer.bettacraft.registry.ModParticles.register(); // M23
         org.overengineer.bettacraft.villager.ModVillagers.register(); // M47
         // M52: the game event handlers (fired by each loader, see platform.event.GameEvents)
         org.overengineer.bettacraft.platform.event.GameEvents.register(
                 org.overengineer.bettacraft.api.ApiEventsHandlers.class,
+                org.overengineer.bettacraft.crafting.RecipeSync.class, // M52b
                 org.overengineer.bettacraft.aquarist.AquaristArrivalHandlers.class,
                 org.overengineer.bettacraft.big.BigCatchingHandlers.class,
                 org.overengineer.bettacraft.big.TransportTubItemHandlers.class,
@@ -132,7 +134,9 @@ public final class BettaCraft {
         for (var map : new net.minecraft.core.cauldron.CauldronInteraction.InteractionMap[] {net.minecraft.core.cauldron.CauldronInteraction.EMPTY,
                 net.minecraft.core.cauldron.CauldronInteraction.WATER, net.minecraft.core.cauldron.CauldronInteraction.LAVA,
                 net.minecraft.core.cauldron.CauldronInteraction.POWDER_SNOW}) {
-            map.map().put(sea, net.minecraft.core.cauldron.CauldronInteraction.FILL_WATER);
+            map.map().put(sea, (state, level, pos, player, hand, stack) -> net.minecraft.core.cauldron.CauldronInteraction.emptyBucket(level, pos, player, hand, stack,
+                    net.minecraft.world.level.block.Blocks.WATER_CAULDRON.defaultBlockState().setValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL, 3),
+                    net.minecraft.sounds.SoundEvents.BUCKET_EMPTY)); // M52b: vanilla's FILL_WATER is private since 1.21.2
         }
         net.minecraft.world.level.block.DispenserBlock.registerBehavior(sea, new net.minecraft.core.dispenser.DefaultDispenseItemBehavior() {
             private final net.minecraft.core.dispenser.DefaultDispenseItemBehavior drop = new net.minecraft.core.dispenser.DefaultDispenseItemBehavior();
@@ -151,7 +155,7 @@ public final class BettaCraft {
         });
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

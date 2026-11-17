@@ -116,7 +116,7 @@ public final class AnimalContainers {
     @Nullable
     public static CritterSpecies critterSpecies(List<CompoundTag> animals) {
         if (animals == null || animals.isEmpty()) return null;
-        return CritterSpecies.byIdOrNull(animals.getFirst().getString("species"));
+        return CritterSpecies.byIdOrNull(animals.getFirst().getStringOr("species", ""));
     }
 
     /** A critter bucket with these animals (water of the tank or the world). */
@@ -254,7 +254,7 @@ public final class AnimalContainers {
     }
 
     /** The entity type id of a tankmate species (bag component). */
-    public static net.minecraft.resources.ResourceLocation typeId(TankmateSpecies s) {
+    public static net.minecraft.resources.Identifier typeId(TankmateSpecies s) {
         return BuiltInRegistries.ENTITY_TYPE.getKey(ModEntities.TANKMATES.get(s).get());
     }
 

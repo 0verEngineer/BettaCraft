@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.genetics;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -9,7 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -37,28 +40,26 @@ public class MagnifierItem extends Item {
         super(properties);
     }
 
-    @Override
-    public boolean isValidRepairItem(ItemStack stack, ItemStack repair) {
-        return repair.is(Items.GLASS_PANE) || repair.is(org.overengineer.bettacraft.platform.Tags.Items.GLASS_PANES) || super.isValidRepairItem(stack, repair);
-    }
+    // M52b: repaired with glass panes through the repairable component (ModItems), isValidRepairItem is gone since 1.21.2
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.magnifier").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.magnifier.menu").withStyle(ChatFormatting.DARK_GRAY));
         if (GeneVisibility.free()) tooltip.add(Component.translatable("tooltip.bettacraft.magnifier.free").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     /** Right-click on a tank: every animal in it that is not analysed yet. */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!(stack.getItem() instanceof MagnifierItem)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!(stack.getItem() instanceof MagnifierItem)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.CONSUME;
+        if (c == null) return InteractionResult.CONSUME;
         int n = analyseAll((ServerLevel) level, c, player, stack, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         player.displayClientMessage(n > 0 ? Component.translatable("message.bettacraft.magnifier.analysed", n).withStyle(ChatFormatting.GREEN)
                 : Component.translatable(GeneVisibility.free() ? "message.bettacraft.magnifier.free" : "message.bettacraft.magnifier.none"), true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** Analyses every animal of the tank not analysed yet (one use each, as long as the magnifier lasts); returns how many. */
@@ -109,7 +110,7 @@ public class MagnifierItem extends Item {
     public static ItemStack find(Player player) {
         if (player.getMainHandItem().getItem() instanceof MagnifierItem) return player.getMainHandItem();
         if (player.getOffhandItem().getItem() instanceof MagnifierItem) return player.getOffhandItem();
-        for (ItemStack s : player.getInventory().items) if (s.getItem() instanceof MagnifierItem) return s;
+        for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (s.getItem() instanceof MagnifierItem) return s;
         return ItemStack.EMPTY;
     }
 

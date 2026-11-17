@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -98,7 +98,7 @@ public final class ForeignPlantGameTests {
 
     @javax.annotation.Nullable
     private static Block block(String id) {
-        return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(id)).orElse(null);
+        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).orElse(null);
     }
 
     /** Places the block (default state) at a free spot of a row and checks it counts with its role. */
@@ -348,17 +348,17 @@ public final class ForeignPlantGameTests {
         var saved = ForeignPlants.files();
         try {
             h.assertTrue(effect(h, r).plants() == 2, "kelp and seagrass by default");
-            Map<ResourceLocation, ForeignPlantProfile> files = new LinkedHashMap<>(saved);
-            files.put(BettaCraft.id("zz_kelp_off"), new ForeignPlantProfile(List.of(ResourceLocation.parse("minecraft:kelp"), ResourceLocation.parse("minecraft:kelp_plant")),
+            Map<Identifier, ForeignPlantProfile> files = new LinkedHashMap<>(saved);
+            files.put(BettaCraft.id("zz_kelp_off"), new ForeignPlantProfile(List.of(Identifier.parse("minecraft:kelp"), Identifier.parse("minecraft:kelp_plant")),
                     List.of(), ForeignPlantRole.NONE, 1, false));
-            files.put(BettaCraft.id("zz_ferns"), new ForeignPlantProfile(List.of(), List.of(ResourceLocation.parse("minecraft:replaceable_by_trees")),
+            files.put(BettaCraft.id("zz_ferns"), new ForeignPlantProfile(List.of(), List.of(Identifier.parse("minecraft:replaceable_by_trees")),
                     ForeignPlantRole.MOSS, 0.5, false));
             int warned = ForeignPlants.renamedWarnings;
             boolean fintastic = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("fintastic");
-            files.put(BettaCraft.id("zz_missing"), new ForeignPlantProfile(List.of(ResourceLocation.parse("fintastic:hornwart"),
-                    ResourceLocation.parse("nosuchmod:weed")), List.of(), ForeignPlantRole.STEM, 1, false));
-            List<ResourceLocation> missing = ForeignPlants.set(files);
-            h.assertTrue(missing.contains(ResourceLocation.parse("nosuchmod:weed")) && missing.contains(ResourceLocation.parse("fintastic:hornwart")), "missing ids: " + missing);
+            files.put(BettaCraft.id("zz_missing"), new ForeignPlantProfile(List.of(Identifier.parse("fintastic:hornwart"),
+                    Identifier.parse("nosuchmod:weed")), List.of(), ForeignPlantRole.STEM, 1, false));
+            List<Identifier> missing = ForeignPlants.set(files);
+            h.assertTrue(missing.contains(Identifier.parse("nosuchmod:weed")) && missing.contains(Identifier.parse("fintastic:hornwart")), "missing ids: " + missing);
             h.assertTrue(ForeignPlants.renamedWarnings == warned + (fintastic ? 1 : 0), "the renamed Fintastic id is warned about (once)");
             var e = effect(h, r); // the signature changed: the interior was counted again
             h.assertTrue(e.plants() == 2, "the fern (from the tag) and the seagrass, the kelp is decoration now: " + e.groups());
@@ -387,8 +387,8 @@ public final class ForeignPlantGameTests {
         h.assertTrue(kelp.plants() == 2 && kelp.blocks() == 5 && kelp.role().equals("stem") && kelp.profile().equals(BettaCraft.id("minecraft_kelp")),
                 "the kelp row: " + kelp);
         var un = ForeignCommand.unprofiledPlants(h.getLevel(), c);
-        if (fossil != null) h.assertTrue(un.getOrDefault(ResourceLocation.parse("fintastic:fossil_stromatolite_growths"), 0) == 1, "without a profile: " + un);
-        h.assertTrue(!un.containsKey(ResourceLocation.parse("minecraft:kelp")), "vanilla blocks are not listed as missing");
+        if (fossil != null) h.assertTrue(un.getOrDefault(Identifier.parse("fintastic:fossil_stromatolite_growths"), 0) == 1, "without a profile: " + un);
+        h.assertTrue(!un.containsKey(Identifier.parse("minecraft:kelp")), "vanilla blocks are not listed as missing");
         h.succeed();
     }
 
@@ -414,7 +414,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void biomeModPlantsCount(GameTestHelper h) {
         boolean ru = block("regions_unexplored:cattail") != null, tf = block("twilightforest:huge_lily_pad") != null;
-        if (Boolean.getBoolean("bettacraft.biomemods") && !(ru && tf)) throw new GameTestAssertException("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
+        if (Boolean.getBooleanOr("bettacraft.biomemods", false) && !(ru && tf)) throw new GameTestAssertException("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
         if (!ru && !tf) {
             h.succeed();
             return;
@@ -438,7 +438,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void alexsCavesSpongeCounts(GameTestHelper h) {
         boolean ac = block("alexscaves:ping_pong_sponge") != null;
-        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac) throw new GameTestAssertException("-Paquatic but Alex's Caves is not loaded");
+        if (Boolean.getBooleanOr("bettacraft.aquaticmods", false) && !ac) throw new GameTestAssertException("-Paquatic but Alex's Caves is not loaded");
         if (!ac) {
             h.succeed();
             return;

@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.api.event;
 import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 
@@ -21,13 +21,13 @@ import net.minecraft.world.entity.Entity;
  * one.</p>
  */
 public class AnimalDiedEvent extends TankEvent {
-    private final ResourceLocation species;
+    private final Identifier species;
     @Nullable
     private final Entity entity, killer;
     private final int count;
     private final String cause;
 
-    public AnimalDiedEvent(ServerLevel level, BlockPos tankPos, UUID tankId, String tankName, ResourceLocation species, @Nullable Entity entity,
+    public AnimalDiedEvent(ServerLevel level, BlockPos tankPos, UUID tankId, String tankName, Identifier species, @Nullable Entity entity,
                            int count, String cause, @Nullable Entity killer) {
         super(level, tankPos, tankId, tankName);
         this.species = species;
@@ -37,7 +37,7 @@ public class AnimalDiedEvent extends TankEvent {
         this.killer = killer;
     }
 
-    public ResourceLocation getSpecies() {
+    public Identifier getSpecies() {
         return species;
     }
 

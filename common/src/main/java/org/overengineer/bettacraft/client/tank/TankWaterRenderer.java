@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,9 +21,9 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * Called from the chunk mesher via {@link TankAwareWaterExtensions#renderFluid}; also used by Sodium 0.8.
  */
 public final class TankWaterRenderer {
-    public static final ResourceLocation STILL = BettaCraft.id("block/tank_water_still");
+    public static final Identifier STILL = BettaCraft.id("block/tank_water_still");
     /** Side faces: same animation, clearer (alpha 90 instead of 140). */
-    public static final ResourceLocation SIDE = BettaCraft.id("block/tank_water_side");
+    public static final Identifier SIDE = BettaCraft.id("block/tank_water_side");
     /**
      * RGB tint. M5: the side faces (looked through at the fish) are clearer and less saturated than the surface, so the
      * fish keep their colours (BettaTints compensates the rest). How see-through the water is lives in the alpha of the

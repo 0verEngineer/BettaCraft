@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank.menu;
 
+import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.UUID;
@@ -70,7 +71,7 @@ public final class TankActions {
         if (controller == null) return;
         TankData tank = controller.getTank();
         boolean modify = TankInhabitants.canModify(player, tank);
-        boolean owner = player.getUUID().equals(tank.owner()) || player.hasPermissions(2);
+        boolean owner = player.getUUID().equals(tank.owner()) || Perms.has(player, 2);
         Component error = null;
         switch (p.action()) {
             case SET_NAME -> {
@@ -94,8 +95,8 @@ public final class TankActions {
                         default -> tank.setLightOff(p.value());
                     }
                     controller.setChanged();
-                    org.overengineer.bettacraft.tank.TankLighting.step(player.serverLevel(), controller);
-                    org.overengineer.bettacraft.tank.TankPower.updateLights(player.serverLevel(), tank);
+                    org.overengineer.bettacraft.tank.TankLighting.step(player.level(), controller);
+                    org.overengineer.bettacraft.tank.TankPower.updateLights(player.level(), tank);
                 }
             }
             case SET_SIGN_POS -> {
@@ -121,7 +122,7 @@ public final class TankActions {
                 else if (p.value() >= 0 && p.value() < values.length) {
                     if (tank.owner() == null) tank.setOwner(player.getUUID());
                     tank.setAquaristAccess(values[p.value()]);
-                    TankCare.log(player.serverLevel(), controller, "log.bettacraft.aquarist.access", TankCare.nameArg(player),
+                    TankCare.log(player.level(), controller, "log.bettacraft.aquarist.access", TankCare.nameArg(player),
                             "@" + values[p.value()].translationKey());
                 }
             }
@@ -139,9 +140,9 @@ public final class TankActions {
             case THIN_PLANTS -> {
                 if (!modify) error = locked();
                 else {
-                    var items = org.overengineer.bettacraft.tank.plants.TankPlants.thin(player.serverLevel(), controller);
+                    var items = org.overengineer.bettacraft.tank.plants.TankPlants.thin(player.level(), controller);
                     if (items.isEmpty()) error = Component.translatable("message.bettacraft.plants.none");
-                    else org.overengineer.bettacraft.tank.plants.TankPlants.taken(player.serverLevel(), controller, player, items, true);
+                    else org.overengineer.bettacraft.tank.plants.TankPlants.taken(player.level(), controller, player, items, true);
                 }
             }
             case TAKE_CRITTER -> {
@@ -153,25 +154,25 @@ public final class TankActions {
                     full = s == null ? 1 : Math.max(1, bucket ? org.overengineer.bettacraft.containers.AnimalContainers.bucket(s)
                             : org.overengineer.bettacraft.containers.AnimalContainers.bag(s));
                 }
-                error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.serverLevel(), controller, player, p.text(), mode == 1, full, sex, bucket);
+                error = org.overengineer.bettacraft.critters.TankCritters.takeOut(player.level(), controller, player, p.text(), mode == 1, full, sex, bucket);
             }
-            case TAKE_CRITTER_ONE -> error = org.overengineer.bettacraft.critters.TankCritters.takeOutById(player.serverLevel(), controller, player, p.value(),
+            case TAKE_CRITTER_ONE -> error = org.overengineer.bettacraft.critters.TankCritters.takeOutById(player.level(), controller, player, p.value(),
                     "bucket".equals(p.text()));
             case ANALYSE -> error = analyse(player, controller, p);
             case REMOVE_CLUTCHES -> {
                 if (!modify) error = locked();
                 else {
-                    int n = org.overengineer.bettacraft.critters.TankCritters.removeClutches(player.serverLevel(), controller);
+                    int n = org.overengineer.bettacraft.critters.TankCritters.removeClutches(player.level(), controller);
                     if (n == 0) error = Component.translatable("message.bettacraft.critters.no_clutches");
                     else {
-                        TankCare.log(player.serverLevel(), controller, "log.bettacraft.clutch_removed", TankCare.nameArg(player));
+                        TankCare.log(player.level(), controller, "log.bettacraft.clutch_removed", TankCare.nameArg(player));
                         player.displayClientMessage(Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN), true);
                     }
                 }
             }
             case REMOVE_BREEDING_BOX -> {
                 if (!modify) error = locked();
-                else error = org.overengineer.bettacraft.tankmates.TankmateItems.removeBox(player.serverLevel(), controller, player);
+                else error = org.overengineer.bettacraft.tankmates.TankmateItems.removeBox(player.level(), controller, player);
             }
             case ENTER_INTERIOR -> {
                 player.closeContainer();
@@ -206,7 +207,7 @@ public final class TankActions {
                 done = true;
             }
         } else if (p.target().isPresent()) {
-            Entity e = player.serverLevel().getEntity(p.target().get());
+            Entity e = player.level().getEntity(p.target().get());
             if (e == null || !TankInhabitants.hasTankRef(e) || !tank.id().equals(ModAttachments.TANK_REF.get(e).tankId())) {
                 return Component.translatable("message.bettacraft.tank.not_inside");
             }
@@ -215,9 +216,9 @@ public final class TankActions {
         }
         if (!done) return Component.translatable("message.bettacraft.critters.none_of_kind");
         org.overengineer.bettacraft.genetics.MagnifierItem.wear(player, magnifier, null);
-        player.serverLevel().playSound(null, controller.getBlockPos(), net.minecraft.sounds.SoundEvents.SPYGLASS_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.2F);
+        player.level().playSound(null, controller.getBlockPos(), net.minecraft.sounds.SoundEvents.SPYGLASS_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.2F);
         player.displayClientMessage(Component.translatable("message.bettacraft.magnifier.analysed", 1).withStyle(ChatFormatting.GREEN), true);
-        TankCare.log(player.serverLevel(), controller, "log.bettacraft.analysed", TankCare.nameArg(player), "1");
+        TankCare.log(player.level(), controller, "log.bettacraft.analysed", TankCare.nameArg(player), "1");
         return null;
     }
 
@@ -233,7 +234,7 @@ public final class TankActions {
     }
 
     private static Component rename(ServerPlayer player, TankData tank, UUID id, String name) {
-        Entity e = player.serverLevel().getEntity(id);
+        Entity e = player.level().getEntity(id);
         if (e == null || !TankInhabitants.hasTankRef(e) || !tank.id().equals(ModAttachments.TANK_REF.get(e).tankId())) {
             return Component.translatable("message.bettacraft.tank.not_inside");
         }

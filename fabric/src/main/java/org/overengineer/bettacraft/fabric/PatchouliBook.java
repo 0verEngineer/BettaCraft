@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.fabric;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.progression.GuideBook;
@@ -10,7 +10,7 @@ import org.overengineer.bettacraft.progression.GuideBook;
  * time (tools/guide). Patchouli is optional; without it the handbook item is not given (like without GuideME on NeoForge).
  */
 final class PatchouliBook implements GuideBook.Backend {
-    static final ResourceLocation BOOK = BettaCraft.id("handbook");
+    static final Identifier BOOK = BettaCraft.id("handbook");
 
     @Override
     public String modId() {
@@ -18,12 +18,12 @@ final class PatchouliBook implements GuideBook.Backend {
     }
 
     @Override
-    public ItemStack createBook(ResourceLocation guideId) {
+    public ItemStack createBook(Identifier guideId) {
         return Api.book();
     }
 
     @Override
-    public boolean isBook(ItemStack stack, ResourceLocation guideId) {
+    public boolean isBook(ItemStack stack, Identifier guideId) {
         ItemStack book = Api.book();
         return !book.isEmpty() && ItemStack.isSameItemSameComponents(stack, book);
     }

@@ -59,10 +59,10 @@ public final class ForeignNests {
 
     private static void carry(ServerLevel level, TankBlockEntity c, LivingEntity mother, ForeignProfile p, CompoundTag brood, double days, RandomGenerator rnd) {
         TankData t = c.getTank();
-        double age = brood.getDouble("age") + days;
+        double age = brood.getDoubleOr("age", 0d) + days;
         brood.putDouble("age", age);
         TagKey<Block> ground = ground(p);
-        Vec3 target = brood.contains("tx") ? new Vec3(brood.getDouble("tx"), brood.getDouble("ty"), brood.getDouble("tz")) : null;
+        Vec3 target = brood.contains("tx") ? new Vec3(brood.getDoubleOr("tx", 0d), brood.getDoubleOr("ty", 0d), brood.getDoubleOr("tz", 0d)) : null;
         if (target == null) {
             HerpBreeding.Nest n = HerpBreeding.findNest(level, t, mother.getRandom(), ground);
             if (n == null) {
@@ -79,7 +79,7 @@ public final class ForeignNests {
             brood.putDouble("walk", 0);
             if (mother instanceof Mob m) ForeignTerrarium.goTo(m, level, t, target, (int) (WALK_DAYS * 24000));
         }
-        double walk = brood.getDouble("walk") + days;
+        double walk = brood.getDoubleOr("walk", 0d) + days;
         brood.putDouble("walk", walk);
         boolean walker = ForeignTerrarium.walker(mother) != null;
         if (walker && mother instanceof Mob mm && !LandWalker.arrivedAt(mm, target, HerpBreeding.NEST_REACH + mother.getBbWidth() / 2) && walk < WALK_DAYS) return;
@@ -96,7 +96,7 @@ public final class ForeignNests {
         if (interior == null) return;
         ForeignProfile.Breeding b = p.breeding();
         int eggs = b.youngMin() + (b.youngMax() > b.youngMin() ? rnd.nextInt(b.youngMax() - b.youngMin() + 1) : 0);
-        if (brood.contains("carried_eggs")) eggs = brood.getInt("carried_eggs"); // part b: a clutch she took along
+        if (brood.contains("carried_eggs")) eggs = brood.getIntOr("carried_eggs", 0); // part b: a clutch she took along
         if (eggs <= 0) {
             giveUp(mother, p);
             return;
@@ -109,8 +109,8 @@ public final class ForeignNests {
         nest.putDouble("y", n.world().y);
         nest.putDouble("z", n.world().z);
         nest.putInt("eggs", eggs);
-        nest.putDouble("progress", brood.getDouble("carried_progress"));
-        nest.putDouble("hot", brood.getDouble("carried_hot"));
+        nest.putDouble("progress", brood.getDoubleOr("carried_progress", 0d));
+        nest.putDouble("hot", brood.getDoubleOr("carried_hot", 0d));
         brood.remove("carried_eggs");
         brood.remove("carried_progress");
         brood.remove("carried_hot");
@@ -122,8 +122,8 @@ public final class ForeignNests {
 
     private static void incubate(ServerLevel level, TankBlockEntity c, LivingEntity mother, ForeignProfile p, CompoundTag brood, double days, RandomGenerator rnd) {
         TankData t = c.getTank();
-        CompoundTag nest = brood.getCompound("nest");
-        BlockPos block = BlockPos.of(nest.getLong("block"));
+        CompoundTag nest = brood.getCompoundOrEmpty("nest");
+        BlockPos block = BlockPos.of(nest.getLongOr("block", 0L));
         ServerLevel interior = InteriorManager.interiorLevel(level.getServer());
         String what = "@" + mother.getType().getDescriptionId();
         if (level.getGameTime() % 200 < 20 && interior != null && interior.isLoaded(block) && !interior.getBlockState(block).is(ModBlocks.TURTLE_EGGS.get())) {
@@ -132,30 +132,30 @@ public final class ForeignNests {
             return;
         }
         double surface = t.waterMb() <= 0 ? Double.NEGATIVE_INFINITY : t.waterSurfaceY();
-        if (nest.getDouble("y") < surface - 0.02) {
+        if (nest.getDoubleOr("y", 0d) < surface - 0.02) {
             TankCare.log(level, c, "log.bettacraft.turtle.eggs_drowned", what);
             end(mother, p, interior, block);
             return;
         }
         double temp = HerpBreeding.nestTemp(t);
-        if (Double.isFinite(temp) && temp > EggSex.LETHAL) nest.putDouble("hot", nest.getDouble("hot") + days);
-        if (nest.getDouble("hot") >= EggSex.LETHAL_DAYS) {
+        if (Double.isFinite(temp) && temp > EggSex.LETHAL) nest.putDouble("hot", nest.getDoubleOr("hot", 0d) + days);
+        if (nest.getDoubleOr("hot", 0d) >= EggSex.LETHAL_DAYS) {
             TankCare.log(level, c, "log.bettacraft.turtle.eggs_cooked", what);
             end(mother, p, interior, block);
             return;
         }
-        double before = nest.getDouble("progress");
+        double before = nest.getDoubleOr("progress", 0d);
         double progress = Math.min(1, before + EggSex.rate(p.breeding().nestPivot(), p.breeding().days(), temp, HerpBreeding.speed()) * days);
         nest.putDouble("progress", progress);
         // M39 (question I1): the temperature in the thermosensitive period (the middle third) decides the sex of the young
         if (p.breeding().sex() == ForeignProfile.Sex.TEMPERATURE && Double.isFinite(temp) && before < EggSex.TSP_TO && progress > EggSex.TSP_FROM) {
-            nest.putDouble("tsp_sum", nest.getDouble("tsp_sum") + temp * days);
-            nest.putDouble("tsp_days", nest.getDouble("tsp_days") + days);
+            nest.putDouble("tsp_sum", nest.getDoubleOr("tsp_sum", 0d) + temp * days);
+            nest.putDouble("tsp_days", nest.getDoubleOr("tsp_days", 0d) + days);
         }
         if (progress < 1 - 1e-9) return;
-        int eggs = nest.getInt("eggs");
-        Vec3 at = new Vec3(nest.getDouble("x"), nest.getDouble("y") + 0.01, nest.getDouble("z"));
-        double tsp = nest.getDouble("tsp_days") > 0 ? nest.getDouble("tsp_sum") / nest.getDouble("tsp_days") : temp;
+        int eggs = nest.getIntOr("eggs", 0);
+        Vec3 at = new Vec3(nest.getDoubleOr("x", 0d), nest.getDoubleOr("y", 0d) + 0.01, nest.getDoubleOr("z", 0d));
+        double tsp = nest.getDoubleOr("tsp_days", 0d) > 0 ? nest.getDoubleOr("tsp_sum", 0d) / nest.getDoubleOr("tsp_days", 0d) : temp;
         end(mother, p, interior, block);
         hatch(level, c, mother, p, eggs, at, rnd, tsp);
     }
@@ -218,14 +218,14 @@ public final class ForeignNests {
     public static void leave(LivingEntity mother) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother);
         if (!d.contains(ForeignBreeding.BROOD)) return;
-        CompoundTag brood = d.getCompound(ForeignBreeding.BROOD);
+        CompoundTag brood = d.getCompoundOrEmpty(ForeignBreeding.BROOD);
         brood.remove("tx");
         if (brood.contains("nest")) {
-            CompoundTag nest = brood.getCompound("nest");
-            removeEggs(mother, BlockPos.of(nest.getLong("block")));
-            brood.putInt("carried_eggs", nest.getInt("eggs"));
-            brood.putDouble("carried_progress", nest.getDouble("progress"));
-            brood.putDouble("carried_hot", nest.getDouble("hot"));
+            CompoundTag nest = brood.getCompoundOrEmpty("nest");
+            removeEggs(mother, BlockPos.of(nest.getLongOr("block", 0L)));
+            brood.putInt("carried_eggs", nest.getIntOr("eggs", 0));
+            brood.putDouble("carried_progress", nest.getDoubleOr("progress", 0d));
+            brood.putDouble("carried_hot", nest.getDoubleOr("hot", 0d));
             brood.remove("nest");
             brood.putDouble("age", 0);
         }
@@ -235,8 +235,8 @@ public final class ForeignNests {
     /** Part b: a mother died in her tank: her laid eggs go with her (the egg block goes). */
     public static void died(LivingEntity mother) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother);
-        if (!d.contains(ForeignBreeding.BROOD) || !d.getCompound(ForeignBreeding.BROOD).contains("nest")) return;
-        removeEggs(mother, BlockPos.of(d.getCompound(ForeignBreeding.BROOD).getCompound("nest").getLong("block")));
+        if (!d.contains(ForeignBreeding.BROOD) || !d.getCompoundOrEmpty(ForeignBreeding.BROOD).contains("nest")) return;
+        removeEggs(mother, BlockPos.of(d.getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest").getLongOr("block", 0L)));
         d.remove(ForeignBreeding.BROOD);
     }
 
@@ -257,17 +257,17 @@ public final class ForeignNests {
     public static Vec3 nestOf(LivingEntity mother) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother);
         if (!d.contains(ForeignBreeding.BROOD)) return null;
-        CompoundTag b = d.getCompound(ForeignBreeding.BROOD);
+        CompoundTag b = d.getCompoundOrEmpty(ForeignBreeding.BROOD);
         if (!b.contains("nest")) return null;
-        CompoundTag n = b.getCompound("nest");
-        return new Vec3(n.getDouble("x"), n.getDouble("y"), n.getDouble("z"));
+        CompoundTag n = b.getCompoundOrEmpty("nest");
+        return new Vec3(n.getDoubleOr("x", 0d), n.getDoubleOr("y", 0d), n.getDoubleOr("z", 0d));
     }
 
     /** GameTests: the interior block of the eggs of a brood, or null. */
     @Nullable
     public static BlockPos eggBlockOf(LivingEntity mother) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother);
-        if (!d.contains(ForeignBreeding.BROOD) || !d.getCompound(ForeignBreeding.BROOD).contains("nest")) return null;
-        return BlockPos.of(d.getCompound(ForeignBreeding.BROOD).getCompound("nest").getLong("block"));
+        if (!d.contains(ForeignBreeding.BROOD) || !d.getCompoundOrEmpty(ForeignBreeding.BROOD).contains("nest")) return null;
+        return BlockPos.of(d.getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest").getLongOr("block", 0L));
     }
 }

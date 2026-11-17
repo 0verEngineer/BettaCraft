@@ -23,8 +23,8 @@ public final class TankmateTrades {
     // M22.2: the offers themselves are in org.overengineer.bettacraft.sources.TraderOffers (two among the usual ones, one
     // among the rare ones; each picks a species of its kind)
 
-    public static net.minecraft.world.entity.npc.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
-        return (trader, random) -> {
+    public static net.minecraft.world.entity.npc.villager.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
+        return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             java.util.List<TankmateSpecies> pool = new java.util.ArrayList<>();
             for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && !s.marine() && s.available()) pool.add(s); // M20: reef fish in ReefTrades

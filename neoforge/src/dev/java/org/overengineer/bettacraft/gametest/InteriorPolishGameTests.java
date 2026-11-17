@@ -68,12 +68,12 @@ public final class InteriorPolishGameTests {
         ServerPlayer inside = MockPlayers.serverPlayer(h), outside = MockPlayers.serverPlayer(h);
         try {
             Vec3 start = Vec3.atBottomCenterOf(h.absolutePos(new BlockPos(10, 1, 7)));
-            inside.teleportTo(h.getLevel(), start.x, start.y, start.z, 0, 0);
+            inside.teleportTo(h.getLevel(), start.x, start.y, start.z, java.util.Set.of(), 0, 0, false);
             InteriorManager.enter(inside, c.getBlockPos());
             h.assertTrue(InteriorManager.isInterior(inside.level()), "the first player is in the interior");
             TankData t = c.getTank();
             h.assertTrue(InteriorManager.playersInside(h.getLevel().getServer(), t).size() == 1, "one player counted inside");
-            h.assertTrue(TankInhabitants.breakBlockedReason(h.getLevel(), c.getBlockPos()).map(m -> m.getString().contains(inside.getGameProfile().getName()))
+            h.assertTrue(TankInhabitants.breakBlockedReason(h.getLevel(), c.getBlockPos()).map(m -> m.getString().contains(inside.getGameProfile().name()))
                     .orElse(false), "the reason names the player inside");
             // the clients learn about it too (keeps them from predicting the break)
             InteriorManager.updateOccupants(h.getLevel().getServer());
@@ -81,7 +81,7 @@ public final class InteriorPolishGameTests {
             TankData view = TankData.loadClientView(t.saveClientView());
             h.assertTrue(view.occupants() == 1, "occupants in the client view");
             // break every block of the free shape like a player
-            outside.teleportTo(h.getLevel(), start.x, start.y, start.z, 0, 0);
+            outside.teleportTo(h.getLevel(), start.x, start.y, start.z, java.util.Set.of(), 0, 0, false);
             for (BlockPos p : l) {
                 outside.gameMode.destroyBlock(h.absolutePos(p)); // (true in creative even when nothing happened)
                 h.assertTrue(h.getBlockState(p).is(ModBlocks.TANK.get()), "block " + p + " refused");
@@ -116,7 +116,7 @@ public final class InteriorPolishGameTests {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             Vec3 start = Vec3.atBottomCenterOf(h.absolutePos(new BlockPos(4, 1, 2)));
-            p.teleportTo(h.getLevel(), start.x, start.y, start.z, 0, 0);
+            p.teleportTo(h.getLevel(), start.x, start.y, start.z, java.util.Set.of(), 0, 0, false);
             InteriorManager.enter(p, c.getBlockPos());
             h.assertTrue(InteriorManager.isInterior(p.level()), "inside");
             ServerLevel in = (ServerLevel) p.level();

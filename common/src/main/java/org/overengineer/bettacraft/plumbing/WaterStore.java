@@ -111,7 +111,7 @@ public class WaterStore implements IFluidHandler {
     }
 
     public void load(CompoundTag t, HolderLookup.Provider registries) {
-        amount = Math.max(0, Math.min(capacity, t.getInt("water")));
+        amount = Math.max(0, Math.min(capacity, t.getIntOr("water", 0)));
         values = t.contains("values") ? WaterValues.CODEC.parse(NbtOps.INSTANCE, t.get("values")).result().orElse(null) : null;
     }
 }

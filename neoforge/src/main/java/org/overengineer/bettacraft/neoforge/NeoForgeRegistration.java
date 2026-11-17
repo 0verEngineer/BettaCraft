@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -33,7 +33,7 @@ final class NeoForgeRegistration {
 
     private static <T> void register(org.overengineer.bettacraft.platform.registry.DeferredRegister<T> reg, IEventBus modBus) {
         DeferredRegister<T> neo = DeferredRegister.create(reg.getRegistryKey(), reg.getNamespace());
-        for (Map.Entry<ResourceLocation, Supplier<? extends T>> e : reg.takeEntries().entrySet()) neo.register(e.getKey().getPath(), e.getValue());
+        for (Map.Entry<Identifier, Supplier<? extends T>> e : reg.takeEntries().entrySet()) neo.register(e.getKey().getPath(), e.getValue());
         neo.register(modBus);
     }
 

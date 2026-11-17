@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,9 +34,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * salt water tank, the cabinet of its sump, or on a pipe; a CO2 gas cylinder next to it. Right-click: its window; hoppers fill
  * in coral rubble. Lit (bubbles in the column) while it runs.
  */
-public class CalciumReactorBlock extends BaseEntityBlock implements PipeConnectable {
+public class CalciumReactorBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
     public static final MapCodec<CalciumReactorBlock> CODEC = simpleCodec(CalciumReactorBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 15, 13);
 
@@ -77,10 +78,10 @@ public class CalciumReactorBlock extends BaseEntityBlock implements PipeConnecta
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CalciumReactorBlockEntity be) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof CalciumReactorBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -90,12 +91,11 @@ public class CalciumReactorBlock extends BaseEntityBlock implements PipeConnecta
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         boolean gone = !state.is(newState.getBlock());
         if (gone && level.getBlockEntity(pos) instanceof CalciumReactorBlockEntity be) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(0).copy());
         }
-        super.onRemove(state, level, pos, newState, moving);
         if (gone) org.overengineer.bettacraft.plumbing.PipeNetwork.invalidate(level);
     }
 
@@ -106,7 +106,7 @@ public class CalciumReactorBlock extends BaseEntityBlock implements PipeConnecta
 
     /** Comparator: how full the column of rubble is. */
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         if (!(level.getBlockEntity(pos) instanceof CalciumReactorBlockEntity be)) return 0;
         int n = be.items().getStackInSlot(0).getCount();
         return n <= 0 ? 0 : 1 + Math.round(14F * n / 64F);
@@ -121,6 +121,6 @@ public class CalciumReactorBlock extends BaseEntityBlock implements PipeConnecta
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.CALCIUM_REACTOR.get(), CalciumReactorBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.CALCIUM_REACTOR.get(), CalciumReactorBlockEntity::serverTick);
     }
 }

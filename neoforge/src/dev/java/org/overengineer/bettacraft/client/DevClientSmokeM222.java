@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -94,7 +94,7 @@ final class DevClientSmokeM222 {
         // M28: -Pgallery=id,id,...: only these subjects (the seeds stay those of the full gallery), no handbook pictures
         if (!ONLY.isEmpty()) subjects.removeIf(s -> !ONLY.contains(s.id()));
 
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 820, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 820, java.util.Set.of(), 0F, 10F, false)));
         then(30, () -> server(this::build));
         // building 49 tanks with their interiors stalls the server for a while: wait until it is done
         then(1, this::awaitBuilt);
@@ -131,7 +131,7 @@ final class DevClientSmokeM222 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(6000, 0, false, false);
         base = p.blockPosition().offset(-COLUMNS * SPACING / 2, 0, 6);
@@ -208,7 +208,7 @@ final class DevClientSmokeM222 {
     }
 
     private void pose(ServerPlayer p, int k) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, tanks.get(k));
         if (c == null) return;
         TankWaterVolume w = new TankWaterVolume(c.getTank());
@@ -220,7 +220,7 @@ final class DevClientSmokeM222 {
             boolean sea = m.species().seahorse();
             Vec3 at = new Vec3(cx + (i == 0 ? -0.35 : 0.4), cy + (i == 0 ? 0.1 : -0.2), w.box().minZ + 0.7 + i * 0.25);
             float yaw = i == 0 ? -90F : 90F;
-            m.moveTo(at.x, at.y, at.z, yaw, 0F);
+            m.snapTo(at.x, at.y, at.z, yaw, 0F);
             SmokeFreeze.freeze(m, true);
             m.setDeltaMovement(Vec3.ZERO);
             m.setYRot(yaw);
@@ -333,7 +333,7 @@ final class DevClientSmokeM222 {
         then(5, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id(page)));
     }
 
-    private void expand(java.util.function.Predicate<ResourceLocation> which) {
+    private void expand(java.util.function.Predicate<Identifier> which) {
         if (mc.screen == null) {
             LOGGER.error("[smoketest] M22.2 the handbook did not open");
             return;
@@ -391,7 +391,7 @@ final class DevClientSmokeM222 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

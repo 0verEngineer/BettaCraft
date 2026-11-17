@@ -73,10 +73,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 neoForge {
     version = project.neo_version
 
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
+    // M52b: no Parchment for 1.21.11 (plain Mojang names)
 
     runs {
         client {

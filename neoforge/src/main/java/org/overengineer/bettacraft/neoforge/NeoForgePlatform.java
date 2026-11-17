@@ -233,13 +233,13 @@ public final class NeoForgePlatform implements Platform {
     }
 
     @Override
-    public boolean checkSpawnPosition(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.MobSpawnType type) {
+    public boolean checkSpawnPosition(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.EntitySpawnReason type) {
         return net.neoforged.neoforge.event.EventHooks.checkSpawnPosition(mob, level, type);
     }
 
     @Override
     public @Nullable net.minecraft.world.entity.SpawnGroupData finalizeMobSpawn(net.minecraft.world.entity.Mob mob, net.minecraft.world.level.ServerLevelAccessor level,
-            net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType type, @Nullable net.minecraft.world.entity.SpawnGroupData data) {
+            net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.EntitySpawnReason type, @Nullable net.minecraft.world.entity.SpawnGroupData data) {
         return net.neoforged.neoforge.event.EventHooks.finalizeMobSpawn(mob, level, difficulty, type, data);
     }
 

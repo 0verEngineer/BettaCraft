@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.ChatFormatting;
@@ -186,26 +189,31 @@ public class LevelSensorBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putInt("target", target);
         tag.putString("status", status.name());
         tag.putLong("topped", toppedTotal);
         tag.putInt("filter_tanks", filterTanks);
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        target = tag.contains("target") ? Math.max(10, Math.min(100, tag.getInt("target"))) : 100;
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        target = tag.contains("target") ? Math.max(10, Math.min(100, tag.getIntOr("target", 0))) : 100;
         try {
-            status = Status.valueOf(tag.getString("status"));
+            status = Status.valueOf(tag.getStringOr("status", ""));
         } catch (IllegalArgumentException e) {
             status = Status.IDLE;
         }
-        toppedTotal = tag.getLong("topped");
-        filterTanks = tag.getInt("filter_tanks");
+        toppedTotal = tag.getLongOr("topped", 0L);
+        filterTanks = tag.getIntOr("filter_tanks", 0);
         energy.load(tag);
     }
 

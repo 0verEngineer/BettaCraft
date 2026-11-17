@@ -233,10 +233,10 @@ public final class LivebearerGameTests {
             offers++;
             boolean named = false;
             for (CompoundTag f : TankmateItems.bagFish(offer.getResult())) {
-                var t = f.getCompound(TankmateEntity.KEY);
-                TankmateGenes g = TankmateGenes.load(t.getCompound("genes"), s);
+                var t = f.getCompoundOrEmpty(TankmateEntity.KEY);
+                TankmateGenes g = TankmateGenes.load(t.getCompoundOrEmpty("genes"), s);
                 h.assertTrue(g.lb() != null, "every fish has genes");
-                if (!t.getBoolean("female") && LivebearerStrain.of(g.lb().express(false)) != null && LivebearerStrain.of(g.lb().express(false)).source
+                if (!t.getBooleanOr("female", false) && LivebearerStrain.of(g.lb().express(false)) != null && LivebearerStrain.of(g.lb().express(false)).source
                         == LivebearerStrain.Source.TRADER) named = true;
             }
             if (named) strains++;

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank.plants;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -67,12 +68,12 @@ public final class FloatingPlant {
     /** Null for an unknown species (kept out of the list, logged by the caller if needed). */
     @Nullable
     public static FloatingPlant load(CompoundTag t) {
-        FloatingPlantType type = FloatingPlantType.byIdOrNull(t.getString("type"));
-        if (type == null || !t.contains("x", Tag.TAG_ANY_NUMERIC) || !t.contains("z", Tag.TAG_ANY_NUMERIC)) return null;
-        double x = t.getDouble("x"), z = t.getDouble("z");
+        FloatingPlantType type = FloatingPlantType.byIdOrNull(t.getStringOr("type", ""));
+        if (type == null || !NbtCompat.has(t, "x", NbtCompat.ANY_NUMERIC) || !NbtCompat.has(t, "z", NbtCompat.ANY_NUMERIC)) return null;
+        double x = t.getDoubleOr("x", 0d), z = t.getDoubleOr("z", 0d);
         if (!Double.isFinite(x) || !Double.isFinite(z)) return null;
-        FloatingPlant p = new FloatingPlant(t.getInt("id"), type, x, z, t.contains("size") ? t.getFloat("size") : 0.5F, t.getFloat("rot"));
-        p.red = Math.max(0, Math.min(1, t.getFloat("red")));
+        FloatingPlant p = new FloatingPlant(t.getIntOr("id", 0), type, x, z, t.contains("size") ? t.getFloatOr("size", 0f) : 0.5F, t.getFloatOr("rot", 0f));
+        p.red = Math.max(0, Math.min(1, t.getFloatOr("red", 0f)));
         return p;
     }
 

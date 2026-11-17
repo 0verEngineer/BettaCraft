@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.entity.betta;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -7,18 +11,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -52,7 +55,7 @@ public class FishBagItem extends Item {
 
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
-        ResourceLocation id = stack.get(ModDataComponents.BAG_ENTITY.get());
+        Identifier id = stack.get(ModDataComponents.BAG_ENTITY.get());
         if (id == null) return null;
         return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
     }
@@ -70,7 +73,7 @@ public class FishBagItem extends Item {
             net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
             String id = e.getEncodeId();
             if (id != null) t.putString("id", id);
-            e.saveWithoutId(t);
+            t.merge(NbtCompat.saveEntityWithoutId(e));
             net.minecraft.nbt.CompoundTag data = new net.minecraft.nbt.CompoundTag();
             data.put(STORED_KEY, t);
             bag.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
@@ -85,9 +88,9 @@ public class FishBagItem extends Item {
     public static net.minecraft.nbt.CompoundTag storedEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof FishBagItem) || !stack.has(ModDataComponents.BAG_ENTITY.get())) return null;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd == null || !cd.contains(STORED_KEY)) return null;
-        net.minecraft.nbt.CompoundTag t = cd.copyTag().getCompound(STORED_KEY);
-        return t.contains("id", net.minecraft.nbt.Tag.TAG_STRING) ? t : null;
+        if (cd == null || !cd.copyTag().contains(STORED_KEY)) return null;
+        net.minecraft.nbt.CompoundTag t = cd.copyTag().getCompoundOrEmpty(STORED_KEY);
+        return NbtCompat.has(t, "id", net.minecraft.nbt.Tag.TAG_STRING) ? t : null;
     }
 
     /** Catch a small water animal (same size rules as the tank; M16: also water animals without a bucket, e.g. squids). */
@@ -97,12 +100,12 @@ public class FishBagItem extends Item {
         if (!(target instanceof Bucketable) && !TankInhabitants.isWaterAnimal(target)) return InteractionResult.PASS;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(target.getType())) return InteractionResult.PASS; // M31 part d: a drowned goes into a mob jar
         if (!TankInhabitants.bagTakes(target)) { // M35: a sea turtle hatchling too
-            if (!player.level().isClientSide && TankInhabitants.isWaterAnimal(target)) {
+            if (!player.level().isClientSide() && TankInhabitants.isWaterAnimal(target)) {
                 player.displayClientMessage(TankInhabitants.rejection(TankInhabitants.accepts(target.getType(), target), target.getType()), true);
             }
             return InteractionResult.PASS;
         }
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             TankInhabitants.release(target);
             ItemStack filled = fillWith(target);
             target.playSound(target instanceof Bucketable b ? b.getPickupSound() : SoundEvents.BUCKET_FILL_FISH, 1.0F, 1.0F);
@@ -110,33 +113,33 @@ public class FishBagItem extends Item {
             target.discard();
             if (target instanceof BettaEntity) org.overengineer.bettacraft.progression.Progress.onBettaCaught(player);
         }
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     /** Release the fish into water. Clicking a tank is handled by the tank block before this. */
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!isFilled(stack)) {
             // M22.1: an empty bag is shaken out anywhere (sneak + right-click): a few drops, no water block
-            if (!player.isSecondaryUseActive()) return InteractionResultHolder.pass(stack);
+            if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
             org.overengineer.bettacraft.containers.ContainerRules.pour(level, player,
                     org.overengineer.bettacraft.containers.ContainerRules.pourSpot(player, getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY)));
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+            return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
         }
         if (stack.has(ModDataComponents.CRITTER_LARVAE.get())) { // M49: larvae only go into a tank
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.amano.larvae_need_tank"), true);
-            return InteractionResultHolder.fail(stack);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.amano.larvae_need_tank"), true);
+            return InteractionResult.FAIL;
         }
         if (stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return releaseCritters(level, player, hand, stack);
         EntityType<?> type = containedType(stack);
-        if (type == null) return InteractionResultHolder.pass(stack);
+        if (type == null) return InteractionResult.PASS;
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos();
         if (!level.getFluidState(pos).is(FluidTags.WATER)) {
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
-            return InteractionResultHolder.fail(stack);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            return InteractionResult.FAIL;
         }
         // M22.1: animals only go into the world once the player confirmed it
         if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
@@ -152,16 +155,16 @@ public class FishBagItem extends Item {
             if (stored != null) { // M16: a water animal without a bucket, with its full data
                 e = org.overengineer.bettacraft.compat.FishContainers.create(server, stored);
                 if (e != null) {
-                    e.moveTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, player.getYRot(), 0);
+                    e.snapTo(pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, player.getYRot(), 0);
                     if (!server.addFreshEntity(e)) e = null;
                 }
             } else {
-                e = type.spawn(server, stack, player, pos, MobSpawnType.BUCKET, false, false);
+                e = type.spawn(server, stack, player, pos, EntitySpawnReason.BUCKET, false, false);
             }
             if (e == null) {
                 // M17: the animal could not be created (removed mod, another mod cancelled the spawn): keep the bag filled
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
             if (e instanceof Bucketable b) {
                 b.loadFromBucketTag(stack.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
@@ -171,16 +174,16 @@ public class FishBagItem extends Item {
             level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
         }
         ItemStack empty = new ItemStack(ModItems.FISH_BAG.get());
-        return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, empty), level.isClientSide);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(stack, player, empty));
     }
 
     /** M14: shrimp, crayfish or snails let go into open water (they are gone). */
-    private InteractionResultHolder<ItemStack> releaseCritters(Level level, Player player, InteractionHand hand, ItemStack stack) {
+    private InteractionResult releaseCritters(Level level, Player player, InteractionHand hand, ItemStack stack) {
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         if (!level.getFluidState(hit.getBlockPos()).is(FluidTags.WATER)) {
-            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
-            return InteractionResultHolder.fail(stack);
+            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            return InteractionResult.FAIL;
         }
         if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
             return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
@@ -195,7 +198,7 @@ public class FishBagItem extends Item {
                 player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
             }
         }
-        return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())), level.isClientSide);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())));
     }
 
     @Override
@@ -214,7 +217,8 @@ public class FishBagItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         BettaData data = stack.get(ModDataComponents.FISH_DATA.get());
         var critters = stack.get(ModDataComponents.CRITTERS.get());
         if (critters != null && !critters.isEmpty()) {

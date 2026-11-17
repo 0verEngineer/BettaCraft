@@ -291,7 +291,7 @@ public final class ModItems {
             () -> new org.overengineer.bettacraft.containers.CritterBucketItem(new Item.Properties().stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET)));
     /** M22.3: analyses the hidden genes of the animals in a tank (64 uses, repaired with glass panes). */
     public static final DeferredItem<org.overengineer.bettacraft.genetics.MagnifierItem> MAGNIFIER = ITEMS.register("magnifier",
-            () -> new org.overengineer.bettacraft.genetics.MagnifierItem(new Item.Properties().durability(64)));
+            () -> new org.overengineer.bettacraft.genetics.MagnifierItem(new Item.Properties().durability(64).repairable(org.overengineer.bettacraft.platform.Tags.Items.GLASS_PANES)));
     /** M22.3: the wild corals as blocks (silk touch), for reefs of one's own. */
     public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredItem<BlockItem>> WILD_CORALS = wildCoralItems();
 

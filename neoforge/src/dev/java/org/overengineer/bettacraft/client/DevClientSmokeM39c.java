@@ -58,7 +58,7 @@ final class DevClientSmokeM39c {
     DevClientSmokeM39c() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(200, () -> server(pl -> place(pl.serverLevel())));
+        then(200, () -> server(pl -> place(pl.level())));
         // long waits: the miniatures of the interiors come to the client chunk by chunk
         then(1, () -> look(pets.getX() + 6, pets.getY() + 3.0, pets.getZ() - 4.6, 0F, 26F));
         then(300, () -> shot("pets"));
@@ -123,7 +123,7 @@ final class DevClientSmokeM39c {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         // --- the pet terrarium: 12 x 3 x 6, grass with flowers, a beehive on a stump, a closed top
@@ -183,7 +183,7 @@ final class DevClientSmokeM39c {
         TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), true);
         double x = t.min().getX() + dx, z = t.min().getZ() + dz;
         double g = ter.ground(x, z) + 0.01 + up;
-        e.moveTo(x, g, z, yaw, 0F);
+        e.snapTo(x, g, z, yaw, 0F);
         e.setYHeadRot(yaw);
         e.yBodyRot = yaw;
         if (e instanceof Mob m) SmokeFreeze.freeze(m, true);
@@ -222,7 +222,7 @@ final class DevClientSmokeM39c {
         LivingEntity swim = insert(level, fc, EntityType.FROG, false);
         if (swim != null) {
             pose(level, fc, swim, 1.8, 2.4, 0, 120F);
-            swim.moveTo(swim.getX(), fc.getTank().waterSurfaceY() - 0.25, swim.getZ(), 120F, 0F);
+            swim.snapTo(swim.getX(), fc.getTank().waterSurfaceY() - 0.25, swim.getZ(), 120F, 0F);
         }
         pose(level, bc, insert(level, bc, EntityType.COW, false), 7.0, 5.0, 0, 150F);
         pose(level, bc, insert(level, bc, EntityType.SHEEP, false), 11.5, 3.0, 0, 200F);

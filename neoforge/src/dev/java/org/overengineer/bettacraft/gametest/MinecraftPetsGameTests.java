@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import net.minecraft.world.InteractionResult;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.container;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.insert;
 import static org.overengineer.bettacraft.gametest.ForeignTerrariumGameTests.interior;
@@ -25,8 +26,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -251,13 +252,13 @@ public final class MinecraftPetsGameTests {
         ServerPlayer player = MockPlayers.serverPlayer(h);
         Sheep sheep = (Sheep) wild(h, EntityType.SHEEP, new Vec3(20, 2, 26));
         MinecraftPets.mark(sheep);
-        player.moveTo(sheep.getX() + 1, sheep.getY(), sheep.getZ());
+        player.snapTo(sheep.getX() + 1, sheep.getY(), sheep.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         player.interactOn(sheep, InteractionHand.MAIN_HAND);
         h.assertFalse(sheep.isSheared(), "a pet keeps its wool");
         LivingEntity cow = wild(h, EntityType.COW, new Vec3(26, 2, 26));
         MinecraftPets.mark(cow);
-        player.moveTo(cow.getX() + 1, cow.getY(), cow.getZ());
+        player.snapTo(cow.getX() + 1, cow.getY(), cow.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
         player.interactOn(cow, InteractionHand.MAIN_HAND);
         h.assertTrue(player.getMainHandItem().is(Items.BUCKET) && !player.getInventory().contains(new ItemStack(Items.MILK_BUCKET)), "no milk");
@@ -328,7 +329,7 @@ public final class MinecraftPetsGameTests {
         ServerPlayer player = MockPlayers.serverPlayer(h);
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.CARROT, 4));
         h.assertTrue(MinecraftPets.handBait(player.getMainHandItem(), level, c.getBlockPos(), player, InteractionHand.MAIN_HAND)
-                != net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION, "a carrot on a closed tank: the lid message");
+                != net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND, "a carrot on a closed tank: the lid message");
         h.assertTrue(player.getMainHandItem().getCount() == 4, "the carrot stays in the hand");
         h.assertTrue(MinecraftPets.bait(c) == null, "no bait under a lid");
         player.discard();

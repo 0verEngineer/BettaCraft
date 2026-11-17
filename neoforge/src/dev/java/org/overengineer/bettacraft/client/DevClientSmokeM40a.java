@@ -96,7 +96,7 @@ final class DevClientSmokeM40a {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         base = p.blockPosition().offset(-10, 2, 200);
         for (BlockPos q : BlockPos.betweenClosed(base.offset(-2, -1, -2), base.offset(20, 6, 8)))

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -9,7 +10,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.language.I18n;
@@ -42,7 +43,7 @@ import org.overengineer.bettacraft.network.MonitorDataPayload;
  * Coordinates: "screen pixels" of {@link #PX} per block, x to the right and y down from the top left corner inside the
  * frame, drawn {@link #LIFT} in front of the glass.
  */
-public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> {
+public class MonitorRenderer extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<MonitorBlockEntity> {
     public static final float PX = 64F;
     /** The frame around a screen (blocks). */
     public static final float BEZEL = 1F / 16F;
@@ -200,15 +201,15 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
         float sh = Math.min(lamp * 0.6F, rh * 1.6F);
         text(pose, buffers, I18n.get("monitor.bettacraft.state." + stateKey), tx, top + (lamp - sh) / 2, txw, sh, col, light, true);
         float y = top + lamp + pad * 0.5F;
-        ListTag warn = tank.detail.getList("warn", Tag.TAG_COMPOUND);
+        ListTag warn = tank.detail.getListOrEmpty("warn");
         for (int i = 0; i < warn.size(); i++) {
             if (y + rh > y1 - pad + 0.01F) break;
             if (y + 2 * rh > y1 - pad + 0.01F && warn.size() - i > 1) {
                 text(pose, buffers, I18n.get("monitor.bettacraft.more", warn.size() - i), x0 + pad, y, tw - 2 * pad, rh, DIM, light, false);
                 break;
             }
-            CompoundTag w = warn.getCompound(i);
-            text(pose, buffers, "! " + translate(w), x0 + pad, y, tw - 2 * pad, rh, w.getInt("s") == MonitorDetail.ALARM ? BAD : WARN, light, false);
+            CompoundTag w = warn.getCompoundOrEmpty(i);
+            text(pose, buffers, "! " + translate(w), x0 + pad, y, tw - 2 * pad, rh, w.getIntOr("s", 0) == MonitorDetail.ALARM ? BAD : WARN, light, false);
             y += rh;
         }
     }
@@ -240,7 +241,7 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
         Matrix4f m = pose.last().pose();
         quad(buffers, m, gx0, gy0, gx1, gy1, 0.4F, GRAPH_BG, light);
         int hours = t.days() * 24;
-        VertexConsumer vc = buffers.getBuffer(RenderType.textBackground());
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
         // a line at every day
         for (int d = 1; d < t.days(); d++) {
             float x = gx1 - (gx1 - gx0) * d * 24F / (hours - 1);
@@ -266,13 +267,13 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
         int fg = t.foreground != 0 ? t.foreground : TEXT;
         CompoundTag d = tank.detail;
         List<String> breed = new ArrayList<>();
-        String nest = d.getString("nest");
+        String nest = d.getStringOr("nest", "");
         if (!nest.isEmpty()) breed.add(I18n.get("monitor.bettacraft.nest." + nest));
-        if (d.getInt("eggs") > 0) breed.add(I18n.get("monitor.bettacraft.eggs", d.getInt("eggs")));
-        if (d.getInt("young") > 0) breed.add(I18n.get("monitor.bettacraft.young", d.getInt("young")));
-        if (d.getInt("berried") > 0) breed.add(I18n.get("monitor.bettacraft.berried", d.getInt("berried")));
+        if (d.getIntOr("eggs", 0) > 0) breed.add(I18n.get("monitor.bettacraft.eggs", d.getIntOr("eggs", 0)));
+        if (d.getIntOr("young", 0) > 0) breed.add(I18n.get("monitor.bettacraft.young", d.getIntOr("young", 0)));
+        if (d.getIntOr("berried", 0) > 0) breed.add(I18n.get("monitor.bettacraft.berried", d.getIntOr("berried", 0)));
         int rows = (int) ((y1 - pad - y) / rh + 0.01F);
-        ListTag al = d.getList("animals", Tag.TAG_COMPOUND);
+        ListTag al = d.getListOrEmpty("animals");
         int room = rows - (breed.isEmpty() ? 0 : 1);
         if (al.isEmpty() && room > 0) {
             text(pose, buffers, I18n.get("monitor.bettacraft.no_animals"), x0 + pad, y, tw - 2 * pad, rh, DIM, light, false);
@@ -284,8 +285,8 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
                 y += rh;
                 break;
             }
-            CompoundTag a = al.getCompound(i);
-            String n = a.getInt("n") + "x " + I18n.get(a.getString("k")) + (a.getInt("y") > 0 ? " " + I18n.get("monitor.bettacraft.young_short", a.getInt("y")) : "");
+            CompoundTag a = al.getCompoundOrEmpty(i);
+            String n = a.getIntOr("n", 0) + "x " + I18n.get(a.getStringOr("k", "")) + (a.getIntOr("y", 0) > 0 ? " " + I18n.get("monitor.bettacraft.young_short", a.getIntOr("y", 0)) : "");
             text(pose, buffers, n, x0 + pad, y, tw - 2 * pad, rh, tank.live ? fg : DIM, light, false);
             y += rh;
             room--;
@@ -302,23 +303,23 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
         if (noData(tank, true, pose, buffers, x0 + pad, y, tw - 2 * pad, headH(th), light)) return;
         int fg = t.foreground != 0 ? t.foreground : TEXT;
         CompoundTag d = tank.detail;
-        ListTag dl = d.getList("dev", Tag.TAG_COMPOUND);
-        boolean energy = d.getLong("ec") > 0;
+        ListTag dl = d.getListOrEmpty("dev");
+        boolean energy = d.getLongOr("ec", 0L) > 0;
         int rows = (int) ((y1 - pad - y) / rh + 0.01F) - (energy ? 1 : 0);
         for (int i = 0; i < dl.size() && i < rows; i++) {
-            CompoundTag k = dl.getCompound(i);
-            int n = k.getInt("n"), on = k.getInt("on"), p = k.getInt("p");
-            boolean powered = k.getBoolean("pw");
+            CompoundTag k = dl.getCompoundOrEmpty(i);
+            int n = k.getIntOr("n", 0), on = k.getIntOr("on", 0), p = k.getIntOr("p", 0);
+            boolean powered = k.getBooleanOr("pw", false);
             int dot = n == 0 ? DIM : !powered ? BAD : on > 0 ? GOOD : DIM;
             quad(buffers, pose.last().pose(), x0 + pad, y + rh * 0.2F, x0 + pad + rh * 0.6F, y + rh * 0.8F, 0.5F, dot, light);
-            String s = I18n.get("monitor.bettacraft.device." + k.getString("k")) + ": "
+            String s = I18n.get("monitor.bettacraft.device." + k.getStringOr("k", "")) + ": "
                     + (n == 0 ? I18n.get("monitor.bettacraft.none") : !powered ? I18n.get("monitor.bettacraft.status.no_power")
                     : on + "/" + n + (p >= 0 && on > 0 ? " · " + p + " %" : ""));
             text(pose, buffers, s, x0 + pad + rh, y, tw - 2 * pad - rh, rh, n == 0 || !tank.live ? DIM : fg, light, false);
             y += rh;
         }
         if (energy && y + rh <= y1 - pad + 0.01F) {
-            text(pose, buffers, I18n.get("monitor.bettacraft.energy", d.getLong("e"), d.getLong("ec"), d.getInt("ed")), x0 + pad, y, tw - 2 * pad, rh,
+            text(pose, buffers, I18n.get("monitor.bettacraft.energy", d.getLongOr("e", 0L), d.getLongOr("ec", 0L), d.getIntOr("ed", 0)), x0 + pad, y, tw - 2 * pad, rh,
                     DIM, light, false);
         }
     }
@@ -359,8 +360,8 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
         for (MonitorTank k : be.clientTanks) {
             if (t.tank != null && !k.id.equals(t.tank)) continue;
             anyDetail |= !k.detail.isEmpty();
-            ListTag lg = k.detail.getList("log", Tag.TAG_COMPOUND);
-            for (int i = 0; i < lg.size(); i++) lines.add(new LogRow(lg.getCompound(i).getLong("t"), tankName(k), lg.getCompound(i)));
+            ListTag lg = k.detail.getListOrEmpty("log");
+            for (int i = 0; i < lg.size(); i++) lines.add(new LogRow(lg.getCompoundOrEmpty(i).getLongOr("t", 0L), tankName(k), lg.getCompoundOrEmpty(i)));
         }
         lines.sort((a, b) -> Long.compare(b.time(), a.time()));
         int fg = t.foreground != 0 ? t.foreground : TEXT;
@@ -373,7 +374,7 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
             if (y + rh > y1 - pad + 0.01F) break;
             Object[] args = MonitorDetail.args(l.entry()).stream().map(TankCare::argComponent).toArray();
             String day = I18n.get("monitor.bettacraft.day", l.time() / 24000L + 1);
-            String msg = Component.translatable(l.entry().getString("k"), args).getString();
+            String msg = Component.translatable(l.entry().getStringOr("k", ""), args).getString();
             if (t.tank == null) {
                 // several tanks: day and tank in a dim row, the entry below it
                 if (y + 2 * rh > y1 - pad + 0.01F) break;
@@ -388,12 +389,12 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
     }
 
     private static String translate(CompoundTag w) {
-        return Component.translatable(w.getString("k"), MonitorDetail.args(w).toArray()).getString();
+        return Component.translatable(w.getStringOr("k", ""), MonitorDetail.args(w).toArray()).getString();
     }
 
     /** A round lamp of {@code size} (a cross of three rectangles), top left at x, y. */
     private static void lamp(MultiBufferSource buffers, Matrix4f m, float x, float y, float size, int argb, int light) {
-        VertexConsumer vc = buffers.getBuffer(RenderType.textBackground());
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
         float a = size * 0.3F, b = size * 0.12F;
         quad(vc, m, x + a, y, x + size - a, y + size, 0.5F, argb, light);
         quad(vc, m, x, y + a, x + size, y + size - a, 0.5F, argb, light);
@@ -465,7 +466,7 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
             hi += 0.5F;
         }
         float bw = (x1 - x0) / n;
-        VertexConsumer vc = buffers.getBuffer(RenderType.textBackground());
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
         for (int i = 0; i < n; i++) {
             float p = points[points.length - n + i];
             if (!Float.isFinite(p)) continue;
@@ -504,7 +505,7 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
 
     /** A rectangle in screen pixels (takes the buffer itself: text in between ends the batch of an older one). */
     static void quad(MultiBufferSource buffers, Matrix4f m, float x0, float y0, float x1, float y1, float z, int argb, int light) {
-        quad(buffers.getBuffer(RenderType.textBackground()), m, x0, y0, x1, y1, z, argb, light);
+        quad(buffers.getBuffer(RenderTypes.textBackground()), m, x0, y0, x1, y1, z, argb, light);
     }
 
     /** A rectangle in screen pixels, both windings (seen from the front whatever the transform does). */
@@ -520,7 +521,7 @@ public class MonitorRenderer implements BlockEntityRenderer<MonitorBlockEntity> 
     }
 
     @Override
-    public boolean shouldRenderOffScreen(MonitorBlockEntity be) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 

@@ -46,8 +46,8 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY - 1, TEXT, false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, TEXT, false);
+        g.drawString(font, title, titleLabelX, titleLabelY - 1, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         small(g, Component.translatable("gui.bettacraft.sump.heaters"), 34, 41, 50);
         small(g, Component.translatable("gui.bettacraft.sump.skimmer"), 80, 41, 34);
         small(g, Component.translatable("gui.bettacraft.sump.refugium"), 133, 22, 66);
@@ -59,11 +59,11 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
-        g.pose().pushPose();
-        g.pose().translate(cx, y, 0);
-        g.pose().scale(s, s, 1);
-        g.drawString(font, c, -w / 2, 0, 0x30404A, false);
-        g.pose().popPose();
+        g.pose().pushMatrix();
+        g.pose().translate(cx, y);
+        g.pose().scale(s, s);
+        g.drawString(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x30404A), false);
+        g.pose().popMatrix();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
         if (hoveredSlot != null && !hoveredSlot.hasItem() && hoveredSlot.index < Sump.CHAMBERS && menu.getCarried().isEmpty()) {
-            g.renderTooltip(font, font.split(Component.translatable("gui.bettacraft.sump.slot." + TIPS[hoveredSlot.index]), 180), mouseX, mouseY);
+            g.setTooltipForNextFrame(font, font.split(Component.translatable("gui.bettacraft.sump.slot." + TIPS[hoveredSlot.index]), 180), mouseX, mouseY);
         }
     }
 }

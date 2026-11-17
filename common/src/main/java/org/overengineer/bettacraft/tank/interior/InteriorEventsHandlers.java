@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import org.overengineer.bettacraft.util.Perms;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,18 +40,18 @@ public final class InteriorEventsHandlers {
     @SubscribeEvent
     public static void onLoggedOut(org.overengineer.bettacraft.platform.event.PlayerEvent.PlayerLoggedOutEvent event) {
         SNEAK_TICKS.remove(event.getEntity().getUUID());
-        if (!event.getEntity().level().isClientSide) InteriorSync.forgetPlayer(event.getEntity().getUUID());
+        if (!event.getEntity().level().isClientSide()) InteriorSync.forgetPlayer(event.getEntity().getUUID());
     }
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || !InteriorManager.isInterior(player.level())) {
-            if (!event.getEntity().level().isClientSide) SNEAK_TICKS.remove(event.getEntity().getUUID());
+            if (!event.getEntity().level().isClientSide()) SNEAK_TICKS.remove(event.getEntity().getUUID());
             return;
         }
         // Players outside every valid region (e.g. teleported in by command, region deleted) are sent back.
-        if (player.tickCount % 40 == 0 && InteriorManager.regionAt(player.server, player.blockPosition()) == null
-                && !player.hasPermissions(2)) {
+        if (player.tickCount % 40 == 0 && InteriorManager.regionAt(player.level().getServer(), player.blockPosition()) == null
+                && !Perms.has(player, 2)) {
             InteriorManager.leave(player);
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.invalid"), true);
             return;
@@ -81,7 +82,7 @@ public final class InteriorEventsHandlers {
     /** M15: starting to mine a block in the interior resets the leave timer too. */
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        if (!event.getLevel().isClientSide && InteriorManager.isInterior(event.getLevel())) resetLeave(event.getEntity());
+        if (!event.getLevel().isClientSide() && InteriorManager.isInterior(event.getLevel())) resetLeave(event.getEntity());
     }
 
     /** M15: explosions leave the blocks of a tank alone while a player is in its interior. */
@@ -102,7 +103,7 @@ public final class InteriorEventsHandlers {
         if (event.getLevel() instanceof Level level && InteriorManager.isInterior(level)
                 && event.getPlacedBlock().is(org.overengineer.bettacraft.registry.ModTags.NOT_IN_TANK_INTERIOR)) {
             event.setCanceled(true);
-            if (event.getEntity() instanceof Player p && !level.isClientSide) {
+            if (event.getEntity() instanceof Player p && !level.isClientSide()) {
                 p.displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank").withStyle(ChatFormatting.GOLD), true);
             }
             return;
@@ -124,16 +125,16 @@ public final class InteriorEventsHandlers {
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
         Player player = event.getEntity();
-        if (!level.isClientSide) resetLeave(player); // M15: building starts the leave timer over
+        if (!level.isClientSide()) resetLeave(player); // M15: building starts the leave timer over
         if (state.getBlock() instanceof BedBlock || state.getBlock() instanceof RespawnAnchorBlock) {
             event.setUseBlock(TriState.FALSE);
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.interior.no_sleep").withStyle(ChatFormatting.GOLD), true);
             }
             return;
         }
         if (player.isShiftKeyDown() && Substrate.isFloor(state) && !(event.getItemStack().getItem() instanceof DecorItem)) {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 // the server decides; keep the client from placing the block on top
                 if (event.getItemStack().isEmpty() || event.getItemStack().getItem() instanceof net.minecraft.world.item.BlockItem) {
                     event.setCanceled(true);
@@ -152,7 +153,7 @@ public final class InteriorEventsHandlers {
             BlockPos target = state.canBeReplaced() ? pos : pos.relative(event.getFace() == null ? net.minecraft.core.Direction.UP : event.getFace());
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
-            if (level.isClientSide) return;
+            if (level.isClientSide()) return;
             InteriorRegion r = InteriorManager.regionAt(level.getServer(), target);
             if (r != null && r.containsInterior(target) && level.getBlockState(target).canBeReplaced() && InteriorManager.canBuild(player, target)) {
                 level.setBlockAndUpdate(target, Blocks.LILY_PAD.defaultBlockState());
@@ -175,7 +176,7 @@ public final class InteriorEventsHandlers {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && InteriorManager.isInterior(player.level())
-                && InteriorManager.regionAt(player.server, player.blockPosition()) == null) {
+                && InteriorManager.regionAt(player.level().getServer(), player.blockPosition()) == null) {
             InteriorManager.leave(player);
         }
     }

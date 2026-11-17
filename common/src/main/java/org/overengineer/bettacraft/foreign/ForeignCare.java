@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -56,7 +57,7 @@ public final class ForeignCare {
     /** The health timers of an animal (new ones, fed now, if it has none yet). */
     public static BettaHealth health(Entity e) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
-        return d.contains(KEY, Tag.TAG_COMPOUND) ? BettaHealth.load(d.getCompound(KEY)) : new BettaHealth();
+        return NbtCompat.has(d, KEY, Tag.TAG_COMPOUND) ? BettaHealth.load(d.getCompoundOrEmpty(KEY)) : new BettaHealth();
     }
 
     public static void setHealth(Entity e, BettaHealth h) {
@@ -133,7 +134,7 @@ public final class ForeignCare {
         if (food.isEmpty()) return false;
         for (String f : p.food()) {
             if (f.startsWith("#")) {
-                ResourceLocation id = ResourceLocation.tryParse(f.substring(1));
+                Identifier id = Identifier.tryParse(f.substring(1));
                 if (id != null && food.is(TagKey.create(Registries.ITEM, id))) return true;
             } else if (f.contains(":")) {
                 if (f.equals(BuiltInRegistries.ITEM.getKey(food.getItem()).toString())) return true;

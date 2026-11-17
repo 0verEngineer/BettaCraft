@@ -48,7 +48,7 @@ public final class SizedIngredient {
     }
 
     public static SizedIngredient of(TagKey<Item> tag, int count) {
-        return new SizedIngredient(Ingredient.of(tag), count);
+        return new SizedIngredient(Ingredient.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getOrThrow(tag)), count);
     }
 
     public Ingredient ingredient() {
@@ -64,7 +64,7 @@ public final class SizedIngredient {
     }
 
     public ItemStack[] getItems() {
-        if (cachedStacks == null) cachedStacks = Stream.of(ingredient.getItems()).map(s -> s.copyWithCount(count)).toArray(ItemStack[]::new);
+        if (cachedStacks == null) cachedStacks = org.overengineer.bettacraft.crafting.RecipeCompat.stacks(ingredient).stream().map(s -> s.copyWithCount(count)).toArray(ItemStack[]::new);
         return cachedStacks;
     }
 

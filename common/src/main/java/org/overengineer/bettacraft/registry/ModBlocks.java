@@ -125,7 +125,7 @@ public final class ModBlocks {
                 org.overengineer.bettacraft.plants.PlantSpecies.class);
         for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
             m.put(sp, BLOCKS.register(sp.id(), () -> new org.overengineer.bettacraft.plants.AquaticPlantBlock(sp, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PLANT).strength(0.2F).sound(SoundType.WET_GRASS).noCollission().noOcclusion().noLootTable()
+                    .mapColor(MapColor.PLANT).strength(0.2F).sound(SoundType.WET_GRASS).noCollision().noOcclusion().noLootTable()
                     .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
                     .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY))));
         }
@@ -140,7 +140,7 @@ public final class ModBlocks {
     /** M19: wool strands of a spawning mop (tetras and rasboras spawn into it; the adults do not reach the eggs). */
     public static final DeferredBlock<org.overengineer.bettacraft.tankmates.SpawningMopBlock> SPAWNING_MOP = BLOCKS.register("spawning_mop",
             () -> new org.overengineer.bettacraft.tankmates.SpawningMopBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GREEN)
-                    .strength(0.2F).sound(SoundType.WOOL).noCollission().noOcclusion()
+                    .strength(0.2F).sound(SoundType.WOOL).noCollision().noOcclusion()
                     .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
                     .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY)));
 
@@ -177,7 +177,7 @@ public final class ModBlocks {
         for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
             if (!sp.form().coral()) continue;
             m.put(sp, BLOCKS.register("wild_" + sp.id(), () -> new org.overengineer.bettacraft.reef.WildCoralBlock(sp, BlockBehaviour.Properties.of()
-                    .mapColor(net.minecraft.world.level.material.MapColor.COLOR_PINK).noCollission().instabreak().randomTicks()
+                    .mapColor(net.minecraft.world.level.material.MapColor.COLOR_PINK).noCollision().instabreak().randomTicks()
                     .sound(net.minecraft.world.level.block.SoundType.WET_GRASS).pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY))));
         }
         return java.util.Collections.unmodifiableMap(m);
@@ -195,7 +195,7 @@ public final class ModBlocks {
                 org.overengineer.bettacraft.plants.wild.WildPlantKind.class);
         for (var k : org.overengineer.bettacraft.plants.wild.WildPlantKind.values()) {
             m.put(k, BLOCKS.register(k.id(), () -> {
-                var p = BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().randomTicks()
+                var p = BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().randomTicks()
                         .sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).noLootTable();
                 if (k != org.overengineer.bettacraft.plants.wild.WildPlantKind.MOSS && k != org.overengineer.bettacraft.plants.wild.WildPlantKind.CARPET) {
                     p = p.offsetType(BlockBehaviour.OffsetType.XZ);
@@ -327,14 +327,14 @@ public final class ModBlocks {
     /** M31 part b: a turtle clutch half buried in the land of a tank's interior (no item; the tank incubates it). */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> TURTLE_EGGS = BLOCKS.register("turtle_eggs",
             () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
-                    .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
+                    .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
     /** M31 part c: a dart frog clutch: clear jelly with dark embryos on the land of a tank's interior (no item). */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> FROG_EGGS = BLOCKS.register("frog_eggs",
             () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE)
-                    .strength(0.1F).sound(SoundType.FROGSPAWN).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
+                    .strength(0.1F).sound(SoundType.FROGSPAWN).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.HeatMatBlock> HEAT_MAT = BLOCKS.register("heat_mat",
             () -> new org.overengineer.bettacraft.terrarium.HeatMatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
-                    .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)
+                    .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)
                     .lightLevel(s -> s.getValue(org.overengineer.bettacraft.terrarium.HeatMatBlock.HEATING) ? 3 : 0)));
     /** M31: basking lamp (heat and UV) on a tank. */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.BaskingLampBlock> BASKING_LAMP = BLOCKS.register("basking_lamp",
@@ -348,7 +348,7 @@ public final class ModBlocks {
     /** M31: thermo-hygrometer on a tank wall. */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock> THERMO_HYGROMETER = BLOCKS.register("thermo_hygrometer",
             () -> new org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
 
     /** M25 part c: the dosing pump of a reef tank. */
     /** M49 part a: the calcium reactor. */
@@ -372,12 +372,12 @@ public final class ModBlocks {
     /** M28: Indian almond leaves lying on the floor (placed with the almond leaf item; tannins, food for the shrimp). */
     public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALMOND_LEAF_LITTER = BLOCKS.register("almond_leaf_litter",
             () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
-                    .instabreak().noCollission().noOcclusion().sound(SoundType.AZALEA_LEAVES).pushReaction(PushReaction.DESTROY),
+                    .instabreak().noCollision().noOcclusion().sound(SoundType.AZALEA_LEAVES).pushReaction(PushReaction.DESTROY),
                     ModItems.ALMOND_LEAF, Block.box(0, 0, 0, 16, 1, 16)));
     /** M28: alder cones lying on the floor (placed with the alder cone item; a few tannins, food for the shrimp). */
     public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALDER_CONES = BLOCKS.register("alder_cones",
             () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
-                    .instabreak().noCollission().noOcclusion().sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY),
+                    .instabreak().noCollision().noOcclusion().sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY),
                     ModItems.ALDER_CONE, Block.box(3, 0, 3, 13, 9, 13)));
 
     /** M26 part a: tubifex worms in mud and stale water. */

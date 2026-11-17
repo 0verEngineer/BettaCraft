@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.aquarist;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.Perms;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -292,7 +296,7 @@ public class AquaristEntity extends PathfinderMob {
             rest = ItemHandlerHelper.insertItemStacked(h, rest, false);
             if (rest.isEmpty()) return;
         }
-        spawnAtLocation(rest);
+        spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), rest);
     }
 
     // ---- water
@@ -627,8 +631,8 @@ public class AquaristEntity extends PathfinderMob {
     // ------------------------------------------------------------------ ticking
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         if (!(level() instanceof ServerLevel level) || tickCount % 20 != 0) return;
         AquaristArrival.check(level, this);
         if (isRemoved()) return;
@@ -937,9 +941,9 @@ public class AquaristEntity extends PathfinderMob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (level().isClientSide) return InteractionResult.SUCCESS;
+        if (level().isClientSide()) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer sp)) return InteractionResult.PASS;
-        boolean boss = player.getUUID().equals(employer) || player.hasPermissions(2);
+        boolean boss = player.getUUID().equals(employer) || Perms.has(player, 2);
         ItemStack held = player.getItemInHand(hand);
         if (held.is(Items.NAME_TAG) && player.getUUID().equals(employer) && phase() == Phase.HIRED) return InteractionResult.PASS; // the name tag renames him
         if (!boss) {
@@ -953,8 +957,8 @@ public class AquaristEntity extends PathfinderMob {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return super.hurt(source, amount);
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return super.hurtServer(level, source, amount);
         // he cannot be hurt; a monster that comes close sends him running (the avoid goal)
         return false;
     }
@@ -974,12 +978,12 @@ public class AquaristEntity extends PathfinderMob {
     }
 
     @Override
-    public boolean startRiding(Entity vehicle, boolean force) {
+    public boolean startRiding(Entity vehicle, boolean force, boolean sendEvent) {
         return false;
     }
 
     @Override
-    public boolean canChangeDimensions(Level from, Level to) {
+    public boolean canTeleport(Level from, Level to) {
         return false;
     }
 
@@ -1009,10 +1013,10 @@ public class AquaristEntity extends PathfinderMob {
         // removed by /kill: nothing he carried is lost
         for (int i = 0; i < bag.getSlots(); i++) {
             ItemStack s = bag.getStackInSlot(i);
-            if (!s.isEmpty()) spawnAtLocation(s.copy());
+            if (!s.isEmpty()) spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), s.copy());
             bag.setStackInSlot(i, ItemStack.EMPTY);
         }
-        for (ItemStack b : carried) spawnAtLocation(b.copy());
+        for (ItemStack b : carried) spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), b.copy());
         carried.clear();
     }
 
@@ -1036,33 +1040,34 @@ public class AquaristEntity extends PathfinderMob {
     // ------------------------------------------------------------------ save
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         CompoundTag a = new CompoundTag();
         a.putString("phase", phase().name().toLowerCase(java.util.Locale.ROOT));
         a.putInt("variant", variant());
-        if (employer != null) a.putUUID("employer", employer);
+        if (employer != null) NbtCompat.putUUID(a, "employer", employer);
         a.putString("employer_name", employerName());
         if (offerUntil != Long.MAX_VALUE) a.putLong("offer_until", offerUntil);
         a.putBoolean("offer_said", offerSaid);
-        if (workplace != null) a.put("workplace", NbtUtils.writeBlockPos(workplace));
-        if (bed != null) a.put("bed", NbtUtils.writeBlockPos(bed));
+        if (workplace != null) a.put("workplace", NbtCompat.writeBlockPos(workplace));
+        if (bed != null) a.put("bed", NbtCompat.writeBlockPos(bed));
         CompoundTag lv = new CompoundTag();
         for (AquaristTask t : AquaristTask.ALL) lv.putInt(t.id(), levels[t.ordinal()]);
         a.put("tasks", lv);
-        if (rearingTank != null) a.putUUID("rearing", rearingTank);
+        if (rearingTank != null) NbtCompat.putUUID(a, "rearing", rearingTank);
         a.put("bag", bag.serializeNBT(registryAccess()));
         if (waterMb > 0) {
             a.putInt("water_mb", waterMb);
             a.putBoolean("tap_water", tapWater);
             if (waterValues != null) WaterValues.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, waterValues).result().ifPresent(v -> a.put("water_values", v));
-            if (waterFor != null) a.putUUID("water_for", waterFor);
+            if (waterFor != null) NbtCompat.putUUID(a, "water_for", waterFor);
         }
         if (!carried.isEmpty()) {
             ListTag l = new ListTag();
-            for (ItemStack s : carried) l.add(s.save(registryAccess()));
+            for (ItemStack s : carried) l.add(NbtCompat.saveStack(registryAccess(), s));
             a.put("carried", l);
-            if (carriedFrom != null) a.putUUID("carried_from", carriedFrom);
+            if (carriedFrom != null) NbtCompat.putUUID(a, "carried_from", carriedFrom);
         }
         if (lastWageDay != Long.MIN_VALUE) a.putLong("wage_day", lastWageDay);
         a.putInt("unpaid_days", unpaidDays);
@@ -1079,50 +1084,53 @@ public class AquaristEntity extends PathfinderMob {
         for (var e : complained.entrySet()) com.put(e.getKey(), LongTag.valueOf(e.getValue()));
         a.put("complained", com);
         tag.put("bettacraft_aquarist", a);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        CompoundTag a = tag.getCompound("bettacraft_aquarist");
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        CompoundTag a = tag.getCompoundOrEmpty("bettacraft_aquarist");
         Phase p = Phase.OFFERING;
-        for (Phase x : Phase.values()) if (x.name().toLowerCase(java.util.Locale.ROOT).equals(a.getString("phase"))) p = x;
+        for (Phase x : Phase.values()) if (x.name().toLowerCase(java.util.Locale.ROOT).equals(a.getStringOr("phase", ""))) p = x;
         setPhase(p);
-        setVariant(a.getInt("variant"));
-        employer = a.hasUUID("employer") ? a.getUUID("employer") : null;
-        entityData.set(DATA_EMPLOYER, a.getString("employer_name"));
-        offerUntil = a.contains("offer_until") ? a.getLong("offer_until") : Long.MAX_VALUE;
-        offerSaid = a.getBoolean("offer_said");
-        workplace = NbtUtils.readBlockPos(a, "workplace").orElse(null);
-        bed = NbtUtils.readBlockPos(a, "bed").orElse(null);
-        CompoundTag lv = a.getCompound("tasks");
-        for (AquaristTask t : AquaristTask.ALL) if (lv.contains(t.id())) setTaskLevel(t, lv.getInt(t.id()));
-        rearingTank = a.hasUUID("rearing") ? a.getUUID("rearing") : null;
-        if (a.contains("bag")) bag.deserializeNBT(registryAccess(), a.getCompound("bag"));
-        waterMb = Math.max(0, a.getInt("water_mb"));
-        tapWater = a.getBoolean("tap_water");
+        setVariant(a.getIntOr("variant", 0));
+        employer = NbtCompat.hasUUID(a, "employer") ? NbtCompat.getUUID(a, "employer") : null;
+        entityData.set(DATA_EMPLOYER, a.getStringOr("employer_name", ""));
+        offerUntil = a.contains("offer_until") ? a.getLongOr("offer_until", 0L) : Long.MAX_VALUE;
+        offerSaid = a.getBooleanOr("offer_said", false);
+        workplace = NbtCompat.readBlockPos(a, "workplace").orElse(null);
+        bed = NbtCompat.readBlockPos(a, "bed").orElse(null);
+        CompoundTag lv = a.getCompoundOrEmpty("tasks");
+        for (AquaristTask t : AquaristTask.ALL) if (lv.contains(t.id())) setTaskLevel(t, lv.getIntOr(t.id(), 0));
+        rearingTank = NbtCompat.hasUUID(a, "rearing") ? NbtCompat.getUUID(a, "rearing") : null;
+        if (a.contains("bag")) bag.deserializeNBT(registryAccess(), a.getCompoundOrEmpty("bag"));
+        waterMb = Math.max(0, a.getIntOr("water_mb", 0));
+        tapWater = a.getBooleanOr("tap_water", false);
         waterValues = a.contains("water_values") ? WaterValues.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, a.get("water_values")).result().orElse(null) : null;
-        waterFor = a.hasUUID("water_for") ? a.getUUID("water_for") : null;
+        waterFor = NbtCompat.hasUUID(a, "water_for") ? NbtCompat.getUUID(a, "water_for") : null;
         carried.clear();
-        for (Tag t : a.getList("carried", Tag.TAG_COMPOUND)) ItemStack.parse(registryAccess(), t).ifPresent(carried::add);
-        carriedFrom = a.hasUUID("carried_from") ? a.getUUID("carried_from") : null;
-        lastWageDay = a.contains("wage_day") ? a.getLong("wage_day") : Long.MIN_VALUE;
-        unpaidDays = a.getInt("unpaid_days");
-        homelessDays = a.getInt("homeless_days");
-        leaveAt = a.contains("leave_at") ? a.getLong("leave_at") : -1;
+        for (Tag t : a.getListOrEmpty("carried")) NbtCompat.parseStack(registryAccess(), t).ifPresent(carried::add);
+        carriedFrom = NbtCompat.hasUUID(a, "carried_from") ? NbtCompat.getUUID(a, "carried_from") : null;
+        lastWageDay = a.contains("wage_day") ? a.getLongOr("wage_day", 0L) : Long.MIN_VALUE;
+        unpaidDays = a.getIntOr("unpaid_days", 0);
+        homelessDays = a.getIntOr("homeless_days", 0);
+        leaveAt = a.contains("leave_at") ? a.getLongOr("leave_at", 0L) : -1;
         reported.clear();
-        CompoundTag rep = a.getCompound("reported");
-        for (String k : rep.getAllKeys()) {
+        CompoundTag rep = a.getCompoundOrEmpty("reported");
+        for (String k : rep.keySet()) {
             try {
                 Set<String> s = new HashSet<>();
-                for (Tag t : rep.getList(k, Tag.TAG_STRING)) s.add(t.getAsString());
+                for (Tag t : rep.getListOrEmpty(k)) s.add(NbtCompat.asString(t));
                 reported.put(UUID.fromString(k), s);
             } catch (IllegalArgumentException ignored) {
                 // a broken key: forget it
             }
         }
         complained.clear();
-        CompoundTag com = a.getCompound("complained");
-        for (String k : com.getAllKeys()) complained.put(k, com.getLong(k));
+        CompoundTag com = a.getCompoundOrEmpty("complained");
+        for (String k : com.keySet()) complained.put(k, com.getLongOr(k, 0L));
     }
 }

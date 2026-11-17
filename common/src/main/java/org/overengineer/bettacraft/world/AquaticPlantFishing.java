@@ -40,7 +40,7 @@ public final class AquaticPlantFishing {
 
     /** M52: the loot change itself (the loader's fishing hook calls it for the fishing loot table). */
     public static ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> loot, LootContext context) {
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
         if (origin == null) return loot;
         Water w = water(context.getLevel().getBiome(BlockPos.containing(origin)));
         if (w == null) return loot;

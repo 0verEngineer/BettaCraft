@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
@@ -183,7 +183,7 @@ public final class HerpGameTests {
         TankData t = c.getTank();
         t.setClimate(new Climate.State(23, 23, 23, 70, 0, 0));
         HerpEntity gecko = put(h, c, HerpSpecies.CRESTED_GECKO, true, 0);
-        gecko.moveTo(t.min().getX() + 1.5, t.min().getY() + 0.05, t.min().getZ() + 1.5, 0, 0);
+        gecko.snapTo(t.min().getX() + 1.5, t.min().getY() + 0.05, t.min().getZ() + 1.5, 0, 0);
         gecko.walker().forceActivity(LandWalker.Activity.CLIMB);
         double floor = t.min().getY();
         h.succeedWhen(() -> {
@@ -243,7 +243,7 @@ public final class HerpGameTests {
         HerpBreeding.step(level, c, 0.001);
         h.assertTrue(f.nestTarget() != null, "she found a place on the moss");
         h.assertTrue(f.nestTarget().y > t.waterSurfaceY(), "on the land");
-        f.moveTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
+        f.snapTo(f.nestTarget().x, f.nestTarget().y, f.nestTarget().z);
         HerpBreeding.step(level, c, 0.001);
         h.assertTrue(t.herpClutches().size() == 1, "one clutch, got " + t.herpClutches().size());
         HerpClutch k = t.herpClutches().getFirst();
@@ -314,7 +314,7 @@ public final class HerpGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void wildHerps(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        var biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
+        var biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.JUNGLE)) == HerpSpawns.Home.JUNGLE, "jungle");
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.DESERT)) == HerpSpawns.Home.ARID, "desert");
         h.assertTrue(HerpSpawns.home(biomes.getHolderOrThrow(Biomes.BADLANDS)) == HerpSpawns.Home.ARID, "badlands");
@@ -330,18 +330,18 @@ public final class HerpGameTests {
         BlockPos p = new BlockPos(20, 2, 20);
         for (var ground : List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.TERRACOTTA, Blocks.GRASS_BLOCK)) {
             h.setBlock(p.below(), ground);
-            h.assertTrue(HerpSpawns.check(gecko, level, MobSpawnType.NATURAL, h.absolutePos(p), level.random), "on " + ground);
+            h.assertTrue(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.random), "on " + ground);
         }
         h.setBlock(p.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(gecko, level, MobSpawnType.NATURAL, h.absolutePos(p), level.random), "not on stone");
+        h.assertFalse(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.random), "not on stone");
         BlockPos wet = new BlockPos(8, 2, 8);
         h.setBlock(wet.below(), Blocks.SAND);
         h.setBlock(wet, Blocks.WATER);
-        h.assertFalse(HerpSpawns.check(ModEntities.herp(HerpSpecies.DART_FROG), level, MobSpawnType.NATURAL, h.absolutePos(wet), level.random), "not in water");
+        h.assertFalse(HerpSpawns.check(ModEntities.herp(HerpSpecies.DART_FROG), level, EntitySpawnReason.NATURAL, h.absolutePos(wet), level.random), "not in water");
         // the wild variety: never a morph
         var random = net.minecraft.util.RandomSource.create(5);
         for (int i = 0; i < 50; i++) {
-            h.assertTrue(HerpSpawns.variety(HerpSpecies.CORN_SNAKE, biomes.getHolderOrThrow(Biomes.FOREST), random, MobSpawnType.NATURAL) == 0, "wild corn snakes");
+            h.assertTrue(HerpSpawns.variety(HerpSpecies.CORN_SNAKE, biomes.getHolderOrThrow(Biomes.FOREST), random, EntitySpawnReason.NATURAL) == 0, "wild corn snakes");
         }
         for (HerpSpecies s : List.of(HerpSpecies.DART_FROG, HerpSpecies.HORNED_FROG, HerpSpecies.LEOPARD_GECKO, HerpSpecies.CRESTED_GECKO, HerpSpecies.CORN_SNAKE)) {
             List<Source> src = Sources.of(Target.item(s.containerId()));

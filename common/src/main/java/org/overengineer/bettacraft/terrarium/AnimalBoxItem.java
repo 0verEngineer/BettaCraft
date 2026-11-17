@@ -1,12 +1,15 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,27 +31,29 @@ import org.overengineer.bettacraft.registry.ModItems;
  * the same question as a bucket, {@link ContainerRules#release}), and the empty box comes back.
  */
 public class AnimalBoxItem extends MobBucketItem {
+    @SuppressWarnings("unchecked")
     public AnimalBoxItem(EntityType<?> type, Properties properties) {
-        super(type, Fluids.EMPTY, SoundEvents.ARMOR_EQUIP_LEATHER.value(), properties);
+        super((EntityType<? extends net.minecraft.world.entity.Mob>) type, Fluids.EMPTY, SoundEvents.ARMOR_EQUIP_LEATHER.value(), properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos().relative(hit.getDirection());
-        if (!level.mayInteract(player, hit.getBlockPos()) || !player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResultHolder.fail(stack);
+        if (!level.mayInteract(player, hit.getBlockPos()) || !player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResult.FAIL;
         if (!ContainerRules.release(level, player, hand, stack)) return ContainerRules.waiting(stack);
         checkExtraContent(player, level, stack, pos);
         level.playSound(player, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         ItemStack empty = player.hasInfiniteMaterials() ? stack : new ItemStack(ModItems.TERRARIUM_BOX.get());
-        return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, empty), level.isClientSide());
+        return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(stack, player, empty));
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> lines, TooltipFlag flag) {
-        super.appendHoverText(stack, ctx, lines, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> lines = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, ctx, tooltipDisplay, tooltipAdder, flag);
         TurtleBucketItem.describe(stack, lines);
     }
 }

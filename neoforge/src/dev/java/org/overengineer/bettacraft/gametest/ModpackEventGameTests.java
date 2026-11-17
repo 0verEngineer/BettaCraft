@@ -9,7 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -88,7 +88,7 @@ public final class ModpackEventGameTests {
             List<AnimalBornEvent> born = caught(AnimalBornEvent.class);
             h.assertTrue(born.size() == 1, "one brood: " + born.size());
             AnimalBornEvent b = born.getFirst();
-            h.assertTrue(b.getSpecies().equals(ResourceLocation.parse("minecraft:tropical_fish")) && b.getCount() == 3, "3 tropical fish: " + b.getSpecies() + " " + b.getCount());
+            h.assertTrue(b.getSpecies().equals(Identifier.parse("minecraft:tropical_fish")) && b.getCount() == 3, "3 tropical fish: " + b.getSpecies() + " " + b.getCount());
             h.assertTrue(b.isForeign() && !b.isHatched() && !b.isCritter(), "a live birth of a foreign animal");
             h.assertTrue(b.getTankId().equals(c.getTank().id()) && b.getTankPos().equals(c.getBlockPos()) && "Gametest tank".equals(b.getTankName()),
                     "names the tank");
@@ -128,7 +128,7 @@ public final class ModpackEventGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             Vec3 near = h.absoluteVec(new Vec3(4, 3, 8));
-            sp.teleportTo(level, near.x, near.y, near.z, 0, 0);
+            sp.teleportTo(level, near.x, near.y, near.z, java.util.Set.of(), 0, 0, false);
             BlockPos tl = new BlockPos(9, 2, 8);
             BlockState s = ModBlocks.MONITOR.get().defaultBlockState().setValue(MonitorBlock.FACING, Direction.NORTH);
             h.setBlock(tl, s);

@@ -297,7 +297,7 @@ public final class TerrariumGameTests {
         MuskTurtleEntity turtle = turtleIn(h, c);
         // start at the bottom of the water at the far end
         double y0 = t.min().getY() + 0.05;
-        turtle.moveTo(t.min().getX() + 0.4, y0, t.min().getZ() + 1.0, 0, 0);
+        turtle.snapTo(t.min().getX() + 0.4, y0, t.min().getZ() + 1.0, 0, 0);
         double surface = t.waterSurfaceY();
         h.assertTrue(turtle.getY() < surface, "starts in the water");
         turtle.walker().forceActivity(LandWalker.Activity.BASK);

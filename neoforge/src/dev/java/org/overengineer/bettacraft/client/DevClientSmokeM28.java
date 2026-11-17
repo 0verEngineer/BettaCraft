@@ -211,7 +211,7 @@ final class DevClientSmokeM28 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(-12, 2, 380);
@@ -254,7 +254,7 @@ final class DevClientSmokeM28 {
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
-            else p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

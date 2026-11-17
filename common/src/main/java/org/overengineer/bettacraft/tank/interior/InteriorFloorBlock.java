@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  * substrate on this floor block ({@link #SUBSTRATE} = true, the state is kept in an {@link InteriorFloorBlockEntity});
  * plain floor blocks have no block entity.
  */
-public class InteriorFloorBlock extends BaseEntityBlock {
+public class InteriorFloorBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockRemoval {
     public static final MapCodec<InteriorFloorBlock> CODEC = simpleCodec(InteriorFloorBlock::new);
     public static final BooleanProperty SUBSTRATE = BooleanProperty.create("substrate");
 
@@ -45,8 +45,7 @@ public class InteriorFloorBlock extends BaseEntityBlock {
      * A merge or split then copied that stale substrate into the new region and it could be taken out a second time.
      */
     @Override
-    protected void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        super.onRemove(state, level, pos, newState, movedByPiston);
+    public void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (newState.is(this) && !newState.getValue(SUBSTRATE)) level.removeBlockEntity(pos);
     }
 

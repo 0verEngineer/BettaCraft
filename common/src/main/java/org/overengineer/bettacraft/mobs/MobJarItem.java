@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.mobs;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -52,15 +56,15 @@ public class MobJarItem extends Item {
     public static CompoundTag storedEntity(ItemStack stack) {
         if (!(stack.getItem() instanceof MobJarItem)) return null;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd == null || !cd.contains(KEY)) return null;
-        CompoundTag t = cd.copyTag().getCompound(KEY);
-        return t.contains("id", Tag.TAG_STRING) ? t : null;
+        if (cd == null || !cd.copyTag().contains(KEY)) return null;
+        CompoundTag t = cd.copyTag().getCompoundOrEmpty(KEY);
+        return NbtCompat.has(t, "id", Tag.TAG_STRING) ? t : null;
     }
 
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getString("id")).orElse(null);
+        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
     }
 
     /** A full jar holding {@code e} (the entity itself is not removed). */
@@ -69,7 +73,7 @@ public class MobJarItem extends Item {
         CompoundTag t = new CompoundTag();
         String id = e.getEncodeId();
         if (id != null) t.putString("id", id);
-        e.saveWithoutId(t);
+        t.merge(NbtCompat.saveEntityWithoutId(e));
         CompoundTag data = new CompoundTag();
         data.put(KEY, t);
         jar.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
@@ -95,12 +99,12 @@ public class MobJarItem extends Item {
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
         if (isFilled(stack) || !target.isAlive() || target instanceof Player) return InteractionResult.PASS;
-        if (player.getCooldowns().isOnCooldown(this)) return InteractionResult.FAIL;
-        if (player.level().isClientSide) return InteractionResult.SUCCESS;
+        if (player.getCooldowns().isOnCooldown(stack)) return InteractionResult.FAIL;
+        if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         Component no = refusal(target);
         if (no != null) {
             player.displayClientMessage(no, true);
-            if (GlassMobs.species(target.getType()) != null) player.getCooldowns().addCooldown(this, COOLDOWN);
+            if (GlassMobs.species(target.getType()) != null) player.getCooldowns().addCooldown(stack, COOLDOWN);
             return InteractionResult.FAIL;
         }
         Mob m = (Mob) target;
@@ -109,7 +113,7 @@ public class MobJarItem extends Item {
         ItemStack filled = fillWith(m);
         m.playSound(SoundEvents.BOTTLE_FILL_DRAGONBREATH, 0.8F, 1.3F);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
-        player.getCooldowns().addCooldown(this, COOLDOWN);
+        player.getCooldowns().addCooldown(stack, COOLDOWN);
         if (m.level() instanceof ServerLevel server) {
             var c = org.overengineer.bettacraft.tank.TankMultiblock.getController(server, m.blockPosition());
             if (c != null) {
@@ -132,7 +136,7 @@ public class MobJarItem extends Item {
         Entity e = org.overengineer.bettacraft.compat.FishContainers.create(level, stored);
         if (e == null) return InteractionResult.FAIL;
         BlockPos at = ctx.getClickedPos().relative(ctx.getClickedFace());
-        e.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, ctx.getRotation(), 0F);
+        e.snapTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, ctx.getRotation(), 0F);
         if (e instanceof Mob m) GlassMobs.unshrink(m);
         TankInhabitants.release(e);
         if (!level.tryAddFreshEntityWithPassengers(e)) return InteractionResult.FAIL;
@@ -145,14 +149,15 @@ public class MobJarItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> lines, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> lines = new SinkList<>(tooltipAdder);
         CompoundTag t = storedEntity(stack);
         if (t == null) {
             lines.add(Component.translatable("tooltip.bettacraft.mob_jar.empty", Math.round(ServerConfig.getOr(ServerConfig.TERRA_MOB_CATCH_HEALTH, 0.25) * 100))
                     .withStyle(ChatFormatting.GRAY));
             return;
         }
-        EntityType.byString(t.getString("id")).ifPresent(type -> lines.add(type.getDescription().copy().withStyle(ChatFormatting.GOLD)));
-        if (t.contains("Health")) lines.add(Component.translatable("tooltip.bettacraft.mob_jar.health", Math.round(t.getFloat("Health"))).withStyle(ChatFormatting.GRAY));
+        EntityType.byString(t.getStringOr("id", "")).ifPresent(type -> lines.add(type.getDescription().copy().withStyle(ChatFormatting.GOLD)));
+        if (t.contains("Health")) lines.add(Component.translatable("tooltip.bettacraft.mob_jar.health", Math.round(t.getFloatOr("Health", 0f))).withStyle(ChatFormatting.GRAY));
     }
 }

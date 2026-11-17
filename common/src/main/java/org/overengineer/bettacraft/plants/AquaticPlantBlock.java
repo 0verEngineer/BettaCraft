@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.plants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -79,12 +79,12 @@ public class AquaticPlantBlock extends Block {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState s, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState s) {
         return true;
     }
 
     @Override
-    protected int getLightBlock(BlockState s, BlockGetter level, BlockPos pos) {
+    protected int getLightBlock(BlockState s) {
         return 0;
     }
 
@@ -104,15 +104,15 @@ public class AquaticPlantBlock extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
                                               BlockHitResult hit) {
-        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (level instanceof ServerLevel server) InteriorPlants.trimBlock(server, pos, player, stack, hand);
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return InteriorPlants.item(species, 0);
     }
 }

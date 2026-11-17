@@ -5,13 +5,13 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.overengineer.bettacraft.equipment.FeederMenu;
 
 /** Feeder screen: vanilla dispenser layout plus a "n x per day" button. */
 public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/dispenser.png");
+    private static final Identifier TEXTURE = Identifier.withDefaultNamespace("textures/gui/container/dispenser.png");
     private Button cycle;
 
     public FeederScreen(FeederMenu menu, Inventory inv, Component title) {
@@ -36,7 +36,7 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat.jei;
 
+import net.minecraft.client.Minecraft;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
@@ -8,7 +9,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.overengineer.bettacraft.BettaCraft;
@@ -131,7 +132,7 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
     }
 
     @Override
-    public ResourceLocation getPluginUid() {
+    public Identifier getPluginUid() {
         return BettaCraft.id("jei");
     }
 
@@ -170,7 +171,7 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         // M33 part b: no info pages with features.compat.jei off, none for the items of a feature that is off (at JEI's start)
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI)) return;
         for (String path : ItemHints.ITEMS) {
-            Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));
+            Item item = BuiltInRegistries.ITEM.getValue(BettaCraft.id(path));
             if (item == net.minecraft.world.item.Items.AIR) continue; // M41: the drive adapter exists only with Create
             info(registration, List.of(new ItemStack(item)), "info.bettacraft." + path);
         }

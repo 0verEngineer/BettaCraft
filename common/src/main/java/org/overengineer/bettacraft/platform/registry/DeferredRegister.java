@@ -15,7 +15,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -70,17 +70,18 @@ public class DeferredRegister<T> {
         return register(name, id -> sup.get());
     }
 
-    public <I extends T> DeferredHolder<T, I> register(String name, Function<ResourceLocation, ? extends I> func) {
+    public <I extends T> DeferredHolder<T, I> register(String name, Function<Identifier, ? extends I> func) {
         if (frozen) throw new IllegalStateException("Cannot register new entries to DeferredRegister after the registry event: " + name);
         Objects.requireNonNull(name);
         Objects.requireNonNull(func);
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, name);
+        Identifier id = Identifier.fromNamespaceAndPath(namespace, name);
         DeferredHolder<T, I> holder = createHolder(registryKey, id);
-        if (entries.putIfAbsent(holder, () -> func.apply(id)) != null) throw new IllegalArgumentException("Duplicate registration " + name);
+        // M52b: the factory runs with its id at hand (item / block properties need it, see RegistrationIds)
+        if (entries.putIfAbsent(holder, () -> RegistrationIds.with(registryKey, id, () -> func.apply(id))) != null) throw new IllegalArgumentException("Duplicate registration " + name);
         return holder;
     }
 
-    protected <I extends T> DeferredHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation id) {
+    protected <I extends T> DeferredHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, Identifier id) {
         return DeferredHolder.create(registryKey, id);
     }
 
@@ -101,8 +102,8 @@ public class DeferredRegister<T> {
         return registryKey;
     }
 
-    public ResourceLocation getRegistryName() {
-        return registryKey.location();
+    public Identifier getRegistryName() {
+        return registryKey.identifier();
     }
 
     public String getNamespace() {
@@ -119,9 +120,9 @@ public class DeferredRegister<T> {
     }
 
     /** The entries in registration order: id and the factory that makes the object. Freezes the register. */
-    public Map<ResourceLocation, Supplier<? extends T>> takeEntries() {
+    public Map<Identifier, Supplier<? extends T>> takeEntries() {
         frozen = true;
-        Map<ResourceLocation, Supplier<? extends T>> out = new LinkedHashMap<>();
+        Map<Identifier, Supplier<? extends T>> out = new LinkedHashMap<>();
         entries.forEach((h, s) -> out.put(h.getId(), s));
         return out;
     }
@@ -134,7 +135,7 @@ public class DeferredRegister<T> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <I extends Item> DeferredItem<I> register(String name, Function<ResourceLocation, ? extends I> func) {
+        public <I extends Item> DeferredItem<I> register(String name, Function<Identifier, ? extends I> func) {
             return (DeferredItem<I>) super.register(name, func);
         }
 
@@ -144,7 +145,7 @@ public class DeferredRegister<T> {
         }
 
         @Override
-        protected <I extends Item> DeferredHolder<Item, I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, ResourceLocation id) {
+        protected <I extends Item> DeferredHolder<Item, I> createHolder(ResourceKey<? extends Registry<Item>> registryKey, Identifier id) {
             return DeferredItem.createItem(id);
         }
 
@@ -157,7 +158,7 @@ public class DeferredRegister<T> {
         }
 
         public DeferredItem<BlockItem> registerSimpleBlockItem(Holder<Block> block, Item.Properties properties) {
-            return registerSimpleBlockItem(block.unwrapKey().orElseThrow().location().getPath(), block::value, properties);
+            return registerSimpleBlockItem(block.unwrapKey().orElseThrow().identifier().getPath(), block::value, properties);
         }
 
         public DeferredItem<BlockItem> registerSimpleBlockItem(Holder<Block> block) {
@@ -189,7 +190,7 @@ public class DeferredRegister<T> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <B extends Block> DeferredBlock<B> register(String name, Function<ResourceLocation, ? extends B> func) {
+        public <B extends Block> DeferredBlock<B> register(String name, Function<Identifier, ? extends B> func) {
             return (DeferredBlock<B>) super.register(name, func);
         }
 
@@ -199,7 +200,7 @@ public class DeferredRegister<T> {
         }
 
         @Override
-        protected <I extends Block> DeferredHolder<Block, I> createHolder(ResourceKey<? extends Registry<Block>> registryKey, ResourceLocation id) {
+        protected <I extends Block> DeferredHolder<Block, I> createHolder(ResourceKey<? extends Registry<Block>> registryKey, Identifier id) {
             return DeferredBlock.createBlock(id);
         }
 

@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.critters.Critter;
@@ -120,8 +120,8 @@ final class DevSmokeM14 {
         // save / load
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
         // M19: the current schema (8 when M14 was written, 9 since the tankmate clutches)
-        if (saved.getInt("schema") != org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion()) throw new IllegalStateException("M14: tank saved as schema " + saved.getInt("schema"));
-        TankData back = TankData.load(saved.getCompound("tank"));
+        if (saved.getIntOr("schema", 0) != org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion()) throw new IllegalStateException("M14: tank saved as schema " + saved.getIntOr("schema", 0));
+        TankData back = TankData.load(saved.getCompoundOrEmpty("tank"));
         if (back.critters().size() != t.critters().size() || back.critterObjects().size() != t.critterObjects().size()) {
             throw new IllegalStateException("M14: save/load lost animals");
         }
@@ -129,7 +129,7 @@ final class DevSmokeM14 {
                 t.min().getX(), t.min().getY(), t.min().getZ());
         if (dec.critters().size() != t.critters().size()) throw new IllegalStateException("M14: client format");
         var info = org.overengineer.bettacraft.compat.info.InfoData.tank(level, tankPos(base));
-        int[] counts = info.getIntArray("critters");
+        int[] counts = info.getIntArray("critters").orElse(new int[0]);
         if (counts.length != 4 || counts[0] + counts[2] < 7) throw new IllegalStateException("M14: overlay counts " + java.util.Arrays.toString(counts));
         if (ModItems.ALGAE_SCRAPER.get() == null || ModItems.FROG_BUCKET.get() == null) throw new IllegalStateException("M14: items");
         var trader = EntityType.WANDERING_TRADER.create(level);

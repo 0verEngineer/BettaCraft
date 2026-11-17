@@ -11,7 +11,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
@@ -157,7 +157,7 @@ public final class Wildlife {
      * deep, while fewer than {@code bigAnimalRules.bigWildNearby} wild big animals live within 64 blocks, and only with a
      * {@code bigAnimalRules.bigSpawnChance} roll.
      */
-    public static boolean checkBig(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkBig(EntityType<?> type, ServerLevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
         if (!Features.enabled(Feature.TANKMATES_WILD) || !Features.enabled(Feature.BIG_ANIMALS)) return false;
         TankmateSpecies big = TankmateSpecies.of(type);
@@ -257,8 +257,8 @@ public final class Wildlife {
     // ------------------------------------------------------------------ spawn rules
 
     /** Natural spawns (and new chunks) are limited; spawn eggs, buckets and commands are not. */
-    static boolean natural(MobSpawnType type) {
-        return type == MobSpawnType.NATURAL || type == MobSpawnType.CHUNK_GENERATION;
+    static boolean natural(EntitySpawnReason type) {
+        return type == EntitySpawnReason.NATURAL || type == EntitySpawnReason.CHUNK_GENERATION;
     }
 
     /** Never inside a tank (tank blocks hold water). */
@@ -274,7 +274,7 @@ public final class Wildlife {
     }
 
     /** Spawn rule of the wild tankmates and frogs: open surface water, no tank, few of them nearby. */
-    public static boolean checkFish(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkFish(EntityType<?> type, ServerLevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
         if (!wildSpawns(type)) return false;
         if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;
@@ -282,7 +282,7 @@ public final class Wildlife {
         if (pos.getY() > sea || pos.getY() < sea - 13) return false;
         if (!level.getFluidState(pos.below()).is(FluidTags.WATER) && !level.getFluidState(pos.above()).is(FluidTags.WATER)) return false;
         int cap = ServerConfig.getOr(ServerConfig.WILD_FISH_NEARBY, 6);
-        return nearby(level, pos, net.minecraft.world.entity.animal.AbstractFish.class, Wildlife::isWildFish) < cap;
+        return nearby(level, pos, net.minecraft.world.entity.animal.fish.AbstractFish.class, Wildlife::isWildFish) < cap;
     }
 
     /**
@@ -296,7 +296,7 @@ public final class Wildlife {
     }
 
     /** Spawn rule of the wild small animals: water right above a solid bottom, near the surface, no tank, few nearby. */
-    public static boolean checkCritter(EntityType<?> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkCritter(EntityType<?> type, ServerLevelAccessor level, EntitySpawnReason spawnType, BlockPos pos, RandomSource random) {
         if (!natural(spawnType)) return true;
         if (!Features.enabled(Feature.INVERTEBRATES_WILD)) return false;
         if (!level.getFluidState(pos).is(FluidTags.WATER) || inTank(level, pos)) return false;

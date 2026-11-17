@@ -90,7 +90,7 @@ public final class InteriorGameTests {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             Vec3 start = Vec3.atBottomCenterOf(h.absolutePos(new BlockPos(5, 1, 5)));
-            p.teleportTo(h.getLevel(), start.x, start.y, start.z, 0, 0);
+            p.teleportTo(h.getLevel(), start.x, start.y, start.z, java.util.Set.of(), 0, 0, false);
             InteriorManager.enter(p, c.getBlockPos());
             h.assertTrue(InteriorManager.isInterior(p.level()), "player is in the interior dimension");
             h.assertTrue(InteriorManager.regionAt(p.server, p.blockPosition()) == r, "player stands in the tank's region");
@@ -220,7 +220,7 @@ public final class InteriorGameTests {
         // first a full encode (as if a client asked), then one block change
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
-            p.teleportTo(h.getLevel(), c.getBlockPos().getX(), c.getBlockPos().getY() + 2, c.getBlockPos().getZ(), 0, 0);
+            p.teleportTo(h.getLevel(), c.getBlockPos().getX(), c.getBlockPos().getY() + 2, c.getBlockPos().getZ(), java.util.Set.of(), 0, 0, false);
             InteriorWorldOps.fill(in, r.originX(), InteriorRegion.BASE_Y, r.originZ(), r.originX() + r.sizeX() - 1, InteriorRegion.BASE_Y,
                     r.originZ() + r.sizeZ() - 1, Blocks.SAND.defaultBlockState(), new it.unimi.dsi.fastutil.longs.LongOpenHashSet());
             InteriorSync.markAllDirty(r.id());
@@ -370,7 +370,7 @@ public final class InteriorGameTests {
         list.add(reg);
         old.put("regions", list);
         CompoundTag migrated = org.overengineer.bettacraft.data.schema.Schemas.INTERIOR_REGIONS.migrate(old);
-        InteriorRegion loaded = InteriorRegion.load(migrated.getList("regions", 10).getCompound(0));
+        InteriorRegion loaded = InteriorRegion.load(migrated.getListOrEmpty("regions").getCompoundOrEmpty(0));
         h.assertTrue(loaded.equipment().needsScan(), "migrated region needs a rescan");
         r.equipment().markNeedsScan();
         h.assertTrue(InteriorManager.equipment(h.getLevel().getServer(), r).heaters().get(net.minecraft.core.BlockPos.asLong(2, 0, 2)) == 64,

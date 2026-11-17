@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -63,19 +64,19 @@ public final class M291GameTests {
         h.assertTrue(Math.abs(TankAeration.airDemand(level, c) - 2) < 1e-6, "its FE demand counts the stones: " + TankAeration.airDemand(level, c));
         // the client learns about the pump (hose and hum)
         CompoundTag sync = cab.getUpdateTag(level.registryAccess());
-        h.assertTrue(sync.getBoolean("has_air_pump") && sync.getInt("air_driven") == 2, "synced: " + sync);
+        h.assertTrue(sync.getBooleanOr("has_air_pump", false) && sync.getIntOr("air_driven", 0) == 2, "synced: " + sync);
         // saved and loaded with it; a cabinet of an older version (ten slots) keeps its filter and storage
         CompoundTag saved = cab.saveWithoutMetadata(level.registryAccess());
-        CompoundTag items = saved.getCompound("items");
-        h.assertTrue(items.getInt("Size") == CabinetBlockEntity.SLOTS, "eleven slots now: " + items.getInt("Size"));
+        CompoundTag items = saved.getCompoundOrEmpty("items");
+        h.assertTrue(items.getIntOr("Size", 0) == CabinetBlockEntity.SLOTS, "eleven slots now: " + items.getIntOr("Size", 0));
         CompoundTag old = saved.copy();
         CompoundTag oldItems = new CompoundTag();
         oldItems.putInt("Size", 10);
         net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
-        CompoundTag filter = (CompoundTag) new ItemStack(ModItems.EXTERNAL_FILTER.get()).save(level.registryAccess());
+        CompoundTag filter = (CompoundTag) NbtCompat.saveStack(level.registryAccess(), new ItemStack(ModItems.EXTERNAL_FILTER.get()));
         filter.putInt("Slot", 0);
         list.add(filter);
-        CompoundTag gravel = (CompoundTag) new ItemStack(net.minecraft.world.item.Items.GRAVEL, 12).save(level.registryAccess());
+        CompoundTag gravel = (CompoundTag) NbtCompat.saveStack(level.registryAccess(), new ItemStack(net.minecraft.world.item.Items.GRAVEL, 12));
         gravel.putInt("Slot", 9);
         list.add(gravel);
         oldItems.put("Items", list);

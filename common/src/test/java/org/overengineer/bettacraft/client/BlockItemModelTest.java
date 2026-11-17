@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;

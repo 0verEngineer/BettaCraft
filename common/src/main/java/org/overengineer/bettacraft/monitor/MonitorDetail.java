@@ -80,7 +80,7 @@ public final class MonitorDetail {
         FeederBlockEntity feeder = TankCare.findFeeder(level, t);
         if (feeder != null && feeder.foodCount() <= 0 && !live.isEmpty()) warn.add(w("monitor.bettacraft.warn.feeder_empty", WARNING));
         for (String k : TankBreeding.warnings(level, c)) warn.add(w("gui.bettacraft.breeding.warn." + k, WARNING));
-        warn.sort((a, b) -> Integer.compare(b.getInt("s"), a.getInt("s")));
+        warn.sort((a, b) -> Integer.compare(b.getIntOr("s", 0), a.getIntOr("s", 0)));
         ListTag wl = new ListTag();
         wl.addAll(warn);
         out.put("warn", wl);
@@ -184,16 +184,16 @@ public final class MonitorDetail {
     /** The worst warning of a detail tag: 0 = all fine, {@link #WARNING}, {@link #ALARM}. */
     public static int state(CompoundTag detail) {
         int s = 0;
-        ListTag l = detail.getList("warn", Tag.TAG_COMPOUND);
-        for (int i = 0; i < l.size(); i++) s = Math.max(s, l.getCompound(i).getInt("s"));
+        ListTag l = detail.getListOrEmpty("warn");
+        for (int i = 0; i < l.size(); i++) s = Math.max(s, l.getCompoundOrEmpty(i).getIntOr("s", 0));
         return s;
     }
 
     /** The arguments of a warning or log entry. */
     public static List<String> args(CompoundTag entry) {
         List<String> out = new ArrayList<>();
-        ListTag a = entry.getList("a", Tag.TAG_STRING);
-        for (int i = 0; i < a.size(); i++) out.add(a.getString(i));
+        ListTag a = entry.getListOrEmpty("a");
+        for (int i = 0; i < a.size(); i++) out.add(a.getStringOr(i, ""));
         return out;
     }
 }

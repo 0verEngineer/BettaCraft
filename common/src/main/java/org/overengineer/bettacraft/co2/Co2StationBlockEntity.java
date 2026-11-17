@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -139,7 +142,7 @@ public class Co2StationBlockEntity extends BlockEntity {
     }
 
     private void updateState(boolean active) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState st = getBlockState();
         BlockState next = st.setValue(Co2StationBlock.ACTIVE, active).setValue(Co2StationBlock.LOADED, hasCylinder());
         if (next != st) level.setBlock(worldPosition, next, Block.UPDATE_ALL);
@@ -239,16 +242,21 @@ public class Co2StationBlockEntity extends BlockEntity {
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
         energy.load(tag);
     }
 }

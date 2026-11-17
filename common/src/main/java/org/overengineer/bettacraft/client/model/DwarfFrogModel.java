@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.client.model;
 
-import net.minecraft.client.model.HierarchicalModel;
+import org.overengineer.bettacraft.client.render.MobState;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.entity.frog.DwarfFrogEntity;
@@ -9,11 +10,11 @@ import org.overengineer.bettacraft.entity.frog.DwarfFrogEntity;
  * M14: the dwarf clawed frog ({@link CritterModelDefinitions#createFrogLayer()}): the hind legs kick while it swims, the
  * front legs paddle, at the surface it points its nose up to breathe. M47: in amplexus the male clasps the female.
  */
-public class DwarfFrogModel extends HierarchicalModel<DwarfFrogEntity> {
-    private final ModelPart root, frog, body, head, armRight, armLeft, legRight, legLeft;
+public class DwarfFrogModel extends EntityModel<MobState<DwarfFrogEntity>> {
+    private final ModelPart frog, body, head, armRight, armLeft, legRight, legLeft;
 
     public DwarfFrogModel(ModelPart root) {
-        this.root = root;
+        super(root);
         this.frog = root.getChild("frog");
         this.body = frog.getChild("body");
         this.head = frog.getChild("head");
@@ -24,12 +25,9 @@ public class DwarfFrogModel extends HierarchicalModel<DwarfFrogEntity> {
     }
 
     @Override
-    public ModelPart root() {
-        return root;
-    }
-
-    @Override
-    public void setupAnim(DwarfFrogEntity frog, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<DwarfFrogEntity> state) {
+        DwarfFrogEntity frog = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, ageInTicks = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         float kick = Mth.sin(limbSwing * 1.6F) * Math.min(1F, limbSwingAmount * 3F);
         float idle = Mth.sin(ageInTicks * 0.08F) * 0.06F;
         legRight.yRot = -0.5F * kick - 0.1F + idle;

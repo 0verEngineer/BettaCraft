@@ -64,11 +64,11 @@ public final class ConfirmEmptyScreen extends Screen {
         g.fill(left, top, left + W, top + H, 0xE0101820);
         g.renderOutline(left, top, W, H, 0xFF6A8CA8);
         g.renderItem(stack, left + 10, top + 9);
-        g.drawString(font, title, left + 32, top + 13, 0xFFFFFF);
+        g.drawString(font, title, left + 32, top + 13, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         Component what = Component.translatable("gui.bettacraft.confirm_empty.text", stack.getHoverName());
         int y = top + 32;
         for (var line : font.split(what, W - 20)) {
-            g.drawString(font, line, left + 10, y, 0xC8D2DC);
+            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xC8D2DC));
             y += 10;
         }
         // the buttons over the box

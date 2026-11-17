@@ -77,19 +77,19 @@ public final class InteriorPlant {
     /** Null for a species this version does not know. */
     @Nullable
     public static InteriorPlant load(CompoundTag t) {
-        PlantSpecies s = PlantSpecies.byIdOrNull(t.getString("species"));
-        int[] p = t.getIntArray("pos");
+        PlantSpecies s = PlantSpecies.byIdOrNull(t.getStringOr("species", ""));
+        int[] p = t.getIntArray("pos").orElse(new int[0]);
         if (s == null || p.length != 3) return null;
-        InteriorPlant pl = new InteriorPlant(t.getInt("id"), s, p[0], p[1], p[2], t.getLong("seed"),
-                Math.max(0, Math.min(s.stages(), t.getInt("stage"))));
-        pl.target = t.contains("target") ? Math.max(0, Math.min(s.stages(), t.getInt("target"))) : pl.stage;
-        pl.progress = t.getDouble("progress");
-        pl.tint = t.getInt("tint");
-        pl.blocks = Math.max(1, t.getInt("blocks"));
-        pl.surface = t.getInt("surface");
-        pl.room = t.getInt("room");
-        pl.redness = t.getDouble("redness");
-        pl.shapeVersion = t.contains("shape") ? t.getInt("shape") : 1;
+        InteriorPlant pl = new InteriorPlant(t.getIntOr("id", 0), s, p[0], p[1], p[2], t.getLongOr("seed", 0L),
+                Math.max(0, Math.min(s.stages(), t.getIntOr("stage", 0))));
+        pl.target = t.contains("target") ? Math.max(0, Math.min(s.stages(), t.getIntOr("target", 0))) : pl.stage;
+        pl.progress = t.getDoubleOr("progress", 0d);
+        pl.tint = t.getIntOr("tint", 0);
+        pl.blocks = Math.max(1, t.getIntOr("blocks", 0));
+        pl.surface = t.getIntOr("surface", 0);
+        pl.room = t.getIntOr("room", 0);
+        pl.redness = t.getDoubleOr("redness", 0d);
+        pl.shapeVersion = t.contains("shape") ? t.getIntOr("shape", 0) : 1;
         return pl;
     }
 

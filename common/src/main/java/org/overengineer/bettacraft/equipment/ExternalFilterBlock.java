@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -8,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -36,9 +39,9 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * a hose and an outlet pipe with a water jet go over the glass into the tank (drawn by the client renderer).
  * Two heater slots; right-click with a heater puts it in, right-click with an empty hand opens the slots.
  */
-public class ExternalFilterBlock extends BaseEntityBlock {
+public class ExternalFilterBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<ExternalFilterBlock> CODEC = simpleCodec(ExternalFilterBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE = Shapes.or(box(3, 0, 3, 13, 12, 13), box(4, 12, 4, 12, 14, 12));
 
     public ExternalFilterBlock(Properties properties) {
@@ -88,7 +91,7 @@ public class ExternalFilterBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         // follow the tank if the one it pointed at is gone but another one is next to it
         Direction f = state.getValue(FACING);
         if (!tankAt(level, pos, f)) {
@@ -115,10 +118,10 @@ public class ExternalFilterBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
                                               BlockHitResult hit) {
-        if (!FilterHeaters.isHeater(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (!FilterHeaters.isHeater(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be) {
             if (be.insertHeater(stack)) {
                 if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -127,24 +130,23 @@ public class ExternalFilterBlock extends BaseEntityBlock {
                 player.displayClientMessage(Component.translatable("message.bettacraft.filter.full"), true);
             }
         }
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** M23: a fitted intake sponge comes back when the filter goes (the heaters stay in the item). */
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be && be.intakeSponge()) {
             net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                     new ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_SPONGE.get()));
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 }

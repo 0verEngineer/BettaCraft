@@ -10,7 +10,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientSmokeM11 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final ResourceLocation LIGHT_BLUE = ResourceLocation.withDefaultNamespace("light_blue_stained_glass");
-    private static final ResourceLocation GLASS = ResourceLocation.withDefaultNamespace("glass");
+    private static final Identifier LIGHT_BLUE = Identifier.withDefaultNamespace("light_blue_stained_glass");
+    private static final Identifier GLASS = Identifier.withDefaultNamespace("glass");
 
     private record Step(int delay, Runnable action) {}
 
@@ -98,7 +98,7 @@ final class DevClientSmokeM11 {
             inv.setItem(2, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(), LIGHT_BLUE, TankStyle.TEXTURED, 4));
             inv.setItem(3, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(), GLASS, TankStyle.CLEAN, 4));
             inv.setItem(4, new ItemStack(ModItems.MIRROR_STICK.get()));
-            inv.selected = 0;
+            inv.getSelectedSlot() = 0;
         }));
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> look(base.getX() + 6.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
@@ -107,7 +107,7 @@ final class DevClientSmokeM11 {
         then(60, () -> shot("overlay_clean"));
         // the water tab of the tank menu names the glass and the style
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(5, 0, 0));
+            TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(5, 0, 0));
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -134,7 +134,7 @@ final class DevClientSmokeM11 {
         then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY)));
         then(1, () -> server(p -> {
             p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-            for (Entity e : TankInhabitants.liveInhabitants(p.serverLevel(), TankMultiblock.getController(p.serverLevel(), mirrorTank).getTank())) {
+            for (Entity e : TankInhabitants.liveInhabitants(p.level(), TankMultiblock.getController(p.level(), mirrorTank).getTank())) {
                 if (e instanceof BettaEntity b) LOGGER.info("[smoketest] M11 mirror: male flaring {} trained {}", b.isFlaring(), b.breeding().isTrained());
             }
         }));
@@ -150,7 +150,7 @@ final class DevClientSmokeM11 {
         LOGGER.info("[smoketest] M11 tank look: {}", m11 ? "M11 (connected glass, 1/64 edges)" : "M10 (frame on every block, 1/16 edges)");
     }
 
-    private static void place(ServerLevel level, List<BlockPos> blocks, ResourceLocation glass, TankStyle style) {
+    private static void place(ServerLevel level, List<BlockPos> blocks, Identifier glass, TankStyle style) {
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
             if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
@@ -168,10 +168,10 @@ final class DevClientSmokeM11 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(0, 2, 150);
         String[] names = {"Glass", "Stained", "Clear"};
-        ResourceLocation[] glass = {GLASS, LIGHT_BLUE, GLASS};
+        Identifier[] glass = {GLASS, LIGHT_BLUE, GLASS};
         TankStyle[] style = {TankStyle.TEXTURED, TankStyle.TEXTURED, TankStyle.CLEAN};
         for (int i = 0; i < 3; i++) {
             BlockPos min = base.offset(i * 5, 0, 0);
@@ -237,7 +237,7 @@ final class DevClientSmokeM11 {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof BettaEntity b) || i >= spots.length) continue;
             SmokeFreeze.freeze(b, true);
-            b.moveTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
+            b.snapTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -246,7 +246,7 @@ final class DevClientSmokeM11 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void lookAt(double x, double eyeY, double z, Vec3 target) {

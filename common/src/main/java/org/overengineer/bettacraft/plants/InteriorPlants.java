@@ -225,7 +225,7 @@ public final class InteriorPlants {
         if (player != null && !player.getAbilities().instabuild) ctx.getItemInHand().shrink(1);
         TankBlockEntity c = controller(level.getServer(), r);
         if (c != null && c.getLevel() instanceof ServerLevel tl && player != null) {
-            TankCare.log(tl, c, "log.bettacraft.aquatic_planted", TankCare.nameArg(player), "@" + item(s, 0).getDescriptionId());
+            TankCare.log(tl, c, "log.bettacraft.aquatic_planted", TankCare.nameArg(player), "@" + item(s, 0).getItem().getDescriptionId());
         }
         return true;
     }
@@ -430,7 +430,7 @@ public final class InteriorPlants {
                         if (p.species.stony()) org.overengineer.bettacraft.reef.Corals.useCalcium(t); // M25 part c: and alkalinity and magnesium
                         if (p.target == p.species.stages()) {
                             p.progress = 0;
-                            TankCare.log(level, c, "log.bettacraft.aquatic_grown", "@" + item(p.species, 0).getDescriptionId());
+                            TankCare.log(level, c, "log.bettacraft.aquatic_grown", "@" + item(p.species, 0).getItem().getDescriptionId());
                         }
                     }
                 } else if (spread && p.species.spreads()) {
@@ -473,7 +473,7 @@ public final class InteriorPlants {
             if (n != null) {
                 changed++;
                 TankCare.log(level, c, n.species.form() == PlantSpecies.Form.STEM ? "log.bettacraft.aquatic_side_shoot" : "log.bettacraft.aquatic_runner",
-                        "@" + item(n.species, 0).getDescriptionId());
+                        "@" + item(n.species, 0).getItem().getDescriptionId());
             }
         }
         InteriorRegions.get(level.getServer()).setDirty();
@@ -631,7 +631,7 @@ public final class InteriorPlants {
             for (int cz = (wz + minZ) >> 4; cz <= (wz + maxZ) >> 4; cz++) {
                 ChunkPos cp = new ChunkPos(cx, cz);
                 if (interior.getChunkSource().getChunkNow(cx, cz) == null) {
-                    interior.getChunkSource().addRegionTicket(InteriorPreparation.TICKET, cp, 0, cp);
+                    interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), cp, 0);
                     interior.getChunk(cx, cz); // loads it now (generated with the shell already)
                 }
             }
@@ -781,7 +781,7 @@ public final class InteriorPlants {
             int cx = at.getX() >> 4, cz = at.getZ() >> 4;
             if (interior.getChunkSource().getChunkNow(cx, cz) == null) {
                 ChunkPos cp = new ChunkPos(cx, cz);
-                interior.getChunkSource().addRegionTicket(InteriorPreparation.TICKET, cp, 0, cp);
+                interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), cp, 0);
                 interior.getChunk(cx, cz);
             }
             if (!interior.getBlockState(at).isAir()) continue;
@@ -869,7 +869,7 @@ public final class InteriorPlants {
         InteriorRegions.get(interior.getServer()).setDirty();
         TankBlockEntity c = controller(interior.getServer(), r);
         if (c != null && c.getLevel() instanceof ServerLevel tl) {
-            TankCare.log(tl, c, "log.bettacraft.aquatic_trimmed", who, "@" + item(p.species, 0).getDescriptionId(), String.valueOf(n));
+            TankCare.log(tl, c, "log.bettacraft.aquatic_trimmed", who, "@" + item(p.species, 0).getItem().getDescriptionId(), String.valueOf(n));
         }
         return n;
     }
@@ -894,12 +894,12 @@ public final class InteriorPlants {
             }
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 0.7F, 1.4F);
             player.displayClientMessage(Component.translatable("message.bettacraft.aquatic.trimmed", n,
-                    Component.translatable(item(p.species, 0).getDescriptionId())).withStyle(ChatFormatting.GREEN), true);
+                    Component.translatable(item(p.species, 0).getItem().getDescriptionId())).withStyle(ChatFormatting.GREEN), true);
         }
         InteriorRegions.get(interior.getServer()).setDirty();
         TankBlockEntity c = controller(interior.getServer(), r);
         if (c != null && c.getLevel() instanceof ServerLevel tl) {
-            TankCare.log(tl, c, "log.bettacraft.aquatic_trimmed", player == null ? "?" : TankCare.nameArg(player), "@" + item(p.species, 0).getDescriptionId(),
+            TankCare.log(tl, c, "log.bettacraft.aquatic_trimmed", player == null ? "?" : TankCare.nameArg(player), "@" + item(p.species, 0).getItem().getDescriptionId(),
                     String.valueOf(n));
         }
         return n;
@@ -923,7 +923,7 @@ public final class InteriorPlants {
             remove(interior, r, p, true);
             if (drops) Block.popResource(interior, pos, item(s, stage));
             message(player, "taken_out", ChatFormatting.GREEN);
-            logAt(interior, r, "log.bettacraft.aquatic_taken_out", TankCare.nameArg(player), "@" + item(s, 0).getDescriptionId());
+            logAt(interior, r, "log.bettacraft.aquatic_taken_out", TankCare.nameArg(player), "@" + item(s, 0).getItem().getDescriptionId());
         } else if (part == PlantPart.RHIZOME && s.form() == PlantSpecies.Form.EPIPHYTE && p.stage >= 2) {
             int half = p.stage / 2;
             p.target = p.stage - half;
@@ -931,7 +931,7 @@ public final class InteriorPlants {
             apply(interior, r, p);
             if (drops) Block.popResource(interior, pos, item(s, half));
             message(player, "divided", ChatFormatting.GREEN);
-            logAt(interior, r, "log.bettacraft.aquatic_divided", TankCare.nameArg(player), "@" + item(s, 0).getDescriptionId());
+            logAt(interior, r, "log.bettacraft.aquatic_divided", TankCare.nameArg(player), "@" + item(s, 0).getItem().getDescriptionId());
             InteriorRegions.get(interior.getServer()).setDirty();
         }
     }

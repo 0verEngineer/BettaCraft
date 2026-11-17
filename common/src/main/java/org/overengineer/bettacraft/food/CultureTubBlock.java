@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.core.Direction;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -31,7 +32,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * matter under the open sky, the artemia hatchery hatches artemia nauplii from salt water and cysts in the light.
  * Hoppers and pipes put the ingredients in and take the food out ({@link CultureTubBlockEntity}).
  */
-public class CultureTubBlock extends BaseEntityBlock {
+public class CultureTubBlock extends BaseEntityBlock implements BlockRemoval {
     public enum Kind { LARVAE, ARTEMIA }
 
     /** Water level in quarters of the tub (0..4). */
@@ -82,30 +83,29 @@ public class CultureTubBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.CULTURE_TUB.get(), CultureTubBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.CULTURE_TUB.get(), CultureTubBlockEntity::serverTick);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
                                               BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof CultureTubBlockEntity be)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return be.accepts(stack) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        return be.use((ServerLevel) level, player, hand, stack) ? ItemInteractionResult.CONSUME : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!(level.getBlockEntity(pos) instanceof CultureTubBlockEntity be)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (stack.isEmpty()) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return be.accepts(stack) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
+        return be.use((ServerLevel) level, player, hand, stack) ? InteractionResult.CONSUME : InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof CultureTubBlockEntity be) be.takeOrShow((ServerLevel) level, player);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof CultureTubBlockEntity be) be.takeOrShow((ServerLevel) level, player);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CultureTubBlockEntity be) {
             be.dropContents(level, pos);
         }
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class CultureTubBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof CultureTubBlockEntity be ? be.comparatorSignal() : 0;
     }
 }

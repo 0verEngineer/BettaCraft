@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.fabric.client;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,7 +11,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -21,7 +23,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -95,8 +97,8 @@ public final class FabricClientPlatform implements ClientPlatform {
     }
 
     private static RenderType entitySheet(RenderType chunkLayer) {
-        if (chunkLayer == RenderType.translucent()) return Sheets.translucentCullBlockSheet();
-        if (chunkLayer == RenderType.solid()) return Sheets.solidBlockSheet();
+        if (chunkLayer == ChunkSectionLayer.TRANSLUCENT) return Sheets.translucentBlockItemSheet();
+        if (chunkLayer == ChunkSectionLayer.SOLID) return Sheets.solidBlockSheet();
         return Sheets.cutoutBlockSheet();
     }
 
@@ -125,7 +127,7 @@ public final class FabricClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public BakedModel standaloneModel(ResourceLocation id) {
+    public BakedModel standaloneModel(Identifier id) {
         return Minecraft.getInstance().getModelManager().getModel(id);
     }
 

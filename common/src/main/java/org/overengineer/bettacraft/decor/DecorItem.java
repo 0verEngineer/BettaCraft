@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.decor;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +10,7 @@ import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,7 +34,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorRegion;
  * world. A hologram shows the placement while holding the item (client).
  */
 public class DecorItem extends Item {
-    private static final Map<ResourceLocation, DecorTemplate> SERVER_CACHE = new HashMap<>();
+    private static final Map<Identifier, DecorTemplate> SERVER_CACHE = new HashMap<>();
 
     private final DecorType type;
 
@@ -48,7 +51,7 @@ public class DecorItem extends Item {
         SERVER_CACHE.clear();
     }
 
-    public static Optional<DecorTemplate> template(ServerLevel level, ResourceLocation id) {
+    public static Optional<DecorTemplate> template(ServerLevel level, Identifier id) {
         DecorTemplate t = SERVER_CACHE.get(id);
         if (t == null) {
             t = DecorTemplate.load(level, id).orElse(null);
@@ -65,7 +68,7 @@ public class DecorItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         Player player = ctx.getPlayer();
         BlockPlaceContext place = new BlockPlaceContext(ctx);
@@ -104,7 +107,8 @@ public class DecorItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.decor.size", type.sizeX, type.sizeZ, type.sizeY).withStyle(ChatFormatting.GRAY));
         if (type.hasHint()) tooltip.add(Component.translatable("tooltip.bettacraft." + type.itemId()).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.bettacraft.decor.usage").withStyle(ChatFormatting.DARK_GRAY));

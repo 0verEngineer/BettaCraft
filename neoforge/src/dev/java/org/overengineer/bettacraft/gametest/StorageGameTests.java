@@ -7,7 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,13 +39,13 @@ public final class StorageGameTests {
     private StorageGameTests() {}
 
     private static Item item(String id) {
-        Item i = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
+        Item i = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
         if (i == Items.AIR) throw new GameTestAssertException("no item " + id);
         return i;
     }
 
     private static Block block(String id) {
-        Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+        Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
         if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
         return b;
     }

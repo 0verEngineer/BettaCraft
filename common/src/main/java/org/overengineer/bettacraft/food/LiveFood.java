@@ -8,7 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,12 +39,12 @@ public final class LiveFood {
     private LiveFood() {}
 
     /** What a portion of suspension is: the food item and whether it came from a poor culture. */
-    public record Content(ResourceLocation item, boolean poor) {
+    public record Content(Identifier item, boolean poor) {
         public static final Codec<Content> CODEC = RecordCodecBuilder.create(i -> i.group(
-                ResourceLocation.CODEC.fieldOf("item").forGetter(Content::item),
+                Identifier.CODEC.fieldOf("item").forGetter(Content::item),
                 Codec.BOOL.optionalFieldOf("poor", false).forGetter(Content::poor)).apply(i, Content::new));
         public static final StreamCodec<ByteBuf, Content> STREAM_CODEC = StreamCodec.composite(
-                ResourceLocation.STREAM_CODEC, Content::item, ByteBufCodecs.BOOL, Content::poor, Content::new);
+                Identifier.STREAM_CODEC, Content::item, ByteBufCodecs.BOOL, Content::poor, Content::new);
     }
 
     // ------------------------------------------------------------------ the food items
@@ -93,7 +93,7 @@ public final class LiveFood {
     public static ItemStack food(FluidStack stack) {
         Content c = stack.get(ModDataComponents.LIVE_FOOD.get());
         if (c == null) return ItemStack.EMPTY;
-        Item item = BuiltInRegistries.ITEM.get(c.item());
+        Item item = BuiltInRegistries.ITEM.getValue(c.item());
         if (item == Items.AIR) return ItemStack.EMPTY;
         ItemStack s = new ItemStack(item);
         if (c.poor()) s.set(ModDataComponents.POOR_CULTURE.get(), true);
@@ -113,7 +113,7 @@ public final class LiveFood {
         if (action.execute()) {
             int used = TankCare.feed(level, c, food, portions);
             if (used < portions) org.overengineer.bettacraft.critters.TankCritters.addFood(c.getTank(), portions - used);
-            TankCare.log(level, c, portions == 1 ? "log.bettacraft.live_food_pumped_one" : "log.bettacraft.live_food_pumped", String.valueOf(portions), "@" + food.getDescriptionId());
+            TankCare.log(level, c, portions == 1 ? "log.bettacraft.live_food_pumped_one" : "log.bettacraft.live_food_pumped", String.valueOf(portions), "@" + food.getItem().getDescriptionId());
             c.setChanged();
         }
         return portions * PORTION_MB;

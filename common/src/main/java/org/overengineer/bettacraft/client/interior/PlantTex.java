@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.client.interior;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 
 /**
@@ -26,9 +26,9 @@ enum PlantTex {
     static final PlantTex[] ALL = values();
 
     /** The texture drawn inside (its own render type). */
-    final ResourceLocation texture;
+    final Identifier texture;
     /** The sprite in the block atlas drawn outside. */
-    final ResourceLocation sprite;
+    final Identifier sprite;
 
     PlantTex(String name, boolean mini) {
         this.texture = BettaCraft.id("textures/block/plant_mesh/" + name + ".png");

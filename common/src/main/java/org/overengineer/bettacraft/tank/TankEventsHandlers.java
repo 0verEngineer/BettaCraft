@@ -34,7 +34,7 @@ public final class TankEventsHandlers {
 
     @SubscribeEvent(priority = org.overengineer.bettacraft.platform.event.EventPriority.HIGHEST, receiveCanceled = true)
     public static void onEntityInteract(org.overengineer.bettacraft.platform.event.PlayerInteractEvent.EntityInteract event) {
-        if (!event.getLevel().isClientSide && TankInhabitants.hasTankRef(event.getTarget())) {
+        if (!event.getLevel().isClientSide() && TankInhabitants.hasTankRef(event.getTarget())) {
             CATCHING.put(event.getTarget().getUUID(), event.getEntity().getScoreboardName());
         }
     }

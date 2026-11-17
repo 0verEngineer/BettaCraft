@@ -71,7 +71,7 @@ final class DevClientSmokeM18 {
         // 1. the row by day and by night
         then(40, () -> look(base.getX() + 11.0, base.getY() + 3.6, base.getZ() - 13.0, 0F, 12F));
         then(80, () -> shot("row_day"));
-        then(1, () -> server(p -> p.serverLevel().setDayTime(18000)));
+        then(1, () -> server(p -> p.level().setDayTime(18000)));
         then(60, () -> {
             shot("row_night");
             check();
@@ -94,7 +94,7 @@ final class DevClientSmokeM18 {
         // 4. dyeing the white bar orange on the server: the client follows
         then(1, () -> server(p -> {
             BlockPos l = controllers.getFirst().offset(0, 2, 1);
-            int n = TankLightBlock.dyeBar(p.serverLevel(), l, p.serverLevel().getBlockState(l), DyeColor.ORANGE, false);
+            int n = TankLightBlock.dyeBar(p.level(), l, p.level().getBlockState(l), DyeColor.ORANGE, false);
             LOGGER.info("[smoketest] M18 dyed {} segments orange", n);
         }));
         then(60, () -> {
@@ -103,12 +103,12 @@ final class DevClientSmokeM18 {
             if (c == 0) LOGGER.error("[smoketest] M18 the dyed bar does not tint its tank on the client");
             shot("row_night_orange");
         });
-        then(1, () -> server(p -> p.serverLevel().setDayTime(6000)));
+        then(1, () -> server(p -> p.level().setDayTime(6000)));
         // 5. the light items (GUI)
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true); // the menu needs it
-            p.teleportTo(p.serverLevel(), base.getX() + 11.5, base.getY() + 1.0, base.getZ() - 8.5, 0F, 12F);
+            p.teleportTo(p.level(), base.getX() + 11.5, base.getY() + 1.0, base.getZ() - 8.5, java.util.Set.of(), 0F, 12F, false);
         }));
         then(20, this::openCreativeTab);
         then(10, () -> hoverLight(DyeColor.RED));
@@ -121,8 +121,8 @@ final class DevClientSmokeM18 {
         then(1, () -> mc.setScreen(null));
         // 6. the stocking of a tank with young bettas (tooltip of the animals line)
         then(5, () -> server(p -> {
-            p.teleportTo(p.serverLevel(), young.getX() + 1.5, young.getY() + 1.0, young.getZ() - 2.5, 0F, 0F);
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), young);
+            p.teleportTo(p.level(), young.getX() + 1.5, young.getY() + 1.0, young.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), young);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -239,7 +239,7 @@ final class DevClientSmokeM18 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         reach(p, false);
         base = p.blockPosition().offset(0, 2, 370);
         for (int i = 0; i < ROW.length; i++) {
@@ -310,7 +310,7 @@ final class DevClientSmokeM18 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void language(String code) {

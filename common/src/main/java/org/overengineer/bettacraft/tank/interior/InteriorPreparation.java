@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class InteriorPreparation {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/interior");
-    public static final TicketType<ChunkPos> TICKET = TicketType.create("bettacraft_interior", Comparator.comparingLong(ChunkPos::toLong), 300);
     /** Main-thread budget per tick for writing shell chunks. */
     private static final long BUDGET_NANOS = 8_000_000L;
     /**
@@ -120,7 +119,7 @@ public final class InteriorPreparation {
             boolean refresh = job.ticks - job.lastRefresh >= REFRESH_TICKS;
             for (int i = refresh ? job.nextChunk : Math.max(job.nextChunk, job.ticketedTo); i < windowEnd; i++) {
                 ChunkPos cp = new ChunkPos(job.chunks.getLong(i));
-                level.getChunkSource().addRegionTicket(TICKET, cp, 0, cp); // adding it again renews its lifespan
+                level.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), cp, 0); // adding it again renews its lifespan
             }
             if (refresh) job.lastRefresh = job.ticks;
             job.ticketedTo = Math.max(job.ticketedTo, windowEnd);

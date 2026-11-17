@@ -52,7 +52,7 @@ public final class InteriorDrops {
         if (s.getBlock() instanceof BedBlock && s.getValue(BedBlock.PART) == BedPart.HEAD) return;
         ItemStack item;
         try {
-            item = s.getBlock().getCloneItemStack(level, pos, s);
+            item = s.getCloneItemStack(level, pos, false);
         } catch (RuntimeException e) {
             item = ItemStack.EMPTY;
         }

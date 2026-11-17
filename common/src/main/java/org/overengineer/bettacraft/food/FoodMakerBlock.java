@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -37,9 +38,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * M26 part b: the food maker. A steel case with a hopper on top and a crank on the side. Right-click opens the window;
  * M37: the crank item winds the spring (the crank turns a quarter, the ratchet clicks; {@link FoodMakerBlockEntity}).
  */
-public class FoodMakerBlock extends BaseEntityBlock {
+public class FoodMakerBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<FoodMakerBlock> CODEC = simpleCodec(FoodMakerBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Position of the crank handle (quarter turns). */
     public static final IntegerProperty CRANK = IntegerProperty.create("crank", 0, 3);
     public static final BooleanProperty WORKING = BooleanProperty.create("working");
@@ -80,11 +81,11 @@ public class FoodMakerBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be)) return InteractionResult.PASS;
         if (player.isSecondaryUseActive()) {
             // M37: the spring is wound with the crank now (sneak + empty hand only says so)
-            if (!level.isClientSide) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.crank.use_crank"), true);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            if (!level.isClientSide()) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.crank.use_crank"), true);
+            return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide() && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -93,16 +94,15 @@ public class FoodMakerBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be ? be.comparator() : 0;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!newState.is(this) && level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be) {
             for (int i = 0; i < FoodMakerBlockEntity.SLOTS; i++) Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
         }
-        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
@@ -126,6 +126,6 @@ public class FoodMakerBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.FOOD_MAKER.get(), FoodMakerBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.FOOD_MAKER.get(), FoodMakerBlockEntity::serverTick);
     }
 }

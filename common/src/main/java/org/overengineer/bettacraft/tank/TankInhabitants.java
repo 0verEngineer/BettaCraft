@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
@@ -22,13 +23,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -159,7 +160,7 @@ public final class TankInhabitants {
      * and everything that breathes under water (bettas, frogs of other mods). A butterfly from a bug net is none.
      */
     public static boolean isWaterAnimal(Entity e) {
-        if (e instanceof net.minecraft.world.entity.animal.WaterAnimal || e instanceof net.minecraft.world.entity.animal.AbstractFish
+        if (e instanceof net.minecraft.world.entity.animal.fish.WaterAnimal || e instanceof net.minecraft.world.entity.animal.fish.AbstractFish
                 || e instanceof net.minecraft.world.entity.animal.axolotl.Axolotl || e instanceof net.minecraft.world.entity.animal.frog.Tadpole) {
             return true;
         }
@@ -168,7 +169,7 @@ public final class TankInhabitants {
     }
 
     public static boolean canModify(Player player, TankData tank) {
-        return !tank.locked() || player.getUUID().equals(tank.owner()) || player.hasPermissions(2);
+        return !tank.locked() || player.getUUID().equals(tank.owner()) || Perms.has(player, 2);
     }
 
     // ------------------------------------------------------------------ inserting
@@ -184,24 +185,24 @@ public final class TankInhabitants {
     }
 
     /** Right-click on a tank with a mob bucket or a filled fish bag. PASS if the stack is neither. */
-    public static ItemInteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         EntityType<?> type = containedType(stack);
-        if (type == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (type == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (TankMoves.travelling(level, pos) && !TankMoves.swimsOn(type)) { // M32 part b: on an airship the animals travel packed (M50: ours swim on)
             player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         Component error = insert(server, controller, stack, type, player, carriedWater(stack));
         if (error != null) {
             player.displayClientMessage(error, true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30
                 : stack.getItem() instanceof org.overengineer.bettacraft.terrarium.AnimalBoxItem || stack.getItem() instanceof org.overengineer.bettacraft.terrarium.TerrariumBoxItem
@@ -213,7 +214,7 @@ public final class TankInhabitants {
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, empty));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** As {@link #insert(ServerLevel, TankBlockEntity, ItemStack, EntityType, Player, long)} with bucket or bag water. */
@@ -333,7 +334,7 @@ public final class TankInhabitants {
         double half = e.getBbWidth() / 2 + 1.0 / 16 + 0.01;
         if (!terra) spawn = new TankWaterVolume(tank.members(), Math.max(tank.waterSurfaceY(), tank.min().getY() + 0.9), TankCare.waterBox(tank))
                 .clamp(spawn, half, 1.0 / 16 + 0.01, Math.min(0.3, e.getBbHeight()), e.getBbHeight());
-        e.moveTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
+        e.snapTo(spawn.x, spawn.y, spawn.z, level.getRandom().nextFloat() * 360F, 0F);
         adopt(e, controller);
         // M17: the animal must really join the level (a UUID clash or another mod cancelling the join): otherwise the
         // container stays full instead of losing the animal
@@ -364,7 +365,7 @@ public final class TankInhabitants {
         Entity e;
         ForeignAnimals.capture(joined);
         try {
-            e = type.create(level, config, BlockPos.containing(spawn), MobSpawnType.BUCKET, false, false);
+            e = type.create(level, config, BlockPos.containing(spawn), EntitySpawnReason.BUCKET, false, false);
         } finally {
             ForeignAnimals.capture(null);
         }
@@ -372,10 +373,10 @@ public final class TankInhabitants {
             LOGGER.info("{} was replaced while spawning ({}); putting the original into the tank",
                     net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type), joined.stream().map(j -> j.getType().toShortString()).toList());
             joined.forEach(Entity::discard);
-            e = type.create(level);
+            e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e != null) {
                 config.accept(e);
-                e.moveTo(spawn.x, spawn.y, spawn.z, 0, 0);
+                e.snapTo(spawn.x, spawn.y, spawn.z, 0, 0);
             }
         }
         return e;
@@ -674,7 +675,7 @@ public final class TankInhabitants {
     /** Takes an inhabitant out with an empty bucket (-1000 mB) or fish bag (-100 mB) from the player's inventory. */
     @Nullable
     public static Component takeOut(ServerPlayer player, TankBlockEntity controller, UUID entityId, boolean bag) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         TankData tank = controller.getTank();
         if (!canModify(player, tank)) return Component.translatable("message.bettacraft.tank.locked");
         Entity e = level.getEntity(entityId);
@@ -815,7 +816,7 @@ public final class TankInhabitants {
 
     /** M22.3: a bucket of water (plain or sea water) in the inventory. */
     static boolean hasWaterBucket(Player player) {
-        for (ItemStack s : player.getInventory().items) if (org.overengineer.bettacraft.containers.AnimalContainers.waterBucket(s)) return true;
+        for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (org.overengineer.bettacraft.containers.AnimalContainers.waterBucket(s)) return true;
         return false;
     }
 

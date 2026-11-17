@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.compat.jade;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.EntityHitResult;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.compat.info.InfoLines;
@@ -40,7 +40,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.TANK;
         }
     }
@@ -56,7 +56,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.FILTER;
         }
     }
@@ -72,7 +72,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.SPRING;
         }
     }
@@ -88,7 +88,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.CULTURE;
         }
     }
@@ -104,7 +104,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.AQUARIST;
         }
     }
@@ -120,7 +120,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.BETTA;
         }
     }

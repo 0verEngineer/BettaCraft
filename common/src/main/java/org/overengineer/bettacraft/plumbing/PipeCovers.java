@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -12,10 +13,10 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -55,7 +56,7 @@ import org.overengineer.bettacraft.config.Features;
  */
 public final class PipeCovers {
     /** The facade items of other mods and the data component that carries their block. */
-    public static final Map<ResourceLocation, ResourceLocation> FOREIGN = Map.of(
+    public static final Map<Identifier, Identifier> FOREIGN = Map.of(
             rl("ae2", "facade"), rl("ae2", "facade_item"),
             rl("enderio", "conduit_facade"), rl("enderio", "block_paint"),
             rl("enderio", "hardened_conduit_facade"), rl("enderio", "block_paint"),
@@ -65,8 +66,8 @@ public final class PipeCovers {
 
     private PipeCovers() {}
 
-    private static ResourceLocation rl(String ns, String path) {
-        return ResourceLocation.fromNamespaceAndPath(ns, path);
+    private static Identifier rl(String ns, String path) {
+        return Identifier.fromNamespaceAndPath(ns, path);
     }
 
     // ------------------------------------------------------------------ what a pipe looks like
@@ -85,7 +86,7 @@ public final class PipeCovers {
     /** Whether the pipe at {@code pos} hides the face of its neighbour (a cover that is a solid full block). */
     public static boolean hidesNeighbour(BlockGetter level, BlockPos pos) {
         BlockState c = coverAt(level, pos);
-        return c != null && c.isSolidRender(level, pos);
+        return c != null && c.isSolidRender();
     }
 
     public static float shade(BlockGetter level, BlockPos pos) {
@@ -120,9 +121,9 @@ public final class PipeCovers {
     @Nullable
     public static BlockState foreign(ItemStack stack, @Nullable Level level) {
         if (stack.isEmpty()) return null;
-        ResourceLocation comp = FOREIGN.get(BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        Identifier comp = FOREIGN.get(BuiltInRegistries.ITEM.getKey(stack.getItem()));
         if (comp == null) return null;
-        DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(comp);
+        DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(comp);
         if (type == null) return null;
         Block b = blockIn(type, stack.get(type), level);
         return b == null || b.defaultBlockState().isAir() ? null : b.defaultBlockState();
@@ -145,7 +146,7 @@ public final class PipeCovers {
     @Nullable
     static Block blockIn(Tag t, int depth) {
         if (depth > 4) return null;
-        if (t instanceof StringTag s) return blockOf(s.getAsString());
+        if (t instanceof StringTag s) return blockOf(NbtCompat.asString(s));
         if (t instanceof CompoundTag c) {
             for (String k : new String[]{"Name", "id", "block", "paint", "item", "facade_block"}) {
                 if (c.contains(k)) {
@@ -153,7 +154,7 @@ public final class PipeCovers {
                     if (b != null) return b;
                 }
             }
-            for (String k : c.getAllKeys()) {
+            for (String k : c.keySet()) {
                 Block b = blockIn(c.get(k), depth + 1);
                 if (b != null) return b;
             }
@@ -169,10 +170,10 @@ public final class PipeCovers {
 
     @Nullable
     private static Block blockOf(String id) {
-        ResourceLocation rl = ResourceLocation.tryParse(id);
+        Identifier rl = Identifier.tryParse(id);
         if (rl == null || "air".equals(rl.getPath())) return null;
-        if (BuiltInRegistries.BLOCK.containsKey(rl)) return BuiltInRegistries.BLOCK.get(rl);
-        if (BuiltInRegistries.ITEM.containsKey(rl) && BuiltInRegistries.ITEM.get(rl) instanceof BlockItem bi) return bi.getBlock();
+        if (BuiltInRegistries.BLOCK.containsKey(rl)) return BuiltInRegistries.BLOCK.getValue(rl);
+        if (BuiltInRegistries.ITEM.containsKey(rl) && BuiltInRegistries.ITEM.getValue(rl) instanceof BlockItem bi) return bi.getBlock();
         return null;
     }
 
@@ -192,7 +193,7 @@ public final class PipeCovers {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.not_full", cover.getBlock().getName()).withStyle(ChatFormatting.GOLD), true);
             return false;
         }
-        if (level.isClientSide) return true;
+        if (level.isClientSide()) return true;
         ItemStack old = be.cover() != null ? be.coverItem() : ItemStack.EMPTY;
         be.setCover(cover, from);
         give(level, pos, player, old);
@@ -227,11 +228,11 @@ public final class PipeCovers {
      * item is no facade (the pipe goes on as usual).
      */
     @Nullable
-    public static ItemInteractionResult useForeign(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult useForeign(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         BlockState c = foreign(stack, level);
         if (c == null) return null;
-        if (apply(level, pos, c, stack, player) && !level.isClientSide && !player.getAbilities().instabuild) stack.shrink(1);
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (apply(level, pos, c, stack, player) && !level.isClientSide() && !player.getAbilities().instabuild) stack.shrink(1);
+        return InteractionResult.SUCCESS;
     }
 
     /** What breaking the pipe gives besides its pipes: the item its cover came from. */

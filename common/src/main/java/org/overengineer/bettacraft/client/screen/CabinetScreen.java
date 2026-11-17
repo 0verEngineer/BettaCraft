@@ -1,12 +1,13 @@
 package org.overengineer.bettacraft.client.screen;
 
+import net.minecraft.client.Minecraft;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.CabinetMenu;
@@ -18,7 +19,7 @@ import org.overengineer.bettacraft.equipment.OutletSide;
  * {@code features.equipment.cabinetOutletSide} off).
  */
 public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
-    private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/cabinet.png");
+    private static final Identifier TEXTURE = BettaCraft.id("textures/gui/cabinet.png");
     /** M22.4: below the heater slots, left of the inventory (the inventory label moves under the storage). */
     public static final int OUTLET_X = 7, OUTLET_Y = 62, OUTLET_W = 58, OUTLET_H = 12;
     private TankScreen.FitButton outletButton;
@@ -33,7 +34,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         outletButton = new TankScreen.FitButton(leftPos + OUTLET_X, topPos + OUTLET_Y, OUTLET_W, OUTLET_H, Component.empty(), b -> {
             OutletSide s = menu.outletSide();
             if (s == null || minecraft == null || minecraft.gameMode == null) return;
-            OutletSide next = hasShiftDown() ? OutletSide.byIndex((s.ordinal() + OutletSide.values().length - 1) % OutletSide.values().length) : s.next();
+            OutletSide next = Minecraft.getInstance().hasShiftDown() ? OutletSide.byIndex((s.ordinal() + OutletSide.values().length - 1) % OutletSide.values().length) : s.next();
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_OUTLET0 + next.ordinal());
         });
         outletButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.cabinet.outlet.tooltip")));
@@ -44,7 +45,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         frontButton = addRenderableWidget(new TankScreen.FitButton(leftPos + FRONT_X, topPos + FRONT_Y, FRONT_W, FRONT_H, Component.empty(), b -> {
             org.overengineer.bettacraft.equipment.CabinetFrontSetting f = menu.frontSetting();
             if (f == null || minecraft == null || minecraft.gameMode == null) return;
-            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_FRONT0 + (hasShiftDown() ? f.previous() : f.next()).ordinal());
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_FRONT0 + (Minecraft.getInstance().hasShiftDown() ? f.previous() : f.next()).ordinal());
         }));
         jointButton = addRenderableWidget(new JointButton(leftPos + JOINT_X, topPos + FRONT_Y));
         // M49: opens the chambers of the sump (above its slot)
@@ -88,24 +89,20 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
 
         @Override
-        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick) { // M52b
             boolean on = menu.joints();
             if (shown == null || shown != on) {
                 shown = on;
                 setTooltip(Tooltip.create(Component.translatable(on ? "gui.bettacraft.cabinet.joints.on" : "gui.bettacraft.cabinet.joints.off")
                         .append(NL).append(Component.translatable("gui.bettacraft.cabinet.joints.tooltip").withStyle(net.minecraft.ChatFormatting.GRAY))));
             }
-            super.renderWidget(g, mouseX, mouseY, partialTick);
+            renderDefaultSprite(g); // the picture instead of the label
             int x = getX() + 3, y = getY() + 3, w = getWidth() - 6, h = getHeight() - 6;
             g.fill(x, y, x + w, y + h, 0xFFB08A58); // two doors in planks colour
             if (on) g.fill(x + w / 2, y, x + w / 2 + 1, y + h, 0xFF2A2320); // the joint
             else g.fill(x + w / 2, y + h / 2 - 1, x + w / 2 + 1, y + h / 2 + 1, 0xFF6A5236); // only the handles
         }
 
-        @Override
-        public void renderString(GuiGraphics g, net.minecraft.client.gui.Font font, int color) {
-            // the picture instead of the text
-        }
     }
 
     // ------------------------------------------------------------------ M41 Create shaft
@@ -122,7 +119,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         DriveButton(int x, int y) {
             super(x, y, DRIVE_S, DRIVE_S, Component.empty(), b -> {
                 if (minecraft == null || minecraft.gameMode == null) return;
-                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, hasShiftDown() ? CabinetMenu.BUTTON_DRIVE_PREVIOUS : CabinetMenu.BUTTON_DRIVE_NEXT);
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, Minecraft.getInstance().hasShiftDown() ? CabinetMenu.BUTTON_DRIVE_PREVIOUS : CabinetMenu.BUTTON_DRIVE_NEXT);
             }, DEFAULT_NARRATION);
         }
 
@@ -142,27 +139,21 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
 
         @Override
-        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-            super.renderWidget(g, mouseX, mouseY, partialTick);
+        protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick) { // M52b
+            renderDefaultSprite(g); // the picture instead of the label
             if (shown == null) return;
-            net.minecraft.world.item.Item shaft = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                    ResourceLocation.fromNamespaceAndPath("create", "shaft"));
+            net.minecraft.world.item.Item shaft = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(
+                    Identifier.fromNamespaceAndPath("create", "shaft"));
             g.renderItem(new net.minecraft.world.item.ItemStack(shaft), getX() + 1, getY() + 1);
-            g.pose().pushPose();
-            g.pose().translate(0, 0, 250); // above the item
+            g.nextStratum(); // M52b: above the item (the GUI draws in strata since 1.21.6)
             if (shown == org.overengineer.bettacraft.equipment.DriveSide.NONE) {
                 g.fill(getX() + 1, getY() + 1, getX() + DRIVE_S - 1, getY() + DRIVE_S - 1, 0x99404040); // greyed: no shaft
             } else {
                 String letter = Component.translatable(shown.translationKey() + ".short").getString();
-                g.drawString(font, letter, getX() + DRIVE_S - 1 - font.width(letter), getY() + DRIVE_S - 9, allowed ? 0xFFFFFF : 0xFF5555, true);
+                g.drawString(font, letter, getX() + DRIVE_S - 1 - font.width(letter), getY() + DRIVE_S - 9, org.overengineer.bettacraft.client.ClientCompat.textColor(allowed ? 0xFFFFFF : 0xFF5555), true);
             }
-            g.pose().popPose();
         }
 
-        @Override
-        public void renderString(GuiGraphics g, net.minecraft.client.gui.Font font, int color) {
-            // the icon and the side's letter instead of the text
-        }
     }
 
     private TankScreen.FitButton powerBtn;
@@ -173,7 +164,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     private TankScreen.FitButton powerButton(int x, int y, int w, int h, java.util.function.IntSupplier value, int containerId) {
         TankScreen.FitButton b = new TankScreen.FitButton(x, y, w, h, Component.empty(), btn -> {
             if (minecraft == null || minecraft.gameMode == null) return;
-            minecraft.gameMode.handleInventoryButtonClick(containerId, hasShiftDown()
+            minecraft.gameMode.handleInventoryButtonClick(containerId, Minecraft.getInstance().hasShiftDown()
                     ? org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_DOWN : org.overengineer.bettacraft.equipment.ExternalFilterMenu.BUTTON_POWER_UP);
         });
         b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.bettacraft.regulator.button_tooltip")));
@@ -202,24 +193,24 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         if (!menu.getSlot(CabinetMenu.FILTER).hasItem()) {
-            g.blit(TEXTURE, leftPos + CabinetMenu.FILTER_X, topPos + CabinetMenu.FILTER_Y, 176, 34, 16, 16);
+            g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.FILTER_X, topPos + CabinetMenu.FILTER_Y, 176, 34, 16, 16, 256, 256);
         }
         if (!menu.getSlot(CabinetMenu.AIR_PUMP).hasItem()) { // M29.1
-            g.blit(TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 176, 50, 16, 16);
+            g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 176, 50, 16, 16, 256, 256);
         }
         SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         if (org.overengineer.bettacraft.equipment.Sump.enabled() || menu.hasSump()) { // M49: the sump slot
-            g.blit(TEXTURE, leftPos + CabinetMenu.SUMP_X - 1, topPos + CabinetMenu.SUMP_Y - 1, 176, 0, 18, 18);
+            g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.SUMP_X - 1, topPos + CabinetMenu.SUMP_Y - 1, 176, 0, 18, 18, 256, 256);
             if (!menu.hasSump()) g.fill(leftPos + CabinetMenu.SUMP_X + 2, topPos + CabinetMenu.SUMP_Y + 5, leftPos + CabinetMenu.SUMP_X + 14,
                     topPos + CabinetMenu.SUMP_Y + 13, 0x557AA8C0); // a hint of water
         }
         if (menu.hasFilter()) {
             for (int i = 0; i < 2; i++) {
                 int x = leftPos + CabinetMenu.HEATER_X + i * 18, y = topPos + CabinetMenu.HEATER_Y;
-                g.blit(TEXTURE, x - 1, y - 1, 176, 0, 18, 18);
-                if (!menu.getSlot(CabinetMenu.HEATER0 + i).hasItem()) g.blit(TEXTURE, x, y, 176, 18, 16, 16);
+                g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, x - 1, y - 1, 176, 0, 18, 18, 256, 256);
+                if (!menu.getSlot(CabinetMenu.HEATER0 + i).hasItem()) g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 176, 18, 16, 16, 256, 256);
             }
         }
     }
@@ -229,10 +220,10 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         // M44: the title leaves room for the front button (long wood names are cut)
         boolean room = frontButton != null && frontButton.visible;
         String t = room ? font.plainSubstrByWidth(title.getString(), FRONT_X - titleLabelX - 2) : title.getString();
-        g.drawString(font, t, titleLabelX, titleLabelY, 0x404040, false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
+        g.drawString(font, t, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
         Component f = Component.translatable("gui.bettacraft.cabinet.filter");
-        g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, 0x606060, false);
+        g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
         // M29.1: the heaters' label gave way to the air pump slot; empty slots explain themselves in a tooltip
     }
 
@@ -245,7 +236,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
                 : i == CabinetMenu.SUMP ? "gui.bettacraft.cabinet.sump.tooltip"
                 : i == CabinetMenu.FILTER ? "gui.bettacraft.cabinet.filter"
                 : i >= CabinetMenu.HEATER0 && i < CabinetMenu.HEATER0 + 2 && menu.hasFilter() ? "gui.bettacraft.cabinet.heaters" : null;
-        if (key != null) g.renderTooltip(font, font.split(Component.translatable(key), 180), mouseX, mouseY);
+        if (key != null) g.setTooltipForNextFrame(font, font.split(Component.translatable(key), 180), mouseX, mouseY);
     }
 
     @Override

@@ -42,6 +42,9 @@ public final class ModNetwork {
         r.playToClient(AlarmWaypointPayload.TYPE, AlarmWaypointPayload.STREAM_CODEC, ModNetwork::onAlarmWaypoint); // M32 part d
         r.playToClient(FeatureSyncPayload.TYPE, FeatureSyncPayload.STREAM_CODEC, ModNetwork::onFeatures); // M33 part b
         r.playToClient(TravellingTankPayload.TYPE, TravellingTankPayload.STREAM_CODEC, ModNetwork::onTravellingTank); // M50
+        r.playToClient(RecipeSyncPayload.TYPE, RecipeSyncPayload.STREAM_CODEC, (p, ctx) -> {
+            if (org.overengineer.bettacraft.platform.Platform.get().isClient()) ctx.enqueueWork(() -> org.overengineer.bettacraft.crafting.RecipeSync.accept(p));
+        }); // M52b
         r.playToClient(AquaristViewPayload.TYPE, AquaristViewPayload.STREAM_CODEC, ModNetwork::onAquaristView); // M51
         r.playToServer(AquaristActionPayload.TYPE, AquaristActionPayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> {
             if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.aquarist.AquaristMenu.handle(sp, p);
@@ -162,7 +165,7 @@ public final class ModNetwork {
 
     /** Whether a template request of this player is answered now (counts it). */
     public static boolean templateRequestAllowed(ServerPlayer sp) {
-        long second = sp.serverLevel().getGameTime() / 20;
+        long second = sp.level().getGameTime() / 20;
         long[] c = TEMPLATE_REQUESTS.computeIfAbsent(sp, k -> new long[]{second, 0});
         if (c[0] != second) {
             c[0] = second;
@@ -180,7 +183,7 @@ public final class ModNetwork {
                 for (DecorType t : DecorType.values()) known |= t.structure().equals(payload.id());
                 if (!known) return;
                 PacketDistributor.sendToPlayer(sp, new DecorTemplatePayload(payload.id(),
-                        DecorItem.template(sp.serverLevel(), payload.id()).map(Optional::of).orElse(Optional.empty())));
+                        DecorItem.template(sp.level(), payload.id()).map(Optional::of).orElse(Optional.empty())));
             } else if (org.overengineer.bettacraft.platform.Platform.get().isClient() && payload.template().isPresent()) {
                 org.overengineer.bettacraft.client.decor.DecorPreview.accept(payload);
             }

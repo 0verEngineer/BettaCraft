@@ -12,7 +12,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
@@ -61,11 +61,11 @@ final class DevClientSmokeM32c {
     }
 
     private static Block block(String id) {
-        return BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
+        return BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         base = p.blockPosition().offset(0, 2, 40);
         if (block("create:display_link") == Blocks.AIR) {

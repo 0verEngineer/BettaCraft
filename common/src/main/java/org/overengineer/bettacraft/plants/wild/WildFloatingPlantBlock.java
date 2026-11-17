@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plants.wild;
 
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -8,13 +9,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.IceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -33,7 +34,7 @@ import org.overengineer.bettacraft.tank.plants.TankPlants;
  * aquarium net (it gives the floating plant item; floating Riccia the aquarium plant Riccia); boats break it like a lily
  * pad. Placed by {@link WildPlantFeature}; no item of the block.
  */
-public class WildFloatingPlantBlock extends BushBlock {
+public class WildFloatingPlantBlock extends VegetationBlock {
     public static final MapCodec<WildFloatingPlantBlock> CODEC = simpleCodec(WildFloatingPlantBlock::new);
     public static final EnumProperty<FloatingPlantType> TYPE = EnumProperty.create("type", FloatingPlantType.class, t -> t != FloatingPlantType.LILY_PAD);
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 1.5, 15);
@@ -44,7 +45,7 @@ public class WildFloatingPlantBlock extends BushBlock {
     }
 
     @Override
-    protected MapCodec<? extends BushBlock> codec() {
+    protected MapCodec<? extends VegetationBlock> codec() {
         return CODEC;
     }
 
@@ -77,8 +78,8 @@ public class WildFloatingPlantBlock extends BushBlock {
     }
 
     @Override
-    protected void entityInside(BlockState s, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(s, level, pos, entity);
+    protected void entityInside(BlockState s, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean pastEdges) {
+        super.entityInside(s, level, pos, entity, effectApplier, pastEdges);
         if (level instanceof ServerLevel && entity instanceof Boat) level.destroyBlock(pos, true, entity);
     }
 
@@ -101,7 +102,7 @@ public class WildFloatingPlantBlock extends BushBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return TankPlants.item(type(state));
     }
 }

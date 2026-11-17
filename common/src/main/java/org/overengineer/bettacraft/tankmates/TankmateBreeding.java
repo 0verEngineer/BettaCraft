@@ -1002,7 +1002,7 @@ public final class TankmateBreeding {
         RandomSource r = level.getRandom();
         var region = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
         TankWaterVolume w = new TankWaterVolume(t);
-        org.overengineer.bettacraft.critters.TankTerrain terrain = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(), region, level.isDay());
+        org.overengineer.bettacraft.critters.TankTerrain terrain = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(), region, level.isBrightOutside());
         for (TankmateEntity f : females) {
             if (room <= 0) break;
             if (f.breeding().cooldown() > 0) continue;
@@ -1279,10 +1279,10 @@ public final class TankmateBreeding {
     @Nullable
     public static TankmateEntity spawn(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, LifeStage stage,
                                        int generation, Vec3 p) {
-        TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level);
+        TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         e.setup(genes, female, stage, generation);
-        e.moveTo(p.x, p.y, p.z, level.getRandom().nextFloat() * 360F, 0F);
+        e.snapTo(p.x, p.y, p.z, level.getRandom().nextFloat() * 360F, 0F);
         TankInhabitants.adopt(e, c);
         if (!level.addFreshEntity(e)) return null;
         c.getTank().inhabitants().add(e.getUUID());

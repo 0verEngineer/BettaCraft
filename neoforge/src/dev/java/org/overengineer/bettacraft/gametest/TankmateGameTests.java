@@ -148,14 +148,14 @@ public final class TankmateGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         return sp;
     }
 
     private static void use(ServerPlayer sp, BlockPos pos, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         Vec3 hit = Vec3.atCenterOf(pos).add(0, 0, 0.5);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, Direction.SOUTH, pos, false));
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, Direction.SOUTH, pos, false));
     }
 
     // ------------------------------------------------------------------ in the tank
@@ -551,11 +551,11 @@ public final class TankmateGameTests {
         CompoundTag view = TankView.build(sp, c);
         TankView v = TankView.read(view);
         var harl = v.inhabitants.stream().filter(TankView.Inhabitant::isTankmate)
-                .filter(i -> "harlequin_rasbora".equals(i.tankmate().getString("species"))).toList();
+                .filter(i -> "harlequin_rasbora".equals(i.tankmate().getStringOr("species", ""))).toList();
         h.assertTrue(harl.size() == 3, "three harlequins in the menu: " + harl.size());
-        h.assertTrue(harl.getFirst().tankmate().getInt("shoal") == 3, "shoal size shown");
-        h.assertTrue((harl.getFirst().tankmate().getInt("stress") & TankmateCare.STRESS_SHOAL) != 0, "too small a shoal shown");
-        var tm = v.breeding.getList("tankmates", 10);
+        h.assertTrue(harl.getFirst().tankmate().getIntOr("shoal", 0) == 3, "shoal size shown");
+        h.assertTrue((harl.getFirst().tankmate().getIntOr("stress", 0) & TankmateCare.STRESS_SHOAL) != 0, "too small a shoal shown");
+        var tm = v.breeding.getListOrEmpty("tankmates");
         h.assertTrue(tm.size() == 2, "two species on the breeding tab: " + tm.size());
         // save and load keep genes, sex, stage
         CompoundTag saved = g.saveTankmate();

@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -25,11 +26,11 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
  * and below the old textured egg / larva layer is still there. Grows while the male builds it.
  */
 final class NestRenderer {
-    private static final ResourceLocation NEST = BettaCraft.id("textures/entity/nest/bubble_nest.png");
-    private static final ResourceLocation EGGS = BettaCraft.id("textures/entity/nest/nest_eggs.png");
-    private static final ResourceLocation LARVAE = BettaCraft.id("textures/entity/nest/nest_larvae.png");
-    private static final ResourceLocation FOAM = BettaCraft.id("textures/entity/nest/nest_foam.png");
-    private static final ResourceLocation BEADS = BettaCraft.id("textures/entity/nest/nest_beads.png");
+    private static final Identifier NEST = BettaCraft.id("textures/entity/nest/bubble_nest.png");
+    private static final Identifier EGGS = BettaCraft.id("textures/entity/nest/nest_eggs.png");
+    private static final Identifier LARVAE = BettaCraft.id("textures/entity/nest/nest_larvae.png");
+    private static final Identifier FOAM = BettaCraft.id("textures/entity/nest/nest_foam.png");
+    private static final Identifier BEADS = BettaCraft.id("textures/entity/nest/nest_beads.png");
     /** Height of the dome above the surface and depth of the foam below it, relative to the nest size (0.7 when built). */
     static final float UP = 0.085F, DOWN = 0.22F;
     private static final int LON = 20, LAT = 4;
@@ -59,11 +60,11 @@ final class NestRenderer {
         // the nest position lies SURFACE_GAP under the water surface: the dome is built on the surface itself
         pose.translate(p.x - origin.getX(), p.y + SURFACE_GAP - origin.getY(), p.z - origin.getZ());
         pose.mulPose(Axis.YP.rotationDegrees(((time + partialTick) * 0.15F) % 360F));
-        VertexConsumer foam = buffers.getBuffer(RenderType.entityTranslucent(NEST));
+        VertexConsumer foam = buffers.getBuffer(RenderTypes.entityTranslucent(NEST));
         float up = size * UP, down = size * DOWN;
         // main dome, an inner layer, and three smaller lobes around it (layers of bubbles of different heights)
         lens(pose, foam, size, 1.0F, up, down, 0, 0, 0F, light, 0xFFFFFFFF);
-        VertexConsumer dense = buffers.getBuffer(RenderType.entityTranslucent(FOAM));
+        VertexConsumer dense = buffers.getBuffer(RenderTypes.entityTranslucent(FOAM));
         lens(pose, dense, size, 0.72F, up * 0.8F, down * 1.05F, 0, 0, 1.7F, light, 0xFFFFFFFF);
         for (int i = 0; i < 3; i++) {
             float a = (float) (i * 2.1 + ((seed >> (i * 8)) & 0xFF) / 255.0 * 0.9);
@@ -76,11 +77,11 @@ final class NestRenderer {
             int n = Math.min(40, nest.visibleEggCount());
             // the textured layer just under the deepest part of the foam (seen from below and from above through it)
             float layer = Math.min(size * 0.5F, size * Math.min(1.0F, 0.55F + n / 40F) * 0.62F);
-            VertexConsumer ev = buffers.getBuffer(RenderType.entityTranslucent(larvae ? LARVAE : EGGS));
+            VertexConsumer ev = buffers.getBuffer(RenderTypes.entityTranslucent(larvae ? LARVAE : EGGS));
             float ly = -down * 0.93F;
             flat(pose, ev, layer, ly, light, false);
             flat(pose, ev, layer, ly + 0.002F, light, true);
-            beads(pose, buffers.getBuffer(RenderType.entityCutoutNoCull(BEADS)), size, down, n, larvae, seed, light);
+            beads(pose, buffers.getBuffer(RenderTypes.entityCutoutNoCull(BEADS)), size, down, n, larvae, seed, light);
         }
         pose.popPose();
     }

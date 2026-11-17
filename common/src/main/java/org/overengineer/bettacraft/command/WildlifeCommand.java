@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.Perms;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -50,7 +51,7 @@ public final class WildlifeCommand {
     private WildlifeCommand() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> build() {
-        return Commands.literal("wildlife").requires(s -> s.hasPermission(2))
+        return Commands.literal("wildlife").requires(s -> Perms.has(s, 2))
                 .executes(ctx -> info(ctx.getSource()))
                 .then(Commands.literal("list").executes(ctx -> list(ctx.getSource(), 64))
                         .then(Commands.argument("radius", IntegerArgumentType.integer(1, 512)).executes(ctx -> list(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius")))))
@@ -68,8 +69,8 @@ public final class WildlifeCommand {
 
     /** Water-ambient mobs that count for the vanilla cap around a position (not persistent), by mod. */
     public static Map<String, Integer> capMobs(ServerLevel level, BlockPos pos) {
-        AABB box = new AABB(pos.getX() - CAP_RADIUS, level.getMinBuildHeight(), pos.getZ() - CAP_RADIUS,
-                pos.getX() + CAP_RADIUS, level.getMaxBuildHeight(), pos.getZ() + CAP_RADIUS);
+        AABB box = new AABB(pos.getX() - CAP_RADIUS, level.getMinY(), pos.getZ() - CAP_RADIUS,
+                pos.getX() + CAP_RADIUS, level.getMaxY(), pos.getZ() + CAP_RADIUS);
         Map<String, Integer> out = new LinkedHashMap<>();
         for (Entity e : level.getEntities((Entity) null, box, e -> e.getType().getCategory() == MobCategory.WATER_AMBIENT)) {
             if (e instanceof Mob m && (m.isPersistenceRequired() || m.requiresCustomPersistence())) continue;
@@ -86,7 +87,7 @@ public final class WildlifeCommand {
             return 0;
         }
         Holder<Biome> biome = level.getBiome(pos);
-        String biomeId = biome.unwrapKey().map(k -> k.location().toString()).orElse("?");
+        String biomeId = biome.unwrapKey().map(k -> k.identifier().toString()).orElse("?");
         NetCatching.Water spawn = Wildlife.water(biome), net = BiomeWaters.water(biome, true);
         say(src, Component.translatable("command.bettacraft.wildlife.biome", biomeId, waterName(spawn), waterName(net)));
         // M28.1 part b: the water of the wild plants here (new chunks)
@@ -98,17 +99,17 @@ public final class WildlifeCommand {
                 Features.enabled(Feature.AQUATIC_WILD) ? "" : " (" + Feature.AQUATIC_WILD.key() + ": off)"));
         // the animals of the mod in the spawn list and their share of the group
         int total = 0, oursTotal = 0;
-        for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) total += d.getWeight().asInt();
-        List<MobSpawnSettings.SpawnerData> ours = WildSpawnPass.ours(biome);
+        for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) total += d.weight();
+        List<net.minecraft.util.random.Weighted<MobSpawnSettings.SpawnerData>> ours = WildSpawnPass.ours(biome);
         if (ours.isEmpty()) {
             say(src, Component.translatable("command.bettacraft.wildlife.none"));
         } else {
             MutableComponent names = Component.empty();
             for (int i = 0; i < ours.size(); i++) {
                 var d = ours.get(i);
-                oursTotal += d.getWeight().asInt();
+                oursTotal += d.weight();
                 if (i > 0) names.append(", ");
-                names.append(d.type.getDescription()).append(" " + d.getWeight().asInt() + " (" + d.minCount + "-" + d.maxCount + ")");
+                names.append(d.value().type().getDescription()).append(" " + d.weight() + " (" + d.value().minCount() + "-" + d.value().maxCount() + ")");
             }
             int share = total <= 0 ? 0 : Math.round(100F * oursTotal / total);
             say(src, Component.translatable("command.bettacraft.wildlife.species", oursTotal, total, share, names));

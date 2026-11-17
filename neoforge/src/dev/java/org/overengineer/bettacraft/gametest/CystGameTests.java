@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import io.netty.buffer.Unpooled;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -115,7 +116,7 @@ public final class CystGameTests {
             sp.getInventory().clearContent();
             h.assertTrue(sp.getInventory().add(jars(100)), "picked up");
             int stacks = 0, total = 0, biggest = 0;
-            for (ItemStack s : sp.getInventory().items) {
+            for (ItemStack s : sp.getInventory().getNonEquipmentItems()) {
                 if (!s.is(ModItems.ARTEMIA_CYSTS.get())) continue;
                 stacks++;
                 total += s.getCount();
@@ -136,7 +137,7 @@ public final class CystGameTests {
     public static void oldDamagedJarsBecomeWholeJars(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         var reg = level.registryAccess();
-        ItemStack loaded = ItemStack.parseOptional(reg, oldJarsTag(16, 9));
+        ItemStack loaded = NbtCompat.parseOptionalStack(reg, oldJarsTag(16, 9));
         h.assertTrue(loaded.getCount() == 16 && plain(loaded), "saved old jars load as 16 plain jars: " + loaded + " " + loaded.getComponentsPatch());
         // a stack that still carries the damage (as if it were made in memory) is cleaned by copy() and by the network codec
         ItemStack raw = jars(16);
@@ -149,9 +150,9 @@ public final class CystGameTests {
         // an item entity of an old world
         ItemEntity e = new ItemEntity(level, 0, 0, 0, jars(16));
         CompoundTag et = new CompoundTag();
-        e.saveWithoutId(et);
-        CompoundTag item = et.getCompound("Item");
-        CompoundTag comps = item.getCompound("components");
+        et.merge(NbtCompat.saveEntityWithoutId(e));
+        CompoundTag item = et.getCompoundOrEmpty("Item");
+        CompoundTag comps = item.getCompoundOrEmpty("components");
         comps.putInt("minecraft:damage", 12);
         item.put("components", comps);
         ItemEntity back = new ItemEntity(EntityType.ITEM, level);
@@ -166,8 +167,8 @@ public final class CystGameTests {
             h.assertTrue(sp.getInventory().add(jars(48)), "48 new jars picked up");
             ItemStack s0 = sp.getInventory().getItem(0);
             h.assertTrue(s0.getCount() == 64 && plain(s0), "one stack of 64: " + s0);
-            for (int i = 1; i < sp.getInventory().items.size(); i++) {
-                h.assertTrue(sp.getInventory().items.get(i).isEmpty(), "nothing in slot " + i);
+            for (int i = 1; i < sp.getInventory().getNonEquipmentItems().size(); i++) {
+                h.assertTrue(sp.getInventory().getNonEquipmentItems().get(i).isEmpty(), "nothing in slot " + i);
             }
         } finally {
             sp.getServer().getPlayerList().remove(sp);
@@ -192,12 +193,12 @@ public final class CystGameTests {
         tub.items().setStackInSlot(CultureTubBlockEntity.INPUT, jars(16));
         CompoundTag tag = tub.saveWithoutMetadata(reg);
         // write it as M21.8..M35 did: the jars in the slot with spent uses, one open jar beside them
-        ListTag list = tag.getCompound("items").getList("Items", Tag.TAG_COMPOUND);
+        ListTag list = tag.getCompoundOrEmpty("items").getListOrEmpty("Items");
         boolean found = false;
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag slot = list.getCompound(i);
-            if (slot.getInt("Slot") != CultureTubBlockEntity.INPUT) continue;
-            CompoundTag comps = slot.getCompound("components");
+            CompoundTag slot = list.getCompoundOrEmpty(i);
+            if (slot.getIntOr("Slot", 0) != CultureTubBlockEntity.INPUT) continue;
+            CompoundTag comps = slot.getCompoundOrEmpty("components");
             comps.putInt("minecraft:damage", 4);
             slot.put("components", comps);
             found = true;

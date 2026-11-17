@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -36,20 +36,20 @@ import org.slf4j.LoggerFactory;
  * the sea turtle, the mobs in glass and the terrarium animals of our own (M31). A profile with {@code "terrarium"} needs
  * registers the type as a terrarium animal (M31) as well, so it goes into terraria and paludaria by its habitat.
  */
-public final class ForeignProfiles extends SimplePreparableReloadListener<Map<ResourceLocation, ForeignProfile>> {
+public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Identifier, ForeignProfile>> {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign");
     private static final FileToIdConverter FILES = FileToIdConverter.json("bettacraft/foreign_animals");
     private static volatile Map<EntityType<?>, ForeignProfile> byType = Map.of();
     /** M33 part d: warnings about an entity id missing from a loaded mod (renamed?) so far (GameTests). */
     public static int renamedWarnings;
     /** M33 part d: the profile file that maps each type (for {@code /bettacraft foreign list}). */
-    private static volatile Map<EntityType<?>, ResourceLocation> fileByType = Map.of();
+    private static volatile Map<EntityType<?>, Identifier> fileByType = Map.of();
     /** M39 (question E1): the types our tanks refuse, with the reason of their profile. */
     private static volatile Map<EntityType<?>, String> refused = Map.of();
     /** Types registered as terrarium animals by a profile (taken back on the next reload). */
     private static final Set<EntityType<?>> TERRARIUM = new HashSet<>();
     /** The files of the last {@link #set} (GameTests add their own and restore these). */
-    private static volatile Map<ResourceLocation, ForeignProfile> files = Map.of();
+    private static volatile Map<Identifier, ForeignProfile> files = Map.of();
 
 
     /** The profile of this type, or null (the mapping itself; every user checks its own feature switch). */
@@ -110,7 +110,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
 
     /** M33 part d: the id of the profile file that maps this type, or null. */
     @Nullable
-    public static ResourceLocation fileOf(EntityType<?> type) {
+    public static Identifier fileOf(EntityType<?> type) {
         return fileByType.get(type);
     }
 
@@ -135,13 +135,13 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     }
 
     /** The profile files as loaded (by id). */
-    public static Map<ResourceLocation, ForeignProfile> files() {
+    public static Map<Identifier, ForeignProfile> files() {
         return files;
     }
 
     /** Whether Bettacraft has its own care for this type, so a profile must not take it over. */
     public static boolean ownCare(EntityType<?> type) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (BettaCraft.MOD_ID.equals(id.getNamespace())) return true;
         if (type == EntityType.AXOLOTL || type == EntityType.DOLPHIN || type == EntityType.TURTLE || type == EntityType.TADPOLE) return true;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return true;
@@ -158,7 +158,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     /** The paths of the entity types registered under a namespace. */
     static List<String> pathsOf(String namespace) {
         List<String> out = new ArrayList<>();
-        for (ResourceLocation id : BuiltInRegistries.ENTITY_TYPE.keySet()) if (id.getNamespace().equals(namespace)) out.add(id.getPath());
+        for (Identifier id : BuiltInRegistries.ENTITY_TYPE.keySet()) if (id.getNamespace().equals(namespace)) out.add(id.getPath());
         return out;
     }
 
@@ -201,10 +201,10 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     }
 
     @Override
-    protected Map<ResourceLocation, ForeignProfile> prepare(ResourceManager rm, ProfilerFiller profiler) {
-        Map<ResourceLocation, ForeignProfile> out = new LinkedHashMap<>();
-        for (Map.Entry<ResourceLocation, Resource> e : FILES.listMatchingResources(rm).entrySet()) {
-            ResourceLocation id = FILES.fileToId(e.getKey());
+    protected Map<Identifier, ForeignProfile> prepare(ResourceManager rm, ProfilerFiller profiler) {
+        Map<Identifier, ForeignProfile> out = new LinkedHashMap<>();
+        for (Map.Entry<Identifier, Resource> e : FILES.listMatchingResources(rm).entrySet()) {
+            Identifier id = FILES.fileToId(e.getKey());
             try (Reader r = e.getValue().openAsReader()) {
                 JsonElement json = JsonParser.parseReader(r);
                 out.put(id, ForeignProfile.parse(json.getAsJsonObject(), w -> LOGGER.warn("{}: {}", id, w)));
@@ -216,22 +216,22 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Re
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, ForeignProfile> files, ResourceManager rm, ProfilerFiller profiler) {
+    protected void apply(Map<Identifier, ForeignProfile> files, ResourceManager rm, ProfilerFiller profiler) {
         set(files);
     }
 
     /** Puts the profiles in place (reload, GameTests). Returns the types now mapped. */
-    public static synchronized Map<EntityType<?>, ForeignProfile> set(Map<ResourceLocation, ForeignProfile> files) {
+    public static synchronized Map<EntityType<?>, ForeignProfile> set(Map<Identifier, ForeignProfile> files) {
         ForeignProfiles.files = java.util.Collections.unmodifiableMap(new LinkedHashMap<>(files));
         for (EntityType<?> t : TERRARIUM) TerrariumAnimals.unregister(t);
         TERRARIUM.clear();
         Map<EntityType<?>, ForeignProfile> map = new LinkedHashMap<>();
-        Map<EntityType<?>, ResourceLocation> fileMap = new LinkedHashMap<>();
+        Map<EntityType<?>, Identifier> fileMap = new LinkedHashMap<>();
         Map<EntityType<?>, String> refusedMap = new LinkedHashMap<>();
         int skipped = 0;
-        for (Map.Entry<ResourceLocation, ForeignProfile> f : files.entrySet()) {
+        for (Map.Entry<Identifier, ForeignProfile> f : files.entrySet()) {
             ForeignProfile p = f.getValue();
-            for (ResourceLocation eid : p.entities()) {
+            for (Identifier eid : p.entities()) {
                 var type = BuiltInRegistries.ENTITY_TYPE.getOptional(eid);
                 if (type.isEmpty()) {
                     if (modLoaded(eid.getNamespace())) {

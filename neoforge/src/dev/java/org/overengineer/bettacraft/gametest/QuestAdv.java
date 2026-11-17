@@ -18,7 +18,7 @@ final class QuestAdv {
     static ServerPlayer watcher(GameTestHelper h, TankBlockEntity c) {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         BlockPos b = c.getBlockPos();
-        p.moveTo(b.getX() + 0.5, b.getY() + 1.5, b.getZ() + 0.5, 0F, 0F);
+        p.snapTo(b.getX() + 0.5, b.getY() + 1.5, b.getZ() + 0.5, 0F, 0F);
         return p;
     }
 

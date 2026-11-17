@@ -36,7 +36,7 @@ public final class TankMovesHandlers {
         List<Lift> todo = new ArrayList<>(LIFTS);
         LIFTS.clear();
         Map<String, List<Lift>> byTank = new HashMap<>();
-        for (Lift l : todo) byTank.computeIfAbsent(l.dim().location() + "|" + l.tank(), k -> new ArrayList<>()).add(l);
+        for (Lift l : todo) byTank.computeIfAbsent(l.dim().identifier() + "|" + l.tank(), k -> new ArrayList<>()).add(l);
         for (List<Lift> group : byTank.values()) {
             ServerLevel level = event.getServer().getLevel(group.getFirst().dim());
             if (level == null) continue;

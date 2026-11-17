@@ -120,7 +120,7 @@ public final class TerrariumAnimals {
 
     /** A spot on the land of the tank (the ground of a random land column; the middle of the floor without land). */
     public static Vec3 spawnPos(ServerLevel level, TankData t, EntityType<?> type, RandomSource r) {
-        TankTerrain terrain = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
+        TankTerrain terrain = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside());
         double surface = t.waterMb() <= 0 ? Double.NEGATIVE_INFINITY : t.waterSurfaceY();
         double half = Math.max(0.1, type.getDimensions().width() / 2 + 1.0 / 16);
         Vec3 water = null;

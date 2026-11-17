@@ -6,7 +6,7 @@ import java.io.Reader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -43,8 +43,8 @@ public final class GeneticsReloadListener extends SimplePreparableReloadListener
 
     private static Map<String, JsonElement> read(ResourceManager rm, FileToIdConverter conv) {
         Map<String, JsonElement> out = new LinkedHashMap<>();
-        for (Map.Entry<ResourceLocation, Resource> e : conv.listMatchingResources(rm).entrySet()) {
-            ResourceLocation id = conv.fileToId(e.getKey());
+        for (Map.Entry<Identifier, Resource> e : conv.listMatchingResources(rm).entrySet()) {
+            Identifier id = conv.fileToId(e.getKey());
             String key = BettaCraft.MOD_ID.equals(id.getNamespace()) ? id.getPath() : id.toString();
             try (Reader r = e.getValue().openAsReader()) {
                 out.put(key, JsonParser.parseReader(r));

@@ -8,7 +8,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -67,7 +67,7 @@ public final class PowerGameTests {
     }
 
     private static Block block(String id) {
-        return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.parse(id)).orElseThrow(() -> new GameTestAssertException("no block " + id));
+        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestAssertException("no block " + id));
     }
 
     private static boolean loaded(String... mods) {
@@ -276,8 +276,8 @@ public final class PowerGameTests {
     private static void conduit(GameTestHelper h, BlockPos rel) {
         ServerLevel level = h.getLevel();
         try {
-            var reg = level.registryAccess().registryOrThrow(ResourceKey.createRegistryKey(ResourceLocation.parse("enderio:conduit")));
-            Holder<?> energy = reg.getHolderOrThrow(ResourceKey.create(reg.key(), ResourceLocation.parse("enderio:energy")));
+            var reg = level.registryAccess().lookupOrThrow(ResourceKey.createRegistryKey(Identifier.parse("enderio:conduit")));
+            Holder<?> energy = reg.getHolderOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:energy")));
             h.setBlock(rel, block("enderio:conduit"));
             Object be = level.getBlockEntity(h.absolutePos(rel));
             be.getClass().getMethod("addConduit", Holder.class, Direction.class, net.minecraft.world.entity.player.Player.class)

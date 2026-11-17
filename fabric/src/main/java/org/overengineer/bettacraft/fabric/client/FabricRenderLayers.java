@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.fabric.client;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -24,11 +25,11 @@ final class FabricRenderLayers {
             if (in == null) return;
             JsonObject o = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
             for (var e : o.entrySet()) {
-                Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(e.getKey()));
+                Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(e.getKey()));
                 RenderType t = switch (e.getValue().getAsString()) {
-                    case "minecraft:cutout" -> RenderType.cutout();
-                    case "minecraft:cutout_mipped" -> RenderType.cutoutMipped();
-                    case "minecraft:translucent" -> RenderType.translucent();
+                    case "minecraft:cutout" -> ChunkSectionLayer.CUTOUT;
+                    case "minecraft:cutout_mipped" -> ChunkSectionLayer.CUTOUT;
+                    case "minecraft:translucent" -> ChunkSectionLayer.TRANSLUCENT;
                     default -> null;
                 };
                 if (t != null) BlockRenderLayerMap.INSTANCE.putBlock(b, t);

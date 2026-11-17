@@ -28,7 +28,7 @@ public final class TankProtectionHandlers {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onBreak(BlockEvent.BreakEvent e) {
-        if (!(e.getLevel() instanceof Level level) || level.isClientSide) return;
+        if (!(e.getLevel() instanceof Level level) || level.isClientSide()) return;
         if (protectedBy(level, e.getPos()) == null) return;
         e.setCanceled(true);
         if (e.getPlayer() instanceof ServerPlayer sp) sp.displayClientMessage(message(), true);
@@ -42,7 +42,7 @@ public final class TankProtectionHandlers {
 
     @SubscribeEvent
     public static void onPiston(PistonEvent.Pre e) {
-        if (!(e.getLevel() instanceof Level level) || level.isClientSide) return;
+        if (!(e.getLevel() instanceof Level level) || level.isClientSide()) return;
         if (!ServerConfig.getOr(ServerConfig.PROTECT_FROM_EXPLOSIONS_AND_PISTONS, true)) return;
         var helper = e.getStructureHelper();
         if (helper == null || !helper.resolve()) return;

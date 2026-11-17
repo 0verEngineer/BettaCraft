@@ -1,10 +1,11 @@
 package org.overengineer.bettacraft.datagen;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonObject;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
@@ -86,7 +87,7 @@ final class DataGenM291 {
     }
 
     /** After all item models: those with a block model of ours as parent and no display get the vanilla block one. */
-    static void blockDisplays(ItemModelProvider p, java.util.Map<ResourceLocation, ItemModelBuilder> models) {
+    static void blockDisplays(ItemModelProvider p, java.util.Map<Identifier, ItemModelBuilder> models) {
         for (var e : models.entrySet()) {
             JsonObject j = e.getValue().toJson();
             String parent = j.has("parent") ? j.get("parent").getAsString() : "";

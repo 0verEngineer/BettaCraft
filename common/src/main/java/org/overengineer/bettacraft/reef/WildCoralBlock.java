@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.reef;
 
+import net.minecraft.world.level.ScheduledTickAccess;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -11,7 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -109,10 +110,10 @@ public class WildCoralBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState s, Direction dir, BlockState other, LevelAccessor level, BlockPos pos, BlockPos otherPos) {
-        if (s.getValue(WATERLOGGED)) level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+    protected BlockState updateShape(BlockState s, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos otherPos, BlockState other, RandomSource random) {
+        if (s.getValue(WATERLOGGED)) tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         if (dir == Direction.DOWN && !canSurvive(s, level, pos)) return net.minecraft.world.level.block.Blocks.WATER.defaultBlockState();
-        return super.updateShape(s, dir, other, level, pos, otherPos);
+        return super.updateShape(s, level, tickAccess, pos, dir, otherPos, other, random);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class WildCoralBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public net.minecraft.world.item.ItemStack pickupBlock(@Nullable Player player, LevelAccessor level, BlockPos pos, BlockState s) {
+    public net.minecraft.world.item.ItemStack pickupBlock(@Nullable net.minecraft.world.entity.LivingEntity player, LevelAccessor level, BlockPos pos, BlockState s) {
         // a bucket takes the water: the coral dries out and breaks off
         ItemStack out = SimpleWaterloggedBlock.super.pickupBlock(player, level, pos, s);
         if (!out.isEmpty()) level.scheduleTick(pos, this, 1);
@@ -145,18 +146,18 @@ public class WildCoralBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (state.getValue(TRIMMED)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.wild_coral.trimmed").withStyle(ChatFormatting.GRAY), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(species, 0);
         Block.popResourceFromFace(level, pos, hit.getDirection(), frag);
         level.setBlock(pos, state.setValue(TRIMMED, true), 3);
         level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 0.8F, 1.3F);
-        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-        return ItemInteractionResult.CONSUME;
+        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
+        return InteractionResult.CONSUME;
     }
 }

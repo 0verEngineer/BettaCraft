@@ -10,9 +10,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -54,7 +54,7 @@ public final class DolphinCare {
     public static double daysHungry(Dolphin d, long now) {
         var tag = org.overengineer.bettacraft.platform.Platform.get().persistentData(d);
         if (!tag.contains(FED)) tag.putLong(FED, now);
-        return Math.max(0, (now - tag.getLong(FED)) / 24000.0);
+        return Math.max(0, (now - tag.getLongOr(FED, 0L)) / 24000.0);
     }
 
     /** One care step of the tank ({@code days} since the last). */
@@ -79,14 +79,14 @@ public final class DolphinCare {
             boolean hungry = daysHungry(d, now) > hungryAfter;
             if (!hungry && !fresh) continue;
             var tag = org.overengineer.bettacraft.platform.Platform.get().persistentData(d);
-            double harm = tag.getDouble(HARM) + HARM_PER_DAY * days * ((hungry ? 1 : 0) + (fresh ? 1 : 0));
+            double harm = tag.getDoubleOr(HARM, 0d) + HARM_PER_DAY * days * ((hungry ? 1 : 0) + (fresh ? 1 : 0));
             if (harm >= 1) {
                 float dmg = (float) Math.floor(harm);
                 harm -= dmg;
                 d.hurt(d.damageSources().starve(), dmg);
             }
             tag.putDouble(HARM, harm);
-            if (now - tag.getLong("bettacraft:dolphin_log") > LOG_TICKS) {
+            if (now - tag.getLongOr("bettacraft:dolphin_log", 0L) > LOG_TICKS) {
                 tag.putLong("bettacraft:dolphin_log", now);
                 TankCare.log(level, c, hungry ? "log.bettacraft.dolphin_hungry" : "log.bettacraft.dolphin_fresh", TankCare.nameArg(d));
             }
@@ -139,13 +139,13 @@ public final class DolphinCare {
     }
 
     /** Raw fish on a tank with dolphins: the hungriest one eats it. PASS if there is no dolphin or no fish. */
-    public static ItemInteractionResult feed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!stack.is(ItemTags.FISHES)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!(level instanceof ServerLevel server)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    public static InteractionResult feed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!stack.is(ItemTags.FISHES)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!(level instanceof ServerLevel server)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         List<Dolphin> list = dolphins(server, c.getTank());
-        if (list.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (list.isEmpty()) return InteractionResult.TRY_WITH_EMPTY_HAND;
         long now = server.getGameTime();
         Dolphin pick = list.getFirst();
         for (Dolphin d : list) if (daysHungry(d, now) > daysHungry(pick, now)) pick = d;
@@ -155,6 +155,6 @@ public final class DolphinCare {
         server.sendParticles(ParticleTypes.HEART, pick.getX(), pick.getY() + 0.6, pick.getZ(), 2, 0.3, 0.2, 0.3, 0.01);
         level.playSound(null, pick.blockPosition(), SoundEvents.DOLPHIN_EAT, SoundSource.NEUTRAL, 1.0F, 1.0F);
         player.displayClientMessage(Component.translatable("message.bettacraft.big.dolphin_fed", pick.getDisplayName()), true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 }

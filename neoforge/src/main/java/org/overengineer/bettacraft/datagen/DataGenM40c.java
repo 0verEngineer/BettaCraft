@@ -5,7 +5,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -24,7 +24,7 @@ final class DataGenM40c {
     private DataGenM40c() {}
 
     /** The tag Cable Facades reads (CFItemTags.SUPPORTS_FACADE in its jar). */
-    static final TagKey<Block> CABLE_FACADES_SUPPORTS = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("cable_facades", "supports_facade"));
+    static final TagKey<Block> CABLE_FACADES_SUPPORTS = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("cable_facades", "supports_facade"));
 
     static void itemModels(ItemModelProvider p) {
         p.withExistingParent("pipe_cover", p.mcLoc("item/handheld")).texture("layer0", p.modLoc("item/pipe_cover"));

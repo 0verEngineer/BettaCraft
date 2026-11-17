@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -47,7 +48,7 @@ public final class DriveRender {
         if (face == null || cab.getLevel() == null) return;
         // the light in front of the face (the cabinet's own block is dark inside)
         light = net.minecraft.client.renderer.LevelRenderer.getLightColor(cab.getLevel(), cab.getBlockPos().relative(face));
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityCutout(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(InventoryMenu.BLOCK_ATLAS));
         TextureAtlasSprite s = sprite("drive_coupling");
         ps.pushPose();
         face(ps, face);

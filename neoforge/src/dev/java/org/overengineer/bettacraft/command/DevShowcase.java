@@ -6,7 +6,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class DevShowcase {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/showcase");
-    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.showcase");
+    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.showcase", false);
     private static final int GAP = 4, ROW = 9;
     private static int ticks;
     private static int haltAt = -1;
@@ -96,7 +96,7 @@ public final class DevShowcase {
     private static BlockPos origin;
     private static int row;
     /** M21.5: the wood of the cabinets in the current row. */
-    private static ResourceLocation rowWood = ResourceLocation.withDefaultNamespace("oak_planks");
+    private static Identifier rowWood = Identifier.withDefaultNamespace("oak_planks");
     private static final String[] WOODS = {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks", "acacia_planks", "dark_oak_planks",
             "mangrove_planks", "cherry_planks", "bamboo_planks", "crimson_planks", "warped_planks", "pale_oak_planks"};
     private static final List<ChunkPos> forced = new ArrayList<>();
@@ -171,7 +171,7 @@ public final class DevShowcase {
     private static void prepare(MinecraftServer server, ServerLevel level) {
         GameRules rules = level.getGameRules();
         rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
-        rules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false, server);
+        rules.getRule(GameRules.SPAWN_MOBS).set(false, server);
         rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, server);
         rules.getRule(GameRules.RULE_DO_PATROL_SPAWNING).set(false, server);
         rules.getRule(GameRules.RULE_DO_TRADER_SPAWNING).set(false, server);
@@ -183,7 +183,7 @@ public final class DevShowcase {
             v.set(false);
             v.save();
         }
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, spawn.getX(), spawn.getZ());
         origin = new BlockPos(spawn.getX() + 3, ground, spawn.getZ() + 6);
         level.setDefaultSpawnPos(new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F);
@@ -435,18 +435,18 @@ public final class DevShowcase {
         // M21.7: cabinets of stone: a small tank on a cabinet of every vanilla stone with slabs, then the first stones of
         // other mods that the recipes know a slab for
         at = startRow(level, "Steinschränke");
-        List<ResourceLocation> stones = new ArrayList<>();
+        List<Identifier> stones = new ArrayList<>();
         for (var p : org.overengineer.bettacraft.equipment.CabinetStones.VANILLA) stones.add(blockOf(p.stone()));
         int modded = 0;
         for (var p : org.overengineer.bettacraft.equipment.CabinetStones.all(level.getRecipeManager(), level.registryAccess())) {
             if (!p.stoneId().getNamespace().equals("minecraft") && modded++ < 6) stones.add(blockOf(p.stone()));
         }
-        for (ResourceLocation id : stones) {
+        for (Identifier id : stones) {
             rowWood = id;
             tank(level, at, 1, 1, 1, 0F, true);
             String de = STONES_DE.get(id.getPath());
             name(level, at, de != null && id.getNamespace().equals("minecraft") ? de
-                    : net.minecraft.locale.Language.getInstance().getOrDefault(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id).getDescriptionId(), id.getPath()));
+                    : net.minecraft.locale.Language.getInstance().getOrDefault(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(id).getDescriptionId(), id.getPath()));
             at = at.east(3);
         }
         LOGGER.info("[showcase] stone cabinets: {} stones ({} of other mods)", stones.size(), Math.min(modded, 6));
@@ -643,7 +643,7 @@ public final class DevShowcase {
 
     /** M35: a land animal of another mod from its terrarium box into a tank. */
     private static void foreign(ServerLevel level, TankBlockEntity c, String id) {
-        var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.ResourceLocation.parse(id)).orElse(null);
+        var type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getOptional(net.minecraft.resources.Identifier.parse(id)).orElse(null);
         var e = type != null ? type.create(level) : null;
         if (e == null) return;
         ItemStack box = org.overengineer.bettacraft.terrarium.TerrariumBoxItem.fillWith(e);
@@ -695,7 +695,7 @@ public final class DevShowcase {
         name(level, at, title);
     }
 
-    private static ResourceLocation blockOf(net.minecraft.world.item.Item item) {
+    private static Identifier blockOf(net.minecraft.world.item.Item item) {
         return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(((net.minecraft.world.item.BlockItem) item).getBlock());
     }
 
@@ -718,8 +718,8 @@ public final class DevShowcase {
         // M21.5: the tanks stand on cabinets: the row is one block higher, the cabinets on the ground
         BlockPos start = origin.offset(0, 1, row * ROW);
         String wood = WOODS[row % WOODS.length];
-        rowWood = net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(ResourceLocation.withDefaultNamespace(wood))
-                ? ResourceLocation.withDefaultNamespace(wood) : ResourceLocation.withDefaultNamespace("oak_planks");
+        rowWood = net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(Identifier.withDefaultNamespace(wood))
+                ? Identifier.withDefaultNamespace(wood) : Identifier.withDefaultNamespace("oak_planks");
         row++;
         // a path in front of the row and, at its start, a small dry tank named after the row (no vanilla signs: the
         // tanks carry their names on the glass)
@@ -736,7 +736,7 @@ public final class DevShowcase {
         return tank(level, cuboid(min, sx, sy, sz), min, salt, water, null, null);
     }
 
-    private static TankBlockEntity tank(ServerLevel level, List<BlockPos> blocks, BlockPos min, float salt, boolean water, ResourceLocation glass, TankStyle style) {
+    private static TankBlockEntity tank(ServerLevel level, List<BlockPos> blocks, BlockPos min, float salt, boolean water, Identifier glass, TankStyle style) {
         cabinets(level, blocks);
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
@@ -1154,19 +1154,19 @@ public final class DevShowcase {
     }
 
     private static void glassAndShapes(ServerLevel level, BlockPos at) {
-        List<ResourceLocation> glass = new ArrayList<>();
-        glass.add(ResourceLocation.withDefaultNamespace("glass"));
-        for (DyeColor c : DyeColor.values()) glass.add(ResourceLocation.withDefaultNamespace(c.getName() + "_stained_glass"));
-        glass.add(ResourceLocation.withDefaultNamespace("tinted_glass"));
-        for (ResourceLocation g : glass) {
+        List<Identifier> glass = new ArrayList<>();
+        glass.add(Identifier.withDefaultNamespace("glass"));
+        for (DyeColor c : DyeColor.values()) glass.add(Identifier.withDefaultNamespace(c.getName() + "_stained_glass"));
+        glass.add(Identifier.withDefaultNamespace("tinted_glass"));
+        for (Identifier g : glass) {
             tank(level, cuboid(at, 2, 1, 2), at, 0F, true, g, TankStyle.TEXTURED);
             name(level, at, glassName(g.getPath()));
             at = at.east(2 + GAP);
         }
-        tank(level, cuboid(at, 2, 2, 2), at, 0F, true, ResourceLocation.withDefaultNamespace("glass"), TankStyle.CLEAN);
+        tank(level, cuboid(at, 2, 2, 2), at, 0F, true, Identifier.withDefaultNamespace("glass"), TankStyle.CLEAN);
         name(level, at, "Stil: klar (clean)");
         at = at.east(2 + GAP);
-        tank(level, cuboid(at, 2, 2, 2), at, 0F, true, ResourceLocation.withDefaultNamespace("glass"), TankStyle.TEXTURED);
+        tank(level, cuboid(at, 2, 2, 2), at, 0F, true, Identifier.withDefaultNamespace("glass"), TankStyle.TEXTURED);
         name(level, at, "Stil: texturiert (textured)");
         at = at.east(2 + GAP);
         // free shapes: an L, a T, a step

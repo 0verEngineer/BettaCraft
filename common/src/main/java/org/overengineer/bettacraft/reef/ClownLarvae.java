@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -145,24 +145,24 @@ public final class ClownLarvae {
     }
 
     /** A bottle of phytoplankton used on a reef tank: it greens the water and feeds the rotifers. */
-    public static ItemInteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (!stack.is(ModItems.PHYTOPLANKTON.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    public static InteractionResult useOnTank(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (!stack.is(ModItems.PHYTOPLANKTON.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.CONSUME;
+        if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        if (!active()) return ItemInteractionResult.CONSUME;
+        if (!active()) return InteractionResult.CONSUME;
         if (!t.marine() || t.waterMb() <= 0) {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.phytoplankton_salt").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (!dosePhytoplankton(t)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.reef.phytoplankton_full").withStyle(ChatFormatting.GOLD), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
@@ -172,7 +172,7 @@ public final class ClownLarvae {
         level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.8F, 1.0F);
         TankCare.log((ServerLevel) level, c, "log.bettacraft.reef.phytoplankton");
         c.markTankChanged();
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** One bottle of phytoplankton into the tank (false: the water is green enough). */

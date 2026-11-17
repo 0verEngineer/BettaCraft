@@ -174,7 +174,7 @@ class MonitorModelTest {
         net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
         t.write(buf);
         MonitorTank back = MonitorTank.read(buf);
-        assertEquals("built", back.detail.getString("nest"));
+        assertEquals("built", back.detail.getStringOr("nest", ""));
         assertEquals("Reef", back.name);
         t.detail = new CompoundTag();
         assertTrue(before != t.contentHash(), "the detail is part of the change check");
@@ -208,7 +208,7 @@ class MonitorModelTest {
         assertFalse(t.settings.contains("junk"), "unknown settings go");
         assertFalse(t.settings.contains("history"), "an overlong history goes");
         assertFalse(t.settings.contains("limit"), "a NaN limit goes");
-        assertEquals(7, t.settings.getInt("days"));
+        assertEquals(7, t.settings.getIntOr("days", 0));
         assertEquals(MonitorValue.TEMPERATURE, t.value());
         assertTrue(t.spark());
         assertTrue(t.id > 0 && t.id <= DashboardLayout.MAX_ID && u.id > 0 && u.id <= DashboardLayout.MAX_ID && t.id != u.id,

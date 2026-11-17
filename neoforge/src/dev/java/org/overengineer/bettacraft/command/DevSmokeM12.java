@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.command;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.registry.ModBlocks;
@@ -61,7 +61,7 @@ final class DevSmokeM12 {
         TankBlockEntity old = TankMultiblock.getController(level, base);
         if (old == null) throw new IllegalStateException("M12: no dev world tank");
         CompoundTag saved = old.saveWithFullMetadata(level.registryAccess());
-        if (saved.getInt("schema") < 7 || !saved.getCompound("tank").contains("plants")) throw new IllegalStateException("M12: saved as " + saved.getInt("schema"));
+        if (saved.getIntOr("schema", 0) < 7 || !saved.getCompoundOrEmpty("tank").contains("plants")) throw new IllegalStateException("M12: saved as " + saved.getIntOr("schema", 0));
         TankBlockEntity c = TankMultiblock.getController(level, tankPos(base));
         if (c == null || c.getTank().plants().size() != FloatingPlantType.values().length) {
             throw new IllegalStateException("M12: plant tank lost its plants: " + (c == null ? "no tank" : c.getTank().plants().size()));
@@ -98,7 +98,7 @@ final class DevSmokeM12 {
         }
         if (!frogbit || !red) throw new IllegalStateException("M12: trades frogbit " + frogbit + ", red root floater " + red);
         CompoundTag info = InfoData.tank(level, tankPos(base));
-        if (info == null || info.getInt("plants") != FloatingPlantType.values().length) throw new IllegalStateException("M12: info data " + info);
+        if (info == null || info.getIntOr("plants", 0) != FloatingPlantType.values().length) throw new IllegalStateException("M12: info data " + info);
         LOGGER.info("[smoketest] M12: dev world tank saved as schema 7+ ({} plants); plant tank keeps its {} plants over the water, "
                 + "drifted up to {} blocks, lily pad fixed; items, trades and info line ok", old.getTank().plants().size(),
                 c.getTank().plants().size(), String.format(java.util.Locale.ROOT, "%.2f", moved));

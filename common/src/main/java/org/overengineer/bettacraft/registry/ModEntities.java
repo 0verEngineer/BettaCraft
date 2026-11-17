@@ -5,7 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.overengineer.bettacraft.platform.registry.DeferredRegister;
 import org.overengineer.bettacraft.BettaCraft;
@@ -19,7 +19,7 @@ public final class ModEntities {
                     .sized(0.5F, 0.35F)
                     .eyeHeight(0.2F)
                     .clientTrackingRange(4)
-                    .build(BettaCraft.id("betta").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("betta"))));
 
     /** M51: the hired aquarist (a person, not a villager). */
     public static final Supplier<EntityType<org.overengineer.bettacraft.aquarist.AquaristEntity>> HIRED_AQUARIST = ENTITIES.register("hired_aquarist",
@@ -27,7 +27,7 @@ public final class ModEntities {
                     .sized(0.6F, 1.95F)
                     .eyeHeight(1.62F)
                     .clientTrackingRange(10)
-                    .build(BettaCraft.id("hired_aquarist").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("hired_aquarist"))));
 
     /** M14: African dwarf clawed frog (Hymenochirus), about 3.5 cm. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.entity.frog.DwarfFrogEntity>> DWARF_FROG = ENTITIES.register("dwarf_clawed_frog",
@@ -35,7 +35,7 @@ public final class ModEntities {
                     .sized(0.3F, 0.15F)
                     .eyeHeight(0.1F)
                     .clientTrackingRange(4)
-                    .build(BettaCraft.id("dwarf_clawed_frog").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("dwarf_clawed_frog"))));
 
     /** M31: common musk turtle (Sternotherus odoratus), about 10 cm: the first terrarium animal. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.MuskTurtleEntity>> MUSK_TURTLE = ENTITIES.register("musk_turtle",
@@ -43,23 +43,23 @@ public final class ModEntities {
                     .sized(0.5F, 0.26F)
                     .eyeHeight(0.16F)
                     .clientTrackingRange(6)
-                    .build(BettaCraft.id("musk_turtle").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("musk_turtle"))));
 
     /** M31 part b: pond slider (Trachemys scripta, red-eared or yellow-bellied), grows to about 25 cm. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.HerpEntity>> SLIDER_TURTLE = ENTITIES.register("slider_turtle",
             () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.HerpEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.HerpEntity(t, l, org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER), MobCategory.CREATURE)
                     .sized(0.78F, 0.32F).eyeHeight(0.2F).clientTrackingRange(6)
-                    .build(BettaCraft.id("slider_turtle").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("slider_turtle"))));
     /** M31 part b: Hermann's tortoise (Testudo hermanni), about 18 cm. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.HerpEntity>> HERMANN_TORTOISE = ENTITIES.register("hermann_tortoise",
             () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.HerpEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.HerpEntity(t, l, org.overengineer.bettacraft.terrarium.HerpSpecies.HERMANN), MobCategory.CREATURE)
                     .sized(0.62F, 0.4F).eyeHeight(0.24F).clientTrackingRange(6)
-                    .build(BettaCraft.id("hermann_tortoise").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("hermann_tortoise"))));
     /** M31 part b: Chinese three-keeled pond turtle (Mauremys reevesii), about 15 cm. */
     public static final Supplier<EntityType<org.overengineer.bettacraft.terrarium.HerpEntity>> REEVES_TURTLE = ENTITIES.register("reeves_turtle",
             () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.HerpEntity>of((t, l) -> new org.overengineer.bettacraft.terrarium.HerpEntity(t, l, org.overengineer.bettacraft.terrarium.HerpSpecies.REEVES), MobCategory.CREATURE)
                     .sized(0.58F, 0.28F).eyeHeight(0.18F).clientTrackingRange(6)
-                    .build(BettaCraft.id("reeves_turtle").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("reeves_turtle"))));
 
     /**
      * M31 part c: the amphibians and reptiles (dart frog 4 cm, horned frog 12 cm, leopard gecko 22 cm, crested gecko 20 cm,
@@ -83,7 +83,7 @@ public final class ModEntities {
         m.put(s, ENTITIES.register(s.id(), () -> EntityType.Builder.<org.overengineer.bettacraft.terrarium.HerpEntity>of(
                         (t, l) -> new org.overengineer.bettacraft.terrarium.HerpEntity(t, l, s), MobCategory.CREATURE)
                 .sized(width, height).eyeHeight(height * 0.7F).clientTrackingRange(6).updateInterval(2)
-                .build(BettaCraft.id(s.id()).toString())));
+                .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id(s.id())))));
     }
 
     /** M31 part b: the entity type of a species (part c: the amphibians and reptiles too). */
@@ -102,7 +102,7 @@ public final class ModEntities {
                     .sized(0.2F, 0.1F)
                     .eyeHeight(0.05F)
                     .clientTrackingRange(4)
-                    .build(BettaCraft.id("wild_critter").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id("wild_critter"))));
 
     /** M19: one entity type per tankmate species (same class, size and attributes per species). */
     public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
@@ -121,7 +121,7 @@ public final class ModEntities {
                         .sized(sp.hitboxWidth(), sp.hitboxHeight())
                         .eyeHeight(sp.hitboxHeight() * 0.6F)
                         .clientTrackingRange(4)
-                        .build(BettaCraft.id(sp.id()).toString());
+                        .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, BettaCraft.id(sp.id())));
                 SPECIES_BY_TYPE.put(type, sp);
                 return type;
             }));
@@ -158,8 +158,8 @@ public final class ModEntities {
     public static void spawnPlacements(org.overengineer.bettacraft.platform.SpawnPlacementRegistrar event) {
         // M33: natural spawns of wild bettas only with features.bettas.wildSpawns (the biome lists are fixed at world load)
         event.register(BETTA.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (type, level, spawnType, pos, random) -> (spawnType != net.minecraft.world.entity.MobSpawnType.NATURAL
-                        && spawnType != net.minecraft.world.entity.MobSpawnType.CHUNK_GENERATION
+                (type, level, spawnType, pos, random) -> (spawnType != net.minecraft.world.entity.EntitySpawnReason.NATURAL
+                        && spawnType != net.minecraft.world.entity.EntitySpawnReason.CHUNK_GENERATION
                         || org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.BETTAS_WILD))
                         && WaterAnimal.checkSurfaceWaterAnimalSpawnRules(type, level, spawnType, pos, random));
         // M22.3: the wild tankmates, frogs and small animals (rare, never in a tank)

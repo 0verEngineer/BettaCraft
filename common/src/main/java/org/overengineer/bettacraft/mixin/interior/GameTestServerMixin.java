@@ -24,6 +24,6 @@ public abstract class GameTestServerMixin {
     private static WorldDimensions.Complete bettacraft$withDatapackDimensions(WorldDimensions dims, Registry<LevelStem> empty,
                                                                              Operation<WorldDimensions.Complete> original,
                                                                              @Local(argsOnly = true) WorldLoader.DataLoadContext context) {
-        return original.call(dims, context.datapackDimensions().registryOrThrow(net.minecraft.core.registries.Registries.LEVEL_STEM));
+        return original.call(dims, context.datapackDimensions().lookupOrThrow(net.minecraft.core.registries.Registries.LEVEL_STEM));
     }
 }

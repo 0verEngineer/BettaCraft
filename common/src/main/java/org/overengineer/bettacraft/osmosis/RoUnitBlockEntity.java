@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.osmosis;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.ChatFormatting;
@@ -202,7 +205,7 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
         int d = s.getDamageValue() + points;
         if (d >= s.getMaxDamage()) {
             parts.setStackInSlot(slot, ItemStack.EMPTY);
-            level.playSound(null, worldPosition, SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 0.6F, 1.0F);
+            level.playSound(null, worldPosition, SoundEvents.ITEM_BREAK.value(), SoundSource.BLOCKS, 0.6F, 1.0F);
         } else {
             s.setDamageValue(d);
             parts.setStackInSlot(slot, s);
@@ -339,8 +342,10 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("parts", parts.serializeNBT(registries));
         tag.putInt("feed", feed);
         tag.putInt("pure", pure);
@@ -349,17 +354,20 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
         tag.putDouble("wear_prefilter", wearPrefilter);
         energy.save(tag);
         spring.save(tag, "spring");
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("parts")) parts.deserializeNBT(registries, tag.getCompound("parts"));
-        feed = Math.max(0, Math.min(FEED_CAPACITY, tag.getInt("feed")));
-        pure = Math.max(0, Math.min(PURE_CAPACITY, tag.getInt("pure")));
-        carry = tag.getDouble("carry");
-        wearMembrane = tag.getDouble("wear_membrane");
-        wearPrefilter = tag.getDouble("wear_prefilter");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("parts")) parts.deserializeNBT(registries, tag.getCompoundOrEmpty("parts"));
+        feed = Math.max(0, Math.min(FEED_CAPACITY, tag.getIntOr("feed", 0)));
+        pure = Math.max(0, Math.min(PURE_CAPACITY, tag.getIntOr("pure", 0)));
+        carry = tag.getDoubleOr("carry", 0d);
+        wearMembrane = tag.getDoubleOr("wear_membrane", 0d);
+        wearPrefilter = tag.getDoubleOr("wear_prefilter", 0d);
         energy.load(tag);
         spring.load(tag, "spring");
     }

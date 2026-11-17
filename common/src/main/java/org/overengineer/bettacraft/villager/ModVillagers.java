@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import org.overengineer.bettacraft.platform.registry.DeferredHolder;
 import org.overengineer.bettacraft.platform.registry.DeferredRegister;
 import org.overengineer.bettacraft.BettaCraft;
@@ -31,7 +31,7 @@ public final class ModVillagers {
             () -> new PoiType(ImmutableSet.copyOf(ModBlocks.BREEDING_BASIN.get().getStateDefinition().getPossibleStates()), 1, 1));
 
     public static final DeferredHolder<VillagerProfession, VillagerProfession> AQUARIST = PROFESSIONS.register("aquarist",
-            () -> new VillagerProfession("aquarist", ModVillagers::isBasin, ModVillagers::isBasin, ImmutableSet.of(), ImmutableSet.of(),
+            () -> new VillagerProfession(net.minecraft.network.chat.Component.translatable("entity.minecraft.villager.bettacraft.aquarist"), ModVillagers::isBasin, ModVillagers::isBasin, ImmutableSet.of(), ImmutableSet.of(),
                     SoundEvents.VILLAGER_WORK_FISHERMAN));
 
     private ModVillagers() {}

@@ -39,7 +39,7 @@ public final class FilterLineFluid implements IFluidHandler {
     }
 
     private boolean on() {
-        return !level.isClientSide && Features.enabled(Feature.FILTER_WATER);
+        return !level.isClientSide() && Features.enabled(Feature.FILTER_WATER);
     }
 
     private java.util.List<FilterPortBlockEntity> ports(PipeLine line) {

@@ -63,7 +63,7 @@ public final class CreateKinetics {
 
     /** The fastest speed (RPM, absolute) of a Create shaft pointing at {@code pos} that is not overstressed, or 0. */
     public static float speed(Level level, BlockPos pos) {
-        if (level == null || level.isClientSide || !available()) return 0F;
+        if (level == null || level.isClientSide() || !available()) return 0F;
         float best = 0F;
         for (Direction d : Direction.values()) {
             BlockPos n = pos.relative(d);

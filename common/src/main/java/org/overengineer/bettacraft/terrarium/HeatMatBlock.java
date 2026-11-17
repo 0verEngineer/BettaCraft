@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -14,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.overengineer.bettacraft.tank.TankBlock;
@@ -26,9 +29,9 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * temperature ({@link TankClimate}); {@link #HEATING} shows that (a warm glow). Wall mats warm the floor half as much.
  * With {@code power.heaterRequiresEnergy} it uses the tank's FE like a heater.
  */
-public class HeatMatBlock extends Block {
+public class HeatMatBlock extends Block implements BlockRemoval {
     public static final MapCodec<HeatMatBlock> CODEC = simpleCodec(HeatMatBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty HEATING = BooleanProperty.create("heating");
     private static final VoxelShape UP = box(1, 15, 1, 15, 16, 15), NORTH = box(1, 1, 0, 15, 15, 1), SOUTH = box(1, 1, 15, 15, 15, 16),
             WEST = box(0, 1, 1, 1, 15, 15), EAST = box(15, 1, 1, 16, 15, 15), DOWN = box(1, 0, 1, 15, 1, 15);
@@ -76,7 +79,7 @@ public class HeatMatBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
         if (dir == state.getValue(FACING) && !canSurvive(state, level, pos)) return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         return state;
     }
@@ -84,13 +87,12 @@ public class HeatMatBlock extends Block {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
-        if (!level.isClientSide && !old.is(this)) TankClimate.equipmentChanged(level, attachedTo(pos, state));
+        if (!level.isClientSide() && !old.is(this)) TankClimate.equipmentChanged(level, attachedTo(pos, state));
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) TankClimate.equipmentChanged(level, attachedTo(pos, state));
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!level.isClientSide() && !newState.is(this)) TankClimate.equipmentChanged(level, attachedTo(pos, state));
     }
 
     @Override

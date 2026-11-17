@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.co2;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -34,9 +34,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * with four sugar), weak and uneven (it starts slowly, varies and fades), day and night. Then it is spent and is set up
  * again (a water bucket replaces the old brew). Needs no power. Empty hand: what it does; sneaking: pour it out.
  */
-public class BioCo2Block extends BaseEntityBlock implements Co2SourceBlock {
+public class BioCo2Block extends BaseEntityBlock implements BlockRemoval, Co2SourceBlock {
     public static final MapCodec<BioCo2Block> CODEC = simpleCodec(BioCo2Block::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** 0 empty, 1 water (and sugar), 2 fermenting, 3 spent. */
     public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, 3);
     public static final int EMPTY = 0, MIXED = 1, FERMENTING = 2, SPENT = 3;
@@ -73,32 +73,31 @@ public class BioCo2Block extends BaseEntityBlock implements Co2SourceBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof BioCo2BlockEntity be)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!be.accepts(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide) be.use(player, hand, stack);
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof BioCo2BlockEntity be)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!be.accepts(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide()) be.use(player, hand, stack);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof BioCo2BlockEntity be) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BioCo2BlockEntity be) {
             if (player.isShiftKeyDown()) be.pourOut(player);
             else be.tell(player);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
-        if (!level.isClientSide && !old.is(this)) Co2SourceBlock.invalidateTank(level, pos);
+        if (!level.isClientSide() && !old.is(this)) Co2SourceBlock.invalidateTank(level, pos);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) Co2SourceBlock.invalidateTank(level, pos);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!level.isClientSide() && !newState.is(this)) Co2SourceBlock.invalidateTank(level, pos);
     }
 
     @Nullable
@@ -110,7 +109,7 @@ public class BioCo2Block extends BaseEntityBlock implements Co2SourceBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? createTickerHelper(type, ModBlockEntities.BIO_CO2.get(), BioCo2BlockEntity::clientTick)
+        return level.isClientSide() ? createTickerHelper(type, ModBlockEntities.BIO_CO2.get(), BioCo2BlockEntity::clientTick)
                 : createTickerHelper(type, ModBlockEntities.BIO_CO2.get(), BioCo2BlockEntity::serverTick);
     }
 }

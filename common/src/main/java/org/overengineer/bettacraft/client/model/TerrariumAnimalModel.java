@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.client.model;
 
-import net.minecraft.client.model.HierarchicalModel;
+import org.overengineer.bettacraft.client.render.MobState;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
@@ -10,11 +11,11 @@ import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
  * walk in a diagonal gait on land and paddle in the water; on a basking spot the head stretches up and the hind legs lie
  * stretched out behind (as turtles do under a lamp).
  */
-public class TerrariumAnimalModel extends HierarchicalModel<TerrariumAnimalEntity> {
-    private final ModelPart root, animal, head, legFr, legFl, legBr, legBl, tail;
+public class TerrariumAnimalModel extends EntityModel<MobState<TerrariumAnimalEntity>> {
+    private final ModelPart animal, head, legFr, legFl, legBr, legBl, tail;
 
     public TerrariumAnimalModel(ModelPart root) {
-        this.root = root;
+        super(root);
         this.animal = root.getChild("animal");
         this.head = animal.getChild("head");
         this.legFr = animal.getChild("leg_fr");
@@ -25,12 +26,9 @@ public class TerrariumAnimalModel extends HierarchicalModel<TerrariumAnimalEntit
     }
 
     @Override
-    public ModelPart root() {
-        return root;
-    }
-
-    @Override
-    public void setupAnim(TerrariumAnimalEntity e, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<TerrariumAnimalEntity> state) {
+        TerrariumAnimalEntity e = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, ageInTicks = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         root().getAllParts().forEach(ModelPart::resetPose);
         float amount = Math.min(1F, limbSwingAmount * 4F);
         float swing = Mth.sin(limbSwing * 2.2F) * 0.6F * amount;

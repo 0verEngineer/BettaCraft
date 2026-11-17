@@ -382,7 +382,7 @@ public final class FilterWaterGameTests {
     }
 
     private static Block block(String id) {
-        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.ResourceLocation.parse(id))
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(net.minecraft.resources.Identifier.parse(id))
                 .orElseThrow(() -> new GameTestAssertException("no block " + id));
     }
 
@@ -429,8 +429,8 @@ public final class FilterWaterGameTests {
         ServerLevel level = h.getLevel();
         PlumbingGameTests.reservoir(h, new BlockPos(15, 2, 4), 16000, null);
         try {
-            var reg = level.registryAccess().registryOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.ResourceLocation.parse("enderio:conduit")));
-            net.minecraft.core.Holder<?> fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.ResourceLocation.parse("enderio:fluid")));
+            var reg = level.registryAccess().lookupOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.Identifier.parse("enderio:conduit")));
+            net.minecraft.core.Holder<?> fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
             h.setBlock(new BlockPos(14, 2, 4), block("enderio:conduit"));
             Object be = level.getBlockEntity(abs(h, 14, 2, 4));
             be.getClass().getMethod("addConduit", net.minecraft.core.Holder.class, Direction.class, net.minecraft.world.entity.player.Player.class)
@@ -456,8 +456,8 @@ public final class FilterWaterGameTests {
         h.succeedWhen(() -> {
             String why = "";
             try {
-                var reg = level.registryAccess().registryOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.ResourceLocation.parse("enderio:conduit")));
-                Object fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.ResourceLocation.parse("enderio:fluid")));
+                var reg = level.registryAccess().lookupOrThrow(net.minecraft.resources.ResourceKey.createRegistryKey(net.minecraft.resources.Identifier.parse("enderio:conduit")));
+                Object fluid = reg.getHolderOrThrow(net.minecraft.resources.ResourceKey.create(reg.key(), net.minecraft.resources.Identifier.parse("enderio:fluid")));
                 var st = be.getClass().getMethod("getConnectionStatus", net.minecraft.core.Holder.class, Direction.class);
                 var cf = be.getClass().getMethod("getConnectionConfig", net.minecraft.core.Holder.class, Direction.class);
                 why = "east " + st.invoke(be, fluid, Direction.EAST) + " " + cf.invoke(be, fluid, Direction.EAST) + ", west " + st.invoke(be, fluid, Direction.WEST) + " " + cf.invoke(be, fluid, Direction.WEST);
@@ -507,9 +507,9 @@ public final class FilterWaterGameTests {
         for (java.lang.reflect.Method m : Class.forName("appeng.api.parts.PartHelper").getMethods()) if (m.getName().equals("setPart") && m.getParameterCount() == 5) set = m;
         if (set == null) throw new GameTestAssertException("AE2 API changed: no PartHelper.setPart");
         BlockPos a = abs(h, 14, 2, 4), b = abs(h, 15, 2, 4);
-        net.minecraft.world.item.Item cable = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse("ae2:fluix_glass_cable"));
-        net.minecraft.world.item.Item export = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse("ae2:export_bus"));
-        net.minecraft.world.item.Item storage = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse("ae2:storage_bus"));
+        net.minecraft.world.item.Item cable = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:fluix_glass_cable"));
+        net.minecraft.world.item.Item export = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:export_bus"));
+        net.minecraft.world.item.Item storage = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.parse("ae2:storage_bus"));
         set.invoke(null, level, a, null, null, cable);
         set.invoke(null, level, b, null, null, cable);
         Object bus = set.invoke(null, level, a, Direction.WEST, null, export);

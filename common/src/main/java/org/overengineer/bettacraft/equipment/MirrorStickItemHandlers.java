@@ -27,7 +27,7 @@ public final class MirrorStickItemHandlers {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer p) || p.isSpectator()) return;
         if ((p.tickCount + p.getId()) % INTERVAL != 0 || !holds(p)) return;
-        int n = flareNear(p.serverLevel(), p);
+        int n = flareNear(p.level(), p);
         if (n > 0) Progress.award(p, Progress.MIRROR);
     }
 }

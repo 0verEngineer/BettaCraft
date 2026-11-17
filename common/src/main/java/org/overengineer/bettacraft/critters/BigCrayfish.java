@@ -79,7 +79,7 @@ public final class BigCrayfish {
             for (InteriorPlant p : r.plants().all()) if (edible(p.species)) food.add(p);
             if (food.isEmpty()) break;
             InteriorPlant p = food.get(rnd.nextInt(food.size()));
-            String name = "@" + InteriorPlants.item(p.species, 0).getDescriptionId();
+            String name = "@" + InteriorPlants.item(p.species, 0).getItem().getDescriptionId();
             if (p.stage <= 1) {
                 // a young plant does not hold in the substrate yet: dug out and gone
                 InteriorPlants.remove(interior, r, p, false);

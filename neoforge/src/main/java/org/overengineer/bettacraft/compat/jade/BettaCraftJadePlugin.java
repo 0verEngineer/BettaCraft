@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.compat.jade;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.tank.TankBlock;
@@ -16,14 +16,14 @@ import snownee.jade.api.WailaPlugin;
  */
 @WailaPlugin(BettaCraft.MOD_ID)
 public class BettaCraftJadePlugin implements IWailaPlugin {
-    public static final ResourceLocation TANK = BettaCraft.id("tank");
-    public static final ResourceLocation BETTA = BettaCraft.id("betta");
-    public static final ResourceLocation FILTER = BettaCraft.id("filter");
-    public static final ResourceLocation CULTURE = BettaCraft.id("culture");
+    public static final Identifier TANK = BettaCraft.id("tank");
+    public static final Identifier BETTA = BettaCraft.id("betta");
+    public static final Identifier FILTER = BettaCraft.id("filter");
+    public static final Identifier CULTURE = BettaCraft.id("culture");
     /** M37: the spring of the devices the crank winds. */
-    public static final ResourceLocation SPRING = BettaCraft.id("spring");
+    public static final Identifier SPRING = BettaCraft.id("spring");
     /** M51: the hired aquarist. */
-    public static final ResourceLocation AQUARIST = BettaCraft.id("hired_aquarist");
+    public static final Identifier AQUARIST = BettaCraft.id("hired_aquarist");
 
     @Override
     public void register(IWailaCommonRegistration registration) {

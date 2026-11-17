@@ -98,7 +98,7 @@ final class DevClientSmokeM24 {
             shot("interior");
         });
         then(1, () -> server(p -> p.teleportTo(p.server.overworld(), base.getX() + 6.0, base.getY() + 1.5, base.getZ() - 2.0, 0F, 0F)));
-        then(5, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 4.5, base.getY() + 1.0, base.getZ() - 1.5, 0F, 20F)));
+        then(5, () -> server(p -> p.teleportTo(p.level(), base.getX() + 4.5, base.getY() + 1.0, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false)));
         // 3. screens
         then(60, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
@@ -123,10 +123,10 @@ final class DevClientSmokeM24 {
         then(20, () -> shot("water_changer_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> mc.setScreen(null));
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 2 * SPACING + 5.5, base.getY() + 1.0, base.getZ() - 2.0, 0F, 20F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), base.getX() + 2 * SPACING + 5.5, base.getY() + 1.0, base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false)));
         then(10, () -> server(p -> {
             BlockPos cp = base.offset(2 * SPACING + 5, 1, 1);
-            if (p.serverLevel().getBlockEntity(cp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, cp);
+            if (p.level().getBlockEntity(cp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, cp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CrucibleScreen)) LOGGER.error("[smoketest] M24 no crucible menu");
@@ -138,7 +138,7 @@ final class DevClientSmokeM24 {
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 2.0, base.getY() + 1.0, base.getZ() - 2.0, 0F, 20F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), base.getX() + 2.0, base.getY() + 1.0, base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false)));
         tankMenu("menu_water", base.offset(0, 1, 0));
         // 4. the items with their tooltips
         then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
@@ -158,10 +158,10 @@ final class DevClientSmokeM24 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -14; z < 9; z++) {
                 level.setBlock(base.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
@@ -269,7 +269,7 @@ final class DevClientSmokeM24 {
     /** The filter formed and serves its tank, the pipes join, the pump head runs on the client too. */
     private void check() {
         server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             if (level.getBlockEntity(base.offset(5, 3, 0)) instanceof org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity h) {
                 org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, h.getBlockPos()); // M40: its guards
                 h.run(level, true);
@@ -326,7 +326,7 @@ final class DevClientSmokeM24 {
 
     private void tankMenu(String name, BlockPos tankPos) {
         then(10, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankPos);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tankPos);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -419,7 +419,7 @@ final class DevClientSmokeM24 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

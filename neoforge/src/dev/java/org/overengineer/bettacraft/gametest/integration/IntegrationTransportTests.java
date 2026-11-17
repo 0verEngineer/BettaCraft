@@ -11,7 +11,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -84,8 +84,8 @@ public final class IntegrationTransportTests {
         ServerLevel level = h.getLevel();
         ChestBlockEntity c = pelletChest(h);
         FeederBlockEntity f = feeder(h, new BlockPos(3, 2, 2));
-        var reg = level.registryAccess().registryOrThrow(ResourceKey.createRegistryKey(ResourceLocation.parse("enderio:conduit")));
-        Holder<?> conduit = reg.getHolderOrThrow(ResourceKey.create(reg.key(), ResourceLocation.parse("enderio:item")));
+        var reg = level.registryAccess().lookupOrThrow(ResourceKey.createRegistryKey(Identifier.parse("enderio:conduit")));
+        Holder<?> conduit = reg.getHolderOrThrow(ResourceKey.create(reg.key(), Identifier.parse("enderio:item")));
         h.setBlock(new BlockPos(2, 2, 2), block("enderio:conduit"));
         Object be = be(h, new BlockPos(2, 2, 2));
         be.getClass().getMethod("addConduit", Holder.class, Direction.class, Player.class).invoke(be, conduit, Direction.UP,

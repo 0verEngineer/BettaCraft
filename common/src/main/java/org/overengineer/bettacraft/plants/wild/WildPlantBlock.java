@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plants.wild;
 
+import net.minecraft.world.level.ScheduledTickAccess;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -12,7 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -119,7 +120,7 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
     protected VoxelShape getShape(BlockState s, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         int h = height(s);
         VoxelShape shape = kind == WildPlantKind.MOSS || kind == WildPlantKind.CARPET ? Block.box(0, 0, 0, 16, h, 16) : Block.box(3, 0, 3, 13, h, 13);
-        Vec3 off = s.getOffset(level, pos);
+        Vec3 off = s.getOffset(pos);
         return shape.move(off.x, off.y, off.z);
     }
 
@@ -140,10 +141,10 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
     }
 
     @Override
-    protected BlockState updateShape(BlockState s, Direction dir, BlockState other, LevelAccessor level, BlockPos pos, BlockPos otherPos) {
-        if (s.getValue(WATERLOGGED)) level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+    protected BlockState updateShape(BlockState s, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos otherPos, BlockState other, RandomSource random) {
+        if (s.getValue(WATERLOGGED)) tickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         if (dir == Direction.DOWN && !canSurvive(s, level, pos)) return Blocks.WATER.defaultBlockState();
-        return super.updateShape(s, dir, other, level, pos, otherPos);
+        return super.updateShape(s, level, tickAccess, pos, dir, otherPos, other, random);
     }
 
     @Override
@@ -152,7 +153,7 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
     }
 
     @Override
-    public ItemStack pickupBlock(@Nullable Player player, LevelAccessor level, BlockPos pos, BlockState s) {
+    public ItemStack pickupBlock(@Nullable net.minecraft.world.entity.LivingEntity player, LevelAccessor level, BlockPos pos, BlockState s) {
         ItemStack out = SimpleWaterloggedBlock.super.pickupBlock(player, level, pos, s);
         if (!out.isEmpty()) level.scheduleTick(pos, this, 1);
         return out;
@@ -185,15 +186,15 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!cut(level, pos, state, hit.getDirection())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.wild_plant.trimmed").withStyle(ChatFormatting.GRAY), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-        return ItemInteractionResult.CONSUME;
+        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
+        return InteractionResult.CONSUME;
     }
 
     /**
@@ -212,7 +213,7 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return InteriorPlants.item(species(state), 0);
     }
 

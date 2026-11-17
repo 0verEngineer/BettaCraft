@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.client.interior;
 
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +29,7 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * {@link PlantMeshRenderer}. The planted cutting is not wrapped.
  */
 public final class PlantMeshModel extends WrappedModel {
-    public PlantMeshModel(BakedModel original) {
+    public PlantMeshModel(BlockStateModel original) {
         super(original);
     }
 
@@ -44,7 +45,7 @@ public final class PlantMeshModel extends WrappedModel {
     }
 
     @Override
-    public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable RenderType renderType) {
+    public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer renderType) {
         if (Boolean.TRUE.equals(data.get(PlantMeshRenderer.MINIATURE)) || !PlantMeshRenderer.active()) {
             return super.quads(state, side, rand, data, renderType);
         }

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -66,7 +69,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
     private final DeviceEnergy energy = new DeviceEnergy(20000, this::setChanged);
     /** The chosen recipe (null = automatic). */
     @Nullable
-    private ResourceLocation selected;
+    private Identifier selected;
     private int progress, status = IDLE;
     /** M37: the spring (device-ticks; the crank winds it). */
     private final org.overengineer.bettacraft.winding.WindSpring spring =
@@ -83,7 +86,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
                 case 2 -> powered() ? energy.getEnergyStored() : (int) Math.round(spring.fill() * 1000);
                 case 3 -> powered() ? energy.getMaxEnergyStored() : 1000;
                 case 4 -> status;
-                case 5 -> level == null ? 0 : selectedIndex(level.getRecipeManager());
+                case 5 -> level == null ? 0 : selectedIndex(org.overengineer.bettacraft.crafting.RecipeCompat.manager(level));
                 case 6 -> powered() ? 1 : 0;
                 case 7 -> org.overengineer.bettacraft.winding.Winding.Device.FOOD_MAKER.windable() ? spring.percent() : -1; // M37
                 default -> 0;
@@ -144,9 +147,10 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
 
     // ------------------------------------------------------------------ recipes
 
-    /** Every recipe of the food maker in a fixed order (by id): the list the window steps through. */
+    /** Every recipe of the food maker in a fixed order (by id): the list the window steps through (null: the client's, M52b). */
     public static List<RecipeHolder<FoodMakerRecipe>> recipes(RecipeManager rm) {
-        List<RecipeHolder<FoodMakerRecipe>> l = new ArrayList<>(rm.getAllRecipesFor(ModRecipes.FOOD_MAKER_TYPE.get()));
+        List<RecipeHolder<FoodMakerRecipe>> l = rm == null ? new ArrayList<>(org.overengineer.bettacraft.crafting.RecipeSync.client().foodMaker())
+                : new ArrayList<>(org.overengineer.bettacraft.crafting.RecipeCompat.byType(rm, ModRecipes.FOOD_MAKER_TYPE.get()));
         l.sort(Comparator.comparing(h -> h.id().toString()));
         return l;
     }
@@ -162,13 +166,13 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
     /** Steps the choice of product (-1 / +1), through "automatic" and every recipe. */
     public void cycle(int dir) {
         if (level == null) return;
-        List<RecipeHolder<FoodMakerRecipe>> l = recipes(level.getRecipeManager());
+        List<RecipeHolder<FoodMakerRecipe>> l = recipes(org.overengineer.bettacraft.crafting.RecipeCompat.manager(level));
         int n = l.size() + 1;
-        int i = Math.floorMod(selectedIndex(level.getRecipeManager()) + dir, n);
-        select(i == 0 ? null : l.get(i - 1).id());
+        int i = Math.floorMod(selectedIndex(org.overengineer.bettacraft.crafting.RecipeCompat.manager(level)) + dir, n);
+        select(i == 0 ? null : l.get(i - 1).id().identifier());
     }
 
-    public void select(@Nullable ResourceLocation id) {
+    public void select(@Nullable Identifier id) {
         if (java.util.Objects.equals(id, selected)) return;
         selected = id;
         progress = 0;
@@ -176,7 +180,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
     }
 
     @Nullable
-    public ResourceLocation selected() {
+    public Identifier selected() {
         return selected;
     }
 
@@ -191,7 +195,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
     public FoodMakerRecipe current(Level level) {
         List<ItemStack> in = FoodMakerRecipe.copy(inputs());
         FoodMakerRecipe best = null;
-        for (RecipeHolder<FoodMakerRecipe> h : recipes(level.getRecipeManager())) {
+        for (RecipeHolder<FoodMakerRecipe> h : recipes(org.overengineer.bettacraft.crafting.RecipeCompat.manager(level))) {
             if (selected != null && !h.id().equals(selected)) continue;
             if (h.value().take(in) == null) continue;
             if (best == null || weight(h.value()) > weight(best)) best = h.value();
@@ -367,22 +371,27 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("progress", progress);
         spring.save(tag, "spring");
         if (selected != null) tag.putString("recipe", selected.toString());
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
-        progress = Math.max(0, tag.getInt("progress"));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        progress = Math.max(0, tag.getIntOr("progress", 0));
         spring.load(tag, "spring");
-        selected = tag.contains("recipe") ? ResourceLocation.tryParse(tag.getString("recipe")) : null;
+        selected = tag.contains("recipe") ? Identifier.tryParse(tag.getStringOr("recipe", "")) : null;
         energy.load(tag);
     }
 }

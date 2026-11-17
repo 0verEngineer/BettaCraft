@@ -11,7 +11,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -88,7 +88,7 @@ final class DevClientSmokeM10 {
         then(40, () -> mc.options.hideGui = false);
     }
 
-    private static void place(ServerLevel level, List<BlockPos> blocks, ResourceLocation glass) {
+    private static void place(ServerLevel level, List<BlockPos> blocks, Identifier glass) {
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
             if (glass != null && level.getBlockEntity(pos) instanceof TankBlockEntity be) be.setGlassId(glass);
@@ -97,7 +97,7 @@ final class DevClientSmokeM10 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(0, 2, 130);
         // A: a big L, 4x2x4 without the 2x2 corner in the north-east (the notch faces the camera)
         List<BlockPos> a = new ArrayList<>();
@@ -119,7 +119,7 @@ final class DevClientSmokeM10 {
         t.add(tb.offset(2, 0, 1));
         t.add(tb.offset(0, 1, 2));
         t.add(tb.offset(4, 1, 2));
-        place(level, t, ResourceLocation.withDefaultNamespace("light_blue_stained_glass"));
+        place(level, t, Identifier.withDefaultNamespace("light_blue_stained_glass"));
         TankBlockEntity cb = TankMultiblock.getController(level, tb.offset(2, 0, 0));
         TankInteractions.changeWater(level, cb, 5000);
         cb.getTank().setName("T");
@@ -169,7 +169,7 @@ final class DevClientSmokeM10 {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof BettaEntity b) || i >= spots.length) continue;
             SmokeFreeze.freeze(b, true);
-            b.moveTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 60F + i * 70F, 0F);
+            b.snapTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 60F + i * 70F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -206,7 +206,7 @@ final class DevClientSmokeM10 {
 
     /** Puts the eye of the player at (x, eyeY, z). */
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.big;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -18,8 +21,9 @@ public class SteelLeaderItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
         tooltip.add(Component.translatable("tooltip.bettacraft.steel_leader").withStyle(ChatFormatting.GRAY));
     }
 }

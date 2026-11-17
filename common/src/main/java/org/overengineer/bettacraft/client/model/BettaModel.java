@@ -1,8 +1,9 @@
 package org.overengineer.bettacraft.client.model;
 
+import org.overengineer.bettacraft.client.render.MobState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
@@ -13,16 +14,13 @@ import org.overengineer.bettacraft.entity.betta.BettaEntity;
  * Animation is code: tail beat, fin undulation, pectoral flapping. Females have shorter fins, sick fish clamped fins
  * and a weaker beat.
  */
-public class BettaModel extends HierarchicalModel<BettaEntity> {
-    private final ModelPart root;
+public class BettaModel extends EntityModel<MobState<BettaEntity>> {
     private final ModelPart body, head, peduncle, caudal, dorsal, anal;
     private final ModelPart pecL, pecR, dumboL, dumboR, ventL, ventR;
     private final ModelPart[] fins;
-    /** Colour for the next (base) render pass, consumed once; 0 = none. Set by the renderer. */
-    private int pendingBaseColor;
 
     public BettaModel(ModelPart root) {
-        this.root = root;
+        super(root);
         this.body = root.getChild("body");
         this.head = body.getChild("head");
         this.peduncle = body.getChild("peduncle");
@@ -38,26 +36,12 @@ public class BettaModel extends HierarchicalModel<BettaEntity> {
         this.fins = new ModelPart[]{dorsal, anal, pecL, pecR, dumboL, dumboR, ventL, ventR};
     }
 
-    @Override
-    public ModelPart root() {
-        return root;
-    }
 
-    public void setPendingBaseColor(int argb) {
-        this.pendingBaseColor = argb;
-    }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        if (pendingBaseColor != 0) {
-            color = color == -1 ? pendingBaseColor : FastColor.ARGB32.multiply(color, pendingBaseColor);
-            pendingBaseColor = 0;
-        }
-        super.renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
-    }
-
-    @Override
-    public void setupAnim(BettaEntity fish, float limbSwing, float limbSwingAmount, float age, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<BettaEntity> state) {
+        BettaEntity fish = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, age = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         root.getAllParts().forEach(ModelPart::resetPose);
         boolean dumbo = fish.genome().isDumbo();
         pecL.visible = pecR.visible = !dumbo;

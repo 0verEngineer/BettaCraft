@@ -1,8 +1,8 @@
 package org.overengineer.bettacraft.mixin.mob;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Husk;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Husk;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import org.overengineer.bettacraft.mobs.GlassMobs;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

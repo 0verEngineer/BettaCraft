@@ -5,7 +5,7 @@ import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -35,7 +35,7 @@ public final class ApiEvents {
         return Features.enabled(Feature.MODPACK_EVENTS);
     }
 
-    public static ResourceLocation id(EntityType<?> type) {
+    public static Identifier id(EntityType<?> type) {
         return BuiltInRegistries.ENTITY_TYPE.getKey(type);
     }
 
@@ -46,10 +46,10 @@ public final class ApiEvents {
     public interface Sink {
         Sink NONE = new Sink() {};
 
-        default void born(ServerLevel level, BlockPos tankPos, java.util.UUID tankId, String tankName, ResourceLocation species, int count,
+        default void born(ServerLevel level, BlockPos tankPos, java.util.UUID tankId, String tankName, Identifier species, int count,
                 boolean hatched, boolean foreign, boolean critter) {}
 
-        default void died(ServerLevel level, BlockPos tankPos, java.util.UUID tankId, String tankName, ResourceLocation species, @Nullable Entity entity,
+        default void died(ServerLevel level, BlockPos tankPos, java.util.UUID tankId, String tankName, Identifier species, @Nullable Entity entity,
                 int count, String cause, @Nullable Entity killer) {}
 
         default void alarm(ServerLevel level, BlockPos tankPos, java.util.UUID tankId, String tankName, BlockPos monitor, String value,
@@ -77,7 +77,7 @@ public final class ApiEvents {
     }
 
     /** Young of one brood ({@code count} 0: nothing). */
-    public static void born(ServerLevel level, TankBlockEntity c, ResourceLocation species, int count, boolean hatched, boolean foreign, boolean critter) {
+    public static void born(ServerLevel level, TankBlockEntity c, Identifier species, int count, boolean hatched, boolean foreign, boolean critter) {
         if (count <= 0 || !on() || c == null) return;
         post("AnimalBornEvent", () -> sink.born(level, c.getBlockPos(), c.getTank().id(), c.getTank().name(), species, count, hatched, foreign, critter));
     }
@@ -93,7 +93,7 @@ public final class ApiEvents {
     }
 
     /** Small animals kept as data died. */
-    public static void diedData(ServerLevel level, TankBlockEntity c, ResourceLocation species, int count, String cause) {
+    public static void diedData(ServerLevel level, TankBlockEntity c, Identifier species, int count, String cause) {
         if (count <= 0 || !on() || c == null) return;
         post("AnimalDiedEvent", () -> sink.died(level, c.getBlockPos(), c.getTank().id(), c.getTank().name(), species, null, count, cause, null));
     }

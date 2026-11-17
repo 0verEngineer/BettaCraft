@@ -99,7 +99,7 @@ public final class InhabitantGameTests {
         for (int i = 0; i < 4; i++) {
             BettaEntity b = fish.get(i);
             b.setNoAi(true);
-            b.moveTo(spots[i][0], min.getY() + 0.8, spots[i][1], (float) spots[i][2], 0);
+            b.snapTo(spots[i][0], min.getY() + 0.8, spots[i][1], (float) spots[i][2], 0);
             b.setYBodyRot((float) spots[i][2]);
         }
         h.runAfterDelay(40, () -> {
@@ -194,7 +194,7 @@ public final class InhabitantGameTests {
             h.assertTrue(c.getTank().waterMb() == w0 - 1100, "bag removes 100 mB");
             h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).isEmpty(), "tank empty");
             boolean bucket = false, bag = false;
-            for (ItemStack s : sp.getInventory().items) {
+            for (ItemStack s : sp.getInventory().getNonEquipmentItems()) {
                 if (s.is(ModItems.BETTA_BUCKET.get()) && s.has(ModDataComponents.FISH_DATA.get())) bucket = true;
                 if (s.getItem() instanceof FishBagItem && FishBagItem.isFilled(s) && s.has(ModDataComponents.FISH_DATA.get())) bag = true;
             }
@@ -220,7 +220,7 @@ public final class InhabitantGameTests {
         h.assertTrue(!Shapes.joinIsNotEmpty(forPlayer, probe, BooleanOp.AND), "open top for players");
         h.assertTrue(!Shapes.joinIsNotEmpty(forWild, probe, BooleanOp.AND), "open top for other entities");
         // launch the fish upwards: it must stay inside the tank
-        fish.moveTo(fish.getX(), h.absolutePos(new BlockPos(2, 2, 2)).getY() + 0.5, fish.getZ());
+        fish.snapTo(fish.getX(), h.absolutePos(new BlockPos(2, 2, 2)).getY() + 0.5, fish.getZ());
         fish.setDeltaMovement(0, 1.5, 0);
         h.runAfterDelay(15, () -> {
             h.assertTrue(fish.getY() < top.getY() + 1.0, "fish stayed below the lid, y=" + fish.getY());
@@ -283,9 +283,9 @@ public final class InhabitantGameTests {
         ItemStack bucket = new ItemStack(ModItems.BETTA_BUCKET.get());
         b.saveToBucketTag(bucket);
         CompoundTag bucketTag = bucket.get(DataComponents.BUCKET_ENTITY_DATA).copyTag();
-        h.assertTrue(nbt.getCompound(BettaData.KEY).equals(bucketTag.getCompound(BettaData.KEY)), "same data under key 'betta'");
+        h.assertTrue(nbt.getCompoundOrEmpty(BettaData.KEY).equals(bucketTag.getCompoundOrEmpty(BettaData.KEY)), "same data under key 'betta'");
         // M26 part b: compared as saved (the raw tag of the record keeps the health of the insertion, save() replaces it)
-        h.assertTrue(BettaData.load(nbt.getCompound(BettaData.KEY)).save().equals(bucket.get(ModDataComponents.FISH_DATA.get()).save()), "component equals NBT");
+        h.assertTrue(BettaData.load(nbt.getCompoundOrEmpty(BettaData.KEY)).save().equals(bucket.get(ModDataComponents.FISH_DATA.get()).save()), "component equals NBT");
         h.succeed();
     }
 
@@ -305,7 +305,7 @@ public final class InhabitantGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             net.minecraft.world.phys.Vec3 eye = net.minecraft.world.phys.Vec3.atCenterOf(h.absolutePos(new BlockPos(4, 1, 2)));
-            sp.teleportTo(h.getLevel(), eye.x, eye.y - 1.0, eye.z, 0F, 0F);
+            sp.teleportTo(h.getLevel(), eye.x, eye.y - 1.0, eye.z, java.util.Set.of(), 0F, 0F, false);
             sp.setShiftKeyDown(true);
             h.assertTrue(sp.isSecondaryUseActive(), "player sneaks");
             for (ItemStack stack : List.of(new ItemStack(Items.TROPICAL_FISH_BUCKET), bettaBucket(11))) {
@@ -318,7 +318,7 @@ public final class InhabitantGameTests {
             List<Entity> live = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank());
             h.assertTrue(live.size() == 2, "both animals in the tank, got " + live.size());
             var area = new net.minecraft.world.phys.AABB(h.absolutePos(BlockPos.ZERO)).inflate(16);
-            int outside = h.getLevel().getEntitiesOfClass(Entity.class, area, e -> (e instanceof net.minecraft.world.entity.animal.WaterAnimal || e instanceof BettaEntity)
+            int outside = h.getLevel().getEntitiesOfClass(Entity.class, area, e -> (e instanceof net.minecraft.world.entity.animal.fish.WaterAnimal || e instanceof BettaEntity)
                     && !c.getTank().contains(e.blockPosition())).size();
             h.assertTrue(outside == 0, "no animal released outside the tank, got " + outside);
             h.assertTrue(!h.getLevel().getFluidState(h.absolutePos(new BlockPos(4, 1, 3))).isSource(), "no water placed in front of the tank");
@@ -337,7 +337,7 @@ public final class InhabitantGameTests {
             ok(insert(h, c, new ItemStack(Items.TROPICAL_FISH_BUCKET), sp));
             Entity fish = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
             int logs = c.getTank().log().size();
-            sp.teleportTo(h.getLevel(), fish.getX(), fish.getY() - 1.0, fish.getZ() - 1.5, 0F, 0F);
+            sp.teleportTo(h.getLevel(), fish.getX(), fish.getY() - 1.0, fish.getZ() - 1.5, java.util.Set.of(), 0F, 0F, false);
             sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
             var r = sp.interactOn(fish, net.minecraft.world.InteractionHand.MAIN_HAND);
             h.assertTrue(r.consumesAction() && fish.isRemoved(), "the bucket caught the fish: " + r);

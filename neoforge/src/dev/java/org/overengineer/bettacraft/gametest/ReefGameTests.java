@@ -98,14 +98,14 @@ public final class ReefGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 8;
+        sp.getInventory().getSelectedSlot() = 8;
         return sp;
     }
 
     private static void use(ServerPlayer sp, BlockPos pos, Direction face, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         Vec3 hit = Vec3.atCenterOf(pos).add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
     }
 
     private static void biome(ServerLevel level, BlockPos at, String biome) {
@@ -177,7 +177,7 @@ public final class ReefGameTests {
             h.setBlock(new BlockPos(20, 1, 20), Blocks.STONE);
             h.setBlock(new BlockPos(20, 2, 20), Blocks.WATER);
             biome(level, water, "minecraft:warm_ocean");
-            sp.teleportTo(level, water.getX() + 0.5, water.getY() + 1.0, water.getZ() + 0.5, 0F, 90F); // right above, looking down
+            sp.teleportTo(level, water.getX() + 0.5, water.getY() + 1.0, water.getZ() + 0.5, java.util.Set.of(), 0F, 90F, false); // right above, looking down
             sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
             sp.gameMode.useItem(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND);
             h.assertTrue(sp.getMainHandItem().is(ModItems.SEA_WATER_BUCKET.get()), "sea water from the ocean: " + sp.getMainHandItem());
@@ -394,7 +394,7 @@ public final class ReefGameTests {
                 sp2.teleportTo(in, r.toWorld(12, 2, 3).getX() + 0.5, r.toWorld(12, 2, 3).getY(), r.toWorld(12, 2, 3).getZ() + 0.5, 0F, 0F);
                 int got = InteriorPlants.trim(in, r, acro, sp2, new ItemStack(Items.SHEARS), InteractionHand.MAIN_HAND);
                 int frags = 0;
-                for (ItemStack s : sp2.getInventory().items) if (s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.ACROPORA).get())) frags += s.getCount();
+                for (ItemStack s : sp2.getInventory().getNonEquipmentItems()) if (s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.ACROPORA).get())) frags += s.getCount();
                 h.assertTrue(got > 0 && frags > 0, "frags cut: " + got + " / " + frags);
             } finally {
                 sp2.getServer().getPlayerList().remove(sp2);
@@ -473,7 +473,7 @@ public final class ReefGameTests {
                     sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
                     NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
                 }
-                for (ItemStack s : sp.getInventory().items) {
+                for (ItemStack s : sp.getInventory().getNonEquipmentItems()) {
                     var tm = org.overengineer.bettacraft.tankmates.TankmateItems.bagSpecies(s);
                     if (tm != null && tm.marine()) reefFish++;
                     var l = TankCritters.bagged(s);

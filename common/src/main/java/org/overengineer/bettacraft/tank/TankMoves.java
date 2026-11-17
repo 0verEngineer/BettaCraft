@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ public final class TankMoves {
      * types it would push out of the airship into the world, so they travel packed.
      */
     public static final net.minecraft.tags.TagKey<EntityType<?>> RETAIN = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE,
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("sable", "retain_in_sub_level"));
+            net.minecraft.resources.Identifier.fromNamespaceAndPath("sable", "retain_in_sub_level"));
 
     /** M50: whether an animal of this type swims on in a tank on a moving structure (Sable) instead of travelling packed. */
     public static boolean swimsOn(EntityType<?> type) {
@@ -69,7 +70,7 @@ public final class TankMoves {
     }
 
     private static boolean swimsOn(CompoundTag tag) {
-        return EntityType.by(tag).map(TankMoves::swimsOn).orElse(false);
+        return EntityType.byString(tag.getStringOr("id", "")).map(TankMoves::swimsOn).orElse(false);
     }
 
     /** M50: whether the care of a tank on a moving structure runs (features.compat.create.travelCare). */
@@ -105,7 +106,7 @@ public final class TankMoves {
         for (Entity e : inhabitantsNear(level, tank)) {
             if (e instanceof net.minecraft.world.entity.player.Player || e.isPassenger() || e.isVehicle()) continue;
             CompoundTag t = new CompoundTag();
-            if (!e.save(t)) continue;
+            if (!NbtCompat.saveEntity(e, t)) continue;
             markPlace(t, e, tank);
             TravelCare.annotate(t, e); // M50
             list.add(t);
@@ -326,7 +327,7 @@ public final class TankMoves {
             stowed.addAll(packAndRemove(level, packNow, before));
             ListTag keep = new ListTag();
             ListTag free = new ListTag();
-            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompound(i)) ? free : keep).add(stowed.getCompound(i));
+            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompoundOrEmpty(i)) ? free : keep).add(stowed.getCompoundOrEmpty(i));
             released = release(level, free, map, home);
             TankBlockEntity c = TankMultiblock.getController(level, home);
             if (c != null) {
@@ -360,7 +361,7 @@ public final class TankMoves {
         if (travelling(level, pos)) {
             // M50: on a moving structure the ones that may swim on come out when the care runs on the road
             ListTag keep = new ListTag(), free = new ListTag();
-            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompound(i)) ? free : keep).add(stowed.getCompound(i));
+            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompoundOrEmpty(i)) ? free : keep).add(stowed.getCompoundOrEmpty(i));
             if (free.isEmpty()) return;
             be.stowed = keep;
             int n = release(level, free, null);
@@ -409,7 +410,7 @@ public final class TankMoves {
         ListTag out = new ListTag();
         for (Entity e : animals) {
             CompoundTag t = new CompoundTag();
-            if (!e.isAlive() || !e.save(t)) continue;
+            if (!e.isAlive() || !NbtCompat.saveEntity(e, t)) continue;
             markPlace(t, e, tank);
             TravelCare.annotate(t, e); // M50
             out.add(t);
@@ -429,11 +430,11 @@ public final class TankMoves {
     private static int release(ServerLevel level, ListTag stowed, @Nullable TankMoveMap map, @Nullable BlockPos home) {
         int n = 0;
         for (int i = 0; i < stowed.size(); i++) {
-            CompoundTag tag = stowed.getCompound(i);
-            if (tag.hasUUID("UUID") && level.getEntity(tag.getUUID("UUID")) != null) continue;
-            Entity e = EntityType.loadEntityRecursive(tag, level, en -> en);
+            CompoundTag tag = stowed.getCompoundOrEmpty(i);
+            if (NbtCompat.hasUUID(tag, "UUID") && level.getEntity(NbtCompat.getUUID(tag, "UUID")) != null) continue;
+            Entity e = EntityType.loadEntityRecursive(tag, level, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
             if (e == null) {
-                LOGGER.warn("A packed animal ({}) could not be loaded again", tag.getString("id"));
+                LOGGER.warn("A packed animal ({}) could not be loaded again", tag.getStringOr("id", ""));
                 continue;
             }
             if (place(level, e, map, false, home) && level.addFreshEntity(e)) n++;
@@ -453,8 +454,8 @@ public final class TankMoves {
             return false;
         }
         if (!c.getTank().contains(BlockPos.containing(p))) p = TankInhabitants.findSpawnPos(level, c.getTank(), level.getRandom());
-        if (live) e.teleportTo(level, p.x, p.y, p.z, java.util.Set.of(), yaw, e.getXRot());
-        else e.moveTo(p.x, p.y, p.z, yaw, e.getXRot());
+        if (live) e.teleportTo(level, p.x, p.y, p.z, java.util.Set.of(), yaw, e.getXRot(), false);
+        else e.snapTo(p.x, p.y, p.z, yaw, e.getXRot());
         e.setYHeadRot(yaw);
         if (e instanceof LivingEntity le) le.yBodyRot = yaw;
         e.setDeltaMovement(Vec3.ZERO);

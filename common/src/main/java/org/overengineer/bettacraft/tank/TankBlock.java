@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
@@ -13,7 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -54,7 +54,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorManager;
  * </ul>
  * Water never spreads out: we never schedule fluid ticks and the outer walls have a full collision face.
  */
-public class TankBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PlayerDestroyable, org.overengineer.bettacraft.platform.PickableBlock {
+public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PlayerDestroyable, org.overengineer.bettacraft.platform.PickableBlock {
     public static final MapCodec<TankBlock> CODEC = simpleCodec(TankBlock::new);
 
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
@@ -203,7 +203,7 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.TANK.get(), TankCare::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.TANK.get(), TankCare::serverTick);
     }
 
     @Override
@@ -243,12 +243,12 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 
     @Override
-    protected int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    protected int getLightBlock(BlockState state) {
         return 0;
     }
 
@@ -266,7 +266,7 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         // M16: no tank inside a tank (players, deployers and other block placers that use the item)
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(context.getLevel())) {
-            if (!context.getLevel().isClientSide && context.getPlayer() != null) {
+            if (!context.getLevel().isClientSide() && context.getPlayer() != null) {
                 context.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank")
                         .withStyle(net.minecraft.ChatFormatting.GOLD), true);
             }
@@ -280,7 +280,7 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
-        if (!level.isClientSide && !oldState.is(this)) {
+        if (!level.isClientSide() && !oldState.is(this)) {
             // Fallback for placements without setPlacedBy (commands, structures): form the tank next tick.
             // M16: in the interior dimension it is broken again at the end of the tick (no tank inside a tank)
             if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level)) TankEvents.removeLater((ServerLevel) level, pos);
@@ -331,7 +331,7 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level instanceof ServerLevel server
                 && level.getBlockEntity(pos) instanceof TankBlockEntity be) {
             TankMultiblock.onTankBlockRemoved(server, pos, be);
@@ -340,22 +340,21 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
                 TankEvents.dryLater(server, pos);
             }
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         Optional<Component> blocked = TankInhabitants.breakBlockedReason(level, pos);
         if (blocked.isPresent()) {
-            if (!level.isClientSide) player.displayClientMessage(blocked.get(), true);
+            if (!level.isClientSide()) player.displayClientMessage(blocked.get(), true);
             return false;
         }
         playerWillDestroy(level, pos, state, player);
         // The water simply vanishes: the block becomes air, never a water source (PLAN 4.1).
-        return level.setBlock(pos, Blocks.AIR.defaultBlockState(), level.isClientSide ? 11 : 3);
+        return level.setBlock(pos, Blocks.AIR.defaultBlockState(), level.isClientSide() ? 11 : 3);
     }
 
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
-        ItemStack stack = super.getCloneItemStack(level, pos, state);
+        ItemStack stack = super.getCloneItemStack(level, pos, state, false);
         if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
             TankBlockItem.setGlass(stack, be.getGlassId());
             TankBlockItem.setStyle(stack, be.getStyle());
@@ -366,14 +365,14 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
     // ------------------------------------------------------------------ interaction
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hit) {
         return TankInteractions.useItemOn(stack, level, pos, player, hand, hit);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         if (!(player instanceof ServerPlayer sp)) {
@@ -389,7 +388,7 @@ public class TankBlock extends BaseEntityBlock implements org.overengineer.betta
                 // M51: a tank without an owner (from before owners, built by a machine or a command) goes to the next player who opens it
                 if (controller.getTank().owner() == null && !sp.isSpectator()) {
                     controller.getTank().setOwner(sp.getUUID());
-                    org.overengineer.bettacraft.tank.TankCare.log(sp.serverLevel(), controller, "log.bettacraft.owner_taken", TankCare.nameArg(sp));
+                    org.overengineer.bettacraft.tank.TankCare.log(sp.level(), controller, "log.bettacraft.owner_taken", TankCare.nameArg(sp));
                     controller.markTankChanged();
                 }
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, controller),

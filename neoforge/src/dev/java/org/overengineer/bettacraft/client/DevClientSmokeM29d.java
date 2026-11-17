@@ -70,7 +70,7 @@ final class DevClientSmokeM29d {
         then(1, () -> server(p -> {
             Vec3 e = eggAt;
             if (e == null) return;
-            for (var a : p.serverLevel().getEntitiesOfClass(Axolotl.class, new net.minecraft.world.phys.AABB(e, e).inflate(1.6, 2, 2))) {
+            for (var a : p.level().getEntitiesOfClass(Axolotl.class, new net.minecraft.world.phys.AABB(e, e).inflate(1.6, 2, 2))) {
                 a.setPos(a.getX() + 2.6, a.getY(), a.getZ() + 0.2);
             }
         }));
@@ -84,7 +84,7 @@ final class DevClientSmokeM29d {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int x = -4; x <= 14; x++)
             for (int z = -8; z <= 8; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -111,7 +111,7 @@ final class DevClientSmokeM29d {
     }
 
     private void arrange(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity cray = TankMultiblock.getController(level, base), axo = TankMultiblock.getController(level, base.offset(6, 0, 0));
         if (cray == null || axo == null) {
             LOGGER.error("[smoketest] M29d tanks missing");
@@ -203,7 +203,7 @@ final class DevClientSmokeM29d {
     // ------------------------------------------------------------------ helpers
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

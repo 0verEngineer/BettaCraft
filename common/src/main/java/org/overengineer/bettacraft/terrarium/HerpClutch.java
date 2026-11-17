@@ -119,19 +119,19 @@ public final class HerpClutch {
     /** Null for a species that no longer exists or broken numbers. */
     @Nullable
     public static HerpClutch load(CompoundTag t) {
-        HerpSpecies s = HerpSpecies.byId(t.getString("species"));
+        HerpSpecies s = HerpSpecies.byId(t.getStringOr("species", ""));
         if (s == null) return null;
-        double x = t.getDouble("x"), y = t.getDouble("y"), z = t.getDouble("z");
+        double x = t.getDoubleOr("x", 0d), y = t.getDoubleOr("y", 0d), z = t.getDoubleOr("z", 0d);
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) return null;
-        HerpClutch c = new HerpClutch(t.getInt("id"), s, Math.max(0, Math.min(64, t.getInt("eggs"))), new Vec3(x, y, z),
-                BlockPos.of(t.getLong("interior")), t.getLong("seed"));
-        c.progress = finite(t.getDouble("progress"), 0, 1);
-        c.tspSum = finite(t.getDouble("tsp_sum"), 0, 1e6);
-        c.tspDays = finite(t.getDouble("tsp_days"), 0, 1e4);
-        c.hotDays = finite(t.getDouble("hot"), 0, 1e4);
-        c.motherVariety = Math.max(0, Math.min(s.varieties().size() - 1, t.getInt("mother")));
-        c.fatherVariety = Math.max(0, Math.min(s.varieties().size() - 1, t.getInt("father")));
-        c.generation = Math.max(0, t.getInt("gen"));
+        HerpClutch c = new HerpClutch(t.getIntOr("id", 0), s, Math.max(0, Math.min(64, t.getIntOr("eggs", 0))), new Vec3(x, y, z),
+                BlockPos.of(t.getLongOr("interior", 0L)), t.getLongOr("seed", 0L));
+        c.progress = finite(t.getDoubleOr("progress", 0d), 0, 1);
+        c.tspSum = finite(t.getDoubleOr("tsp_sum", 0d), 0, 1e6);
+        c.tspDays = finite(t.getDoubleOr("tsp_days", 0d), 0, 1e4);
+        c.hotDays = finite(t.getDoubleOr("hot", 0d), 0, 1e4);
+        c.motherVariety = Math.max(0, Math.min(s.varieties().size() - 1, t.getIntOr("mother", 0)));
+        c.fatherVariety = Math.max(0, Math.min(s.varieties().size() - 1, t.getIntOr("father", 0)));
+        c.generation = Math.max(0, t.getIntOr("gen", 0));
         return c;
     }
 

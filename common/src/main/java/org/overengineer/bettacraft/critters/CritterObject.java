@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -74,7 +75,7 @@ public final class CritterObject {
 
     @Nullable
     public static CritterObject load(CompoundTag t) {
-        Kind k = switch (t.getString("kind")) {
+        Kind k = switch (t.getStringOr("kind", "")) {
             case "clutch" -> Kind.CLUTCH;
             case "molt" -> Kind.MOLT;
             case "axolotl_eggs" -> Kind.AXOLOTL_EGGS;
@@ -82,17 +83,17 @@ public final class CritterObject {
             default -> null;
         };
         if (k == null) return null;
-        CritterObject o = new CritterObject(t.getInt("id"), k, t.getDouble("x"), t.getDouble("y"), t.getDouble("z"));
+        CritterObject o = new CritterObject(t.getIntOr("id", 0), k, t.getDoubleOr("x", 0d), t.getDoubleOr("y", 0d), t.getDoubleOr("z", 0d));
         if (!Double.isFinite(o.x) || !Double.isFinite(o.y) || !Double.isFinite(o.z)) return null;
-        o.face = t.getByte("face");
-        o.yaw = t.getFloat("yaw");
-        o.age = Math.max(0, Critter.finite(t.getDouble("age"), 0)); // M17: no NaN / negative ages
-        o.mother = t.contains("mother", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("mother")) : null;
-        o.father = t.contains("father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompound("father")) : null;
-        o.count = Math.max(0, Math.min(1000, t.getInt("count"))); // M17: a corrupt count cannot hatch thousands
-        o.generation = Math.max(0, t.getInt("gen"));
-        o.species = CritterSpecies.byId(t.getString("species"));
-        o.size = t.contains("size") && Float.isFinite(t.getFloat("size")) ? t.getFloat("size") : 1F;
+        o.face = t.getByteOr("face", (byte) 0);
+        o.yaw = t.getFloatOr("yaw", 0f);
+        o.age = Math.max(0, Critter.finite(t.getDoubleOr("age", 0d), 0)); // M17: no NaN / negative ages
+        o.mother = NbtCompat.has(t, "mother", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompoundOrEmpty("mother")) : null;
+        o.father = NbtCompat.has(t, "father", Tag.TAG_COMPOUND) ? CritterGenes.load(t.getCompoundOrEmpty("father")) : null;
+        o.count = Math.max(0, Math.min(1000, t.getIntOr("count", 0))); // M17: a corrupt count cannot hatch thousands
+        o.generation = Math.max(0, t.getIntOr("gen", 0));
+        o.species = CritterSpecies.byId(t.getStringOr("species", ""));
+        o.size = t.contains("size") && Float.isFinite(t.getFloatOr("size", 0f)) ? t.getFloatOr("size", 0f) : 1F;
         return o;
     }
 }

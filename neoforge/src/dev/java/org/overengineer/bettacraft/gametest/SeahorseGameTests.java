@@ -111,7 +111,7 @@ public final class SeahorseGameTests {
         for (int cx = (r.originX() - 1) >> 4; cx <= (r.originX() + r.sizeX()) >> 4; cx++) {
             for (int cz = (r.originZ() - 1) >> 4; cz <= (r.originZ() + r.sizeZ()) >> 4; cz++) {
                 net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(cx, cz);
-                in.getChunkSource().addRegionTicket(org.overengineer.bettacraft.tank.interior.InteriorPreparation.TICKET, cp, 0, cp);
+                in.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), cp, 0);
                 in.getChunk(cx, cz);
             }
         }

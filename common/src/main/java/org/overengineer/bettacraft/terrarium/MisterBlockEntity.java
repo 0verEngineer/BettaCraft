@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -100,7 +103,7 @@ public class MisterBlockEntity extends BlockEntity {
     }
 
     private void setMisting(boolean on) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState s = getBlockState();
         if (s.hasProperty(MisterBlock.MISTING) && s.getValue(MisterBlock.MISTING) != on) level.setBlock(worldPosition, s.setValue(MisterBlock.MISTING, on), Block.UPDATE_CLIENTS);
     }
@@ -147,16 +150,21 @@ public class MisterBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         water.save(tag, registries);
         tag.putInt("setting", setting);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         water.load(tag, registries);
-        setting = tag.contains("setting") ? Math.max(MIN_SETTING, Math.min(MAX_SETTING, tag.getInt("setting"))) : DEFAULT_SETTING;
+        setting = tag.contains("setting") ? Math.max(MIN_SETTING, Math.min(MAX_SETTING, tag.getIntOr("setting", 0))) : DEFAULT_SETTING;
     }
 }

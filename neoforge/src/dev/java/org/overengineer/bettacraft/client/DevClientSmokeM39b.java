@@ -10,7 +10,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -62,7 +62,7 @@ final class DevClientSmokeM39b {
     DevClientSmokeM39b() {
         then(1, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
-        then(200, () -> server(pl -> place(pl.serverLevel())));
+        then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(insects.getX() + 5, insects.getY() + 3.0, insects.getZ() - 5.2, 0F, 22F));
         then(140, () -> shot("insects"));
         then(1, () -> look(mammals.getX() + 6, mammals.getY() + 3.2, mammals.getZ() - 6.0, 0F, 22F));
@@ -73,15 +73,15 @@ final class DevClientSmokeM39b {
         then(100, () -> shot("birds_water"));
         // night: the fireflies glow
         then(1, () -> server(p -> {
-            dayTime = p.serverLevel().getDayTime();
-            p.serverLevel().setDayTime(18000);
+            dayTime = p.level().getDayTime();
+            p.level().setDayTime(18000);
         }));
         then(1, () -> look(insects.getX() + 5, insects.getY() + 3.0, insects.getZ() - 5.2, 0F, 22F));
         then(80, () -> server(p -> fireflies.forEach(f -> {
             if (f instanceof Mob m) ForeignHabits.flashNow(m);
         })));
         then(3, () -> shot("fireflies"));
-        then(1, () -> server(p -> p.serverLevel().setDayTime(dayTime)));
+        then(1, () -> server(p -> p.level().setDayTime(dayTime)));
         then(1, () -> mc.options.hideGui = false);
     }
 
@@ -129,7 +129,7 @@ final class DevClientSmokeM39b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         BlockPos base = p.blockPosition().offset(-12, 2, 200);
         // --- the insect terrarium: 10 x 3 x 6, soil with moss, a few logs and stones
@@ -164,14 +164,14 @@ final class DevClientSmokeM39b {
     }
 
     private static EntityType<?> type(String id) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id)).orElse(null);
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id)).orElse(null);
     }
 
     /** Puts a new animal of the type in by its container (as a player would); the animal, or null with an error logged. */
     private static LivingEntity insert(ServerLevel level, TankBlockEntity c, EntityType<?> type, boolean tub) {
         Entity e = type.create(level);
         if (e == null) return null;
-        e.moveTo(c.getBlockPos().getX(), c.getBlockPos().getY(), c.getBlockPos().getZ());
+        e.snapTo(c.getBlockPos().getX(), c.getBlockPos().getY(), c.getBlockPos().getZ());
         ItemStack stack = tub ? TransportTubItem.fillWith(e) : TerrariumBoxItem.fillWith(e);
         e.discard();
         List<Entity> before = TankInhabitants.liveInhabitants(level, c.getTank());
@@ -191,7 +191,7 @@ final class DevClientSmokeM39b {
         TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), true);
         double x = t.min().getX() + dx, z = t.min().getZ() + dz;
         double g = ter.ground(x, z) + 0.01 + up;
-        e.moveTo(x, g, z, yaw, 0F);
+        e.snapTo(x, g, z, yaw, 0F);
         e.setYHeadRot(yaw);
         e.yBodyRot = yaw;
         if (e instanceof Mob m) SmokeFreeze.freeze(m, true);
@@ -252,7 +252,7 @@ final class DevClientSmokeM39b {
         LivingEntity penguin = insertIf(level, pc, "livingthings:penguin", true);
         if (penguin != null) {
             pose(level, pc, penguin, 4.5, 3.2, 0, 90F);
-            penguin.moveTo(penguin.getX(), surface - 0.5, penguin.getZ(), 90F, 0F);
+            penguin.snapTo(penguin.getX(), surface - 0.5, penguin.getZ(), 90F, 0F);
         }
         pose(level, pc, insertIf(level, pc, "livingthings:penguin", true), 11.4, 5.0, 0, 200F);
         pose(level, pc, insertIf(level, pc, "livingthings:flamingo", true), 9.0, 2.6, 0, 240F);

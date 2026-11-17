@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.tank.interior;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -42,39 +45,42 @@ public class InteriorFloorBlockEntity extends BlockEntity implements org.overeng
         this.substrate = substrate;
         this.paid = paid;
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag raw, HolderLookup.Provider registries) {
-        super.loadAdditional(raw, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag raw = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.INTERIOR_FLOOR.migrate(raw);
         if (tag.contains("substrate")) {
-            BlockState s = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), tag.getCompound("substrate"));
+            BlockState s = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), tag.getCompoundOrEmpty("substrate"));
             substrate = s.isAir() ? Blocks.SAND.defaultBlockState() : s;
         }
-        paid = tag.getBoolean("paid");
-        if (level != null && level.isClientSide) {
+        paid = tag.getBooleanOr("paid", false);
+        if (level != null && level.isClientSide()) {
             org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         Schemas.INTERIOR_FLOOR.stamp(tag);
         tag.put("substrate", NbtUtils.writeBlockState(substrate));
         tag.putBoolean("paid", paid);
+        NbtCompat.write(output, tag);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag, registries);
-        return tag;
+        return saveCustomOnly(registries); // M52b: saveAdditional takes a value output now
     }
 
     @Override
@@ -83,12 +89,12 @@ public class InteriorFloorBlockEntity extends BlockEntity implements org.overeng
     }
 
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
-        if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+        if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
     }
 
     @Override
     public void handleUpdateTag(net.minecraft.nbt.CompoundTag tag, HolderLookup.Provider registries) {
-        loadWithComponents(tag, registries); // NeoForge's default
+        loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
     }
 
     @Override

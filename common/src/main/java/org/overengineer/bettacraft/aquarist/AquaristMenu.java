@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.aquarist;
 
+import org.overengineer.bettacraft.util.Perms;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +50,7 @@ public final class AquaristMenu {
         v.putString("phase", npc.phase().name().toLowerCase(java.util.Locale.ROOT));
         v.putString("status", npc.computeStatus(level));
         v.putString("employer", npc.employerName());
-        v.putBoolean("boss", viewer.getUUID().equals(npc.employer()) || viewer.hasPermissions(2));
+        v.putBoolean("boss", viewer.getUUID().equals(npc.employer()) || Perms.has(viewer, 2));
         v.putBoolean("feature", Features.enabled(Feature.AQUARIST_NPC));
         int[] lv = new int[AquaristTask.ALL.length];
         for (AquaristTask t : AquaristTask.ALL) lv[t.ordinal()] = npc.taskLevel(t);
@@ -68,14 +70,14 @@ public final class AquaristMenu {
         v.putBoolean("food", AquaristWork.chestsHaveFood(level, npc.workplace()));
         v.putInt("chests", AquaristWork.chests(level, npc.workplace()).size());
         if (npc.offerUntil() != Long.MAX_VALUE) v.putLong("offer_left", Math.max(0, npc.offerUntil() - level.getServer().overworld().getGameTime()));
-        if (npc.rearingTank() != null) v.putUUID("rearing", npc.rearingTank());
+        if (npc.rearingTank() != null) NbtCompat.putUUID(v, "rearing", npc.rearingTank());
         ListTag tanks = new ListTag();
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         for (AquaristRecords.TankEntry e : AquaristWork.tanksAround(level, npc)) {
             if (tanks.size() >= MAX_TANK_ROWS) break;
             TankBlockEntity c = rec.resolve(level.getServer(), e);
             CompoundTag t = new CompoundTag();
-            t.putUUID("id", e.tank());
+            NbtCompat.putUUID(t, "id", e.tank());
             t.putLong("pos", e.pos().asLong());
             if (c == null) {
                 t.putString("name", "");
@@ -94,7 +96,7 @@ public final class AquaristMenu {
         if (!(p.level().getEntity(a.entity()) instanceof AquaristEntity npc) || !npc.isAlive()) return;
         if (p.distanceToSqr(npc) > 8 * 8 || p.isSpectator()) return;
         boolean employer = p.getUUID().equals(npc.employer());
-        boolean boss = employer || p.hasPermissions(2);
+        boolean boss = employer || Perms.has(p, 2);
         ServerLevel level = (ServerLevel) npc.level();
         Component err = null;
         switch (a.action()) {

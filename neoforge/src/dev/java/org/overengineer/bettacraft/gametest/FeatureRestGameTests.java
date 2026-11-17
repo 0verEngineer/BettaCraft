@@ -12,13 +12,13 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestFunction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -155,11 +155,11 @@ public final class FeatureRestGameTests {
     }
 
     /** Recipe id -> result item path (ours only). */
-    private static Map<ResourceLocation, String> results(ServerLevel level, RecipeManager rm) {
-        Map<ResourceLocation, String> out = new java.util.HashMap<>();
+    private static Map<Identifier, String> results(ServerLevel level, RecipeManager rm) {
+        Map<Identifier, String> out = new java.util.HashMap<>();
         for (RecipeHolder<?> r : rm.getRecipes()) {
             ItemStack res = r.value().getResultItem(level.registryAccess());
-            ResourceLocation id = res.isEmpty() ? null : BuiltInRegistries.ITEM.getKey(res.getItem());
+            Identifier id = res.isEmpty() ? null : BuiltInRegistries.ITEM.getKey(res.getItem());
             out.put(r.id(), id != null && id.getNamespace().equals(BettaCraft.MOD_ID) ? id.getPath() : "");
         }
         return out;
@@ -179,7 +179,7 @@ public final class FeatureRestGameTests {
         return true;
     }
 
-    private static void contentGone(GameTestHelper h, Feature f, Map<ResourceLocation, String> before) {
+    private static void contentGone(GameTestHelper h, Feature f, Map<Identifier, String> before) {
         ServerLevel level = h.getLevel();
         RecipeManager rm = FeatureSwitchGameTests.recipes(level);
         for (var e : before.entrySet()) {
@@ -277,7 +277,7 @@ public final class FeatureRestGameTests {
     private static void run(GameTestHelper h, Feature f) {
         ServerLevel level = h.getLevel();
         check(Features.enabled(f), f, "on before the test (another test left it off?)");
-        Map<ResourceLocation, String> before = results(level, FeatureSwitchGameTests.recipes(level));
+        Map<Identifier, String> before = results(level, FeatureSwitchGameTests.recipes(level));
         Set<String> offers = allowedOffers();
         Stock s = stock(h);
         Probe probe = PROBES.get(f);
@@ -299,7 +299,7 @@ public final class FeatureRestGameTests {
         // on again: everything is back
         check(Features.enabled(f), f, "not on again");
         RecipeManager rm = FeatureSwitchGameTests.recipes(level);
-        for (ResourceLocation id : before.keySet()) check(rm.byKey(id).isPresent(), f, "recipe " + id + " not back");
+        for (Identifier id : before.keySet()) check(rm.byKey(id).isPresent(), f, "recipe " + id + " not back");
         check(allowedOffers().containsAll(offers), f, "offers not back");
         check(new FeatureLootCondition(f).test(null), f, "loot condition not back");
         care(h, s);

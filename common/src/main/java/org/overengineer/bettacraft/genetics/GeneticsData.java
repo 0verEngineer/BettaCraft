@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.genetics;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -417,41 +418,41 @@ public final class GeneticsData {
 
     public static GeneticsData fromNbt(CompoundTag t) {
         Map<String, ColorDef> colors = new LinkedHashMap<>();
-        ListTag cl = t.getList("colors", Tag.TAG_COMPOUND);
+        ListTag cl = t.getListOrEmpty("colors");
         for (int i = 0; i < cl.size(); i++) {
-            CompoundTag x = cl.getCompound(i);
-            colors.put(x.getString("id"), new ColorDef(x.getString("id"), x.getInt("rgb"), x.contains("rank") ? x.getInt("rank") : null,
-                    x.getBoolean("iri"), x.getInt("w"), x.contains("name") ? x.getString("name") : null));
+            CompoundTag x = cl.getCompoundOrEmpty(i);
+            colors.put(x.getStringOr("id", ""), new ColorDef(x.getStringOr("id", ""), x.getIntOr("rgb", 0), x.contains("rank") ? x.getIntOr("rank", 0) : null,
+                    x.getBooleanOr("iri", false), x.getIntOr("w", 0), x.contains("name") ? x.getStringOr("name", "") : null));
         }
         Map<String, Map<String, AlleleDef>> genes = new LinkedHashMap<>();
-        CompoundTag gt = t.getCompound("genes");
-        for (String locus : gt.getAllKeys()) {
+        CompoundTag gt = t.getCompoundOrEmpty("genes");
+        for (String locus : gt.keySet()) {
             Map<String, AlleleDef> m = new LinkedHashMap<>();
-            ListTag l = gt.getList(locus, Tag.TAG_COMPOUND);
+            ListTag l = gt.getListOrEmpty(locus);
             for (int i = 0; i < l.size(); i++) {
-                CompoundTag x = l.getCompound(i);
-                m.put(x.getString("id"), new AlleleDef(x.getString("id"), x.getInt("rank"), x.getInt("w"),
-                        x.contains("name") ? x.getString("name") : null));
+                CompoundTag x = l.getCompoundOrEmpty(i);
+                m.put(x.getStringOr("id", ""), new AlleleDef(x.getStringOr("id", ""), x.getIntOr("rank", 0), x.getIntOr("w", 0),
+                        x.contains("name") ? x.getStringOr("name", "") : null));
             }
             genes.put(locus, m);
         }
         List<VarietyDef> varieties = new ArrayList<>();
-        ListTag vl = t.getList("varieties", Tag.TAG_COMPOUND);
+        ListTag vl = t.getListOrEmpty("varieties");
         for (int i = 0; i < vl.size(); i++) {
-            CompoundTag x = vl.getCompound(i);
+            CompoundTag x = vl.getCompoundOrEmpty(i);
             Map<String, Set<String>> cond = new LinkedHashMap<>();
-            CompoundTag when = x.getCompound("when");
-            for (String k : when.getAllKeys()) {
+            CompoundTag when = x.getCompoundOrEmpty("when");
+            for (String k : when.keySet()) {
                 Set<String> s = new LinkedHashSet<>();
-                ListTag l = when.getList(k, Tag.TAG_STRING);
-                for (int j = 0; j < l.size(); j++) s.add(l.getString(j));
+                ListTag l = when.getListOrEmpty(k);
+                for (int j = 0; j < l.size(); j++) s.add(l.getStringOr(j, ""));
                 cond.put(k, Set.copyOf(s));
             }
             Map<String, String> ex = new LinkedHashMap<>();
-            CompoundTag et = x.getCompound("example");
-            for (String k : et.getAllKeys()) ex.put(k, et.getString(k));
-            varieties.add(new VarietyDef(x.getString("id"), x.getInt("prio"), x.getBoolean("form"), cond, ex,
-                    x.contains("name") ? x.getString("name") : null));
+            CompoundTag et = x.getCompoundOrEmpty("example");
+            for (String k : et.keySet()) ex.put(k, et.getStringOr(k, ""));
+            varieties.add(new VarietyDef(x.getStringOr("id", ""), x.getIntOr("prio", 0), x.getBooleanOr("form", false), cond, ex,
+                    x.contains("name") ? x.getStringOr("name", "") : null));
         }
         GeneticsData def = defaults();
         if (colors.isEmpty()) colors.putAll(def.colors);

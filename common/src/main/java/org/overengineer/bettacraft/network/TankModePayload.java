@@ -47,7 +47,7 @@ public record TankModePayload(int containerId, int mode) implements CustomPacket
         if (!WaterLimit.enabled()) return Result.OFF;
         if (p.mode() < 0 || p.mode() >= TankModeSetting.values().length) return Result.INVALID;
         TankData t = c.getTank();
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         if (!TankInhabitants.canModify(player, t)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
             return Result.LOCKED;

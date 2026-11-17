@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.compat;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import javax.annotation.Nullable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,8 +26,8 @@ import net.minecraft.world.item.component.CustomData;
  * Both work for putting animals into our tanks and for taking them out through the tank menu.
  */
 public final class FishContainers {
-    public static final ResourceLocation BFT_FISH_BAG = ResourceLocation.fromNamespaceAndPath("betterfishtanks", "fish_bag_item");
-    public static final ResourceLocation FINTASTIC_FISHNET = ResourceLocation.fromNamespaceAndPath("fintastic", "fishnet");
+    public static final Identifier BFT_FISH_BAG = Identifier.fromNamespaceAndPath("betterfishtanks", "fish_bag_item");
+    public static final Identifier FINTASTIC_FISHNET = Identifier.fromNamespaceAndPath("fintastic", "fishnet");
     static final String BFT_KEY = "StoredEntity";
     static final String NET_KEY = "CreatureData";
 
@@ -35,11 +36,11 @@ public final class FishContainers {
         BFT_BAG(BFT_FISH_BAG, BFT_KEY, 100L),
         FISHNET(FINTASTIC_FISHNET, NET_KEY, 0L);
 
-        public final ResourceLocation item;
+        public final Identifier item;
         final String key;
         public final long waterMb;
 
-        Foreign(ResourceLocation item, String key, long waterMb) {
+        Foreign(Identifier item, String key, long waterMb) {
             this.item = item;
             this.key = key;
             this.waterMb = waterMb;
@@ -51,7 +52,7 @@ public final class FishContainers {
     @Nullable
     public static Foreign kind(ItemStack stack) {
         if (stack.isEmpty()) return null;
-        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         for (Foreign f : Foreign.values()) if (f.item.equals(id)) return f;
         return null;
     }
@@ -62,15 +63,15 @@ public final class FishContainers {
         Foreign f = kind(stack);
         if (f == null) return null;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd == null || !cd.contains(f.key)) return null;
-        CompoundTag t = cd.copyTag().getCompound(f.key);
-        return t.contains("id", Tag.TAG_STRING) ? t : null;
+        if (cd == null || !cd.copyTag().contains(f.key)) return null;
+        CompoundTag t = cd.copyTag().getCompoundOrEmpty(f.key);
+        return NbtCompat.has(t, "id", Tag.TAG_STRING) ? t : null;
     }
 
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getString("id")).orElse(null);
+        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
     }
 
     public static boolean isEmptyContainer(ItemStack stack) {
@@ -100,7 +101,7 @@ public final class FishContainers {
         CompoundTag entity = new CompoundTag();
         String id = e.getEncodeId();
         if (id != null) entity.putString("id", id);
-        e.saveWithoutId(entity);
+        entity.merge(NbtCompat.saveEntityWithoutId(e));
         if (f == Foreign.FISHNET && player != null) entity.putString("OwnerName", player.getName().getString());
         CompoundTag data = out.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         data.put(f.key, entity);
@@ -120,6 +121,6 @@ public final class FishContainers {
         t.remove("Motion");
         t.remove("Passengers");
         t.remove("OwnerName");
-        return EntityType.create(t, level).orElse(null);
+        return EntityType.create(NbtCompat.input(level.registryAccess(), t), level, net.minecraft.world.entity.EntitySpawnReason.LOAD).orElse(null);
     }
 }

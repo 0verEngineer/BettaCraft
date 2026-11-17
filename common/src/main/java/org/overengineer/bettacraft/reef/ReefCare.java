@@ -32,7 +32,7 @@ public final class ReefCare {
             if (org.overengineer.bettacraft.foreign.ForeignProfiles.cared(e) != null) continue; // M32 part a: the salt is in its health timers
             Salinity.Range range = SaltTolerance.of(e);
             CompoundTag data = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
-            double shock = data.getDouble(KEY);
+            double shock = data.getDoubleOr(KEY, 0d);
             if (range == null) {
                 if (shock > 0) data.remove(KEY);
                 continue;
@@ -66,6 +66,6 @@ public final class ReefCare {
 
     /** Salt shock of a frog or foreign animal (0..1, menu and tests). */
     public static double shock(Entity e) {
-        return org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getDouble(KEY);
+        return org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getDoubleOr(KEY, 0d);
     }
 }

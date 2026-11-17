@@ -69,7 +69,7 @@ public final class BiomeWatersGameTests {
     /** Every vanilla biome: net (also deep under ground), spawns, plant fishing, floating plants, mud, corals as before. */
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void vanillaBiomesKeepTheirWaters(GameTestHelper h) {
-        var reg = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        var reg = h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
         List<String> bad = new ArrayList<>();
         int n = 0;
         for (var b : reg.holders().toList()) {
@@ -98,7 +98,7 @@ public final class BiomeWatersGameTests {
     /** The tags hold the vanilla biomes (modpacks extend them). */
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void waterTagsHoldTheVanillaBiomes(GameTestHelper h) {
-        var reg = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        var reg = h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
         record Want(net.minecraft.tags.TagKey<Biome> tag, ResourceKey<Biome> biome) {}
         for (Want w : List.of(new Want(ModTags.WARM_OCEAN_WATERS, Biomes.WARM_OCEAN), new Want(ModTags.LUKEWARM_OCEAN_WATERS, Biomes.LUKEWARM_OCEAN),
                 new Want(ModTags.LUKEWARM_OCEAN_WATERS, Biomes.DEEP_LUKEWARM_OCEAN), new Want(ModTags.MANGROVE_WATERS, Biomes.MANGROVE_SWAMP),

@@ -139,7 +139,7 @@ public final class CichlidGameTests {
         h.assertTrue(male.isGuarding() && female.isGuarding(), "they stay at the brood");
         // a neon swims up to the brood: chased off and bitten
         TankmateEntity neon = add(h, c, TankmateSpecies.NEON_TETRA, false);
-        neon.moveTo(k.x, k.y + 0.1, k.z);
+        neon.snapTo(k.x, k.y + 0.1, k.z);
         float hp = neon.getHealth();
         int before = k.count;
         TankmateBreeding.step(h.getLevel(), c, 1.0); // tankmates.behaviour.broodDefence 1: one hit point a day

@@ -82,7 +82,7 @@ final class DataGenM49 {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, ModItems.DECOR.get(org.overengineer.bettacraft.decor.DecorType.MANGROVE_STILT_ROOTS).get())
                 .requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS)
                 .requires(Items.MANGROVE_LOG).requires(Items.MANGROVE_LOG).requires(Items.MUD)
-                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS))
+                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS))
                 .save(out, BettaCraft.id("decor_mangrove_stilt_roots"));
     }
 

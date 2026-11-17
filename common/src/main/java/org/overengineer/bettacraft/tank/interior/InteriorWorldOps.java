@@ -33,8 +33,8 @@ public final class InteriorWorldOps {
 
     /** Fills the inclusive box with {@code state}. */
     public static void fill(ServerLevel level, int x0, int y0, int z0, int x1, int y1, int z1, BlockState state, LongSet touchedChunks) {
-        y0 = Math.max(y0, level.getMinBuildHeight());
-        y1 = Math.min(y1, level.getMaxBuildHeight() - 1);
+        y0 = Math.max(y0, level.getMinY());
+        y1 = Math.min(y1, level.getMaxY() - 1);
         for (int cx = x0 >> 4; cx <= x1 >> 4; cx++) {
             for (int cz = z0 >> 4; cz <= z1 >> 4; cz++) {
                 LevelChunk chunk = level.getChunk(cx, cz);
@@ -48,7 +48,7 @@ public final class InteriorWorldOps {
                         }
                     }
                 }
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
                 touchedChunks.add(ChunkPos.asLong(cx, cz));
             }
         }
@@ -56,8 +56,8 @@ public final class InteriorWorldOps {
 
     /** Visits every non-air block in the inclusive box, skipping empty sections quickly. */
     public static void forEachBlock(ServerLevel level, int x0, int y0, int z0, int x1, int y1, int z1, BlockVisitor visitor) {
-        y0 = Math.max(y0, level.getMinBuildHeight());
-        y1 = Math.min(y1, level.getMaxBuildHeight() - 1);
+        y0 = Math.max(y0, level.getMinY());
+        y1 = Math.min(y1, level.getMaxY() - 1);
         for (int cx = x0 >> 4; cx <= x1 >> 4; cx++) {
             for (int cz = z0 >> 4; cz <= z1 >> 4; cz++) {
                 LevelChunk chunk = level.getChunk(cx, cz);
@@ -109,7 +109,7 @@ public final class InteriorWorldOps {
                 BlockEntity be = BlockEntity.loadStatic(p, c.state(), c.blockEntity(), level.registryAccess());
                 if (be != null) chunk.addAndRegisterBlockEntity(be); // M17: registers the ticker too (furnaces, hoppers, machines kept still)
             }
-            chunk.setUnsaved(true);
+            chunk.markUnsaved();
             touchedChunks.add(ChunkPos.asLong(p.getX() >> 4, p.getZ() >> 4));
             if (org.overengineer.bettacraft.platform.Platform.get().lightEmission(c.state(), level, p) > 0) {
                 level.getChunkSource().getLightEngine().checkBlock(p);
@@ -132,7 +132,7 @@ public final class InteriorWorldOps {
         });
         for (BlockPos p : withBe) level.getChunkAt(p).removeBlockEntity(p);
         for (BlockPos p : lit) level.getChunkSource().getLightEngine().checkBlock(p);
-        for (long c : chunks) level.getChunk(ChunkPos.getX(c), ChunkPos.getZ(c)).setUnsaved(true);
+        for (long c : chunks) level.getChunk(ChunkPos.getX(c), ChunkPos.getZ(c)).markUnsaved();
         touchedChunks.addAll(chunks);
     }
 

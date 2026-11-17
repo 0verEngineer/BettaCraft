@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -97,7 +100,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
 
     /** Whether it lives in a tank now (server: its tank found; client: synced). */
     public boolean inTank() {
-        return level().isClientSide ? entityData.get(DATA_IN_TANK) : tank != null;
+        return level().isClientSide() ? entityData.get(DATA_IN_TANK) : tank != null;
     }
 
     /** On a basking spot now (synced, for the renderer: head up, legs out). */
@@ -171,13 +174,13 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(ServerLevel serverLevel) {
         if (tank != null && level() instanceof ServerLevel server) {
             if (resting()) walker.hold();
             else walker.tick(this, server, tank, gait(), cold);
             return;
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     @Override
@@ -185,7 +188,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         if (tank != null || entityData.get(DATA_IN_TANK)) {
             setDeltaMovement(Vec3.ZERO);
             // M44: the legs still move with the walker's steps (the client animates them; up a wall the climb counts too)
-            if (level().isClientSide) calculateEntityAnimation(herpPose().wall() != null);
+            if (level().isClientSide()) calculateEntityAnimation(herpPose().wall() != null);
             return;
         }
         super.travel(input);
@@ -208,7 +211,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     }
 
     @Override
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+    public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return !inTank() && super.causeFallDamage(distance, multiplier, source);
     }
 
@@ -267,8 +270,8 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-        return tank == null && super.shouldDropLoot();
+    protected boolean shouldDropLoot(ServerLevel serverLevel) {
+        return tank == null && super.shouldDropLoot(serverLevel);
     }
 
     @Override
@@ -303,7 +306,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.is(org.overengineer.bettacraft.registry.ModItems.TERRARIUM_BOX.get()) || !isAlive()) return super.mobInteract(player, hand);
         playSound(b.getPickupSound(), 1.0F, 1.0F);
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             TankInhabitants.release(this);
             ItemStack filled = b.getBucketItemStack();
             b.saveToBucketTag(filled);
@@ -311,7 +314,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
             level().playSound(null, blockPosition(), b.getPickupSound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
             discard();
         }
-        return InteractionResult.sidedSuccess(level().isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     // ------------------------------------------------------------------ save
@@ -325,22 +328,26 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
 
     protected void loadTerrarium(CompoundTag t) {
         // time in a bucket or an unloaded chunk stands still
-        lastFed = t.contains("fed_days") ? level().getGameTime() - Math.round(t.getDouble("fed_days") * TICKS_PER_DAY) : NEVER;
-        harmDays = t.getDouble("harm");
+        lastFed = t.contains("fed_days") ? level().getGameTime() - Math.round(t.getDoubleOr("fed_days", 0d) * TICKS_PER_DAY) : NEVER;
+        harmDays = t.getDoubleOr("harm", 0d);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.put("terrarium", saveTerrarium());
         if (wild) tag.putBoolean("wild", true);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        loadTerrarium(tag.getCompound("terrarium"));
-        wild = tag.getBoolean("wild");
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        loadTerrarium(tag.getCompoundOrEmpty("terrarium"));
+        wild = tag.getBooleanOr("wild", false);
     }
 
     private int baskOverride = -1;

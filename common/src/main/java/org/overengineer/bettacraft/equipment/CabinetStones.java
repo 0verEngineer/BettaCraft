@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
@@ -54,7 +54,7 @@ import org.overengineer.bettacraft.registry.ModTags;
 public final class CabinetStones {
     /** A stone and its slab. */
     public record Pair(Item stone, Item slab) {
-        public ResourceLocation stoneId() {
+        public Identifier stoneId() {
             return BuiltInRegistries.ITEM.getKey(stone);
         }
     }
@@ -113,7 +113,7 @@ public final class CabinetStones {
         if (stack.is(ModTags.CABINET_STONES)) return true;
         // metal and other storage blocks (not in the exclusion tag: mods put the quartz block into #c:storage_blocks)
         if (stack.is(org.overengineer.bettacraft.platform.Tags.Items.STORAGE_BLOCKS)) return false;
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(b);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(b);
         if (id.getNamespace().equals("minecraft")) return false; // vanilla: only what the tag says
         BlockState s = b.defaultBlockState();
         return s.is(BlockTags.MINEABLE_WITH_PICKAXE) && STONE_SOUNDS.contains(s.getSoundType()) && !MODDED_EXCLUDED.matcher(id.getPath()).find();
@@ -157,6 +157,8 @@ public final class CabinetStones {
 
     /** Every stone with a slab, vanilla first, then by id (JEI). */
     public static List<Pair> all(RecipeManager recipes, HolderLookup.Provider registries) {
+        // M52b: a client has no recipes; it got the pairs from the server (RecipeSync)
+        if (recipes == null) return org.overengineer.bettacraft.crafting.RecipeSync.client().stones();
         return ALL.computeIfAbsent(recipes, rm -> {
             List<Pair> out = new ArrayList<>();
             for (var e : SLABS.computeIfAbsent(rm, k -> build(k, registries)).entrySet()) {
@@ -171,22 +173,23 @@ public final class CabinetStones {
 
     private static Map<Item, Item> build(RecipeManager rm, HolderLookup.Provider registries) {
         Map<Item, List<Candidate>> cands = new HashMap<>();
-        for (RecipeHolder<CraftingRecipe> h : rm.getAllRecipesFor(RecipeType.CRAFTING)) {
+        for (RecipeHolder<CraftingRecipe> h : org.overengineer.bettacraft.crafting.RecipeCompat.byType(rm, RecipeType.CRAFTING)) {
             if (!(h.value() instanceof ShapedRecipe r) || r instanceof CabinetRecipe || r instanceof StoneCabinetRecipe) continue;
             if (r.getWidth() != 3 || r.getHeight() != 1) continue;
-            Item slab = slabItem(r.getResultItem(registries));
+            // a shaped recipe's assemble is its result (M52b: getResultItem is gone)
+            Item slab = slabItem(r.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, registries));
             if (slab == null) continue;
             var ing = r.getIngredients();
-            if (ing.size() != 3) continue;
-            for (ItemStack s : ing.get(0).getItems()) {
-                if (ing.get(1).test(s) && ing.get(2).test(s)) add(cands, s.getItem(), slab, true);
+            if (ing.size() != 3 || ing.get(0).isEmpty() || ing.get(1).isEmpty() || ing.get(2).isEmpty()) continue;
+            for (ItemStack s : org.overengineer.bettacraft.crafting.RecipeCompat.stacks(ing.get(0))) {
+                if (ing.get(1).get().test(s) && ing.get(2).get().test(s)) add(cands, s.getItem(), slab, true);
             }
         }
-        for (RecipeHolder<StonecutterRecipe> h : rm.getAllRecipesFor(RecipeType.STONECUTTING)) {
-            Item slab = slabItem(h.value().getResultItem(registries));
-            if (slab == null || h.value().getIngredients().isEmpty()) continue;
-            Ingredient in = h.value().getIngredients().getFirst();
-            for (ItemStack s : in.getItems()) add(cands, s.getItem(), slab, false);
+        for (RecipeHolder<StonecutterRecipe> h : org.overengineer.bettacraft.crafting.RecipeCompat.byType(rm, RecipeType.STONECUTTING)) {
+            Item slab = slabItem(h.value().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(ItemStack.EMPTY), registries));
+            if (slab == null) continue;
+            Ingredient in = h.value().input();
+            for (ItemStack s : org.overengineer.bettacraft.crafting.RecipeCompat.stacks(in)) add(cands, s.getItem(), slab, false);
         }
         Map<Item, Item> out = new HashMap<>();
         for (var e : cands.entrySet()) {

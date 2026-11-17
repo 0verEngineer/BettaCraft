@@ -18,7 +18,7 @@ import guideme.style.TextStyle;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.FeatureContent;
@@ -60,9 +60,9 @@ public final class GuidePageFeatures {
         if (fm.get("item_ids") instanceof List<?> ids && !ids.isEmpty()) {
             Feature off = null;
             for (Object o : ids) {
-                ResourceLocation id = ResourceLocation.tryParse(String.valueOf(o));
+                Identifier id = Identifier.tryParse(String.valueOf(o));
                 if (id == null || !BettaCraft.MOD_ID.equals(id.getNamespace()) || !BuiltInRegistries.ITEM.containsKey(id)) return null;
-                var item = BuiltInRegistries.ITEM.get(id);
+                var item = BuiltInRegistries.ITEM.getValue(id);
                 if (FeatureGate.item(item)) return null;
                 if (off == null) for (Feature f : FeatureGate.of(item)) if (!Features.enabled(f)) off = f;
             }
@@ -76,15 +76,15 @@ public final class GuidePageFeatures {
     }
 
     /** The pages hidden now: off themselves or below such a page in the navigation. */
-    public static Set<ResourceLocation> hidden(PageCollection guide) {
-        Set<ResourceLocation> out = new HashSet<>();
+    public static Set<Identifier> hidden(PageCollection guide) {
+        Set<Identifier> out = new HashSet<>();
         for (NavigationNode root : guide.getNavigationTree().getRootNodes()) collect(guide, root, false, out);
         // pages outside the navigation
         for (ParsedGuidePage p : guide.getPages()) if (!out.contains(p.getId()) && offFeature(p) != null) out.add(p.getId());
         return out;
     }
 
-    private static void collect(PageCollection guide, NavigationNode node, boolean parentHidden, Set<ResourceLocation> out) {
+    private static void collect(PageCollection guide, NavigationNode node, boolean parentHidden, Set<Identifier> out) {
         boolean hidden = parentHidden || node.pageId() != null && offFeature(guide.getParsedPage(node.pageId())) != null;
         if (hidden && node.pageId() != null) out.add(node.pageId());
         for (NavigationNode c : node.children()) collect(guide, c, hidden, out);
@@ -96,12 +96,12 @@ public final class GuidePageFeatures {
     }
 
     /** A page of a feature that is off (itself or a page above it) starts with a notice in the feature's colour. */
-    public static void addNotice(PageCollection guide, @Nullable ResourceLocation pageId, @Nullable LytDocument document) {
+    public static void addNotice(PageCollection guide, @Nullable Identifier pageId, @Nullable LytDocument document) {
         if (pageId == null || document == null || !GuideBook.GUIDE_ID.getNamespace().equals(pageId.getNamespace())) return;
         Feature off = offFeature(guide.getParsedPage(pageId));
         if (off == null && hidden(guide).contains(pageId)) {
             // a page below a hidden chapter: name the chapter's feature
-            for (ResourceLocation p = parent(guide, pageId); p != null && off == null; p = parent(guide, p)) off = offFeature(guide.getParsedPage(p));
+            for (Identifier p = parent(guide, pageId); p != null && off == null; p = parent(guide, p)) off = offFeature(guide.getParsedPage(p));
         }
         if (off == null) return;
         off = Features.cause(off); // the group that is off, not the sub-switch it takes along
@@ -137,9 +137,9 @@ public final class GuidePageFeatures {
     }
 
     /** From the mixin on the search: the results without hidden pages. */
-    public static <T> List<T> filterSearch(List<T> results, Object guide, java.util.function.Function<T, ResourceLocation> page) {
+    public static <T> List<T> filterSearch(List<T> results, Object guide, java.util.function.Function<T, Identifier> page) {
         if (!(guide instanceof PageCollection pc) || results.isEmpty()) return results;
-        Set<ResourceLocation> hidden;
+        Set<Identifier> hidden;
         try {
             hidden = hidden(pc);
         } catch (RuntimeException e) {
@@ -152,7 +152,7 @@ public final class GuidePageFeatures {
     }
 
     @Nullable
-    private static ResourceLocation parent(PageCollection guide, ResourceLocation page) {
+    private static Identifier parent(PageCollection guide, Identifier page) {
         ParsedGuidePage p = guide.getParsedPage(page);
         if (p == null || p.getFrontmatter().navigationEntry() == null) return null;
         return p.getFrontmatter().navigationEntry().parent();

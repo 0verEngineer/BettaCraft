@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
+import net.minecraft.core.Direction;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -22,7 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** Automatic feeder; placed on top of a tank. */
-public class FeederBlock extends BaseEntityBlock {
+public class FeederBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<FeederBlock> CODEC = simpleCodec(FeederBlock::new);
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 8, 13);
 
@@ -54,25 +56,24 @@ public class FeederBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.FEEDER.get(), FeederBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.FEEDER.get(), FeederBlockEntity::serverTick);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof FeederBlockEntity be) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof FeederBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof FeederBlockEntity be) {
             for (int i = 0; i < FeederBlockEntity.SLOTS; i++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
             }
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class FeederBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         if (!(level.getBlockEntity(pos) instanceof FeederBlockEntity be)) return 0;
         return Math.min(15, (be.foodCount() * 15 + 63) / 64);
     }

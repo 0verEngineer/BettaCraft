@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.registry;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -17,7 +17,7 @@ public final class ModTags {
 
     /** Food the feeder and hand feeding accept. */
     /** M24: stainless steel (ours; the steel of other mods, #c:ingots/steel, is no stainless steel). */
-    public static final TagKey<Item> STAINLESS_STEEL_INGOTS = TagKey.create(Registries.ITEM, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "ingots/stainless_steel"));
+    public static final TagKey<Item> STAINLESS_STEEL_INGOTS = TagKey.create(Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath("c", "ingots/stainless_steel"));
     public static final TagKey<Item> BETTA_FOOD = TagKey.create(Registries.ITEM, BettaCraft.id("betta_food"));
     /** Fry food for the whole fry stage (infusoria). */
     public static final TagKey<Item> FRY_FOOD_START = TagKey.create(Registries.ITEM, BettaCraft.id("fry_food_start"));
@@ -53,7 +53,7 @@ public final class ModTags {
     public static final TagKey<Item> FOOD_VEGETABLES = TagKey.create(Registries.ITEM, BettaCraft.id("food_vegetables"));
     /** M26 part b: ice for frozen food (ice, packed ice, blue ice, snow blocks). */
     public static final TagKey<Item> FREEZING_ICE = TagKey.create(Registries.ITEM, BettaCraft.id("freezing_ice"));
-    public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "buckets/entity_water"));
+    public static final TagKey<Item> ENTITY_WATER_BUCKETS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "buckets/entity_water"));
 
     /** Never accepted in tanks. */
     public static final TagKey<EntityType<?>> TANK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("tank_blacklist"));
@@ -69,9 +69,9 @@ public final class ModTags {
     public static final TagKey<EntityType<?>> ALL_ANIMALS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("all_animals"));
     /** M28.1: the animals of the mod that spawn in the world by themselves (default config). */
     public static final TagKey<EntityType<?>> WILD_ANIMALS = TagKey.create(Registries.ENTITY_TYPE, BettaCraft.id("wild_animals"));
-    public static final TagKey<EntityType<?>> C_FISH = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fish"));
-    public static final TagKey<EntityType<?>> C_FISHES = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "fishes"));
-    public static final TagKey<EntityType<?>> BFT_CATCHABLE = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("betterfishtanks", "catchable_fish"));
+    public static final TagKey<EntityType<?>> C_FISH = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("c", "fish"));
+    public static final TagKey<EntityType<?>> C_FISHES = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("c", "fishes"));
+    public static final TagKey<EntityType<?>> BFT_CATCHABLE = TagKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath("betterfishtanks", "catchable_fish"));
 
     /** Biomes with wild bettas; their water gives swamp water bottles. Contains {@code #c:is_swamp}. */
     public static final TagKey<Biome> BETTA_SPAWN_BIOMES = TagKey.create(Registries.BIOME, BettaCraft.id("betta_spawn_biomes"));

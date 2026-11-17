@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
@@ -50,7 +50,7 @@ public final class AquaristArrival {
     @Nullable
     public static String whyNot(ServerPlayer p, boolean ignoreTime) {
         if (!Features.enabled(Feature.AQUARIST_NPC)) return "off";
-        MinecraftServer server = p.getServer();
+        MinecraftServer server = p.level().getServer();
         if (server == null || p.isSpectator()) return "spectator";
         AquaristRecords rec = AquaristRecords.get(server);
         AquaristRecords.PlayerRecord r = rec.player(p.getUUID());
@@ -72,7 +72,7 @@ public final class AquaristArrival {
     /** Whether the player bred something: counted since M51, or a breeding advancement (worlds of earlier versions). */
     static boolean bred(ServerPlayer p, AquaristRecords.PlayerRecord r) {
         if (r.breedings > 0) return true;
-        var adv = p.getServer().getAdvancements();
+        var adv = p.level().getServer().getAdvancements();
         for (String id : BREEDING_ADVANCEMENTS) {
             AdvancementHolder h = adv.get(BettaCraft.id(id));
             try {
@@ -86,8 +86,8 @@ public final class AquaristArrival {
 
     /** A breeding advancement event reached the player (any breeding in a tank near him or his own). */
     public static void onBreeding(ServerPlayer p) {
-        if (p.getServer() == null) return;
-        AquaristRecords rec = AquaristRecords.get(p.getServer());
+        if (p.level().getServer() == null) return;
+        AquaristRecords rec = AquaristRecords.get(p.level().getServer());
         rec.player(p.getUUID()).breedings++;
         rec.setDirty();
     }
@@ -100,16 +100,16 @@ public final class AquaristArrival {
     /** An aquarist comes to the player (no checks): spawned 10 to 20 blocks away, he walks up and offers his work. */
     @Nullable
     public static AquaristEntity arrive(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos at = spot(level, p);
         if (at == null) return null;
-        AquaristEntity npc = ModEntities.HIRED_AQUARIST.get().create(level);
+        AquaristEntity npc = ModEntities.HIRED_AQUARIST.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (npc == null) return null;
-        npc.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, level.getRandom().nextFloat() * 360F, 0F);
+        npc.snapTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, level.getRandom().nextFloat() * 360F, 0F);
         npc.setVariant(level.getRandom().nextInt(AquaristEntity.VARIANTS));
-        npc.finalizeSpawn(level, level.getCurrentDifficultyAt(at), MobSpawnType.EVENT, null);
+        npc.finalizeSpawn(level, level.getCurrentDifficultyAt(at), EntitySpawnReason.EVENT, null);
         npc.setCustomName(null); // his first name
-        npc.setEmployer(p.getUUID(), p.getGameProfile().getName());
+        npc.setEmployer(p.getUUID(), p.getGameProfile().name());
         long until = level.getServer().overworld().getGameTime() + Math.round(ServerConfig.getOr(ServerConfig.AQUARIST_OFFER_DAYS, 1.0) * 24000L);
         npc.setOfferUntil(until);
         if (!level.addFreshEntity(npc)) return null;
@@ -118,7 +118,7 @@ public final class AquaristArrival {
         r.npc = npc.getUUID();
         r.hired = false;
         r.offerUntil = until;
-        r.name = p.getGameProfile().getName();
+        r.name = p.getGameProfile().name();
         rec.setDirty();
         arrivals++;
         p.sendSystemMessage(Component.translatable("message.bettacraft.aquarist.coming", npc.getName()).withStyle(ChatFormatting.AQUA));
@@ -137,9 +137,9 @@ public final class AquaristArrival {
 
     /** As {@link #spawnHired} without looking for a home (the caller gives him one, {@link AquaristEntity#setHome}). */
     public static AquaristEntity spawnHiredHomeless(ServerLevel level, java.util.UUID employer, String employerName, net.minecraft.world.phys.Vec3 at) {
-        AquaristEntity npc = ModEntities.HIRED_AQUARIST.get().create(level);
+        AquaristEntity npc = ModEntities.HIRED_AQUARIST.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (npc == null) throw new IllegalStateException("no aquarist entity");
-        npc.moveTo(at.x, at.y, at.z, 0F, 0F);
+        npc.snapTo(at.x, at.y, at.z, 0F, 0F);
         npc.setVariant(Math.floorMod(employer.hashCode(), AquaristEntity.VARIANTS));
         npc.setCustomName(null);
         npc.setEmployer(employer, employerName);
@@ -200,16 +200,16 @@ public final class AquaristArrival {
 
     private static MutableComponent button(String key, String command, ChatFormatting color) {
         return Component.translatable(key).withStyle(s -> s.withColor(color).withBold(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command))));
+                .withClickEvent(new ClickEvent.RunCommand(command))
+                .withHoverEvent(new HoverEvent.ShowText(Component.literal(command))));
     }
 
     /** The loaded aquarist of the player's record, or null. */
     @Nullable
     public static AquaristEntity npcOf(ServerPlayer p) {
-        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).peek(p.getUUID());
+        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.level().getServer()).peek(p.getUUID());
         if (r == null || r.npc == null) return null;
-        for (ServerLevel l : p.getServer().getAllLevels()) {
+        for (ServerLevel l : p.level().getServer().getAllLevels()) {
             Entity e = l.getEntity(r.npc);
             if (e instanceof AquaristEntity a && a.isAlive()) return a;
         }
@@ -221,14 +221,14 @@ public final class AquaristArrival {
     /** The player hires the aquarist who offers his work. Null: done; else why not. */
     @Nullable
     public static Component hire(ServerPlayer p) {
-        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).player(p.getUUID());
+        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.level().getServer()).player(p.getUUID());
         if (r.npc == null || r.hired) return Component.translatable("message.bettacraft.aquarist.none_offering");
         AquaristEntity npc = npcOf(p);
         if (npc == null || npc.phase() != AquaristEntity.Phase.OFFERING) return Component.translatable("message.bettacraft.aquarist.too_far");
         ServerLevel level = (ServerLevel) npc.level();
         r.hired = true;
         r.offerUntil = Long.MAX_VALUE;
-        AquaristRecords.get(p.getServer()).setDirty();
+        AquaristRecords.get(p.level().getServer()).setDirty();
         npc.setPhase(AquaristEntity.Phase.HIRED);
         npc.setOfferUntil(Long.MAX_VALUE);
         npc.findHome(level);
@@ -241,12 +241,12 @@ public final class AquaristArrival {
     /** The player refuses the aquarist who offers his work. */
     @Nullable
     public static Component decline(ServerPlayer p) {
-        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).player(p.getUUID());
+        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.level().getServer()).player(p.getUUID());
         if (r.npc == null || r.hired) return Component.translatable("message.bettacraft.aquarist.none_offering");
         AquaristEntity npc = npcOf(p);
         if (npc != null) npc.say((ServerLevel) npc.level(), Component.translatable("message.bettacraft.aquarist.declined"), ChatFormatting.GRAY);
         r.refused++;
-        gone(p.getServer(), r, true);
+        gone(p.level().getServer(), r, true);
         if (npc != null) npc.startLeaving((ServerLevel) npc.level());
         return null;
     }

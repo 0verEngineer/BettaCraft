@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -24,7 +27,7 @@ public class ArtemiaCystsItem extends Item {
     }
 
     /** M35.1: the spent uses of an old jar are gone; the jar is a whole jar again (stacks with new ones). */
-    @Override
+    /** M52b: no longer called by Minecraft (worlds of 1.21.1 do not come to 1.21.11). */
     public void verifyComponentsAfterLoad(ItemStack stack) {
         stripOldUses(stack);
     }
@@ -43,13 +46,11 @@ public class ArtemiaCystsItem extends Item {
         return true;
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return false;
-    }
+    // M52b: not enchantable (no enchantable component; isEnchantable is gone since 1.21.2)
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.artemia_cysts").withStyle(ChatFormatting.GRAY));
     }
 }

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.entity.frog;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -18,7 +21,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -250,7 +253,7 @@ public class DwarfFrogEntity extends AbstractFish {
     public void tick() {
         super.tick();
         if (level() instanceof ServerLevel server && isAlive()) serverTick(server);
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             swimPose.tick(this, 0.5F, 0F, 0F, false);
             if (Features.enabled(Feature.SMOOTH_SWIMMING)) {
                 yBodyRot = swimPose.yaw();
@@ -369,8 +372,8 @@ public class DwarfFrogEntity extends AbstractFish {
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         TankWaterVolume w = tankWater;
         if (w == null || !isInWater()) {
             if (isInWater() && (target == null || --targetTicks <= 0)) {
@@ -456,7 +459,7 @@ public class DwarfFrogEntity extends AbstractFish {
     public void aiStep() {
         super.aiStep();
         TankWaterVolume w = tankWater;
-        if (w != null && !level().isClientSide && isInWater() && clasped == null) {
+        if (w != null && !level().isClientSide() && isInWater() && clasped == null) {
             Vec3 p = position();
             Vec3 c = w.clamp(p, 0.16 + 1.0 / 16, 1.0 / 16 + 0.01, getBbHeight() - 0.04);
             if (c.x != p.x || c.y != p.y || c.z != p.z) {
@@ -474,8 +477,8 @@ public class DwarfFrogEntity extends AbstractFish {
 
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
-                                                                   net.minecraft.world.entity.MobSpawnType spawnType, @javax.annotation.Nullable net.minecraft.world.entity.SpawnGroupData groupData) {
-        wild = spawnType == net.minecraft.world.entity.MobSpawnType.NATURAL || spawnType == net.minecraft.world.entity.MobSpawnType.CHUNK_GENERATION;
+                                                                   net.minecraft.world.entity.EntitySpawnReason spawnType, @javax.annotation.Nullable net.minecraft.world.entity.SpawnGroupData groupData) {
+        wild = spawnType == net.minecraft.world.entity.EntitySpawnReason.NATURAL || spawnType == net.minecraft.world.entity.EntitySpawnReason.CHUNK_GENERATION;
         return super.finalizeSpawn(level, difficulty, spawnType, groupData);
     }
 
@@ -485,8 +488,8 @@ public class DwarfFrogEntity extends AbstractFish {
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-        return tankWater == null && super.shouldDropLoot();
+    protected boolean shouldDropLoot(ServerLevel serverLevel) {
+        return tankWater == null && super.shouldDropLoot(serverLevel);
     }
 
     @Override
@@ -505,17 +508,21 @@ public class DwarfFrogEntity extends AbstractFish {
     // ------------------------------------------------------------------ save / bucket
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.put("frog", saveFrog());
         if (wild) tag.putBoolean("wild", true); // M22.3
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        loadFrog(tag.getCompound("frog"));
-        wild = tag.getBoolean("wild");
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        loadFrog(tag.getCompoundOrEmpty("frog"));
+        wild = tag.getBooleanOr("wild", false);
     }
 
     private CompoundTag saveFrog() {
@@ -529,12 +536,12 @@ public class DwarfFrogEntity extends AbstractFish {
     }
 
     private void loadFrog(CompoundTag t) {
-        breath = t.contains("breath") ? t.getInt("breath") : -1;
+        breath = t.contains("breath") ? t.getIntOr("breath", 0) : -1;
         // time in a bag or an unloaded chunk stands still: the frog is as hungry as it was
-        lastFed = t.contains("fed_days") ? level().getGameTime() - Math.round(t.getDouble("fed_days") * TICKS_PER_DAY) : NEVER;
-        if (t.contains("female")) female = t.getBoolean("female"); // M47: older frogs keep the sex of their UUID
-        youngDays = t.contains("young_days") ? Math.max(0, t.getDouble("young_days")) : -1;
-        rest = Math.max(0, t.getDouble("rest"));
+        lastFed = t.contains("fed_days") ? level().getGameTime() - Math.round(t.getDoubleOr("fed_days", 0d) * TICKS_PER_DAY) : NEVER;
+        if (t.contains("female")) female = t.getBooleanOr("female", false); // M47: older frogs keep the sex of their UUID
+        youngDays = t.contains("young_days") ? Math.max(0, t.getDoubleOr("young_days", 0d)) : -1;
+        rest = Math.max(0, t.getDoubleOr("rest", 0d));
         entityData.set(DATA_SIZE, youngDays < 0 ? 1F : (float) (FROGLET_SIZE + (1 - FROGLET_SIZE) * Math.min(1, youngDays / FrogBreeding.frogletDays())));
     }
 
@@ -549,7 +556,7 @@ public class DwarfFrogEntity extends AbstractFish {
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
         wild = false;
-        if (tag.contains("frog")) loadFrog(tag.getCompound("frog"));
+        if (tag.contains("frog")) loadFrog(tag.getCompoundOrEmpty("frog"));
     }
 
     @Override

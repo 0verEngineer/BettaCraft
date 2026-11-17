@@ -12,13 +12,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientSmokeM36 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final ResourceLocation DRAGN = ResourceLocation.fromNamespaceAndPath("dragnbettas", "betta");
+    private static final Identifier DRAGN = Identifier.fromNamespaceAndPath("dragnbettas", "betta");
 
     private record Step(int delay, Runnable action) {}
 
@@ -132,7 +132,7 @@ final class DevClientSmokeM36 {
             "fin_color", "yellow", "pattern", "koi", "pattern_color", "orange");
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         row = p.blockPosition().offset(-3, 1, 40);
         // the ruler: black and white stripes one block wide right behind the tank (above the water), and a floor under it
         for (int x = -1; x <= 6; x++) {
@@ -153,7 +153,7 @@ final class DevClientSmokeM36 {
         if (dragn) {
             // DragN's halfmoon and plakat (their body types 2 and 3), adults; only through reflection, never compiled against
             for (int body : new int[] {2, 3}) {
-                Entity e = BuiltInRegistries.ENTITY_TYPE.get(DRAGN).spawn(level, row.offset(3, 0, 1), MobSpawnType.SPAWN_EGG);
+                Entity e = BuiltInRegistries.ENTITY_TYPE.getValue(DRAGN).spawn(level, row.offset(3, 0, 1), EntitySpawnReason.SPAWN_ITEM_USE);
                 if (e instanceof Mob m) m.setPersistenceRequired();
                 if (e instanceof net.minecraft.world.entity.AgeableMob a) a.setAge(0);
                 try {
@@ -176,7 +176,7 @@ final class DevClientSmokeM36 {
         for (int i = 0; i < 4; i++) tankmate(level, cc, TankmateSpecies.NEON_TETRA, i % 2 == 0);
         tankmate(level, cc, TankmateSpecies.PANDA_CORY, false);
         tankmate(level, cc, TankmateSpecies.GUPPY, false);
-        p.teleportTo(level, row.getX() + 3.0, row.getY(), row.getZ() - 3.0, 0F, 0F);
+        p.teleportTo(level, row.getX() + 3.0, row.getY(), row.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
     }
 
     private static void insert(ServerLevel level, ServerPlayer p, TankBlockEntity c, Map<String, String> genes, boolean female) {
@@ -195,7 +195,7 @@ final class DevClientSmokeM36 {
 
     /** Every fish of the row at its spot, side-on (facing west), frozen; the community tank's fish spread out. */
     private void place(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, row);
         if (c == null) {
             LOGGER.error("[smoketest] M36 row tank missing");
@@ -242,7 +242,7 @@ final class DevClientSmokeM36 {
 
     private static void freeze(Mob m, Vec3 at, float yaw) {
         SmokeFreeze.freeze(m, true);
-        m.moveTo(at.x, at.y, at.z, yaw, 0F);
+        m.snapTo(at.x, at.y, at.z, yaw, 0F);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
         m.yBodyRot = yaw;
@@ -252,7 +252,7 @@ final class DevClientSmokeM36 {
     }
 
     private void log(ServerPlayer p, String label) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         LOGGER.info("[smoketest] M36 size {} (factor {}):", AnimalSizes.betta(), AnimalSizes.bettaFactor());
         for (BlockPos at : new BlockPos[] {row, community}) {
             for (Entity e : level.getEntities((Entity) null, new net.minecraft.world.phys.AABB(at).expandTowards(6, 2, 2).inflate(0.5), e -> e instanceof Mob)) {
@@ -288,7 +288,7 @@ final class DevClientSmokeM36 {
     }
 
     private void visible(ServerPlayer p, boolean on) {
-        for (Entity e : p.serverLevel().getEntities((Entity) null, new net.minecraft.world.phys.AABB(row).expandTowards(6, 2, 2).inflate(0.5), e -> e instanceof Mob)) e.setInvisible(!on);
+        for (Entity e : p.level().getEntities((Entity) null, new net.minecraft.world.phys.AABB(row).expandTowards(6, 2, 2).inflate(0.5), e -> e instanceof Mob)) e.setInvisible(!on);
     }
 
     private void cleanup(ServerPlayer p) {
@@ -296,12 +296,12 @@ final class DevClientSmokeM36 {
         ServerConfig.SIZE_BETTA.set(AnimalSize.NORMAL);
         if (!dragn) return;
         // no foreign animals stay in the dev world
-        for (Entity e : p.serverLevel().getEntities((Entity) null, new net.minecraft.world.phys.AABB(row).inflate(8),
+        for (Entity e : p.level().getEntities((Entity) null, new net.minecraft.world.phys.AABB(row).inflate(8),
                 e -> DRAGN.equals(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType())))) e.discard();
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

@@ -127,7 +127,7 @@ final class DataGenM26 {
         // green water: swamp water fertilised with bone meal, ripens in the light (like the artemia culture)
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.GREEN_WATER_CULTURE.get())
                 .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.BONE_MEAL)
-                .unlockedBy("has_swamp_water", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
+                .unlockedBy("has_swamp_water", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
                 .save(out, BettaCraft.id("green_water_culture"));
         DataGenM26b.recipes(out, hasTank); // M26 part b
     }

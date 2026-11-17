@@ -258,7 +258,7 @@ public final class InteriorSync {
     }
 
     public static void handleRequest(ServerPlayer player, InteriorRequestPayload req) {
-        MinecraftServer server = player.server;
+        MinecraftServer server = player.level().getServer();
         InteriorRegion r = InteriorRegions.get(server).get(req.regionId());
         if (r == null || !r.built() || player.level().dimension() != r.tankDimension()) return;
         double range = ServerConfig.getOr(ServerConfig.INTERIOR_SYNC_RANGE, 96) + 32;
@@ -353,7 +353,7 @@ public final class InteriorSync {
             snap.addSection(sx, sy, sz, buf, keepEmpty);
             return;
         }
-        if (sy < level.getMinSection() || sy >= level.getMaxSection()) return;
+        if (sy < level.getMinSectionY() || sy >= level.getMaxSectionY() + 1) return;
         LevelChunkSection section = chunk.getSection(chunk.getSectionIndexFromSectionY(sy));
         if (!section.hasOnlyAir()) {
             for (int y = 0; y < 16; y++) {

@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.BettaCraft;
@@ -52,7 +52,7 @@ final class FabricModels {
     private static BakedModel tank(BakedModel parsed, java.util.function.Function<Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> sprites) {
         var edge = sprites.apply(new Material(InventoryMenu.BLOCK_ATLAS, BettaCraft.id("block/tank_edge")));
         var clear = sprites.apply(new Material(InventoryMenu.BLOCK_ATLAS, BettaCraft.id("block/tank_clear_icon")));
-        var particle = sprites.apply(new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.withDefaultNamespace("block/glass")));
+        var particle = sprites.apply(new Material(InventoryMenu.BLOCK_ATLAS, Identifier.withDefaultNamespace("block/glass")));
         @SuppressWarnings("deprecation")
         var transforms = parsed.getTransforms();
         return new FabricDynamicModel(new TankBakedModel(edge, clear, particle, transforms, null, TankStyle.TEXTURED, null));

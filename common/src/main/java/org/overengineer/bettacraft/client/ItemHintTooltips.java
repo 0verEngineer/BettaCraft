@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client;
 
+import net.minecraft.client.Minecraft;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,7 +15,7 @@ final class ItemHintTooltips {
     static void onTooltip(net.minecraft.world.item.ItemStack stack, List<Component> tip) {
         String key = ItemHints.key(stack.getItem());
         if (key == null || !I18n.exists(key)) return;
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             for (Component line : ItemHints.lines(I18n.get(key))) tip.add(line.copy().withStyle(ChatFormatting.GRAY));
         } else {
             tip.add(Component.translatable("tooltip.bettacraft.hold_shift",

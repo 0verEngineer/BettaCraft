@@ -62,6 +62,6 @@ public final class FloatingPlantEventsHandlers {
 
     static void handled(PlayerInteractEvent.RightClickBlock e) {
         e.setCanceled(true);
-        e.setCancellationResult(InteractionResult.sidedSuccess(e.getLevel().isClientSide));
+        e.setCancellationResult(InteractionResult.SUCCESS);
     }
 }

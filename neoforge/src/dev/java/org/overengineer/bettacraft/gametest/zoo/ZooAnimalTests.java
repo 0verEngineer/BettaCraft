@@ -15,7 +15,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -23,10 +23,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -107,12 +107,12 @@ public final class ZooAnimalTests {
     /** The survey over the entity registry (sorted by id); instances are created and discarded again. */
     static List<Status> survey(ServerLevel level) {
         Map<EntityType<?>, Item> buckets = buckets();
-        List<ResourceLocation> ids = new ArrayList<>(BuiltInRegistries.ENTITY_TYPE.keySet());
-        ids.sort(java.util.Comparator.comparing(ResourceLocation::toString));
+        List<Identifier> ids = new ArrayList<>(BuiltInRegistries.ENTITY_TYPE.keySet());
+        ids.sort(java.util.Comparator.comparing(Identifier::toString));
         List<Status> out = new ArrayList<>();
-        for (ResourceLocation rl : ids) {
+        for (Identifier rl : ids) {
             if (ZooSuite.OWN.contains(rl.getNamespace())) continue;
-            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(rl);
+            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(rl);
             if (type == EntityType.PLAYER) continue;
             Entity e;
             try {
@@ -223,7 +223,7 @@ public final class ZooAnimalTests {
             try {
                 Entity e = c.type().create(level);
                 Vec3 at = h.absoluteVec(new Vec3(20, 2, 20));
-                e.moveTo(at.x, at.y, at.z, 0, 0);
+                e.snapTo(at.x, at.y, at.z, 0, 0);
                 box = key(ForeignTerrarium.boxRefusal(player, e));
                 // a capture item (soul vial, imprisonment tool) or our bag with the whole animal: into the water tank and a terrarium
                 for (TankBlockEntity into : List.of(tank, terra)) {
@@ -370,7 +370,7 @@ public final class ZooAnimalTests {
         if (land) {
             Entity e = c.type().create(level);
             Vec3 at = h.absoluteVec(new Vec3(30, 2, 30));
-            e.moveTo(at.x, at.y, at.z, 0, 0);
+            e.snapTo(at.x, at.y, at.z, 0, 0);
             if (!ForeignTerrarium.boxTakes(e)) {
                 s.in += "box refuses (" + key(ForeignTerrarium.boxRefusal(ZooAccess.player(h), e)) + ") ";
                 e.discard();
@@ -446,7 +446,7 @@ public final class ZooAnimalTests {
                 Component msg = TankInhabitants.takeOut(player, s.tank, one.getUUID(), true);
                 act.append("take out: ").append(key(msg));
                 ItemStack filled = ItemStack.EMPTY;
-                for (ItemStack st : player.getInventory().items) if (TankInhabitants.containedType(st) == c.type()) filled = st;
+                for (ItemStack st : player.getInventory().getNonEquipmentItems()) if (TankInhabitants.containedType(st) == c.type()) filled = st;
                 if (msg == null) {
                     if (filled.isEmpty()) violations.add(c.id() + ": taken out but no container holds it (lost)");
                     if (ofType(level, t, c.type()).size() != n - 1) violations.add(c.id() + ": taking out left " + ofType(level, t, c.type()).size() + " of " + n);

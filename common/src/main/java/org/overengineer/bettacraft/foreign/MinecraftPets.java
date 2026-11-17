@@ -16,13 +16,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -112,7 +111,7 @@ public final class MinecraftPets {
 
     /** Whether this animal is marked as a Minecraft pet (it lived in a tank or was born there). */
     public static boolean marked(Entity e) {
-        return org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getBoolean(PET);
+        return org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getBooleanOr(PET, false);
     }
 
     public static void mark(Entity e) {
@@ -255,19 +254,19 @@ public final class MinecraftPets {
      * Food by hand on a tank that no animal in it ate ({@code ForeignFood} comes first): on a tank with an open top the item is laid
      * as bait if some Minecraft pet eats it (a message). PASS otherwise.
      */
-    public static ItemInteractionResult handBait(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (stack.isEmpty() || !(level instanceof ServerLevel server) || !enabled() || !lures(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    public static InteractionResult handBait(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (stack.isEmpty() || !(level instanceof ServerLevel server) || !enabled() || !lures(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!org.overengineer.bettacraft.mobs.GlassMobs.openTop(server, c.getTank())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.glass.bait_lid"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         BAITS.put(c, new Bait(stack.copyWithCount(1), server.getGameTime() + BAIT_TICKS));
         if (!player.getAbilities().instabuild) stack.shrink(1);
-        TankCare.log(server, c, "log.bettacraft.pet.bait", "@" + stack.getDescriptionId());
+        TankCare.log(server, c, "log.bettacraft.pet.bait", "@" + stack.getItem().getDescriptionId());
         player.displayClientMessage(Component.translatable("message.bettacraft.pet.bait", stack.getHoverName()), true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** Lays a bait without a player (GameTests). */
@@ -351,8 +350,8 @@ public final class MinecraftPets {
         m.discard(); // the same animal (UUID) comes in from the box
         Component err = TankInhabitants.insert(level, c, boxed, m.getType(), null, 0);
         if (err != null && saved != null) { // back where it stood
-            Entity back = EntityType.loadEntityRecursive(saved, level, e -> {
-                e.moveTo(x, y, z, e.getYRot(), e.getXRot());
+            Entity back = EntityType.loadEntityRecursive(saved, level, net.minecraft.world.entity.EntitySpawnReason.LOAD, e -> {
+                e.snapTo(x, y, z, e.getYRot(), e.getXRot());
                 return e;
             });
             if (back != null) level.addFreshEntity(back);

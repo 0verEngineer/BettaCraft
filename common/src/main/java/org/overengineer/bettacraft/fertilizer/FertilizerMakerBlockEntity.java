@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.fertilizer;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -363,24 +366,29 @@ public class FertilizerMakerBlockEntity extends BlockEntity implements MenuProvi
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("water", water);
         tag.putInt("fertilizer", fertilizer);
         tag.putInt("progress", progress);
         spring.save(tag, "spring");
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
         if (items.getSlots() != SLOTS) items.setSize(SLOTS);
-        water = Math.max(0, Math.min(TANK_MB, tag.getInt("water")));
-        fertilizer = Math.max(0, Math.min(TANK_MB, tag.getInt("fertilizer")));
-        progress = Math.max(0, tag.getInt("progress"));
+        water = Math.max(0, Math.min(TANK_MB, tag.getIntOr("water", 0)));
+        fertilizer = Math.max(0, Math.min(TANK_MB, tag.getIntOr("fertilizer", 0)));
+        progress = Math.max(0, tag.getIntOr("progress", 0));
         spring.load(tag, "spring");
         energy.load(tag);
     }

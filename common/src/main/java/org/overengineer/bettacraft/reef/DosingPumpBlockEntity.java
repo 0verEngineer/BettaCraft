@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.reef;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -279,21 +282,26 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         tag.putIntArray("per_day", perDay);
         for (int i = 0; i < CHANNELS; i++) tag.putDouble("carry" + i, carry[i]);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
-        int[] p = tag.getIntArray("per_day");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        int[] p = tag.getIntArray("per_day").orElse(new int[0]);
         for (int i = 0; i < CHANNELS; i++) {
             perDay[i] = i < p.length ? Math.max(0, p[i]) : DEFAULT_ML;
-            double c = tag.getDouble("carry" + i);
+            double c = tag.getDoubleOr("carry" + i, 0d);
             carry[i] = Double.isFinite(c) ? Math.max(0, c) : 0;
         }
     }

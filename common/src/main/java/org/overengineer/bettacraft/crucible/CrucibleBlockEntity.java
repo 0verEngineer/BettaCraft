@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.crucible;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -164,7 +167,8 @@ public class CrucibleBlockEntity extends BlockEntity implements MenuProvider {
 
     @Nullable
     private RecipeHolder<CrucibleRecipe> recipe(Level level) {
-        Optional<RecipeHolder<CrucibleRecipe>> r = level.getRecipeManager().getRecipeFor(ModRecipes.CRUCIBLE_TYPE.get(),
+        if (!(level instanceof net.minecraft.server.level.ServerLevel sl)) return null; // M52b: the recipes are on the server
+        Optional<RecipeHolder<CrucibleRecipe>> r = sl.recipeAccess().getRecipeFor(ModRecipes.CRUCIBLE_TYPE.get(),
                 new CrucibleRecipe.Input(CrucibleRecipe.copy(inputs())), level);
         return r.orElse(null);
     }
@@ -258,22 +262,27 @@ public class CrucibleBlockEntity extends BlockEntity implements MenuProvider {
     // ------------------------------------------------------------------ save
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.put("items", items.serializeNBT(registries));
         tag.putInt("progress", progress);
         tag.putInt("heat", heat);
         tag.putInt("heat_max", heatMax);
         energy.save(tag);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompound("items"));
-        progress = tag.getInt("progress");
-        heat = tag.getInt("heat");
-        heatMax = tag.getInt("heat_max");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        if (tag.contains("items")) items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        progress = tag.getIntOr("progress", 0);
+        heat = tag.getIntOr("heat", 0);
+        heatMax = tag.getIntOr("heat_max", 0);
         energy.load(tag);
     }
 }

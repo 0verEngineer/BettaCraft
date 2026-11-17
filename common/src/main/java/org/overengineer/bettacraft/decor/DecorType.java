@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.decor;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.Locale;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 
 /**
@@ -79,7 +79,7 @@ public enum DecorType {
         return ordinal() >= ROWING_BOAT.ordinal();
     }
 
-    public ResourceLocation structure() {
+    public Identifier structure() {
         boolean small = (this == SHIPWRECK || this == DINO_SKULL) && !Features.enabled(Feature.DETAILED_DECOR);
         return BettaCraft.id("decor/" + id() + (small ? "_small" : ""));
     }

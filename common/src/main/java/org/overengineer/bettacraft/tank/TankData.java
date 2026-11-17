@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -185,9 +186,9 @@ public final class TankData {
 
         static LogEntry load(CompoundTag t) {
             List<String> args = new ArrayList<>();
-            ListTag a = t.getList("a", Tag.TAG_STRING);
-            for (int i = 0; i < a.size(); i++) args.add(a.getString(i));
-            return new LogEntry(t.getLong("t"), t.getString("k"), List.copyOf(args));
+            ListTag a = t.getListOrEmpty("a");
+            for (int i = 0; i < a.size(); i++) args.add(a.getStringOr(i, ""));
+            return new LogEntry(t.getLongOr("t", 0L), t.getStringOr("k", ""), List.copyOf(args));
         }
     }
 
@@ -445,7 +446,7 @@ public final class TankData {
     public org.overengineer.bettacraft.aquarist.AquaristAccess aquaristAccess() { return aquaristAccess; }
     public void setAquaristAccess(org.overengineer.bettacraft.aquarist.AquaristAccess a) { this.aquaristAccess = a == null ? org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER : a; }
     /** M51: game time an aquarist last did task {@code task} here (Long.MIN_VALUE: never). */
-    public long aquaristDone(String task) { return aquaristWork.contains(task) ? aquaristWork.getLong(task) : Long.MIN_VALUE; }
+    public long aquaristDone(String task) { return aquaristWork.contains(task) ? aquaristWork.getLongOr(task, 0L) : Long.MIN_VALUE; }
     public void setAquaristDone(String task, long time) { aquaristWork.putLong(task, time); }
     public void setPhytoplankton(double v) { this.phytoplankton = clean(v); }
     public double nauplii() { return nauplii; }
@@ -511,12 +512,12 @@ public final class TankData {
     }
 
     private void loadTerrarium(CompoundTag c) {
-        terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.byOrdinal(c.getByte("mode"));
-        setLandShare(c.contains("land", Tag.TAG_ANY_NUMERIC) ? c.getFloat("land") : -1F);
-        tankMode = org.overengineer.bettacraft.terrarium.TankModeSetting.byId(c.getString("type")); // M33.1: absent = automatic
-        if (c.contains("air", Tag.TAG_ANY_NUMERIC) && c.contains("rh", Tag.TAG_ANY_NUMERIC)) {
-            setClimate(new org.overengineer.bettacraft.terrarium.Climate.State(c.getFloat("air"), c.getFloat("ground"), c.getFloat("bask"),
-                    c.getFloat("rh"), c.getFloat("uv"), c.getFloat("duty")));
+        terrariumMode = org.overengineer.bettacraft.terrarium.TerrariumMode.byOrdinal(c.getByteOr("mode", (byte) 0));
+        setLandShare(NbtCompat.has(c, "land", NbtCompat.ANY_NUMERIC) ? c.getFloatOr("land", 0f) : -1F);
+        tankMode = org.overengineer.bettacraft.terrarium.TankModeSetting.byId(c.getStringOr("type", "")); // M33.1: absent = automatic
+        if (NbtCompat.has(c, "air", NbtCompat.ANY_NUMERIC) && NbtCompat.has(c, "rh", NbtCompat.ANY_NUMERIC)) {
+            setClimate(new org.overengineer.bettacraft.terrarium.Climate.State(c.getFloatOr("air", 0f), c.getFloatOr("ground", 0f), c.getFloatOr("bask", 0f),
+                    c.getFloatOr("rh", 0f), c.getFloatOr("uv", 0f), c.getFloatOr("duty", 0f)));
         } else {
             setClimate(null);
         }
@@ -620,7 +621,7 @@ public final class TankData {
         locked = o.locked;
         breakProtected = o.breakProtected;
         aquaristAccess = o.aquaristAccess; // M51
-        for (String k : o.aquaristWork.getAllKeys()) aquaristWork.putLong(k, o.aquaristWork.getLong(k));
+        for (String k : o.aquaristWork.keySet()) aquaristWork.putLong(k, o.aquaristWork.getLongOr(k, 0L));
         tankMode = o.tankMode; // M33.1: the parts of a split tank and a merged tank keep the type
         waterQuality = o.waterQuality;
         lastFreshWater = o.lastFreshWater;
@@ -802,12 +803,12 @@ public final class TankData {
 
     public CompoundTag save() {
         CompoundTag t = new CompoundTag();
-        t.putUUID("id", id);
+        NbtCompat.putUUID(t, "id", id);
         t.putLongArray("members", members.toLongArray());
         t.putInt("scale", scale);
         t.putLong("water_mb", waterMb);
         t.putInt("region", regionId);
-        if (owner != null) t.putUUID("owner", owner);
+        if (owner != null) NbtCompat.putUUID(t, "owner", owner);
         t.putFloat("water_quality", waterQuality);
         t.putDouble("evaporation_carry", evaporationCarry);
         t.put("zones", zones.copy());
@@ -829,7 +830,7 @@ public final class TankData {
         t.putBoolean("locked", locked);
         if (breakProtected) t.putBoolean("break_protected", true);
         ListTag inh = new ListTag();
-        for (UUID u : inhabitants) inh.add(NbtUtils.createUUID(u));
+        for (UUID u : inhabitants) inh.add(NbtCompat.createUUID(u));
         t.put("inhabitants", inh);
         ListTag lg = new ListTag();
         for (LogEntry e : log) lg.add(e.save());
@@ -928,80 +929,80 @@ public final class TankData {
 
     public static TankData load(CompoundTag t) {
         TankData d = new TankData();
-        if (t.hasUUID("id")) d.id = t.getUUID("id");
-        for (long l : t.getLongArray("members")) d.members.add(l);
-        d.scale = t.getInt("scale");
+        if (NbtCompat.hasUUID(t, "id")) d.id = NbtCompat.getUUID(t, "id");
+        for (long l : t.getLongArray("members").orElse(new long[0])) d.members.add(l);
+        d.scale = t.getIntOr("scale", 0);
         if (d.scale != 4 && d.scale != 8 && d.scale != 16) d.scale = 16; // M17: corrupt scale
-        d.waterMb = Math.max(0, t.getLong("water_mb"));
-        d.regionId = t.contains("region", Tag.TAG_ANY_NUMERIC) ? t.getInt("region") : -1;
-        d.owner = t.hasUUID("owner") ? t.getUUID("owner") : null;
-        d.waterQuality = t.contains("water_quality", Tag.TAG_ANY_NUMERIC) ? WaterQuality.clamp(t.getFloat("water_quality")) : 1.0F;
-        d.setEvaporationCarry(t.getDouble("evaporation_carry"));
-        d.zones = t.getCompound("zones").copy();
-        d.powerBuffer = Math.max(0, t.getLong("power"));
-        d.lastFreshWater = t.contains("last_fresh_water", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_fresh_water") : -1L;
-        d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloat("target_temp")) : TankTemperature.DEFAULT_TARGET;
-        d.waterTemp = t.contains("water_temp") && Float.isFinite(t.getFloat("water_temp")) ? t.getFloat("water_temp") : d.targetTemp;
-        ListTag hl = t.getList("legacy_heaters", Tag.TAG_STRING);
+        d.waterMb = Math.max(0, t.getLongOr("water_mb", 0L));
+        d.regionId = NbtCompat.has(t, "region", NbtCompat.ANY_NUMERIC) ? t.getIntOr("region", 0) : -1;
+        d.owner = NbtCompat.hasUUID(t, "owner") ? NbtCompat.getUUID(t, "owner") : null;
+        d.waterQuality = NbtCompat.has(t, "water_quality", NbtCompat.ANY_NUMERIC) ? WaterQuality.clamp(t.getFloatOr("water_quality", 0f)) : 1.0F;
+        d.setEvaporationCarry(t.getDoubleOr("evaporation_carry", 0d));
+        d.zones = t.getCompoundOrEmpty("zones").copy();
+        d.powerBuffer = Math.max(0, t.getLongOr("power", 0L));
+        d.lastFreshWater = NbtCompat.has(t, "last_fresh_water", NbtCompat.ANY_NUMERIC) ? t.getLongOr("last_fresh_water", 0L) : -1L;
+        d.targetTemp = t.contains("target_temp") ? TankTemperature.clampTarget(t.getFloatOr("target_temp", 0f)) : TankTemperature.DEFAULT_TARGET;
+        d.waterTemp = t.contains("water_temp") && Float.isFinite(t.getFloatOr("water_temp", 0f)) ? t.getFloatOr("water_temp", 0f) : d.targetTemp;
+        ListTag hl = t.getListOrEmpty("legacy_heaters");
         for (int i = 0; i < Math.min(LEGACY_HEATER_SLOTS, hl.size()); i++) {
-            String id = hl.getString(i);
+            String id = hl.getStringOr(i, "");
             if (id.isEmpty()) continue;
-            ResourceLocation rl = ResourceLocation.tryParse(id);
-            Item item = rl == null ? Items.AIR : BuiltInRegistries.ITEM.get(rl);
+            Identifier rl = Identifier.tryParse(id);
+            Item item = rl == null ? Items.AIR : BuiltInRegistries.ITEM.getValue(rl);
             if (item == Items.AIR) d.unknownHeaters[i] = id; // keep ids of removed mods
             else d.legacyHeaters().setItem(i, new ItemStack(item));
         }
-        d.name = t.getString("name");
-        d.signVisible = !t.contains("sign_visible") || t.getBoolean("sign_visible");
-        d.signPos = SignPosition.byName(t.getString("sign_pos"));
-        Direction f = Direction.byName(t.getString("front"));
+        d.name = t.getStringOr("name", "");
+        d.signVisible = !t.contains("sign_visible") || t.getBooleanOr("sign_visible", false);
+        d.signPos = SignPosition.byName(t.getStringOr("sign_pos", ""));
+        Direction f = Direction.byName(t.getStringOr("front", ""));
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
-        d.locked = t.getBoolean("locked");
-        d.breakProtected = t.getBoolean("break_protected"); // M21.5: missing in older worlds = off
-        ListTag inh = t.getList("inhabitants", Tag.TAG_INT_ARRAY);
+        d.locked = t.getBooleanOr("locked", false);
+        d.breakProtected = t.getBooleanOr("break_protected", false); // M21.5: missing in older worlds = off
+        ListTag inh = t.getListOrEmpty("inhabitants");
         // M17: a malformed UUID threw here, vanilla then dropped the whole block entity and the tank was lost
-        for (Tag u : inh) if (u instanceof net.minecraft.nbt.IntArrayTag ia && ia.size() == 4) d.inhabitants.add(NbtUtils.loadUUID(u));
-        ListTag lg = t.getList("log", Tag.TAG_COMPOUND);
-        for (int i = Math.max(0, lg.size() - MAX_LOG); i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompound(i)));
+        for (Tag u : inh) if (u instanceof net.minecraft.nbt.IntArrayTag ia && ia.size() == 4) d.inhabitants.add(NbtCompat.loadUUID(u));
+        ListTag lg = t.getListOrEmpty("log");
+        for (int i = Math.max(0, lg.size() - MAX_LOG); i < lg.size(); i++) d.log.add(LogEntry.load(lg.getCompoundOrEmpty(i)));
         try {
-            d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompound("nest")) : null;
+            d.nest = NbtCompat.has(t, "nest", Tag.TAG_COMPOUND) ? BubbleNest.load(t.getCompoundOrEmpty("nest")) : null;
         } catch (RuntimeException e) { // M17: a broken nest must not take the tank with it
             org.slf4j.LoggerFactory.getLogger("bettacraft/tank").warn("Dropped an unreadable bubble nest of tank {}", d.id, e);
             d.nest = null;
         }
-        ListTag pl = t.getList("plants", Tag.TAG_COMPOUND);
+        ListTag pl = t.getListOrEmpty("plants");
         int maxId = 0;
         for (int i = 0; i < pl.size(); i++) {
-            var p = org.overengineer.bettacraft.tank.plants.FloatingPlant.load(pl.getCompound(i));
+            var p = org.overengineer.bettacraft.tank.plants.FloatingPlant.load(pl.getCompoundOrEmpty(i));
             if (p == null) continue;
             d.plants.add(p);
             maxId = Math.max(maxId, p.id);
         }
-        d.nextPlantId = Math.max(maxId + 1, t.contains("next_plant_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_plant_id") : 1);
+        d.nextPlantId = Math.max(maxId + 1, NbtCompat.has(t, "next_plant_id", NbtCompat.ANY_NUMERIC) ? t.getIntOr("next_plant_id", 0) : 1);
         // M14 (schema 8): small animals, clutches, moults, food pool, algae
         int maxCritter = 0;
-        ListTag cl = t.getList("critters", Tag.TAG_COMPOUND);
+        ListTag cl = t.getListOrEmpty("critters");
         for (int i = 0; i < cl.size(); i++) {
-            var c = org.overengineer.bettacraft.critters.Critter.load(cl.getCompound(i));
+            var c = org.overengineer.bettacraft.critters.Critter.load(cl.getCompoundOrEmpty(i));
             if (c == null) continue;
             d.critters.add(c);
             maxCritter = Math.max(maxCritter, c.id);
         }
-        ListTag ol = t.getList("critter_objects", Tag.TAG_COMPOUND);
+        ListTag ol = t.getListOrEmpty("critter_objects");
         for (int i = 0; i < ol.size(); i++) {
-            var o = org.overengineer.bettacraft.critters.CritterObject.load(ol.getCompound(i));
+            var o = org.overengineer.bettacraft.critters.CritterObject.load(ol.getCompoundOrEmpty(i));
             if (o == null) continue;
             d.critterObjects.add(o);
             maxCritter = Math.max(maxCritter, o.id);
         }
-        d.nextCritterId = Math.max(maxCritter + 1, t.contains("next_critter_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_critter_id") : 1);
-        d.setCritterFood(t.getDouble("critter_food"));
-        ListTag al = t.getList("algae", Tag.TAG_COMPOUND);
+        d.nextCritterId = Math.max(maxCritter + 1, NbtCompat.has(t, "next_critter_id", NbtCompat.ANY_NUMERIC) ? t.getIntOr("next_critter_id", 0) : 1);
+        d.setCritterFood(t.getDoubleOr("critter_food", 0d));
+        ListTag al = t.getListOrEmpty("algae");
         for (int i = 0; i < al.size(); i++) {
-            CompoundTag a = al.getCompound(i);
-            int[] v = a.getIntArray("a");
+            CompoundTag a = al.getCompoundOrEmpty(i);
+            int[] v = a.getIntArray("a").orElse(new int[0]);
             if (v.length != 4) continue;
-            long p = a.getLong("p");
+            long p = a.getLongOr("p", 0L);
             if (!d.members.contains(p)) continue;
             float[] lv = new float[4];
             boolean any = false;
@@ -1012,82 +1013,82 @@ public final class TankData {
             if (any) d.algae.put(p, lv);
         }
         // M19 (schema 9): tankmate clutches, breeding box, water changes
-        ListTag tc = t.getList("clutches", Tag.TAG_COMPOUND);
+        ListTag tc = t.getListOrEmpty("clutches");
         int maxClutch = 0;
         for (int i = 0; i < tc.size(); i++) {
-            var c = org.overengineer.bettacraft.tankmates.Clutch.load(tc.getCompound(i));
+            var c = org.overengineer.bettacraft.tankmates.Clutch.load(tc.getCompoundOrEmpty(i));
             if (c == null) continue;
             d.clutches.add(c);
             maxClutch = Math.max(maxClutch, c.id);
         }
-        d.nextClutchId = Math.max(maxClutch + 1, t.contains("next_clutch_id", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_clutch_id") : 1);
-        d.breedingBox = t.getBoolean("breeding_box");
-        d.freshWindowStart = t.contains("fresh_window_start", Tag.TAG_ANY_NUMERIC) ? t.getLong("fresh_window_start") : -1L;
-        d.freshWindowMb = Math.max(0, t.getLong("fresh_window_mb"));
-        d.freshWindowTemp = t.contains("fresh_window_temp", Tag.TAG_ANY_NUMERIC) ? t.getFloat("fresh_window_temp") : Float.NaN;
-        d.lastCoolChange = t.contains("last_cool_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_cool_change") : -1L;
-        d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
-        d.calcium = Salinity.clampCalcium(t.getFloat("calcium"));
-        d.oxygen = t.contains("oxygen", Tag.TAG_ANY_NUMERIC) ? t.getFloat("oxygen") : Float.NaN;
-        d.setNitrate(t.getFloat("nitrate"));
-        d.lastWaterChange = t.contains("last_water_change", Tag.TAG_ANY_NUMERIC) ? t.getLong("last_water_change") : -1L;
-        if (t.contains("tds", Tag.TAG_ANY_NUMERIC)) d.setTds(t.getFloat("tds")); // M25
-        d.setPh(t.contains("ph", Tag.TAG_ANY_NUMERIC) ? t.getFloat("ph") : org.overengineer.bettacraft.chem.WaterChemistry.startPh(d.salinity));
-        d.setTannin(t.getFloat("tannin"));
-        if (t.contains("co2", Tag.TAG_ANY_NUMERIC)) d.setCo2(t.getFloat("co2"));
+        d.nextClutchId = Math.max(maxClutch + 1, NbtCompat.has(t, "next_clutch_id", NbtCompat.ANY_NUMERIC) ? t.getIntOr("next_clutch_id", 0) : 1);
+        d.breedingBox = t.getBooleanOr("breeding_box", false);
+        d.freshWindowStart = NbtCompat.has(t, "fresh_window_start", NbtCompat.ANY_NUMERIC) ? t.getLongOr("fresh_window_start", 0L) : -1L;
+        d.freshWindowMb = Math.max(0, t.getLongOr("fresh_window_mb", 0L));
+        d.freshWindowTemp = NbtCompat.has(t, "fresh_window_temp", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("fresh_window_temp", 0f) : Float.NaN;
+        d.lastCoolChange = NbtCompat.has(t, "last_cool_change", NbtCompat.ANY_NUMERIC) ? t.getLongOr("last_cool_change", 0L) : -1L;
+        d.salinity = Salinity.clampSalinity(t.getFloatOr("salinity", 0f));
+        d.calcium = Salinity.clampCalcium(t.getFloatOr("calcium", 0f));
+        d.oxygen = NbtCompat.has(t, "oxygen", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("oxygen", 0f) : Float.NaN;
+        d.setNitrate(t.getFloatOr("nitrate", 0f));
+        d.lastWaterChange = NbtCompat.has(t, "last_water_change", NbtCompat.ANY_NUMERIC) ? t.getLongOr("last_water_change", 0L) : -1L;
+        if (NbtCompat.has(t, "tds", NbtCompat.ANY_NUMERIC)) d.setTds(t.getFloatOr("tds", 0f)); // M25
+        d.setPh(NbtCompat.has(t, "ph", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("ph", 0f) : org.overengineer.bettacraft.chem.WaterChemistry.startPh(d.salinity));
+        d.setTannin(t.getFloatOr("tannin", 0f));
+        if (NbtCompat.has(t, "co2", NbtCompat.ANY_NUMERIC)) d.setCo2(t.getFloatOr("co2", 0f));
         // M25 part c: tanks of earlier versions get the alkalinity, magnesium and trace elements of their salt
-        d.setKh(t.contains("kh", Tag.TAG_ANY_NUMERIC) ? t.getFloat("kh") : org.overengineer.bettacraft.chem.WaterChemistry.khOf(d.salinity));
-        d.setMagnesium(t.contains("magnesium", Tag.TAG_ANY_NUMERIC) ? t.getFloat("magnesium") : org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(d.salinity));
-        d.setTrace(t.contains("trace", Tag.TAG_ANY_NUMERIC) ? t.getFloat("trace") : org.overengineer.bettacraft.chem.WaterChemistry.traceOf(d.salinity));
-        d.setFertilizer(t.getFloat("fertilizer")); // M37
-        d.lightDimmer = t.contains("light_dimmer", Tag.TAG_ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getInt("light_dimmer"))) : 100;
-        d.lightTimer = t.getBoolean("light_timer");
-        d.lightOn = t.contains("light_on", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_on"), 1440) : 8 * 60;
-        d.lightOff = t.contains("light_off", Tag.TAG_ANY_NUMERIC) ? Math.floorMod(t.getInt("light_off"), 1440) : 20 * 60;
-        if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
-        ListTag te = t.getList("turtle_eggs", Tag.TAG_COMPOUND); // M31 part b
+        d.setKh(NbtCompat.has(t, "kh", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("kh", 0f) : org.overengineer.bettacraft.chem.WaterChemistry.khOf(d.salinity));
+        d.setMagnesium(NbtCompat.has(t, "magnesium", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("magnesium", 0f) : org.overengineer.bettacraft.chem.WaterChemistry.magnesiumOf(d.salinity));
+        d.setTrace(NbtCompat.has(t, "trace", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("trace", 0f) : org.overengineer.bettacraft.chem.WaterChemistry.traceOf(d.salinity));
+        d.setFertilizer(t.getFloatOr("fertilizer", 0f)); // M37
+        d.lightDimmer = NbtCompat.has(t, "light_dimmer", NbtCompat.ANY_NUMERIC) ? Math.max(0, Math.min(100, t.getIntOr("light_dimmer", 0))) : 100;
+        d.lightTimer = t.getBooleanOr("light_timer", false);
+        d.lightOn = NbtCompat.has(t, "light_on", NbtCompat.ANY_NUMERIC) ? Math.floorMod(t.getIntOr("light_on", 0), 1440) : 8 * 60;
+        d.lightOff = NbtCompat.has(t, "light_off", NbtCompat.ANY_NUMERIC) ? Math.floorMod(t.getIntOr("light_off", 0), 1440) : 20 * 60;
+        if (NbtCompat.has(t, "terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompoundOrEmpty("terrarium")); // M31
+        ListTag te = t.getListOrEmpty("turtle_eggs"); // M31 part b
         int maxTurtle = 0;
         for (int i = 0; i < te.size(); i++) {
-            var c = org.overengineer.bettacraft.terrarium.HerpClutch.load(te.getCompound(i));
+            var c = org.overengineer.bettacraft.terrarium.HerpClutch.load(te.getCompoundOrEmpty(i));
             if (c == null) continue;
             d.herpClutches.add(c);
             maxTurtle = Math.max(maxTurtle, c.id);
         }
-        d.nextHerpClutchId = Math.max(maxTurtle + 1, t.contains("next_turtle_clutch", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_turtle_clutch") : 1);
+        d.nextHerpClutchId = Math.max(maxTurtle + 1, NbtCompat.has(t, "next_turtle_clutch", NbtCompat.ANY_NUMERIC) ? t.getIntOr("next_turtle_clutch", 0) : 1);
         // M47 part c: frog spawn and tadpoles (absent in older worlds: none)
         int maxBrood = 0;
-        ListTag fs = t.getList("frog_spawn", Tag.TAG_COMPOUND);
+        ListTag fs = t.getListOrEmpty("frog_spawn");
         for (int i = 0; i < fs.size(); i++) {
-            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompound(i));
+            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompoundOrEmpty(i));
             if (s == null) continue;
             d.frogSpawn.add(s);
             maxBrood = Math.max(maxBrood, s.id);
         }
-        ListTag tp = t.getList("tadpoles", Tag.TAG_COMPOUND);
+        ListTag tp = t.getListOrEmpty("tadpoles");
         for (int i = 0; i < tp.size(); i++) {
-            var k = org.overengineer.bettacraft.entity.frog.Tadpole.load(tp.getCompound(i));
+            var k = org.overengineer.bettacraft.entity.frog.Tadpole.load(tp.getCompoundOrEmpty(i));
             if (k == null) continue;
             d.tadpoles.add(k);
             maxBrood = Math.max(maxBrood, k.id);
         }
-        d.nextFrogBroodId = Math.max(maxBrood + 1, t.contains("next_frog_brood", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_frog_brood") : 1);
-        d.setTadpoleFood(t.getDouble("tadpole_food"));
+        d.nextFrogBroodId = Math.max(maxBrood + 1, NbtCompat.has(t, "next_frog_brood", NbtCompat.ANY_NUMERIC) ? t.getIntOr("next_frog_brood", 0) : 1);
+        d.setTadpoleFood(t.getDoubleOr("tadpole_food", 0d));
         // M48 part b: plankton (absent in older worlds: none)
-        CompoundTag plankton = t.getCompound("plankton");
-        d.setCopepods(plankton.getDouble("copepods"));
-        d.setRotifers(plankton.getDouble("rotifers"));
-        d.setPhytoplankton(plankton.getDouble("phytoplankton"));
-        d.setNauplii(plankton.getDouble("nauplii"));
-        d.setFlies(plankton.getDouble("flies")); // M49
-        for (Tag e : t.getList("mangroves", Tag.TAG_COMPOUND)) {
+        CompoundTag plankton = t.getCompoundOrEmpty("plankton");
+        d.setCopepods(plankton.getDoubleOr("copepods", 0d));
+        d.setRotifers(plankton.getDoubleOr("rotifers", 0d));
+        d.setPhytoplankton(plankton.getDoubleOr("phytoplankton", 0d));
+        d.setNauplii(plankton.getDoubleOr("nauplii", 0d));
+        d.setFlies(plankton.getDoubleOr("flies", 0d)); // M49
+        for (Tag e : t.getListOrEmpty("mangroves")) {
             var m = org.overengineer.bettacraft.plants.Mangroves.Tree.load((CompoundTag) e);
             if (m != null) d.mangroves.add(m);
         }
-        if (t.contains("aquarist", Tag.TAG_COMPOUND)) { // M51
-            CompoundTag a = t.getCompound("aquarist");
-            d.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(a.getString("access"));
-            CompoundTag done = a.getCompound("done");
-            for (String k : done.getAllKeys()) d.aquaristWork.putLong(k, done.getLong(k));
+        if (NbtCompat.has(t, "aquarist", Tag.TAG_COMPOUND)) { // M51
+            CompoundTag a = t.getCompoundOrEmpty("aquarist");
+            d.aquaristAccess = org.overengineer.bettacraft.aquarist.AquaristAccess.byId(a.getStringOr("access", ""));
+            CompoundTag done = a.getCompoundOrEmpty("done");
+            for (String k : done.keySet()) d.aquaristWork.putLong(k, done.getLongOr(k, 0L));
         }
         d.recomputeBounds();
         return d;
@@ -1141,61 +1142,61 @@ public final class TankData {
     public static TankData loadClientView(CompoundTag t) {
         TankData d = new TankData();
         d.clientView = true;
-        int[] mn = t.getIntArray("min"), mx = t.getIntArray("max");
+        int[] mn = t.getIntArray("min").orElse(new int[0]), mx = t.getIntArray("max").orElse(new int[0]);
         if (mn.length == 3 && mx.length == 3) {
             d.minX = mn[0]; d.minY = mn[1]; d.minZ = mn[2];
             d.maxX = mx[0]; d.maxY = mx[1]; d.maxZ = mx[2];
         }
-        d.clientMemberCount = t.getInt("count");
+        d.clientMemberCount = t.getIntOr("count", 0);
         if (mn.length == 3 && mx.length == 3) {
-            if (t.contains("shape", Tag.TAG_BYTE_ARRAY)) {
-                d.members.addAll(TankShape.decode(t.getByteArray("shape"), d.minX, d.minY, d.minZ, d.sizeX(), d.sizeY(), d.sizeZ()));
+            if (NbtCompat.has(t, "shape", Tag.TAG_BYTE_ARRAY)) {
+                d.members.addAll(TankShape.decode(t.getByteArray("shape").orElse(new byte[0]), d.minX, d.minY, d.minZ, d.sizeX(), d.sizeY(), d.sizeZ()));
             } else if ((long) d.sizeX() * d.sizeY() * d.sizeZ() <= 1 << 20) {
                 for (int y = d.minY; y <= d.maxY; y++)
                     for (int z = d.minZ; z <= d.maxZ; z++)
                         for (int x = d.minX; x <= d.maxX; x++) d.members.add(BlockPos.asLong(x, y, z));
             }
         }
-        d.scale = t.getInt("scale");
-        d.waterMb = t.getLong("water_mb");
-        d.regionId = t.getInt("region");
-        d.name = t.getString("name");
-        d.signVisible = t.getBoolean("sign_visible");
-        d.signPos = SignPosition.byName(t.getString("sign_pos"));
-        Direction f = Direction.byName(t.getString("front"));
+        d.scale = t.getIntOr("scale", 0);
+        d.waterMb = t.getLongOr("water_mb", 0L);
+        d.regionId = t.getIntOr("region", 0);
+        d.name = t.getStringOr("name", "");
+        d.signVisible = t.getBooleanOr("sign_visible", false);
+        d.signPos = SignPosition.byName(t.getStringOr("sign_pos", ""));
+        Direction f = Direction.byName(t.getStringOr("front", ""));
         d.front = f != null && f.getAxis().isHorizontal() ? f : Direction.SOUTH;
-        d.waterTemp = t.getFloat("water_temp");
-        d.clientInhabitants = t.getInt("inhabitants");
-        d.occupants = t.getInt("occupants");
-        d.nest = t.contains("nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompound("nest")) : null;
-        if (t.contains("plants", Tag.TAG_BYTE_ARRAY)) d.plants.addAll(org.overengineer.bettacraft.tank.plants.FloatingPlantSim.decode(t.getByteArray("plants"), d.minX, d.minZ));
-        if (t.contains("critters", Tag.TAG_BYTE_ARRAY)) {
-            var dec = org.overengineer.bettacraft.critters.CritterSync.decode(t.getByteArray("critters"), d.minX, d.minY, d.minZ);
+        d.waterTemp = t.getFloatOr("water_temp", 0f);
+        d.clientInhabitants = t.getIntOr("inhabitants", 0);
+        d.occupants = t.getIntOr("occupants", 0);
+        d.nest = NbtCompat.has(t, "nest", Tag.TAG_COMPOUND) ? BubbleNest.loadClientView(t.getCompoundOrEmpty("nest")) : null;
+        if (NbtCompat.has(t, "plants", Tag.TAG_BYTE_ARRAY)) d.plants.addAll(org.overengineer.bettacraft.tank.plants.FloatingPlantSim.decode(t.getByteArray("plants").orElse(new byte[0]), d.minX, d.minZ));
+        if (NbtCompat.has(t, "critters", Tag.TAG_BYTE_ARRAY)) {
+            var dec = org.overengineer.bettacraft.critters.CritterSync.decode(t.getByteArray("critters").orElse(new byte[0]), d.minX, d.minY, d.minZ);
             d.critters.addAll(dec.critters());
             d.critterObjects.addAll(dec.objects());
         }
-        if (t.contains("algae", Tag.TAG_BYTE_ARRAY)) d.algae.putAll(org.overengineer.bettacraft.tank.algae.AlgaeSim.decode(t.getByteArray("algae"), d.minX, d.minY, d.minZ));
-        ListTag tc = t.getList("clutches", Tag.TAG_COMPOUND);
+        if (NbtCompat.has(t, "algae", Tag.TAG_BYTE_ARRAY)) d.algae.putAll(org.overengineer.bettacraft.tank.algae.AlgaeSim.decode(t.getByteArray("algae").orElse(new byte[0]), d.minX, d.minY, d.minZ));
+        ListTag tc = t.getListOrEmpty("clutches");
         for (int i = 0; i < tc.size(); i++) {
-            var c = org.overengineer.bettacraft.tankmates.Clutch.loadClientView(tc.getCompound(i));
+            var c = org.overengineer.bettacraft.tankmates.Clutch.loadClientView(tc.getCompoundOrEmpty(i));
             if (c != null) d.clutches.add(c);
         }
-        d.breedingBox = t.getBoolean("breeding_box");
-        ListTag fs = t.getList("frog_spawn", Tag.TAG_COMPOUND); // M47 part c
+        d.breedingBox = t.getBooleanOr("breeding_box", false);
+        ListTag fs = t.getListOrEmpty("frog_spawn"); // M47 part c
         for (int i = 0; i < fs.size(); i++) {
-            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompound(i));
+            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompoundOrEmpty(i));
             if (s != null) d.frogSpawn.add(s);
         }
-        ListTag tp = t.getList("tadpoles", Tag.TAG_COMPOUND);
-        for (int i = 0; i < tp.size(); i++) d.tadpoles.add(org.overengineer.bettacraft.entity.frog.Tadpole.loadClientView(tp.getCompound(i)));
-        d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
-        if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
+        ListTag tp = t.getListOrEmpty("tadpoles");
+        for (int i = 0; i < tp.size(); i++) d.tadpoles.add(org.overengineer.bettacraft.entity.frog.Tadpole.loadClientView(tp.getCompoundOrEmpty(i)));
+        d.salinity = Salinity.clampSalinity(t.getFloatOr("salinity", 0f));
+        if (NbtCompat.has(t, "terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompoundOrEmpty("terrarium")); // M31
         return d;
     }
 
     @Override
     public String toString() {
-        return "Tank[" + id + " " + sizeX() + "x" + sizeY() + "x" + sizeZ() + " at " + NbtUtils.writeBlockPos(min()) + ", "
+        return "Tank[" + id + " " + sizeX() + "x" + sizeY() + "x" + sizeZ() + " at " + NbtCompat.writeBlockPos(min()) + ", "
                 + waterMb + "/" + capacityMb() + " mB, scale " + scale + ", region " + regionId + "]";
     }
 }

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.equipment;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -85,7 +88,7 @@ public class AirPumpBlockEntity extends BlockEntity implements AirSource, org.ov
 
     private void changed() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     /** The tank block next to (or under) the pump whose interior it serves, or null. */
@@ -117,7 +120,7 @@ public class AirPumpBlockEntity extends BlockEntity implements AirSource, org.ov
 
     public void onLoad() {
         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this); // NeoForge's default onLoad
-        if (level != null && level.isClientSide) CLIENT_LOADED.add(this);
+        if (level != null && level.isClientSide()) CLIENT_LOADED.add(this);
     }
 
     @Override
@@ -131,17 +134,22 @@ public class AirPumpBlockEntity extends BlockEntity implements AirSource, org.ov
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putInt("power", power);
         tag.putInt("driven", driven);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getInt("power"))) : 10;
-        driven = Math.max(0, tag.getInt("driven"));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getIntOr("power", 0))) : 10;
+        driven = Math.max(0, tag.getIntOr("driven", 0));
     }
 
     @Override

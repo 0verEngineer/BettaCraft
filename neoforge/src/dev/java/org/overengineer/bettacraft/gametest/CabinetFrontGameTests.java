@@ -164,7 +164,7 @@ public final class CabinetFrontGameTests {
             h.assertTrue(menu.clickMenuButton(sp, CabinetMenu.BUTTON_FRONT0 + CabinetFrontSetting.SINGLE.ordinal()) && cab.frontSetting() == CabinetFrontSetting.SINGLE, "single");
             h.assertTrue(h.getBlockState(mid).getValue(CabinetBlock.FRONT) == CabinetFront.SINGLE, "this block: single door");
             CompoundTag upd = cab.getUpdateTag(level.registryAccess());
-            h.assertTrue("single".equals(upd.getString("front")) && !upd.getBoolean("joints"), "update tag: " + upd);
+            h.assertTrue("single".equals(upd.getStringOr("front", "")) && !upd.getBooleanOr("joints", false), "update tag: " + upd);
             CompoundTag saved = cab.saveWithFullMetadata(level.registryAccess());
             CabinetBlockEntity copy = new CabinetBlockEntity(h.absolutePos(mid), h.getBlockState(mid));
             copy.loadWithComponents(saved, level.registryAccess());

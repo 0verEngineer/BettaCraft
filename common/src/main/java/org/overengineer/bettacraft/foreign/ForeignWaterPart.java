@@ -72,7 +72,7 @@ public final class ForeignWaterPart {
         Terrain t = TERRAIN.get(c);
         if (t == null || now - t.time() >= 20 || now < t.time()) {
             TankData d = c.getTank();
-            t = new Terrain(new TankTerrain(d, level.getServer(), InteriorRegions.get(level.getServer()).get(d.regionId()), level.isDay()), now);
+            t = new Terrain(new TankTerrain(d, level.getServer(), InteriorRegions.get(level.getServer()).get(d.regionId()), level.isBrightOutside()), now);
             TERRAIN.put(c, t);
         }
         return t.terrain();

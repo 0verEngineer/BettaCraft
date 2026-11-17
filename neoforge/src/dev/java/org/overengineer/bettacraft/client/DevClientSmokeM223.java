@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -89,15 +89,15 @@ final class DevClientSmokeM223 {
         // 3. the tank menu: single small animals, a fish with unknown genes, the magnifier
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(this::fillInventory));
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), tank.getX() + 1.5, tank.getY() + 0.2, tank.getZ() - 2.5, 0F, 0F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), tank.getX() + 1.5, tank.getY() + 0.2, tank.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         menu("menu_critter_list", ts -> {
             ts.showCrittersPageForTest();
             ts.selectFirstCritterForTest();
         });
         menu("menu_fish_unknown", ts -> ts.showBettaForTest());
         then(1, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
-            int n = MagnifierItem.analyseAll(p.serverLevel(), c, p, MagnifierItem.find(p), null);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
+            int n = MagnifierItem.analyseAll(p.level(), c, p, MagnifierItem.find(p), null);
             LOGGER.info("[smoketest] M22.3 magnifier analysed {} animals", n);
             if (n < 3) LOGGER.error("[smoketest] M22.3 the magnifier analysed too few animals: {}", n);
         }));
@@ -120,10 +120,10 @@ final class DevClientSmokeM223 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
         BlockPos base = p.blockPosition().offset(-30, 2, 420);
         pool = base;
         reef = base.offset(20, 0, 0);
@@ -195,9 +195,9 @@ final class DevClientSmokeM223 {
 
     private void spawnShoal(ServerLevel level, TankmateSpecies s, BlockPos at, int n) {
         for (int i = 0; i < n; i++) {
-            var e = ModEntities.TANKMATES.get(s).get().spawn(level, at.offset(i % 3 - 1, 0, i / 3), MobSpawnType.SPAWN_EGG);
+            var e = ModEntities.TANKMATES.get(s).get().spawn(level, at.offset(i % 3 - 1, 0, i / 3), EntitySpawnReason.SPAWN_ITEM_USE);
             if (e == null) continue;
-            e.moveTo(at.getX() + 0.5 + (i % 3) * 0.45, at.getY() + 0.3 + (i % 2) * 0.25, at.getZ() + 0.5 + (i / 3) * 0.4, 90F, 0F);
+            e.snapTo(at.getX() + 0.5 + (i % 3) * 0.45, at.getY() + 0.3 + (i % 2) * 0.25, at.getZ() + 0.5 + (i / 3) * 0.4, 90F, 0F);
             e.setup(org.overengineer.bettacraft.world.Wildlife.tankmate(s, new java.util.Random(i)::nextLong), i % 2 == 0, LifeStage.ADULT, 0);
             SmokeFreeze.freeze(e, true);
         }
@@ -209,14 +209,14 @@ final class DevClientSmokeM223 {
         k.look = CritterLooks.random(s, r);
         WildCritterEntity e = WildCritterEntity.of(level, k.saveAnimal());
         if (e == null) return;
-        e.moveTo(at.getX() + r.nextDouble(), at.getY() + 0.05, at.getZ() + r.nextDouble() * 1.5, r.nextFloat() * 360F, 0F);
+        e.snapTo(at.getX() + r.nextDouble(), at.getY() + 0.05, at.getZ() + r.nextDouble() * 1.5, r.nextFloat() * 360F, 0F);
         e.setPersistenceRequired();
         level.addFreshEntity(e);
     }
 
     private void countCritters() {
         server(p -> {
-            var list = p.serverLevel().getEntitiesOfClass(WildCritterEntity.class, new net.minecraft.world.phys.AABB(pool).inflate(16));
+            var list = p.level().getEntitiesOfClass(WildCritterEntity.class, new net.minecraft.world.phys.AABB(pool).inflate(16));
             LOGGER.info("[smoketest] M22.3 {} wild small animals in the pool", list.size());
             if (list.size() < 10) LOGGER.error("[smoketest] M22.3 wild small animals missing: {}", list.size());
             int inWater = 0;
@@ -290,7 +290,7 @@ final class DevClientSmokeM223 {
 
     private void menu(String name, java.util.function.Consumer<org.overengineer.bettacraft.client.screen.TankScreen> page) {
         then(10, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -349,7 +349,7 @@ final class DevClientSmokeM223 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

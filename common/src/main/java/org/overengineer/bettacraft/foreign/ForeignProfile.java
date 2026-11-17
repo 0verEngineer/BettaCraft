@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,7 +11,7 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.chem.ChemTolerance;
 import org.overengineer.bettacraft.tank.BigTankRules;
 import org.overengineer.bettacraft.tank.Salinity;
@@ -52,13 +53,13 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
  *                  {@code fungus}, {@code cave} ...; a message {@code message.bettacraft.tank.refused.<reason>}), or null. A
  *                  refusing profile maps nothing else (no care, no breeding).
  */
-public record ForeignProfile(List<ResourceLocation> entities, boolean required, String group, @Nullable String species,
+public record ForeignProfile(List<Identifier> entities, boolean required, String group, @Nullable String species,
                              double tempMin, double tempMax, double minQuality, Salinity.Range salinity, @Nullable ChemTolerance.Range chemistry,
                              boolean labyrinth, double hungerDays, double stock, List<String> food, Breeding breeding, boolean suppressOwn,
                              @Nullable TerrariumNeeds terrarium, @Nullable Land land, double lengthM, @Nullable String refuse) {
 
     /** M35 and before: a profile without an aquarium length and without a refusal. */
-    public ForeignProfile(List<ResourceLocation> entities, boolean required, String group, @Nullable String species,
+    public ForeignProfile(List<Identifier> entities, boolean required, String group, @Nullable String species,
                           double tempMin, double tempMax, double minQuality, Salinity.Range salinity, @Nullable ChemTolerance.Range chemistry,
                           boolean labyrinth, double hungerDays, double stock, List<String> food, Breeding breeding, boolean suppressOwn,
                           @Nullable TerrariumNeeds terrarium, @Nullable Land land) {
@@ -192,16 +193,16 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      *                      Thieves); the young never get them from their parents
      */
     public record Breeding(Type type, double tempMin, double tempMax, double minWaterBlocks, boolean needsPlants, double days,
-                           int youngMin, int youngMax, double pauseDays, double rate, @Nullable ResourceLocation offspring,
-                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot,
+                           int youngMin, int youngMax, double pauseDays, double rate, @Nullable Identifier offspring,
+                           @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable Identifier nest, double nestPivot,
                            Sex sex, List<String> sterile) {
         public static final Breeding NONE = new Breeding(Type.NONE, Double.NaN, Double.NaN, 0, false, 1, 0, 0, 0, 0, null, null, List.of(), true, null, 30,
                 Sex.NONE, List.of());
 
         /** M35 and before: without sexes and sterile keys. */
         public Breeding(Type type, double tempMin, double tempMax, double minWaterBlocks, boolean needsPlants, double days,
-                        int youngMin, int youngMax, double pauseDays, double rate, @Nullable ResourceLocation offspring,
-                        @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable ResourceLocation nest, double nestPivot) {
+                        int youngMin, int youngMax, double pauseDays, double rate, @Nullable Identifier offspring,
+                        @Nullable CompoundTag offspringNbt, List<String> inherit, boolean baby, @Nullable Identifier nest, double nestPivot) {
             this(type, tempMin, tempMax, minWaterBlocks, needsPlants, days, youngMin, youngMax, pauseDays, rate, offspring, offspringNbt, inherit, baby,
                     nest, nestPivot, Sex.NONE, List.of());
         }
@@ -251,7 +252,7 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
      * file without entity ids or with a broken value type throws {@link Invalid}.
      */
     public static ForeignProfile parse(JsonObject o, Consumer<String> warn) {
-        List<ResourceLocation> entities = new ArrayList<>();
+        List<Identifier> entities = new ArrayList<>();
         JsonElement ent = o.get("entity");
         if (ent == null) ent = o.get("entities");
         if (ent == null) throw new Invalid("no \"entity\"");
@@ -350,12 +351,12 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
             young = new int[]{(int) Math.max(0, Math.round(y[0])), (int) Math.max(0, Math.round(y[1]))};
         }
         if (young[1] < young[0]) young = new int[]{young[1], young[0]};
-        ResourceLocation offspring = b.has("offspring") ? id(b.get("offspring").getAsString()) : null;
+        Identifier offspring = b.has("offspring") ? id(b.get("offspring").getAsString()) : null;
         CompoundTag nbt = null;
         if (b.has("offspring_nbt")) {
             JsonElement n = b.get("offspring_nbt");
             try {
-                nbt = TagParser.parseTag(n.isJsonPrimitive() ? n.getAsString() : n.toString());
+                nbt = TagParser.parseCompoundFully(n.isJsonPrimitive() ? n.getAsString() : n.toString());
             } catch (Exception ex) {
                 warn.accept("offspring_nbt is no valid SNBT: " + ex.getMessage());
             }
@@ -363,10 +364,10 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         List<String> inherit = new ArrayList<>();
         if (b.has("inherit")) for (JsonElement e : array(b.get("inherit"))) inherit.add(e.getAsString());
         boolean needsPlants = bool(b, "needs_plants", type == Type.EGGS && sp != null && sp.breeding() == TankmateSpecies.Breeding.SCATTER);
-        ResourceLocation nest = null;
+        Identifier nest = null;
         if (b.has("nest")) {
             String n = b.get("nest").getAsString().trim();
-            nest = ResourceLocation.tryParse(n.startsWith("#") ? n.substring(1) : n);
+            nest = Identifier.tryParse(n.startsWith("#") ? n.substring(1) : n);
             if (nest == null) warn.accept("bad nest tag \"" + n + "\" (a block tag, e.g. #bettacraft:turtle_nest_ground)");
             else if (type != Type.EGGS) warn.accept("\"nest\" only counts for \"type\": \"eggs\"");
         }
@@ -518,8 +519,8 @@ public record ForeignProfile(List<ResourceLocation> entities, boolean required, 
         };
     }
 
-    private static ResourceLocation id(String s) {
-        ResourceLocation r = ResourceLocation.tryParse(s);
+    private static Identifier id(String s) {
+        Identifier r = Identifier.tryParse(s);
         if (r == null) throw new Invalid("bad id \"" + s + "\"");
         return r;
     }

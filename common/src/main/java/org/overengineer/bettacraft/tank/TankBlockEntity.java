@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.tank;
 
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +18,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,7 +33,7 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
  * controller role is the non-null {@link #tank} field, which avoids swapping block entities on merge/split.)
  */
 public class TankBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.model.ModelDataSource, org.overengineer.bettacraft.platform.BlockEntityLifecycle, org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
-    public static final ResourceLocation DEFAULT_GLASS = ResourceLocation.withDefaultNamespace("glass");
+    public static final Identifier DEFAULT_GLASS = Identifier.withDefaultNamespace("glass");
     public static final org.overengineer.bettacraft.platform.model.ModelKey<BlockState> GLASS_STATE = new org.overengineer.bettacraft.platform.model.ModelKey<>("glass_state");
     /** M11: textured (connected glass texture) or clean (clear glass, edge lines only). */
     public static final org.overengineer.bettacraft.platform.model.ModelKey<TankStyle> STYLE = new org.overengineer.bettacraft.platform.model.ModelKey<>("style");
@@ -190,7 +194,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
 
     /** M32 part b (client): Create's copy of a tank block on a contraption (its level is the contraption's, not the world). */
     public boolean onContraption() {
-        return contraptionView || level != null && level.isClientSide && org.overengineer.bettacraft.client.tank.TankClientLevels.notTheWorld(level);
+        return contraptionView || level != null && level.isClientSide() && org.overengineer.bettacraft.client.tank.TankClientLevels.notTheWorld(level);
     }
 
     @Nullable
@@ -217,7 +221,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         if (savedAt != null) this.movedFrom = savedAt;
     }
 
-    private ResourceLocation glass = DEFAULT_GLASS;
+    private Identifier glass = DEFAULT_GLASS;
     private TankStyle style = TankStyle.TEXTURED;
     @Nullable
     private BlockPos controllerPos;
@@ -230,11 +234,11 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
 
     // ------------------------------------------------------------------ accessors
 
-    public ResourceLocation getGlassId() {
+    public Identifier getGlassId() {
         return glass;
     }
 
-    public void setGlassId(ResourceLocation glass) {
+    public void setGlassId(Identifier glass) {
         this.glass = glass;
         setChanged();
     }
@@ -255,7 +259,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
 
     /** The glass block (falls back to vanilla glass for unknown ids; the id itself is preserved). */
     public BlockState getGlassState() {
-        Block b = BuiltInRegistries.BLOCK.get(glass);
+        Block b = BuiltInRegistries.BLOCK.getValue(glass);
         return b == Blocks.AIR ? Blocks.GLASS.defaultBlockState() : b.defaultBlockState();
     }
 
@@ -282,7 +286,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     /** Call after mutating {@link #getTank()} on the server: saves and syncs the summary to clients. */
     public void markTankChanged() {
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
         }
     }
@@ -308,29 +312,31 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     // ------------------------------------------------------------------ persistence
 
     @Override
-    protected void loadAdditional(CompoundTag rawTag, HolderLookup.Provider registries) {
-        super.loadAdditional(rawTag, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag rawTag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         CompoundTag tag = Schemas.TANK_BLOCK_ENTITY.migrate(rawTag);
-        ResourceLocation g = ResourceLocation.tryParse(tag.getString("glass"));
+        Identifier g = Identifier.tryParse(tag.getStringOr("glass", ""));
         glass = g == null ? DEFAULT_GLASS : g;
-        style = TankStyle.byId(tag.getString("style"));
-        int[] c = tag.getIntArray("controller");
+        style = TankStyle.byId(tag.getStringOr("style", ""));
+        int[] c = tag.getIntArray("controller").orElse(new int[0]);
         controllerPos = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : null;
         // M32 part b: saved somewhere else = moved as data (the controller position is the old one until TankMoves ran)
         movedFrom = null;
         savedAt = null;
-        if (tag.contains("at", Tag.TAG_LONG)) {
-            BlockPos at = BlockPos.of(tag.getLong("at"));
+        if (NbtCompat.has(tag, "at", Tag.TAG_LONG)) {
+            BlockPos at = BlockPos.of(tag.getLongOr("at", 0L));
             savedAt = at;
             if (!at.equals(worldPosition)) movedFrom = at;
         }
-        stowed = tag.getList("stowed", Tag.TAG_COMPOUND).copy();
-        tripLog = tag.contains(TravelCare.TRIP_KEY, Tag.TAG_COMPOUND) ? tag.getCompound(TravelCare.TRIP_KEY).copy() : null; // M50
-        if (tag.contains("tank", Tag.TAG_COMPOUND)) {
-            tank = TankData.load(tag.getCompound("tank"));
-        } else if (tag.contains("tank_view", Tag.TAG_COMPOUND)) {
+        stowed = tag.getListOrEmpty("stowed").copy();
+        tripLog = NbtCompat.has(tag, TravelCare.TRIP_KEY, Tag.TAG_COMPOUND) ? tag.getCompoundOrEmpty(TravelCare.TRIP_KEY).copy() : null; // M50
+        if (NbtCompat.has(tag, "tank", Tag.TAG_COMPOUND)) {
+            tank = TankData.load(tag.getCompoundOrEmpty("tank"));
+        } else if (NbtCompat.has(tag, "tank_view", Tag.TAG_COMPOUND)) {
             TankData old = tank;
-            tank = TankData.loadClientView(tag.getCompound("tank_view"));
+            tank = TankData.loadClientView(tag.getCompoundOrEmpty("tank_view"));
             // M12: floating plants glide to their new place instead of jumping
             if (old != null && level != null) org.overengineer.bettacraft.tank.plants.FloatingPlantSim.adopt(old.plants(), tank.plants(),
                     level.getGameTime(), org.overengineer.bettacraft.tank.plants.TankPlants.SYNC_TICKS);
@@ -351,8 +357,10 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         writeCommon(tag);
         tag.putLong("at", worldPosition.asLong()); // M32 part b
         if (!stowed.isEmpty()) tag.put("stowed", stowed.copy());
@@ -360,6 +368,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         if (tank != null && (isController() || movedFrom != null && movedFrom.equals(controllerPos))) {
             tag.put("tank", tank.save());
         }
+        NbtCompat.write(output, tag);
     }
 
     private void writeCommon(CompoundTag tag) {
@@ -388,21 +397,21 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     }
 
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
-        ResourceLocation oldGlass = glass;
+        Identifier oldGlass = glass;
         TankStyle oldStyle = style;
-        if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+        if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle);
     }
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        ResourceLocation oldGlass = glass;
+        Identifier oldGlass = glass;
         TankStyle oldStyle = style;
-        loadWithComponents(tag, registries); // NeoForge's default
+        loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle);
     }
 
-    private void afterClientUpdate(ResourceLocation oldGlass, TankStyle oldStyle) {
-        if (level != null && level.isClientSide) {
+    private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle) {
+        if (level != null && level.isClientSide()) {
             updateClientControllerSet();
             if (!oldGlass.equals(glass) || oldStyle != style) {
                 org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
@@ -414,9 +423,9 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     // ------------------------------------------------------------------ components (item <-> block)
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput input) {
+    protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
-        ResourceLocation g = input.get(ModDataComponents.GLASS.get());
+        Identifier g = input.get(ModDataComponents.GLASS.get());
         if (g != null) {
             glass = g;
         }
@@ -434,9 +443,9 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        tag.remove("glass");
-        tag.remove("style");
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("glass");
+        output.discard("style");
     }
 
     // ------------------------------------------------------------------ client
@@ -451,7 +460,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
 
     public void onLoad() {
         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this); // NeoForge's default onLoad
-        if (level != null && level.isClientSide) {
+        if (level != null && level.isClientSide()) {
             updateClientControllerSet();
         }
     }

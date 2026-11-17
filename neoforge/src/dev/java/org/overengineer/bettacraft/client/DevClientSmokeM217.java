@@ -9,7 +9,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
@@ -51,7 +51,7 @@ final class DevClientSmokeM217 {
     private final String lang = mc.options.languageCode;
     private BlockPos base, counters;
     private volatile int stones = 40;
-    private final List<ResourceLocation> hotbar = new ArrayList<>();
+    private final List<Identifier> hotbar = new ArrayList<>();
     private int wait;
 
     DevClientSmokeM217() {
@@ -90,18 +90,18 @@ final class DevClientSmokeM217 {
                 int k = i % hotbar.size();
                 p.getInventory().setItem(i, CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), hotbar.get(k)));
             }
-            p.getInventory().selected = 4;
-            p.teleportTo(p.serverLevel(), counters.getX() + 6.0, counters.getY(), counters.getZ() - 5.5, 0F, 12F);
+            p.getInventory().getSelectedSlot() = 4;
+            p.teleportTo(p.level(), counters.getX() + 6.0, counters.getY(), counters.getZ() - 5.5, java.util.Set.of(), 0F, 12F, false);
         }));
         then(1, () -> {
-            if (mc.player != null) mc.player.getInventory().selected = 4;
+            if (mc.player != null) mc.player.getInventory().getSelectedSlot() = 4;
         });
         then(60, () -> mc.getToasts().clear());
         then(5, () -> shot("hotbar"));
         // the menu of a stone cabinet (its name in the title) with stone cabinet items in the storage
         then(1, () -> server(p -> {
             BlockPos at = base.offset(8, 0, 0);
-            if (p.serverLevel().getBlockEntity(at) instanceof CabinetBlockEntity cab) {
+            if (p.level().getBlockEntity(at) instanceof CabinetBlockEntity cab) {
                 for (int i = 0; i < 9 && i < hotbar.size(); i++) {
                     cab.storage().setStackInSlot(i, CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), hotbar.get(i)));
                 }
@@ -174,9 +174,9 @@ final class DevClientSmokeM217 {
     // ------------------------------------------------------------------ building
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(-30, 3, 440);
-        List<ResourceLocation> ids = new ArrayList<>();
+        List<Identifier> ids = new ArrayList<>();
         for (CabinetStones.Pair s : CabinetStones.VANILLA) ids.add(block(s.stone()));
         List<CabinetStones.Pair> all = CabinetStones.all(level.getRecipeManager(), level.registryAccess());
         int modded = 0;
@@ -196,7 +196,7 @@ final class DevClientSmokeM217 {
         }
         // the counters: three joined cabinets each
         counters = base.offset(0, 0, 10);
-        ResourceLocation[] joined = {block(Items.SANDSTONE), block(Items.DEEPSLATE_BRICKS), block(Items.QUARTZ_BLOCK)};
+        Identifier[] joined = {block(Items.SANDSTONE), block(Items.DEEPSLATE_BRICKS), block(Items.QUARTZ_BLOCK)};
         for (int k = 0; k < joined.length; k++) {
             BlockPos at = counters.offset(k * 4, 0, 0);
             for (int x = 0; x < 3; x++) cabinet(level, at.offset(x, 0, 0), joined[k]);
@@ -211,11 +211,11 @@ final class DevClientSmokeM217 {
         while (hotbar.size() < 9) hotbar.add(block(Items.POLISHED_BLACKSTONE_BRICKS));
     }
 
-    private static ResourceLocation block(net.minecraft.world.item.Item item) {
+    private static Identifier block(net.minecraft.world.item.Item item) {
         return BuiltInRegistries.BLOCK.getKey(((BlockItem) item).getBlock());
     }
 
-    private static void cabinet(ServerLevel level, BlockPos at, ResourceLocation stone) {
+    private static void cabinet(ServerLevel level, BlockPos at, Identifier stone) {
         level.setBlockAndUpdate(at, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         if (level.getBlockEntity(at) instanceof CabinetBlockEntity cab) {
             cab.setWood(stone);
@@ -245,7 +245,7 @@ final class DevClientSmokeM217 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

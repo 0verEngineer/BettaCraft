@@ -54,7 +54,7 @@ public final class BigCatching {
     @Nullable
     public static ItemStack caught(ServerLevel level, TankmateSpecies s, RandomGenerator r) {
         var type = ModEntities.TANKMATES.get(s);
-        TankmateEntity e = type == null ? null : type.get().create(level);
+        TankmateEntity e = type == null ? null : type.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         e.setup(Wildlife.tankmate(s, r), r.nextBoolean(), LifeStage.ADULT, 0);
         ItemStack tub = TransportTubItem.fillWith(e);
@@ -79,8 +79,8 @@ public final class BigCatching {
     /** One swing of the large net in open water. True when the net was used. */
     public static boolean swing(ServerLevel level, Player player, InteractionHand hand, BlockPos water) {
         ItemStack tool = player.getItemInHand(hand);
-        if (player.getCooldowns().isOnCooldown(tool.getItem())) return false;
-        player.getCooldowns().addCooldown(tool.getItem(), ServerConfig.getOr(ServerConfig.CRITTERS_NET_COOLDOWN, 40));
+        if (player.getCooldowns().isOnCooldown(tool)) return false;
+        player.getCooldowns().addCooldown(tool, ServerConfig.getOr(ServerConfig.CRITTERS_NET_COOLDOWN, 40));
         level.playSound(null, water, SoundEvents.GENERIC_SPLASH, SoundSource.PLAYERS, 0.8F, 0.9F);
         if (!Features.enabled(Feature.BIG_ANIMALS)) return true;
         int slot = emptyTub(player);
@@ -88,7 +88,7 @@ public final class BigCatching {
             player.displayClientMessage(Component.translatable("message.bettacraft.big.need_tub_net"), true);
             return true;
         }
-        if (!player.getAbilities().instabuild) tool.hurtAndBreak(1, player, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
+        if (!player.getAbilities().instabuild) tool.hurtAndBreak(1, player, hand.asEquipmentSlot());
         RandomGenerator r = NetCatching.random(level);
         TankmateSpecies s = roll(level, water, r);
         if (s == null) {

@@ -77,7 +77,7 @@ final class DevClientSmokeM331 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         palu = p.blockPosition().offset(-8, 2, 220);
         TankBlockEntity pc = tank(level, p, palu, 4, 3, 3);
@@ -94,11 +94,11 @@ final class DevClientSmokeM331 {
         TankInteractions.changeWater(level, wc, wc.getTank().capacityMb());
         wc.getTank().setTankMode(TankModeSetting.TERRARIUM);
         wc.markTankChanged();
-        p.teleportTo(level, palu.getX() + 6.0, palu.getY(), palu.getZ() - 3.0, 0F, 10F);
+        p.teleportTo(level, palu.getX() + 6.0, palu.getY(), palu.getZ() - 3.0, java.util.Set.of(), 0F, 10F, false);
     }
 
     private void fill(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity pc = TankMultiblock.getController(level, palu);
         TankBlockEntity wc = TankMultiblock.getController(level, wet);
         if (pc == null || wc == null) {
@@ -118,7 +118,7 @@ final class DevClientSmokeM331 {
 
     private void menu(BlockPos pos) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), pos);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), pos);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));

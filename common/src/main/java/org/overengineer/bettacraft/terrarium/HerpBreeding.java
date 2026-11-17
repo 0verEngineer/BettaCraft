@@ -248,7 +248,7 @@ public final class HerpBreeding {
         double female = k.femaleShare();
         int females = 0, males = 0;
         // part c: dart frog tadpoles go into the water (no water: they die)
-        TankTerrain terrain = s.tadpoles() ? new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay()) : null;
+        TankTerrain terrain = s.tadpoles() ? new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside()) : null;
         if (terrain != null && !Double.isFinite(terrain.surface())) {
             TankCare.log(level, c, "log.bettacraft.herp.no_tadpole_water", "@" + s.translationKey());
             return 0;
@@ -260,15 +260,15 @@ public final class HerpBreeding {
             if (morph) variety = s.wildVarieties() + r.nextInt(s.varieties().size() - s.wildVarieties()); // part c: a new morph
             double weight = s.stock() * 0.1;
             if (live.size() + females + males >= maxEntities || stock + weight > cap + 1e-6) continue;
-            HerpEntity y = ModEntities.herp(s).create(level);
+            HerpEntity y = ModEntities.herp(s).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (y == null) continue;
             y.makeHatchling();
             y.setFemale(isFemale);
             y.setVariety(variety);
             y.setGeneration(k.generation);
             Vec3 at = terrain != null ? waterSpot(t, terrain, r) : null;
-            if (at != null) y.moveTo(at.x, at.y, at.z, r.nextFloat() * 360F, 0F);
-            else y.moveTo(k.x + (r.nextDouble() - 0.5) * 0.12, k.y + 0.01, k.z + (r.nextDouble() - 0.5) * 0.12, r.nextFloat() * 360F, 0F);
+            if (at != null) y.snapTo(at.x, at.y, at.z, r.nextFloat() * 360F, 0F);
+            else y.snapTo(k.x + (r.nextDouble() - 0.5) * 0.12, k.y + 0.01, k.z + (r.nextDouble() - 0.5) * 0.12, r.nextFloat() * 360F, 0F);
             TankInhabitants.adopt(y, c);
             if (!level.addFreshEntity(y)) continue;
             y.setFromBucket(false);

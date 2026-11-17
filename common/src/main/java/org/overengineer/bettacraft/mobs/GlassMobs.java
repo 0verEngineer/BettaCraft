@@ -12,12 +12,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,7 +27,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Slime;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,8 +65,8 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds;
  * ({@link GlassMobSpecies.Breeding}). The habitats go through the terrarium care hook ({@link TerrariumAnimals}).
  */
 public final class GlassMobs {
-    public static final ResourceLocation SCALE_ID = BettaCraft.id("in_glass");
-    public static final ResourceLocation REINFORCEMENTS_ID = BettaCraft.id("in_glass_reinforcements");
+    public static final Identifier SCALE_ID = BettaCraft.id("in_glass");
+    public static final Identifier REINFORCEMENTS_ID = BettaCraft.id("in_glass_reinforcements");
     /** In-game days a young mob bred in the tank needs to grow up. */
     public static final double GROW_DAYS = 2.0;
     /** A fed pair breeds within this many days of the meal; a mob that bred waits {@link #BREED_PAUSE_DAYS}. */
@@ -77,7 +77,7 @@ public final class GlassMobs {
     public static final long BAIT_TICKS = 24000L;
     public static final double LURE_RANGE = 12.0;
 
-    private static final Map<ResourceLocation, GlassMobSpecies> DEFAULTS = new HashMap<>();
+    private static final Map<Identifier, GlassMobSpecies> DEFAULTS = new HashMap<>();
     private static final Map<TankBlockEntity, Bait> BAITS = new WeakHashMap<>();
 
     static {
@@ -102,7 +102,7 @@ public final class GlassMobs {
      */
     @Nullable
     public static GlassMobSpecies species(EntityType<?> type) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         var rules = TankInhabitants.rules();
         if (InhabitantRules.matches(rules.deny(), id.toString())) return null;
         GlassMobSpecies s = DEFAULTS.get(id);
@@ -140,7 +140,7 @@ public final class GlassMobs {
 
     /** Server: whether the mob is in its tank right now (its vanilla AI and physics are off). */
     public static boolean held(Entity e) {
-        if (!(e instanceof Mob) || e.level().isClientSide || !ModAttachments.GLASS_MOB.has(e)) return false;
+        if (!(e instanceof Mob) || e.level().isClientSide() || !ModAttachments.GLASS_MOB.has(e)) return false;
         GlassMobState s = ModAttachments.GLASS_STATE.existing(e).orElse(null);
         return s != null && s.controller != null;
     }
@@ -312,7 +312,7 @@ public final class GlassMobs {
         TankData t = c.getTank();
         java.util.UUID old = z.getUUID();
         String from = "@" + z.getType().getDescriptionId();
-        Zombie n = z.convertTo(to, true);
+        Zombie n = z.convertTo(to, net.minecraft.world.entity.ConversionParams.single(z, true, true), m -> {});
         if (n == null) return null;
         GlassMobData nd = data(n);
         nd.growth = d.growth;
@@ -362,7 +362,7 @@ public final class GlassMobs {
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         if (live.size() >= ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64)) return null;
         double cap = TankInhabitants.hardCap(t.waterBlocks() + TerrariumAnimals.landBlocks(t));
-        Entity made = a.getType().create(level);
+        Entity made = a.getType().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (!(made instanceof Mob m)) {
             if (made != null) made.discard();
             return null;
@@ -378,7 +378,7 @@ public final class GlassMobs {
             return null;
         }
         Vec3 at = a.position().add(b.position()).scale(0.5);
-        m.moveTo(at.x, at.y, at.z, level.getRandom().nextFloat() * 360F, 0F);
+        m.snapTo(at.x, at.y, at.z, level.getRandom().nextFloat() * 360F, 0F);
         TankInhabitants.adopt(m, c);
         if (!level.tryAddFreshEntityWithPassengers(m) || m.isRemoved()) {
             if (!m.isRemoved()) m.discard();
@@ -410,7 +410,7 @@ public final class GlassMobs {
         m.ejectPassengers();
         prepare(m);
         Vec3 at = TerrariumAnimals.spawnPos(level, t, m.getType(), level.getRandom());
-        m.moveTo(at.x, at.y, at.z, m.getYRot(), 0F);
+        m.snapTo(at.x, at.y, at.z, m.getYRot(), 0F);
         m.setDeltaMovement(Vec3.ZERO);
         m.fallDistance = 0;
         TankInhabitants.adopt(m, c);
@@ -425,10 +425,10 @@ public final class GlassMobs {
      * Food by hand on a tank: the first grown mob that eats it and has not eaten lately is fed (a fed pair breeds). Without
      * one, on a tank with an open top, the item is laid as bait ({@link #layBait}). PASS otherwise.
      */
-    public static ItemInteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (stack.isEmpty() || !(level instanceof ServerLevel server) || !enabled()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    public static InteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (stack.isEmpty() || !(level instanceof ServerLevel server) || !enabled()) return InteractionResult.TRY_WITH_EMPTY_HAND;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         long now = server.getGameTime();
         for (Entity e : TankInhabitants.liveInhabitants(server, c.getTank())) {
             if (!(e instanceof Mob m) || !isGlassMob(m)) continue;
@@ -440,15 +440,15 @@ public final class GlassMobs {
             ItemStack one = stack.copyWithCount(1);
             if (!player.getAbilities().instabuild) stack.shrink(1);
             server.sendParticles(ParticleTypes.HEART, m.getX(), m.getY() + m.getBbHeight() + 0.1, m.getZ(), 2, 0.05, 0.05, 0.05, 0.0);
-            server.playSound(null, m.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.NEUTRAL, 0.5F, 1.4F);
-            TankCare.log(server, c, "log.bettacraft.glass.fed", TankCare.nameArg(m), "@" + one.getDescriptionId());
+            server.playSound(null, m.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.5F, 1.4F);
+            TankCare.log(server, c, "log.bettacraft.glass.fed", TankCare.nameArg(m), "@" + one.getItem().getDescriptionId());
             player.displayClientMessage(Component.translatable("message.bettacraft.terrarium.ate", m.getDisplayName(), one.getHoverName()), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         Component bait = layBait(server, c, stack, player);
-        if (bait == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (bait == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         player.displayClientMessage(bait, true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /**
@@ -458,12 +458,12 @@ public final class GlassMobs {
     @Nullable
     public static Component layBait(ServerLevel level, TankBlockEntity c, ItemStack stack, @Nullable Player player) {
         boolean lures = false;
-        for (GlassMobSpecies s : GlassMobSpecies.DEFAULTS) if (s.lures(stack) && species(BuiltInRegistries.ENTITY_TYPE.get(s.id())) != null) lures = true;
+        for (GlassMobSpecies s : GlassMobSpecies.DEFAULTS) if (s.lures(stack) && species(BuiltInRegistries.ENTITY_TYPE.getValue(s.id())) != null) lures = true;
         if (!lures) return null;
         if (!openTop(level, c.getTank())) return Component.translatable("message.bettacraft.glass.bait_lid");
         BAITS.put(c, new Bait(stack.copyWithCount(1), level.getGameTime() + BAIT_TICKS));
         if (player == null || !player.getAbilities().instabuild) stack.shrink(1);
-        TankCare.log(level, c, "log.bettacraft.glass.bait", "@" + stack.getDescriptionId());
+        TankCare.log(level, c, "log.bettacraft.glass.bait", "@" + stack.getItem().getDescriptionId());
         return Component.translatable("message.bettacraft.glass.bait", stack.getHoverName());
     }
 

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.critters;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.random.RandomGenerator;
@@ -102,7 +103,7 @@ public record CritterGenes(int a, int b, float grade) {
     }
 
     public static CritterGenes load(CompoundTag t) {
-        return new CritterGenes(t.getInt("a"), t.getInt("b"), t.contains("grade", Tag.TAG_ANY_NUMERIC) ? t.getFloat("grade") : 0.1F);
+        return new CritterGenes(t.getIntOr("a", 0), t.getIntOr("b", 0), NbtCompat.has(t, "grade", NbtCompat.ANY_NUMERIC) ? t.getFloatOr("grade", 0f) : 0.1F);
     }
 
     // ------------------------------------------------------------------ phenotype

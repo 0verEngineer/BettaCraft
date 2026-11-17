@@ -7,7 +7,7 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -40,7 +40,7 @@ public final class ProgressionGameTests {
     private static ServerPlayer player(GameTestHelper h, double x, double z) {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         Vec3 at = h.absoluteVec(new Vec3(x, 1, z));
-        p.moveTo(at.x, at.y, at.z, 0, 0);
+        p.snapTo(at.x, at.y, at.z, 0, 0);
         return p;
     }
 
@@ -50,7 +50,7 @@ public final class ProgressionGameTests {
 
     private static int books(ServerPlayer p) {
         int n = 0;
-        for (ItemStack s : p.getInventory().items) if (GuideBook.isBook(s)) n += s.getCount();
+        for (ItemStack s : p.getInventory().getNonEquipmentItems()) if (GuideBook.isBook(s)) n += s.getCount();
         return n;
     }
 
@@ -108,7 +108,7 @@ public final class ProgressionGameTests {
         }
         ServerPlayer owner = player(h, 10, 10), other = player(h, 10, 10);
         try {
-            for (int i = 0; i < owner.getInventory().items.size(); i++) owner.getInventory().items.set(i, new ItemStack(Items.STONE, 64));
+            for (int i = 0; i < owner.getInventory().getNonEquipmentItems().size(); i++) owner.getInventory().getNonEquipmentItems().set(i, new ItemStack(Items.STONE, 64));
             h.assertTrue(GuideBook.handle(owner, GuideBook.Trigger.CRAFT, GiveBook.ON_FIRST_CATCH_OR_CRAFT), "delivered by dropping");
             h.assertTrue(GuideBook.wasGiven(owner), "flag set after the drop");
             List<ItemEntity> drops = droppedBooks(h, owner);
@@ -120,7 +120,7 @@ public final class ProgressionGameTests {
             book.playerTouch(other);
             h.assertTrue(book.isAlive() && books(other) == 0, "other player cannot pick the book up within 60 s");
             // the owner can, once there is room
-            owner.getInventory().items.set(0, ItemStack.EMPTY);
+            owner.getInventory().getNonEquipmentItems().set(0, ItemStack.EMPTY);
             book.playerTouch(owner);
             h.assertTrue(!book.isAlive() && books(owner) == 1, "owner picks the book up");
 
@@ -147,8 +147,8 @@ public final class ProgressionGameTests {
             if (betta == null) throw new GameTestAssertException("no betta");
             BlockPos water = h.absolutePos(new BlockPos(12, 1, 14));
             h.getLevel().setBlockAndUpdate(water, net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
-            betta.moveTo(water.getX() + 0.5, water.getY() + 0.3, water.getZ() + 0.5, 0, 0);
-            betta.finalizeSpawn(h.getLevel(), h.getLevel().getCurrentDifficultyAt(water), MobSpawnType.BUCKET, null);
+            betta.snapTo(water.getX() + 0.5, water.getY() + 0.3, water.getZ() + 0.5, 0, 0);
+            betta.finalizeSpawn(h.getLevel(), h.getLevel().getCurrentDifficultyAt(water), EntitySpawnReason.BUCKET, null);
             h.getLevel().addFreshEntity(betta);
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
             h.assertTrue(!done(p, "catch_betta"), "not caught yet");
@@ -178,7 +178,7 @@ public final class ProgressionGameTests {
                     new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(h.absolutePos(new BlockPos(2, 1, 2))), net.minecraft.core.Direction.UP,
                             h.absolutePos(new BlockPos(2, 1, 2)), false));
             h.assertTrue(c.getTank().waterMb() == 1000 && done(p, "fill_tank"), "half full: fill_tank");
-            p.moveTo(h.absoluteVec(new Vec3(30, 1, 30)).add(500, 0, 500)); // far away: tank events still reach the owner
+            p.snapTo(h.absoluteVec(new Vec3(30, 1, 30)).add(500, 0, 500)); // far away: tank events still reach the owner
             TankCare.log(h.getLevel(), c, "log.bettacraft.nest_built", "Rex");
             h.assertTrue(done(p, "nest_built"), "nest_built via the tank log (owner)");
             h.assertTrue(!done(p, "spawned"), "spawned not yet");

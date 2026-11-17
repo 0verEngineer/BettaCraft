@@ -366,12 +366,12 @@ public final class TankBreeding {
         int spawned = 0;
         for (int i = 0; i < survivors; i++) {
             BubbleNest.Egg egg = eggs.get(i);
-            BettaEntity fry = ModEntities.BETTA.get().create(level);
+            BettaEntity fry = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (fry == null) continue;
             fry.setBettaData(BettaData.offspring(egg.genotype(), egg.female(), n.motherFishId, n.fatherFishId, n.generation, level.getGameTime()));
             Vec3 p = water.clamp(new Vec3(n.pos.x + (r.nextDouble() - 0.5) * 0.6, n.pos.y - 0.2 - r.nextDouble() * 0.3,
                     n.pos.z + (r.nextDouble() - 0.5) * 0.6), 0.1 + 1.0 / 16, 0.1 + 1.0 / 16, 0.05);
-            fry.moveTo(p.x, p.y, p.z, r.nextFloat() * 360F, 0F);
+            fry.snapTo(p.x, p.y, p.z, r.nextFloat() * 360F, 0F);
             TankInhabitants.adopt(fry, controller);
             if (level.addFreshEntity(fry)) {
                 tank.inhabitants().add(fry.getUUID());

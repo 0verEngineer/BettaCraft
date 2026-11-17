@@ -134,7 +134,7 @@ public final class InteriorGround {
             long now = interior.getGameTime();
             if (now - m.ticketTime.getOrDefault(key, -1000L) > 200) {
                 m.ticketTime.put(key, now);
-                interior.getChunkSource().addRegionTicket(InteriorPreparation.TICKET, new ChunkPos(key), 0, new ChunkPos(key));
+                interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), new ChunkPos(key), 0);
             }
             return UNKNOWN;
         }

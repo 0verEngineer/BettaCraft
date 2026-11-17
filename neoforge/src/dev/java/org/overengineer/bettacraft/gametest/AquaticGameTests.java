@@ -189,7 +189,7 @@ public final class AquaticGameTests {
                     if (err != null) throw new GameTestAssertException(p.species().id() + ": take out failed: " + err.getString());
                     h.assertTrue(h.getLevel().getEntity(p.entity()) == null, p.species().id() + ": gone from the tank");
                     boolean filled = false;
-                    for (ItemStack s : sp.getInventory().items) filled |= TankInhabitants.containedType(s) == p.species().type();
+                    for (ItemStack s : sp.getInventory().getNonEquipmentItems()) filled |= TankInhabitants.containedType(s) == p.species().type();
                     h.assertTrue(filled, p.species().id() + ": in the " + (bag ? "bag" : "bucket") + " now");
                     LOGGER.info("[aquatic] {} lived {} ticks in a tank and was taken out with a {}", p.species().id(), LIVE_TICKS, bag ? "bag" : "bucket");
                 }
@@ -275,10 +275,10 @@ public final class AquaticGameTests {
                 sp.getInventory().add(new ItemStack(ModItems.FISH_BAG.get()));
                 Component out = TankInhabitants.takeOut(sp, c, in.getUUID(), true);
                 h.assertTrue(out == null, "taken out with the bag: " + (out == null ? "" : out.getString()));
-                ItemStack filled = sp.getInventory().items.stream().filter(s -> FishBagItem.storedEntity(s) != null).findFirst()
+                ItemStack filled = sp.getInventory().getNonEquipmentItems().stream().filter(s -> FishBagItem.storedEntity(s) != null).findFirst()
                         .orElseThrow(() -> new GameTestAssertException("no filled bag"));
                 CompoundTag t = FishBagItem.storedEntity(filled);
-                h.assertTrue("minecraft:glow_squid".equals(t.getString("id")) && t.getString("CustomName").contains("Inky"), "data kept: " + t);
+                h.assertTrue("minecraft:glow_squid".equals(t.getStringOr("id", "")) && t.getStringOr("CustomName", "").contains("Inky"), "data kept: " + t);
             } finally {
                 sp.getServer().getPlayerList().remove(sp);
             }
@@ -333,7 +333,7 @@ public final class AquaticGameTests {
             h.assertTrue(t.isAlive() && TankInhabitants.inside(c.getTank(), t), "still a tadpole in the tank");
             CompoundTag tag = new CompoundTag();
             t.addAdditionalSaveData(tag);
-            h.assertTrue(tag.getInt("Age") < Tadpole.ticksToBeFrog, "age set back: " + tag.getInt("Age"));
+            h.assertTrue(tag.getIntOr("Age", 0) < Tadpole.ticksToBeFrog, "age set back: " + tag.getIntOr("Age", 0));
         } finally {
             ServerConfig.INHABITANTS_TADPOLES.set(saved);
         }

@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -85,7 +85,7 @@ final class DevClientSmokeM30a {
     private void freezePangasius(ServerLevel level) {
         int i = 0;
         for (TankmateEntity m : level.getEntitiesOfClass(TankmateEntity.class, new net.minecraft.world.phys.AABB(small).inflate(16), e -> e.species() == TankmateSpecies.PANGASIUS)) {
-            m.moveTo(small.getX() + 3.5 + i * 5.0, small.getY() + 1.0 + i * 1.2, small.getZ() + 2.5 + i, i == 0 ? -80F : -100F, 0F);
+            m.snapTo(small.getX() + 3.5 + i * 5.0, small.getY() + 1.0 + i * 1.2, small.getZ() + 2.5 + i, i == 0 ? -80F : -100F, 0F);
             SmokeFreeze.freeze(m, true);
             i++;
         }
@@ -110,7 +110,7 @@ final class DevClientSmokeM30a {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.server);
         BlockPos base = p.blockPosition().offset(-16, 2, 300);
         big = base;

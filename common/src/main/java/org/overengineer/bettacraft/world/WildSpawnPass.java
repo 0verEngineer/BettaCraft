@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.world;
 
+import net.minecraft.util.random.Weighted;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -16,10 +17,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -122,7 +123,7 @@ public final class WildSpawnPass {
             int x = center.getX() + (int) Math.round(Math.cos(a) * d), z = center.getZ() + (int) Math.round(Math.sin(a) * d);
             BlockPos surface = surface(level, x, z);
             if (surface == null) continue;
-            List<MobSpawnSettings.SpawnerData> ours = fish(ours(level.getBiome(surface)));
+            List<Weighted<MobSpawnSettings.SpawnerData>> ours = fish(ours(level.getBiome(surface)));
             if (ours.isEmpty()) continue;
             int n = spawnInColumn(level, surface, ours, r, room);
             if (n > 0) return n;
@@ -131,13 +132,13 @@ public final class WildSpawnPass {
     }
 
     /** M46: the entries without the small animals (they have their own try). */
-    public static List<MobSpawnSettings.SpawnerData> fish(List<MobSpawnSettings.SpawnerData> entries) {
-        return entries.stream().filter(d -> d.type != ModEntities.WILD_CRITTER.get()).toList();
+    public static List<Weighted<MobSpawnSettings.SpawnerData>> fish(List<Weighted<MobSpawnSettings.SpawnerData>> entries) {
+        return entries.stream().filter(d -> d.value().type() != ModEntities.WILD_CRITTER.get()).toList();
     }
 
     /** M46: whether small animals spawn in this biome. */
     public static boolean hasCritters(Holder<Biome> biome) {
-        return ours(biome).stream().anyMatch(d -> d.type == ModEntities.WILD_CRITTER.get());
+        return ours(biome).stream().anyMatch(d -> d.value().type() == ModEntities.WILD_CRITTER.get());
     }
 
     // ------------------------------------------------------------------ M46: the small animals' own try
@@ -229,10 +230,10 @@ public final class WildSpawnPass {
     }
 
     /** The spawn entries of the mod in a biome (water ambient group, with their biome weights). */
-    public static List<MobSpawnSettings.SpawnerData> ours(Holder<Biome> biome) {
-        List<MobSpawnSettings.SpawnerData> out = new ArrayList<>();
+    public static List<Weighted<MobSpawnSettings.SpawnerData>> ours(Holder<Biome> biome) {
+        List<Weighted<MobSpawnSettings.SpawnerData>> out = new ArrayList<>();
         for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) {
-            if (d.type.is(ModTags.ALL_ANIMALS)) out.add(d);
+            if (d.value().type().is(ModTags.ALL_ANIMALS)) out.add(d);
         }
         return out;
     }
@@ -241,16 +242,16 @@ public final class WildSpawnPass {
      * Picks one of {@code entries} by weight and spawns a group of it in the water column below {@code surface} (fish near
      * the surface, small animals on the bottom), at most {@code room} animals, with the normal spawn rules and events.
      */
-    public static int spawnInColumn(ServerLevel level, BlockPos surface, List<MobSpawnSettings.SpawnerData> entries, RandomSource r, int room) {
-        var pick = WeightedRandom.getRandomItem(r, entries);
+    public static int spawnInColumn(ServerLevel level, BlockPos surface, List<Weighted<MobSpawnSettings.SpawnerData>> entries, RandomSource r, int room) {
+        var pick = WeightedRandom.getRandomItem(r, entries, Weighted::weight).map(Weighted::value);
         if (pick.isEmpty() || room <= 0) return 0;
         MobSpawnSettings.SpawnerData d = pick.get();
-        boolean bottom = d.type == ModEntities.WILD_CRITTER.get();
+        boolean bottom = d.type() == ModEntities.WILD_CRITTER.get();
         int floor = level.getHeight(Heightmap.Types.OCEAN_FLOOR, surface.getX(), surface.getZ());
         int y = bottom ? floor : Math.max(floor, surface.getY() - r.nextInt(3));
         BlockPos start = new BlockPos(surface.getX(), y, surface.getZ());
-        int count = Math.min(room, d.minCount + r.nextInt(Math.max(1, d.maxCount - d.minCount + 1)));
-        return spawnGroup(level, d.type, start, bottom, count, r, null);
+        int count = Math.min(room, d.minCount() + r.nextInt(Math.max(1, d.maxCount() - d.minCount() + 1)));
+        return spawnGroup(level, d.type(), start, bottom, count, r, null);
     }
 
     private static int spawnGroup(ServerLevel level, EntityType<?> type, BlockPos start, boolean bottom, int count, RandomSource r,
@@ -262,16 +263,16 @@ public final class WildSpawnPass {
             if (bottom) at = new BlockPos(at.getX(), level.getHeight(Heightmap.Types.OCEAN_FLOOR, at.getX(), at.getZ()), at.getZ());
             if (!level.getFluidState(at).is(FluidTags.WATER) || !level.isPositionEntityTicking(at)) continue;
             if (!SpawnPlacements.isSpawnPositionOk(type, level, at)) continue;
-            if (!SpawnPlacements.checkSpawnRules(type, level, MobSpawnType.NATURAL, at, r)) continue;
+            if (!SpawnPlacements.checkSpawnRules(type, level, EntitySpawnReason.NATURAL, at, r)) continue;
             double x = at.getX() + 0.5, z = at.getZ() + 0.5;
             if (!level.noCollision(type.getSpawnAABB(x, at.getY(), z))) continue;
-            if (!(type.create(level) instanceof Mob mob)) return made;
-            mob.moveTo(x, at.getY(), z, r.nextFloat() * 360F, 0F);
-            if (!org.overengineer.bettacraft.platform.Platform.get().checkSpawnPosition(mob, level, MobSpawnType.NATURAL)) {
+            if (!(type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED) instanceof Mob mob)) return made;
+            mob.snapTo(x, at.getY(), z, r.nextFloat() * 360F, 0F);
+            if (!org.overengineer.bettacraft.platform.Platform.get().checkSpawnPosition(mob, level, EntitySpawnReason.NATURAL)) {
                 mob.discard();
                 continue;
             }
-            group = org.overengineer.bettacraft.platform.Platform.get().finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(at), MobSpawnType.NATURAL, group);
+            group = org.overengineer.bettacraft.platform.Platform.get().finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(at), EntitySpawnReason.NATURAL, group);
             if (level.tryAddFreshEntityWithPassengers(mob)) made++;
         }
         return made;

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.interior;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,10 +18,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -397,7 +398,7 @@ public final class PlantMeshRenderer {
         }
         if (!active() || ROOTS.isEmpty()) return;
         float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        Vec3 cam = event.getCamera().getPosition();
+        Vec3 cam = event.getCamera().position();
         PoseStack ps = event.getPoseStack();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         int budget = BUILDS_PER_FRAME;
@@ -433,7 +434,7 @@ public final class PlantMeshRenderer {
             draw(m, pos, cam, ps, buffers, time);
             lastDrawn++;
         }
-        for (PlantTex t : PlantTex.ALL) buffers.endBatch(RenderType.entityCutoutNoCull(t.texture));
+        for (PlantTex t : PlantTex.ALL) buffers.endBatch(RenderTypes.entityCutoutNoCull(t.texture));
     }
 
     /** M22.1: everything alive near the polyps of a mesh (inside: the player, other players) closes them for a moment. */
@@ -461,7 +462,7 @@ public final class PlantMeshRenderer {
         if (level == null || !active()) return;
         if (shadowBuffers == null) shadowBuffers = MultiBufferSource.immediate(new com.mojang.blaze3d.vertex.ByteBufferBuilder(1 << 18));
         float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        Vec3 cam = event.getCamera().getPosition();
+        Vec3 cam = event.getCamera().position();
         PoseStack ps = new PoseStack();
         ps.mulPose(event.getModelViewMatrix());
         for (var e : MESHES.long2ObjectEntrySet()) {
@@ -508,7 +509,7 @@ public final class PlantMeshRenderer {
         for (int t = 0; t < PlantTex.ALL.length; t++) {
             Layer l = m.layers[t];
             if (l.light.isEmpty()) continue;
-            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderType.entityCutoutNoCull(PlantTex.ALL[t].texture));
+            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderTypes.entityCutoutNoCull(PlantTex.ALL[t].texture));
             float[] v = l.v.elements();
             int[] col = l.color.elements();
             int quads = l.light.size();

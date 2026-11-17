@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plants;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -41,7 +44,8 @@ public class AquaticPlantItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> lines, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> lines = new SinkList<>(tooltipAdder);
         int st = stage(stack);
         if (st > 0) {
             lines.add(Component.translatable("item.bettacraft.aquatic_plant.grown", Math.round(100.0 * st / species.stages()))

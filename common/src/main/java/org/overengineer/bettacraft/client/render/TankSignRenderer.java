@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.tank.TankShape;
  * one of six positions (M10: on an irregular front, on the widest flat part of the top or bottom row). Drawn by the controller; shrinks the text when the front is too narrow. Also draws the bubble
  * nest with its eggs / larvae (M2) and the floating plants on the surface (M12, {@link FloatingPlantRenderer}).
  */
-public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
+public class TankSignRenderer extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<TankBlockEntity> {
     /** Height of the plate at {@code render.signScale} 1 (M15: was 0.25). */
     public static final float PLATE_HEIGHT = 0.12F;
     private static final float MARGIN = 0.06F;
@@ -109,7 +109,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         pose.mulPose(Axis.YP.rotationDegrees(-front.toYRot()));
         // black plate slightly behind the text (towards the glass), double-sided
         org.joml.Matrix4f m = pose.last().pose();
-        com.mojang.blaze3d.vertex.VertexConsumer bg = buffers.getBuffer(net.minecraft.client.renderer.RenderType.textBackground());
+        com.mojang.blaze3d.vertex.VertexConsumer bg = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderType.textBackground());
         float hw = plateW / 2, hh = plateH / 2, bz = -0.004F;
         float[][] quad = {{-hw, -hh}, {hw, -hh}, {hw, hh}, {-hw, hh}};
         for (int i = 0; i < 4; i++) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);
@@ -132,7 +132,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     }
 
     @Override
-    public boolean shouldRenderOffScreen(TankBlockEntity be) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 

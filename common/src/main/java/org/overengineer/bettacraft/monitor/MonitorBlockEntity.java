@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.monitor;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -227,7 +230,7 @@ public class MonitorBlockEntity extends BlockEntity implements org.overengineer.
      * 8 blocks, may build), clipped to the screen, saved and synced. The editor switches {@link DashboardLayout#auto} off.
      */
     public static boolean applyLayout(ServerPlayer player, BlockPos pos, CompoundTag tag) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.level();
         if (!level.isLoaded(pos) || !(level.getBlockEntity(pos) instanceof MonitorBlockEntity be)) return false;
         MonitorBlockEntity c = be.controller();
         if (c == null || player.distanceToSqr(Vec3.atCenterOf(pos)) > 64 || !player.mayBuild() || !level.mayInteract(player, pos)) return false;
@@ -239,7 +242,7 @@ public class MonitorBlockEntity extends BlockEntity implements org.overengineer.
 
     void syncToClients() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MonitorBlockEntity be) {
@@ -286,18 +289,20 @@ public class MonitorBlockEntity extends BlockEntity implements org.overengineer.
     }
 
     private void loadScreen(CompoundTag tag) {
-        origin = tag.contains("origin") ? BlockPos.of(tag.getLong("origin")) : null;
+        origin = tag.contains("origin") ? BlockPos.of(tag.getLongOr("origin", 0L)) : null;
         if (origin != null && origin.equals(worldPosition)) origin = null;
-        width = Math.max(1, Math.min(MonitorScreens.MAX_W, tag.getInt("w")));
-        height = Math.max(1, Math.min(MonitorScreens.MAX_H, tag.getInt("h")));
-        formed = tag.getBoolean("formed");
-        status = tag.getInt("status");
-        layout = DashboardLayout.load(tag.getCompound("layout"));
+        width = Math.max(1, Math.min(MonitorScreens.MAX_W, tag.getIntOr("w", 0)));
+        height = Math.max(1, Math.min(MonitorScreens.MAX_H, tag.getIntOr("h", 0)));
+        formed = tag.getBooleanOr("formed", false);
+        status = tag.getIntOr("status", 0);
+        layout = DashboardLayout.load(tag.getCompoundOrEmpty("layout"));
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         saveScreen(tag);
         if (isController()) {
             energy.save(tag);
@@ -305,18 +310,21 @@ public class MonitorBlockEntity extends BlockEntity implements org.overengineer.
             for (MonitorTank t : tanks) list.add(t.save());
             tag.put("tanks", list);
         }
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
         loadScreen(tag);
         energy.load(tag);
         tanks.clear();
-        ListTag list = tag.getList("tanks", Tag.TAG_COMPOUND);
+        ListTag list = tag.getListOrEmpty("tanks");
         for (int i = 0; i < list.size() && tanks.size() < MonitorSync.MAX_TANKS; i++) {
-            CompoundTag c = list.getCompound(i);
-            if (c.hasUUID("id")) tanks.add(MonitorTank.load(c));
+            CompoundTag c = list.getCompoundOrEmpty(i);
+            if (NbtCompat.hasUUID(c, "id")) tanks.add(MonitorTank.load(c));
         }
     }
 

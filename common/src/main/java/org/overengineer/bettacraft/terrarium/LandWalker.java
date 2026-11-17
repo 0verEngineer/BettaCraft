@@ -220,7 +220,7 @@ public final class LandWalker {
         long now = level.getGameTime();
         if (terrain == null || now - terrainTime >= 20 || now < terrainTime) {
             terrain = new TankTerrain(t, level.getServer(), org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId()),
-                    level.isDay());
+                    level.isBrightOutside());
             terrainTime = now;
             spots = TankClimate.baskingSpots(level, t);
         }
@@ -330,7 +330,7 @@ public final class LandWalker {
                 nx = pos.x;
                 nz = pos.z;
                 ny = pos.y + Math.min(rise, Math.max(0.02, gait.walk()));
-                show = Pose.wall(Direction.getNearest(dx, 0, dz));
+                show = Pose.wall(Direction.getApproximateNearest(dx, 0, dz));
             } else {
                 ny = pos.y + Mth.clamp(rise, -0.15, 0.08);
             }

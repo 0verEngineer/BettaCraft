@@ -48,19 +48,19 @@ final class DevClientSmokeM32d {
 
     DevClientSmokeM32d() {
         then(1, () -> server(this::build));
-        then(10, () -> server(p -> MonitorSync.cycle(p.serverLevel(), monitor)));
+        then(10, () -> server(p -> MonitorSync.cycle(p.level(), monitor)));
         then(40, () -> look(base.getX() + 0.5, base.getY() + 4, base.getZ() - 30, 0F, 6F));
         then(10, this::checkShown);
         then(140, () -> shot("waypoint"));
         then(1, () -> server(p -> {
             tank.getTank().setWaterTemp(24F);
-            MonitorSync.cycle(p.serverLevel(), monitor);
+            MonitorSync.cycle(p.level(), monitor);
         }));
         then(20, this::checkGone);
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         base = p.blockPosition().offset(0, 0, 40);
         for (int x = -3; x <= 4; x++) for (int z = -2; z <= 3; z++) level.setBlock(base.offset(x, -1, z), Blocks.STONE_BRICKS.defaultBlockState(), 2);

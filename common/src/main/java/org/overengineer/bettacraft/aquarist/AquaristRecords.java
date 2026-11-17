@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.aquarist;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -53,7 +54,7 @@ public final class AquaristRecords extends SavedData {
 
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
-            if (npc != null) t.putUUID("npc", npc);
+            if (npc != null) NbtCompat.putUUID(t, "npc", npc);
             t.putBoolean("hired", hired);
             if (offerUntil != Long.MAX_VALUE) t.putLong("offer_until", offerUntil);
             if (notBefore != Long.MIN_VALUE) t.putLong("not_before", notBefore);
@@ -67,15 +68,15 @@ public final class AquaristRecords extends SavedData {
 
         static PlayerRecord load(CompoundTag t) {
             PlayerRecord r = new PlayerRecord();
-            if (t.hasUUID("npc")) r.npc = t.getUUID("npc");
-            r.hired = t.getBoolean("hired");
-            r.offerUntil = t.contains("offer_until") ? t.getLong("offer_until") : Long.MAX_VALUE;
-            r.notBefore = t.contains("not_before") ? t.getLong("not_before") : Long.MIN_VALUE;
-            r.breedings = t.getInt("breedings");
-            r.breedingsAtLeave = t.contains("breedings_at_leave") ? t.getInt("breedings_at_leave") : -1;
-            r.refused = t.getInt("refused");
-            r.left = t.getInt("left");
-            r.name = t.getString("name");
+            if (NbtCompat.hasUUID(t, "npc")) r.npc = NbtCompat.getUUID(t, "npc");
+            r.hired = t.getBooleanOr("hired", false);
+            r.offerUntil = t.contains("offer_until") ? t.getLongOr("offer_until", 0L) : Long.MAX_VALUE;
+            r.notBefore = t.contains("not_before") ? t.getLongOr("not_before", 0L) : Long.MIN_VALUE;
+            r.breedings = t.getIntOr("breedings", 0);
+            r.breedingsAtLeave = t.contains("breedings_at_leave") ? t.getIntOr("breedings_at_leave", 0) : -1;
+            r.refused = t.getIntOr("refused", 0);
+            r.left = t.getIntOr("left", 0);
+            r.name = t.getStringOr("name", "");
             return r;
         }
     }
@@ -87,7 +88,7 @@ public final class AquaristRecords extends SavedData {
     private final Map<UUID, TankEntry> tanks = new HashMap<>();
 
     public static AquaristRecords get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(new SavedData.Factory<>(AquaristRecords::new, AquaristRecords::load, null), NAME);
+        return server.overworld().getDataStorage().computeIfAbsent(org.overengineer.bettacraft.util.NbtCompat.savedData(NAME, AquaristRecords::new, AquaristRecords::load, AquaristRecords::save));
     }
 
     public PlayerRecord player(UUID id) {
@@ -192,21 +193,20 @@ public final class AquaristRecords extends SavedData {
 
     // ------------------------------------------------------------------ save
 
-    @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag pl = new ListTag();
         for (var e : players.entrySet()) {
             CompoundTag t = e.getValue().save();
-            t.putUUID("player", e.getKey());
+            NbtCompat.putUUID(t, "player", e.getKey());
             pl.add(t);
         }
         tag.put("players", pl);
         ListTag tl = new ListTag();
         for (TankEntry e : tanks.values()) {
             CompoundTag t = new CompoundTag();
-            t.putUUID("tank", e.tank());
-            t.putUUID("owner", e.owner());
-            t.putString("dim", e.dimension().location().toString());
+            NbtCompat.putUUID(t, "tank", e.tank());
+            NbtCompat.putUUID(t, "owner", e.owner());
+            t.putString("dim", e.dimension().identifier().toString());
             t.putLong("pos", e.pos().asLong());
             tl.add(t);
         }
@@ -216,17 +216,17 @@ public final class AquaristRecords extends SavedData {
 
     public static AquaristRecords load(CompoundTag tag, HolderLookup.Provider registries) {
         AquaristRecords r = new AquaristRecords();
-        for (Tag x : tag.getList("players", Tag.TAG_COMPOUND)) {
+        for (Tag x : tag.getListOrEmpty("players")) {
             CompoundTag t = (CompoundTag) x;
-            if (t.hasUUID("player")) r.players.put(t.getUUID("player"), PlayerRecord.load(t));
+            if (NbtCompat.hasUUID(t, "player")) r.players.put(NbtCompat.getUUID(t, "player"), PlayerRecord.load(t));
         }
-        for (Tag x : tag.getList("tanks", Tag.TAG_COMPOUND)) {
+        for (Tag x : tag.getListOrEmpty("tanks")) {
             CompoundTag t = (CompoundTag) x;
-            if (!t.hasUUID("tank") || !t.hasUUID("owner")) continue;
-            ResourceLocation dim = ResourceLocation.tryParse(t.getString("dim"));
+            if (!NbtCompat.hasUUID(t, "tank") || !NbtCompat.hasUUID(t, "owner")) continue;
+            Identifier dim = Identifier.tryParse(t.getStringOr("dim", ""));
             if (dim == null) continue;
-            UUID id = t.getUUID("tank");
-            r.tanks.put(id, new TankEntry(id, t.getUUID("owner"), ResourceKey.create(Registries.DIMENSION, dim), BlockPos.of(t.getLong("pos"))));
+            UUID id = NbtCompat.getUUID(t, "tank");
+            r.tanks.put(id, new TankEntry(id, NbtCompat.getUUID(t, "owner"), ResourceKey.create(Registries.DIMENSION, dim), BlockPos.of(t.getLongOr("pos", 0L))));
         }
         return r;
     }

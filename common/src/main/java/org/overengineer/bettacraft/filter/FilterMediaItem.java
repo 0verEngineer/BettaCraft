@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.filter;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -47,10 +50,7 @@ public class FilterMediaItem extends Item {
         return dirt >= 0.75 ? 2 : dirt >= 0.25 ? 1 : 0;
     }
 
-    @Override
-    public boolean isValidRepairItem(ItemStack stack, ItemStack repair) {
-        return false;
-    }
+    // M52b: not repairable (no repairable component; isValidRepairItem is gone since 1.21.2)
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
@@ -60,12 +60,12 @@ public class FilterMediaItem extends Item {
         ItemStack stack = ctx.getItemInHand();
         if (!s.is(Blocks.WATER_CAULDRON)) return InteractionResult.PASS;
         if (!medium.cleanable()) {
-            if (!level.isClientSide && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
+            if (!level.isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
                     Component.translatable("message.bettacraft.media.not_cleanable").withStyle(ChatFormatting.GOLD), true);
             return InteractionResult.FAIL;
         }
         if (stack.getDamageValue() <= 0) return InteractionResult.PASS;
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             // M26: the mulm washed out of a dirty medium (food for the tubifex dish)
             int mulm = mulmFrom(dirt(stack));
             stack.setDamageValue(0);
@@ -78,11 +78,12 @@ public class FilterMediaItem extends Item {
             if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.media.cleaned", stack.getHoverName())
                     .withStyle(ChatFormatting.AQUA), true);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         int pct = (int) Math.round(dirt(stack) * 100);
         String key = medium.cleanable() ? "tooltip.bettacraft.media.dirt" : "tooltip.bettacraft.media.used";
         tooltip.add(Component.translatable(key, pct).withStyle(pct >= 80 ? ChatFormatting.RED : pct >= 40 ? ChatFormatting.GOLD : ChatFormatting.GRAY));

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.decor;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +13,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
@@ -31,27 +32,27 @@ public record DecorTemplate(int sizeX, int sizeY, int sizeZ, List<Entry> blocks)
     public record Placed(BlockPos pos, BlockState state) {}
 
     /** Reads the template from the server's structure manager (datapacks may replace it). */
-    public static Optional<DecorTemplate> load(ServerLevel level, ResourceLocation id) {
+    public static Optional<DecorTemplate> load(ServerLevel level, Identifier id) {
         Optional<StructureTemplate> t = level.getStructureManager().get(id);
         if (t.isEmpty()) return Optional.empty();
         CompoundTag nbt = t.get().save(new CompoundTag());
         HolderGetter<Block> blocks = level.holderLookup(net.minecraft.core.registries.Registries.BLOCK);
-        ListTag palette = nbt.getList("palette", Tag.TAG_COMPOUND);
-        if (palette.isEmpty() && nbt.contains("palettes", Tag.TAG_LIST)) palette = nbt.getList("palettes", Tag.TAG_LIST).getList(0);
+        ListTag palette = nbt.getListOrEmpty("palette");
+        if (palette.isEmpty() && NbtCompat.has(nbt, "palettes", Tag.TAG_LIST)) palette = nbt.getListOrEmpty("palettes").getListOrEmpty(0);
         List<BlockState> states = new ArrayList<>();
-        for (int i = 0; i < palette.size(); i++) states.add(NbtUtils.readBlockState(blocks, palette.getCompound(i)));
+        for (int i = 0; i < palette.size(); i++) states.add(NbtUtils.readBlockState(blocks, palette.getCompoundOrEmpty(i)));
         List<Entry> entries = new ArrayList<>();
-        ListTag list = nbt.getList("blocks", Tag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty("blocks");
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag b = list.getCompound(i);
-            ListTag pos = b.getList("pos", Tag.TAG_INT);
-            int s = b.getInt("state");
+            CompoundTag b = list.getCompoundOrEmpty(i);
+            ListTag pos = b.getListOrEmpty("pos");
+            int s = b.getIntOr("state", 0);
             if (s < 0 || s >= states.size() || states.get(s).isAir()) continue;
-            entries.add(new Entry(new BlockPos(pos.getInt(0), pos.getInt(1), pos.getInt(2)), states.get(s)));
+            entries.add(new Entry(new BlockPos(pos.getIntOr(0, 0), pos.getIntOr(1, 0), pos.getIntOr(2, 0)), states.get(s)));
         }
         entries.sort(Comparator.comparingInt((Entry e) -> e.pos().getY()));
-        ListTag size = nbt.getList("size", Tag.TAG_INT);
-        return Optional.of(new DecorTemplate(size.getInt(0), size.getInt(1), size.getInt(2), List.copyOf(entries)));
+        ListTag size = nbt.getListOrEmpty("size");
+        return Optional.of(new DecorTemplate(size.getIntOr(0, 0), size.getIntOr(1, 0), size.getIntOr(2, 0), List.copyOf(entries)));
     }
 
     /** Rotation that turns the structure's north side towards the player. */

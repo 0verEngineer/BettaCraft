@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client.render;
 
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
@@ -7,7 +8,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
@@ -143,7 +144,7 @@ public final class TravelWater {
     private static void update(Slosh s, Matrix4f m, Vector3f centre, Minecraft mc) {
         long now = System.nanoTime();
         Vector3f c = m.transformPosition(new Vector3f(centre));
-        Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 cam = mc.gameRenderer.getMainCamera().position();
         Vec3 w = new Vec3(c.x() + cam.x, c.y() + cam.y, c.z() + cam.z);
         double dt = s.last == 0 ? 0 : (now - s.last) / 1e9;
         s.last = now;
@@ -213,7 +214,7 @@ public final class TravelWater {
         }
         var atlas = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), side = atlas.apply(TankWaterRenderer.SIDE);
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
         PoseStack.Pose p = pose.last();
         double time = (mc.level == null ? 0 : (mc.level.getGameTime() % 24000L)) / 20.0 + mc.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
         for (var e : cols.long2LongEntrySet()) {

@@ -49,7 +49,7 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY, TEXT, false);
+        g.drawString(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         left(g, Component.translatable("gui.bettacraft.live_food_pump.doses"), 8, 22, TEXT, 100);
         left(g, Component.translatable("gui.bettacraft.live_food_pump.portions"), 8, 40, TEXT, 100);
         centre(g, menu.doses() <= 0 ? Component.translatable("gui.bettacraft.live_food_pump.doses_off") : Component.literal(String.valueOf(menu.doses())),
@@ -79,15 +79,15 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
-        g.pose().pushPose();
-        g.pose().translate(x, y, 0);
-        g.pose().scale(s, s, 1);
-        g.drawString(font, c, 0, 0, color, false);
-        g.pose().popPose();
+        g.pose().pushMatrix();
+        g.pose().translate(x, y);
+        g.pose().scale(s, s);
+        g.drawString(font, c, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+        g.pose().popMatrix();
     }
 
     private void centre(GuiGraphics g, Component c, int cx, int y, int color) {
-        g.drawString(font, c, cx - font.width(c) / 2, y, color, false);
+        g.drawString(font, c, cx - font.width(c) / 2, y, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
     }
 
     @Override

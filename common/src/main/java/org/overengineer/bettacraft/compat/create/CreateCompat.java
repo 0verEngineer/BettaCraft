@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Field;
@@ -234,14 +235,14 @@ public final class CreateCompat {
             Object contraption = ctxContraption.get(context);
             BlockPos local = (BlockPos) ctxLocalPos.get(context);
             BlockPos abs = ((BlockPos) contraptionAnchor.get(contraption)).offset(local);
-            int[] c = nbt.getIntArray("controller");
+            int[] c = nbt.getIntArray("controller").orElse(new int[0]);
             BlockPos cp = c.length == 3 ? new BlockPos(c[0], c[1], c[2]) : null;
             TankBlockEntity here = TankMultiblock.getController(level, abs);
-            if (nbt.contains("tank", Tag.TAG_COMPOUND) && abs.equals(cp)) {
-                TankData t = TankData.load(nbt.getCompound("tank"));
+            if (NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND) && abs.equals(cp)) {
+                TankData t = TankData.load(nbt.getCompoundOrEmpty("tank"));
                 List<Entity> packed = new ArrayList<>();
                 ListTag list = TankMoves.pack(level, t, packed);
-                ListTag stowed = nbt.getList("stowed", Tag.TAG_COMPOUND);
+                ListTag stowed = nbt.getListOrEmpty("stowed");
                 stowed.addAll(list);
                 nbt.put("stowed", stowed);
                 @SuppressWarnings("unchecked")
@@ -261,7 +262,7 @@ public final class CreateCompat {
 
     /** Region of a controller's captured data, or -1 (members, client copies). */
     private static int regionOf(@Nullable CompoundTag nbt) {
-        return nbt != null && nbt.contains("tank", Tag.TAG_COMPOUND) ? nbt.getCompound("tank").getInt("region") : -1;
+        return nbt != null && NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND) ? nbt.getCompoundOrEmpty("tank").getIntOr("region", 0) : -1;
     }
 
     /** M52: the care on the road of a moving tank ({@code CreateTravel} of the loader module, compiled against Create). */
@@ -290,7 +291,7 @@ public final class CreateCompat {
             CompoundTag nbt = (CompoundTag) ctxBlockEntityData.get(context);
             int region = regionOf(nbt);
             if (region >= 0) TankMoves.stoppedTravelling(region);
-            if (region >= 0 || nbt != null && nbt.contains("tank", Tag.TAG_COMPOUND)) {
+            if (region >= 0 || nbt != null && NbtCompat.has(nbt, "tank", Tag.TAG_COMPOUND)) {
                 // M32 part c: at the end of the tick, a controller Create could not place or a destroyed contraption
                 Object contraption = ctxContraption.get(context);
                 CreateLandings.stopped(level, contraptionEntity.get(contraption) instanceof Entity e ? e : null, nbt,
@@ -330,7 +331,7 @@ public final class CreateCompat {
 
     /** Create put a tank block down: hand the contraption's rotation to {@link TankMoves}. */
     private static void transformed(BlockEntity be, Object transform) {
-        if (!(be instanceof TankBlockEntity t) || be.getLevel() == null || be.getLevel().isClientSide) return;
+        if (!(be instanceof TankBlockEntity t) || be.getLevel() == null || be.getLevel().isClientSide()) return;
         try {
             BlockPos o = (BlockPos) transformApplyWithoutOffset.invoke(transform, BlockPos.ZERO);
             BlockPos x = ((BlockPos) transformApplyWithoutOffset.invoke(transform, new BlockPos(1, 0, 0))).subtract(o);

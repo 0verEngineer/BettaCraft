@@ -36,7 +36,7 @@ public record WaterChangerPayload(BlockPos pos, int interval, int share, boolean
         if (!(player.level().getBlockEntity(p.pos()) instanceof WaterChangerBlockEntity be)) return;
         be.set(p.interval(), p.share(), p.enabled());
         if (p.changeNow() && be.manualChangeAllowed(player.level().getGameTime())) {
-            int mb = be.check(player.serverLevel(), true);
+            int mb = be.check(player.level(), true);
             player.displayClientMessage(Component.translatable(mb > 0 ? "message.bettacraft.water_changer.changed" : "message.bettacraft.water_changer.not_changed", mb), true);
         }
     }

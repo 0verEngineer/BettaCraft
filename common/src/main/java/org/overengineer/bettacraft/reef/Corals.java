@@ -91,7 +91,7 @@ public final class Corals {
      * like on land). The client always says yes (it has no tank data; the server decides).
      */
     public static boolean vanillaCoralLives(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
-        if (level.isClientSide || !ServerConfig.getOr(ServerConfig.SALT_VANILLA_CORALS, false)) return true;
+        if (level.isClientSide() || !ServerConfig.getOr(ServerConfig.SALT_VANILLA_CORALS, false)) return true;
         var server = level.getServer();
         if (server == null) return true;
         var r = org.overengineer.bettacraft.tank.interior.InteriorManager.regionAt(server, pos);

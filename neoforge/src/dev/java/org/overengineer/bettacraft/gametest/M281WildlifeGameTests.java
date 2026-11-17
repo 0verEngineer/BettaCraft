@@ -81,7 +81,7 @@ public final class M281WildlifeGameTests {
     }
 
     private static List<MobSpawnSettings.SpawnerData> ours(GameTestHelper h, ResourceKey<Biome> biome) {
-        return WildSpawnPass.ours(h.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(biome));
+        return WildSpawnPass.ours(h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getHolderOrThrow(biome));
     }
 
     // ------------------------------------------------------------------ tags
@@ -108,7 +108,7 @@ public final class M281WildlifeGameTests {
      */
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void spawnSharesOfTheWaters(GameTestHelper h) {
-        var biomes = h.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        var biomes = h.getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
         List<ResourceKey<Biome>> keys = List.of(Biomes.RIVER, Biomes.SWAMP, Biomes.MANGROVE_SWAMP, Biomes.JUNGLE, Biomes.SPARSE_JUNGLE,
                 Biomes.BAMBOO_JUNGLE, Biomes.BEACH, Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.OCEAN, Biomes.DEEP_LUKEWARM_OCEAN);
         boolean foreign = false;
@@ -180,7 +180,7 @@ public final class M281WildlifeGameTests {
             check(limit > 0 && WildSpawnPass.room(level, min) == limit, "room before: " + WildSpawnPass.room(level, min));
             // M46: the fish limit (the small animals have their own, CritterSpawnPassGameTests)
             var type = ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get();
-            for (int i = 0; i < limit; i++) type.spawn(level, min.offset(i % size, 0, i / size), net.minecraft.world.entity.MobSpawnType.NATURAL);
+            for (int i = 0; i < limit; i++) type.spawn(level, min.offset(i % size, 0, i / size), net.minecraft.world.entity.EntitySpawnReason.NATURAL);
             check(WildSpawnPass.room(level, min) == 0, "room with " + limit + " wild animals: " + WildSpawnPass.room(level, min));
             check(WildSpawnPass.tryFor(level, min, RandomSource.create(3)) == 0, "the pass spawned over its limit");
             for (Entity e : WildSpawnPass.wildAround(level, min, 16)) e.discard();
@@ -226,7 +226,7 @@ public final class M281WildlifeGameTests {
         int size = 6;
         BlockPos min = pool(h, size);
         try {
-            for (int i = 0; i < 3; i++) ModEntities.WILD_CRITTER.get().spawn(level, min.offset(i, 0, 1), net.minecraft.world.entity.MobSpawnType.NATURAL);
+            for (int i = 0; i < 3; i++) ModEntities.WILD_CRITTER.get().spawn(level, min.offset(i, 0, 1), net.minecraft.world.entity.EntitySpawnReason.NATURAL);
             CommandSourceStack src = level.getServer().createCommandSourceStack().withLevel(level).withPosition(Vec3.atCenterOf(min.offset(2, 3, 2)))
                     .withPermission(4).withSuppressedOutput();
             var d = level.getServer().getCommands().getDispatcher();

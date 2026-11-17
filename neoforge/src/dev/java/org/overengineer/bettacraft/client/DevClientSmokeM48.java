@@ -64,7 +64,7 @@ final class DevClientSmokeM48 {
     private int wait;
 
     DevClientSmokeM48() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 900, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 900, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(100, () -> server(this::pose));
@@ -100,7 +100,7 @@ final class DevClientSmokeM48 {
         for (String k : List.of("mandarinfish", "banggai_cardinal", "lyretail_anthias", "lyretail_anthias_female", "fire_shrimp")) {
             then(1, () -> server(p -> {
                 // the animal where it is now (the bottom animals do not stay exactly where they were posed)
-                Vec3 a = where(p.serverLevel(), k);
+                Vec3 a = where(p.level(), k);
                 if (a == null) {
                     LOGGER.error("[smoketest] M48 no {}", k);
                     return;
@@ -110,7 +110,7 @@ final class DevClientSmokeM48 {
                 // never inside the tank: at most just outside the front glass
                 double z = Math.min(a.z - back, reef.getZ() - 0.12);
                 double dz = a.z - z;
-                p.teleportTo(p.serverLevel(), a.x, a.y + (low ? 0.12 + 0.3 * dz : 0.05) - p.getEyeHeight(), z, 0F, low ? 18F : 2F);
+                p.teleportTo(p.level(), a.x, a.y + (low ? 0.12 + 0.3 * dz : 0.05) - p.getEyeHeight(), z, java.util.Set.of(), 0F, low ? 18F : 2F, false);
             }));
             then(40, () -> shot("sp_" + k));
         }
@@ -120,7 +120,7 @@ final class DevClientSmokeM48 {
         then(10, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, 0F, 0F);
+            p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         }));
         String lang = mc.options.languageCode;
         menu(() -> reef, 5, "menu_reef", lang);
@@ -132,7 +132,7 @@ final class DevClientSmokeM48 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         reach(p, false);
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
@@ -214,7 +214,7 @@ final class DevClientSmokeM48 {
     }
 
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity f = TankMultiblock.getController(level, forms);
         if (f != null) row(level, f, 6, new double[]{1.45, 1.05, 0.8}, 0.95);
         for (BlockPos t : List.of(neons, pandas, bronzes, garras)) {
@@ -302,7 +302,7 @@ final class DevClientSmokeM48 {
     }
 
     private static void freezeAt(TankmateEntity m, Vec3 a, float yaw) {
-        m.moveTo(a.x, a.y, a.z, yaw, 0F);
+        m.snapTo(a.x, a.y, a.z, yaw, 0F);
         SmokeFreeze.freeze(m, true);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
@@ -314,7 +314,7 @@ final class DevClientSmokeM48 {
 
     private void menu(java.util.function.Supplier<BlockPos> tank, int tab, String name, String lang) {
         then(10, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank.get());
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank.get());
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -401,7 +401,7 @@ final class DevClientSmokeM48 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

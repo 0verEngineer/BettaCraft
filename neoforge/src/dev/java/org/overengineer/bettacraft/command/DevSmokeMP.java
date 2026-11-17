@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -76,7 +78,7 @@ import org.slf4j.LoggerFactory;
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevSmokeMP {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest.mp");
+    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.smoketest.mp", false);
     /** Whole test: 10 minutes (the clients need about a minute to start). */
     private static final int TIMEOUT_TICKS = 20 * 60 * 10;
     static final String P1 = "Dev1", P2 = "Dev2";
@@ -116,7 +118,7 @@ public final class DevSmokeMP {
     }
 
     private static void report(ServerPlayer p, String text) {
-        String name = p.getGameProfile().getName();
+        String name = p.getGameProfile().name();
         LOGGER.info("[smoketest] MP report from {}: {}", name, text);
         String[] a = text.split(" ");
         switch (a[0]) {
@@ -500,7 +502,7 @@ public final class DevSmokeMP {
                 check(name + ": no betta before the confirmation (" + a[4] + ")", "0".equals(a[4]));
             }
             case "release" -> {
-                int bettas = p == null ? -1 : p.serverLevel().getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class,
+                int bettas = p == null ? -1 : p.level().getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class,
                         new net.minecraft.world.phys.AABB(poolMin().offset(8, 1, 1)).inflate(3)).size();
                 check(name + ": the confirmed betta bucket is empty (" + a[2] + ")", "minecraft:bucket".equals(a[2]));
                 check(name + ": the water of the bucket on the pad on the client (" + a[3] + ")", "water".equals(a[3]));
@@ -543,7 +545,7 @@ public final class DevSmokeMP {
     }
 
     private static void build(ServerLevel level) {
-        base = level.getSharedSpawnPos().offset(0, 60, -48);
+        base = level.getRespawnData().pos().offset(0, 60, -48);
         mainMin = base;
         lMin = base.offset(7, 0, 0);
         for (int cx = (base.getX() - 8) >> 4; cx <= (base.getX() + 14) >> 4; cx++)
@@ -607,7 +609,7 @@ public final class DevSmokeMP {
         level.setDayTime(6000);
         level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
         level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, server);
-        level.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, server);
+        level.getGameRules().getRule(GameRules.SPAWN_MOBS).set(false, server);
         level.setWeatherParameters(6000, 0, false, false);
         server.setDifficulty(Difficulty.PEACEFUL, true);
         savedEvaporation = ServerConfig.getOr(ServerConfig.EVAPORATION_ENABLED, true);
@@ -666,10 +668,10 @@ public final class DevSmokeMP {
         p.setInvulnerable(true);
         p.setHealth(p.getMaxHealth());
         p.getInventory().clearContent();
-        if (P1.equals(p.getGameProfile().getName())) placeDev1(p);
+        if (P1.equals(p.getGameProfile().name())) placeDev1(p);
         else placeDev2(p);
         p.sendSystemMessage(Component.literal(PREFIX + "tank:all:" + mainMin.getX() + "," + mainMin.getY() + "," + mainMin.getZ()));
-        LOGGER.info("[smoketest] MP {} joined", p.getGameProfile().getName());
+        LOGGER.info("[smoketest] MP {} joined", p.getGameProfile().name());
     }
 
     // ------------------------------------------------------------------ the scenario
@@ -684,7 +686,7 @@ public final class DevSmokeMP {
 
     /** M44: a new land goal for the zombie in glass of the M31 terrarium (it walks while the clients watch its legs). */
     private static void walkGlassZombie(ServerLevel level, BlockPos m31) {
-        for (var z : level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
+        for (var z : level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(m31).inflate(8))) {
             if (org.overengineer.bettacraft.registry.ModAttachments.GLASS_STATE.has(z)) {
                 var w = org.overengineer.bettacraft.registry.ModAttachments.GLASS_STATE.get(z).walker();
                 if (w != null) w.forceActivity(org.overengineer.bettacraft.terrarium.LandWalker.Activity.LAND);
@@ -706,7 +708,7 @@ public final class DevSmokeMP {
 
     private static void hand(String name, ItemStack stack) {
         ServerPlayer p = player(name);
-        if (p != null) p.getInventory().setItem(p.getInventory().selected, stack);
+        if (p != null) p.getInventory().setItem(p.getInventory().getSelectedSlot(), stack);
     }
 
     private static int count(ServerPlayer p, net.minecraft.world.item.Item item) {
@@ -1048,7 +1050,7 @@ public final class DevSmokeMP {
                 if (i == 1) s.makeHatchling();
                 s.setNoAi(true);
                 s.setPersistenceRequired();
-                s.moveTo(min.getX() + 0.5 + i, min.getY(), min.getZ() - 2.5, 0F, 0F);
+                s.snapTo(min.getX() + 0.5 + i, min.getY(), min.getZ() - 2.5, 0F, 0F);
                 level.addFreshEntity(s);
             }
             // M31 part c: a harlequin crested gecko shown clinging to a wall (the synced pose)
@@ -1058,11 +1060,11 @@ public final class DevSmokeMP {
                 g.setNoAi(true);
                 g.setPersistenceRequired();
                 g.setPoseForTest(org.overengineer.bettacraft.terrarium.LandWalker.Pose.WALL_E);
-                g.moveTo(min.getX() + 2.5, min.getY(), min.getZ() - 2.5, 0F, 0F);
+                g.snapTo(min.getX() + 2.5, min.getY(), min.getZ() - 2.5, 0F, 0F);
                 level.addFreshEntity(g);
             }
             // M31 part d: a zombie from a mob jar into the terrarium: shrunk on every client (the synced scale attribute)
-            for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
+            for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
             var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
             if (zombie != null) {
                 zombie.setHealth(1F);
@@ -1116,7 +1118,7 @@ public final class DevSmokeMP {
                 level.setBlockAndUpdate(q, ModBlocks.CABINET.get().defaultBlockState()
                         .setValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING, net.minecraft.core.Direction.NORTH));
                 if (level.getBlockEntity(q) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) {
-                    cab.setWood(net.minecraft.resources.ResourceLocation.withDefaultNamespace(woods[i]));
+                    cab.setWood(net.minecraft.resources.Identifier.withDefaultNamespace(woods[i]));
                     level.sendBlockUpdated(q, level.getBlockState(q), level.getBlockState(q), 3);
                 }
             }
@@ -1359,7 +1361,7 @@ public final class DevSmokeMP {
                 net.minecraft.nbt.CompoundTag comps = new net.minecraft.nbt.CompoundTag();
                 comps.putInt("minecraft:damage", 5);
                 old.put("components", comps);
-                p.getInventory().setItem(1, net.minecraft.world.item.ItemStack.parseOptional(server.registryAccess(), old));
+                p.getInventory().setItem(1, org.overengineer.bettacraft.util.NbtCompat.parseOptionalStack(server.registryAccess(), old));
             }
             say("seahorses", "all", min.getX() + "," + min.getY() + "," + min.getZ());
         }, () -> reports.containsKey(P1 + ":seahorses") && reports.containsKey(P2 + ":seahorses"), 20 * 30));
@@ -1429,7 +1431,7 @@ public final class DevSmokeMP {
                 k.age = 20;
                 var e = org.overengineer.bettacraft.entity.critter.WildCritterEntity.of(level, k.saveAnimal());
                 if (e == null) continue;
-                e.moveTo(min.getX() + 0.3 + i * 0.7, min.getY() + 0.1, min.getZ() + 1.5, 0F, 0F);
+                e.snapTo(min.getX() + 0.3 + i * 0.7, min.getY() + 0.1, min.getZ() + 1.5, 0F, 0F);
                 e.setPersistenceRequired();
                 level.addFreshEntity(e);
             }
@@ -1574,9 +1576,9 @@ public final class DevSmokeMP {
             ServerLevel level = server.overworld();
             travelBearing = mainMin.offset(1, 9, 1);
             clearTravel(level); // the dev world keeps what an earlier run left there
-            var bearing = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.parse("create:mechanical_bearing"));
+            var bearing = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(net.minecraft.resources.Identifier.parse("create:mechanical_bearing"));
             net.minecraft.world.level.block.state.BlockState s = bearing.defaultBlockState();
-            for (var p : s.getProperties()) if (p.getName().equals("facing")) s = s.setValue((net.minecraft.world.level.block.state.properties.DirectionProperty) p, net.minecraft.core.Direction.UP);
+            for (var p : s.getProperties()) if (p.getName().equals("facing")) s = s.setValue((net.minecraft.world.level.block.state.properties.EnumProperty<Direction>) p, net.minecraft.core.Direction.UP);
             level.setBlock(travelBearing, s, 3);
             travelBearingBe = level.getBlockEntity(travelBearing);
             List<BlockPos> blocks = new ArrayList<>();
@@ -1673,8 +1675,8 @@ public final class DevSmokeMP {
                     t1.contains(aqTanks.get("dev1")) && t1.contains(aqTanks.get("released")) && !t1.contains(aqTanks.get("dev2")) && !t1.contains(aqTanks.get("locked")));
             check("aquarists: Dev2's looks after his own and the released tank, not Dev1's or the locked one " + t2,
                     t2.contains(aqTanks.get("dev2")) && t2.contains(aqTanks.get("released")) && !t2.contains(aqTanks.get("dev1")) && !t2.contains(aqTanks.get("locked")));
-            p1.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() - 4.5, 0F, 20F);
-            p2.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() + 13.5, 180F, 20F);
+            p1.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() - 4.5, java.util.Set.of(), 0F, 20F, false);
+            p2.teleportTo(level, aqBase.getX() + 4.5, aqBase.getY(), aqBase.getZ() + 13.5, java.util.Set.of(), 180F, 20F, false);
         }, () -> true, 20));
         steps.add(new Step("aquarists: work", () -> {}, () -> {
             ServerLevel level = server.overworld();
@@ -1692,13 +1694,13 @@ public final class DevSmokeMP {
             var feed = org.overengineer.bettacraft.aquarist.AquaristTask.FEED;
             int before = aq2.taskLevel(feed);
             if (p1 != null) {
-                p1.teleportTo(level, aq2.getX() - 1.5, aq2.getY(), aq2.getZ(), -90F, 10F);
+                p1.teleportTo(level, aq2.getX() - 1.5, aq2.getY(), aq2.getZ(), java.util.Set.of(), -90F, 10F, false);
                 org.overengineer.bettacraft.aquarist.AquaristMenu.handle(p1, new org.overengineer.bettacraft.network.AquaristActionPayload(aq2.getId(),
                         org.overengineer.bettacraft.aquarist.AquaristMenu.SET_LEVEL, feed.ordinal() * 10 + 3, ""));
             }
             check("aquarists: Dev1 cannot change Dev2's aquarist", aq2.taskLevel(feed) == before);
             if (p2 != null) {
-                p2.teleportTo(level, aq2.getX() + 1.5, aq2.getY(), aq2.getZ(), 90F, 10F);
+                p2.teleportTo(level, aq2.getX() + 1.5, aq2.getY(), aq2.getZ(), java.util.Set.of(), 90F, 10F, false);
                 org.overengineer.bettacraft.aquarist.AquaristMenu.handle(p2, new org.overengineer.bettacraft.network.AquaristActionPayload(aq2.getId(),
                         org.overengineer.bettacraft.aquarist.AquaristMenu.SET_LEVEL, feed.ordinal() * 10 + 3, ""));
             }
@@ -1738,7 +1740,7 @@ public final class DevSmokeMP {
                 .setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.FOOT);
         level.setBlockAndUpdate(at.offset(-2, 0, 0), foot);
         level.setBlockAndUpdate(at.offset(-2, 0, 1), foot.setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
-        var npc = org.overengineer.bettacraft.aquarist.AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().getName(),
+        var npc = org.overengineer.bettacraft.aquarist.AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().name(),
                 net.minecraft.world.phys.Vec3.atBottomCenterOf(at.offset(1, 0, 2)));
         npc.setHome(level, at, at.offset(-2, 0, 1));
         npc.alwaysDay = true;

@@ -59,12 +59,12 @@ public final class ClientSetup {
     }
 
     public interface ItemProperties {
-        void register(net.minecraft.world.item.Item item, net.minecraft.resources.ResourceLocation id,
+        void register(net.minecraft.world.item.Item item, net.minecraft.resources.Identifier id,
                 net.minecraft.client.renderer.item.ClampedItemPropertyFunction function);
     }
 
     public interface RenderLayers {
-        void put(net.minecraft.world.level.block.Block block, net.minecraft.client.renderer.RenderType layer);
+        void put(net.minecraft.world.level.block.Block block, net.minecraft.client.renderer.rendertype.RenderType layer);
     }
 
     public interface Particles {
@@ -289,6 +289,7 @@ public final class ClientSetup {
         org.overengineer.bettacraft.client.interior.PlantMeshRenderer.clear();
         org.overengineer.bettacraft.client.decor.DecorPreview.clear();
         org.overengineer.bettacraft.client.map.AlarmWaypoints.clear(); // M32 part d
+        org.overengineer.bettacraft.crafting.RecipeSync.clear(); // M52b
         // back to the built-in genetics (the next server sends its own); not while our integrated server still runs
         if (net.minecraft.client.Minecraft.getInstance().getSingleplayerServer() == null) {
             org.overengineer.bettacraft.genetics.GeneticsData.reset();

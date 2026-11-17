@@ -86,16 +86,16 @@ final class DevClientSmokeM23 {
         then(60, () -> shot("air_pump"));
         // 3. night: the timer switched the panel tank off, the others shine
         then(1, () -> server(p -> {
-            p.serverLevel().setDayTime(18000);
+            p.level().setDayTime(18000);
             for (int i = 0; i < 3; i++) {
-                TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(i * SPACING, 1, 0));
-                if (c != null) TankLighting.step(p.serverLevel(), c);
+                TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(i * SPACING, 1, 0));
+                if (c != null) TankLighting.step(p.level(), c);
             }
         }));
         then(1, () -> look(base.getX() + SPACING + 2.0, base.getY() + 4.0, base.getZ() - 9.0, 0F, 14F));
         then(80, this::checkNight);
         then(1, () -> shot("night_timer"));
-        then(1, () -> server(p -> p.serverLevel().setDayTime(6000)));
+        then(1, () -> server(p -> p.level().setDayTime(6000)));
         // 4. inside the aerated tank
         then(1, () -> server(p -> {
             InteriorRegion r = airRegion;
@@ -109,7 +109,7 @@ final class DevClientSmokeM23 {
             InteriorRegion r = airRegion;
             if (r == null) return;
             BlockPos at = r.toWorld(14, 6, 6);
-            p.teleportTo(p.serverLevel(), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, -10F, -12F);
+            p.teleportTo(p.level(), at.getX() + 0.5, at.getY(), at.getZ() + 0.5, java.util.Set.of(), -10F, -12F, false);
         }));
         then(100, () -> {
             int n = DeviceEffects.spongeFiltersForTest();
@@ -138,7 +138,7 @@ final class DevClientSmokeM23 {
         then(1, () -> mc.setScreen(null));
         then(10, () -> server(p -> {
             BlockPos fp = base.offset(2, 1, 3);
-            if (p.serverLevel().getBlockEntity(fp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, fp);
+            if (p.level().getBlockEntity(fp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, fp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen)) LOGGER.error("[smoketest] M23 no filter menu");
@@ -165,10 +165,10 @@ final class DevClientSmokeM23 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, p.server);
+        level.getGameRules().getRule(net.minecraft.world.level.gamerules.GameRules.RULE_DAYLIGHT).set(false, p.server);
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -12; z < 9; z++) {
                 level.setBlock(base.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
@@ -292,7 +292,7 @@ final class DevClientSmokeM23 {
 
     private void tankMenu(String name, BlockPos tankPos) {
         then(10, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankPos);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tankPos);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -385,7 +385,7 @@ final class DevClientSmokeM23 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

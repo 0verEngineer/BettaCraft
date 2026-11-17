@@ -79,7 +79,7 @@ final class DataGenM28 {
         // stones
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.HOLEY_ROCK))
                 .requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.DRIPSTONE_BLOCK)
-                .unlockedBy("has_calcite", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, BettaCraft.id("decor_holey_rock"));
+                .unlockedBy("has_calcite", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, BettaCraft.id("decor_holey_rock"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SLATE_CAVE))
                 .requires(Items.DEEPSLATE_TILES).requires(Items.DEEPSLATE_TILES).requires(Items.POLISHED_DEEPSLATE).requires(Items.COBBLED_DEEPSLATE)
                 .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_slate_cave"));
@@ -95,7 +95,7 @@ final class DataGenM28 {
         // roots
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.MANGROVE_ROOT))
                 .requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_LOG)
-                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, BettaCraft.id("decor_mangrove_root"));
+                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, BettaCraft.id("decor_mangrove_root"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SPIDERWOOD))
                 .requires(Items.STRIPPED_OAK_LOG).requires(Items.OAK_LOG).requires(Tags.Items.RODS_WOODEN).requires(Tags.Items.RODS_WOODEN)
                 .requires(Tags.Items.RODS_WOODEN)
@@ -110,7 +110,7 @@ final class DataGenM28 {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, decor(DecorType.CLAY_TUBES))
                 .pattern("CCC").pattern("C C").pattern("CCC")
                 .define('C', ModItems.SPAWNING_CAVE.get())
-                .unlockedBy("has_spawning_cave", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, BettaCraft.id("decor_clay_tubes"));
+                .unlockedBy("has_spawning_cave", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, BettaCraft.id("decor_clay_tubes"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.SHRIMP_TUBES))
                 .requires(Items.TERRACOTTA).requires(Items.ORANGE_TERRACOTTA).requires(Items.WHITE_TERRACOTTA).requires(Items.CLAY_BALL)
                 .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_shrimp_tubes"));
@@ -124,7 +124,7 @@ final class DataGenM28 {
                 .unlockedBy("has_tank", hasTank).save(out, BettaCraft.id("decor_diver_helmet"));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, decor(DecorType.TREASURE_CHEST))
                 .requires(Items.CHEST).requires(ModItems.AIR_STONE.get()).requires(Tags.Items.NUGGETS_GOLD).requires(Items.YELLOW_CONCRETE)
-                .unlockedBy("has_air_stone", net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, BettaCraft.id("decor_treasure_chest"));
+                .unlockedBy("has_air_stone", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, BettaCraft.id("decor_treasure_chest"));
     }
 
     static void blockTags(Function<TagKey<Block>, IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {

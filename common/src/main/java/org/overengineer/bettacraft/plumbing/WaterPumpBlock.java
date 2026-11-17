@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
@@ -27,9 +28,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * the block in front of it ({@link #FACING} = the outlet). {@code pipes.pumpRate} mB per tick at 100 % (power regulator:
  * right-click or sneak + mouse wheel); with {@code pipes.pumpsRequireEnergy} it needs FE. Redstone stops it.
  */
-public class WaterPumpBlock extends BaseEntityBlock implements PipeConnectable {
+public class WaterPumpBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
     public static final MapCodec<WaterPumpBlock> CODEC = simpleCodec(WaterPumpBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     public WaterPumpBlock(Properties properties) {
@@ -65,8 +66,8 @@ public class WaterPumpBlock extends BaseEntityBlock implements PipeConnectable {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (level.isClientSide()) org.overengineer.bettacraft.util.ClientHooks.openRegulator(pos);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -76,8 +77,7 @@ public class WaterPumpBlock extends BaseEntityBlock implements PipeConnectable {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         PipeNetwork.invalidate(level);
     }
 
@@ -90,6 +90,6 @@ public class WaterPumpBlock extends BaseEntityBlock implements PipeConnectable {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.WATER_PUMP.get(), WaterPumpBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.WATER_PUMP.get(), WaterPumpBlockEntity::serverTick);
     }
 }

@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.registry;
 import java.util.function.Supplier;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.platform.registry.DeferredRegister;
 import org.overengineer.bettacraft.BettaCraft;
 
@@ -15,8 +15,8 @@ public final class ModDataComponents {
      * The glass block a tank item/block is made of. Stored as id (not as Block reference) so that tanks made of
      * glass from a removed mod keep their data instead of failing to load.
      */
-    public static final Supplier<DataComponentType<ResourceLocation>> GLASS = COMPONENTS.registerComponentType("glass",
-            b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+    public static final Supplier<DataComponentType<Identifier>> GLASS = COMPONENTS.registerComponentType("glass",
+            b -> b.persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC));
 
     /** M11: look of a tank item/block (textured glass or clean clear glass); missing = textured. */
     public static final Supplier<DataComponentType<org.overengineer.bettacraft.tank.TankStyle>> TANK_STYLE = COMPONENTS.registerComponentType("tank_style",
@@ -28,16 +28,16 @@ public final class ModDataComponents {
                     .networkSynchronized(org.overengineer.bettacraft.entity.betta.BettaData.STREAM_CODEC));
 
     /** Entity type inside a filled fish bag. */
-    public static final Supplier<DataComponentType<ResourceLocation>> BAG_ENTITY = COMPONENTS.registerComponentType("bag_entity",
-            b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+    public static final Supplier<DataComponentType<Identifier>> BAG_ENTITY = COMPONENTS.registerComponentType("bag_entity",
+            b -> b.persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC));
 
     /** Game time a food culture was started (infusoria / artemia). */
     public static final Supplier<DataComponentType<Long>> CULTURE_START = COMPONENTS.registerComponentType("culture_start",
             b -> b.persistent(com.mojang.serialization.Codec.LONG).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG));
 
     /** The planks a cabinet item/block is made of (id, like {@link #GLASS}). */
-    public static final Supplier<DataComponentType<ResourceLocation>> WOOD = COMPONENTS.registerComponentType("wood",
-            b -> b.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+    public static final Supplier<DataComponentType<Identifier>> WOOD = COMPONENTS.registerComponentType("wood",
+            b -> b.persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC));
 
     /** M22.4: the outlet side of a cabinet ({@code OutletSide} id; missing = back). */
     public static final Supplier<DataComponentType<String>> OUTLET_SIDE = COMPONENTS.registerComponentType("outlet_side",

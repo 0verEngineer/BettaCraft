@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * to the guards and outlets. It cannot be broken by hand: it goes when the pipe outside goes.
  */
 public class PipeAnchorBlock extends PlumbingBlock {
-    public static final DirectionProperty MOUNT = DirectionProperty.create("mount");
+    public static final EnumProperty<Direction> MOUNT = EnumProperty.create("mount", Direction.class);
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Direction.class);
 
     static {

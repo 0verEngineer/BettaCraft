@@ -44,7 +44,7 @@ public final class FabricMpSmoke implements ModInitializer {
         if (!Boolean.getBoolean("bettacraft.smoketest.mp")) return;
         ServerMessageEvents.CHAT_MESSAGE.register((msg, sender, params) -> {
             String t = msg.signedContent();
-            if (t.startsWith("mp-report ")) REPORTS.put(sender.getGameProfile().getName(), t.substring("mp-report ".length()));
+            if (t.startsWith("mp-report ")) REPORTS.put(sender.getGameProfile().name(), t.substring("mp-report ".length()));
         });
         ServerTickEvents.END_SERVER_TICK.register(FabricMpSmoke::tick);
     }
@@ -66,12 +66,12 @@ public final class FabricMpSmoke implements ModInitializer {
                 }
                 case 1 -> {
                     ServerLevel level = server.overworld();
-                    base = level.getSharedSpawnPos().above(2).offset(3, 0, 3);
+                    base = level.getRespawnData().pos().above(2).offset(3, 0, 3);
                     for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
                         level.setBlockAndUpdate(base.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
                     }
                     for (ServerPlayer p : new ServerPlayer[]{d1, d2}) {
-                        p.teleportTo(level, base.getX() + 1.5, base.getY(), base.getZ() - 3.0, 0F, 20F);
+                        p.teleportTo(level, base.getX() + 1.5, base.getY(), base.getZ() - 3.0, java.util.Set.of(), 0F, 20F, false);
                         p.getAbilities().flying = true;
                         p.onUpdateAbilities();
                     }

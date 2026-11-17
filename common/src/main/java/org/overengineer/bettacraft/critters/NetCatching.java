@@ -221,7 +221,7 @@ public final class NetCatching {
     /** The filled bag for a catch (a frog, or 1-3 small animals). */
     public static ItemStack catchItem(ServerLevel level, Catch c, RandomGenerator rnd) {
         if (c.species() == null) {
-            var frog = ModEntities.DWARF_FROG.get().create(level);
+            var frog = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (frog == null) return ItemStack.EMPTY;
             ItemStack bag = FishBagItem.fillWith(frog);
             frog.discard();
@@ -261,9 +261,9 @@ public final class NetCatching {
      */
     public static boolean tryCatch(ServerLevel level, Player player, InteractionHand hand, BlockPos water) {
         ItemStack net = player.getItemInHand(hand);
-        if (player.getCooldowns().isOnCooldown(net.getItem())) return false;
-        player.getCooldowns().addCooldown(net.getItem(), ServerConfig.getOr(ServerConfig.CRITTERS_NET_COOLDOWN, 40));
-        if (!player.getAbilities().instabuild) net.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+        if (player.getCooldowns().isOnCooldown(net)) return false;
+        player.getCooldowns().addCooldown(net, ServerConfig.getOr(ServerConfig.CRITTERS_NET_COOLDOWN, 40));
+        if (!player.getAbilities().instabuild) net.hurtAndBreak(1, player, hand.asEquipmentSlot());
         level.playSound(null, water, SoundEvents.GENERIC_SPLASH, SoundSource.PLAYERS, 0.5F, 1.4F);
         RandomGenerator rnd = random(level);
         Water w = water(level, water);

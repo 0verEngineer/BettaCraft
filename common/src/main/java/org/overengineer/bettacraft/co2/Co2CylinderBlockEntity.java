@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.co2;
 
+import net.minecraft.core.component.DataComponentGetter;
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
@@ -152,13 +156,13 @@ public class Co2CylinderBlockEntity extends BlockEntity implements Co2Source, Re
 
     private void changed() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     // ------------------------------------------------------------------ item, save, sync
 
     @Override
-    protected void applyImplicitComponents(DataComponentInput input) {
+    protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
         Float g = input.get(ModDataComponents.CO2_GAS.get());
         gas = g == null ? 0 : Math.max(0, g);
@@ -172,26 +176,31 @@ public class Co2CylinderBlockEntity extends BlockEntity implements Co2Source, Re
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        tag.remove("gas");
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("gas");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putFloat("gas", gas);
         tag.putInt("power", power);
         tag.putBoolean("closed", closed);
         tag.putDouble("bubbles", lastBubbles);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        gas = Math.max(0, tag.getFloat("gas"));
-        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getInt("power"))) : 2;
-        closed = tag.getBoolean("closed");
-        lastBubbles = tag.getDouble("bubbles");
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        gas = Math.max(0, tag.getFloatOr("gas", 0f));
+        power = tag.contains("power") ? Math.max(0, Math.min(10, tag.getIntOr("power", 0))) : 2;
+        closed = tag.getBooleanOr("closed", false);
+        lastBubbles = tag.getDoubleOr("bubbles", 0d);
     }
 
     @Override

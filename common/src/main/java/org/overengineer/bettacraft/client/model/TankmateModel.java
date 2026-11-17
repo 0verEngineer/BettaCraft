@@ -1,11 +1,12 @@
 package org.overengineer.bettacraft.client.model;
 
+import org.overengineer.bettacraft.client.render.MobState;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
@@ -15,8 +16,7 @@ import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
  * kuhli loach bends in a wave along its segments, the gourami's feelers swing; parts of only one sex (the guppy male's
  * big tail and the gonopodium, the bristlenose male's bristles) show by sex.
  */
-public class TankmateModel extends HierarchicalModel<TankmateEntity> {
-    private final ModelPart root;
+public class TankmateModel extends EntityModel<MobState<TankmateEntity>> {
     @Nullable
     private final ModelPart tail, dorsal, pecR, pecL, male, female, filaments, jaw;
     private final List<ModelPart> segments = new ArrayList<>();
@@ -26,7 +26,7 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     private final List<ModelPart> waveR = new ArrayList<>(), waveL = new ArrayList<>();
 
     public TankmateModel(ModelPart root) {
-        this.root = root;
+        super(root);
         ModelPart fish = root.getChild("fish");
         this.tail = find(fish, "tail");
         this.dorsal = find(fish, "dorsal");
@@ -117,12 +117,9 @@ public class TankmateModel extends HierarchicalModel<TankmateEntity> {
     }
 
     @Override
-    public ModelPart root() {
-        return root;
-    }
-
-    @Override
-    public void setupAnim(TankmateEntity fish, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<TankmateEntity> state) {
+        TankmateEntity fish = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, ageInTicks = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         root.getAllParts().forEach(ModelPart::resetPose);
         if (!curls.isEmpty()) {
             seahorse(fish, ageInTicks);

@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -410,26 +410,26 @@ public final class TankCritters {
      * Right-click on a tank with a bag of small animals: they go in (with the 100 mB of the bag; M22.3: a critter bucket
      * with its 1000 mB). PASS for other stacks.
      */
-    public static ItemInteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult tryInsert(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         List<CompoundTag> animals = org.overengineer.bettacraft.containers.AnimalContainers.critters(stack);
         boolean bucket = stack.getItem() instanceof org.overengineer.bettacraft.containers.CritterBucketItem;
-        if (animals == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (animals == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         Component error = insert(server, c, animals, player, bucket ? TankInhabitants.BUCKET_MB : TankInhabitants.BAG_MB);
         if (error != null) {
             player.displayClientMessage(error, true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, bucket ? new ItemStack(net.minecraft.world.item.Items.BUCKET)
                 : new ItemStack(ModItems.FISH_BAG.get())));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY_FISH, SoundSource.BLOCKS, 0.8F, 1.3F);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** Puts the animals into the tank; returns an error message or null on success. */

@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
 public final class BettaSkins {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/skins");
     private static final int MAX = 1024; // 64x64 RGBA = 16 KiB each
-    private static final Map<ResourceLocation, NativeImage> MASKS = new HashMap<>();
-    private static final LinkedHashMap<Key, ResourceLocation> SKINS = new LinkedHashMap<>(64, 0.75F, true);
+    private static final Map<Identifier, NativeImage> MASKS = new HashMap<>();
+    private static final LinkedHashMap<Key, Identifier> SKINS = new LinkedHashMap<>(64, 0.75F, true);
     private static int counter;
 
     /** A mask texture and its ARGB tint. */
-    public record Layer(ResourceLocation mask, int argb) {}
+    public record Layer(Identifier mask, int argb) {}
 
     private record Key(Layer[] layers) {
         @Override
@@ -50,9 +50,9 @@ public final class BettaSkins {
 
     /** The composited texture of these layers (bottom first); {@code null} if a mask could not be loaded. */
     @Nullable
-    public static ResourceLocation get(Layer... layers) {
+    public static Identifier get(Layer... layers) {
         Key key = new Key(layers);
-        ResourceLocation loc = SKINS.get(key);
+        Identifier loc = SKINS.get(key);
         if (loc != null) return loc;
         NativeImage img = composite(layers);
         if (img == null) return null;
@@ -61,7 +61,7 @@ public final class BettaSkins {
         SKINS.put(key, loc);
         if (SKINS.size() > MAX) {
             var it = SKINS.entrySet().iterator();
-            ResourceLocation old = it.next().getValue();
+            Identifier old = it.next().getValue();
             it.remove();
             Minecraft.getInstance().getTextureManager().release(old);
         }
@@ -127,7 +127,7 @@ public final class BettaSkins {
     }
 
     @Nullable
-    private static NativeImage mask(ResourceLocation loc) {
+    private static NativeImage mask(Identifier loc) {
         NativeImage img = MASKS.get(loc);
         if (img != null || MASKS.containsKey(loc)) return img;
         try (InputStream in = Minecraft.getInstance().getResourceManager().open(loc)) {

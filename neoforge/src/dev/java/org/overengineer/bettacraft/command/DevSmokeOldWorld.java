@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
 public final class DevSmokeOldWorld {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final boolean ENABLED = Boolean.getBoolean("bettacraft.smoketest.oldworld");
+    private static final boolean ENABLED = Boolean.getBooleanOr("bettacraft.smoketest.oldworld", false);
     private static final Pattern REGION = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");
     private static int ticks;
     private static int haltAt = -1;
@@ -122,17 +123,17 @@ public final class DevSmokeOldWorld {
         if (!t.inhabitants().equals(o.inhabitants)) throw new IllegalStateException(where + ": animals " + o.inhabitants.size() + " -> " + t.inhabitants().size());
         if (!o.hadPlants && !t.plants().isEmpty()) throw new IllegalStateException(where + ": plants out of nowhere");
         CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-        if (saved.getInt("schema") != Schemas.TANK_BLOCK_ENTITY.currentVersion()) throw new IllegalStateException(where + ": saves as " + saved.getInt("schema"));
-        if (!saved.getCompound("tank").contains("plants")) throw new IllegalStateException(where + ": no plant list saved");
+        if (saved.getIntOr("schema", 0) != Schemas.TANK_BLOCK_ENTITY.currentVersion()) throw new IllegalStateException(where + ": saves as " + saved.getIntOr("schema", 0));
+        if (!saved.getCompoundOrEmpty("tank").contains("plants")) throw new IllegalStateException(where + ": no plant list saved");
         // what the clients get: the block entity view, the menu data (plants tab) and the info overlay data
         TankData view = TankData.loadClientView(t.saveClientView());
         if (view.waterMb() != t.waterMb() || !view.plants().isEmpty() && o.schema < 7) throw new IllegalStateException(where + ": client view");
         TankView menu = TankView.read(TankView.build(FakePlayerFactory.getMinecraft(level), c));
         if (menu.plants.total != t.plants().size()) throw new IllegalStateException(where + ": menu plants " + menu.plants.total);
         CompoundTag info = InfoData.tank(level, o.pos);
-        if (info == null || info.getInt("plants") != t.plants().size()) throw new IllegalStateException(where + ": info data " + info);
+        if (info == null || info.getIntOr("plants", 0) != t.plants().size()) throw new IllegalStateException(where + ": info data " + info);
         LOGGER.info("[smoketest] old tank {} '{}': {} blocks, {} mB, {} animal(s), {} plant(s) -> loads unchanged, saves as schema {}",
-                where, t.name(), t.memberCount(), t.waterMb(), t.inhabitants().size(), t.plants().size(), saved.getInt("schema"));
+                where, t.name(), t.memberCount(), t.waterMb(), t.inhabitants().size(), t.plants().size(), saved.getIntOr("schema", 0));
     }
 
     /** Every tank controller in the overworld region files and every saved entity, read without loading the chunks. */
@@ -141,21 +142,21 @@ public final class DevSmokeOldWorld {
         int chunks = 0;
         for (CompoundTag chunk : chunks(root.resolve("region"))) {
             chunks++;
-            var list = chunk.getList("block_entities", Tag.TAG_COMPOUND);
+            var list = chunk.getListOrEmpty("block_entities");
             for (int i = 0; i < list.size(); i++) {
-                CompoundTag be = list.getCompound(i);
-                if (!"bettacraft:tank".equals(be.getString("id")) || !be.contains("tank", Tag.TAG_COMPOUND)) continue;
-                CompoundTag t = be.getCompound("tank");
+                CompoundTag be = list.getCompoundOrEmpty(i);
+                if (!"bettacraft:tank".equals(be.getStringOr("id", "")) || !NbtCompat.has(be, "tank", Tag.TAG_COMPOUND)) continue;
+                CompoundTag t = be.getCompoundOrEmpty("tank");
                 java.util.Set<java.util.UUID> inh = new java.util.HashSet<>();
-                for (Tag u : t.getList("inhabitants", Tag.TAG_INT_ARRAY)) inh.add(net.minecraft.nbt.NbtUtils.loadUUID(u));
-                tanks.add(new Old(new BlockPos(be.getInt("x"), be.getInt("y"), be.getInt("z")), be.getInt("schema"), t.getLong("water_mb"),
-                        t.getLongArray("members"), inh, t.getString("name"), t.contains("plants")));
+                for (Tag u : t.getListOrEmpty("inhabitants")) inh.add(org.overengineer.bettacraft.util.NbtCompat.loadUUID(u));
+                tanks.add(new Old(new BlockPos(be.getIntOr("x", 0), be.getIntOr("y", 0), be.getIntOr("z", 0)), be.getIntOr("schema", 0), t.getLongOr("water_mb", 0L),
+                        t.getLongArray("members").orElse(new long[0]), inh, t.getStringOr("name", ""), t.contains("plants")));
             }
         }
         for (CompoundTag chunk : chunks(root.resolve("entities"))) {
-            for (Tag e : chunk.getList("Entities", Tag.TAG_COMPOUND)) {
+            for (Tag e : chunk.getListOrEmpty("Entities")) {
                 CompoundTag et = (CompoundTag) e;
-                if (et.hasUUID("UUID")) savedEntities.add(et.getUUID("UUID"));
+                if (NbtCompat.hasUUID(et, "UUID")) savedEntities.add(NbtCompat.getUUID(et, "UUID"));
             }
         }
         LOGGER.info("[smoketest] old world: {} chunks and {} saved entities read from the region files", chunks, savedEntities.size());

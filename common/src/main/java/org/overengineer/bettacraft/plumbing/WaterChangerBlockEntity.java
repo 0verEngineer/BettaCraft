@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import net.minecraft.core.BlockPos;
@@ -221,7 +224,7 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
 
     private void changed() {
         setChanged();
-        if (level != null && !level.isClientSide) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     private void write(CompoundTag tag) {
@@ -236,28 +239,33 @@ public class WaterChangerBlockEntity extends BlockEntity implements org.overengi
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         write(tag);
         energy.save(tag);
         spring.save(tag, "spring");
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        intervalDays = tag.contains("interval") ? Math.max(0, Math.min(60, tag.getInt("interval"))) : 0;
-        share = tag.contains("share") ? Math.max(5, Math.min(50, tag.getInt("share"))) : 25;
-        enabled = !tag.contains("enabled") || tag.getBoolean("enabled");
-        last = tag.contains("last") ? tag.getLong("last") : -1;
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        intervalDays = tag.contains("interval") ? Math.max(0, Math.min(60, tag.getIntOr("interval", 0))) : 0;
+        share = tag.contains("share") ? Math.max(5, Math.min(50, tag.getIntOr("share", 0))) : 25;
+        enabled = !tag.contains("enabled") || tag.getBooleanOr("enabled", false);
+        last = tag.contains("last") ? tag.getLongOr("last", 0L) : -1;
         try {
-            status = Status.valueOf(tag.getString("status"));
+            status = Status.valueOf(tag.getStringOr("status", ""));
         } catch (IllegalArgumentException e) {
             status = Status.WAITING;
         }
-        lastMb = tag.getInt("last_mb");
-        filterTanks = tag.getInt("filter_tanks");
-        lastWasteMb = tag.getInt("last_waste_mb");
+        lastMb = tag.getIntOr("last_mb", 0);
+        filterTanks = tag.getIntOr("filter_tanks", 0);
+        lastWasteMb = tag.getIntOr("last_waste_mb", 0);
         energy.load(tag);
         spring.load(tag, "spring");
     }

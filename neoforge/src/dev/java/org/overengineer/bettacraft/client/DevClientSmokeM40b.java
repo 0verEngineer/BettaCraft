@@ -98,7 +98,7 @@ final class DevClientSmokeM40b {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(-10, 2, 200);
         for (BlockPos q : BlockPos.betweenClosed(base.offset(-3, -1, -2), base.offset(18, 6, 12)))
             level.setBlock(q, q.getY() == base.getY() - 1 ? Blocks.SMOOTH_STONE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);

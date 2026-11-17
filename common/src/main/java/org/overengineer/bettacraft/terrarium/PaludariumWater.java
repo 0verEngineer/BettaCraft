@@ -51,7 +51,7 @@ public final class PaludariumWater {
     @Nullable
     public static net.minecraft.world.phys.Vec3 waterSpot(ServerLevel level, TankData t, net.minecraft.util.RandomSource r, double height) {
         org.overengineer.bettacraft.critters.TankTerrain ter = new org.overengineer.bettacraft.critters.TankTerrain(t, level.getServer(),
-                org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay());
+                org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId()), level.isBrightOutside());
         double surface = ter.surface();
         if (!Double.isFinite(surface)) return null;
         double m = 0.3;

@@ -95,7 +95,7 @@ final class DevClientSmokeM281 {
     private static final Block[] BANKS = {Blocks.GRASS_BLOCK, Blocks.GRASS_BLOCK, Blocks.GRASS_BLOCK, Blocks.SNOW_BLOCK};
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(-30, 4, 380); // above the superflat ground (its floor lies at the bottom of the world)
         int total = 0, floatingTotal = 0;
@@ -152,7 +152,7 @@ final class DevClientSmokeM281 {
     // ------------------------------------------------------------------ steps
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

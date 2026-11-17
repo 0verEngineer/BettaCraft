@@ -79,7 +79,7 @@ final class DevClientSmokeM49 {
     private int wait;
 
     DevClientSmokeM49() {
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), p.getX(), p.getY() + 2, p.getZ() + 1100, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 1100, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
         then(1, () -> mc.options.hideGui = true);
         then(120, () -> server(this::pose));
@@ -108,11 +108,11 @@ final class DevClientSmokeM49 {
         then(40, () -> shot("sp_archerfish"));
         then(1, () -> server(p -> {
             // close to the first mudskipper, from the front glass, looking down at it
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), pal);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), pal);
             if (c == null) return;
-            for (Entity e : TankInhabitants.liveInhabitants(p.serverLevel(), c.getTank())) {
+            for (Entity e : TankInhabitants.liveInhabitants(p.level(), c.getTank())) {
                 if (e instanceof HerpEntity h && h.species() == HerpSpecies.MUDSKIPPER) {
-                    p.teleportTo(p.serverLevel(), h.getX() + 0.05, h.getY() + 0.42 - p.getEyeHeight(), pal.getZ() - 0.25, 0F, 26F);
+                    p.teleportTo(p.level(), h.getX() + 0.05, h.getY() + 0.42 - p.getEyeHeight(), pal.getZ() - 0.25, java.util.Set.of(), 0F, 26F, false);
                     return;
                 }
             }
@@ -127,21 +127,21 @@ final class DevClientSmokeM49 {
         then(10, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), reef.getX() + 1.5, reef.getY() + 0.5, reef.getZ() - 2.5, 0F, 0F);
+            p.teleportTo(p.level(), reef.getX() + 1.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         }));
         String lang = mc.options.languageCode;
         screen(p -> {
-            if (p.serverLevel().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
+            if (p.level().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
         }, "menu_cabinet", lang);
         screen(p -> {
-            if (p.serverLevel().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) {
+            if (p.level().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) {
                 BlockPos pos = cab.getBlockPos();
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.equipment.SumpMenu(id, inv, cab),
                         Component.translatable("gui.bettacraft.sump.title")), b -> b.writeBlockPos(pos));
             }
         }, "menu_sump", lang);
         screen(p -> {
-            if (p.serverLevel().getBlockEntity(reef.offset(3, -1, 0)) instanceof CalciumReactorBlockEntity r) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, r, r.getBlockPos());
+            if (p.level().getBlockEntity(reef.offset(3, -1, 0)) instanceof CalciumReactorBlockEntity r) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, r, r.getBlockPos());
         }, "menu_reactor", lang);
         menu(() -> reef, 9, "menu_sump_tab", lang);
         menu(() -> pal, 0, "menu_paludarium", lang);
@@ -151,7 +151,7 @@ final class DevClientSmokeM49 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         reach(p, false);
         level.setDayTime(6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
@@ -235,7 +235,7 @@ final class DevClientSmokeM49 {
     }
 
     private void pose(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity r = TankMultiblock.getController(level, reef);
         if (r != null) {
             var b = new TankWaterVolume(r.getTank()).box();
@@ -256,7 +256,7 @@ final class DevClientSmokeM49 {
             if (!(e instanceof HerpEntity h) || h.species() != HerpSpecies.MUDSKIPPER) continue;
             double x = pal.getX() + 3.9 + j * 0.45, z = pal.getZ() + 0.45 + j * 0.45; // on the mud (seen from the north: on the left)
             double y = groundY(level, c, x, z);
-            h.moveTo(x, y, z, -70F + j * 40F, 0F);
+            h.snapTo(x, y, z, -70F + j * 40F, 0F);
             SmokeFreeze.freeze(h, false);
             h.setYRot(-70F + j * 40F);
             h.yBodyRot = h.getYRot();
@@ -289,7 +289,7 @@ final class DevClientSmokeM49 {
     }
 
     private void shoot(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         TankBlockEntity c = TankMultiblock.getController(level, pal);
         if (c == null) return;
         // the archerfish next to the mangrove shoots at its crown
@@ -312,7 +312,7 @@ final class DevClientSmokeM49 {
     }
 
     private static void freezeAt(TankmateEntity m, Vec3 a, float yaw) {
-        m.moveTo(a.x, a.y, a.z, yaw, 0F);
+        m.snapTo(a.x, a.y, a.z, yaw, 0F);
         SmokeFreeze.freeze(m, true);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
@@ -348,7 +348,7 @@ final class DevClientSmokeM49 {
 
     private void menu(java.util.function.Supplier<BlockPos> tank, int tab, String name, String lang) {
         then(10, () -> server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank.get());
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank.get());
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -435,7 +435,7 @@ final class DevClientSmokeM49 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

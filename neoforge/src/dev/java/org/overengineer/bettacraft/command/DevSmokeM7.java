@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -95,7 +95,7 @@ public final class DevSmokeM7 {
         for (int x = 0; x < 4; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
             if (!level.getBlockState(t.offset(x, y, z)).is(ModBlocks.TANK.get())) level.setBlockAndUpdate(t.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
         if (loaded(BetterFishTanksCompat.MOD_ID)) {
-            Block bft = BuiltInRegistries.BLOCK.get(BetterFishTanksCompat.TANK_BLOCK);
+            Block bft = BuiltInRegistries.BLOCK.getValue(BetterFishTanksCompat.TANK_BLOCK);
             BlockPos b = bftTank(base);
             for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
                 if (!level.getBlockState(b.offset(x, y, z)).is(bft)) level.setBlockAndUpdate(b.offset(x, y, z), bft.defaultBlockState());
@@ -113,7 +113,7 @@ public final class DevSmokeM7 {
         TankInteractions.changeWater(level, c, c.getTank().capacityMb() - c.getTank().waterMb());
         List<String> inserted = new ArrayList<>();
         for (String id : BUCKETS) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
             if (item == Items.AIR) continue;
             ItemStack stack = foreignBucket(item);
             var err = TankInhabitants.insert(level, c, stack, TankInhabitants.containedType(stack), fake, 0L);
@@ -126,7 +126,7 @@ public final class DevSmokeM7 {
             BettaEntity b = ModEntities.BETTA.get().create(level);
             BettaData d = BettaData.create(BettaGenome.randomDomestic(level.getRandom()), false, level.getGameTime());
             b.loadFromBucketTag(BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d).get(DataComponents.BUCKET_ENTITY_DATA).copyTag());
-            ItemStack bag = FishContainers.fill(new ItemStack(BuiltInRegistries.ITEM.get(FishContainers.BFT_FISH_BAG)), b, null);
+            ItemStack bag = FishContainers.fill(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG)), b, null);
             b.discard();
             var err = TankInhabitants.insert(level, c, bag, ModEntities.BETTA.get(), fake, TankInhabitants.carriedWater(bag));
             if (err != null) throw new IllegalStateException("BFT bag: " + err.getString());
@@ -145,7 +145,7 @@ public final class DevSmokeM7 {
         for (Item i : BuiltInRegistries.ITEM) if (new ItemStack(i).is(ModTags.PELLET_FISH)) pelletFish++;
         LOGGER.info("[smoketest] M7 predators {}, blacklist {} entries, {} raw fish for pellets", predators, blacklist.size(), pelletFish);
         if (!predators.contains("minecraft:pufferfish") || pelletFish < 2) throw new IllegalStateException("tags");
-        var biomes = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.BIOME).getTag(ModTags.BETTA_SPAWN_BIOMES)
+        var biomes = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME).getTag(ModTags.BETTA_SPAWN_BIOMES)
                 .map(s -> s.stream().map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("?")).toList()).orElse(List.of());
         LOGGER.info("[smoketest] M7 betta spawn biomes: {}", biomes);
         if (biomes.isEmpty()) throw new IllegalStateException("no spawn biomes");
@@ -174,16 +174,16 @@ public final class DevSmokeM7 {
     private static void plaque(ServerLevel level, BlockPos base, FakePlayer fake) {
         BlockPos wall = base.offset(24, 0, 1), pos = base.offset(24, 0, 0);
         level.setBlockAndUpdate(wall, Blocks.STONE.defaultBlockState());
-        Block oak = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
+        Block oak = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fishofthieves", "oak_fish_plaque"));
         level.setBlockAndUpdate(pos, oak.defaultBlockState());
         ItemStack bucket = BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                 BettaData.create(BettaGenome.randomDomestic(level.getRandom()), false, level.getGameTime()));
         fake.setItemInHand(InteractionHand.MAIN_HAND, bucket);
         level.getBlockState(pos).useItemOn(bucket, level, fake, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, false));
-        var nbt = level.getBlockEntity(pos).saveWithoutMetadata(level.registryAccess()).getCompound("PlaqueData");
-        LOGGER.info("[smoketest] M7 fish plaque holds {} (betta data {})", nbt.getString("id"), nbt.contains(BettaData.KEY));
-        if (!"bettacraft:betta".equals(nbt.getString("id")) || !nbt.contains(BettaData.KEY)) throw new IllegalStateException("plaque");
+        var nbt = level.getBlockEntity(pos).saveWithoutMetadata(level.registryAccess()).getCompoundOrEmpty("PlaqueData");
+        LOGGER.info("[smoketest] M7 fish plaque holds {} (betta data {})", nbt.getStringOr("id", ""), nbt.contains(BettaData.KEY));
+        if (!"bettacraft:betta".equals(nbt.getStringOr("id", "")) || !nbt.contains(BettaData.KEY)) throw new IllegalStateException("plaque");
     }
 
     /** Fintastic water plants placed with their items in the dry interior (mixins), duckweed included. */
@@ -193,7 +193,7 @@ public final class DevSmokeM7 {
         List<String> placed = new ArrayList<>();
         String[] plants = {"hornwort", "anubias", "amazon_sword", "duckweed"};
         for (int i = 0; i < plants.length; i++) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("fintastic", plants[i]));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath("fintastic", plants[i]));
             BlockPos on = r.toWorld(4 + 3 * i, -1, 4); // floor block
             in.removeBlock(on.above(), false);
             ItemStack stack = new ItemStack(item);

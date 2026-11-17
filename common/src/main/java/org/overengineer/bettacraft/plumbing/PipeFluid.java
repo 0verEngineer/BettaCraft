@@ -26,7 +26,7 @@ public final class PipeFluid implements IFluidHandler {
 
     @Nullable
     private PipeNetwork net() {
-        return level.isClientSide ? null : PipeNetwork.of(level, pos);
+        return level.isClientSide() ? null : PipeNetwork.of(level, pos);
     }
 
     @Override

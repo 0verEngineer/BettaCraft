@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.BlockRemoval;
 import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -36,9 +36,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * 40-95 %), and every second it sprays it uses {@code terrarium.misterMbPerSecond} of its water. Water comes in by
  * bucket, from pipes and other mods' fluid handlers, from a reservoir or water source next to it.
  */
-public class MisterBlock extends BaseEntityBlock {
+public class MisterBlock extends BaseEntityBlock implements BlockRemoval {
     public static final MapCodec<MisterBlock> CODEC = simpleCodec(MisterBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty MISTING = BooleanProperty.create("misting");
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 9, 12);
 
@@ -73,30 +73,29 @@ public class MisterBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof MisterBlockEntity be)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        return be.fillFrom(stack, player, hand) ? ItemInteractionResult.sidedSuccess(level.isClientSide) : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof MisterBlockEntity be)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        return be.fillFrom(stack, player, hand) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof MisterBlockEntity be) be.adjust(player, player.isShiftKeyDown() ? -5 : 5);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MisterBlockEntity be) be.adjust(player, player.isShiftKeyDown() ? -5 : 5);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
-        if (!level.isClientSide && !old.is(this)) {
+        if (!level.isClientSide() && !old.is(this)) {
             TankClimate.equipmentChanged(level, pos.below());
             org.overengineer.bettacraft.plumbing.PipeNetwork.invalidate(level);
         }
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        super.onRemove(state, level, pos, newState, moving);
-        if (!level.isClientSide && !newState.is(this)) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!level.isClientSide() && !newState.is(this)) {
             TankClimate.equipmentChanged(level, pos.below());
             org.overengineer.bettacraft.plumbing.PipeNetwork.invalidate(level);
         }
@@ -109,7 +108,7 @@ public class MisterBlock extends BaseEntityBlock {
 
     /** Comparator: how full its water tank is. */
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         return level.getBlockEntity(pos) instanceof MisterBlockEntity be ? be.comparator() : 0;
     }
 
@@ -135,6 +134,6 @@ public class MisterBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.MISTER.get(), MisterBlockEntity::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.MISTER.get(), MisterBlockEntity::serverTick);
     }
 }

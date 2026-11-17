@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.client.model;
 
-import net.minecraft.client.model.HierarchicalModel;
+import org.overengineer.bettacraft.client.render.MobState;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
@@ -11,23 +12,18 @@ import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
  * along the body as fast as the snake moves) and lies nearly still while it rests. Each segment moves sideways on the
  * wave and turns along it, so the chain stays closed; the head follows the neck and points along the curve.
  */
-public class SnakeModel extends HierarchicalModel<TerrariumAnimalEntity> {
+public class SnakeModel extends EntityModel<MobState<TerrariumAnimalEntity>> {
     public static final int SEGMENTS = 10;
     /** Wave length in segments and the sideways reach of the curve (px). */
     private static final float WAVE = 6.5F, REACH = 2.6F;
-    private final ModelPart root, head;
+    private final ModelPart head;
     private final ModelPart[] seg = new ModelPart[SEGMENTS];
 
     public SnakeModel(ModelPart root) {
-        this.root = root;
+        super(root);
         ModelPart animal = root.getChild("animal");
         this.head = animal.getChild("head");
         for (int i = 0; i < SEGMENTS; i++) seg[i] = animal.getChild("seg" + i);
-    }
-
-    @Override
-    public ModelPart root() {
-        return root;
     }
 
     /** Sideways offset of the body at segment position {@code s} (0 = neck). */
@@ -37,7 +33,9 @@ public class SnakeModel extends HierarchicalModel<TerrariumAnimalEntity> {
     }
 
     @Override
-    public void setupAnim(TerrariumAnimalEntity e, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(MobState<TerrariumAnimalEntity> state) {
+        TerrariumAnimalEntity e = state.entity;
+        float limbSwing = state.walkAnimationPos, limbSwingAmount = state.walkAnimationSpeed, ageInTicks = state.ageInTicks, netHeadYaw = state.yRot, headPitch = state.xRot;
         root().getAllParts().forEach(ModelPart::resetPose);
         float moving = Math.min(1F, limbSwingAmount * 5F);
         // moving: the wave travels with the distance covered; resting: a slow drift of the resting curves

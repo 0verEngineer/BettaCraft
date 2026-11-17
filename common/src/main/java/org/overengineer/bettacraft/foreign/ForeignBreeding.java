@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.foreign;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.lang.reflect.Method;
@@ -94,16 +95,16 @@ public final class ForeignBreeding {
             boolean brooding = false;
             for (LivingEntity e : en.getValue()) {
                 CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
-                if (d.getDouble(REST) > 0) d.putDouble(REST, Math.max(0, d.getDouble(REST) - days));
-                if (d.contains(BROOD, Tag.TAG_COMPOUND)) {
+                if (d.getDoubleOr(REST, 0d) > 0) d.putDouble(REST, Math.max(0, d.getDoubleOr(REST, 0d) - days));
+                if (NbtCompat.has(d, BROOD, Tag.TAG_COMPOUND)) {
                     brooding = true;
-                    CompoundTag b = d.getCompound(BROOD);
+                    CompoundTag b = d.getCompoundOrEmpty(BROOD);
                     if (p.breeding().nests()) { // M35: eggs into a nest on the land
                         ForeignNests.step(level, c, e, p, b, days, rnd);
                         continue;
                     }
-                    b.putDouble("age", b.getDouble("age") + days);
-                    if (b.getDouble("age") >= p.breeding().days()) {
+                    b.putDouble("age", b.getDoubleOr("age", 0d) + days);
+                    if (b.getDoubleOr("age", 0d) >= p.breeding().days()) {
                         d.remove(BROOD);
                         d.putDouble(REST, p.breeding().pauseDays());
                         hatch(level, c, e, p, b, rnd);
@@ -149,7 +150,7 @@ public final class ForeignBreeding {
 
     /** Whether this animal may breed now: grown, not resting, fed and healthy (with our care on). */
     static boolean ready(LivingEntity e, ForeignProfile p) {
-        if (!e.isAlive() || e.isBaby() || org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getDouble(REST) > 0) return false;
+        if (!e.isAlive() || e.isBaby() || org.overengineer.bettacraft.platform.Platform.get().persistentData(e).getDoubleOr(REST, 0d) > 0) return false;
         if (sterile(e, p)) return false; // M39 (F1): a trophy fish of Fish of Thieves
         if (ForeignProfiles.cared(e) == null) return true; // M35: the sea turtle has no hunger of ours
         BettaHealth h = ForeignCare.health(e);
@@ -159,8 +160,8 @@ public final class ForeignBreeding {
     /** M39 (question F1): whether one of the sterile keys of the profile is set on the animal (a trophy fish does not breed). */
     public static boolean sterile(Entity e, ForeignProfile p) {
         if (p.breeding().sterile().isEmpty()) return false;
-        CompoundTag all = e.saveWithoutId(new CompoundTag());
-        for (String k : p.breeding().sterile()) if (all.getBoolean(k)) return true;
+        CompoundTag all = NbtCompat.saveEntityWithoutId(e);
+        for (String k : p.breeding().sterile()) if (all.getBooleanOr(k, false)) return true;
         return false;
     }
 
@@ -171,7 +172,7 @@ public final class ForeignBreeding {
     public static boolean female(Entity e) {
         CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
         if (!d.contains(SEX)) d.putBoolean(SEX, (e.getUUID().getLeastSignificantBits() & 1L) == 0);
-        return d.getBoolean(SEX);
+        return d.getBooleanOr(SEX, false);
     }
 
     /** M39: sets the sex of an animal of a sexed profile. */
@@ -237,7 +238,7 @@ public final class ForeignBreeding {
     static CompoundTag inherited(Entity e, ForeignProfile p) {
         CompoundTag out = new CompoundTag();
         if (p.breeding().inherit().isEmpty()) return out;
-        CompoundTag all = e.saveWithoutId(new CompoundTag());
+        CompoundTag all = NbtCompat.saveEntityWithoutId(e);
         for (String k : p.breeding().inherit()) if (all.contains(k)) out.put(k, all.get(k).copy());
         return out;
     }
@@ -248,7 +249,7 @@ public final class ForeignBreeding {
         int live = TankInhabitants.liveInhabitants(level, t).size();
         int room = Math.max(0, ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64) - live);
         int n = Math.min(room, b.youngMin() + (b.youngMax() > b.youngMin() ? rnd.nextInt(b.youngMax() - b.youngMin() + 1) : 0));
-        CompoundTag motherGenes = inherited(mother, p), fatherGenes = brood.getCompound("father");
+        CompoundTag motherGenes = inherited(mother, p), fatherGenes = brood.getCompoundOrEmpty("father");
         int made = 0;
         for (int i = 0; i < n; i++) {
             Vec3 at = mother.position().add((rnd.nextDouble() - 0.5) * 0.4, 0, (rnd.nextDouble() - 0.5) * 0.4);
@@ -272,12 +273,12 @@ public final class ForeignBreeding {
             LOGGER.warn("offspring {} is not registered", b.offspring());
             return null;
         }
-        Entity e = type.create(level);
+        Entity e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (e == null) return null;
         // M35: a terrarium animal hatches where it is (its nest on the land), a water animal in the water
         Vec3 p0 = p.terrarium() != null ? at : new TankWaterVolume(c.getTank()).clamp(at, Math.max(0.1, e.getBbWidth() / 2), 0.05, Math.max(0.1, e.getBbHeight()));
         if (!b.inherit().isEmpty() || b.offspringNbt() != null || !b.sterile().isEmpty()) {
-            CompoundTag data = e.saveWithoutId(new CompoundTag());
+            CompoundTag data = NbtCompat.saveEntityWithoutId(e);
             for (String k : b.inherit()) {
                 if (b.sterile().contains(k)) continue; // M39 (F1): never inherited
                 CompoundTag from = rnd.nextBoolean() ? mother : father;
@@ -288,13 +289,13 @@ public final class ForeignBreeding {
             for (String k : b.sterile()) data.putBoolean(k, false); // M39 (F1): a young trophy fish? never
             data.remove("UUID");
             try {
-                e.load(data);
+                NbtCompat.loadEntity(e, data);
             } catch (Exception ex) {
                 LOGGER.warn("cannot apply the inherited data to a young {}: {}", BuiltInRegistries.ENTITY_TYPE.getKey(type), ex.toString());
             }
         }
         if (b.baby() && e instanceof Mob m) m.setBaby(true);
-        e.moveTo(p0.x, p0.y, p0.z, (float) (rnd.nextDouble() * 360), 0F);
+        e.snapTo(p0.x, p0.y, p0.z, (float) (rnd.nextDouble() * 360), 0F);
         TankInhabitants.adopt(e, c);
         ours++;
         try {
@@ -368,7 +369,7 @@ public final class ForeignBreeding {
 
 
     static boolean inTank(@Nullable Object o) {
-        return o instanceof Entity e && !e.level().isClientSide && foreign(e) && TankInhabitants.hasTankRef(e);
+        return o instanceof Entity e && !e.level().isClientSide() && foreign(e) && TankInhabitants.hasTankRef(e);
     }
 
 

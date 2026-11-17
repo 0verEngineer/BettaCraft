@@ -103,7 +103,7 @@ final class DevClientSmokeM216 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), menuTank.getX() + 0.5, menuTank.getY(), menuTank.getZ() - 2.0, 0F, 0F);
+            p.teleportTo(p.level(), menuTank.getX() + 0.5, menuTank.getY(), menuTank.getZ() - 2.0, java.util.Set.of(), 0F, 0F, false);
         }));
         then(10, () -> openMenu(menuTank));
         then(30, () -> {
@@ -196,7 +196,7 @@ final class DevClientSmokeM216 {
     // ------------------------------------------------------------------ building
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(-30, 3, 440);
         for (int i = 0; i < displays.size(); i++) {
             BlockPos at = base.offset(i * 4, 0, 0);
@@ -258,7 +258,7 @@ final class DevClientSmokeM216 {
     }
 
     private static void place(TankmateEntity e, double x, double y, double z) {
-        e.moveTo(x, y, z, 90F, 0F);
+        e.snapTo(x, y, z, 90F, 0F);
         e.setYBodyRot(90F);
         e.setYHeadRot(90F);
         e.setDeltaMovement(Vec3.ZERO);
@@ -342,7 +342,7 @@ final class DevClientSmokeM216 {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -359,7 +359,7 @@ final class DevClientSmokeM216 {
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
-            else p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.progression;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +25,7 @@ public final class GuideBookHandlers {
         ItemEntity item = event.getItemEntity();
         CompoundTag data = org.overengineer.bettacraft.platform.Platform.get().persistentData(item);
         if (!data.contains(OWNER_UNTIL)) return;
-        if (item.level().getGameTime() >= data.getLong(OWNER_UNTIL)) {
+        if (item.level().getGameTime() >= data.getLongOr(OWNER_UNTIL, 0L)) {
             item.setTarget(null);
             data.remove(OWNER_UNTIL);
         }

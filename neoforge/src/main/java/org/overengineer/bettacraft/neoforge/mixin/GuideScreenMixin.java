@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.neoforge.mixin;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.compat.guideme.DeepNavigation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -16,14 +16,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "guideme.internal.screen.GuideScreen", remap = false)
 public abstract class GuideScreenMixin {
     /** M33 part b: a page of a feature that is off starts with a notice (before the page is laid out). */
-    @Inject(method = "loadPage(Lnet/minecraft/resources/ResourceLocation;)V", at = @At(value = "INVOKE",
+    @Inject(method = "loadPage(Lnet/minecraft/resources/Identifier;)V", at = @At(value = "INVOKE",
             target = "Lguideme/internal/screen/GuideScreen;updateScreenLayout()V"), require = 0, remap = false)
-    private void bettacraft$featureNotice(ResourceLocation pageId, CallbackInfo ci) {
+    private void bettacraft$featureNotice(Identifier pageId, CallbackInfo ci) {
         org.overengineer.bettacraft.compat.guideme.GuidePageFeatures.noticeOnScreen(this);
     }
 
-    @Inject(method = "loadPage(Lnet/minecraft/resources/ResourceLocation;)V", at = @At("TAIL"), require = 0, remap = false)
-    private void bettacraft$reveal(ResourceLocation pageId, CallbackInfo ci) {
+    @Inject(method = "loadPage(Lnet/minecraft/resources/Identifier;)V", at = @At("TAIL"), require = 0, remap = false)
+    private void bettacraft$reveal(Identifier pageId, CallbackInfo ci) {
         DeepNavigation.reveal(this);
     }
 }

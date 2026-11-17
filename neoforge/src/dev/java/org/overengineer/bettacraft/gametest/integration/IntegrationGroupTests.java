@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest.integration;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,7 +16,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -63,7 +64,7 @@ public final class IntegrationGroupTests {
         TreeSet<String> bad = new TreeSet<>();
         int[] checked = {0};
         // the profiles of animals and plants of other mods
-        for (Map.Entry<ResourceLocation, Resource> e : rm.listResources("bettacraft/foreign_animals", p -> p.getPath().endsWith(".json")).entrySet()) {
+        for (Map.Entry<Identifier, Resource> e : rm.listResources("bettacraft/foreign_animals", p -> p.getPath().endsWith(".json")).entrySet()) {
             JsonObject o = read(e.getValue());
             String where = e.getKey().toString();
             for (String id : strings(o.get("entity"))) check(BuiltInRegistries.ENTITY_TYPE, id, where, bad, checked);
@@ -72,15 +73,15 @@ public final class IntegrationGroupTests {
                 check(BuiltInRegistries.ITEM, id, where, bad, checked);
             }
         }
-        for (Map.Entry<ResourceLocation, Resource> e : rm.listResources("bettacraft/foreign_plants", p -> p.getPath().endsWith(".json")).entrySet()) {
+        for (Map.Entry<Identifier, Resource> e : rm.listResources("bettacraft/foreign_plants", p -> p.getPath().endsWith(".json")).entrySet()) {
             JsonObject o = read(e.getValue());
             for (String id : strings(o.get("blocks"))) {
                 if (!id.startsWith("#")) check(BuiltInRegistries.BLOCK, id, e.getKey().toString(), bad, checked);
             }
         }
         // our tag files (of every namespace) that name ids of other mods
-        Registry<?> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
-        for (Map.Entry<ResourceLocation, List<Resource>> e : rm.listResourceStacks("tags", p -> p.getPath().endsWith(".json")).entrySet()) {
+        Registry<?> biomes = server.registryAccess().lookupOrThrow(Registries.BIOME);
+        for (Map.Entry<Identifier, List<Resource>> e : rm.listResourceStacks("tags", p -> p.getPath().endsWith(".json")).entrySet()) {
             String path = e.getKey().getPath();
             Registry<?> reg = path.startsWith("tags/item/") ? BuiltInRegistries.ITEM
                     : path.startsWith("tags/block/") ? BuiltInRegistries.BLOCK
@@ -103,7 +104,7 @@ public final class IntegrationGroupTests {
         List<String> recipes = new ArrayList<>();
         for (String[] r : new String[][]{{"create", "compat/create_drive_adapter"}, {"create", "compat/create_stainless_steel_ingot"},
                 {"enderio", "compat/enderio_stainless_steel_ingot"}, {"mekanism", "compat/mekanism_stainless_steel_ingot"}}) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(BettaCraft.MOD_ID, r[1]);
+            Identifier id = Identifier.fromNamespaceAndPath(BettaCraft.MOD_ID, r[1]);
             if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(r[0]) && server.getRecipeManager().byKey(id).isEmpty()) recipes.add(id.toString());
         }
         if (!recipes.isEmpty()) bad.add("recipes not loaded: " + recipes);
@@ -130,7 +131,7 @@ public final class IntegrationGroupTests {
 
     /** Checks one id: only ids of loaded mods (the namespace is the mod id) and vanilla count, not ours. */
     private static void check(Registry<?> reg, String id, String where, TreeSet<String> bad, int[] checked) {
-        ResourceLocation rl = ResourceLocation.tryParse(id);
+        Identifier rl = Identifier.tryParse(id);
         if (rl == null) {
             bad.add(where + ": malformed " + id);
             return;

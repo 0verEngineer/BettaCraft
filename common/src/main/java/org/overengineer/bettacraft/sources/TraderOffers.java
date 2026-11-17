@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
@@ -74,7 +74,7 @@ public final class TraderOffers {
 
         /** M33: the listing the trader gets: nothing while the offer is not {@link #allowed}, asked at every new trader. */
         public VillagerTrades.ItemListing gatedListing() {
-            return GATED.computeIfAbsent(id, k -> (trader, random) -> allowed() ? listing().getOffer(trader, random) : null);
+            return GATED.computeIfAbsent(id, k -> (traderLevel, trader, random) -> allowed() ? listing().getOffer(traderLevel, trader, random) : null);
         }
     }
 
@@ -118,7 +118,7 @@ public final class TraderOffers {
         out.add(new Offer("racer_nerites", Slot.RARE, 3, () -> List.of(
                 new Product(Target.critter(CritterSpecies.RED_NERITE), 2, 4, 0.5, false, Feature.SNAIL_COLORS.key()),
                 new Product(Target.critter(CritterSpecies.YELLOW_NERITE), 2, 4, 0.5, false, Feature.SNAIL_COLORS.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.SNAIL_COLORS)) return null;
                     RandomGenerator rnd = random::nextLong;
                     CritterSpecies s = random.nextBoolean() ? CritterSpecies.RED_NERITE : CritterSpecies.YELLOW_NERITE;
@@ -126,7 +126,7 @@ public final class TraderOffers {
                 }));
         // M25 part c: crystal bee shrimp (A or S grade) and the Sulawesi animals, rare
         out.add(new Offer("caridina", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.CARIDINA), 2, 8, 1.0, false, Feature.CARIDINA.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.CARIDINA)) return null;
                     RandomGenerator rnd = random::nextLong;
                     int line = random.nextBoolean() ? CritterGenes.CARIDINA_RED : CritterGenes.CARIDINA_BLACK;
@@ -137,7 +137,7 @@ public final class TraderOffers {
         out.add(new Offer("sulawesi", Slot.RARE, 2, () -> List.of(
                 new Product(Target.critter(CritterSpecies.SULAWESI_SHRIMP), 2, 7, 0.5, false, Feature.SULAWESI.key()),
                 new Product(Target.critter(CritterSpecies.TYLOMELANIA), 2, 7, 0.5, false, Feature.SULAWESI.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.SULAWESI)) return null;
                     RandomGenerator rnd = random::nextLong;
                     ItemStack bag = random.nextBoolean() ? TankCritters.bagOf(CritterSpecies.SULAWESI_SHRIMP, 2, () -> CritterGenes.WILD, rnd, true)
@@ -147,7 +147,7 @@ public final class TraderOffers {
         // M29 part d: the big crayfish, one per bag: a blue or an orange Florida crayfish, a marbled crayfish
         out.add(new Offer("florida_crayfish", Slot.RARE, 2, () -> List.of(
                 new Product(Target.critter(CritterSpecies.FLORIDA_CRAYFISH), 1, 8, 1.0, false, Feature.BIG_CRAYFISH.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.BIG_CRAYFISH)) return null;
                     RandomGenerator rnd = random::nextLong;
                     int line = random.nextFloat() < 0.65F ? 0 : 1;
@@ -157,7 +157,7 @@ public final class TraderOffers {
                 }));
         out.add(new Offer("marbled_crayfish", Slot.USUAL, 3, () -> List.of(
                 new Product(Target.critter(CritterSpecies.MARBLED_CRAYFISH), 1, 4, 1.0, false, Feature.BIG_CRAYFISH.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.BIG_CRAYFISH)) return null;
                     RandomGenerator rnd = random::nextLong;
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 4), Optional.empty(),
@@ -166,8 +166,8 @@ public final class TraderOffers {
         out.add(new Offer("assassin_snail", Slot.RARE, 2, () -> List.of(new Product(Target.critter(CritterSpecies.ASSASSIN_SNAIL), 1, 4)),
                 offer(4, 2, (r, rnd) -> TankCritters.bagOf(CritterSpecies.ASSASSIN_SNAIL, 1, () -> CritterGenes.WILD, rnd, false))));
         out.add(new Offer("dwarf_clawed_frog", Slot.RARE, 2, () -> List.of(new Product(Target.FROG, 1, 6)),
-                (trader, random) -> {
-                    var frog = org.overengineer.bettacraft.registry.ModEntities.DWARF_FROG.get().create(trader.level());
+                (traderLevel, trader, random) -> {
+                    var frog = org.overengineer.bettacraft.registry.ModEntities.DWARF_FROG.get().create(trader.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                     if (frog == null) return null;
                     ItemStack bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(frog);
                     frog.discard();
@@ -175,9 +175,9 @@ public final class TraderOffers {
                 }));
         // M31: the musk turtle in a bucket of water
         out.add(new Offer("musk_turtle", Slot.RARE, 2, () -> List.of(new Product(Target.item("musk_turtle_bucket"), 1, 7, 1.0, false, Feature.TURTLES.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.TURTLES)) return null;
-                    var turtle = org.overengineer.bettacraft.registry.ModEntities.MUSK_TURTLE.get().create(trader.level());
+                    var turtle = org.overengineer.bettacraft.registry.ModEntities.MUSK_TURTLE.get().create(trader.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                     if (turtle == null) return null;
                     ItemStack bucket = turtle.getBucketItemStack();
                     turtle.saveToBucketTag(bucket);
@@ -186,9 +186,9 @@ public final class TraderOffers {
                 }));
         // M49 part b: the mudskipper in its terrarium box (features.brackish.mudskipper)
         out.add(new Offer("mudskipper", Slot.RARE, 2, () -> List.of(new Product(Target.item("mudskipper_box"), 1, 6, 1.0, false, Feature.MUDSKIPPER.key())),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     if (!Features.enabled(Feature.MUDSKIPPER)) return null;
-                    var m = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER).create(trader.level());
+                    var m = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER).create(trader.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                     if (m == null) return null;
                     ItemStack box = m.getBucketItemStack();
                     m.saveToBucketTag(box);
@@ -197,7 +197,7 @@ public final class TraderOffers {
                 }));
         // M49 part b: Amano shrimp in a fish bag (features.brackish.amanoShrimp)
         out.add(new Offer("amano_shrimp", Slot.USUAL, 3, () -> List.of(new Product(Target.critter(CritterSpecies.AMANO_SHRIMP), 3, 5, 1.0, false, null)),
-                (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 5), Optional.empty(),
+                (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 5), Optional.empty(),
                         TankCritters.bagOf(CritterSpecies.AMANO_SHRIMP, 3, () -> CritterGenes.WILD, random::nextLong, false), 3, 1, 0.05F)));
         // ---------------------------------------------------------------- M19 tankmates: two usual offers, one rare
         out.add(new Offer("tankmates_1", Slot.USUAL, 3, () -> fishPool(TankmateSpecies.Trade.COMMON, false), TankmateTrades.listing(TankmateSpecies.Trade.COMMON)));
@@ -222,7 +222,7 @@ public final class TraderOffers {
             List<Product> p = new ArrayList<>();
             for (PlantSpecies f : REEF_FRAGS) p.add(new Product(Target.plant(f), 2, 4, 1.0 / REEF_FRAGS.size(), false, null));
             return p;
-        }, (trader, random) -> {
+        }, (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             ItemStack frag = InteriorPlants.item(REEF_FRAGS.get(rnd.nextInt(REEF_FRAGS.size())), 0);
             frag.setCount(2);
@@ -232,7 +232,7 @@ public final class TraderOffers {
         out.add(new Offer("reef_crew", Slot.RARE, 3, () -> List.of(
                 new Product(Target.critter(CritterSpecies.CLEANER_SHRIMP), 1, 5, 0.5, false, null),
                 new Product(Target.critter(CritterSpecies.HERMIT_CRAB), 3, 5, 0.5, false, null)),
-                (trader, random) -> {
+                (traderLevel, trader, random) -> {
                     RandomGenerator rnd = random::nextLong;
                     ItemStack bag = rnd.nextBoolean() ? TankCritters.bagOf(CritterSpecies.CLEANER_SHRIMP, 1, () -> CritterGenes.WILD, rnd, false)
                             : TankCritters.bagOf(CritterSpecies.HERMIT_CRAB, 3, () -> CritterGenes.WILD, rnd, false);
@@ -240,7 +240,7 @@ public final class TraderOffers {
                 }));
         // M48 part b: the fire shrimp (features.saltwater.moreReefAnimals), one at a time
         out.add(new Offer("fire_shrimp", Slot.RARE, 3, () -> List.of(new Product(Target.critter(CritterSpecies.FIRE_SHRIMP), 1, 8, 1.0, false, null)),
-                (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
+                (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
                         TankCritters.bagOf(CritterSpecies.FIRE_SHRIMP, 1, () -> CritterGenes.WILD, random::nextLong, false), 3, 1, 0.05F)));
         out.add(new Offer("live_rock", Slot.RARE, 2, () -> List.of(new Product(Target.item("live_rock"), 8, 6)),
                 fixed(6, 2, () -> new ItemStack(ModItems.LIVE_ROCK.get(), 8))));
@@ -279,7 +279,7 @@ public final class TraderOffers {
 
     /** A reef fish of this kind of offer (a pair, or a shoal for the chromis). */
     private static VillagerTrades.ItemListing reefFish(TankmateSpecies.Trade kind) {
-        return (trader, random) -> {
+        return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
             for (TankmateSpecies s : TankmateSpecies.values()) if (s.trade() == kind && s.marine() && s.available()) pool.add(s); // M21.8: features.saltwater.seahorses
@@ -293,13 +293,13 @@ public final class TraderOffers {
     }
 
     private static VillagerTrades.ItemListing offer(int emeralds, int uses, Maker maker) {
-        return (trader, random) -> {
+        return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             return new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), maker.make(random, rnd), uses, 1, 0.05F);
         };
     }
 
     private static VillagerTrades.ItemListing fixed(int emeralds, int uses, Supplier<ItemStack> item) {
-        return (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), item.get(), uses, 1, 0.05F);
+        return (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), item.get(), uses, 1, 0.05F);
     }
 }

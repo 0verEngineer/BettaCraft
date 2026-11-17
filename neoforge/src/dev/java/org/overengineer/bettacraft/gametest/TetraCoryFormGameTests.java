@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -178,7 +179,7 @@ public final class TetraCoryFormGameTests {
         // an old neon (saved before M48 with its single variety) loads as wild type
         TankmateEntity old = add(h, c, neon, new TankmateGenes("wild", "wild"), true);
         CompoundTag tag = new CompoundTag();
-        old.saveWithoutId(tag);
+        tag.merge(NbtCompat.saveEntityWithoutId(old));
         TankmateEntity loaded = ModEntities.TANKMATES.get(neon).get().create(h.getLevel());
         loaded.load(tag);
         check(loaded.variety().equals("wild") && neon.texture(loaded.variety(), true).equals("neon_tetra_wild"), "the old neon loads wild");
@@ -201,7 +202,7 @@ public final class TetraCoryFormGameTests {
         for (int i = 0; i < 300; i++) {
             var offer = TankmateTrades.offer(TankmateSpecies.CARDINAL_TETRA, r::nextLong);
             for (CompoundTag f : TankmateItems.bagFish(offer.getResult())) {
-                TankmateGenes g = TankmateGenes.load(f.getCompound(TankmateEntity.KEY).getCompound("genes"), TankmateSpecies.CARDINAL_TETRA);
+                TankmateGenes g = TankmateGenes.load(f.getCompoundOrEmpty(TankmateEntity.KEY).getCompoundOrEmpty("genes"), TankmateSpecies.CARDINAL_TETRA);
                 sold.add(g.phenotype(TankmateSpecies.CARDINAL_TETRA) + (g.carries("gold") ? "+gold" : ""));
             }
         }
@@ -254,7 +255,7 @@ public final class TetraCoryFormGameTests {
             for (int i = 0; i < 200; i++) {
                 var offer = TankmateTrades.offer(TankmateSpecies.STERBAI_CORY, r::nextLong);
                 for (CompoundTag f : TankmateItems.bagFish(offer.getResult())) {
-                    TankmateGenes g = TankmateGenes.load(f.getCompound(TankmateEntity.KEY).getCompound("genes"), TankmateSpecies.STERBAI_CORY);
+                    TankmateGenes g = TankmateGenes.load(f.getCompoundOrEmpty(TankmateEntity.KEY).getCompoundOrEmpty("genes"), TankmateSpecies.STERBAI_CORY);
                     check(!g.carries("albino"), "the trader sells an albino sterbai with the switch off");
                 }
             }

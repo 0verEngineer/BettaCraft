@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.gametest.framework.GameTest;
@@ -252,16 +253,16 @@ public final class FrogBreedingGameTests {
         for (int i = 0; i < 6; i++) {
             DwarfFrogEntity f = ModEntities.DWARF_FROG.get().create(level);
             CompoundTag tag = new CompoundTag();
-            f.saveWithoutId(tag);
-            tag.getCompound("frog").remove("female");
-            tag.getCompound("frog").remove("young_days");
+            tag.merge(NbtCompat.saveEntityWithoutId(f));
+            tag.getCompoundOrEmpty("frog").remove("female");
+            tag.getCompoundOrEmpty("frog").remove("young_days");
             DwarfFrogEntity g = ModEntities.DWARF_FROG.get().create(level);
             g.load(tag);
             boolean expected = (f.getUUID().getLeastSignificantBits() & 1L) == 1L;
             check(g.getUUID().equals(f.getUUID()) && g.isFemale() == expected && g.isAdult(), "old frog: sex from the UUID, grown");
             CompoundTag again = new CompoundTag();
-            g.saveWithoutId(again);
-            check(again.getCompound("frog").contains("female") && again.getCompound("frog").getBoolean("female") == expected, "the sex is saved");
+            again.merge(NbtCompat.saveEntityWithoutId(g));
+            check(again.getCompoundOrEmpty("frog").contains("female") && again.getCompoundOrEmpty("frog").getBooleanOr("female", false) == expected, "the sex is saved");
             f.discard();
             g.discard();
         }
@@ -315,7 +316,7 @@ public final class FrogBreedingGameTests {
         // an old ram (Gold over Balloon)
         TankmateEntity old = TankmateBreeding.spawn(level, c, s, new TankmateGenes("gold", "balloon"), true, LifeStage.ADULT, 2, p);
         CompoundTag tag = new CompoundTag();
-        old.saveWithoutId(tag);
+        tag.merge(NbtCompat.saveEntityWithoutId(old));
         TankmateEntity loaded = ModEntities.TANKMATES.get(s).get().create(level);
         loaded.load(tag);
         check(loaded.genes().a().equals("gold") && loaded.genes().b().equals("balloon") && loaded.variety().equals("gold") && loaded.generation() == 2,

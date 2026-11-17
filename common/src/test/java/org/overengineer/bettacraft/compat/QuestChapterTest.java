@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -84,15 +85,15 @@ class QuestChapterTest {
 
     @BeforeAll
     static void load() throws Exception {
-        chapter = TagParser.parseTag(Files.readString(root().resolve(CHAPTER), StandardCharsets.UTF_8));
+        chapter = TagParser.parseCompoundFully(Files.readString(root().resolve(CHAPTER), StandardCharsets.UTF_8));
         en = lang("src/generated/resources/assets/bettacraft/lang/en_us.json");
         de = lang("src/main/resources/assets/bettacraft/lang/de_de.json");
-        quests = chapter.getList("quests", Tag.TAG_COMPOUND);
+        quests = chapter.getListOrEmpty("quests");
         for (int i = 0; i < quests.size(); i++) {
-            CompoundTag q = quests.getCompound(i);
-            String k = JsonParser.parseString(q.getString("title")).getAsJsonObject().get("translate").getAsString();
+            CompoundTag q = quests.getCompoundOrEmpty(i);
+            String k = JsonParser.parseString(q.getStringOr("title", "")).getAsJsonObject().get("translate").getAsString();
             BY_NAME.put(k.substring("quest.bettacraft.".length(), k.length() - ".title".length()), q);
-            BY_ID.put(q.getString("id"), q);
+            BY_ID.put(q.getStringOr("id", ""), q);
         }
     }
 
@@ -113,61 +114,61 @@ class QuestChapterTest {
     void chapterIsValid() {
         List<String> problems = new ArrayList<>();
         Set<String> ids = new HashSet<>();
-        assertEquals("bettacraft", chapter.getString("filename"));
-        ids.add(chapter.getString("id"));
-        key(chapter.getString("title"), problems, "chapter title");
-        key(chapter.getList("subtitle", Tag.TAG_STRING).getString(0), problems, "chapter subtitle");
+        assertEquals("bettacraft", chapter.getStringOr("filename", ""));
+        ids.add(chapter.getStringOr("id", ""));
+        key(chapter.getStringOr("title", ""), problems, "chapter title");
+        key(chapter.getListOrEmpty("subtitle").getString(0), problems, "chapter subtitle");
         assertTrue(quests.size() >= 90, "the chapter of M45 has about 95 quests: " + quests.size());
         int advancements = 0, items = 0, itemRewards = 0;
         for (int i = 0; i < quests.size(); i++) {
-            CompoundTag q = quests.getCompound(i);
-            String qid = q.getString("id");
+            CompoundTag q = quests.getCompoundOrEmpty(i);
+            String qid = q.getStringOr("id", "");
             if (!ids.add(qid)) problems.add("id twice: " + qid);
-            key(q.getString("title"), problems, qid + " title");
-            key(q.getList("description", Tag.TAG_STRING).getString(0), problems, qid + " description");
-            for (Tag d : q.getList("dependencies", Tag.TAG_STRING)) {
+            key(q.getStringOr("title", ""), problems, qid + " title");
+            key(q.getListOrEmpty("description").getString(0), problems, qid + " description");
+            for (Tag d : q.getListOrEmpty("dependencies")) {
                 if (!BY_ID.containsKey(d.getAsString())) problems.add(qid + ": unknown dependency " + d.getAsString());
             }
-            ListTag tasks = q.getList("tasks", Tag.TAG_COMPOUND);
+            ListTag tasks = q.getListOrEmpty("tasks");
             if (tasks.isEmpty()) problems.add(qid + ": no task");
             for (int j = 0; j < tasks.size(); j++) {
-                CompoundTag t = tasks.getCompound(j);
-                if (!ids.add(t.getString("id"))) problems.add("id twice: " + t.getString("id"));
-                switch (t.getString("type")) {
+                CompoundTag t = tasks.getCompoundOrEmpty(j);
+                if (!ids.add(t.getStringOr("id", ""))) problems.add("id twice: " + t.getStringOr("id", ""));
+                switch (t.getStringOr("type", "")) {
                     case "advancement" -> {
                         advancements++;
-                        String a = t.getString("advancement");
+                        String a = t.getStringOr("advancement", "");
                         Path f = root().resolve("src/generated/resources/data/bettacraft/advancement/" + a.substring("bettacraft:".length()) + ".json");
                         if (!a.startsWith("bettacraft:") || !Files.exists(f)) problems.add(qid + ": no advancement " + a);
                     }
                     case "item" -> {
                         items++;
-                        String item = t.getCompound("item").getString("id");
+                        String item = t.getCompoundOrEmpty("item").getStringOr("id", "");
                         if (!isItem(item)) problems.add(qid + ": no item " + item);
                     }
-                    default -> problems.add(qid + ": unexpected task type " + t.getString("type"));
+                    default -> problems.add(qid + ": unexpected task type " + t.getStringOr("type", ""));
                 }
             }
-            ListTag rewards = q.getList("rewards", Tag.TAG_COMPOUND);
+            ListTag rewards = q.getListOrEmpty("rewards");
             boolean xp = false;
             for (int j = 0; j < rewards.size(); j++) {
-                CompoundTag r = rewards.getCompound(j);
-                if (!ids.add(r.getString("id"))) problems.add("reward id twice in " + qid);
-                switch (r.getString("type")) {
+                CompoundTag r = rewards.getCompoundOrEmpty(j);
+                if (!ids.add(r.getStringOr("id", ""))) problems.add("reward id twice in " + qid);
+                switch (r.getStringOr("type", "")) {
                     case "xp" -> xp = true;
                     case "item" -> {
                         itemRewards++;
-                        String item = r.getCompound("item").getString("id");
+                        String item = r.getCompoundOrEmpty("item").getStringOr("id", "");
                         if (!isItem(item)) problems.add(qid + ": reward of no item " + item);
-                        int n = r.getInt("count");
+                        int n = r.getIntOr("count", 0);
                         if (n < 1 || n > 16) problems.add(qid + ": reward of " + n + " " + item + " (small rewards: 1 to 16)");
                     }
-                    default -> problems.add(qid + ": unexpected reward type " + r.getString("type"));
+                    default -> problems.add(qid + ": unexpected reward type " + r.getStringOr("type", ""));
                 }
             }
             if (!xp) problems.add(qid + ": no xp reward");
-            boolean optionalTag = q.getList("tags", Tag.TAG_STRING).stream().anyMatch(t -> t.getAsString().equals(BettacraftApi.TAG_OPTIONAL));
-            if (optionalTag != q.getBoolean("optional")) problems.add(qid + ": optional and the tag " + BettacraftApi.TAG_OPTIONAL + " differ");
+            boolean optionalTag = q.getListOrEmpty("tags").stream().anyMatch(t -> t.getAsString().equals(BettacraftApi.TAG_OPTIONAL));
+            if (optionalTag != q.getBooleanOr("optional", false)) problems.add(qid + ": optional and the tag " + BettacraftApi.TAG_OPTIONAL + " differ");
         }
         for (String id : ids) {
             if (!id.matches("[0-7][0-9A-F]{15}")) problems.add("not a 16-digit positive hex id: " + id);
@@ -193,25 +194,25 @@ class QuestChapterTest {
             }
             if (BY_NAME.get(name) != q) problems.add(name + ": " + id + " has another title now");
             Set<String> tasks = new TreeSet<>();
-            ListTag tl = q.getList("tasks", Tag.TAG_COMPOUND);
+            ListTag tl = q.getListOrEmpty("tasks");
             for (int j = 0; j < tl.size(); j++) {
-                CompoundTag t = tl.getCompound(j);
-                tasks.add(t.getString("type").equals("advancement") ? t.getString("id") + "=advancement:" + t.getString("advancement")
-                        : t.getString("id") + "=item:" + t.getCompound("item").getString("id") + "*" + t.getCompound("item").getInt("count"));
+                CompoundTag t = tl.getCompoundOrEmpty(j);
+                tasks.add(t.getStringOr("type", "").equals("advancement") ? t.getStringOr("id", "") + "=advancement:" + t.getStringOr("advancement", "")
+                        : t.getStringOr("id", "") + "=item:" + t.getCompoundOrEmpty("item").getStringOr("id", "") + "*" + t.getCompoundOrEmpty("item").getIntOr("count", 0));
             }
             Set<String> wanted = new TreeSet<>(List.of(p[2].trim().split(" ")));
             if (!tasks.equals(wanted)) problems.add(name + ": tasks " + tasks + " instead of " + wanted);
             Set<String> deps = new TreeSet<>();
-            for (Tag d : q.getList("dependencies", Tag.TAG_STRING)) deps.add(d.getAsString());
+            for (Tag d : q.getListOrEmpty("dependencies")) deps.add(d.getAsString());
             Set<String> wantedDeps = new TreeSet<>();
             for (String d : p[3].trim().split(" ")) if (!d.isBlank()) wantedDeps.add(d);
             if (!deps.equals(wantedDeps)) problems.add(name + ": dependencies " + deps + " instead of " + wantedDeps);
             String[] xp = p[4].trim().split("=");
             boolean found = false;
-            ListTag rl = q.getList("rewards", Tag.TAG_COMPOUND);
+            ListTag rl = q.getListOrEmpty("rewards");
             for (int j = 0; j < rl.size(); j++) {
-                CompoundTag r = rl.getCompound(j);
-                if (r.getString("id").equals(xp[0]) && r.getString("type").equals("xp") && r.getInt("xp") == Integer.parseInt(xp[1])) found = true;
+                CompoundTag r = rl.getCompoundOrEmpty(j);
+                if (r.getStringOr("id", "").equals(xp[0]) && r.getStringOr("type", "").equals("xp") && r.getIntOr("xp", 0) == Integer.parseInt(xp[1])) found = true;
             }
             if (!found) problems.add(name + ": xp reward " + p[4].trim() + " changed");
         }
@@ -229,21 +230,21 @@ class QuestChapterTest {
         Integer s = state.get(id);
         if (s != null) return s == 2;
         state.put(id, 1);
-        for (Tag d : BY_ID.get(id).getList("dependencies", Tag.TAG_STRING)) if (!acyclic(d.getAsString(), state)) return false;
+        for (Tag d : BY_ID.get(id).getListOrEmpty("dependencies")) if (!acyclic(d.getAsString(), state)) return false;
         state.put(id, 2);
         return true;
     }
 
     private static List<Feature> features(CompoundTag q, List<String> problems) {
         List<Feature> out = new ArrayList<>();
-        for (Tag t : q.getList("tags", Tag.TAG_STRING)) {
+        for (Tag t : q.getListOrEmpty("tags")) {
             String s = t.getAsString();
             if (s.startsWith(BettacraftApi.TAG_FEATURE)) {
                 Feature f = Feature.byPath(s.substring(BettacraftApi.TAG_FEATURE.length()));
-                if (f == null) problems.add(q.getString("id") + ": unknown feature tag " + s);
+                if (f == null) problems.add(q.getStringOr("id", "") + ": unknown feature tag " + s);
                 else out.add(f);
             } else if (!s.equals(BettacraftApi.TAG_OPTIONAL) && !s.equals(BettacraftApi.TAG_NEEDS_POWER) && !s.equals(BettacraftApi.TAG_MOD + "create")) {
-                problems.add(q.getString("id") + ": unknown tag " + s);
+                problems.add(q.getStringOr("id", "") + ": unknown tag " + s);
             }
         }
         return out;
@@ -265,31 +266,31 @@ class QuestChapterTest {
         for (Map.Entry<String, CompoundTag> e : BY_NAME.entrySet()) {
             CompoundTag q = e.getValue();
             List<Feature> tags = features(q, problems);
-            for (Tag d : q.getList("dependencies", Tag.TAG_STRING)) {
+            for (Tag d : q.getListOrEmpty("dependencies")) {
                 CompoundTag dq = BY_ID.get(d.getAsString());
                 for (Feature f : features(dq, problems)) if (!covered(tags, f)) problems.add(e.getKey() + ": depends on a quest of " + f.path());
-                for (Tag t : dq.getList("tags", Tag.TAG_STRING)) {
+                for (Tag t : dq.getListOrEmpty("tags")) {
                     String s = t.getAsString();
                     if ((s.startsWith(BettacraftApi.TAG_MOD) || s.equals(BettacraftApi.TAG_NEEDS_POWER))
-                            && q.getList("tags", Tag.TAG_STRING).stream().noneMatch(x -> x.getAsString().equals(s))) {
+                            && q.getListOrEmpty("tags").stream().noneMatch(x -> x.getAsString().equals(s))) {
                         problems.add(e.getKey() + ": depends on a quest with " + s);
                     }
                 }
             }
-            ListTag tasks = q.getList("tasks", Tag.TAG_COMPOUND);
+            ListTag tasks = q.getListOrEmpty("tasks");
             for (int j = 0; j < tasks.size(); j++) {
-                CompoundTag t = tasks.getCompound(j);
-                if (!t.getString("type").equals("item")) continue;
-                String item = t.getCompound("item").getString("id");
+                CompoundTag t = tasks.getCompoundOrEmpty(j);
+                if (!t.getStringOr("type", "").equals("item")) continue;
+                String item = t.getCompoundOrEmpty("item").getStringOr("id", "");
                 for (Feature f : FeatureContent.ofItem(item.substring(item.indexOf(':') + 1))) {
                     if (!covered(tags, f)) problems.add(e.getKey() + ": item task " + item + " of " + f.path() + " without the tag");
                 }
             }
-            ListTag rewards = q.getList("rewards", Tag.TAG_COMPOUND);
+            ListTag rewards = q.getListOrEmpty("rewards");
             for (int j = 0; j < rewards.size(); j++) {
-                CompoundTag r = rewards.getCompound(j);
-                if (!r.getString("type").equals("item")) continue;
-                String item = r.getCompound("item").getString("id");
+                CompoundTag r = rewards.getCompoundOrEmpty(j);
+                if (!r.getStringOr("type", "").equals("item")) continue;
+                String item = r.getCompoundOrEmpty("item").getStringOr("id", "");
                 for (Feature f : FeatureContent.ofItem(item.substring(item.indexOf(':') + 1))) {
                     if (!covered(tags, f)) problems.add(e.getKey() + ": reward " + item + " of " + f.path() + " without the tag");
                 }

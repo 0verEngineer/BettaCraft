@@ -18,8 +18,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.entity.npc.WanderingTrader;
+import net.minecraft.world.entity.npc.villager.VillagerTrades;
+import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -134,14 +134,14 @@ public final class CritterGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
-        sp.getInventory().selected = 8; // the hand is the last hotbar slot: items given go to the first slots
+        sp.getInventory().getSelectedSlot() = 8; // the hand is the last hotbar slot: items given go to the first slots
         return sp;
     }
 
     private static void use(ServerPlayer sp, BlockPos pos, Direction face, ItemStack stack) {
         sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
         Vec3 hit = Vec3.atCenterOf(pos).add(face.getStepX() * 0.5, face.getStepY() * 0.5, face.getStepZ() * 0.5);
-        sp.gameMode.useItemOn(sp, sp.serverLevel(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
+        sp.gameMode.useItemOn(sp, sp.level(), stack, InteractionHand.MAIN_HAND, new BlockHitResult(hit, face, pos, false));
     }
 
     private static void biome(ServerLevel level, BlockPos at, String biome) {
@@ -390,7 +390,7 @@ public final class CritterGameTests {
         // the scraper on the north face of the first block, like a player from outside
         ServerPlayer sp = player(h);
         BlockPos face = h.absolutePos(new BlockPos(2, 2, 2));
-        sp.teleportTo(level, face.getX() + 0.5, face.getY(), face.getZ() - 2.0, 0F, 0F);
+        sp.teleportTo(level, face.getX() + 0.5, face.getY(), face.getZ() - 2.0, java.util.Set.of(), 0F, 0F, false);
         ItemStack scraper = new ItemStack(ModItems.ALGAE_SCRAPER.get());
         use(sp, face, Direction.NORTH, scraper);
         TankData t = dirty.getTank();
@@ -463,7 +463,7 @@ public final class CritterGameTests {
         TankBlockEntity c = tank(h, 2, 2, 2, 3, 2, 2, 11000);
         ServerPlayer sp = player(h);
         BlockPos front = h.absolutePos(new BlockPos(3, 2, 2));
-        sp.teleportTo(level, front.getX() + 0.5, front.getY(), front.getZ() - 2.5, 0F, 0F);
+        sp.teleportTo(level, front.getX() + 0.5, front.getY(), front.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         java.util.random.RandomGenerator rnd = new java.util.Random(3);
         ItemStack bag = TankCritters.bagOf(CritterSpecies.NEOCARIDINA, 3, () -> CritterGenes.pure(0, 0.2F), rnd, true);
         List<CompoundTag> animals = new ArrayList<>(bag.get(ModDataComponents.CRITTERS.get()));
@@ -483,7 +483,7 @@ public final class CritterGameTests {
         sp.getInventory().setItem(5, new ItemStack(ModItems.FISH_BAG.get()));
         var err = TankCritters.takeOut(level, c, sp, "neocaridina:" + best.genes.variety(CritterSpecies.NEOCARIDINA), false);
         h.assertTrue(err == null, "taken: " + (err == null ? "" : err.getString()));
-        List<CompoundTag> got = sp.getInventory().items.stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull).findFirst().orElse(null);
+        List<CompoundTag> got = sp.getInventory().getNonEquipmentItems().stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull).findFirst().orElse(null);
         h.assertTrue(got != null && got.size() == 1, "one in the bag");
         h.assertTrue(Critter.loadAnimal(got.getFirst(), 0, 0, 0, 0).genes.grade() > 0.85F, "the best one");
         // the net: aimed through the glass at a shrimp held still
@@ -494,11 +494,11 @@ public final class CritterGameTests {
         k.z = mid.getZ() + 0.5;
         k.idle = 10000;
         k.face = Critter.FLOOR;
-        sp.teleportTo(level, mid.getX() + 0.5, mid.getY() + 0.6 - sp.getEyeHeight() + 1.0, mid.getZ() - 3.0, 0F, 0F);
+        sp.teleportTo(level, mid.getX() + 0.5, mid.getY() + 0.6 - sp.getEyeHeight() + 1.0, mid.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
         sp.lookAt(EntityAnchorArgument.Anchor.EYES, new Vec3(k.x, k.y + 0.04, k.z));
         use(sp, front, Direction.NORTH, new ItemStack(ModItems.AQUARIUM_NET.get()));
         h.assertTrue(count(t, CritterSpecies.NEOCARIDINA) == 1, "the net caught one: " + count(t, CritterSpecies.NEOCARIDINA) + " left");
-        List<CompoundTag> after = sp.getInventory().items.stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull).findFirst().orElse(null);
+        List<CompoundTag> after = sp.getInventory().getNonEquipmentItems().stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull).findFirst().orElse(null);
         h.assertTrue(after != null && after.size() == 2, "into the same bag (same species)");
         // Ctrl in the menu: a full bag at once (here the last one)
         h.assertTrue(TankCritters.takeOut(level, c, sp, "neocaridina:" + t.critters().getFirst().genes.variety(CritterSpecies.NEOCARIDINA), false,
@@ -561,7 +561,7 @@ public final class CritterGameTests {
                     {"minecraft:plains", ""}};
             for (String[] cs : cases) {
                 biome(level, water, cs[0]);
-                h.assertTrue(level.getBiome(water).is(net.minecraft.resources.ResourceLocation.parse(cs[0])), "biome " + cs[0] + ": " + level.getBiome(water));
+                h.assertTrue(level.getBiome(water).is(net.minecraft.resources.Identifier.parse(cs[0])), "biome " + cs[0] + ": " + level.getBiome(water));
                 sp.getInventory().clearContent();
                 for (int i = 0; i < 4; i++) sp.getInventory().add(new ItemStack(ModItems.FISH_BAG.get(), 16));
                 sp.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.AQUARIUM_NET.get()));
@@ -573,17 +573,17 @@ public final class CritterGameTests {
                 for (int i = 0; i < SWINGS; i++) {
                     sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
                     NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
-                    for (int slot = 0; slot < sp.getInventory().items.size(); slot++) {
-                        ItemStack s = sp.getInventory().items.get(slot);
+                    for (int slot = 0; slot < sp.getInventory().getNonEquipmentItems().size(); slot++) {
+                        ItemStack s = sp.getInventory().getNonEquipmentItems().get(slot);
                         List<CompoundTag> l = TankCritters.bagged(s);
                         if (l != null) {
                             catches += s.getCount();
                             for (CompoundTag tag : l) seen.add(Critter.loadAnimal(tag, 0, 0, 0, 0).species);
-                            sp.getInventory().items.set(slot, ItemStack.EMPTY);
+                            sp.getInventory().getNonEquipmentItems().set(slot, ItemStack.EMPTY);
                         } else if (s.getItem() instanceof FishBagItem && FishBagItem.containedType(s) == ModEntities.DWARF_FROG.get()) {
                             frogs += s.getCount();
                             catches += s.getCount();
-                            sp.getInventory().items.set(slot, ItemStack.EMPTY);
+                            sp.getInventory().getNonEquipmentItems().set(slot, ItemStack.EMPTY);
                         }
                     }
                 }
@@ -615,7 +615,7 @@ public final class CritterGameTests {
             biome(level, water, "minecraft:river");
             sp.getCooldowns().removeCooldown(ModItems.AQUARIUM_NET.get());
             NetCatching.tryCatch(level, sp, InteractionHand.OFF_HAND, water);
-            h.assertTrue(sp.getInventory().items.stream().allMatch(ItemStack::isEmpty), "no bag, no catch");
+            h.assertTrue(sp.getInventory().getNonEquipmentItems().stream().allMatch(ItemStack::isEmpty), "no bag, no catch");
         } finally {
             ServerConfig.CRITTERS_NET_CHANCE.set(saved);
             ServerConfig.AQUATIC_NET_SHARE.set(plantShare);
@@ -635,11 +635,11 @@ public final class CritterGameTests {
             h.setBlock(new BlockPos(16, 2, 16), Blocks.MUD);
             biome(level, mud, "minecraft:swamp");
             ServerPlayer sp = player(h);
-            sp.teleportTo(level, mud.getX() + 0.5, mud.getY() + 1, mud.getZ() - 1.5, 0F, 40F);
+            sp.teleportTo(level, mud.getX() + 0.5, mud.getY() + 1, mud.getZ() - 1.5, java.util.Set.of(), 0F, 40F, false);
             h.assertTrue(level.getBiome(mud).is(net.minecraft.world.level.biome.Biomes.SWAMP), "swamp: " + level.getBiome(mud));
             sp.getInventory().setItem(5, new ItemStack(ModItems.FISH_BAG.get(), 4));
             use(sp, mud, Direction.UP, new ItemStack(Items.IRON_SHOVEL));
-            boolean snail = sp.getInventory().items.stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull)
+            boolean snail = sp.getInventory().getNonEquipmentItems().stream().map(TankCritters::bagged).filter(java.util.Objects::nonNull)
                     .anyMatch(l -> Critter.loadAnimal(l.getFirst(), 0, 0, 0, 0).species == CritterSpecies.TRUMPET_SNAIL);
             h.assertTrue(snail, "a trumpet snail in the bag");
             h.assertTrue(level.getBlockState(mud).is(Blocks.MUD), "the mud stays");

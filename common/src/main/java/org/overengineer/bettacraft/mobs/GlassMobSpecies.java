@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.mobs;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.overengineer.bettacraft.registry.ModTags;
@@ -28,7 +28,7 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds.Habitat;
  * @param stock    how much an adult counts for the stocking (an adult betta = 1)
  * @param undead   burns in sunlight outside (and, with {@code terrarium.mobUndeadBurn}, in a tank without a lid)
  */
-public record GlassMobSpecies(ResourceLocation id, float scale, LandWalker.Gait gait, TerrariumNeeds needs, Breeding breeding,
+public record GlassMobSpecies(Identifier id, float scale, LandWalker.Gait gait, TerrariumNeeds needs, Breeding breeding,
                               @Nullable Predicate<ItemStack> food, @Nullable Predicate<ItemStack> bait, boolean climbs, double stock, boolean undead) {
 
     /** How a mob breeds in the tank. */
@@ -55,7 +55,7 @@ public record GlassMobSpecies(ResourceLocation id, float scale, LandWalker.Gait 
 
     private static GlassMobSpecies of(String id, float scale, LandWalker.Gait gait, TerrariumNeeds needs, Breeding b,
                                       @Nullable Predicate<ItemStack> food, @Nullable Predicate<ItemStack> bait, boolean climbs, double stock, boolean undead) {
-        return new GlassMobSpecies(ResourceLocation.withDefaultNamespace(id), scale, gait, needs, b, food, bait, climbs, stock, undead);
+        return new GlassMobSpecies(Identifier.withDefaultNamespace(id), scale, gait, needs, b, food, bait, climbs, stock, undead);
     }
 
     private static TerrariumNeeds habitat(Habitat h) {
@@ -78,7 +78,7 @@ public record GlassMobSpecies(ResourceLocation id, float scale, LandWalker.Gait 
                     s -> s.is(Items.MAGMA_CREAM), s -> s.is(Items.MAGMA_CREAM), false, 0.35, false));
 
     /** A mob of another mod (or vanilla) added through {@code inhabitants.allow}: shrunk to about a third of a block, on land. */
-    public static GlassMobSpecies generic(ResourceLocation id, float width, float height) {
+    public static GlassMobSpecies generic(Identifier id, float width, float height) {
         float s = Math.max(0.0625F, Math.min(1F, 0.35F / Math.max(0.1F, Math.max(width, height))));
         return new GlassMobSpecies(id, s, HUMANOID, habitat(Habitat.ANY), Breeding.NONE, null, null, false, 0.5, false);
     }

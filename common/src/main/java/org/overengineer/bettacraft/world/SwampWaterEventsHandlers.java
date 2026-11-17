@@ -45,8 +45,8 @@ public final class SwampWaterEventsHandlers {
         else return;
         if (!level.mayInteract(player, pos)) return;
         event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
-        if (level.isClientSide) return;
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (level.isClientSide()) return;
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         player.setItemInHand(event.getHand(), ItemUtils.createFilledResult(stack, player, result));

@@ -147,7 +147,7 @@ public final class EquipmentGameTests {
         CompoundTag tag = c.saveWithFullMetadata(level.registryAccess());
         // turn it into what M3 wrote: schema 2, "heaters" instead of "legacy_heaters"
         tag.putInt("schema", 2);
-        CompoundTag tank = tag.getCompound("tank");
+        CompoundTag tank = tag.getCompoundOrEmpty("tank");
         tank.remove("legacy_heaters");
         ListTag old = new ListTag();
         for (String id : new String[]{"bettacraft:heater_large", "", "bettacraft:heater_small", "bettacraft:heater_medium"}) old.add(StringTag.valueOf(id));
@@ -172,7 +172,7 @@ public final class EquipmentGameTests {
                 h.assertTrue(t.log().stream().anyMatch(e -> e.key().equals("log.bettacraft.heaters_moved")), "logged");
                 // saved again: schema 3, no old key
                 CompoundTag saved = c.saveWithFullMetadata(level.registryAccess());
-                h.assertTrue(saved.getInt("schema") == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion() && !saved.getCompound("tank").contains("heaters"), "saved as the current version");
+                h.assertTrue(saved.getIntOr("schema", 0) == org.overengineer.bettacraft.data.schema.Schemas.TANK_BLOCK_ENTITY.currentVersion() && !saved.getCompoundOrEmpty("tank").contains("heaters"), "saved as the current version");
                 h.succeed();
             });
         });

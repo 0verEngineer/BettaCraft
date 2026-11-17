@@ -16,10 +16,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -43,7 +43,7 @@ public final class WildSpawnPassHandlers {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || !Features.enabled(Feature.WILD_SPAWN_PASS)) return;
-        if (InteriorManager.isInterior(level) || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) return;
+        if (InteriorManager.isInterior(level) || !level.getGameRules().get(GameRules.SPAWN_MOBS)) return;
         int every = interval();
         long t = level.getGameTime();
         for (ServerPlayer p : level.players()) {

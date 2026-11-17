@@ -1,5 +1,9 @@
 package org.overengineer.bettacraft.entity.tankmate;
 
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.InteractionResult;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -18,11 +22,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Bucketable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -46,7 +50,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  */
 public class TankmateEntity extends AbstractFish {
     /** Variety, sex and stage for the renderer (server -> client). */
-    private static final EntityDataAccessor<CompoundTag> DATA_LOOK = SynchedEntityData.defineId(TankmateEntity.class, EntityDataSerializers.COMPOUND_TAG);
+    private static final EntityDataAccessor<String> DATA_LOOK = SynchedEntityData.defineId(TankmateEntity.class, EntityDataSerializers.STRING); // M52b: SNBT
     private static final EntityDataAccessor<Byte> DATA_FLAGS = SynchedEntityData.defineId(TankmateEntity.class, EntityDataSerializers.BYTE);
     public static final int FLAG_SICK = 1, FLAG_GRAVID = 2, FLAG_GUARD = 4, FLAG_GLASS = 8, FLAG_REST = 16, FLAG_STRESS = 32, FLAG_HIDDEN = 64;
     public static final String KEY = "tankmate";
@@ -147,7 +151,7 @@ public class TankmateEntity extends AbstractFish {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_LOOK, new CompoundTag());
+        builder.define(DATA_LOOK, "");
         builder.define(DATA_FLAGS, (byte) 0);
     }
 
@@ -163,15 +167,15 @@ public class TankmateEntity extends AbstractFish {
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType,
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnType,
                                         @Nullable SpawnGroupData groupData) {
-        if (spawnType != MobSpawnType.BUCKET) {
+        if (spawnType != EntitySpawnReason.BUCKET) {
             female = random.nextBoolean();
             // M22.3: wild ones (natural spawns): rarely a bred colour openly; they despawn far from players like vanilla fish
-            wild = spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION;
+            wild = spawnType == EntitySpawnReason.NATURAL || spawnType == EntitySpawnReason.CHUNK_GENERATION;
             genes = wild ? org.overengineer.bettacraft.world.Wildlife.tankmate(species, random::nextLong) : TankmateGenes.wild(species, 0.08, random::nextLong);
             // spawn eggs and commands: a random bred variety now and then
-            if (spawnType == MobSpawnType.SPAWN_EGG || spawnType == MobSpawnType.COMMAND) {
+            if (spawnType == EntitySpawnReason.SPAWN_ITEM_USE || spawnType == EntitySpawnReason.COMMAND) {
                 if (TankmateGenes.livebearer(species) && Features.enabled(Feature.LIVEBEARER_GENETICS)) {
                     // M21.6: a named strain of the species now and then
                     if (random.nextInt(3) == 0) {
@@ -220,11 +224,11 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public String variety() {
-        return level().isClientSide ? lookVariety : genes.phenotype(species);
+        return level().isClientSide() ? lookVariety : genes.phenotype(species);
     }
 
     public boolean isFemale() {
-        return level().isClientSide ? lookFemale : female;
+        return level().isClientSide() ? lookFemale : female;
     }
 
     /**
@@ -233,7 +237,7 @@ public class TankmateEntity extends AbstractFish {
      */
     @Nullable
     public org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome livebearerGenome() {
-        if (level().isClientSide) return lookLb;
+        if (level().isClientSide()) return lookLb;
         return Features.enabled(Feature.LIVEBEARER_GENETICS) ? genes.lb() : null;
     }
 
@@ -245,7 +249,7 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public LifeStage lifeStage() {
-        LifeStage s = level() != null && level().isClientSide ? lookStage : stage;
+        LifeStage s = level() != null && level().isClientSide() ? lookStage : stage;
         return s == null ? LifeStage.ADULT : s;
     }
 
@@ -286,7 +290,7 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public boolean isGravid() {
-        return level().isClientSide ? (entityData.get(DATA_FLAGS) & FLAG_GRAVID) != 0 : gravidDays >= 0;
+        return level().isClientSide() ? (entityData.get(DATA_FLAGS) & FLAG_GRAVID) != 0 : gravidDays >= 0;
     }
 
     public double gravidDays() {
@@ -316,7 +320,7 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public boolean isSick() {
-        return level().isClientSide ? flag(FLAG_SICK) : health.isSick();
+        return level().isClientSide() ? flag(FLAG_SICK) : health.isSick();
     }
 
     /** Set by the tank step: size of the shoal (same species, juveniles and older) and whether it is too small. */
@@ -369,7 +373,7 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public boolean isGuarding() {
-        return level().isClientSide ? flag(FLAG_GUARD) : guarding;
+        return level().isClientSide() ? flag(FLAG_GUARD) : guarding;
     }
 
     public void setGuarding(boolean g) {
@@ -480,7 +484,7 @@ public class TankmateEntity extends AbstractFish {
         look.putBoolean("female", female);
         look.putString("stage", stage.id());
         if (genes.lb() != null && Features.enabled(Feature.LIVEBEARER_GENETICS)) look.put("lb", genes.lb().save());
-        entityData.set(DATA_LOOK, look);
+        entityData.set(DATA_LOOK, NbtCompat.syncTag(look));
     }
 
     void setFlags(int flags) {
@@ -492,12 +496,12 @@ public class TankmateEntity extends AbstractFish {
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
         super.onSyncedDataUpdated(key);
         if (DATA_LOOK.equals(key)) {
-            CompoundTag look = entityData.get(DATA_LOOK);
-            lookVariety = look.contains("variety", Tag.TAG_STRING) ? look.getString("variety") : species.variety(0);
-            lookFemale = look.getBoolean("female");
-            lookStage = look.contains("stage", Tag.TAG_STRING) ? LifeStage.byId(look.getString("stage")) : LifeStage.ADULT;
-            lookLb = look.contains("lb", Tag.TAG_COMPOUND)
-                    ? org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome.load(look.getCompound("lb"), species == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY)
+            CompoundTag look = NbtCompat.unsyncTag(entityData.get(DATA_LOOK));
+            lookVariety = NbtCompat.has(look, "variety", Tag.TAG_STRING) ? look.getStringOr("variety", "") : species.variety(0);
+            lookFemale = look.getBooleanOr("female", false);
+            lookStage = NbtCompat.has(look, "stage", Tag.TAG_STRING) ? LifeStage.byId(look.getStringOr("stage", "")) : LifeStage.ADULT;
+            lookLb = NbtCompat.has(look, "lb", Tag.TAG_COMPOUND)
+                    ? org.overengineer.bettacraft.genetics.livebearer.LivebearerGenome.load(look.getCompoundOrEmpty("lb"), species == org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY)
                     : null;
             refreshDimensions();
         }
@@ -532,20 +536,20 @@ public class TankmateEntity extends AbstractFish {
     }
 
     public void loadTankmate(CompoundTag t) {
-        genes = TankmateGenes.load(t.getCompound("genes"), species);
-        female = t.getBoolean("female");
-        LifeStage s = t.contains("stage", Tag.TAG_STRING) ? LifeStage.byId(t.getString("stage")) : LifeStage.ADULT;
+        genes = TankmateGenes.load(t.getCompoundOrEmpty("genes"), species);
+        female = t.getBooleanOr("female", false);
+        LifeStage s = NbtCompat.has(t, "stage", Tag.TAG_STRING) ? LifeStage.byId(t.getStringOr("stage", "")) : LifeStage.ADULT;
         stage = s.isEntity() ? s : LifeStage.FRY;
-        double sd = t.getDouble("stage_days");
+        double sd = t.getDoubleOr("stage_days", 0d);
         stageDays = Double.isFinite(sd) ? Math.max(0, sd) : 0;
-        generation = t.getInt("gen");
-        health = BettaHealth.load(t.getCompound("health"));
-        breeding = BettaBreeding.load(t.getCompound("breeding"));
-        gravidDays = t.contains("gravid", Tag.TAG_ANY_NUMERIC) ? t.getDouble("gravid") : -1;
+        generation = t.getIntOr("gen", 0);
+        health = BettaHealth.load(t.getCompoundOrEmpty("health"));
+        breeding = BettaBreeding.load(t.getCompoundOrEmpty("breeding"));
+        gravidDays = NbtCompat.has(t, "gravid", NbtCompat.ANY_NUMERIC) ? t.getDoubleOr("gravid", 0d) : -1;
         if (!Double.isFinite(gravidDays)) gravidDays = -1;
-        gravidFather = t.contains("gravid_father", Tag.TAG_COMPOUND) ? TankmateGenes.load(t.getCompound("gravid_father"), species) : null;
+        gravidFather = NbtCompat.has(t, "gravid_father", Tag.TAG_COMPOUND) ? TankmateGenes.load(t.getCompoundOrEmpty("gravid_father"), species) : null;
         if (gravidDays >= 0 && gravidFather == null) gravidFather = TankmateGenes.wild(species);
-        double teeth = t.getDouble("teeth");
+        double teeth = t.getDoubleOr("teeth", 0d);
         teethDays = Double.isFinite(teeth) ? Math.max(0, teeth) : 0;
         analysed = org.overengineer.bettacraft.genetics.GeneVisibility.analysed(t); // M22.3: older worlds: analysed
         syncLook();
@@ -553,20 +557,24 @@ public class TankmateEntity extends AbstractFish {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
+    public void addAdditionalSaveData(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        super.addAdditionalSaveData(output);
         tag.put(KEY, saveTankmate());
         tag.putLong("last_sim", lastSimTime);
         if (wild) tag.putBoolean("wild", true); // M22.3
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        if (tag.contains(KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompound(KEY));
-        lastSimTime = tag.contains("last_sim") ? tag.getLong("last_sim") : -1;
+    public void readAdditionalSaveData(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+
+        super.readAdditionalSaveData(input);
+        if (NbtCompat.has(tag, KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompoundOrEmpty(KEY));
+        lastSimTime = tag.contains("last_sim") ? tag.getLongOr("last_sim", 0L) : -1;
         simStarted = false;
-        wild = tag.getBoolean("wild");
+        wild = tag.getBooleanOr("wild", false);
     }
 
     @Override
@@ -580,7 +588,7 @@ public class TankmateEntity extends AbstractFish {
     public void loadFromBucketTag(CompoundTag tag) {
         Bucketable.loadDefaultDataFromBucketTag(this, tag);
         wild = false; // M22.3: caught once, it stays
-        if (tag.contains(KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompound(KEY));
+        if (NbtCompat.has(tag, KEY, Tag.TAG_COMPOUND)) loadTankmate(tag.getCompoundOrEmpty(KEY));
         lastSimTime = level().getGameTime(); // time in a bucket or bag stands still
     }
 
@@ -599,7 +607,7 @@ public class TankmateEntity extends AbstractFish {
     public void tick() {
         super.tick();
         if (level() instanceof ServerLevel server && isAlive()) TankmateCare.serverTick(server, this);
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             boolean eel = species.model() == TankmateSpecies.Model.KUHLI;
             if (species.seahorse()) {
                 // M21.8: upright, never pitched; the small dorsal fin flutters fast all the time
@@ -617,8 +625,8 @@ public class TankmateEntity extends AbstractFish {
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
+    protected void customServerAiStep(ServerLevel serverLevel) {
+        super.customServerAiStep(serverLevel);
         behaviour.tick();
     }
 
@@ -627,7 +635,7 @@ public class TankmateEntity extends AbstractFish {
         super.aiStep();
         if (tankWater != null && !tankWater.near(position())) tankWater = null; // M50: moved by another mod, the care finds the tank again
         TankWaterVolume w = tankWater;
-        if (w != null && !level().isClientSide && isInWater()) {
+        if (w != null && !level().isClientSide() && isInWater()) {
             // keep the whole fish inside the water of the tank (not in the glass, not above the surface); 1.33.3: the
             // top of the rendered model (the tall dorsal fin of an angelfish), not 0.8 of the hitbox, stays below the
             // surface, and a fish above that line goes back at once (halfway let it bob up through the surface)
@@ -648,8 +656,8 @@ public class TankmateEntity extends AbstractFish {
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-        return tankWater == null && super.shouldDropLoot();
+    protected boolean shouldDropLoot(ServerLevel serverLevel) {
+        return tankWater == null && super.shouldDropLoot(serverLevel);
     }
 
     @Override
@@ -670,8 +678,8 @@ public class TankmateEntity extends AbstractFish {
     @Override
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
         if (species.isLarge() && player.getItemInHand(hand).is(net.minecraft.world.item.Items.WATER_BUCKET)) {
-            if (!level().isClientSide) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.big.no_bucket", getDisplayName()), true);
-            return net.minecraft.world.InteractionResult.sidedSuccess(level().isClientSide);
+            if (!level().isClientSide()) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.big.no_bucket", getDisplayName()), true);
+            return net.minecraft.world.InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
     }

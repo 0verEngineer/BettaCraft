@@ -54,33 +54,33 @@ public class MultiblockFilterScreen extends Screen {
         FilterPumpHeadBlockEntity h = be();
         if (h == null) return;
         int x = left + 10, y = top + 8;
-        g.drawString(font, title, x, y, 0xFFFFFF);
+        g.drawString(font, title, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         g.drawCenteredString(font, Component.literal(h.power() * 10 + " %"), left + W - 38, top + 9, 0xFFE0E0E0);
         y += 16;
         MultiblockFilter.Problem p = h.problem();
         if (p != MultiblockFilter.Problem.NONE) {
             g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.problem." + p.name().toLowerCase(java.util.Locale.ROOT),
-                    MultiblockFilter.maxChambers()).withStyle(ChatFormatting.GOLD), x, y, 0xFFFFFF);
+                    MultiblockFilter.maxChambers()).withStyle(ChatFormatting.GOLD), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 12;
         }
         g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.size", h.chambers(), h.inlets(), h.outlets()), x, y, 0xFFE0E0E0);
         y += 12;
         Component tank = h.servedTank() == null ? Component.translatable("gui.bettacraft.mb_filter.no_tank").withStyle(ChatFormatting.GOLD)
                 : Component.translatable("gui.bettacraft.mb_filter.tank", h.servedTank().getX(), h.servedTank().getY(), h.servedTank().getZ()).withStyle(ChatFormatting.GREEN);
-        g.drawString(font, tank, x, y, 0xFFFFFF);
+        g.drawString(font, tank, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         y += 12;
-        g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, 0xFFFFFF);
+        g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         y += 12;
         if (h.freshPorts() > 0 || h.wastePorts() > 0) { // M40 part b: the water ports
             Component w = h.wastePorts() > 0 ? Component.translatable("gui.bettacraft.mb_filter.water", h.freshMb(), h.wasteMb())
                     : Component.translatable("gui.bettacraft.mb_filter.no_waste", h.freshMb());
-            g.drawString(font, w.copy().withStyle(ChatFormatting.DARK_AQUA), x, y, 0xFFFFFF);
+            g.drawString(font, w.copy().withStyle(ChatFormatting.DARK_AQUA), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 12;
         }
         // M40: every tank of the filter (A1: its share by water volume), or why the filter does not work for it
         var tanks = h.tanks();
         if (h.retrofit() && tanks.stream().anyMatch(t -> t.status().warning())) {
-            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.retrofit").withStyle(ChatFormatting.RED), x, y, 0xFFFFFF);
+            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.retrofit").withStyle(ChatFormatting.RED), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 11;
         }
         for (int i = 0; i < tanks.size() && i < 4; i++) {
@@ -90,11 +90,11 @@ public class MultiblockFilterScreen extends Screen {
                     ? Component.translatable("gui.bettacraft.mb_filter.link", at, t.percent(), t.flow(), Math.round(t.clean())).withStyle(ChatFormatting.GREEN)
                     : Component.translatable("gui.bettacraft.mb_filter.link_off", at, Component.translatable("gui.bettacraft.mb_filter.link." + t.status().key()))
                     .withStyle(t.status().warning() ? ChatFormatting.RED : ChatFormatting.GOLD);
-            g.drawString(font, line, x, y, 0xFFFFFF);
+            g.drawString(font, line, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         if (tanks.size() > 4) {
-            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.more_tanks", tanks.size() - 4).withStyle(ChatFormatting.GRAY), x, y, 0xFFFFFF);
+            g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.more_tanks", tanks.size() - 4).withStyle(ChatFormatting.GRAY), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         y += 6;
@@ -108,10 +108,10 @@ public class MultiblockFilterScreen extends Screen {
             Component line = md == FilterMedium.NONE ? Component.translatable("gui.bettacraft.mb_filter.chamber_empty", i + 1)
                     : Component.translatable(md.cleanable() ? "gui.bettacraft.mb_filter.chamber_dirt" : "gui.bettacraft.mb_filter.chamber_used", i + 1, name, dirt);
             ChatFormatting c = md == FilterMedium.NONE ? ChatFormatting.DARK_GRAY : dirt >= 80 ? ChatFormatting.RED : dirt >= 40 ? ChatFormatting.GOLD : ChatFormatting.GRAY;
-            g.drawString(font, line.copy().withStyle(c), cx, cy, 0xFFFFFF);
+            g.drawString(font, line.copy().withStyle(c), cx, cy, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             col = 1 - col;
         }
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.mb_filter.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, 0xA0A0A0);
+        g.drawCenteredString(font, Component.translatable("gui.bettacraft.mb_filter.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0));
     }
 
     @Override

@@ -1,5 +1,10 @@
 package org.overengineer.bettacraft.terrarium;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.InteractionResult;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -13,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -62,9 +66,9 @@ public class TerrariumBoxItem extends Item {
     public static CompoundTag storedEntity(ItemStack stack) {
         if (!isFilled(stack)) return null;
         CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
-        if (cd == null || !cd.contains(STORED_KEY)) return null;
-        CompoundTag t = cd.copyTag().getCompound(STORED_KEY);
-        return t.contains("id", Tag.TAG_STRING) ? t : null;
+        if (cd == null || !cd.copyTag().contains(STORED_KEY)) return null;
+        CompoundTag t = cd.copyTag().getCompoundOrEmpty(STORED_KEY);
+        return NbtCompat.has(t, "id", Tag.TAG_STRING) ? t : null;
     }
 
     /** A filled box holding {@code e} (the entity itself is not removed). */
@@ -73,7 +77,7 @@ public class TerrariumBoxItem extends Item {
         CompoundTag t = new CompoundTag();
         String id = e.getEncodeId();
         if (id != null) t.putString("id", id);
-        e.saveWithoutId(t);
+        t.merge(NbtCompat.saveEntityWithoutId(e));
         t.remove("UUID"); // a new one when it comes out (no clash with the old entity)
         CompoundTag data = new CompoundTag();
         data.put(STORED_KEY, t);
@@ -85,33 +89,33 @@ public class TerrariumBoxItem extends Item {
 
     /** Lets the animal go on the block looked at. */
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!isFilled(stack)) return InteractionResultHolder.pass(stack);
+        if (!isFilled(stack)) return InteractionResult.PASS;
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
-        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
-        if (level.getBlockState(hit.getBlockPos()).getBlock() instanceof TankBlock) return InteractionResultHolder.pass(stack);
+        if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
+        if (level.getBlockState(hit.getBlockPos()).getBlock() instanceof TankBlock) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos().relative(hit.getDirection());
-        if (!level.mayInteract(player, hit.getBlockPos()) || !player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResultHolder.fail(stack);
+        if (!level.mayInteract(player, hit.getBlockPos()) || !player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResult.FAIL;
         if (!ContainerRules.release(level, player, hand, stack)) return ContainerRules.waiting(stack);
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
-            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, en -> en);
+            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
             if (e == null) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
-            e.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
+            e.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
             if (e instanceof Mob m) m.setPersistenceRequired();
             TankInhabitants.release(e);
             if (!server.tryAddFreshEntityWithPassengers(e)) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
-                return InteractionResultHolder.fail(stack);
+                return InteractionResult.FAIL;
             }
             level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
-            return InteractionResultHolder.consume(player.hasInfiniteMaterials() ? stack : new ItemStack(this));
+            return InteractionResult.CONSUME.heldItemTransformedTo(player.hasInfiniteMaterials() ? stack : new ItemStack(this));
         }
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
     }
 
     @Override
@@ -121,8 +125,9 @@ public class TerrariumBoxItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltip, flag);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
         tooltip.add(Component.translatable(isFilled(stack) ? "tooltip.bettacraft.terrarium_box.filled" : "tooltip.bettacraft.terrarium_box")
                 .withStyle(ChatFormatting.GRAY));
     }

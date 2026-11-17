@@ -22,7 +22,7 @@ public final class RecipeViewerInfo {
         List<Page> out = new ArrayList<>();
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.COMPAT_JEI)) return out;
         for (String path : org.overengineer.bettacraft.progression.ItemHints.ITEMS) {
-            Item item = BuiltInRegistries.ITEM.get(BettaCraft.id(path));
+            Item item = BuiltInRegistries.ITEM.getValue(BettaCraft.id(path));
             if (item == Items.AIR) continue; // the drive adapter exists only with Create
             add(out, List.of(new ItemStack(item)), "info.bettacraft." + path);
         }

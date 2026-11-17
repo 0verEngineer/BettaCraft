@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.compat.create;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,14 +77,14 @@ public final class CreateLandings {
     private CreateLandings() {}
 
     private static String key(ResourceKey<Level> dim, BlockPos oldController) {
-        return dim.location() + "|" + oldController.asLong();
+        return dim.identifier() + "|" + oldController.asLong();
     }
 
     /** The trip of a controller ends (put down or removed). */
     static void stopped(ServerLevel level, @Nullable Entity contraption, CompoundTag data, @Nullable Vec3 position, @Nullable BlockPos local) {
-        if (!data.contains("tank", Tag.TAG_COMPOUND)) return;
-        TankData t = TankData.load(data.getCompound("tank"));
-        int[] c = data.getIntArray("controller");
+        if (!NbtCompat.has(data, "tank", Tag.TAG_COMPOUND)) return;
+        TankData t = TankData.load(data.getCompoundOrEmpty("tank"));
+        int[] c = data.getIntArray("controller").orElse(new int[0]);
         if (c.length != 3) return;
         UUID id = t.id();
         for (Stop s : STOPS) if (s.tank().equals(id)) return; // Create can stop the actors twice in one tick
@@ -126,8 +127,8 @@ public final class CreateLandings {
 
     /** Create put the contraption down but could not place the controller (it dropped it as a plain item). */
     static void notPlaced(ServerLevel level, Stop s) {
-        TankData t = TankData.load(s.data().getCompound("tank"));
-        ListTag stowed = s.data().getList("stowed", Tag.TAG_COMPOUND);
+        TankData t = TankData.load(s.data().getCompoundOrEmpty("tank"));
+        ListTag stowed = s.data().getListOrEmpty("stowed");
         List<TankBlockEntity> members = new ArrayList<>();
         for (TankBlockEntity be : MEMBERS.getOrDefault(key(s.dim(), s.oldController()), List.of())) {
             if (!be.isRemoved() && be.movedFrom() != null && s.oldController().equals(be.getControllerPos())) members.add(be);
@@ -187,12 +188,12 @@ public final class CreateLandings {
 
     /** The contraption was destroyed with the tank on it: its interior region is freed (nothing could claim it again). */
     static void destroyed(ServerLevel level, Stop s) {
-        TankData t = TankData.load(s.data().getCompound("tank"));
+        TankData t = TankData.load(s.data().getCompoundOrEmpty("tank"));
         if (t.regionId() < 0 || InteriorRegions.get(level.getServer()).get(t.regionId()) == null) return;
         int region = t.regionId();
         InteriorManager.freeRegion(level, t);
         TankMoves.stoppedTravelling(region);
         LOGGER.warn("The contraption with tank {} was destroyed: its interior region {} was freed ({} packed animal(s) lost with it)",
-                t.id(), region, s.data().getList("stowed", Tag.TAG_COMPOUND).size());
+                t.id(), region, s.data().getListOrEmpty("stowed").size());
     }
 }

@@ -76,7 +76,7 @@ public final class TankCurrents {
 
     /** M33 part d: by position and dimension (tanks at the same place in two dimensions are two tanks). */
     private static long key(Level level, TankBlockEntity c) {
-        return c.getBlockPos().asLong() * 31 + level.dimension().location().hashCode();
+        return c.getBlockPos().asLong() * 31 + level.dimension().identifier().hashCode();
     }
 
     /** Forgets every cached current (tests). */

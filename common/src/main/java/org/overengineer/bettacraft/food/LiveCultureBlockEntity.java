@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.food;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import javax.annotation.Nullable;
@@ -144,8 +147,8 @@ public class LiveCultureBlockEntity extends BlockEntity {
 
     /** Daphnia: the barrel stands in the sun of a hot biome (base temperature 1.5 or more, by day) or in the Nether. */
     public boolean hot(Level level) {
-        if (level.dimensionType().ultraWarm()) return true;
-        return level.getBiome(worldPosition).value().getBaseTemperature() >= 1.5F && level.isDay() && level.canSeeSky(worldPosition.above());
+        if (level.environmentAttributes().getValue(net.minecraft.world.attribute.EnvironmentAttributes.WATER_EVAPORATES, worldPosition)) return true;
+        return level.getBiome(worldPosition).value().getBaseTemperature() >= 1.5F && level.isBrightOutside() && level.canSeeSky(worldPosition.above());
     }
 
     /** Why the culture does not grow right now (translation key suffix), or null. */
@@ -199,7 +202,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
     }
 
     void updateState() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         BlockState s = getBlockState();
         if (!(s.getBlock() instanceof LiveCultureBlock)) return;
         double p = model.population;
@@ -479,8 +482,10 @@ public class LiveCultureBlockEntity extends BlockEntity {
     // ------------------------------------------------------------------ NBT
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        CompoundTag tag = new CompoundTag();
+        HolderLookup.Provider registries = NbtCompat.registries(this);
+        super.saveAdditional(output);
         tag.putInt("water", water);
         tag.putBoolean("mud", mud);
         tag.putInt("bottles", bottles);
@@ -489,19 +494,22 @@ public class LiveCultureBlockEntity extends BlockEntity {
         tag.putDouble("foul", model.foul);
         tag.putDouble("crowded", model.crowded);
         tag.putDouble("heat", model.heat);
+        NbtCompat.write(output, tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        water = Math.max(0, tag.getInt("water"));
-        mud = tag.getBoolean("mud");
-        bottles = Math.max(0, Math.min(MAX_BOTTLES, tag.getInt("bottles")));
-        model.population = clamp(tag.getDouble("population"));
-        model.food = clamp(tag.getDouble("food"));
-        model.foul = clamp(tag.getDouble("foul"));
-        model.crowded = Math.max(0, finite(tag.getDouble("crowded")));
-        model.heat = Math.max(0, finite(tag.getDouble("heat")));
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag tag = NbtCompat.read(input);
+        HolderLookup.Provider registries = input.lookup();
+        super.loadAdditional(input);
+        water = Math.max(0, tag.getIntOr("water", 0));
+        mud = tag.getBooleanOr("mud", false);
+        bottles = Math.max(0, Math.min(MAX_BOTTLES, tag.getIntOr("bottles", 0)));
+        model.population = clamp(tag.getDoubleOr("population", 0d));
+        model.food = clamp(tag.getDoubleOr("food", 0d));
+        model.foul = clamp(tag.getDoubleOr("foul", 0d));
+        model.crowded = Math.max(0, finite(tag.getDoubleOr("crowded", 0d)));
+        model.heat = Math.max(0, finite(tag.getDoubleOr("heat", 0d)));
     }
 
     private static double finite(double v) {

@@ -1,5 +1,8 @@
 package org.overengineer.bettacraft.plumbing;
 
+import org.overengineer.bettacraft.util.SinkList;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -21,13 +24,14 @@ public class PipeTeeItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         // a filter pipe takes it in its own use handler; anywhere else it only says where it goes
-        if (!ctx.getLevel().isClientSide && ctx.getPlayer() != null && !FilterPipes.isPipe(ctx.getLevel().getBlockState(ctx.getClickedPos())))
+        if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null && !FilterPipes.isPipe(ctx.getLevel().getBlockState(ctx.getClickedPos())))
             ctx.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.where").withStyle(ChatFormatting.GOLD), true);
         return InteractionResult.PASS;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        List<Component> tooltip = new SinkList<>(tooltipAdder);
         tooltip.add(Component.translatable("tooltip.bettacraft.pipe_tee.usage").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

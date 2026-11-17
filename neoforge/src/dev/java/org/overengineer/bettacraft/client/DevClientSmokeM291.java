@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -45,14 +45,14 @@ final class DevClientSmokeM291 {
     DevClientSmokeM291() {
         List<ItemStack> items = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM) {
-            ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+            Identifier id = BuiltInRegistries.ITEM.getKey(item);
             if (!id.getNamespace().equals(BettaCraft.MOD_ID)) continue;
             if (item instanceof BlockItem || DEVICES.contains(id.getPath())) items.add(new ItemStack(item));
         }
         // the cabinet in another wood and in stone (the item model follows the material)
         for (String m : new String[]{"minecraft:birch_planks", "minecraft:crimson_planks", "minecraft:stone_bricks", "minecraft:polished_deepslate"}) {
             items.add(org.overengineer.bettacraft.equipment.CabinetBlockItem.setWood(
-                    new ItemStack(org.overengineer.bettacraft.registry.ModItems.CABINET.get()), ResourceLocation.parse(m)));
+                    new ItemStack(org.overengineer.bettacraft.registry.ModItems.CABINET.get()), Identifier.parse(m)));
         }
         // the plants last (flat icons on purpose, like vanilla saplings)
         items.sort((a, b) -> Boolean.compare(a.getItem() instanceof AquaticPlantItem || plant(a), b.getItem() instanceof AquaticPlantItem || plant(b)));
@@ -77,7 +77,7 @@ final class DevClientSmokeM291 {
         }
         // close-ups of the icons that were hard to read before M29.1
         List<ItemStack> zoom = new ArrayList<>();
-        for (String id : ZOOM) zoom.add(new ItemStack(BuiltInRegistries.ITEM.get(BettaCraft.id(id))));
+        for (String id : ZOOM) zoom.add(new ItemStack(BuiltInRegistries.ITEM.getValue(BettaCraft.id(id))));
         then(1, () -> mc.setScreen(new Grid(zoom, 4F)));
         then(15, () -> shot("items_zoom"));
         then(1, () -> mc.setScreen(null));

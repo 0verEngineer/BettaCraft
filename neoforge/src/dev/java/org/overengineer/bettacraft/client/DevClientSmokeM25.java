@@ -63,7 +63,7 @@ final class DevClientSmokeM25 {
             shot("scene");
         });
         then(1, () -> mc.options.hideGui = false);
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 5.5, base.getY() + 1.0, base.getZ() - 1.5, 0F, 20F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), base.getX() + 5.5, base.getY() + 1.0, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false)));
         then(20, () -> org.overengineer.bettacraft.util.ClientHooks.openRegulator(base.offset(5, 0, 0)));
         then(20, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.RegulatorScreen)) LOGGER.error("[smoketest] M25 no regulator screen for the cylinder");
@@ -80,7 +80,7 @@ final class DevClientSmokeM25 {
     }
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         for (int x = -14; x <= 20; x++)
             for (int z = -12; z <= 16; z++) {
                 level.setBlockAndUpdate(base.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
@@ -137,7 +137,7 @@ final class DevClientSmokeM25 {
 
     private void check() {
         server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             TankBlockEntity c = TankMultiblock.getController(level, base.offset(2, 0, 0));
             int n = c == null ? 0 : TankEquipment.co2Sources(level, c).size();
             if (n != 2) LOGGER.error("[smoketest] M25 the tank has {} CO2 sources, expected 2", n);
@@ -184,7 +184,7 @@ final class DevClientSmokeM25 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {

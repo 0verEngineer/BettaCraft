@@ -422,42 +422,42 @@ public final class InteriorEquipment {
         coolers.clear();
         filters.clear();
         floating.clear();
-        long[] hk = t.getLongArray("heaters");
-        int[] hv = t.getIntArray("heater_capacity");
+        long[] hk = t.getLongArray("heaters").orElse(new long[0]);
+        int[] hv = t.getIntArray("heater_capacity").orElse(new int[0]);
         for (int i = 0; i < hk.length; i++) heaters.put(hk[i], i < hv.length ? hv[i] : 16);
-        long[] ck = t.getLongArray("coolers"); // M9; absent in older regions (there were no coolers)
-        int[] cv = t.getIntArray("cooler_capacity");
+        long[] ck = t.getLongArray("coolers").orElse(new long[0]); // M9; absent in older regions (there were no coolers)
+        int[] cv = t.getIntArray("cooler_capacity").orElse(new int[0]);
         for (int i = 0; i < ck.length; i++) coolers.put(ck[i], i < cv.length ? cv[i] : 16);
-        for (long l : t.getLongArray("filters")) filters.add(l);
-        for (long l : t.getLongArray("floating")) floating.add(l);
+        for (long l : t.getLongArray("filters").orElse(new long[0])) filters.add(l);
+        for (long l : t.getLongArray("floating").orElse(new long[0])) floating.add(l);
         caveBlocks.clear();
         mopBlocks.clear();
-        for (long l : t.getLongArray("caves")) caveBlocks.add(l);
-        for (long l : t.getLongArray("mops")) mopBlocks.add(l);
+        for (long l : t.getLongArray("caves").orElse(new long[0])) caveBlocks.add(l);
+        for (long l : t.getLongArray("mops").orElse(new long[0])) mopBlocks.add(l);
         smallCaveBlocks.clear();
-        for (long l : t.getLongArray("small_caves")) smallCaveBlocks.add(l);
+        for (long l : t.getLongArray("small_caves").orElse(new long[0])) smallCaveBlocks.add(l);
         pumps.clear();
-        for (long l : t.getLongArray("pumps")) pumps.add(l);
-        liveRock = Math.max(0, t.getInt("live_rock"));
+        for (long l : t.getLongArray("pumps").orElse(new long[0])) pumps.add(l);
+        liveRock = Math.max(0, t.getIntOr("live_rock", 0));
         clearM23();
-        for (long l : t.getLongArray("corners")) corners.add(l);
-        for (long l : t.getLongArray("sponge_filters")) spongeFilters.add(l);
-        for (long l : t.getLongArray("air_stones")) airStones.add(l);
-        for (long l : t.getLongArray("intake_sponges")) intakeSponges.add(l);
-        long[] pk = t.getLongArray("power_keys");
-        int[] pv = t.getIntArray("power_values");
+        for (long l : t.getLongArray("corners").orElse(new long[0])) corners.add(l);
+        for (long l : t.getLongArray("sponge_filters").orElse(new long[0])) spongeFilters.add(l);
+        for (long l : t.getLongArray("air_stones").orElse(new long[0])) airStones.add(l);
+        for (long l : t.getLongArray("intake_sponges").orElse(new long[0])) intakeSponges.add(l);
+        long[] pk = t.getLongArray("power_keys").orElse(new long[0]);
+        int[] pv = t.getIntArray("power_values").orElse(new int[0]);
         for (int i = 0; i < pk.length && i < pv.length; i++) power.put(pk[i], pv[i]);
         plumbing.clear();
-        long[] qk = t.getLongArray("plumbing_keys");
-        int[] qv = t.getIntArray("plumbing_codes");
+        long[] qk = t.getLongArray("plumbing_keys").orElse(new long[0]);
+        int[] qv = t.getIntArray("plumbing_codes").orElse(new int[0]);
         for (int i = 0; i < qk.length && i < qv.length; i++) plumbing.put(qk[i], qv[i]);
         plumbingVersion++;
         spawningVersion++;
-        substrate = t.getInt("substrate");
-        needsScan = t.getBoolean("rescan");
+        substrate = t.getIntOr("substrate", 0);
+        needsScan = t.getBooleanOr("rescan", false);
         if (!t.contains("small_caves")) needsScan = true; // M29: regions of earlier versions find their small caves once
-        if (!t.getBoolean("dry")) needsScan = true; // M29.1: regions of earlier versions lose their stray water blocks once
-        int[] chem = t.getIntArray("chem"); // M25: regions of earlier versions count the soil, limestone and wood once
+        if (!t.getBooleanOr("dry", false)) needsScan = true; // M29.1: regions of earlier versions lose their stray water blocks once
+        int[] chem = t.getIntArray("chem").orElse(new int[0]); // M25: regions of earlier versions count the soil, limestone and wood once
         if (chem.length >= 5) {
             floorBlocks = chem[0];
             acidFloor = chem[1];
@@ -473,25 +473,25 @@ public final class InteriorEquipment {
         foreignPlants.clear();
         foreignVersion++;
         if (t.contains("foreign_plants")) {
-            CompoundTag ft = t.getCompound("foreign_plants");
-            long[] fk = ft.getLongArray("keys");
-            int[] fi = ft.getIntArray("blocks");
-            net.minecraft.nbt.ListTag pl = ft.getList("palette", net.minecraft.nbt.Tag.TAG_STRING);
+            CompoundTag ft = t.getCompoundOrEmpty("foreign_plants");
+            long[] fk = ft.getLongArray("keys").orElse(new long[0]);
+            int[] fi = ft.getIntArray("blocks").orElse(new int[0]);
+            net.minecraft.nbt.ListTag pl = ft.getListOrEmpty("palette");
             net.minecraft.world.level.block.Block[] blocks = new net.minecraft.world.level.block.Block[pl.size()];
             for (int i = 0; i < pl.size(); i++) {
-                var id = net.minecraft.resources.ResourceLocation.tryParse(pl.getString(i));
+                var id = net.minecraft.resources.Identifier.tryParse(pl.getStringOr(i, ""));
                 blocks[i] = id == null ? null : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(id).orElse(null);
             }
             for (int i = 0; i < fk.length && i < fi.length; i++) {
                 if (fi[i] >= 0 && fi[i] < blocks.length && blocks[fi[i]] != null) foreignPlants.put(fk[i], blocks[fi[i]]);
                 else needsScan = true; // a block of a mod that is gone
             }
-            foreignSignature = ft.getInt("signature");
+            foreignSignature = ft.getIntOr("signature", 0);
         } else {
             foreignSignature = 0;
             needsScan = true;
         }
-        int[] litter = t.getIntArray("litter"); // M28: regions of earlier versions count the litter and shelter once
+        int[] litter = t.getIntArray("litter").orElse(new int[0]); // M28: regions of earlier versions count the litter and shelter once
         if (litter.length >= 3) {
             leafLitter = litter[0];
             alderCones = litter[1];

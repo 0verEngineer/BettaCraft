@@ -25,9 +25,9 @@ public final class GlassMobData {
 
     public static GlassMobData load(CompoundTag t) {
         GlassMobData d = new GlassMobData();
-        d.growth = t.contains("growth") ? Math.max(0, Math.min(1, t.getDouble("growth"))) : 1.0;
-        d.fedAt = t.contains("fed") ? t.getLong("fed") : NEVER;
-        d.bredAt = t.contains("bred") ? t.getLong("bred") : NEVER;
+        d.growth = t.contains("growth") ? Math.max(0, Math.min(1, t.getDoubleOr("growth", 0d))) : 1.0;
+        d.fedAt = t.contains("fed") ? t.getLongOr("fed", 0L) : NEVER;
+        d.bredAt = t.contains("bred") ? t.getLongOr("bred", 0L) : NEVER;
         return d;
     }
 }

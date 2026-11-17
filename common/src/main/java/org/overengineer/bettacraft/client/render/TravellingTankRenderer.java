@@ -63,7 +63,7 @@ public final class TravellingTankRenderer {
      */
     public static boolean travellingBlock(TankBlockEntity be) {
         Level level = be.getLevel();
-        if (level == null || !level.isClientSide || !SableCompat.loaded()) return false;
+        if (level == null || !level.isClientSide() || !SableCompat.loaded()) return false;
         long now = level.getGameTime();
         if (be.travelCheckAt == Long.MIN_VALUE || now - be.travelCheckAt >= 20 || now < be.travelCheckAt) {
             be.travelCheckAt = now;
@@ -127,7 +127,7 @@ public final class TravellingTankRenderer {
         if (be.travelCache instanceof Cache c && c.source() == src) return c.animals();
         List<Animal> out = new ArrayList<>();
         for (int i = 0; i < src.size() && out.size() < MAX_ANIMALS; i++) {
-            CompoundTag tag = src.getCompound(i);
+            CompoundTag tag = src.getCompoundOrEmpty(i);
             Entity e;
             try {
                 e = EntityType.create(tag, mc.level).orElse(null);
@@ -135,9 +135,9 @@ public final class TravellingTankRenderer {
                 e = null;
             }
             if (e == null) continue;
-            ListTag place = tag.getList(TankMoves.PLACE_KEY, Tag.TAG_DOUBLE);
-            double hx = place.size() == 3 ? place.getDouble(0) : 0.5, hy = place.size() == 3 ? place.getDouble(1) : 0.4,
-                    hz = place.size() == 3 ? place.getDouble(2) : 0.5;
+            ListTag place = tag.getListOrEmpty(TankMoves.PLACE_KEY);
+            double hx = place.size() == 3 ? place.getDoubleOr(0, 0d) : 0.5, hy = place.size() == 3 ? place.getDoubleOr(1, 0d) : 0.4,
+                    hz = place.size() == 3 ? place.getDoubleOr(2, 0d) : 0.5;
             RandomSource r = RandomSource.create(e.getUUID().getLeastSignificantBits() ^ i);
             ((org.overengineer.bettacraft.mixin.EntityAccessor) e).bettacraft$setWasTouchingWater(true); // swimming, not flopping on land
             float sat = org.overengineer.bettacraft.tank.TravelCare.satiation(tag);

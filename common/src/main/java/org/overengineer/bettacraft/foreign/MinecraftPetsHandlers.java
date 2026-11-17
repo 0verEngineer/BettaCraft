@@ -16,13 +16,12 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -78,8 +77,8 @@ public final class MinecraftPetsHandlers {
         ItemStack stack = event.getItemStack();
         if (!farmTool(stack)) return;
         event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.sidedSuccess(event.getLevel().isClientSide));
-        if (!event.getLevel().isClientSide) {
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!event.getLevel().isClientSide()) {
             event.getEntity().displayClientMessage(Component.translatable("message.bettacraft.pet.no_farm", target.getDisplayName()), true);
         }
     }

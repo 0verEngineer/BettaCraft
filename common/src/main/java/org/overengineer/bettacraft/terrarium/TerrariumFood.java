@@ -13,7 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -89,24 +89,24 @@ public final class TerrariumFood {
     }
 
     /** Land food on a tank: the hungriest animal that eats it eats one. PASS if it is no land food or nobody eats it now. */
-    public static ItemInteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
+    public static InteractionResult handFeed(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand) {
         Diet d = diet(stack);
-        if (d == null || !(level instanceof ServerLevel server)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (d == null || !(level instanceof ServerLevel server)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
-        if (c == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         List<Entity> list = eaters(server, c.getTank(), d);
-        if (list.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (list.isEmpty()) return InteractionResult.TRY_WITH_EMPTY_HAND;
         Entity pick = list.getFirst();
         ((TerrariumAnimal) pick).feed();
         ItemStack one = stack.copyWithCount(1);
-        String id = stack.getDescriptionId();
+        String id = stack.getItem().getDescriptionId();
         if (!player.getAbilities().instabuild) stack.shrink(1);
         server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, one), pick.getX(), pick.getY() + 0.2, pick.getZ(), 6, 0.1, 0.05, 0.1, 0.02);
-        level.playSound(null, pick.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.NEUTRAL, 0.5F, 1.4F);
+        level.playSound(null, pick.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.5F, 1.4F);
         TankCare.log(server, c, "log.bettacraft.turtle.greens", TankCare.nameArg(pick), "@" + id);
         player.displayClientMessage(d == Diet.GREENS ? Component.translatable("message.bettacraft.turtle.greens", pick.getDisplayName())
                 : Component.translatable("message.bettacraft.terrarium.ate", pick.getDisplayName(), one.getHoverName()), true);
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /** The feeder: land food for every animal that eats it and is hungry. Returns the items used. */

@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -19,71 +19,71 @@ import net.minecraft.world.level.gameevent.GameEvent;
 public final class TankInteractions {
     private TankInteractions() {}
 
-    public static ItemInteractionResult useItemOn(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand,
+    public static InteractionResult useItemOn(ItemStack stack, Level level, BlockPos pos, Player player, InteractionHand hand,
                                                   net.minecraft.world.phys.BlockHitResult hit) {
         // M21.5: a clip-on feeder in the hand goes onto the side of the glass (no tank menu)
-        if (stack.is(org.overengineer.bettacraft.registry.ModItems.CLIP_FEEDER.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        ItemInteractionResult r = org.overengineer.bettacraft.genetics.MagnifierItem.useOnTank(stack, level, pos, player, hand); // M22.3
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (stack.is(org.overengineer.bettacraft.registry.ModItems.CLIP_FEEDER.get())) return InteractionResult.PASS;
+        InteractionResult r = org.overengineer.bettacraft.genetics.MagnifierItem.useOnTank(stack, level, pos, player, hand); // M22.3
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.critters.TankCritters.tryInsert(stack, level, pos, player, hand); // M14
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.tankmates.TankmateItems.useOnTank(stack, level, pos, player, hand); // M19: groups, clutches, breeding box
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = TankInhabitants.tryInsert(stack, level, pos, player, hand);
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.big.DolphinCare.feed(stack, level, pos, player, hand); // M30: raw fish for the dolphins
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.foreign.ForeignFood.handFeed(stack, level, pos, player, hand); // M35: greens, meat for the animals of other mods
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.mobs.GlassMobs.handFeed(stack, level, pos, player, hand); // M31 part d: food for the mobs in glass, or bait
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.tankmates.Archerfish.useOnTank(stack, level, pos, player, hand); // M49: fruit flies over the archerfish
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.terrarium.TerrariumFood.handFeed(stack, level, pos, player, hand); // M31 part b: greens for the turtles
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = TankCare.handFeed(stack, level, pos, player, hand, hit.getLocation());
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.foreign.MinecraftPets.handBait(stack, level, pos, player, hand); // M39 part c: bait for the Minecraft pets
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.reef.ReefItems.useOnTank(stack, level, pos, player, hand); // M20: sea salt, calcium
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.reef.ClownLarvae.useOnTank(stack, level, pos, player, hand); // M48 part b: phytoplankton
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.critters.AmanoLarvae.useOnTank(stack, level, pos, player, hand); // M49: a bag of Amano larvae
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.chem.ChemItem.useOnTank(stack, level, pos, player, hand); // M25: measuring, salt, leaves
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         r = org.overengineer.bettacraft.fertilizer.Fertilizer.useOnTank(stack, level, pos, player, hand); // M37: a portion of fertilizer
-        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        if (r != InteractionResult.TRY_WITH_EMPTY_HAND) return r;
         boolean sea = stack.is(org.overengineer.bettacraft.registry.ModItems.SEA_WATER_BUCKET.get());
         boolean ro = stack.is(org.overengineer.bettacraft.registry.ModItems.RO_WATER_BUCKET.get()); // M25
         boolean fill = stack.is(Items.WATER_BUCKET) || sea || ro;
         boolean drain = stack.is(Items.BUCKET);
         if (!fill && !drain) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
-        if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS;
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) {
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         TankData tank = controller.getTank();
         if (!TankInhabitants.canModify(player, tank)) {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (fill) {
             // M33.1: a fixed terrarium takes no water, a fixed paludarium only up to its land
             if (org.overengineer.bettacraft.terrarium.WaterLimit.blocks(server, controller, TankData.MB_PER_BLOCK)) {
                 org.overengineer.bettacraft.terrarium.WaterLimit.tell(server, controller, player);
-                return ItemInteractionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
             if (tank.waterMb() + TankData.MB_PER_BLOCK > tank.capacityMb()) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.full"), true);
-                return ItemInteractionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
             float qualityBefore = tank.waterQuality();
             boolean hadWater = tank.waterMb() > 0;
@@ -107,13 +107,13 @@ public final class TankInteractions {
         } else {
             if (tank.waterMb() < TankData.MB_PER_BLOCK) {
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_enough_water"), true);
-                return ItemInteractionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
             double minFill = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
             if (tank.waterMb() - TankData.MB_PER_BLOCK < minFill * tank.capacityMb() && !TankInhabitants.liveInhabitants(server, tank).isEmpty()) {
                 // keep the inhabitants in water
                 player.displayClientMessage(Component.translatable("message.bettacraft.tank.keep_water", Math.round(minFill * 100)), true);
-                return ItemInteractionResult.CONSUME;
+                return InteractionResult.CONSUME;
             }
             boolean salty = tank.marine();
             changeWater(server, controller, -TankData.MB_PER_BLOCK);
@@ -123,7 +123,7 @@ public final class TankInteractions {
             level.playSound(null, pos, org.overengineer.bettacraft.registry.ModSounds.TANK_DRAIN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         }
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     /**

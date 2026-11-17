@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tankmates;
 
+import net.minecraft.world.InteractionResult;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -93,15 +94,15 @@ public final class Archerfish {
     }
 
     /** Fruit flies in the hand on a tank with an archerfish and an open top: one item let out over the water. */
-    public static net.minecraft.world.ItemInteractionResult useOnTank(ItemStack stack, net.minecraft.world.level.Level level, BlockPos pos,
+    public static net.minecraft.world.InteractionResult useOnTank(ItemStack stack, net.minecraft.world.level.Level level, BlockPos pos,
                                                                      net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
-        if (!enabled() || !stack.is(ModTags.SMALL_FEEDER_INSECTS)) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!(level instanceof ServerLevel server)) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!enabled() || !stack.is(ModTags.SMALL_FEEDER_INSECTS)) return net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!(level instanceof ServerLevel server)) return net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND;
         TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, pos);
-        if (c == null || release(server, c, stack, 1) <= 0) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (c == null || release(server, c, stack, 1) <= 0) return net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!player.getAbilities().instabuild) stack.shrink(1);
         player.displayClientMessage(Component.translatable("message.bettacraft.archerfish.flies").withStyle(ChatFormatting.GREEN), true);
-        return net.minecraft.world.ItemInteractionResult.CONSUME;
+        return net.minecraft.world.InteractionResult.CONSUME;
     }
 
     /** The care step (every second): insects come to the plants, the archerfish shoot, now and then a player is splashed. */
@@ -115,7 +116,7 @@ public final class Archerfish {
         if (tops.isEmpty()) return;
         var rnd = level.getRandom();
         // insects come to the plants above the open tank by day
-        if (level.isDay()) {
+        if (level.isBrightOutside()) {
             int spots = insectSpots(level, c, tops);
             if (spots > 0) {
                 double rate = ServerConfig.getOr(ServerConfig.ARCHER_INSECTS, 6.0) * Math.min(1.0, spots / 2.0);
@@ -183,7 +184,7 @@ public final class Archerfish {
 
     /** The pale blue of the jet (small dust particles: they stay where they are for a moment, in the water and in the air). */
     private static final net.minecraft.core.particles.DustParticleOptions JET = new net.minecraft.core.particles.DustParticleOptions(
-            new org.joml.Vector3f(0.62F, 0.84F, 1.0F), 0.7F);
+            net.minecraft.util.ARGB.colorFromFloat(1.0F, 0.62F, 0.84F, 1.0F), 0.7F);
 
     /** A thin line of water particles from the mouth to the target, a splash where it hits. */
     static void jet(ServerLevel level, Vec3 from, Vec3 to) {

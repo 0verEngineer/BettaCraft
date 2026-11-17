@@ -1,10 +1,10 @@
 package org.overengineer.bettacraft.client.render;
 
-import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.aquarist.AquaristEntity;
 
@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.aquarist.AquaristEntity;
  * four procedural skins with his work clothes ({@code tools/assetgen/hired_aquarist.py}); the item of his job in his hand.
  */
 public class AquaristRenderer extends HumanoidMobRenderer<AquaristEntity, PlayerModel<AquaristEntity>> {
-    private static final ResourceLocation[] TEXTURES = new ResourceLocation[AquaristEntity.VARIANTS];
+    private static final Identifier[] TEXTURES = new Identifier[AquaristEntity.VARIANTS];
 
     static {
         for (int i = 0; i < TEXTURES.length; i++) TEXTURES[i] = BettaCraft.id("textures/entity/hired_aquarist/aquarist_" + i + ".png");
@@ -24,7 +24,7 @@ public class AquaristRenderer extends HumanoidMobRenderer<AquaristEntity, Player
     }
 
     @Override
-    public ResourceLocation getTextureLocation(AquaristEntity e) {
+    public Identifier getTextureLocation(AquaristEntity e) {
         return TEXTURES[e.variant()];
     }
 }

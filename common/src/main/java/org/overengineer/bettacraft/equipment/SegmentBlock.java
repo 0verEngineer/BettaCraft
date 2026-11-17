@@ -74,7 +74,7 @@ public class SegmentBlock extends Block implements org.overengineer.bettacraft.p
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
     public static final EnumProperty<Size> SIZE = EnumProperty.create("size", Size.class);
     /** Internal filter (M4): side of the outlet with the water jet; the heater ignores it. */
-    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<Direction> FACING =
             net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
     private final Kind kind;
@@ -131,7 +131,7 @@ public class SegmentBlock extends Block implements org.overengineer.bettacraft.p
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return itemFor(state);
     }
 
@@ -141,7 +141,7 @@ public class SegmentBlock extends Block implements org.overengineer.bettacraft.p
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             // M17: two pieces placed side by side touch and are removed together; every piece (its anchor block) gives
             // its own item back, not only the one that was hit
             List<ItemStack> drops = new ArrayList<>();

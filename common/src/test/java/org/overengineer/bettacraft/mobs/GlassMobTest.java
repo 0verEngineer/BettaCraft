@@ -25,7 +25,7 @@ import org.overengineer.bettacraft.terrarium.TerrariumNeeds.Habitat;
 class GlassMobTest {
     private static CompoundTag snbt(String s) {
         try {
-            return TagParser.parseTag(s);
+            return TagParser.parseCompoundFully(s);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -54,7 +54,7 @@ class GlassMobTest {
         assertEquals(spider.scale() * 0.55F, spider.scaleAt(0), 1e-5);
         assertEquals(spider.scale(), spider.scaleAt(1), 1e-6);
         assertEquals(drowned.scale(), drowned.scaleAt(0), 1e-6, "a vanilla baby is small by itself");
-        GlassMobSpecies other = GlassMobSpecies.generic(net.minecraft.resources.ResourceLocation.parse("othermod:ghoul"), 0.6F, 1.95F);
+        GlassMobSpecies other = GlassMobSpecies.generic(net.minecraft.resources.Identifier.parse("othermod:ghoul"), 0.6F, 1.95F);
         assertEquals(0.35, other.scale() * 1.95, 1e-3, "an added mob is about a third of a block tall");
     }
 
@@ -62,12 +62,12 @@ class GlassMobTest {
     void enderIoSoulVial() {
         CompoundTag e = MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{entity_type:\"minecraft:zombie\",entity_tag:{id:\"minecraft:zombie\",Health:4.0f}}"));
         assertNotNull(e);
-        assertEquals("minecraft:zombie", e.getString("id"));
-        assertEquals(4.0F, e.getFloat("Health"));
+        assertEquals("minecraft:zombie", e.getStringOr("id", ""));
+        assertEquals(4.0F, e.getFloatOr("Health", 0f));
         CompoundTag old = MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{entityTag:{id:\"minecraft:spider\",Health:2.0f}}"));
-        assertEquals("minecraft:spider", old.getString("id"));
+        assertEquals("minecraft:spider", old.getStringOr("id", ""));
         CompoundTag noId = MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{entity_type:\"minecraft:husk\",entity_tag:{Health:5.0f}}"));
-        assertEquals("minecraft:husk", noId.getString("id"));
+        assertEquals("minecraft:husk", noId.getStringOr("id", ""));
         assertNull(MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{}")), "an empty vial");
     }
 
@@ -75,15 +75,15 @@ class GlassMobTest {
     void industrialForegoingImprisonmentTool() {
         CompoundTag e = MobCaptures.parse(MobCaptures.Format.IMPRISONMENT, snbt("{entity:\"minecraft:drowned\",Health:3.0f,Pos:[1.0d,2.0d,3.0d]}"));
         assertNotNull(e);
-        assertEquals("minecraft:drowned", e.getString("id"));
+        assertEquals("minecraft:drowned", e.getStringOr("id", ""));
         assertFalse(e.contains("entity"));
-        assertEquals(3.0F, e.getFloat("Health"));
+        assertEquals(3.0F, e.getFloatOr("Health", 0f));
     }
 
     @Test
     void genericCaptureItems() {
         CompoundTag e = MobCaptures.parse(MobCaptures.Format.GENERIC, snbt("{StoredEntity:{id:\"minecraft:slime\",Health:1.0f,Size:0}}"));
-        assertEquals("minecraft:slime", e.getString("id"));
+        assertEquals("minecraft:slime", e.getStringOr("id", ""));
         assertNull(MobCaptures.parse(MobCaptures.Format.GENERIC, snbt("{item:{id:\"minecraft:stone\",count:1}}")), "an item is no mob");
     }
 }

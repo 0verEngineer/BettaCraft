@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.command;
 
+import org.overengineer.bettacraft.util.Perms;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -25,9 +26,9 @@ final class AquaristCommand {
                 .then(Commands.literal("hire").executes(ctx -> answer(ctx.getSource(), true)))
                 .then(Commands.literal("decline").executes(ctx -> answer(ctx.getSource(), false)))
                 .then(Commands.literal("status").executes(ctx -> status(ctx.getSource(), ctx.getSource().getPlayerOrException()))
-                        .then(Commands.argument("player", EntityArgument.player()).requires(s -> s.hasPermission(2))
+                        .then(Commands.argument("player", EntityArgument.player()).requires(s -> Perms.has(s, 2))
                                 .executes(ctx -> status(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
-                .then(Commands.literal("arrive").requires(s -> s.hasPermission(2))
+                .then(Commands.literal("arrive").requires(s -> Perms.has(s, 2))
                         .executes(ctx -> arrive(ctx.getSource(), ctx.getSource().getPlayerOrException()))
                         .then(Commands.argument("player", EntityArgument.player()).executes(ctx -> arrive(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));
     }
@@ -44,10 +45,10 @@ final class AquaristCommand {
 
     private static int status(CommandSourceStack src, ServerPlayer p) {
         String why = AquaristArrival.whyNot(p, false);
-        AquaristRecords rec = AquaristRecords.get(p.getServer());
+        AquaristRecords rec = AquaristRecords.get(p.level().getServer());
         AquaristRecords.PlayerRecord r = rec.player(p.getUUID());
-        int tanks = rec.ownTanks(p.getServer(), p.getUUID());
-        double wait = Math.max(0, (r.notBefore - p.getServer().overworld().getGameTime()) / 24000.0);
+        int tanks = rec.ownTanks(p.level().getServer(), p.getUUID());
+        double wait = Math.max(0, (r.notBefore - p.level().getServer().overworld().getGameTime()) / 24000.0);
         Component reason = why == null ? Component.translatable("message.bettacraft.aquarist.why.none")
                 : Component.translatable("message.bettacraft.aquarist.why." + why, tanks, ServerConfig.getOr(ServerConfig.AQUARIST_MIN_TANKS, 3),
                 String.format(java.util.Locale.ROOT, "%.1f", wait));
@@ -58,7 +59,7 @@ final class AquaristCommand {
     }
 
     private static int arrive(CommandSourceStack src, ServerPlayer p) {
-        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).player(p.getUUID());
+        AquaristRecords.PlayerRecord r = AquaristRecords.get(p.level().getServer()).player(p.getUUID());
         if (r.npc != null) {
             src.sendFailure(Component.translatable("message.bettacraft.aquarist.why." + (r.hired ? "hired" : "offering"), 0, 0, "0"));
             return 0;

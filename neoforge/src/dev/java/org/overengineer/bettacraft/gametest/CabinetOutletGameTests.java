@@ -188,7 +188,7 @@ public final class CabinetOutletGameTests {
             h.assertTrue(cab.outletSide() == OutletSide.LEFT, "left set");
             // the update tag (network) carries the side
             CompoundTag upd = cab.getUpdateTag(level.registryAccess());
-            h.assertTrue("left".equals(upd.getString("outlet")), "update tag: " + upd);
+            h.assertTrue("left".equals(upd.getStringOr("outlet", "")), "update tag: " + upd);
             // saved and loaded
             CompoundTag saved = cab.saveWithFullMetadata(level.registryAccess());
             CabinetBlockEntity copy = new CabinetBlockEntity(h.absolutePos(cp), state);

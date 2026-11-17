@@ -5,7 +5,7 @@ import java.util.function.Function;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -68,7 +68,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     /** Tank, external filter and cabinet. */
     static final class Blocks implements IProbeInfoProvider {
         @Override
-        public ResourceLocation getID() {
+        public Identifier getID() {
             return BettaCraft.id("blocks");
         }
 

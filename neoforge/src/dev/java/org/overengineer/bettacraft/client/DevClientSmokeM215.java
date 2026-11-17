@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -143,7 +143,7 @@ final class DevClientSmokeM215 {
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {
             reach(p, true);
-            p.teleportTo(p.serverLevel(), swim.getX() + 2.0, swim.getY(), swim.getZ() - 3.0, 0F, 0F);
+            p.teleportTo(p.level(), swim.getX() + 2.0, swim.getY(), swim.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
         }));
         then(10, () -> openMenu(swim));
         then(30, () -> shot("menu_protection_off"));
@@ -163,7 +163,7 @@ final class DevClientSmokeM215 {
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             boolean broke = p.gameMode.destroyBlock(swim);
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.CREATIVE);
-            boolean still = p.serverLevel().getBlockState(swim).is(ModBlocks.TANK.get());
+            boolean still = p.level().getBlockState(swim).is(ModBlocks.TANK.get());
             LOGGER.info("[smoketest] M21.5 breaking a protected tank: broken {}, still there {}", broke, still);
             if (broke || !still) LOGGER.error("[smoketest] M21.5 the protected tank was broken");
         }));
@@ -212,7 +212,7 @@ final class DevClientSmokeM215 {
     // ------------------------------------------------------------------ building
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         base = p.blockPosition().offset(-30, 3, 380);
         RandomSource r = RandomSource.create(215);
         // smooth swimming: neons, green neons, kuhli loaches, otocinclus, a bristlenose
@@ -232,7 +232,7 @@ final class DevClientSmokeM215 {
         for (int i = 0; i < 6; i++) {
             TankmateEntity e = fish(level, c, TankmateSpecies.GREEN_NEON_TETRA, TankmateGenes.pure(TankmateSpecies.GREEN_NEON_TETRA, i % 2 == 0 ? "wild" : "blue"), i % 2 == 0);
             if (e != null) {
-                e.moveTo(colors.getX() + 0.45 + (i % 3) * 0.55, colors.getY() + 0.3 + (i / 3) * 0.3, colors.getZ() + 0.6 + (i % 2) * 0.2, 90F, 0F);
+                e.snapTo(colors.getX() + 0.45 + (i % 3) * 0.55, colors.getY() + 0.3 + (i / 3) * 0.3, colors.getZ() + 0.6 + (i % 2) * 0.2, 90F, 0F);
                 e.setYBodyRot(90F);
                 e.setYHeadRot(90F);
                 SmokeFreeze.freeze(e, true);
@@ -251,12 +251,12 @@ final class DevClientSmokeM215 {
         light(level, snails, 2, 1, 1);
         // cabinets of several woods (and other mods' planks), each under a small tank
         cabinets = base.offset(0, 0, 8);
-        List<ResourceLocation> woods = new ArrayList<>();
+        List<Identifier> woods = new ArrayList<>();
         for (String w : new String[] {"oak_planks", "spruce_planks", "mangrove_planks", "bamboo_planks", "cherry_planks", "crimson_planks"}) {
-            woods.add(ResourceLocation.withDefaultNamespace(w));
+            woods.add(Identifier.withDefaultNamespace(w));
         }
         for (var e : BuiltInRegistries.BLOCK.entrySet()) {
-            ResourceLocation id = e.getKey().location();
+            Identifier id = e.getKey().location();
             if (!id.getNamespace().equals("minecraft") && !id.getNamespace().equals(BettaCraft.MOD_ID) && id.getPath().endsWith("_planks") && woods.size() < 8) woods.add(id);
         }
         LOGGER.info("[smoketest] M21.5 cabinet woods: {}", woods);
@@ -343,7 +343,7 @@ final class DevClientSmokeM215 {
 
     private void openMenu(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
@@ -360,7 +360,7 @@ final class DevClientSmokeM215 {
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.server.overworld(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
-            else p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 

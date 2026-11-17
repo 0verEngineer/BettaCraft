@@ -69,17 +69,12 @@ public record CrucibleRecipe(List<SizedIngredient> ingredients, ItemStack result
         return result.copy();
     }
 
-    @Override
-    public boolean canCraftInDimensions(int w, int h) {
-        return true;
-    }
-
-    @Override
+    /** The result (1.21.1 {@code getResultItem}). */
     public ItemStack getResultItem(HolderLookup.Provider registries) {
         return result;
     }
 
-    @Override
+    /** The ingredients without their counts (1.21.1 {@code getIngredients}). */
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> l = NonNullList.create();
         for (SizedIngredient s : ingredients) l.add(s.ingredient());
@@ -91,13 +86,24 @@ public record CrucibleRecipe(List<SizedIngredient> ingredients, ItemStack result
         return true;
     }
 
+    /** M52b: not in the recipe book (a device of its own), so nothing to place. */
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public net.minecraft.world.item.crafting.PlacementInfo placementInfo() {
+        return net.minecraft.world.item.crafting.PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public net.minecraft.world.item.crafting.RecipeBookCategory recipeBookCategory() {
+        return net.minecraft.world.item.crafting.RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public RecipeSerializer<CrucibleRecipe> getSerializer() {
         return ModRecipes.CRUCIBLE.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<CrucibleRecipe> getType() {
         return ModRecipes.CRUCIBLE_TYPE.get();
     }
 

@@ -96,8 +96,8 @@ public final class PlantIndex {
 
     public void load(CompoundTag t) {
         plants.clear();
-        nextId = Math.max(1, t.getInt("next_id"));
-        for (Tag e : t.getList("list", Tag.TAG_COMPOUND)) {
+        nextId = Math.max(1, t.getIntOr("next_id", 0));
+        for (Tag e : t.getListOrEmpty("list")) {
             InteriorPlant p = InteriorPlant.load((CompoundTag) e);
             if (p == null) continue;
             plants.add(p);

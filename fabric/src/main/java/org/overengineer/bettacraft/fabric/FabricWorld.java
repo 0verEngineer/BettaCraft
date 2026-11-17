@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.fabric;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,7 +21,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
@@ -51,7 +52,7 @@ public final class FabricWorld {
     // ------------------------------------------------------------------ biomes
 
     private static TagKey<Biome> tag(String id) {
-        return TagKey.create(Registries.BIOME, ResourceLocation.parse(id));
+        return TagKey.create(Registries.BIOME, Identifier.parse(id));
     }
 
     private static void biomes() {
@@ -83,14 +84,14 @@ public final class FabricWorld {
     // ------------------------------------------------------------------ loot
 
     /** One global loot modifier of our data: the loot table it is limited to (or null), its conditions, what it does. */
-    record Modifier(String type, ResourceLocation table, List<LootItemCondition> conditions, ItemStack item) {}
+    record Modifier(String type, Identifier table, List<LootItemCondition> conditions, ItemStack item) {}
 
     static volatile List<Modifier> modifiers = List.of();
 
     private static void loot() {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
-            public ResourceLocation getFabricId() {
+            public Identifier getFabricId() {
                 return BettaCraft.id("loot_modifiers");
             }
 
@@ -102,7 +103,7 @@ public final class FabricWorld {
     }
 
     /** The loot of a table was rolled (LootTableMixin; the table's id is its random sequence, as vanilla's tables have it). */
-    public static void modify(ResourceLocation id, LootContext context, ObjectArrayList<ItemStack> loot) {
+    public static void modify(Identifier id, LootContext context, ObjectArrayList<ItemStack> loot) {
         List<Modifier> ms = modifiers;
         if (ms.isEmpty()) return;
         for (Modifier m : ms) {
@@ -126,23 +127,23 @@ public final class FabricWorld {
     private static List<Modifier> read(ResourceManager rm) {
         List<Modifier> out = new ArrayList<>();
         var ops = RegistryOps.create(JsonOps.INSTANCE, net.minecraft.core.RegistryAccess.EMPTY);
-        var list = rm.getResource(ResourceLocation.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json"));
+        var list = rm.getResource(Identifier.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json"));
         if (list.isEmpty()) return out;
         try (Reader r = list.get().openAsReader()) {
             JsonArray entries = JsonParser.parseReader(r).getAsJsonObject().getAsJsonArray("entries");
             for (JsonElement e : entries) {
-                ResourceLocation id = ResourceLocation.parse(e.getAsString());
+                Identifier id = Identifier.parse(e.getAsString());
                 if (!id.getNamespace().equals(BettaCraft.MOD_ID)) continue;
-                var res = rm.getResource(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "loot_modifiers/" + id.getPath() + ".json"));
+                var res = rm.getResource(Identifier.fromNamespaceAndPath(id.getNamespace(), "loot_modifiers/" + id.getPath() + ".json"));
                 if (res.isEmpty()) continue;
                 try (Reader mr = res.get().openAsReader()) {
                     JsonObject o = JsonParser.parseReader(mr).getAsJsonObject();
-                    ResourceLocation table = null;
+                    Identifier table = null;
                     List<LootItemCondition> conds = new ArrayList<>();
                     for (JsonElement c : o.getAsJsonArray("conditions")) {
                         JsonObject co = c.getAsJsonObject();
                         if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
-                            table = ResourceLocation.parse(co.get("loot_table_id").getAsString());
+                            table = Identifier.parse(co.get("loot_table_id").getAsString());
                             continue;
                         }
                         LootItemCondition.DIRECT_CODEC.parse(ops, co).result().ifPresent(conds::add);

@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
+import org.overengineer.bettacraft.util.NbtCompat;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -84,7 +85,7 @@ public final class TravelCare {
                 params(c, org.overengineer.bettacraft.foreign.ForeignCare.params(p));
             }
         }
-        BettaHealth h = health(tag, c.getString("kind"));
+        BettaHealth h = health(tag, c.getStringOr("kind", ""));
         if (h != null) look(c, h, c);
         tag.put(CARE_KEY, c);
     }
@@ -100,8 +101,8 @@ public final class TravelCare {
     /** The timers on the road: nobody dies there (NO_DEATH; DECOR stays DECOR), no diet bonus. */
     private static BettaHealth.Params paramsOf(CompoundTag c) {
         ServerConfig.CareMode mode = Care.mode() == ServerConfig.CareMode.DECOR ? ServerConfig.CareMode.DECOR : ServerConfig.CareMode.NO_DEATH;
-        return new BettaHealth.Params(c.getDouble("p_sick"), c.getDouble("p_death"), c.getDouble("p_both"), c.getDouble("p_rec"),
-                c.getDouble("p_hungry"), BettaHealth.Diet.OFF, mode);
+        return new BettaHealth.Params(c.getDoubleOr("p_sick", 0d), c.getDoubleOr("p_death", 0d), c.getDoubleOr("p_both", 0d), c.getDoubleOr("p_rec", 0d),
+                c.getDoubleOr("p_hungry", 0d), BettaHealth.Diet.OFF, mode);
     }
 
     /** The health timers of a packed animal by its kind, or null (no timers of ours). */
@@ -114,14 +115,14 @@ public final class TravelCare {
     @Nullable
     private static CompoundTag healthTag(CompoundTag tag, String kind) {
         return switch (kind) {
-            case "betta" -> tag.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY).contains("health", Tag.TAG_COMPOUND)
-                    ? tag.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY).getCompound("health") : null;
-            case "tankmate" -> tag.getCompound(TankmateEntity.KEY).contains("health", Tag.TAG_COMPOUND)
-                    ? tag.getCompound(TankmateEntity.KEY).getCompound("health") : null;
+            case "betta" -> NbtCompat.has(tag.getCompoundOrEmpty(org.overengineer.bettacraft.entity.betta.BettaData.KEY), "health", Tag.TAG_COMPOUND)
+                    ? tag.getCompoundOrEmpty(org.overengineer.bettacraft.entity.betta.BettaData.KEY).getCompoundOrEmpty("health") : null;
+            case "tankmate" -> NbtCompat.has(tag.getCompoundOrEmpty(TankmateEntity.KEY), "health", Tag.TAG_COMPOUND)
+                    ? tag.getCompoundOrEmpty(TankmateEntity.KEY).getCompoundOrEmpty("health") : null;
             case "foreign" -> {
-                CompoundTag d = tag.getCompound("NeoForgeData");
-                yield d.contains(org.overengineer.bettacraft.foreign.ForeignCare.KEY, Tag.TAG_COMPOUND)
-                        ? d.getCompound(org.overengineer.bettacraft.foreign.ForeignCare.KEY) : new BettaHealth().save();
+                CompoundTag d = tag.getCompoundOrEmpty("NeoForgeData");
+                yield NbtCompat.has(d, org.overengineer.bettacraft.foreign.ForeignCare.KEY, Tag.TAG_COMPOUND)
+                        ? d.getCompoundOrEmpty(org.overengineer.bettacraft.foreign.ForeignCare.KEY) : new BettaHealth().save();
             }
             default -> null;
         };
@@ -129,10 +130,10 @@ public final class TravelCare {
 
     private static void putHealth(CompoundTag tag, String kind, BettaHealth h) {
         switch (kind) {
-            case "betta" -> tag.getCompound(org.overengineer.bettacraft.entity.betta.BettaData.KEY).put("health", h.save());
-            case "tankmate" -> tag.getCompound(TankmateEntity.KEY).put("health", h.save());
+            case "betta" -> tag.getCompoundOrEmpty(org.overengineer.bettacraft.entity.betta.BettaData.KEY).put("health", h.save());
+            case "tankmate" -> tag.getCompoundOrEmpty(TankmateEntity.KEY).put("health", h.save());
             case "foreign" -> {
-                CompoundTag d = tag.getCompound("NeoForgeData");
+                CompoundTag d = tag.getCompoundOrEmpty("NeoForgeData");
                 d.put(org.overengineer.bettacraft.foreign.ForeignCare.KEY, h.save());
                 tag.put("NeoForgeData", d);
             }
@@ -150,12 +151,12 @@ public final class TravelCare {
 
     /** Satiation 0..1 of a packed animal as last simulated (1 if unknown), for drawing it. */
     public static float satiation(CompoundTag tag) {
-        CompoundTag c = tag.getCompound(CARE_KEY);
-        return c.contains("sat", Tag.TAG_FLOAT) ? c.getFloat("sat") : 1F;
+        CompoundTag c = tag.getCompoundOrEmpty(CARE_KEY);
+        return NbtCompat.has(c, "sat", Tag.TAG_FLOAT) ? c.getFloatOr("sat", 0f) : 1F;
     }
 
     public static boolean sick(CompoundTag tag) {
-        return tag.getCompound(CARE_KEY).getBoolean("sick");
+        return tag.getCompoundOrEmpty(CARE_KEY).getBooleanOr("sick", false);
     }
 
     // ------------------------------------------------------------------ the trip
@@ -216,8 +217,8 @@ public final class TravelCare {
      */
     @Nullable
     public static Result step(ServerLevel level, CompoundTag be, Env env, long ticks) {
-        if (!be.contains("tank", Tag.TAG_COMPOUND) || ticks <= 0) return null;
-        TankData t = TankData.load(be.getCompound("tank"));
+        if (!NbtCompat.has(be, "tank", Tag.TAG_COMPOUND) || ticks <= 0) return null;
+        TankData t = TankData.load(be.getCompoundOrEmpty("tank"));
         double days = ticks / 24000.0;
         long n = ticks;
         // power: what the devices that travel along need, as on the ground (TankPower.step)
@@ -254,11 +255,11 @@ public final class TravelCare {
                 : TankTemperature.equilibrium(env.ambient(), t.targetTemp(), heatOn ? env.heatBlocks() : 0, heatOn ? env.coolBlocks() : 0, t.waterBlocks());
         t.setWaterTemp(TankTemperature.approach(t.waterTemp(), eq, days, ServerConfig.getOr(ServerConfig.TEMPERATURE_TAU_DAYS, 0.1)));
         // water quality
-        ListTag stowed = be.getList("stowed", Tag.TAG_COMPOUND);
+        ListTag stowed = be.getListOrEmpty("stowed");
         double load = org.overengineer.bettacraft.critters.TankCritters.bioload(t);
         for (int i = 0; i < stowed.size(); i++) {
-            CompoundTag c = stowed.getCompound(i).getCompound(CARE_KEY);
-            load += c.contains("load", Tag.TAG_ANY_NUMERIC) ? c.getDouble("load") : 1.0;
+            CompoundTag c = stowed.getCompoundOrEmpty(i).getCompoundOrEmpty(CARE_KEY);
+            load += NbtCompat.has(c, "load", NbtCompat.ANY_NUMERIC) ? c.getDoubleOr("load", 0d) : 1.0;
         }
         if (TankWater.qualityEnabled() && t.waterMb() > 0) {
             t.setWaterQuality(WaterQuality.step(t.waterQuality(), days, load, t.systemBlocks(), (filterOn ? env.cleanBlocks() : 0) + env.passive(),
@@ -269,14 +270,14 @@ public final class TravelCare {
         boolean waterBadDefault = TankWater.isBad(t);
         long now = level.getGameTime();
         for (int i = 0; i < stowed.size(); i++) {
-            CompoundTag tag = stowed.getCompound(i);
-            CompoundTag c = tag.getCompound(CARE_KEY);
-            String kind = c.getString("kind");
-            if (tag.contains("last_sim", Tag.TAG_LONG)) tag.putLong("last_sim", now); // the trip is simulated here, not again later
+            CompoundTag tag = stowed.getCompoundOrEmpty(i);
+            CompoundTag c = tag.getCompoundOrEmpty(CARE_KEY);
+            String kind = c.getStringOr("kind", "");
+            if (NbtCompat.has(tag, "last_sim", Tag.TAG_LONG)) tag.putLong("last_sim", now); // the trip is simulated here, not again later
             BettaHealth h = health(tag, kind);
             if (h == null || !kindEnabled(kind)) continue;
-            boolean tempBad = t.waterMb() > 0 && (temp < c.getDouble("lo") - 1e-4 || temp > c.getDouble("hi") + 1e-4);
-            double q = c.getDouble("q");
+            boolean tempBad = t.waterMb() > 0 && (temp < c.getDoubleOr("lo", 0d) - 1e-4 || temp > c.getDoubleOr("hi", 0d) + 1e-4);
+            double q = c.getDoubleOr("q", 0d);
             boolean waterBad = t.waterMb() > 0 && (q < 0 ? waterBadDefault : TankWater.qualityEnabled() && t.waterQuality() < q);
             h.step(days, new BettaHealth.Conditions(tempBad, false, waterBad, 0), paramsOf(c));
             putHealth(tag, kind, h);
@@ -286,13 +287,13 @@ public final class TravelCare {
         be.put("stowed", stowed);
         be.put("tank", t.save());
         // the trip
-        CompoundTag trip = be.getCompound(TRIP_KEY);
-        trip.putLong("ticks", trip.getLong("ticks") + n);
-        if (filterFe + heatFe > 0 && filterOn && heatOn) trip.putLong("powered", trip.getLong("powered") + n);
-        if (filterFe + heatFe > 0 && !(filterOn && heatOn)) trip.putLong("unpowered", trip.getLong("unpowered") + n);
-        trip.putLong("battery", trip.getLong("battery") + fromBattery);
-        trip.putLong("dynamo", trip.getLong("dynamo") + dyn);
-        if (!trip.contains("minQuality", Tag.TAG_FLOAT) || t.waterQuality() < trip.getFloat("minQuality")) trip.putFloat("minQuality", t.waterQuality());
+        CompoundTag trip = be.getCompoundOrEmpty(TRIP_KEY);
+        trip.putLong("ticks", trip.getLongOr("ticks", 0L) + n);
+        if (filterFe + heatFe > 0 && filterOn && heatOn) trip.putLong("powered", trip.getLongOr("powered", 0L) + n);
+        if (filterFe + heatFe > 0 && !(filterOn && heatOn)) trip.putLong("unpowered", trip.getLongOr("unpowered", 0L) + n);
+        trip.putLong("battery", trip.getLongOr("battery", 0L) + fromBattery);
+        trip.putLong("dynamo", trip.getLongOr("dynamo", 0L) + dyn);
+        if (!NbtCompat.has(trip, "minQuality", Tag.TAG_FLOAT) || t.waterQuality() < trip.getFloatOr("minQuality", 0f)) trip.putFloat("minQuality", t.waterQuality());
         trip.putFloat("lastTemp", t.waterTemp());
         be.put(TRIP_KEY, trip);
         return new Result(filterOn, heatOn, filterFe + heatFe, fromBattery, dyn);
@@ -311,10 +312,10 @@ public final class TravelCare {
      * the contraption gave), and the players near a tank that travelled with contraption power get the advancement.
      */
     public static void arrived(ServerLevel level, TankBlockEntity c, @Nullable CompoundTag trip) {
-        if (trip == null || trip.getLong("ticks") <= 0) return;
-        long ticks = trip.getLong("ticks");
-        long powered = trip.getLong("powered"), unpowered = trip.getLong("unpowered");
-        long given = trip.getLong("battery") + trip.getLong("dynamo");
+        if (trip == null || trip.getLongOr("ticks", 0L) <= 0) return;
+        long ticks = trip.getLongOr("ticks", 0L);
+        long powered = trip.getLongOr("powered", 0L), unpowered = trip.getLongOr("unpowered", 0L);
+        long given = trip.getLongOr("battery", 0L) + trip.getLongOr("dynamo", 0L);
         String minutes = String.valueOf(Math.max(1, Math.round(ticks / 1200.0)));
         String share = powered + unpowered <= 0 ? "-" : Math.round(100.0 * powered / (powered + unpowered)) + "%";
         TankCare.log(level, c, "log.bettacraft.travel.arrived", minutes, share, String.valueOf(given));
