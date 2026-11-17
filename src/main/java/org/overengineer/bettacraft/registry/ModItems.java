@@ -388,6 +388,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> DOSING_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.DOSING_PUMP);
     /** M25 part d: active soil (substrate for soft water). */
     public static final DeferredItem<BlockItem> ACTIVE_SOIL = ITEMS.registerSimpleBlockItem(ModBlocks.ACTIVE_SOIL);
+    /** M47 part a: the breeding basin (workplace of the aquarist villager). */
+    public static final DeferredItem<BlockItem> BREEDING_BASIN = ITEMS.registerSimpleBlockItem(ModBlocks.BREEDING_BASIN);
     public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> DOSING_CANISTER = canister("dosing_canister", null);
     public static final DeferredItem<org.overengineer.bettacraft.reef.DosingCanisterItem> CALCIUM_CANISTER = canister("calcium_canister",
             org.overengineer.bettacraft.reef.ReefDosing.Additive.CALCIUM);

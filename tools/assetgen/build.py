@@ -38,6 +38,7 @@ import model_defs as md
 import palette
 import patterns
 import preview
+import aquarist
 import uv_template
 import varieties
 from common import GEN, ensure_dirs, rel
@@ -83,6 +84,7 @@ def main() -> int:
     written += critters.write_all()
     written += tankmates.write_all()
     written += cultures.write_all()
+    written += aquarist.write_all()  # M47
     written += gui.write_all()
     written += md.write_generated(GEN, preview.sample_textures())
     written += preview.write_all()

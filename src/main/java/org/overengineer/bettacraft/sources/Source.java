@@ -33,6 +33,8 @@ public record Source(Kind kind, String target, @Nullable Where where, double cha
         /** M30: the large net swung in open water (into an empty transport tub). */
         BIG_NET,
         /** M30: fishing with a steel leader in the other hand (into an empty transport tub). */
-        STEEL_LEADER
+        STEEL_LEADER,
+        /** M47: the aquarist villager ({@code chance} = his level 1..5, {@code chanceMax} the share among the products of the offer). */
+        AQUARIST
     }
 }

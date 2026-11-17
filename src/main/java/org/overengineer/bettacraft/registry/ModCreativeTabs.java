@@ -110,6 +110,7 @@ public final class ModCreativeTabs {
                         ModItems.PIPE_TEE, ModItems.PIPE_COVER, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD, ModItems.FILTER_FRESH_PORT, ModItems.FILTER_WASTE_PORT)) out.accept(it.get());
                 // M25: water chemistry
                 for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF, ModItems.ALDER_CONE, ModItems.ACTIVE_SOIL)) out.accept(it.get());
+                out.accept(ModItems.BREEDING_BASIN.get()); // M47
                 // M25 part b: CO2 and reverse osmosis
                 for (var it : java.util.List.of(ModItems.YEAST, ModItems.BIO_CO2, ModItems.CO2_STATION, ModItems.CO2_SOLENOID, ModItems.RO_UNIT,
                         ModItems.RO_MEMBRANE, ModItems.RO_PREFILTER, ModItems.RO_WATER_BUCKET)) out.accept(it.get());

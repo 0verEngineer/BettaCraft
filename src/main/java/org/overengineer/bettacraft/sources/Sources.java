@@ -40,6 +40,7 @@ public final class Sources {
         bigAnimals(out); // M30
         world(out);
         trader(out);
+        aquarist(out); // M47
         return out;
     }
 
@@ -256,6 +257,22 @@ public final class Sources {
 
     private static Source src(Source.Kind kind, String target, Where where, double chance, String block) {
         return new Source(kind, target, where, chance, chance, 1, 1, 0, false, null, block);
+    }
+
+    // ------------------------------------------------------------------ M47: the aquarist villager
+
+    private static void aquarist(List<Source> out) {
+        String key = Feature.AQUARIST_VILLAGER.key();
+        for (var o : org.overengineer.bettacraft.villager.AquaristTrades.all()) {
+            if (o.buys()) continue;
+            for (var p : o.products().get()) {
+                boolean dup = false;
+                for (Source s : out) if (s.kind() == Source.Kind.AQUARIST && s.target().equals(p.target()) && (int) s.chance() == o.level()) dup = true;
+                if (dup) continue;
+                out.add(new Source(Source.Kind.AQUARIST, p.target(), null, o.level(), p.share(), p.count(), p.count(), p.emeralds(), false,
+                        p.condition() != null ? p.condition() : key, null));
+            }
+        }
     }
 
     // ------------------------------------------------------------------ wandering trader

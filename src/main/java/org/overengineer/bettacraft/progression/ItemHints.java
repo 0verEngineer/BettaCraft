@@ -73,7 +73,9 @@ public final class ItemHints {
             // M41: the drive adapter (only registered with Create)
             "drive_adapter",
             // M30: catching big animals
-            "large_net", "transport_tub", "steel_leader");
+            "large_net", "transport_tub", "steel_leader",
+            // M47: the workplace of the aquarist villager
+            "breeding_basin");
 
     private ItemHints() {}
 

@@ -1,0 +1,30 @@
+{
+  "_comment": "Bettacraft: what the aquarist villager pays (emeralds) for a grown betta or a bred tankmate. A datapack overrides single values with data/<namespace>/bettacraft/aquarist_prices.json. See the handbook page 'Aquarist villager'.",
+  "betta": {
+    "base": 2,
+    "bred": 1,
+    "per_generation": 0.5,
+    "max_generations": 6,
+    "named_variety": 3,
+    "rare_allele": 1,
+    "rare_weight": 3,
+    "long_fins": 1,
+    "wild_species": 4,
+    "max": 24
+  },
+  "tankmate": {
+    "only_bred": true,
+    "common": 1,
+    "rare": 3,
+    "other": 2,
+    "bred_variety": 3,
+    "max": 16
+  },
+  "species": {
+    "discus": 5,
+    "zebra_pleco": 5,
+    "angelfish": 2,
+    "lined_seahorse": 4,
+    "dwarf_seahorse": 3
+  }
+}

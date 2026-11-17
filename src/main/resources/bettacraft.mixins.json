@@ -20,7 +20,8 @@
     "mob.LivingEntityGlassMixin",
     "mob.MobGlassMixin",
     "mob.SlimeGlassMixin",
-    "mob.ZombieGlassMixin"
+    "mob.ZombieGlassMixin",
+    "villager.MerchantContainerMixin"
   ],
   "client": [
     "client.BackgroundWindowMixin",

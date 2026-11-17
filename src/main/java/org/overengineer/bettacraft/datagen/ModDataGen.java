@@ -334,6 +334,7 @@ public final class ModDataGen {
             DataGenM26.blockStates(this); // M26 part a
             DataGenM37.blockStates(this); // M37
             DataGenM41.blockStates(this); // M41: the drive adapter (only the model)
+            DataGenM47.blockStates(this); // M47: the breeding basin
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
@@ -675,6 +676,7 @@ public final class ModDataGen {
             DataGenM26.itemModels(this); // M26 part a
             DataGenM37.itemModels(this); // M37
             DataGenM41.itemModels(this); // M41
+            DataGenM47.itemModels(this); // M47
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
@@ -1126,6 +1128,7 @@ public final class ModDataGen {
             DataGenM28.recipes(output, hasIt(ModItems.TANK.get())); // M28 part c
             DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
             DataGenM31.recipes(output, hasIt(ModItems.TANK.get())); // M31 part a
+            DataGenM47.recipes(output, hasIt(net.minecraft.world.item.Items.GLASS_PANE)); // M47
             DataGenM31b.recipes(output, hasIt(ModItems.TANK.get())); // M31 part b
             DataGenM31c.recipes(output, hasIt(ModItems.TANK.get())); // M31 part c
             DataGenM31d.recipes(output, hasIt(ModItems.TANK.get())); // M31 part d
@@ -1286,6 +1289,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.RO_UNIT.get());
             dropSelf(ModBlocks.DOSING_PUMP.get()); // M25 part c
             for (Block b : DataGenM31.blocks()) dropSelf(b); // M31 part a
+            dropSelf(ModBlocks.BREEDING_BASIN.get()); // M47
             add(ModBlocks.TURTLE_EGGS.get(), LootTable.lootTable()); // M31 part b: broken eggs give nothing
             add(ModBlocks.FROG_EGGS.get(), LootTable.lootTable()); // M31 part c
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
@@ -1350,6 +1354,7 @@ public final class ModDataGen {
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
+                        l.add(ModBlocks.BREEDING_BASIN.get()); // M47
                         return l;
                     }));
         }
@@ -1431,6 +1436,7 @@ public final class ModDataGen {
             DataGenM40b.blockTags(this::tag); // M40 part b
             DataGenM40c.blockTags(this::tag); // M40 part c: Cable Facades
             DataGenM41.blockTags(this::tag); // M41: the drive adapter (optional: only with Create)
+            DataGenM47.blockTags(this::tag); // M47: the breeding basin
             DataGenM38.blockTags(this::tag); // M38
             DataGenM27.blockTags(this::tag); // M27
             DataGenM28.blockTags(this::tag); // M28 part c

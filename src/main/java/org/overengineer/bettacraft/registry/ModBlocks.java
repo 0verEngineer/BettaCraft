@@ -356,6 +356,11 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.reef.DosingPumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
 
+    /** M47 part a: the breeding basin, the workplace of the aquarist villager (decoration). */
+    public static final DeferredBlock<org.overengineer.bettacraft.villager.BreedingBasinBlock> BREEDING_BASIN = BLOCKS.register("breeding_basin",
+            () -> new org.overengineer.bettacraft.villager.BreedingBasinBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD)
+                    .strength(1.0F).sound(SoundType.GLASS).noOcclusion()));
+
     /** M25 part d: active soil, fired clay granules with humic acids: as interior substrate it keeps the water soft and acidic. */
     public static final DeferredBlock<net.minecraft.world.level.block.Block> ACTIVE_SOIL = BLOCKS.register("active_soil",
             () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BLACK)

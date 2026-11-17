@@ -41,6 +41,7 @@ public final class BettaCraft {
         org.overengineer.bettacraft.progression.ModTriggers.register(modBus);
         org.overengineer.bettacraft.registry.ModSounds.register(modBus);
         org.overengineer.bettacraft.registry.ModParticles.register(modBus); // M23
+        org.overengineer.bettacraft.villager.ModVillagers.register(modBus); // M47
         modBus.addListener(ModNetwork::register);
         // M22.3: spontaneous mutations of the small animals (wildlife.otherMutationChance)
         org.overengineer.bettacraft.critters.CritterGenes.MUTATION = org.overengineer.bettacraft.world.Wildlife::mutationChance;

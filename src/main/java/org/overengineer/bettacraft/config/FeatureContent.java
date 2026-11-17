@@ -71,6 +71,7 @@ public final class FeatureContent {
         put(Feature.MONITORS, "monitor");
         put(Feature.BIG_ANIMALS, "large_net", "transport_tub", "transport_tub_filled", "steel_leader");
         put(Feature.TERRARIUM_DEVICES, "heat_mat", "basking_lamp", "mister", "thermo_hygrometer");
+        put(Feature.AQUARIST_VILLAGER, "breeding_basin"); // M47
         put(Feature.HERPS, "terrarium_box");
         put(Feature.MOBS_IN_GLASS, "mob_jar", "mob_jar_filled");
         put(Feature.CREATE_DRIVE, "drive_adapter"); // M41 (only registered with Create)
