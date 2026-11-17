@@ -95,6 +95,11 @@ public final class Progress {
     public static final String CREATE_DRIVE = "create_drive";
     /** A tank arrived somewhere else in one piece (Create contraption, Sable sub-level). */
     public static final String TRAVELLED = "travelling_tank";
+    // M47
+    /** The first tadpoles of the dwarf clawed frogs hatched in a tank (log frog.tadpoles_hatched). */
+    public static final String FROG_TADPOLE = "frog_tadpole";
+    /** A trade with an aquarist villager. */
+    public static final String AQUARIST_TRADE = "aquarist_trade";
 
     private Progress() {}
 
@@ -146,6 +151,7 @@ public final class Progress {
             case "log.bettacraft.critters_born" -> CRITTERS_BRED;
             case "log.bettacraft.algae_scraped" -> ALGAE_SCRAPED;
             case "log.bettacraft.auto_water_change" -> AUTO_WATER_CHANGE;
+            case "log.bettacraft.frog.tadpoles_hatched" -> FROG_TADPOLE; // M47
             default -> null;
         };
         if (event != null) awardNear(level, controller, event, 0);

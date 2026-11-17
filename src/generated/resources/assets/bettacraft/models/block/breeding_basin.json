@@ -1,0 +1,835 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        }
+      },
+      "from": [
+        1,
+        2,
+        1
+      ],
+      "to": [
+        15,
+        4,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        3,
+        2,
+        3
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        13,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        2,
+        3
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        1,
+        0,
+        13
+      ],
+      "to": [
+        3,
+        2,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            2.0,
+            2.0
+          ]
+        }
+      },
+      "from": [
+        13,
+        0,
+        13
+      ],
+      "to": [
+        15,
+        2,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            13.0
+          ]
+        },
+        "east": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            3.5
+          ]
+        },
+        "north": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            3.5
+          ]
+        },
+        "up": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            13.0
+          ]
+        },
+        "west": {
+          "texture": "#gravel",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            3.5
+          ]
+        }
+      },
+      "from": [
+        2.5,
+        4,
+        2.5
+      ],
+      "to": [
+        13.5,
+        5.5,
+        13.5
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "texture": "#plant",
+          "uv": [
+            0.0,
+            4.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#plant",
+          "uv": [
+            0.0,
+            4.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        4,
+        5.5,
+        8
+      ],
+      "rotation": {
+        "angle": 45.0,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "rescale": true
+      },
+      "to": [
+        12,
+        13,
+        8
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "texture": "#plant",
+          "uv": [
+            0.0,
+            4.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#plant",
+          "uv": [
+            0.0,
+            4.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        4,
+        5.5,
+        8
+      ],
+      "rotation": {
+        "angle": -45.0,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "rescale": true
+      },
+      "to": [
+        12,
+        13,
+        8
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "minecraft:missingno"
+        },
+        "east": {
+          "texture": "#water",
+          "uv": [
+            2.0,
+            3.5,
+            13.0,
+            10.5
+          ]
+        },
+        "north": {
+          "texture": "#water",
+          "uv": [
+            2.0,
+            3.5,
+            13.0,
+            10.5
+          ]
+        },
+        "south": {
+          "texture": "#water",
+          "uv": [
+            2.0,
+            3.5,
+            13.0,
+            10.5
+          ]
+        },
+        "up": {
+          "texture": "#water",
+          "uv": [
+            2.0,
+            2.0,
+            13.0,
+            13.0
+          ]
+        },
+        "west": {
+          "texture": "#water",
+          "uv": [
+            2.0,
+            3.5,
+            13.0,
+            10.5
+          ]
+        }
+      },
+      "from": [
+        2.5,
+        5.5,
+        2.5
+      ],
+      "to": [
+        13.5,
+        12.5,
+        13.5
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "minecraft:missingno"
+        },
+        "east": {
+          "texture": "#glass"
+        },
+        "north": {
+          "texture": "#glass"
+        },
+        "south": {
+          "texture": "#glass"
+        },
+        "up": {
+          "texture": "minecraft:missingno"
+        },
+        "west": {
+          "texture": "#glass"
+        }
+      },
+      "from": [
+        2,
+        4,
+        2
+      ],
+      "to": [
+        14,
+        14,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        14,
+        2
+      ],
+      "to": [
+        14,
+        14.5,
+        3
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            12.0,
+            1.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        14,
+        13
+      ],
+      "to": [
+        14,
+        14.5,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        }
+      },
+      "from": [
+        2,
+        14,
+        3
+      ],
+      "to": [
+        3,
+        14.5,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0.0,
+            0.0,
+            1.0,
+            10.0
+          ]
+        }
+      },
+      "from": [
+        13,
+        14,
+        3
+      ],
+      "to": [
+        14,
+        14.5,
+        13
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "glass": "minecraft:block/glass",
+    "gravel": "bettacraft:block/breeding_basin_gravel",
+    "particle": "bettacraft:block/breeding_basin_wood",
+    "plant": "bettacraft:block/breeding_basin_plant",
+    "water": "bettacraft:block/breeding_basin_water",
+    "wood": "bettacraft:block/breeding_basin_wood"
+  }
+}

@@ -36,7 +36,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
             // M45
             "tankmate_inserted", "livebearer_litter", "seahorse_fry", "critters_bred", "algae_scraped", "herp_clutch", "turtle_clutch",
             "paludarium", "sea_turtle", "pet_terrarium", "foreign_animal", "mob_in_glass", "big_animal", "shared_filter",
-            "auto_water_change", "varied_diet", "regulator", "light_timer", "powered", "wound_up", "create_drive", "travelling_tank"};
+            "auto_water_change", "varied_diet", "regulator", "light_timer", "powered", "wound_up", "create_drive", "travelling_tank",
+            // M47
+            "frog_tadpole", "aquarist_trade"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -173,6 +175,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         event(reg, "wound_up", ModItems.CRANK.get(), AdvancementType.TASK, Progress.WOUND);
         event(tank, "create_drive", Items.PISTON, AdvancementType.TASK, Progress.CREATE_DRIVE);
         event(tank, "travelling_tank", Items.MINECART, AdvancementType.GOAL, Progress.TRAVELLED);
+        // M47: the frogs' first tadpoles, a trade with the aquarist villager
+        event(filled, "frog_tadpole", ModItems.FROG_BUCKET.get(), AdvancementType.GOAL, Progress.FROG_TADPOLE);
+        event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
     }
 
     private AdvancementHolder event(AdvancementHolder parent, String name, ItemLike icon, AdvancementType type, String event) {

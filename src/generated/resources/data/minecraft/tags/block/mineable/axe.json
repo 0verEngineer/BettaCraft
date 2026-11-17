@@ -6,6 +6,7 @@
     {
       "id": "bettacraft:drive_adapter",
       "required": false
-    }
+    },
+    "bettacraft:breeding_basin"
   ]
 }

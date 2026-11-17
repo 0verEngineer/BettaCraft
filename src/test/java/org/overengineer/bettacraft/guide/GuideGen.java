@@ -523,6 +523,13 @@ public final class GuideGen {
                             + " in diesem Angebot") : "";
                     lines.add(bold(t("Wandering trader", "Fahrender Händler")) + " (" + slot + "): " + price + share + cond);
                 }
+                case AQUARIST -> { // M47: chance = the level, chanceMax = the share in the offer
+                    String price = s.min() + t(" for ", " für ") + s.emeralds() + " " + t(s.emeralds() == 1 ? "emerald" : "emeralds", s.emeralds() == 1 ? "Smaragd" : "Smaragde");
+                    String share = s.chanceMax() < 0.999 ? t("; one of about " + Math.round(1 / s.chanceMax()) + " in this offer", "; eins von etwa "
+                            + Math.round(1 / s.chanceMax()) + " in diesem Angebot") : "";
+                    lines.add(link(t("Aquarist villager", "Aquarianer"), "getting_started/aquarist.md", page) + " (" + level((int) s.chance()) + "): "
+                            + price + share + cond);
+                }
             }
         }
         return lines;
@@ -851,7 +858,8 @@ public final class GuideGen {
         }
         StringBuilder other = new StringBuilder();
         for (Source s : sources) {
-            if (s.kind() == Source.Kind.NET || s.kind() == Source.Kind.FISHING || s.kind() == Source.Kind.TRADER_USUAL || s.kind() == Source.Kind.TRADER_RARE) continue;
+            if (s.kind() == Source.Kind.NET || s.kind() == Source.Kind.FISHING || s.kind() == Source.Kind.TRADER_USUAL || s.kind() == Source.Kind.TRADER_RARE
+                    || s.kind() == Source.Kind.AQUARIST) continue;
             String what = link(name(s.target()), page(s.target()), page, false);
             String how = switch (s.kind()) {
                 case BOTTLE -> t("glass bottle filled with water ", "Glasflasche mit Wasser ") + where(s.where());
@@ -877,6 +885,13 @@ public final class GuideGen {
             m.put(kind == Source.Kind.TRADER_USUAL ? t("## Wandering trader: usual offers", "## Fahrender Händler: übliche Angebote")
                     : t("## Wandering trader: rare offers", "## Fahrender Händler: seltene Angebote"), tb.render());
         }
+        // M47: the aquarist villager
+        Table aq = new Table(t("Level", "Stufe"), t("Thing", "Ware"), t("Count", "Anzahl"), t("Emeralds", "Smaragde"));
+        for (Source s : sources) {
+            if (s.kind() != Source.Kind.AQUARIST) continue;
+            aq.row(level((int) s.chance()), link(name(s.target()), page(s.target()), page, false), String.valueOf(s.min()), String.valueOf(s.emeralds()));
+        }
+        m.put(t("## Aquarist villager", "## Aquarianer"), aq.render());
     }
 
     // ================================================================== advancements
@@ -913,6 +928,13 @@ public final class GuideGen {
     }
 
     // ================================================================== words
+
+    /** M47: a villager level by its vanilla name. */
+    private String level(int n) {
+        String[] en = {"", "Novice", "Apprentice", "Journeyman", "Expert", "Master"}, de = {"", "Neuling", "Lehrling", "Geselle", "Experte", "Meister"};
+        int k = Math.max(1, Math.min(5, n));
+        return t(en[k], this.de ? de[k] : en[k]);
+    }
 
     private String t(String en, String de) {
         return this.de ? de : en;

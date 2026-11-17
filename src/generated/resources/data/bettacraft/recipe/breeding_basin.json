@@ -1,0 +1,46 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "sources.aquaristVillager"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "P": [
+      {
+        "tag": "bettacraft:aquatic_plants"
+      },
+      {
+        "type": "neoforge:compound",
+        "children": [
+          {
+            "item": "minecraft:seagrass"
+          },
+          {
+            "item": "minecraft:kelp"
+          },
+          {
+            "item": "minecraft:lily_pad"
+          }
+        ]
+      }
+    ],
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "G G",
+    "GPG",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:breeding_basin"
+  }
+}

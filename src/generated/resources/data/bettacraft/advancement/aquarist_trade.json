@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:insert_betta",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "aquarist_trade"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.aquarist_trade.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:breeding_basin"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.aquarist_trade.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

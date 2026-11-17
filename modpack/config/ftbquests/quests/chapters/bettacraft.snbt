@@ -1292,6 +1292,32 @@
 			title: "{\"translate\":\"quest.bettacraft.travelling_tank.title\"}",
 			x: 10.5d,
 			y: -6.0d
+		},
+		{
+			dependencies: ["009F38F06F92C81B"],
+			description: ["{\"translate\":\"quest.bettacraft.aquarist.desc\"}"],
+			id: "4069EE4320B460B1",
+			rewards: [{ id: "1F7AF8A60383E4E2", type: "xp", xp: 50 }, { count: 1, id: "7F878C3CF36709F5", item: { count: 1, id: "bettacraft:breeding_basin" }, type: "item" }],
+			tags: ["bettacraft_feature:sources.aquaristVillager", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:aquarist_trade", criterion: "", id: "4BD154AED43B13C1", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.aquarist.title\"}",
+			x: 7.5d,
+			y: 4.0d
+		},
+		{
+			dependencies: ["4E1E551B96DB1C2E"],
+			description: ["{\"translate\":\"quest.bettacraft.frog_tadpole.desc\"}"],
+			id: "15CA0D23F64FC275",
+			rewards: [{ id: "51CEC9D867289AB3", type: "xp", xp: 100 }],
+			tags: ["bettacraft_feature:frogs.breeding"],
+			tasks: [
+				{ advancement: "bettacraft:frog_tadpole", criterion: "", id: "733902E838E2900B", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.frog_tadpole.title\"}",
+			x: 3.0d,
+			y: 6.0d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

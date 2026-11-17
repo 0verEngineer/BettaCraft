@@ -198,6 +198,10 @@ QUESTS = [
     # Create (optional)
     ("create_drive", [adv("create_drive")], ["cabinet"], 8.75, -5.25, 100, None),
     ("travelling_tank", [adv("travelling_tank")], ["create_drive"], 10.50, -6.00, 100, None),
+
+    # ------------------------------------------------------------ M47
+    ("aquarist", [adv("aquarist_trade")], ["insert_betta"], 7.50, 4.00, 50, None),
+    ("frog_tadpole", [adv("frog_tadpole")], ["frogs"], 3.00, 6.00, 100, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -229,6 +233,7 @@ OWN_FEATURES = {
     "big_gear": ["BIG_ANIMALS"],
     "foreign_animal": ["FOREIGN_ANIMALS"], "mob_in_glass": ["MOBS_IN_GLASS"],
     "travelling_tank": ["CREATE_CONTRAPTIONS"], "create_drive": ["CREATE_DRIVE"],
+    "aquarist": ["AQUARIST_VILLAGER"], "frog_tadpole": ["FROG_BREEDING"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
@@ -278,6 +283,7 @@ REWARDS = {
     "seahorse": [("live_rock", 1)],
     "big_gear": [("steel_leader", 1)],
     "guppy_collection": [("fish_bag", 4)],
+    "aquarist": [("breeding_basin", 1)],
 }
 
 FIRST_CHAPTER = 33  # quests of the chapter of 1.25.0 (ids, tasks, dependencies frozen)

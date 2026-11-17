@@ -97,7 +97,7 @@ final class LangM45 {
         q(a, "guppy_hybrid", "Crossbreed", "Cross an endler with a guppy and raise the hybrid.");
         q(a, "guppy_collection", "Strain Collection", "Breed every guppy and endler strain.");
         q(a, "community_fish", "Schooling Fish", "Danios, rainbowfish and the bigger tetras swim in schools: keep at least six.");
-        q(a, "cichlids", "Dwarf Cichlids", "Rams and dwarf cichlids guard their eggs and fry. They want warm, soft water.");
+        q(a, "cichlids", "Dwarf Cichlids", "Rams and dwarf cichlids guard their eggs and fry. They want warm, soft water. The ram forms Gold, Electric Blue, Black and German Blue are recessive.");
         q(a, "puffers", "Puffers", "Pufferfish hunt snails and nip fins: keep them on their own.");
         q(a, "barbs_loaches", "Barbs and Loaches", "Lively barbs and bottom-dwelling loaches: busy fish for a bigger tank.");
         q(a, "gouramis", "Gouramis", "Honey, chocolate and pearl gouramis breathe air like bettas and build bubble nests too.");
