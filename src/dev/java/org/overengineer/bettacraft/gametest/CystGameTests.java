@@ -235,8 +235,9 @@ public final class CystGameTests {
         ServerLevel level = h.getLevel();
         double chance = ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.getDefault();
         h.assertTrue(Math.abs(chance - ServerConfig.ARTEMIA_SAND_CHANCE_M35 / 2) < 1e-9 && Math.abs(chance - 0.04) < 1e-9, "4 % = 8 % / 2: " + chance);
-        List<Source> sources = Sources.of(Target.item("artemia_cysts"));
-        h.assertTrue(sources.size() == 1, "one source of cysts: " + sources);
+        // M47: the aquarist villager sells cysts too (a trade, no drop)
+        List<Source> sources = Sources.of(Target.item("artemia_cysts")).stream().filter(x -> x.kind() != Source.Kind.AQUARIST).toList();
+        h.assertTrue(sources.size() == 1, "one source of cysts in the world: " + sources);
         Source s = sources.get(0);
         h.assertTrue(s.kind() == Source.Kind.BLOCK_DROP && Math.abs(s.chance() - 0.04) < 1e-9 && s.min() <= 1 && s.max() <= 1,
                 "the sand drop, 4 %, one jar: " + s);
