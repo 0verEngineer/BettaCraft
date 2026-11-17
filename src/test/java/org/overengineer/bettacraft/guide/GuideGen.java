@@ -111,11 +111,13 @@ public final class GuideGen {
             case "frog" -> "invertebrates/dwarf_clawed_frog.md";
             case "tankmate" -> {
                 TankmateSpecies s = TankmateSpecies.byId(id);
+                if (s == TankmateSpecies.ARCHERFISH) yield "brackish/archerfish.md"; // M49: the brackish water chapter
                 // M30: the big animals have their own chapter
                 yield (s.isLarge() ? "big_tanks/" : s.marine() ? "saltwater/" : "tankmates/") + s.id() + ".md";
             }
             case "critter" -> {
                 CritterSpecies s = CritterSpecies.byId(id);
+                if (s == CritterSpecies.AMANO_SHRIMP) yield "brackish/amano_shrimp.md"; // M49
                 yield (s.marine() ? "saltwater/" : "invertebrates/") + s.id() + ".md";
             }
             case "plant" -> {
@@ -159,6 +161,7 @@ public final class GuideGen {
             case CLOWNFISH, TANG, GOBY, DAMSEL, DRAGONET, CARDINALFISH, ANTHIAS -> "saltwater/reef_animals.md"; // M48 part b
             case SEAHORSE -> "saltwater/seahorses.md";
             case CATFISH, BONYTONGUE, RAY, SHARK, MORAY -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
+            case ARCHERFISH -> "brackish.md"; // M49
         };
     }
 

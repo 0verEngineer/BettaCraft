@@ -33,7 +33,7 @@ The zebra nerite (*Neritina natalensis*) from the mangroves and river mouths of 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 8–9.6 % per swing (about 1 in 10–13 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 7.1–8.4 % per swing (about 1 in 12–14 swings), 1–2 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** at beaches: 9–11 % per swing (about 1 in 9–11 swings), 1–2 at a time.
 * **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wild** at beaches, in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).

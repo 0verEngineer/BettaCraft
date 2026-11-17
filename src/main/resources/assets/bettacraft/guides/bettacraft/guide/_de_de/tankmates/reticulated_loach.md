@@ -50,6 +50,6 @@ Vermehrt sich im Becken praktisch nie.
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,2–0,24 % pro Schwung (etwa 1 von 423–501 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.tankmates.barbsAndLoaches`).
 * **Wild** in Sümpfen, in Gruppen von 3–5 (Spawn-Gewicht 1) (Config `features.tankmates.barbsAndLoaches`).
-* **Fahrender Händler** (seltene Angebote): 6 für 12 Smaragde; eins von 13 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 6 für 12 Smaragde; eins von 14 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

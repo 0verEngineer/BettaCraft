@@ -48,6 +48,7 @@ Der Pflanzen-Reiter des Aquariums zeigt, wie viele Pflanzen anderer Mods zählen
 | Minecraft | `#minecraft:corals`, `#minecraft:wall_corals` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:lily_pad` | Schwimmblätter | 44 Blöcke Pflanzenmasse pro Pflanze, Schatten |
+| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:sea_pickle` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:seagrass`, `minecraft:tall_seagrass` | Bandpflanze | 83 Blöcke Pflanzenmasse pro Pflanze |
 | Alex's Caves | `alexscaves:ping_pong_sponge` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |

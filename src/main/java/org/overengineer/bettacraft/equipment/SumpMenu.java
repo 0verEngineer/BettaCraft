@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.registry.ModMenus;
  * ({@link Sump#read}); this menu edits them in place, like the heaters of the filter in the cabinet menu.
  */
 public class SumpMenu extends AbstractContainerMenu {
-    public static final int INV_Y = 84, PLAYER0 = Sump.CHAMBERS;
+    public static final int INV_Y = 96, PLAYER0 = Sump.CHAMBERS;
     /** x, y of each chamber slot. */
     public static final int[][] POS = {{17, 22}, {35, 22}, {71, 22}, {17, 52}, {35, 52}, {107, 52}, {143, 52}};
     @Nullable
@@ -29,7 +29,7 @@ public class SumpMenu extends AbstractContainerMenu {
         buf.readBlockPos();
     }
 
-    SumpMenu(int id, Inventory inv, CabinetBlockEntity cabinet) {
+    public SumpMenu(int id, Inventory inv, CabinetBlockEntity cabinet) {
         this(id, inv, cabinet, null);
     }
 

@@ -50,7 +50,7 @@ other fish eat the eggs they reach; in a spawning mop most are safe. Live food g
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.32–0.38 % per swing (about 1 in 260–308 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–5 (spawn weight 2) (config `features.tankmates.moreBottomFish`).
-* **Wandering trader** (rare offers): 6 for 8 emeralds; one of 13 in this offer.
+* **Wandering trader** (rare offers): 6 for 8 emeralds; one of 14 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

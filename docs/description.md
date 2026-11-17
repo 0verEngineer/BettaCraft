@@ -91,6 +91,10 @@ the Mods 10, and fine on its own.
   glow and give frags. Clownfish spawn at their anemone and their larvae need rotifers (cultured on phytoplankton); the
   Banggai cardinalfish broods in the male's mouth, the mandarinfish lives on the copepods of the live rock; tangs, gobies,
   chromis, damsels, anthias, cleaner and fire shrimp, hermit crabs.
+- A **sump** in the cabinet adds its water to the tank and holds heaters, a skimmer, filter media and a **refugium** with
+  Chaetomorpha; a **calcium reactor** dissolves coral rubble with CO2 for the stony corals.
+- **Brackish water:** the archerfish shoots insects off the leaves above the tank, the mudskipper lives on the mud of a
+  paludarium, Amano larvae grow up in brackish water, and a mangrove propagule grows into a small mangrove over the water.
 - **Seahorses** swim upright, hold on to plants and corals, and the male gives birth from his brood pouch.
 - **Big tanks** up to 32 x 16 x 32 blocks with a size rule for big animals by their real length: the bamboo shark that
   lays egg cases, the blacktip reef shark, eagle and cownose rays, the honeycomb moray, and in fresh water pangasius,

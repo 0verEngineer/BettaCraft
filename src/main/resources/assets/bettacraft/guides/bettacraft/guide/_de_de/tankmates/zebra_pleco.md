@@ -48,7 +48,7 @@ Braucht eine **Laichhöhle** (Deko) und 28–31 °C. Jedes Männchen besetzt ein
 
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,1 % pro Schwung (etwa 1 von 969–1148 Schwüngen).
 * **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 1) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde; eins von 13 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 2 für 6 Smaragde; eins von 14 in diesem Angebot.
 * **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

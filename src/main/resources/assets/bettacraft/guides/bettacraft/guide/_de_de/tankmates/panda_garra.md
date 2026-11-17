@@ -51,7 +51,7 @@ Laichstimmung.
 
 * **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,32–0,38 % pro Schwung (etwa 1 von 260–308 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.tankmates.moreBottomFish`).
-* **Fahrender Händler** (seltene Angebote): 6 für 8 Smaragde; eins von 13 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 6 für 8 Smaragde; eins von 14 in diesem Angebot.
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

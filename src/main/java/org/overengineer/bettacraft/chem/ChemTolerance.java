@@ -97,6 +97,7 @@ public final class ChemTolerance {
             case CARIDINA -> CARIDINA; // M25 part c: soft water only
             case SULAWESI_SHRIMP, TYLOMELANIA -> SULAWESI;
             case DWARF_CRAYFISH -> Range.fresh(6.5, 8.5, 100, 600);
+            case AMANO_SHRIMP -> Range.fresh(6.5, 8.2, 50, 600); // M49: hardy, medium hard water
             case RAMSHORN, BLADDER_SNAIL, TRUMPET_SNAIL -> Range.fresh(6.2, 8.6, 50, 800);
             default -> s.isSnail() ? SNAIL : Range.TOLERANT;
         };
@@ -119,7 +120,7 @@ public final class ChemTolerance {
             case ANGELFISH -> Range.fresh(6.0, 8.0, 0, 500);
             case DISCUS -> Range.fresh(5.0, 7.0, 0, 200);
             // M29 part b: puffers, barbs, loaches (the brackish green spotted puffer: only the pH counts, the salt drives the TDS)
-            case GREEN_SPOTTED_PUFFER -> BRACKISH;
+            case GREEN_SPOTTED_PUFFER, ARCHERFISH -> BRACKISH; // M49: the archerfish of the mangroves
             case DWARF_PUFFER -> Range.fresh(6.5, 8.2, 50, 600);
             case RED_EYE_PUFFER -> Range.fresh(5.0, 7.6, 0, 400);
             case CHERRY_BARB -> Range.fresh(6.0, 8.0, 0, 500);

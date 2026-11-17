@@ -19,7 +19,7 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
     public SumpScreen(SumpMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
         imageWidth = 176;
-        imageHeight = 166;
+        imageHeight = 178;
         inventoryLabelY = SumpMenu.INV_Y - 11;
     }
 
@@ -32,11 +32,11 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
         g.fill(x, y + imageHeight - 1, x + imageWidth, y + imageHeight, DARK);
         g.fill(x + imageWidth - 1, y, x + imageWidth, y + imageHeight, DARK);
         // the glass box of the sump with its water and the baffles between the chambers
-        g.fill(x + 8, y + 14, x + 168, y + 72, 0xFF7A8A90);
-        g.fill(x + 9, y + 18, x + 167, y + 71, WATER);
-        g.fill(x + 61, y + 15, x + 63, y + 71, 0xFF6A7A80);
-        g.fill(x + 97, y + 15, x + 99, y + 71, 0xFF6A7A80);
-        g.fill(x + 99, y + 18, x + 167, y + 71, 0xFFA6D4B4); // the refugium: greener water
+        g.fill(x + 8, y + 14, x + 168, y + 82, 0xFF7A8A90);
+        g.fill(x + 9, y + 18, x + 167, y + 81, WATER);
+        g.fill(x + 61, y + 15, x + 63, y + 81, 0xFF6A7A80);
+        g.fill(x + 97, y + 15, x + 99, y + 81, 0xFF6A7A80);
+        g.fill(x + 99, y + 18, x + 167, y + 81, 0xFFA6D4B4); // the refugium: greener water
         for (Slot s : menu.slots) {
             g.fill(x + s.x - 1, y + s.y - 1, x + s.x + 17, y + s.y + 17, SLOT);
             g.fill(x + s.x - 1, y + s.y - 1, x + s.x + 17, y + s.y, DARK);
@@ -52,7 +52,7 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
         small(g, Component.translatable("gui.bettacraft.sump.skimmer"), 80, 41, 34);
         small(g, Component.translatable("gui.bettacraft.sump.refugium"), 133, 22, 66);
         small(g, Component.translatable("gui.bettacraft.sump.refugium_slots"), 133, 32, 66);
-        small(g, Component.translatable("gui.bettacraft.sump.media"), 34, 72 - 2, 50);
+        small(g, Component.translatable("gui.bettacraft.sump.media"), 34, 72, 50);
     }
 
     private void small(GuiGraphics g, Component c, int cx, int y, int max) {

@@ -40,6 +40,8 @@ navigation:
 | [Reverse osmosis unit](equipment/reverse_osmosis.md) | reverse osmosis water (nothing dissolved) for soft water |
 | [Monitor](equipment/monitor.md) | screens of up to 8 x 5 blocks with the values of every tank nearby |
 | [Dosing pump](saltwater/dosing_pump.md) | doses calcium, alkalinity, magnesium and trace elements into reef tanks |
+| [Sump](equipment/sump.md) and [refugium](equipment/refugium.md) | a second tank in the cabinet: more water, chambers for heaters, skimmer, media and Chaetomorpha |
+| [Calcium reactor](saltwater/calcium_reactor.md) | dissolves coral rubble with CO2: calcium and alkalinity for the stony corals |
 
 By default none of the equipment needs power; a server can switch that on (see [Power](equipment/power.md)).
 

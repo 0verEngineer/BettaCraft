@@ -33,7 +33,7 @@ Die Gelbe Rennschnecke, die gelbe Form von *Vittina waigiensis*: gelb oder goldg
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 1,3–1,5 % pro Schwung (etwa 1 von 67–79 Schwüngen) (Config `features.invertebrates.snailColors`).
+* **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 1,1–1,3 % pro Schwung (etwa 1 von 80–88 Schwüngen) (Config `features.invertebrates.snailColors`).
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.snailColors`).
 * **Fahrender Händler** (seltene Angebote): 2 für 4 Smaragde; eins von 2 in diesem Angebot (Config `features.invertebrates.snailColors`).
 

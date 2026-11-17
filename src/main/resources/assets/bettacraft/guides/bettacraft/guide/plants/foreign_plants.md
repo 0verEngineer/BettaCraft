@@ -45,6 +45,7 @@ The plants tab of the aquarium shows how many plants of other mods count and the
 | Minecraft | `#minecraft:corals`, `#minecraft:wall_corals` | coral | 190 blocks of plant mass per plant |
 | Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | stem plant | 120 blocks of plant mass per plant |
 | Minecraft | `minecraft:lily_pad` | floating leaves | 44 blocks of plant mass per plant, shade |
+| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | stem plant | 120 blocks of plant mass per plant |
 | Minecraft | `minecraft:sea_pickle` | coral | 190 blocks of plant mass per plant |
 | Minecraft | `minecraft:seagrass`, `minecraft:tall_seagrass` | ribbon plant | 83 blocks of plant mass per plant |
 | Alex's Caves | `alexscaves:ping_pong_sponge` | coral | 190 blocks of plant mass per plant |

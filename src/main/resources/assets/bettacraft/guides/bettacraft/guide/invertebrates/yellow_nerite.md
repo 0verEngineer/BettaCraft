@@ -33,7 +33,7 @@ The yellow racer nerite, the yellow form of *Vittina waigiensis*: yellow or gold
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.3–1.5 % per swing (about 1 in 67–79 swings) (config `features.invertebrates.snailColors`).
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.1–1.3 % per swing (about 1 in 80–88 swings) (config `features.invertebrates.snailColors`).
 * **Wild** in mangrove swamps, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.snailColors`).
 * **Wandering trader** (rare offers): 2 for 4 emeralds; one of 2 in this offer (config `features.invertebrates.snailColors`).
 

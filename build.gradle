@@ -373,6 +373,13 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm49')) {
+                // gradlew runClient -Psmoketestm49 : the M49 scene (a reef tank on cabinets with a sump and a calcium reactor, the
+                // cabinet, sump and reactor windows and the tab "Sump"; a brackish paludarium with a mangrove, archerfish,
+                // mudskippers and Amano shrimp)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m49only', 'true'
+            }
             if (project.hasProperty('smoketestm48')) {
                 // gradlew runClient -Psmoketestm48 : the M48 scene (the tetra and cory forms, the bronze cory and the panda garra;
                 // a reef tank with live rock, mandarin, Banggai, anthias and fire shrimp; clownfish larvae with rotifers, the menu)

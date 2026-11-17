@@ -308,10 +308,8 @@ REWARDS = {
     "tetra_cory_form": [("spawning_mop", 1)],
     "mandarin": [("live_rock", 4)],
     "clown_larvae": [("rotifer_culture", 2)],
-    "sump": [("chaetomorpha", 4)],
     "calcium_reactor": [("coral_rubble", 16)],
-    "archerfish": [("fruit_fly_culture", 2)],
-    "amano": [("phytoplankton_culture", 2)],
+    "amano": [("fish_bag", 4)],
 }
 
 FIRST_CHAPTER = 33  # quests of the chapter of 1.25.0 (ids, tasks, dependencies frozen)

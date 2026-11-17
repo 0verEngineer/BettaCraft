@@ -127,6 +127,15 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   bottles); tang, goby, chromis, damsel, the lyretail anthias (a shoal fed often), the **Banggai cardinalfish** (the male
   broods in his mouth), the **mandarinfish** that lives only on the copepods of the live rock, cleaner and fire shrimp,
   hermit crabs, turbo snails.
+- **Sump** in the cabinet under the tank: its water counts with the tank, its chambers hold heaters, a protein skimmer,
+  filter media and a **refugium** with Chaetomorpha that takes up nitrate; a **calcium reactor** dissolves coral rubble with
+  CO2 for the stony corals.
+
+### Brackish water and mangroves
+- The **archerfish** shoots insects off the leaves above an open tank with a jet of water (and now and then a player), the
+  **mudskipper** skips over the mud of a brackish paludarium and climbs roots, the **Amano shrimp** needs brackish water for
+  its larvae (net them over into a brackish tank), and a **mangrove propagule** grows into a small mangrove with stilt
+  roots and a crown over the water.
 - **Seahorses** (lined and dwarf) swim upright, hold on to plants and corals, eat live food, and the male gives birth
   from his brood pouch.
 
@@ -329,6 +338,10 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.bettas.enabled` | Labyrinth Fish, Moving In, Fish Flakes, Room Service, Tropical, Mirror, Mirror, Back on Fin, A Lesson Learned (optional) |
 | `features.bigTanks.bigAnimals` | Heavy Lifting, Big Fish |
 | `features.bigTanks.enabled` | Public Aquarium |
+| `features.brackish.amanoShrimp` | Back from the Sea |
+| `features.brackish.archerfish` | Sharpshooter |
+| `features.brackish.mangroves` | Mangrove |
+| `features.brackish.mudskipper` | Fish on Land |
 | `features.breeding.enabled` | Bubble Architect |
 | `features.breeding.enabled` + `features.bettas.enabled` | Clutch |
 | `features.breeding.magnifier` | Under the Lens |
@@ -380,6 +393,9 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.saltwater.seahorses` | Seahorses |
 | `features.saltwater.seahorses` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Proud Father |
 | `features.sources.aquaristVillager` | An Aquarist in the Village |
+| `features.sump.calciumReactor` | Calcium Reactor |
+| `features.sump.enabled` | The Sump |
+| `features.sump.refugium` | Refugium |
 | `features.tankmates.barbsAndLoaches` | Barbs and Loaches |
 | `features.tankmates.cichlids` | Dwarf Cichlids |
 | `features.tankmates.communityFish` | Schooling Fish |

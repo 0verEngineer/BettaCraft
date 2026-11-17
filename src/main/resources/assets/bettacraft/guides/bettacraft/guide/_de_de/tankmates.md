@@ -85,6 +85,7 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 | <ItemImage id="bettacraft:swordtail_bucket" /> [Schwertträger](tankmates/swordtail.md) | 22–28 | 3 | ja | lebendgebärend |
 | <ItemImage id="bettacraft:bronze_cory_bucket" /> [Metallpanzerwels](tankmates/bronze_cory.md) | 20–28 | 6 | ja | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
 | <ItemImage id="bettacraft:panda_garra_bucket" /> [Panda-Saugschmerle](tankmates/panda_garra.md) | 20–26 | 5 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:archerfish_bucket" /> [Schützenfisch](brackish/archerfish.md) | 24–30 | 3 | nein (groß, zupft Flossen) | vermehrt sich nicht im Aquarium |
 
 ## In diesem Kapitel
 

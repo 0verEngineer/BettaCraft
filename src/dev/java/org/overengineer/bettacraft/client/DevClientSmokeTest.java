@@ -171,6 +171,8 @@ final class DevClientSmokeTest {
     /** -Psmoketestm47: the aquarist villager in a village and his trade menu, the ram forms, the frog breeding (M47). */
     private static final boolean M47_ONLY = Boolean.getBoolean("bettacraft.smoketest.m47only");
     private static final boolean M48_ONLY = Boolean.getBoolean("bettacraft.smoketest.m48only");
+    private static final boolean M49_ONLY = Boolean.getBoolean("bettacraft.smoketest.m49only");
+    private static DevClientSmokeM49 m49;
     private static DevClientSmokeM47 m47;
     private static DevClientSmokeM48 m48;
     /** -Pquests -Pkubejs -Psmoketestm45: the quest chapter in the quest book, English and German (M45). */
@@ -433,6 +435,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M49_ONLY) {
+                if (ticks == 60) m49 = new DevClientSmokeM49();
+                if (m49 != null && m49.tick()) {
+                    m49 = null;
+                    LOGGER.info("[smoketest] client world test finished (M49 only)");
                     mc.stop();
                 }
                 return;

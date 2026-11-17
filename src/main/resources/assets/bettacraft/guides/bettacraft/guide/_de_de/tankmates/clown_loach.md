@@ -49,6 +49,6 @@ Vermehrt sich im Aquarium praktisch nie.
 * **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,13–0,15 % pro Schwung (etwa 1 von 646–765 Schwüngen), 1–4 auf einmal.
 * **Wild** in Sümpfen, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.tankmates.wildSpawns`).
 * **Wild** in Dschungelgewässern, in Gruppen von 3–5 (Spawn-Gewicht 2) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 13 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 14 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -1173,11 +1173,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         fitLine(g, Component.translatable(s.getBoolean("running") ? "gui.bettacraft.sump.pump_on" : "gui.bettacraft.sump.pump_off")
                 .withStyle(s.getBoolean("running") ? ChatFormatting.GREEN : ChatFormatting.RED), x, y, TEXT_LIGHT, w);
         y += 13;
-        fitLine(g, Component.translatable("gui.bettacraft.sump.heaters_line", s.getInt("heaters")).withStyle(s.getInt("heaters") > 0 ? ChatFormatting.GOLD : ChatFormatting.GRAY),
-                x, y, TEXT_LIGHT, w);
-        y += 11;
-        fitLine(g, Component.translatable("gui.bettacraft.sump.skimmer_line", s.getInt("skimmers")).withStyle(s.getInt("skimmers") > 0 ? ChatFormatting.AQUA : ChatFormatting.GRAY),
-                x, y, TEXT_LIGHT, w);
+        MutableComponent gear = Component.translatable("gui.bettacraft.sump.heaters_line", s.getInt("heaters")).withStyle(s.getInt("heaters") > 0 ? ChatFormatting.GOLD : ChatFormatting.GRAY);
+        gear.append(Component.literal(" · ").withStyle(ChatFormatting.DARK_GRAY));
+        gear.append(Component.translatable("gui.bettacraft.sump.skimmer_line", s.getInt("skimmers")).withStyle(s.getInt("skimmers") > 0 ? ChatFormatting.AQUA : ChatFormatting.GRAY));
+        fitLine(g, gear, x, y, TEXT_LIGHT, w);
         y += 11;
         int media = s.getInt("media");
         fitLine(g, (media == 0 ? Component.translatable("gui.bettacraft.sump.media_none")
@@ -1189,8 +1188,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (!s.getBoolean("refugium_on")) ref = Component.translatable("gui.bettacraft.sump.refugium_off").withStyle(ChatFormatting.GRAY);
         else if (algae == 0) ref = Component.translatable("gui.bettacraft.sump.refugium_empty").withStyle(ChatFormatting.GRAY);
         else if (s.getInt("lit") == 0) ref = Component.translatable("gui.bettacraft.sump.refugium_dark", algae).withStyle(ChatFormatting.GOLD);
-        else ref = Component.translatable("gui.bettacraft.sump.refugium_line", algae, org.overengineer.bettacraft.equipment.Sump.MAX_ALGAE, fmt2(s.getDouble("uptake")),
-                Math.round((1 - s.getDouble("algae_factor")) * 100)).withStyle(ChatFormatting.GREEN);
+        else {
+            fitLine(g, Component.translatable("gui.bettacraft.sump.refugium_line", algae, org.overengineer.bettacraft.equipment.Sump.MAX_ALGAE)
+                    .withStyle(ChatFormatting.GREEN), x, y, TEXT_LIGHT, w);
+            y += 11;
+            ref = Component.translatable("gui.bettacraft.sump.refugium_effect", fmt2(s.getDouble("uptake")), Math.round((1 - s.getDouble("algae_factor")) * 100))
+                    .withStyle(ChatFormatting.GREEN);
+        }
         fitLine(g, ref, x, y, TEXT_LIGHT, w);
         y += 13;
         MutableComponent dev = Component.translatable("gui.bettacraft.sump.devices", s.getInt("sensors"), s.getInt("dosing"));

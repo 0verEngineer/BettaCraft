@@ -4,6 +4,50 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.39.0-beta.1] - 2026-11-17
+
+A sump under the tank with a refugium and a calcium reactor; brackish water with the archerfish, the mudskipper, mangroves
+and the Amano shrimp.
+
+### Added
+- **Sump:** a small tank in the cabinet under an aquarium (a new slot in the cabinet). Its water counts with the tank (0.5
+  blocks each, `sump.sumpWaterBlocks`): the waste, the nitrate and the dosed values change more slowly, and there is room for
+  more animals. Its return pump runs like an external filter; its chambers (the button above the slot) hold two heaters or
+  coolers, a protein skimmer and two filter media, so they take no room in or at the tank. A level sensor, a dosing pump or a
+  calcium reactor next to the cabinet serves the tank above. The tank menu gets the tab "Sump". Switch `features.sump.enabled`.
+- **Refugium:** a chamber of the sump with Chaetomorpha (up to 16) and a tank light: it takes up nitrate
+  (`sump.refugiumNitratePerAlgae`), starves the algae on the glass of nutrients and grows (`sump.chaetoDoublingDays`); the
+  extra algae are food for shrimp and snails, a vegetable for the food maker or go into the composter. The wandering trader
+  sells Chaetomorpha. Switch `features.sump.refugium`.
+- **Calcium reactor:** a column of coral rubble that CO2 from a gas cylinder dissolves: it raises calcium and alkalinity in
+  the ratio the stony corals use them, up to about 440 mg/L calcium (`sump.calciumReactorCalciumPerDay`,
+  `sump.calciumReactorRubblePerDay`). Next to a salt water tank, the cabinet of its sump or on a pipe; hoppers fill in the
+  rubble (from dead coral blocks or calcite). Switch `features.sump.calciumReactor`.
+- **Brackish water** as a theme of its own (a new chapter of the handbook), switch `features.brackish.enabled`:
+  - **Archerfish:** shoots insects above the water with a jet of water: fruit flies let out over an open tank, insects at
+    the plants above it (a mangrove crown, the land of a paludarium, leaves or flowers on top); now and then it splashes a
+    player leaning over the tank. Net in mangrove swamps, wild there, wandering trader.
+  - **Mudskipper:** a fish on land for a brackish paludarium (it is stressed in fresh water); it skips over the mud and climbs
+    roots and the glass. Terrarium box in mangrove swamps, wild there, wandering trader.
+  - **Mangroves:** a mangrove propagule on a tank (or placed in the interior) grows in six stages into a small mangrove of
+    vanilla blocks: stilt roots in the water, a crown over the surface (`brackish.mangroveStageDays`, faster in brackish
+    water). New decoration: the tall **mangrove stilt roots**.
+  - **Amano shrimp:** strong algae eaters that mate in fresh water; their larvae die there after a day
+    (`brackish.amanoFreshLarvaDays`): net the cloud of larvae into a fish bag and let it out into a brackish tank, where a
+    part settles as young shrimp after three days (`brackish.amanoLarvaDays`, `brackish.amanoLarvaSurvival`, twice as many
+    with phytoplankton). Net in mangrove swamps, wandering trader.
+- Seven advancements ("Below Deck", "Dissolved Coral", "Sharpshooter", "Mistaken for a Fly", "Fish Out of Water", "Roots in
+  the Brine", "Back from the Sea") and seven new quests.
+- Handbook (English and German): the chapter "Brackish water" with pages for the archerfish, the mudskipper, the Amano shrimp
+  and the mangroves; pages for the sump, the refugium and the calcium reactor; generated sections.
+
+### Changed
+- The mangrove swamps are a home of their own for the terrarium animals (the swamp animals live there as before).
+- Mangrove leaves and propagules in a tank interior count as plants of Minecraft (`minecraft_mangrove` profile).
+
+### Compatibility
+- Cabinets of older worlds get the new sump slot empty; tanks without a sump work as before.
+
 ## [1.38.0-beta.1] - 2026-11-17
 
 Gold and albino neons, a hardy bronze cory and the panda garra; on the reef the mandarin, the Banggai cardinalfish, the

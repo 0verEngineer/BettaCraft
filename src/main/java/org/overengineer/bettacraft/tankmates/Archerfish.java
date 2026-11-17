@@ -92,6 +92,18 @@ public final class Archerfish {
         return 1;
     }
 
+    /** Fruit flies in the hand on a tank with an archerfish and an open top: one item let out over the water. */
+    public static net.minecraft.world.ItemInteractionResult useOnTank(ItemStack stack, net.minecraft.world.level.Level level, BlockPos pos,
+                                                                     net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        if (!enabled() || !stack.is(ModTags.SMALL_FEEDER_INSECTS)) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!(level instanceof ServerLevel server)) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, pos);
+        if (c == null || release(server, c, stack, 1) <= 0) return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        player.displayClientMessage(Component.translatable("message.bettacraft.archerfish.flies").withStyle(ChatFormatting.GREEN), true);
+        return net.minecraft.world.ItemInteractionResult.CONSUME;
+    }
+
     /** The care step (every second): insects come to the plants, the archerfish shoot, now and then a player is splashed. */
     public static void step(ServerLevel level, TankBlockEntity c, double days) {
         if (!enabled() || days <= 0) return;
@@ -169,15 +181,20 @@ public final class Archerfish {
         return a.position().add(look.scale(a.getBbWidth() * 0.5)).add(0, a.getBbHeight() * 0.6, 0);
     }
 
-    /** A thin line of water particles from the mouth to the target. */
+    /** The pale blue of the jet (small dust particles: they stay where they are for a moment, in the water and in the air). */
+    private static final net.minecraft.core.particles.DustParticleOptions JET = new net.minecraft.core.particles.DustParticleOptions(
+            new org.joml.Vector3f(0.62F, 0.84F, 1.0F), 0.7F);
+
+    /** A thin line of water particles from the mouth to the target, a splash where it hits. */
     static void jet(ServerLevel level, Vec3 from, Vec3 to) {
         Vec3 d = to.subtract(from);
-        int n = Math.max(6, (int) Math.ceil(d.length() * 8));
+        int n = Math.max(8, (int) Math.ceil(d.length() * 14));
         for (int i = 1; i <= n; i++) {
             Vec3 p = from.add(d.scale(i / (double) n));
-            level.sendParticles(ParticleTypes.SPLASH, p.x, p.y, p.z, 1, 0.01, 0.01, 0.01, 0.0);
+            level.sendParticles(JET, p.x, p.y, p.z, 1, 0.0, 0.0, 0.0, 0.0);
         }
-        level.sendParticles(ParticleTypes.FALLING_WATER, to.x, to.y, to.z, 4, 0.05, 0.05, 0.05, 0.0);
+        level.sendParticles(ParticleTypes.SPLASH, to.x, to.y, to.z, 6, 0.06, 0.04, 0.06, 0.0);
+        level.sendParticles(ParticleTypes.FALLING_WATER, to.x, to.y, to.z, 3, 0.05, 0.05, 0.05, 0.0);
     }
 
     /** The area above the tank where its insects fly (for the client and the tests). */

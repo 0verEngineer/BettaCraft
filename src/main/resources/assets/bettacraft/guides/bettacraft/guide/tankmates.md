@@ -82,6 +82,7 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 | <ItemImage id="bettacraft:swordtail_bucket" /> [Swordtail](tankmates/swordtail.md) | 22–28 | 3 | yes | Bears live young |
 | <ItemImage id="bettacraft:bronze_cory_bucket" /> [Bronze Cory](tankmates/bronze_cory.md) | 20–28 | 6 | yes | Glues its eggs to the glass (after a cool water change) |
 | <ItemImage id="bettacraft:panda_garra_bucket" /> [Panda Garra](tankmates/panda_garra.md) | 20–26 | 5 | too cool | Scatters its eggs (fine plants, spawning mop) |
+| <ItemImage id="bettacraft:archerfish_bucket" /> [Archerfish](brackish/archerfish.md) | 24–30 | 3 | no (big, nips fins) | Does not breed in a tank |
 
 ## In this chapter
 

@@ -33,7 +33,7 @@ Die Olivgrüne Rennschnecke (*Neritina reclivata*) von den Küsten Floridas und 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 8–9,6 % pro Schwung (etwa 1 von 10–13 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Mangrovensümpfen: 7,1–8,4 % pro Schwung (etwa 1 von 12–14 Schwüngen), 1–2 auf einmal.
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 9–11 % pro Schwung (etwa 1 von 9–11 Schwüngen), 1–2 auf einmal.
 * **Wild** in Mangrovensümpfen, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).

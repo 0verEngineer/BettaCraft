@@ -30,9 +30,11 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="minecraft:piston" /> | ↳ **Shaft Power** | A turning Create shaft drives a tank through a drive adapter or its cabinet |
 | <ItemImage id="bettacraft:decor_castle" /> | ↳ **Honey, I Shrunk Myself** | Enter a tank interior (sneak + right-click a tank) |
 | <ItemImage id="bettacraft:decor_shipwreck" /> | ↳ **Interior Designer** | Place a decoration structure |
+| <ItemImage id="minecraft:mangrove_propagule" /> | ↳ **Roots in the Brine** | A mangrove in a tank grows its crown over the water |
 | <ItemImage id="minecraft:gravel" /> | ↳ **Groundwork** | Lay substrate on an interior floor block (sneak + right-click with a block) |
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Water Works** | Fill a tank at least halfway with water |
 | <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Clear View** | Scrape algae off the glass of a tank with the algae scraper |
+| <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Back from the Sea** | Raise Amano larvae in brackish water until they settle as young shrimp |
 | <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Colony** | Young shrimp, snails or crayfish are born in a tank |
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Guest from Afar** | Put an axolotl or an animal of another mod with a Bettacraft profile into a tank |
 | <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Tadpoles!** | The spawn of your dwarf clawed frogs hatches in a tank |
@@ -58,6 +60,8 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Fresh Start** | Change water: pour fresh water into a tank with used water |
 | <ItemImage id="bettacraft:mob_jar" /> | ↳ **Ship in a Bottle** | Get a mob into a tank, shrunk and harmless |
 | <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Community Tank** | Put a tankmate fish into a tank |
+| <ItemImage id="bettacraft:archerfish_bucket" /> | ↳ **Sharpshooter** | An archerfish shoots an insect off the leaves above its tank |
+| <ItemImage id="minecraft:water_bucket" /> | ↳ **Mistaken for a Fly** | Get splashed by an archerfish while leaning over its tank |
 | <ItemImage id="bettacraft:banggai_cardinal_bucket" /> | ↳ **A Mouthful of Young** | A Banggai cardinalfish male releases his young from his mouth |
 | <ItemImage id="bettacraft:rotifers" /> | ↳ **Rotifer Rearing** | Clownfish larvae raised on rotifers settle as young fish |
 | <ItemImage id="bettacraft:breeding_box" /> | ↳ **Born Alive** | Livebearers give birth in one of your tanks |
@@ -67,6 +71,7 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sunrise, Sunset** | Switch on the daylight timer of a tank's lights |
 | <ItemImage id="minecraft:moss_block" /> | ↳ **Half and Half** | Open the menu of a paludarium: water and land in one tank |
 | <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Hatchlings** | A clutch of a terrarium animal hatches |
+| <ItemImage id="bettacraft:mudskipper_box" /> | ↳ **Fish Out of Water** | Keep a mudskipper in a brackish paludarium |
 | <ItemImage id="minecraft:rabbit_foot" /> | ↳ **House Pet** | A peaceful Minecraft animal moves into a terrarium or paludarium |
 | <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm or Cool** | Turtle eggs hatch: the nest temperature decided their sex |
 | <ItemImage id="minecraft:turtle_scute" /> | ↳ **Ocean Giant** | Put a sea turtle into a big sea water paludarium |
@@ -74,6 +79,8 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="minecraft:redstone" /> | ↳ **Plugged In** | Open the menu of a tank with energy in its buffer while devices need power |
 | <ItemImage id="bettacraft:crank" /> | ↳ **Wound Up** | Wind a device with the crank |
 | <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **One Filter for All** | A multiblock filter cleans the water of two tanks at once |
+| <ItemImage id="bettacraft:sump" /> | ↳ **Below Deck** | Put a sump into a cabinet under a tank |
+| <ItemImage id="bettacraft:calcium_reactor" /> | ↳ **Dissolved Coral** | A calcium reactor dissolves coral rubble with CO2 into a reef tank |
 | <ItemImage id="minecraft:minecart" /> | ↳ **Mobile Aquarium** | A tank arrives in one piece somewhere else on a contraption |
 | <ItemImage id="bettacraft:betta_bucket" /> | **Labyrinth Fish** | Catch a wild betta in a swamp with a bucket or a fish bag |
 | <ItemImage id="bettacraft:swamp_water_bottle" /> | **Murky Waters** | Fill a glass bottle with swamp water |

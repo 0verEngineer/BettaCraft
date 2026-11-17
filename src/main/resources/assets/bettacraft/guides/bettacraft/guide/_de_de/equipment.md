@@ -40,6 +40,8 @@ navigation:
 | [Osmoseanlage](equipment/reverse_osmosis.md) | Osmosewasser (nichts gelöst) für weiches Wasser |
 | [Monitor](equipment/monitor.md) | Bildschirme bis 8 x 5 Blöcke mit den Werten aller Becken in der Nähe |
 | [Dosierpumpe](saltwater/dosing_pump.md) | dosiert Kalzium, Alkalinität, Magnesium und Spurenelemente in Riffbecken |
+| [Technikbecken](equipment/sump.md) und [Refugium](equipment/refugium.md) | ein zweites Becken im Unterschrank: mehr Wasser, Kammern für Heizer, Abschäumer, Medien und Chaetomorpha |
+| [Kalkreaktor](saltwater/calcium_reactor.md) | löst Korallenbruch mit CO2: Calcium und Alkalinität für die Steinkorallen |
 
 Standardmäßig braucht keine Ausrüstung Strom; ein Server kann das einschalten (siehe [Strom](equipment/power.md)).
 

@@ -52,6 +52,7 @@ bekommt in einem kühlen Becken unsere Pflege und Zucht.
 | [Tylomelania-Schnecke](invertebrates/tylomelania.md) | 24–30 | Paar | etwas |
 | [Floridakrebs](invertebrates/florida_crayfish.md) | 15–28 | Paar | kaum |
 | [Marmorkrebs](invertebrates/marbled_crayfish.md) | 12–30 | ein Tier genügt | kaum |
+| [Amano-Garnele](brackish/amano_shrimp.md) | 18–28 | Paar | etwas |
 | [Zwergkrallenfrosch](invertebrates/dwarf_clawed_frog.md) | 20–28 | nein | nein |
 
 ## In diesem Kapitel

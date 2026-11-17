@@ -34,7 +34,7 @@ The assassin snail (*Clea helena*) from South-East Asia: a yellow and brown band
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.68 % per swing (about 1 in 146 swings).
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.3–1.5 % per swing (about 1 in 67–79 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 1.1–1.3 % per swing (about 1 in 80–88 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in deep cave water: 3.5–4.2 % per swing (about 1 in 24–28 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in lush caves: 2.7–2.9 % per swing (about 1 in 34–37 swings).
 * **Wild** in rivers, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.wildSpawns`).

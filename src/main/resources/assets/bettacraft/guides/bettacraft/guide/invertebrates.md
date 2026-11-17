@@ -51,6 +51,7 @@ gets our care and breeding in a cool tank.
 | [Tylomelania Snail](invertebrates/tylomelania.md) | 24–30 | pair | some |
 | [Florida Crayfish](invertebrates/florida_crayfish.md) | 15–28 | pair | hardly |
 | [Marbled Crayfish](invertebrates/marbled_crayfish.md) | 12–30 | one is enough | hardly |
+| [Amano Shrimp](brackish/amano_shrimp.md) | 18–28 | pair | some |
 | [Dwarf Clawed Frog](invertebrates/dwarf_clawed_frog.md) | 20–28 | no | no |
 
 ## In this chapter

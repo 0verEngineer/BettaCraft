@@ -1019,6 +1019,40 @@ def m48(out_en: Path) -> None:
         save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
 
 
+# M49 scene (DevClientSmokeM49, -Psmoketestm49): the sump with the calcium reactor, the brackish paludarium, the archerfish,
+# the mudskipper, the mangrove, the Amano shrimp; the windows of the sump and the reactor and the tab "Sump" (en, de).
+# ``py guide_images.py m49``.
+M49_WORLD = {"sump": ("bettacraft_m49_sump", (330, 140, 1000, 600)),
+             "calcium_reactor": ("bettacraft_m49_calcium_reactor", (200, 180, 1280, 620)),
+             "brackish": ("bettacraft_m49_brackish", (310, 190, 970, 590)),
+             "archer_shot": ("bettacraft_m49_archer_shot", (150, 150, 1110, 880)),
+             "sp_archerfish": ("bettacraft_m49_sp_archerfish", (140, 120, 1140, 760)),
+             "sp_mudskipper": ("bettacraft_m49_sp_mudskipper", (200, 200, 1000, 700)),
+             "mangrove": ("bettacraft_m49_mangrove", (150, 200, 1130, 900)),
+             "sp_amano_shrimp": ("bettacraft_m49_sp_amano_shrimp", (150, 150, 1100, 600))}
+M49_MENUS = {"sump_menu": ("bettacraft_m49_menu_sump", (464, 302, 816, 658)),
+             "sump_tab": ("bettacraft_m49_menu_sump_tab", (394, 250, 886, 530)),
+             "calcium_reactor_menu": ("bettacraft_m49_menu_reactor", (464, 314, 816, 480))}
+
+
+def m49(out_en: Path, out_de: Path) -> None:
+    for name, (shot, box) in M49_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        im = Image.open(src).convert("RGB").crop(box)
+        w = min(800, im.width)
+        save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+    for name, (shot, box) in M49_MENUS.items():
+        for suffix, out in (("", out_en), ("_de", out_de)):
+            src = SHOTS / f"{shot}{suffix}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1033,6 +1067,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m49"]:
+        m49(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m48"]:
         m48(out_en)
         return 0

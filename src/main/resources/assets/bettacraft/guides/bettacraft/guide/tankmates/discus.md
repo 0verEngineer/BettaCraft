@@ -54,7 +54,7 @@ The young **feed on the skin secretion of their parents**: they stay with them m
 
 * **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.09–0.1 % per swing (about 1 in 969–1148 swings), 1–4 at a time.
 * **Wild** in jungle water, in groups of 3–3 (spawn weight 1) (config `features.tankmates.cichlids`).
-* **Wandering trader** (rare offers): 6 for 17 emeralds; one of 13 in this offer.
+* **Wandering trader** (rare offers): 6 for 17 emeralds; one of 14 in this offer.
 * **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.cichlids`).
 * **[Breeding](breeding.md)**: Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood.
 

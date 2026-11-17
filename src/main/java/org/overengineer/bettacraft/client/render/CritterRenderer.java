@@ -361,7 +361,7 @@ public final class CritterRenderer {
                 float a = i * 2.39F + t * 0.3F;
                 pose.translate(net.minecraft.util.Mth.cos(a) * (0.03F + i * 0.012F), net.minecraft.util.Mth.sin(t * 0.7F + i) * 0.03F + (i % 3) * 0.03F,
                         net.minecraft.util.Mth.sin(a) * (0.03F + i * 0.012F));
-                pose.scale(0.18F, -0.18F, -0.18F);
+                pose.scale(0.26F, -0.26F, -0.26F);
                 eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xE8ECE0));
                 pose.popPose();
             }

@@ -1390,7 +1390,7 @@
 			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.sump.desc\"}"],
 			id: "4DCACB4D4287A6E0",
-			rewards: [{ id: "79C54E9EDF716090", type: "xp", xp: 75 }, { count: 4, id: "7E05EEFF85CDCB19", item: { count: 1, id: "bettacraft:chaetomorpha" }, type: "item" }],
+			rewards: [{ id: "79C54E9EDF716090", type: "xp", xp: 75 }],
 			tags: ["bettacraft_feature:sump.enabled"],
 			tasks: [
 				{ advancement: "bettacraft:sump_installed", criterion: "", id: "39A267F96DAF8FDE", type: "advancement" }
@@ -1429,7 +1429,7 @@
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.archerfish.desc\"}"],
 			id: "3BB1DF945431649D",
-			rewards: [{ id: "0DBEAA6FF0C24F69", type: "xp", xp: 75 }, { count: 2, id: "30C77681FF992E90", item: { count: 1, id: "bettacraft:fruit_fly_culture" }, type: "item" }],
+			rewards: [{ id: "0DBEAA6FF0C24F69", type: "xp", xp: 75 }],
 			tags: ["bettacraft_feature:brackish.archerfish"],
 			tasks: [
 				{ advancement: "bettacraft:archerfish_shot", criterion: "", id: "03BB13DCF13BE375", type: "advancement" }
@@ -1468,7 +1468,7 @@
 			dependencies: ["2754F2DD6EA86AEC"],
 			description: ["{\"translate\":\"quest.bettacraft.amano.desc\"}"],
 			id: "3D46AA8518E83DD2",
-			rewards: [{ id: "78E792F5977F068A", type: "xp", xp: 250 }, { count: 2, id: "1C6EE05210C3F1EF", item: { count: 1, id: "bettacraft:phytoplankton_culture" }, type: "item" }],
+			rewards: [{ id: "78E792F5977F068A", type: "xp", xp: 250 }, { count: 4, id: "52F44DC1D654BB85", item: { count: 1, id: "bettacraft:fish_bag" }, type: "item" }],
 			shape: "hexagon",
 			size: 1.5d,
 			tags: ["bettacraft_feature:brackish.amanoShrimp", "bettacraft_feature:breeding.enabled"],

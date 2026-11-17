@@ -119,43 +119,68 @@ public final class Mangroves {
         Map<BlockPos, double[]> out = new LinkedHashMap<>();
         java.util.Random r = new java.util.Random(seed);
         double s = Math.max(4, scale) / 16.0; // a smaller interior scale makes a smaller tree
-        int top = Math.max(3, room - 1);
-        int trunkBase = (int) Math.round(Math.max(2, Math.min(top * 0.45, Math.max(2, water * 0.55))));
-        int crownBase = Math.max(trunkBase + 2, Math.min(top - 3, Math.max(water + 2, (int) Math.round(top * 0.62))));
-        int crownTop = Math.min(top, crownBase + Math.max(2, (int) Math.round(4 * s)));
-        // the stilt roots: arches from the foot of the trunk out and down to the floor
-        int roots = 5 + r.nextInt(2);
-        double reach = Math.max(2.5, Math.min(7 * s, trunkBase * 1.2 + 1));
-        double turn = r.nextDouble() * Math.PI * 2;
-        for (int i = 0; i < roots; i++) {
-            double a = turn + i * Math.PI * 2 / roots + (r.nextDouble() - 0.5) * 0.5;
-            double len = reach * (0.75 + r.nextDouble() * 0.35);
-            for (double t = 0; t <= 1.0001; t += 0.06) {
-                int x = (int) Math.round(Math.cos(a) * len * t);
-                int z = (int) Math.round(Math.sin(a) * len * t);
-                int y = (int) Math.round(trunkBase * (1 - t * t));
-                put(out, x, y, z, y == 0 ? 1 : 0, 0.05 + 0.4 * t);
-            }
-        }
+        int top = Math.max(4, room - 1);
+        // the trunk stands on its stilt roots in the water, the crown starts just above the surface
+        int trunkBase = (int) Math.round(Math.max(2, Math.min(top * 0.4, water * 0.55)));
+        int crownBase = Math.max(trunkBase + 2, Math.min(top - 2, Math.max(water + 2, trunkBase + 3)));
+        double ry = Math.max(1.5, Math.min((top - crownBase) / 2.0, 3.0 * s));
+        double rx = Math.max(3.0, Math.min(10.0 * s, 3.0 * ry + 2));
+        int cy = (int) Math.round(crownBase + ry * 0.9);
         // the foot: the propagule takes root, a central stilt carries the trunk
         for (int y = 0; y < trunkBase; y++) put(out, 0, y, 0, y == 0 ? 1 : 0, 0.01 + 0.04 * y / Math.max(1.0, trunkBase));
-        // the trunk
-        for (int y = trunkBase; y <= crownBase + 1; y++) put(out, 0, y, 0, 2, 0.1 + 0.5 * (y - trunkBase) / Math.max(1.0, crownBase + 1 - trunkBase));
-        // a second, thinner fork of the trunk into the crown
-        int fx = r.nextBoolean() ? 1 : -1, fz = r.nextBoolean() ? 1 : -1;
-        for (int y = crownBase - 1; y <= crownBase + 1; y++) put(out, y >= crownBase ? fx : 0, y, y > crownBase ? fz : 0, 2, 0.6);
-        // the crown: a flat dome of leaves above the water
-        double rx = Math.max(2.5, 5.5 * s), ry = Math.max(1.5, (crownTop - crownBase) / 1.6 + 0.5);
-        int cy = (crownBase + crownTop) / 2 + 1;
-        for (int y = crownBase; y <= crownTop; y++) {
-            for (int x = (int) -Math.ceil(rx); x <= Math.ceil(rx); x++) {
-                for (int z = (int) -Math.ceil(rx); z <= Math.ceil(rx); z++) {
-                    double d = (x * x + z * z) / (rx * rx) + (y - cy) * (y - cy) / (ry * ry);
+        // the trunk: two by two logs up into the crown
+        for (int y = trunkBase; y <= cy; y++) {
+            double o = 0.08 + 0.45 * (y - trunkBase) / Math.max(1.0, cy - trunkBase);
+            put(out, 0, y, 0, 2, o);
+            if (s >= 0.75) {
+                put(out, 1, y, 0, 2, o);
+                put(out, 0, y, 1, 2, o);
+                put(out, 1, y, 1, 2, o);
+            }
+        }
+        // the stilt roots: arches from the trunk out and down to the floor, from different heights
+        int roots = 6 + r.nextInt(3);
+        double turn = r.nextDouble() * Math.PI * 2;
+        for (int i = 0; i < roots; i++) {
+            double a = turn + i * Math.PI * 2 / roots + (r.nextDouble() - 0.5) * 0.4;
+            double len = Math.max(2.5, 7.5 * s) * (0.7 + r.nextDouble() * 0.45);
+            double h = trunkBase + r.nextDouble() * Math.max(1.0, 2.5 * s);
+            int lastX = Integer.MIN_VALUE, lastY = 0, lastZ = 0;
+            for (double t = 0; t <= 1.0001; t += 0.04) {
+                int x = (int) Math.round(0.5 + Math.cos(a) * len * t);
+                int z = (int) Math.round(0.5 + Math.sin(a) * len * t);
+                int y = (int) Math.round(h * (1 - Math.pow(t, 1.8)));
+                if (x == lastX && y == lastY && z == lastZ) continue;
+                put(out, x, y, z, y == 0 ? 1 : 0, 0.05 + 0.4 * t);
+                lastX = x;
+                lastY = y;
+                lastZ = z;
+            }
+        }
+        // branches from the top of the trunk out into the crown
+        int branches = 3 + r.nextInt(2);
+        for (int i = 0; i < branches; i++) {
+            double a = turn + 0.6 + i * Math.PI * 2 / branches + (r.nextDouble() - 0.5) * 0.5;
+            double len = rx * 0.65;
+            for (double t = 0.1; t <= 1.0001; t += 0.1) {
+                put(out, (int) Math.round(0.5 + Math.cos(a) * len * t), (int) Math.round(crownBase + ry * 0.5 + t * ry * 0.6),
+                        (int) Math.round(0.5 + Math.sin(a) * len * t), 2, 0.55 + 0.1 * t);
+            }
+            // an aerial root hanging from the branch down to the water
+            int ax = (int) Math.round(0.5 + Math.cos(a) * len * 0.8), az = (int) Math.round(0.5 + Math.sin(a) * len * 0.8);
+            for (int y = Math.max(0, water - 1); y < crownBase + 1; y++) put(out, ax, y, az, 0, 0.75 + 0.15 * (crownBase - y) / Math.max(1.0, crownBase - water));
+        }
+        // the crown: a wide, flat dome of leaves above the water
+        for (int y = (int) Math.floor(cy - ry); y <= Math.min(top, (int) Math.ceil(cy + ry)); y++) {
+            if (y < crownBase) continue;
+            for (int x = (int) -Math.ceil(rx); x <= Math.ceil(rx) + 1; x++) {
+                for (int z = (int) -Math.ceil(rx); z <= Math.ceil(rx) + 1; z++) {
+                    double dx = x - 0.5, dz = z - 0.5;
+                    double d = (dx * dx + dz * dz) / (rx * rx) + (y - cy) * (y - cy) / (ry * ry);
                     if (d > 1.0) continue;
-                    if (d > 0.7 && r.nextDouble() < 0.35) continue; // a ragged edge
-                    BlockPos p = new BlockPos(x, y, z);
-                    if (out.containsKey(p)) continue;
-                    put(out, x, y, z, 3, 0.62 + 0.38 * Math.sqrt(d));
+                    if (d > 0.65 && r.nextDouble() < 0.4) continue; // a ragged edge
+                    if (out.containsKey(new BlockPos(x, y, z))) continue;
+                    put(out, x, y, z, 3, 0.6 + 0.4 * Math.sqrt(d));
                 }
             }
         }

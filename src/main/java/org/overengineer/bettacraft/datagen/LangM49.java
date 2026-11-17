@@ -62,14 +62,15 @@ final class LangM49 {
         a.accept("gui.bettacraft.sump.line", "Sumps: %s · their water %s blocks · together %s blocks");
         a.accept("gui.bettacraft.sump.pump_on", "Return pump runs");
         a.accept("gui.bettacraft.sump.pump_off", "Return pump stands still (no power)");
-        a.accept("gui.bettacraft.sump.heaters_line", "Heaters and coolers in the sump: %s");
-        a.accept("gui.bettacraft.sump.skimmer_line", "Protein skimmers in the sump: %s");
+        a.accept("gui.bettacraft.sump.heaters_line", "Heaters and coolers: %s");
+        a.accept("gui.bettacraft.sump.skimmer_line", "protein skimmers: %s");
         a.accept("gui.bettacraft.sump.media_none", "No filter media in the sump");
         a.accept("gui.bettacraft.sump.media_line", "Filter media: %s · clean %s blocks · dirt up to %s %%");
         a.accept("gui.bettacraft.sump.refugium_off", "Refugium switched off");
         a.accept("gui.bettacraft.sump.refugium_empty", "Refugium: no Chaetomorpha");
         a.accept("gui.bettacraft.sump.refugium_dark", "Refugium: %s Chaetomorpha without light (or pump)");
-        a.accept("gui.bettacraft.sump.refugium_line", "Refugium: %s/%s Chaetomorpha · nitrate -%s mg/L a day · glass algae -%s %%");
+        a.accept("gui.bettacraft.sump.refugium_line", "Refugium: %s/%s Chaetomorpha, lit");
+        a.accept("gui.bettacraft.sump.refugium_effect", "Nitrate -%s mg/L a day · glass algae -%s %%");
         a.accept("gui.bettacraft.sump.devices", "Beside the cabinet: %s level sensors, %s dosing pumps");
         a.accept("gui.bettacraft.sump.reactor", "a calcium reactor");
         a.accept("gui.bettacraft.sump.hint", "The chambers: the button above the sump in the cabinet");

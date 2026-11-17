@@ -35,6 +35,7 @@ final class LangM49b {
                 + "Shoots insects off the leaves above the water with a jet of water: fruit flies let out over an open tank, insects at the plants above it (a paludarium, a mangrove crown). Now and then it splashes a player who leans over the tank.\n"
                 + "Does not breed in a tank. Catch: aquarium net in mangrove swamps, wandering trader.");
         a.accept("message.bettacraft.archerfish.splash", "Splash! An archerfish took you for an insect");
+        a.accept("message.bettacraft.archerfish.flies", "The fruit flies buzz over the water: the archerfish takes aim");
         a.accept("log.bettacraft.archerfish.flies", "%s fruit flies let out over the water for the archerfish");
         // the mudskipper
         a.accept("entity.bettacraft.mudskipper", "Mudskipper");

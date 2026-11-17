@@ -51,7 +51,7 @@ At 24–28 °C a female with a male gets pregnant and gives birth to 10–40 you
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.32–0.38 % per swing (about 1 in 260–308 swings), 1–4 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 5.5–6.5 % per swing (about 1 in 15–18 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in mangrove swamps: 3.8–4.5 % per swing (about 1 in 22–27 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–3 (spawn weight 2) (config `features.tankmates.communityFish`).
 * **Wild** in mangrove swamps, in groups of 3–3 (spawn weight 3) (config `features.tankmates.communityFish`).
 * **Wandering trader** (usual offers): 6 for 6 emeralds; one of 37 in this offer.

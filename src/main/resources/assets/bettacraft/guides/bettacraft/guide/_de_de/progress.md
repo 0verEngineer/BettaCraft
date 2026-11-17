@@ -30,9 +30,11 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:piston" /> | ↳ **Wellenkraft** | Eine drehende Create-Welle treibt ein Becken über einen Antriebsadapter oder seinen Schrank an |
 | <ItemImage id="bettacraft:decor_castle" /> | ↳ **Liebling, ich habe mich geschrumpft** | Betritt einen Aquarium-Innenraum (Schleichen + Rechtsklick auf ein Aquarium) |
 | <ItemImage id="bettacraft:decor_shipwreck" /> | ↳ **Innenarchitekt** | Setze eine Deko-Struktur |
+| <ItemImage id="minecraft:mangrove_propagule" /> | ↳ **Wurzeln im Brackwasser** | Eine Mangrove im Becken treibt ihre Krone über das Wasser |
 | <ItemImage id="minecraft:gravel" /> | ↳ **Bodenarbeit** | Lege Bodengrund auf einen Innenraum-Bodenblock (Schleichen + Rechtsklick mit einem Block) |
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Wasserwerk** | Fülle ein Aquarium mindestens zur Hälfte mit Wasser |
 | <ItemImage id="bettacraft:algae_scraper" /> | ↳ **Klare Sicht** | Kratze mit dem Algenschaber Algen von der Scheibe eines Beckens |
+| <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Zurück vom Meer** | Ziehe Amano-Larven im Brackwasser auf, bis sie sich als junge Garnelen niederlassen |
 | <ItemImage id="bettacraft:critter_bucket" /> | ↳ **Kolonie** | In einem Becken kommen junge Garnelen, Schnecken oder Krebse zur Welt |
 | <ItemImage id="minecraft:axolotl_bucket" /> | ↳ **Gast von weit her** | Setze einen Axolotl oder ein Tier einer anderen Mod mit Bettacraft-Profil in ein Becken |
 | <ItemImage id="bettacraft:dwarf_frog_bucket" /> | ↳ **Kaulquappen!** | Der Laich deiner Zwergkrallenfrösche schlüpft in einem Becken |
@@ -58,6 +60,8 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Frischer Start** | Wasser wechseln: Frischwasser in ein Aquarium mit verbrauchtem Wasser füllen |
 | <ItemImage id="bettacraft:mob_jar" /> | ↳ **Buddelschiff** | Bring einen Mob in ein Becken, geschrumpft und harmlos |
 | <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Gesellschaftsbecken** | Setze einen Beifisch in ein Becken |
+| <ItemImage id="bettacraft:archerfish_bucket" /> | ↳ **Meisterschütze** | Ein Schützenfisch schießt ein Insekt von den Blättern über seinem Becken |
+| <ItemImage id="minecraft:water_bucket" /> | ↳ **Für eine Fliege gehalten** | Werde von einem Schützenfisch angespritzt, während du dich über sein Becken beugst |
 | <ItemImage id="bettacraft:banggai_cardinal_bucket" /> | ↳ **Ein Maul voller Junge** | Ein Banggai-Männchen entlässt seine Jungen aus dem Maul |
 | <ItemImage id="bettacraft:rotifers" /> | ↳ **Rotatorien-Aufzucht** | Mit Rotatorien aufgezogene Clownfisch-Larven lassen sich als Jungfische nieder |
 | <ItemImage id="bettacraft:breeding_box" /> | ↳ **Lebend geboren** | Lebendgebärende bekommen in einem deiner Becken Junge |
@@ -67,6 +71,7 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sonnenaufgang** | Schalte die Tageslicht-Zeitschaltung der Beckenbeleuchtung ein |
 | <ItemImage id="minecraft:moss_block" /> | ↳ **Halb und halb** | Öffne das Menü eines Paludariums: Wasser und Land in einem Becken |
 | <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Schlüpflinge** | Ein Gelege eines Terrarientiers schlüpft |
+| <ItemImage id="bettacraft:mudskipper_box" /> | ↳ **Ein Fisch an Land** | Halte einen Schlammspringer in einem Brackwasser-Paludarium |
 | <ItemImage id="minecraft:rabbit_foot" /> | ↳ **Haustier** | Ein friedliches Minecraft-Tier zieht in ein Terrarium oder Paludarium |
 | <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm oder kühl** | Schildkröteneier schlüpfen: Die Nesttemperatur hat ihr Geschlecht bestimmt |
 | <ItemImage id="minecraft:turtle_scute" /> | ↳ **Riese des Ozeans** | Setze eine Meeresschildkröte in ein großes Meerwasser-Paludarium |
@@ -74,6 +79,8 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:redstone" /> | ↳ **Am Netz** | Öffne das Menü eines Beckens mit Energie im Speicher, während Geräte Strom brauchen |
 | <ItemImage id="bettacraft:crank" /> | ↳ **Aufgezogen** | Ziehe ein Gerät mit der Kurbel auf |
 | <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **Ein Filter für alle** | Ein Multiblock-Filter reinigt das Wasser von zwei Becken zugleich |
+| <ItemImage id="bettacraft:sump" /> | ↳ **Unter Deck** | Setze ein Technikbecken in einen Unterschrank unter einem Becken |
+| <ItemImage id="bettacraft:calcium_reactor" /> | ↳ **Gelöste Koralle** | Ein Kalkreaktor löst Korallenbruch mit CO2 in ein Riffbecken |
 | <ItemImage id="minecraft:minecart" /> | ↳ **Mobiles Aquarium** | Ein Becken kommt auf einer Contraption heil an einem anderen Ort an |
 | <ItemImage id="bettacraft:betta_bucket" /> | **Labyrinthfisch** | Fange einen wilden Betta im Sumpf mit einem Eimer oder einer Fischtüte |
 | <ItemImage id="bettacraft:swamp_water_bottle" /> | **Trübes Wasser** | Fülle eine Glasflasche mit Sumpfwasser |
