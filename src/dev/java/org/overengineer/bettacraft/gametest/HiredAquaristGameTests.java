@@ -149,7 +149,13 @@ public final class HiredAquaristGameTests {
     }
 
     static void cleanup(GameTestHelper h, UUID... players) {
-        for (UUID p : players) AquaristRecords.get(h.getLevel().getServer()).reset(p);
+        var list = h.getLevel().getServer().getPlayerList();
+        for (UUID p : players) {
+            AquaristRecords.get(h.getLevel().getServer()).reset(p);
+            // the mock players leave again: they would stand near the tests of later batches (alarm waypoints count players nearby)
+            ServerPlayer sp = list.getPlayer(p);
+            if (sp != null && "test-mock-player".equals(sp.getGameProfile().getName())) list.remove(sp);
+        }
         for (Entity e : h.getLevel().getEntities(ModEntities.HIRED_AQUARIST.get(), new net.minecraft.world.phys.AABB(h.absolutePos(BlockPos.ZERO)).inflate(40), x -> true)) e.discard();
     }
 
@@ -465,7 +471,12 @@ public final class HiredAquaristGameTests {
             AquaristEntity npc = npc(h, sp);
             List<TankBlockEntity> all = List.of(own, foreign, released, locked, none, lockedReleased, ownerless);
             for (TankBlockEntity c : all) for (AlgaeSim.Face f : TankAlgae.wetFaces(c.getTank())) AlgaeSim.set(c.getTank().algae(), f.pos(), f.dir(), 0.9F);
-            var mine = AquaristWork.tanks(h.getLevel(), npc).stream().map(t -> t.getTank().id()).toList();
+            // (tests run side by side: only the tanks of this test count)
+            BlockPos o = h.absolutePos(BlockPos.ZERO);
+            var mine = AquaristWork.tanks(h.getLevel(), npc).stream().filter(t -> {
+                BlockPos r = t.getBlockPos().subtract(o);
+                return r.getX() >= 0 && r.getX() < 32 && r.getZ() >= 0 && r.getZ() < 32;
+            }).map(t -> t.getTank().id()).toList();
             check(mine.size() == 2 && mine.contains(own.getTank().id()) && mine.contains(released.getTank().id()), "own and released: "
                     + AquaristWork.tanks(h.getLevel(), npc).stream().map(t -> t.getBlockPos().subtract(h.absolutePos(BlockPos.ZERO)) + " "
                     + AquaristRules.verdict(t.getTank(), sp.getUUID())).toList());
@@ -506,7 +517,7 @@ public final class HiredAquaristGameTests {
             check(AquaristRules.verdict(team.getTank(), sp.getUUID()) == AquaristRules.Verdict.FOREIGN, "not in a team: foreign");
             FtbTeamsCompat.testOverride = (a, b) -> (a.equals(mate) && b.equals(sp.getUUID())) || (b.equals(mate) && a.equals(sp.getUUID()));
             check(AquaristRules.verdict(team.getTank(), sp.getUUID()) == AquaristRules.Verdict.TEAM, "the team's tank");
-            check(AquaristWork.tanks(h.getLevel(), npc).size() == 1, "he works there");
+            check(AquaristWork.tanks(h.getLevel(), npc).contains(team), "he works there");
             ServerConfig.AQUARIST_FTB_TEAMS.set(false);
             check(AquaristRules.verdict(team.getTank(), sp.getUUID()) == AquaristRules.Verdict.FOREIGN, "the config off: foreign again");
             h.succeed();
@@ -552,7 +563,7 @@ public final class HiredAquaristGameTests {
             TankBlockEntity bs = tank(h, 10, 4, b.getUUID());
             AquaristEntity npc = npc(h, a);
             check(AquaristRules.verdict(bs.getTank(), a.getUUID()) == AquaristRules.Verdict.TEAM, "the mate's tank is a team tank");
-            check(AquaristWork.tanks(h.getLevel(), npc).size() == 1, "his aquarist works there");
+            check(AquaristWork.tanks(h.getLevel(), npc).contains(bs), "his aquarist works there");
             h.succeed();
         } catch (ReflectiveOperationException e) {
             throw new GameTestAssertException("FTB Teams: " + (e.getCause() != null ? e.getCause() : e));
@@ -645,51 +656,53 @@ public final class HiredAquaristGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m51_chunk", timeoutTicks = 3000)
     public static void survivesHisChunkUnloading(GameTestHelper h) {
         ServerLevel level = h.getLevel();
+        floor(h);
+        home(h);
         ServerPlayer sp = player(h);
-        BlockPos far = h.absolutePos(new BlockPos(0, 0, 0)).offset(3200, 0, 0);
-        ChunkPos cp = new ChunkPos(far.offset(8, 0, 8));
+        TankBlockEntity from = tank(h, 10, 4, sp.getUUID()), rear = tank(h, 10, 12, sp.getUUID());
+        BettaEntity young = betta(h, from, 5108);
+        young.setBettaData(young.getBettaData().withStage(LifeStage.JUVENILE));
+        AquaristEntity npc = npc(h, sp);
+        npc.setRearingTank(rear.getTank().id());
+        put(chest(h), new ItemStack(ModItems.BETTA_PELLETS.get(), 6));
+        run(h, npc, AquaristWork.Kind.FETCH_FOOD, null);
+        run(h, npc, AquaristWork.Kind.TAKE_YOUNG, from);
+        check(npc.carriedAnimals().size() == 1 && npc.hasFood(), "carries");
+        int food = count(npc.bag(), ModItems.BETTA_PELLETS.get());
+        UUID id = npc.getUUID();
+        // he walks off to a place far away (the chunks of the GameTest structures are forced and never unload)
+        BlockPos far = h.absolutePos(BlockPos.ZERO).offset(3200, 0, 0);
+        ChunkPos cp = new ChunkPos(far);
         for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, true);
         Runnable release = () -> {
             for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, false);
         };
-        await(h, 400, () -> level.isPositionEntityTicking(far.offset(8, 0, 8)), "the far chunks load", () -> {
-            for (int x = 0; x < 20; x++) for (int z = 0; z < 20; z++) level.setBlock(far.offset(x, 0, z), Blocks.STONE.defaultBlockState(), 3);
-            level.setBlock(far.offset(BASIN), ModBlocks.BREEDING_BASIN.get().defaultBlockState(), 3);
-            level.setBlock(far.offset(CHEST), Blocks.CHEST.defaultBlockState(), 3);
-            BlockState foot = Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
-            level.setBlock(far.offset(BED), foot, 3);
-            level.setBlock(far.offset(BED.south()), foot.setValue(BedBlock.PART, BedPart.HEAD), 3);
-            TankBlockEntity from = tankAt(h, far.offset(10, 1, 4), sp.getUUID()), rear = tankAt(h, far.offset(10, 1, 10), sp.getUUID());
-            BettaEntity young = betta(h, from, 5108);
-            young.setBettaData(young.getBettaData().withStage(LifeStage.JUVENILE));
-            AquaristEntity npc = AquaristArrival.spawnHiredHomeless(level, sp.getUUID(), "tester", Vec3.atBottomCenterOf(far.offset(6, 1, 6)));
-            check(npc.setHome(level, far.offset(BASIN), far.offset(BED.south())), "his home");
-            npc.setNoAi(true);
-            npc.setRearingTank(rear.getTank().id());
-            IItemHandler chest = level.getCapability(Capabilities.ItemHandler.BLOCK, far.offset(CHEST), null);
-            put(chest, new ItemStack(ModItems.BETTA_PELLETS.get(), 6));
-            AquaristWork.perform(level, npc, new AquaristWork.Job(AquaristWork.Kind.FETCH_FOOD, null));
-            AquaristWork.perform(level, npc, new AquaristWork.Job(AquaristWork.Kind.TAKE_YOUNG, from.getTank().id()));
-            check(npc.carriedAnimals().size() == 1 && npc.hasFood(), "carries");
-            int food = count(npc.bag(), ModItems.BETTA_PELLETS.get());
-            UUID id = npc.getUUID();
-            for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, false);
-            await(h, 1500, () -> level.getEntity(id) == null && !level.hasChunk(cp.x, cp.z), "his chunk unloads", () -> {
-                check(AquaristWork.tank(level, npc, rear.getTank().id()) == null, "an unloaded tank is not his to touch");
-                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, true);
-                await(h, 600, () -> level.getEntity(id) instanceof AquaristEntity, "he comes back", () -> {
-                    AquaristEntity back = (AquaristEntity) level.getEntity(id);
-                    check(back.carriedAnimals().size() == 1 && count(back.bag(), ModItems.BETTA_PELLETS.get()) == food, "with the young and the food");
-                    check(back.phase() == AquaristEntity.Phase.HIRED && back.workplace() != null && back.bed() != null, "still hired, with his home");
-                    AquaristRecords.PlayerRecord r = AquaristRecords.get(level.getServer()).player(sp.getUUID());
-                    check(id.equals(r.npc) && r.hired, "the record still has him");
-                    TankBlockEntity rr = TankMultiblock.getController(level, rear.getBlockPos());
-                    AquaristWork.perform(level, back, new AquaristWork.Job(AquaristWork.Kind.RELEASE_YOUNG, rr.getTank().id()));
-                    check(back.carriedAnimals().isEmpty() && TankInhabitants.liveInhabitants(level, rr.getTank()).size() == 1, "the young betta in the rearing tank");
-                    back.discard();
-                    release.run();
-                    cleanup(h, sp.getUUID());
-                    h.succeed();
+        await(h, 400, () -> level.isPositionEntityTicking(far), "the far chunks load", () -> {
+            level.setBlock(far.below(), Blocks.STONE.defaultBlockState(), 3);
+            TankBlockEntity farTank = tankAt(h, far.offset(3, 0, 0), sp.getUUID());
+            UUID farId = farTank.getTank().id();
+            npc.teleportTo(far.getX() + 0.5, far.getY(), far.getZ() + 0.5);
+            await(h, 100, () -> level.getEntity(id) != null && new ChunkPos(level.getEntity(id).blockPosition()).equals(cp), "he is there", () -> {
+                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, false);
+                await(h, 1500, () -> level.getEntity(id) == null && !level.hasChunk(cp.x, cp.z), "his chunk unloads", () -> {
+                    check(AquaristWork.tank(level, npc, farId) == null, "a tank in an unloaded chunk is not his to touch");
+                    AquaristRecords.PlayerRecord r0 = AquaristRecords.get(level.getServer()).player(sp.getUUID());
+                    check(id.equals(r0.npc) && r0.hired, "unloaded he stays hired");
+                    for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, true);
+                    await(h, 600, () -> level.getEntity(id) instanceof AquaristEntity, "he comes back", () -> {
+                        AquaristEntity back = (AquaristEntity) level.getEntity(id);
+                        check(back.carriedAnimals().size() == 1 && count(back.bag(), ModItems.BETTA_PELLETS.get()) == food, "with the young and the food");
+                        check(back.phase() == AquaristEntity.Phase.HIRED && back.workplace() != null && back.bed() != null, "still hired, with his home");
+                        AquaristRecords.PlayerRecord r = AquaristRecords.get(level.getServer()).player(sp.getUUID());
+                        check(id.equals(r.npc) && r.hired, "the record still has him");
+                        AquaristWork.perform(level, back, new AquaristWork.Job(AquaristWork.Kind.RELEASE_YOUNG, rear.getTank().id()));
+                        check(back.carriedAnimals().isEmpty() && TankInhabitants.liveInhabitants(level, rear.getTank()).size() == 1, "the young betta in the rearing tank");
+                        back.discard();
+                        for (int a = 0; a < 3; a++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) level.setBlock(far.offset(3 + a, y, z), Blocks.AIR.defaultBlockState(), 3);
+                        release.run();
+                        cleanup(h, sp.getUUID());
+                        h.succeed();
+                    });
                 });
             });
         });
@@ -709,6 +722,20 @@ public final class HiredAquaristGameTests {
         c.getTank().setOwner(owner);
         AquaristRecords.get(level.getServer()).noteTank(level, c);
         return c;
+    }
+
+    /** A betta put into a tank, found by the inhabitant list (far from the test the box lookup may miss it the first tick). */
+    static BettaEntity bettaById(GameTestHelper h, TankBlockEntity c, long seed) {
+        var d = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(
+                net.minecraft.util.RandomSource.create(seed)), false, 0);
+        java.util.Set<UUID> before = new java.util.HashSet<>(c.getTank().inhabitants());
+        var err = TankInhabitants.insert(h.getLevel(), c, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d),
+                ModEntities.BETTA.get(), null, false);
+        if (err != null) throw new GameTestAssertException("insert failed: " + err.getString());
+        for (UUID u : c.getTank().inhabitants()) {
+            if (!before.contains(u) && h.getLevel().getEntity(u) instanceof BettaEntity b) return b;
+        }
+        throw new GameTestAssertException("inserted betta not found (far)");
     }
 
     private static void await(GameTestHelper h, int max, java.util.function.BooleanSupplier done, String what, Runnable then) {
@@ -768,11 +795,13 @@ public final class HiredAquaristGameTests {
             stranger.moveTo(npc.position().add(1, 0, 0));
             var r = npc.interact(stranger, net.minecraft.world.InteractionHand.MAIN_HAND);
             check(r == net.minecraft.world.InteractionResult.CONSUME, "a stranger only gets told whose he is: " + r);
+            h.getLevel().getServer().getPlayerList().remove(stranger);
             // the marks on the tank survive saving; an older tank has none
             TankBlockEntity c = tank(h, 10, 4, sp.getUUID());
-            c.getTank().setAquaristAccess(AquaristAccess.ALL);
-            c.getTank().setAquaristDone("feed", 1234L);
-            TankData back = TankData.load(c.getTank().save());
+            TankData copy = TankData.load(c.getTank().save()); // a copy: a released tank here would be work for the aquarists of other tests
+            copy.setAquaristAccess(AquaristAccess.ALL);
+            copy.setAquaristDone("feed", 1234L);
+            TankData back = TankData.load(copy.save());
             check(back.aquaristAccess() == AquaristAccess.ALL && back.aquaristDone("feed") == 1234L, "saved and loaded");
             var tag = c.getTank().save();
             tag.remove("aquarist");
