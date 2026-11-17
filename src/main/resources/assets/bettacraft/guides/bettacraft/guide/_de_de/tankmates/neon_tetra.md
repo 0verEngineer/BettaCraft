@@ -33,6 +33,13 @@ Ein blauer Neonstreifen über einer roten hinteren Körperhälfte: der klassisch
 | Besatz | zählt als 0,35 Fisch |
 | Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 20–50 Junge |
 | Betta-Becken | zu kühl |
+| Besonderheiten | 4 Farbformen |
+
+## Farbformen
+
+![Neon-Formen: Wildform, Diamant, Gold, Albino](../images/neon_forms.png)
+
+Farbformen: Wildform, Diamant, Gold, Albino. Der **Diamant-Neon** hat glänzend blaue Schuppen über Kopf und Rücken, der **Gold-Neon** einen hellgoldenen Körper mit silbrigem Streifen und nur blassem Rot, der **Albino** ist rosaweiß mit blassem Streifen, Rosa statt Rot und roten Augen. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Form (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge und die Wildform-Fische des Händlers tragen manchmal eine Form verdeckt; das Menü zeigt die Gene im Tooltip. Schalter: `features.tankmates.tetraCoryForms`.
 
 ## Zucht
 
@@ -40,9 +47,10 @@ Bei 22–25 °C streut ein Paar 20–50 Eier in feinblättrige Pflanzen, Javamoo
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,3–1,6 % pro Schwung (etwa 1 von 63–75 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 1,3–1,5 % pro Schwung (etwa 1 von 65–77 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 15) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 37 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.wildSpawns`).
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -40,11 +40,11 @@ The lined seahorse (*Hippocampus erectus*) from the western Atlantic, from Nova 
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.62–0.74 % per swing (about 1 in 134–160 swings) (config `features.saltwater.seahorses`).
-* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 1.5–1.8 % per swing (about 1 in 56–67 swings) (config `features.saltwater.seahorses`).
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 0.51–0.6 % per swing (about 1 in 166–198 swings) (config `features.saltwater.seahorses`).
+* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 1.4–1.7 % per swing (about 1 in 59–71 swings) (config `features.saltwater.seahorses`).
 * **Wild** in warm oceans (coral reefs), alone (spawn weight 2) (config `features.saltwater.seahorses`).
 * **Wild** in lukewarm oceans, alone (spawn weight 2) (config `features.saltwater.seahorses`).
-* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 3 in this offer (config `features.saltwater.seahorses`).
+* **Wandering trader** (rare offers): 2 for 7 emeralds; one of 5 in this offer (config `features.saltwater.seahorses`).
 * **[Breeding](seahorses.md)**: Brood pouch: the male carries the eggs.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

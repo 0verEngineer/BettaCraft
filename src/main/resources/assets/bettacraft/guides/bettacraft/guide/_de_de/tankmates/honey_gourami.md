@@ -50,12 +50,12 @@ Wie ein Betta: Bei 25–28 °C baut das Männchen ein Schaumnest an der Oberflä
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,27–0,32 % pro Schwung (etwa 1 von 317–375 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,24–0,29 % pro Schwung (etwa 1 von 347–411 Schwüngen).
 * **[Kescher](../equipment/tank_net.md)** in Sümpfen: 0,6–0,71 % pro Schwung (etwa 1 von 141–167 Schwüngen).
 * **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.tankmates.gouramis`).
 * **Wild** in Sümpfen, einzeln (Spawn-Gewicht 3) (Config `features.tankmates.gouramis`).
-* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 36 in diesem Angebot.
-* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.gouramis`).
+* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 37 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.gouramis`).
 * **[Zucht](breeding.md)**: baut ein Schaumnest.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

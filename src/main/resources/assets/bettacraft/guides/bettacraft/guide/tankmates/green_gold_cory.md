@@ -46,11 +46,11 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.53–0.63 % per swing (about 1 in 158–188 swings), 1–4 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.36–0.42 % per swing (about 1 in 237–280 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.49–0.58 % per swing (about 1 in 173–205 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.35–0.41 % per swing (about 1 in 242–287 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–6 (spawn weight 3) (config `features.tankmates.wildSpawns`).
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 4) (config `features.tankmates.wildSpawns`).
-* **Wandering trader** (rare offers): 6 for 8 emeralds; one of 12 in this offer.
+* **Wandering trader** (rare offers): 6 for 8 emeralds; one of 13 in this offer.
 * **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -38,10 +38,10 @@ Das Grüne Schwalbenschwänzchen (*Chromis viridis*) aus dem Indopazifik: kleine
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,9–3,5 % pro Schwung (etwa 1 von 29–34 Schwüngen), 1–4 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 3,8–4,5 % pro Schwung (etwa 1 von 22–27 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,4–2,8 % pro Schwung (etwa 1 von 36–42 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 3,5–4,2 % pro Schwung (etwa 1 von 24–28 Schwüngen), 1–4 auf einmal.
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 3–5 (Spawn-Gewicht 7) (Config `features.saltwater.reefFish`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 3–5 (Spawn-Gewicht 5) (Config `features.saltwater.reefFish`).
-* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 4 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 5 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

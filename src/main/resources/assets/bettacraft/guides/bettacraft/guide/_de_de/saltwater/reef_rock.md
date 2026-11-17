@@ -17,6 +17,9 @@ item_ids:
   auf lebendes Gestein und Korallenblöcke).
 * **Lebendes Gestein**: Riffgestein voller Kalkrotalgen und Bakterien. Im Salzwasser reinigt es das Wasser ohne Strom: ein
   Beckenblock lebendes Gestein (16x16x16 Innenblöcke) hält 24 Wasserblöcke sauber (`saltwater.liveRockBlocks`).
+* **Copepoden**: winzige Krebstiere leben im lebenden Gestein und wachsen von selbst nach (etwa 24 Portionen je Beckenblock
+  lebendes Gestein, `reef.copepodsPerLiveRock`). Sie sind das einzige Futter des [Mandarinfischs](mandarinfish.md); das Menü
+  zeigt sie in der Riff-Zeile des Wasser-Tabs.
 
 ## Bezug
 

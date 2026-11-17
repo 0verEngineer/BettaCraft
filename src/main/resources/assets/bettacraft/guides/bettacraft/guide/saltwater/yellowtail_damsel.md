@@ -38,10 +38,10 @@ The yellowtail damselfish (*Chrysiptera parasema*) from the western Pacific: a b
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 2.1–2.5 % per swing (about 1 in 40–48 swings).
-* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 4.5–5.4 % per swing (about 1 in 19–22 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 1.7–2 % per swing (about 1 in 50–59 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 4.2–5.1 % per swing (about 1 in 20–24 swings).
 * **Wild** in warm oceans (coral reefs), alone (spawn weight 5) (config `features.saltwater.reefFish`).
 * **Wild** in lukewarm oceans, alone (spawn weight 6) (config `features.saltwater.reefFish`).
-* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 4 in this offer.
+* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 5 in this offer.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

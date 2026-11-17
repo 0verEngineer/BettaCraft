@@ -33,6 +33,11 @@ Durchscheinend mit einer orangeroten Leuchtlinie von der Schnauze bis zum Schwan
 | Besatz | zählt als 0,35 Fisch |
 | Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 20–50 Junge |
 | Betta-Becken | ja |
+| Besonderheiten | 2 Farbformen |
+
+## Farbformen
+
+Farbformen: Wildform, Albino. Der **Albino** behält seine leuchtend orange Linie auf einem rosaweißen Körper und hat rote Augen. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Form (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge und die Wildform-Fische des Händlers tragen manchmal eine Form verdeckt; das Menü zeigt die Gene im Tooltip. Schalter: `features.tankmates.tetraCoryForms`.
 
 ## Zucht
 
@@ -40,9 +45,10 @@ Bei 25–28 °C streut ein Paar 20–50 Eier in feinblättrige Pflanzen, Javamoo
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,67–0,79 % pro Schwung (etwa 1 von 126–150 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,65–0,77 % pro Schwung (etwa 1 von 129–153 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 8) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (seltene Angebote): 6 für 7 Smaragde; eins von 12 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 6 für 7 Smaragde; eins von 13 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.wildSpawns`).
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -47,10 +47,10 @@ Like a betta: at 27–29 °C the male builds a foam nest at the surface (floatin
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.5–0.59 % per swing (about 1 in 169–200 swings).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing (about 1 in 631–748 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.15 % per swing (about 1 in 646–765 swings).
 * **Wild** in swamps, alone (spawn weight 3) (config `features.tankmates.gouramis`).
 * **Wild** in jungle water, alone (spawn weight 2) (config `features.tankmates.gouramis`).
-* **Wandering trader** (usual offers): 2 for 5 emeralds; one of 36 in this offer.
+* **Wandering trader** (usual offers): 2 for 5 emeralds; one of 37 in this offer.
 * **[Breeding](breeding.md)**: Builds a foam nest.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -38,10 +38,10 @@ Die Gelbe Wächtergrundel (*Cryptocentrus cinctus*) aus den Lagunen des westlich
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 1,7–2 % pro Schwung (etwa 1 von 50–60 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 2,3–2,7 % pro Schwung (etwa 1 von 37–44 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 1,3–1,6 % pro Schwung (etwa 1 von 62–74 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 2,1–2,5 % pro Schwung (etwa 1 von 39–47 Schwüngen).
 * **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 4) (Config `features.saltwater.reefFish`).
 * **Wild** in lauwarmen Ozeanen, einzeln (Spawn-Gewicht 3) (Config `features.saltwater.reefFish`).
-* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 5 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

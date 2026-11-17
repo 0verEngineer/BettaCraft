@@ -50,12 +50,12 @@ Like a betta: at 25–28 °C the male builds a foam nest at the surface (floatin
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.27–0.32 % per swing (about 1 in 317–375 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.24–0.29 % per swing (about 1 in 347–411 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.6–0.71 % per swing (about 1 in 141–167 swings).
 * **Wild** in rivers, alone (spawn weight 2) (config `features.tankmates.gouramis`).
 * **Wild** in swamps, alone (spawn weight 3) (config `features.tankmates.gouramis`).
-* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
-* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.gouramis`).
+* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 37 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.gouramis`).
 * **[Breeding](breeding.md)**: Builds a foam nest.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

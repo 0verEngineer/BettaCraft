@@ -33,6 +33,13 @@ A blue neon stripe over a red rear half: the classic shoal fish.
 | Stocking | counts as 0.35 fish |
 | Breeding | Scatters its eggs (fine plants, spawning mop), 20–50 young |
 | Betta tank | too cool |
+| Special | 4 colour varieties |
+
+## Varieties
+
+![Neon forms: wild type, Diamond, Gold, Albino](../images/neon_forms.png)
+
+Varieties: Wild type, Diamond, Gold, Albino. The **Diamond** neon has shining blue scales over the head and the back, the **Gold** neon a pale golden body with a silvery stripe and only a faint red, the **Albino** is pink-white with a pale stripe, pink instead of red and red eyes. The wild type is dominant, the bred forms are recessive: only two equal alleles show the form (carriers look wild). Of two different bred forms the one listed first shows. Wild fish and the wild-type fish of the trader now and then carry a form hidden; the menu shows the genes in a tooltip. Switch: `features.tankmates.tetraCoryForms`.
 
 ## Breeding
 
@@ -40,9 +47,10 @@ At 22–25 °C a pair scatters 20–50 eggs into fine-leaved plants, java moss o
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1.3–1.6 % per swing (about 1 in 63–75 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 1.3–1.5 % per swing (about 1 in 65–77 swings), 1–4 at a time.
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 15) (config `features.tankmates.wildSpawns`).
-* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 36 in this offer.
+* **Wandering trader** (usual offers): 6 for 4 emeralds; one of 37 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.wildSpawns`).
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

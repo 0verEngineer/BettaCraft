@@ -24,11 +24,21 @@ None of them goes into fresh water, and none of the freshwater animals into a re
 | <ItemImage id="bettacraft:yellow_watchman_goby_bucket" /> [Yellow Watchman Goby](yellow_watchman_goby.md) | 22–28 | – | sea water | Does not breed in a tank |
 | <ItemImage id="bettacraft:green_chromis_bucket" /> [Green Chromis](green_chromis.md) | 24–28 | 5 | sea water | Does not breed in a tank |
 | <ItemImage id="bettacraft:yellowtail_damsel_bucket" /> [Yellowtail Damsel](yellowtail_damsel.md) | 23–28 | – | sea water, also strong brackish water | Does not breed in a tank |
+| <ItemImage id="bettacraft:mandarinfish_bucket" /> [Mandarinfish](mandarinfish.md) | 24–28 | – | sea water | Does not breed in a tank |
+| <ItemImage id="bettacraft:banggai_cardinal_bucket" /> [Banggai Cardinalfish](banggai_cardinal.md) | 24–28 | – | sea water | Mouthbrooder: the male carries the eggs in his mouth, the young come out fully formed |
+| <ItemImage id="bettacraft:lyretail_anthias_bucket" /> [Lyretail Anthias](lyretail_anthias.md) | 23–28 | 5 | sea water | Does not breed in a tank |
 
 ## Clownfish and their anemone
 
 Clownfish live in a **bubble tip anemone** (see [Corals](corals.md)): an adult pair moves into each anemone, the young join
 them; adults without an anemone of their own are chased off. At 25–28 °C a fit pair spawns at the **foot of the anemone**,
-the male guards the orange eggs, and after a day and a half the larvae hatch; feed the fry [fry powder](../tankmates/breeding.md).
-Without an anemone clownfish live well but do not breed. The other reef fish and the reef shrimp, crabs and snails do not
-breed in a tank.
+the male guards the orange eggs, and after a day and a half the larvae hatch. They drift for three days and need
+**rotifers** in the water (later also artemia nauplii): see [Phytoplankton and rotifers](../food/plankton.md); without them
+only about 5 % survive. Without an anemone clownfish live well but do not breed.
+
+## More reef animals
+
+The [Banggai cardinalfish](banggai_cardinal.md) is the easy reef fish to breed: the male carries the eggs in his mouth and the
+young come out fully formed. The [mandarinfish](mandarinfish.md) lives only on the copepods of the live rock, the
+[lyretail anthias](lyretail_anthias.md) wants a shoal and food three times a day. The other reef fish and the reef shrimp, crabs
+and snails do not breed in a tank. Switch: `features.saltwater.moreReefAnimals`.

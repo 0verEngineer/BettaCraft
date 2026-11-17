@@ -35,14 +35,14 @@ Der Falsche Clownfisch (*Amphiprion ocellaris*) von den Korallenriffen des östl
 ## Haltung
 
 * Jedes Paar braucht eine **Blasenanemone** (siehe [Korallen](corals.md)): Erwachsene ohne eigene Anemone werden verjagt.
-* Bei 25–28 °C laicht ein fittes Paar am **Fuß der Anemone**; das Männchen bewacht die Eier, nach anderthalb Tagen schlüpfen die Larven und fressen [Aufzuchtpulver](../tankmates/breeding.md).
+* Bei 25–28 °C laicht ein fittes Paar am **Fuß der Anemone**; das Männchen bewacht die Eier, nach anderthalb Tagen schlüpfen die Larven und treiben drei Tage: Sie brauchen [Rotatorien](../food/plankton.md) im Wasser (später auch Artemia-Nauplien); ohne sie überleben nur wenige.
 * Ohne Anemone leben Clownfische gut, vermehren sich aber nicht.
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,5–3 % pro Schwung (etwa 1 von 34–40 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2–2,4 % pro Schwung (etwa 1 von 41–49 Schwüngen).
 * **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 6) (Config `features.saltwater.reefFish`).
-* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 4 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 5 in diesem Angebot.
 * **[Zucht](reef_animals.md)**: Laicht an seiner Anemone, das Männchen bewacht.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

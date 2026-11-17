@@ -17,6 +17,9 @@ item_ids:
   rock and coral blocks).
 * **Live rock**: reef rock full of coralline algae and bacteria. In salt water it cleans the water without power: one
   tank block of live rock (16x16x16 interior blocks) keeps 24 water blocks clean (`saltwater.liveRockBlocks`).
+* **Copepods**: tiny crustaceans live in the live rock and grow back by themselves (about 24 portions per tank block of live
+  rock, `reef.copepodsPerLiveRock`). They are the only food of the [mandarinfish](mandarinfish.md); the menu shows them in the
+  reef line of the water tab.
 
 ## Obtaining
 

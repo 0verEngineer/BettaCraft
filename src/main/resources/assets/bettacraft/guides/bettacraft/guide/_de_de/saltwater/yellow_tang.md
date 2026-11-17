@@ -39,8 +39,8 @@ Der Gelbe Segelflossendoktor (*Zebrasoma flavescens*) von den Riffen Hawaiis: ei
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 1–1,2 % pro Schwung (etwa 1 von 81–96 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,84–1 % pro Schwung (etwa 1 von 99–119 Schwüngen).
 * **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 3) (Config `features.saltwater.reefFish`).
-* **Fahrender Händler** (seltene Angebote): 2 für 9 Smaragde; eins von 3 in diesem Angebot.
+* **Fahrender Händler** (seltene Angebote): 2 für 9 Smaragde; eins von 5 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

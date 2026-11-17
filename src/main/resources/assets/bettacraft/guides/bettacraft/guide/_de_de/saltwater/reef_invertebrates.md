@@ -20,3 +20,4 @@ Turboschnecken weiden Algen und fressen Futterreste. Sie sind [Kleintiere](../in
 | [Weißband-Putzergarnele](cleaner_shrimp.md) | 23–28 | nein | kaum |
 | [Blaubein-Einsiedlerkrebs](hermit_crab.md) | 22–28 | nein | etwas |
 | [Mexikanische Turboschnecke](turbo_snail.md) | 22–28 | nein | viel |
+| [Feuergarnele](fire_shrimp.md) | 24–28 | nein | kaum |

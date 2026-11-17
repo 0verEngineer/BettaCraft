@@ -48,11 +48,11 @@ At 25–28 °C a pair scatters 5–15 eggs into fine-leaved plants, java moss or
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.44–0.53 % per swing (about 1 in 190–225 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.41–0.48 % per swing (about 1 in 208–246 swings).
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.3–0.35 % per swing (about 1 in 282–334 swings).
 * **Wild** in rivers, alone (spawn weight 3) (config `features.tankmates.puffers`).
 * **Wild** in swamps, alone (spawn weight 2) (config `features.tankmates.puffers`).
-* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
+* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 37 in this offer.
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

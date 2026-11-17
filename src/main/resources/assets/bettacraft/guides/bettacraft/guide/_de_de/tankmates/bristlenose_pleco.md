@@ -51,12 +51,12 @@ Braucht eine **Laichhöhle** (Deko) und 23–27 °C. Jedes Männchen besetzt ein
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,36–0,42 % pro Schwung (etwa 1 von 238–281 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,45–0,53 % pro Schwung (etwa 1 von 189–224 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,32–0,38 % pro Schwung (etwa 1 von 260–308 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,44–0,52 % pro Schwung (etwa 1 von 194–230 Schwüngen).
 * **Wild** in Flüssen, einzeln (Spawn-Gewicht 2) (Config `features.tankmates.wildSpawns`).
 * **Wild** in Dschungelgewässern, einzeln (Spawn-Gewicht 5) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 36 in diesem Angebot.
-* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.wildSpawns`).
+* **Fahrender Händler** (übliche Angebote): 2 für 4 Smaragde; eins von 37 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.wildSpawns`).
 * **[Zucht](breeding.md)**: laicht in Höhlen, das Männchen bewacht.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

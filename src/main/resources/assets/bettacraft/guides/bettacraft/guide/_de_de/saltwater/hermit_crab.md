@@ -35,8 +35,8 @@ Der Blaubein-Einsiedlerkrebs (*Clibanarius tricolor*) aus der Karibik: ein klein
 ## Bezug
 
 * **[Kescher](../equipment/tank_net.md)** an Stränden: 4,5–5,4 % pro Schwung (etwa 1 von 19–22 Schwüngen), 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 9,6–12 % pro Schwung (etwa 1 von 8–10 Schwüngen), 1–2 auf einmal.
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 13–16 % pro Schwung (etwa 1 von 6–8 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 8,9–11 % pro Schwung (etwa 1 von 9–11 Schwüngen), 1–2 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 13–15 % pro Schwung (etwa 1 von 7–8 Schwüngen), 1–2 auf einmal.
 * **Wild** an Stränden, in Gruppen von 2–5 (Spawn-Gewicht 1) (Config `features.invertebrates.wildSpawns`).
 * **Wild** in warmen Ozeanen (Korallenriffe), in Gruppen von 2–5 (Spawn-Gewicht 2) (Config `features.invertebrates.wildSpawns`).
 * **Wild** in lauwarmen Ozeanen, in Gruppen von 2–5 (Spawn-Gewicht 3) (Config `features.invertebrates.wildSpawns`).

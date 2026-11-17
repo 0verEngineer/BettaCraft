@@ -40,11 +40,11 @@ Das Gestreifte Seepferdchen (*Hippocampus erectus*) aus dem westlichen Atlantik,
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,62–0,74 % pro Schwung (etwa 1 von 134–160 Schwüngen) (Config `features.saltwater.seahorses`).
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,5–1,8 % pro Schwung (etwa 1 von 56–67 Schwüngen) (Config `features.saltwater.seahorses`).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 0,51–0,6 % pro Schwung (etwa 1 von 166–198 Schwüngen) (Config `features.saltwater.seahorses`).
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 1,4–1,7 % pro Schwung (etwa 1 von 59–71 Schwüngen) (Config `features.saltwater.seahorses`).
 * **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 2) (Config `features.saltwater.seahorses`).
 * **Wild** in lauwarmen Ozeanen, einzeln (Spawn-Gewicht 2) (Config `features.saltwater.seahorses`).
-* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 3 in diesem Angebot (Config `features.saltwater.seahorses`).
+* **Fahrender Händler** (seltene Angebote): 2 für 7 Smaragde; eins von 5 in diesem Angebot (Config `features.saltwater.seahorses`).
 * **[Zucht](seahorses.md)**: Bruttasche: das Männchen trägt die Eier.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

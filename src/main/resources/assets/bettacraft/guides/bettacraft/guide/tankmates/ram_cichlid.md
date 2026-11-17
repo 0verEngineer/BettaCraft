@@ -57,12 +57,12 @@ At 27–30 °C a pair forms: the male and the nearest free female clean a **flat
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.53–0.63 % per swing (about 1 in 158–188 swings).
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.16 % per swing (about 1 in 631–748 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.49–0.58 % per swing (about 1 in 173–205 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.13–0.15 % per swing (about 1 in 646–765 swings).
 * **Wild** in rivers, alone (spawn weight 3) (config `features.tankmates.cichlids`).
 * **Wild** in jungle water, alone (spawn weight 2) (config `features.tankmates.cichlids`).
-* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 36 in this offer.
-* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.cichlids`).
+* **Wandering trader** (usual offers): 2 for 3 emeralds; one of 37 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.cichlids`).
 * **[Breeding](breeding.md)**: Open brooder: the pair spawns on a stone, leaf or the glass and guards the brood.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

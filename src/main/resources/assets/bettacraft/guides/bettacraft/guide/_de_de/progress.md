@@ -53,11 +53,15 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:golden_apple" /> | ↳ **Dynastie** | Zieh einen Betta der fünften Generation groß |
 | <ItemImage id="bettacraft:betta_pellets" /> | ↳ **Designerfisch** | Züchte einen benannten Typ wie Koi Galaxy, Samurai oder Nemo |
 | <ItemImage id="minecraft:glistering_melon_slice" /> | ↳ **Fischdoktor** | Päppel einen kranken Betta wieder auf |
+| <ItemImage id="bettacraft:fish_bag" /> | ↳ **Gold, Albino, Diamant** | Eine selbst gezüchtete Zuchtform eines Salmlers oder Panzerwelses wird erwachsen |
 | <ItemImage id="bettacraft:fish_flakes" /> | ↳ **Ausgewogene Kost** | Öffne das Menü eines Beckens mit einem abwechslungsreich gefütterten Fisch |
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Frischer Start** | Wasser wechseln: Frischwasser in ein Aquarium mit verbrauchtem Wasser füllen |
 | <ItemImage id="bettacraft:mob_jar" /> | ↳ **Buddelschiff** | Bring einen Mob in ein Becken, geschrumpft und harmlos |
 | <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Gesellschaftsbecken** | Setze einen Beifisch in ein Becken |
+| <ItemImage id="bettacraft:banggai_cardinal_bucket" /> | ↳ **Ein Maul voller Junge** | Ein Banggai-Männchen entlässt seine Jungen aus dem Maul |
+| <ItemImage id="bettacraft:rotifers" /> | ↳ **Rotatorien-Aufzucht** | Mit Rotatorien aufgezogene Clownfisch-Larven lassen sich als Jungfische nieder |
 | <ItemImage id="bettacraft:breeding_box" /> | ↳ **Lebend geboren** | Lebendgebärende bekommen in einem deiner Becken Junge |
+| <ItemImage id="bettacraft:mandarinfish_bucket" /> | ↳ **Lebendes Gestein** | Ein Mandarinfisch lebt von den Copepoden deines Lebendgesteins |
 | <ItemImage id="bettacraft:lined_seahorse_bucket" /> | ↳ **Stolzer Vater** | Ein Seepferdchen-Männchen entlässt Junge aus seiner Bruttasche |
 | <ItemImage id="bettacraft:external_filter" /> | ↳ **Installateur** | Schließe einen Außenfilter an ein Aquarium an |
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sonnenaufgang** | Schalte die Tageslicht-Zeitschaltung der Beckenbeleuchtung ein |

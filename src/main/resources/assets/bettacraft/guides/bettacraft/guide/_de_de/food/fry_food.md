@@ -55,7 +55,7 @@ Artemia sind Salinenkrebse; ihre getrockneten Eier (Zysten) schlüpfen in Salzwa
 * <ItemLink id="bettacraft:artemia_cysts" />: **Sand abbauen**: 4 % pro Block.
 * <ItemLink id="bettacraft:artemia_cysts" />: **[Aquarianer](../getting_started/aquarist.md)** (Geselle): 4 für 2 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:infusoria_culture" />: **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 3 Smaragde; eins von etwa 3 in diesem Angebot (Config `features.sources.aquaristVillager`).
-* <ItemLink id="bettacraft:artemia_culture" />: **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 4 Smaragde; eins von etwa 3 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:artemia_culture" />: **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 4 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
 
 Herstellung:
 

@@ -35,8 +35,8 @@ The blue-leg hermit crab (*Clibanarius tricolor*) from the Caribbean: a small cr
 ## Obtaining
 
 * **[Aquarium net](../equipment/tank_net.md)** at beaches: 4.5–5.4 % per swing (about 1 in 19–22 swings), 1–2 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 9.6–12 % per swing (about 1 in 8–10 swings), 1–2 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 13–16 % per swing (about 1 in 6–8 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 8.9–11 % per swing (about 1 in 9–11 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 13–15 % per swing (about 1 in 7–8 swings), 1–2 at a time.
 * **Wild** at beaches, in groups of 2–5 (spawn weight 1) (config `features.invertebrates.wildSpawns`).
 * **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 3) (config `features.invertebrates.wildSpawns`).

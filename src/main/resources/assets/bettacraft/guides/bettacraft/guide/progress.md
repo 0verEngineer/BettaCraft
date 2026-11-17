@@ -53,11 +53,15 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="minecraft:golden_apple" /> | ↳ **Dynasty** | Raise a betta of the fifth generation |
 | <ItemImage id="bettacraft:betta_pellets" /> | ↳ **Designer Fish** | Breed a named variety such as Koi Galaxy, Samurai or Nemo |
 | <ItemImage id="minecraft:glistering_melon_slice" /> | ↳ **Fish Doctor** | Nurse a sick betta back to health |
+| <ItemImage id="bettacraft:fish_bag" /> | ↳ **Gold, Albino, Diamond** | A bred form of a tetra or a cory you bred yourself grows up |
 | <ItemImage id="bettacraft:fish_flakes" /> | ↳ **Balanced Diet** | Open the menu of a tank with a fish on a varied diet |
 | <ItemImage id="minecraft:water_bucket" /> | ↳ **Fresh Start** | Change water: pour fresh water into a tank with used water |
 | <ItemImage id="bettacraft:mob_jar" /> | ↳ **Ship in a Bottle** | Get a mob into a tank, shrunk and harmless |
 | <ItemImage id="bettacraft:neon_tetra_bucket" /> | ↳ **Community Tank** | Put a tankmate fish into a tank |
+| <ItemImage id="bettacraft:banggai_cardinal_bucket" /> | ↳ **A Mouthful of Young** | A Banggai cardinalfish male releases his young from his mouth |
+| <ItemImage id="bettacraft:rotifers" /> | ↳ **Rotifer Rearing** | Clownfish larvae raised on rotifers settle as young fish |
 | <ItemImage id="bettacraft:breeding_box" /> | ↳ **Born Alive** | Livebearers give birth in one of your tanks |
+| <ItemImage id="bettacraft:mandarinfish_bucket" /> | ↳ **Living Rock** | A mandarinfish lives on the copepods of your live rock |
 | <ItemImage id="bettacraft:lined_seahorse_bucket" /> | ↳ **Proud Father** | A male seahorse releases fry from his pouch |
 | <ItemImage id="bettacraft:external_filter" /> | ↳ **Plumbing** | Attach an external filter to a tank |
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sunrise, Sunset** | Switch on the daylight timer of a tank's lights |

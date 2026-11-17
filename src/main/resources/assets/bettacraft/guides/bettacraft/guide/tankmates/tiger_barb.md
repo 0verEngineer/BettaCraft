@@ -50,12 +50,12 @@ At 24–27 °C a pair scatters 30–80 eggs into fine-leaved plants, java moss o
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.53–0.63 % per swing (about 1 in 158–188 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in rivers: 0.49–0.58 % per swing (about 1 in 173–205 swings), 1–4 at a time.
 * **[Aquarium net](../equipment/tank_net.md)** in swamps: 0.6–0.71 % per swing (about 1 in 141–167 swings), 1–4 at a time.
 * **Wild** in rivers, in groups of 3–6 (spawn weight 3) (config `features.tankmates.barbsAndLoaches`).
 * **Wild** in swamps, in groups of 3–6 (spawn weight 3) (config `features.tankmates.barbsAndLoaches`).
-* **Wandering trader** (usual offers): 6 for 5 emeralds; one of 36 in this offer.
-* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 14 in this offer (config `features.tankmates.barbsAndLoaches`).
+* **Wandering trader** (usual offers): 6 for 5 emeralds; one of 37 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.barbsAndLoaches`).
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

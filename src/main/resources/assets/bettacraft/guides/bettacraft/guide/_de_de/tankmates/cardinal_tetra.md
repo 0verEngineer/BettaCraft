@@ -33,6 +33,11 @@ Wie der Neon, aber das Rot reicht über den ganzen Bauch; mag es wärmer und pas
 | Besatz | zählt als 0,4 Fisch |
 | Zucht | Freilaicher (feinblättrige Pflanzen, Laichmop), 20–50 Junge |
 | Betta-Becken | ja |
+| Besonderheiten | 2 Farbformen |
+
+## Farbformen
+
+Farbformen: Wildform, Gold. Der **Gold**-Kardinal hat einen hellgoldenen Körper mit silbrigem Streifen und einem blassroten Bauch. Die Wildform ist dominant, Zuchtformen sind rezessiv: Erst zwei gleiche Allele zeigen die Form (Träger sehen wild aus). Von zwei verschiedenen Zuchtformen zeigt sich die zuerst genannte. Wildfänge und die Wildform-Fische des Händlers tragen manchmal eine Form verdeckt; das Menü zeigt die Gene im Tooltip. Schalter: `features.tankmates.tetraCoryForms`.
 
 ## Zucht
 
@@ -40,9 +45,10 @@ Bei 26–28 °C streut ein Paar 20–50 Eier in feinblättrige Pflanzen, Javamoo
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,98–1,2 % pro Schwung (etwa 1 von 86–102 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,96–1,1 % pro Schwung (etwa 1 von 88–104 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–6 (Spawn-Gewicht 11) (Config `features.tankmates.wildSpawns`).
-* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 36 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 6 für 4 Smaragde; eins von 37 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.wildSpawns`).
 * **[Zucht](breeding.md)**: Freilaicher (feinblättrige Pflanzen, Laichmop).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -52,10 +52,10 @@ Die Jungen **fressen die Hautschleimschicht ihrer Eltern**: Sie bleiben mehr als
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,11 % pro Schwung (etwa 1 von 947–1121 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Dschungelgewässern: 0,09–0,1 % pro Schwung (etwa 1 von 969–1148 Schwüngen), 1–4 auf einmal.
 * **Wild** in Dschungelgewässern, in Gruppen von 3–3 (Spawn-Gewicht 1) (Config `features.tankmates.cichlids`).
-* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 12 in diesem Angebot.
-* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.cichlids`).
+* **Fahrender Händler** (seltene Angebote): 6 für 17 Smaragde; eins von 13 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.cichlids`).
 * **[Zucht](breeding.md)**: Offenbrüter: das Paar laicht auf Stein, Blatt oder Scheibe und bewacht die Brut.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

@@ -8,7 +8,7 @@ navigation:
 
 # Panzerwelse
 
-Panzerwelse aus Südamerika, die in Gruppen den Boden absuchen und ab und zu zur Oberfläche flitzen, um Luft zu holen. Nach einem kühlen Wasserwechsel klebt das Weibchen seine Eier an die Scheibe.
+Panzerwelse aus Südamerika, die in Gruppen den Boden absuchen und ab und zu zur Oberfläche flitzen, um Luft zu holen. Nach einem kühlen Wasserwechsel klebt das Weibchen seine Eier an die Scheibe. Der Metallpanzerwels ist der robusteste; Panda-, Sterbai- und Metallpanzerwels haben Zuchtformen (Albino, Longfin, Gold Laser).
 
 ## Arten
 
@@ -18,3 +18,4 @@ Panzerwelse aus Südamerika, die in Gruppen den Boden absuchen und ab und zu zur
 | <ItemImage id="bettacraft:panda_cory_bucket" /> [Panda-Panzerwels](panda_cory.md) | 20–26 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
 | <ItemImage id="bettacraft:sterbai_cory_bucket" /> [Sterbai-Panzerwels](sterbai_cory.md) | 24–30 | 6 | ja | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
 | <ItemImage id="bettacraft:green_gold_cory_bucket" /> [Gelbflossen-Panzerwels](green_gold_cory.md) | 22–27 | 6 | zu kühl | klebt Eier ans Glas (nach kühlem Wasserwechsel) |
+| <ItemImage id="bettacraft:bronze_cory_bucket" /> [Metallpanzerwels](bronze_cory.md) | 20–28 | 6 | ja | klebt Eier ans Glas (nach kühlem Wasserwechsel) |

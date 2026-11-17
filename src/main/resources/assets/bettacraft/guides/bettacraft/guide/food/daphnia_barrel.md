@@ -45,7 +45,7 @@ full it is.
 ## Obtaining
 
 * <ItemLink id="bettacraft:daphnia" />: **Glass bottle** filled with water in swamps: 8 % per bottle, along with the water.
-* <ItemLink id="bettacraft:green_water_culture" />: **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 3 emeralds; one of about 3 in this offer (config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:green_water_culture" />: **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 3 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
 
 Crafting:
 

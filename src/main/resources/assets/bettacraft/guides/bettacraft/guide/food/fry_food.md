@@ -52,7 +52,7 @@ Artemia are brine shrimp; their dried eggs (cysts) hatch in salt water.
 * <ItemLink id="bettacraft:artemia_cysts" />: **Breaking sand**: 4 % per block.
 * <ItemLink id="bettacraft:artemia_cysts" />: **[Aquarist villager](../getting_started/aquarist.md)** (Journeyman): 4 for 2 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
 * <ItemLink id="bettacraft:infusoria_culture" />: **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 3 emeralds; one of about 3 in this offer (config `features.sources.aquaristVillager`).
-* <ItemLink id="bettacraft:artemia_culture" />: **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 4 emeralds; one of about 3 in this offer (config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:artemia_culture" />: **[Aquarist villager](../getting_started/aquarist.md)** (Expert): 1 for 4 emeralds; one of about 4 in this offer (config `features.sources.aquaristVillager`).
 
 Crafting:
 

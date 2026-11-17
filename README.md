@@ -97,8 +97,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
 
 ### Tankmates and small animals
-- **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish,
-  corydoras, plecos, otocinclus, loaches and garra, barbs, guppies and endlers (own genetics with 28 strains), platys,
+- **50 freshwater tankmates** with their own models and behaviour: tetras (neons also Diamond, Gold and Albino, gold
+  cardinals, albino glowlights), rasboras and danios, rainbowfish, corydoras (albino and longfin panda, albino sterbai, the
+  bronze cory with Albino and Gold Laser), plecos, otocinclus, loaches, the garra and the panda garra, barbs, guppies and
+  endlers (own genetics with 28 strains), platys,
   mollies and swordtails, gouramis, **cichlids** (rams in six forms with Black and German Blue, Apistogramma, angelfish,
   discus) and **puffers**. Shoals, water
   ranges, predators and prey, fin nippers, snail eaters, and a breeding style per species (glued eggs, caves, egg
@@ -121,7 +123,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 ### Reef tanks and seahorses
 - Sea water, salinity, protein skimmer, flow pump, reef and live rock, actinic light. Eight corals and the bubble tip
   anemone grow with light, flow, calcium, alkalinity and magnesium (four-channel dosing pump), bleach or glow and give
-  frags. Clownfish spawn at their anemone; tang, goby, chromis, damsel, cleaner shrimp, hermit crabs, turbo snails.
+  frags. Clownfish spawn at their anemone, and their **larvae need rotifers** that live on phytoplankton (both cultured in
+  bottles); tang, goby, chromis, damsel, the lyretail anthias (a shoal fed often), the **Banggai cardinalfish** (the male
+  broods in his mouth), the **mandarinfish** that lives only on the copepods of the live rock, cleaner and fire shrimp,
+  hermit crabs, turbo snails.
 - **Seahorses** (lined and dwarf) swim upright, hold on to plants and corals, eat live food, and the male gives birth
   from his brood pouch.
 
@@ -369,6 +374,8 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.power.winding` | Wound Up (needs a power option; optional) |
 | `features.saltwater.enabled` | Salt Water |
 | `features.saltwater.enabled` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Clean Reef |
+| `features.saltwater.larvaRearing` | Rotifer Rearing |
+| `features.saltwater.moreReefAnimals` | Living Rock, Banggai Cardinalfish |
 | `features.saltwater.reefFish` | Clownfish |
 | `features.saltwater.seahorses` | Seahorses |
 | `features.saltwater.seahorses` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Proud Father |
@@ -379,7 +386,9 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.tankmates.enabled` | Community Tank, Born Alive |
 | `features.tankmates.gouramis` | Gouramis |
 | `features.tankmates.livebearerGenetics` | Strain Breeder, Crossbreed, Strain Collection |
+| `features.tankmates.moreBottomFish` | Bronze Cory and Panda Garra |
 | `features.tankmates.puffers` | Puffers |
+| `features.tankmates.tetraCoryForms` | Bred Forms of Tetras and Corys |
 | `features.terrariums.devices` | Desert and Rainforest |
 | `features.terrariums.devices` + `features.terrariums.herps` | Leopard Gecko |
 | `features.terrariums.enabled` | Half and Half |

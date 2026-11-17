@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.38.0-beta.1] - 2026-11-17
+
+Gold and albino neons, a hardy bronze cory and the panda garra; on the reef the mandarin, the Banggai cardinalfish, the
+anthias and the fire shrimp, and clownfish larvae that need rotifers.
+
+### Added
+- **Bred forms of tetras and corydoras**, recessive on the colour locus like the ram forms: neon tetra Diamond, Gold and
+  Albino, cardinal tetra Gold, glowlight tetra Albino, panda cory Albino and the rare Longfin (long, flowing tail and
+  dorsal fin), sterbai cory Albino. Wild fish and the wild-type fish of the wandering trader carry them hidden; the trader
+  and the aquarist sell them now and then (the longfin a quarter as often). Switch `features.tankmates.tetraCoryForms`.
+- **Bronze cory** (*Corydoras aeneus*): a hardy cory with metallic green-bronze flanks, in the forms Albino and Gold Laser;
+  eggs on the glass after a cool water change. **Panda garra** (*Garra flavatra*): a small, yellow-and-black banded algae
+  grazer for cool, clear water that scatters its eggs. Net in rivers and jungle water, wild, wandering trader, aquarist.
+  Switch `features.tankmates.moreBottomFish`.
+- **Mandarinfish:** a blue-and-orange dragonet that takes no fed food at all: it lives on the **copepods** of the live
+  rock. Live rock in salt water holds copepods (`reef.copepodsPerLiveRock`) that grow back by themselves; other small reef
+  fish pick some too, so it wants plenty of rock and a quiet tank, otherwise it starves. The menu shows the copepods.
+- **Banggai cardinalfish:** the easy reef fish to breed: the female passes her eggs to the male, who carries them in his
+  mouth; the young come out fully formed (juveniles, no fry food).
+- **Lyretail anthias:** a shoaling fairy basslet (orange females, a magenta male) that is hungry again after a third of a
+  day; **fire shrimp:** a deep red cleaner shrimp with white dots that cleans the fish like the cleaner shrimp. Net in warm
+  oceans, wild, wandering trader. Switch `features.saltwater.moreReefAnimals`.
+- **Clownfish larvae and their food chain:** after hatching the larvae drift for three days (`reef.clownLarvaDays`) and
+  need **rotifers** in the water (in the second half also artemia nauplii); fed, most survive, without food only 5 %
+  (`reef.clownLarvaSurvival`). **Phytoplankton** (a culture of salt water, seagrass or kelp and bone meal that ripens in
+  light) keeps the rotifers in the tank alive; **rotifer cultures** start from phytoplankton and infusoria and go on with
+  phytoplankton (one bottle of rotifers and two of phytoplankton make two cultures); the aquarist sells rotifer cultures.
+  Rotifers are also the finest fry food. Switch `features.saltwater.larvaRearing`.
+- Advancements "Gold, Albino, Diamond", "Living Rock", "Rotifer Rearing" and "A Mouthful of Young", five new quests.
+- Handbook (English and German): pages for the bronze cory, the panda garra, the mandarinfish, the Banggai cardinalfish,
+  the lyretail anthias, the fire shrimp and "Phytoplankton and rotifers"; the varieties of the neon, cardinal, glowlight,
+  panda and sterbai cory; clownfish larvae on the reef pages; copepods on the live rock page; generated sections.
+
+### Changed
+- Wild-caught and trader fish pick a hidden bred form by weight (a rare form a quarter as often).
+- The neon, cardinal, glowlight, panda and sterbai textures are named by their form (the wild form looks as before).
+
+### Compatibility
+- Fish of older worlds load as the wild form (their genes were "wild"); clownfish clutches of older worlds go on with the
+  new larvae rules (without rotifers a few survive, so breeding never stops); tanks without plankton save nothing new.
+
 ## [1.37.0-beta.1] - 2026-11-17
 
 An aquarist moves into the village, the ram gets two new forms, and the dwarf clawed frogs breed.

@@ -50,10 +50,10 @@ Bei 23–27 °C wird ein Weibchen mit einem Männchen trächtig und bringt nach 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,71–0,84 % pro Schwung (etwa 1 von 119–141 Schwüngen), 1–4 auf einmal.
+* **[Kescher](../equipment/tank_net.md)** in Flüssen: 0,65–0,77 % pro Schwung (etwa 1 von 130–154 Schwüngen), 1–4 auf einmal.
 * **Wild** in Flüssen, in Gruppen von 3–3 (Spawn-Gewicht 4) (Config `features.tankmates.communityFish`).
-* **Fahrender Händler** (übliche Angebote): 6 für 6 Smaragde; eins von 36 in diesem Angebot.
-* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 14 in diesem Angebot (Config `features.tankmates.communityFish`).
+* **Fahrender Händler** (übliche Angebote): 6 für 6 Smaragde; eins von 37 in diesem Angebot.
+* **[Aquarianer](../getting_started/aquarist.md)** (Meister): 2 für 14 Smaragde; eins von etwa 20 in diesem Angebot (Config `features.tankmates.communityFish`).
 * **[Zucht](breeding.md)**: lebendgebärend.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

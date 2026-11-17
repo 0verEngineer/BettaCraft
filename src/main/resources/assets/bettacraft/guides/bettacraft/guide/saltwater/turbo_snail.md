@@ -33,8 +33,8 @@ The Mexican turbo snail (*Turbo fluctuosa*) from the Gulf of California: a large
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 9.6–12 % per swing (about 1 in 8–10 swings), 1–2 at a time.
-* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 11–13 % per swing (about 1 in 7–9 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 8.9–11 % per swing (about 1 in 9–11 swings), 1–2 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in lukewarm oceans: 11–13 % per swing (about 1 in 8–9 swings), 1–2 at a time.
 * **Wild** in warm oceans (coral reefs), in groups of 2–5 (spawn weight 2) (config `features.invertebrates.wildSpawns`).
 * **Wild** in lukewarm oceans, in groups of 2–5 (spawn weight 3) (config `features.invertebrates.wildSpawns`).
 

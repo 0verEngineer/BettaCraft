@@ -33,7 +33,11 @@ Dark with white dots and orange pectoral fins; one of the few corys for warm bet
 | Stocking | counts as 0.6 fish |
 | Breeding | Glues its eggs to the glass (after a cool water change), 12–30 young |
 | Betta tank | yes |
-| Special | gulps air at the surface |
+| Special | gulps air at the surface, 2 colour varieties |
+
+## Varieties
+
+Varieties: Wild type, Albino. The **Albino** sterbai is cream-white with faint white dots, keeps its orange pectoral fins and has red eyes. The wild type is dominant, the bred forms are recessive: only two equal alleles show the form (carriers look wild). Of two different bred forms the one listed first shows. Wild fish and the wild-type fish of the trader now and then carry a form hidden; the menu shows the genes in a tooltip. Switch: `features.tankmates.tetraCoryForms`.
 
 ## Breeding
 
@@ -46,9 +50,10 @@ A cool water change sets them off: at least a quarter of the water fresh, coolin
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.62–0.74 % per swing (about 1 in 135–160 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.61–0.72 % per swing (about 1 in 138–164 swings), 1–4 at a time.
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 7) (config `features.tankmates.wildSpawns`).
-* **Wandering trader** (usual offers): 6 for 5 emeralds; one of 36 in this offer.
+* **Wandering trader** (usual offers): 6 for 5 emeralds; one of 37 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.wildSpawns`).
 * **[Breeding](breeding.md)**: Glues its eggs to the glass (after a cool water change).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

@@ -8,7 +8,7 @@ navigation:
 
 # Schmerlen
 
-Bodenfische aus Süd- und Südostasien: das aalartige Dornauge ist nachtaktiv und wühlt im Bodengrund, die große Prachtschmerle, die kleine Zwergschmerle und die Netzschmerle leben in Gruppen und fressen Schnecken, und die Saugschmerle weidet mit ihrem Saugmaul Algen ab.
+Bodenfische aus Süd- und Südostasien: das aalartige Dornauge ist nachtaktiv und wühlt im Bodengrund, die große Prachtschmerle, die kleine Zwergschmerle und die Netzschmerle leben in Gruppen und fressen Schnecken, und die Saugschmerle und die kleine, gebänderte Panda-Saugschmerle weiden mit ihrem Saugmaul Algen ab.
 
 ## Arten
 
@@ -19,3 +19,4 @@ Bodenfische aus Süd- und Südostasien: das aalartige Dornauge ist nachtaktiv un
 | <ItemImage id="bettacraft:dwarf_chain_loach_bucket" /> [Zwergschmerle](dwarf_chain_loach.md) | 24–29 | 6 | ja | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:reticulated_loach_bucket" /> [Netzschmerle](reticulated_loach.md) | 24–30 | 5 | ja | vermehrt sich nicht im Aquarium |
 | <ItemImage id="bettacraft:garra_rufa_bucket" /> [Saugschmerle](garra_rufa.md) | 18–32 | 5 | ja | Freilaicher (feinblättrige Pflanzen, Laichmop) |
+| <ItemImage id="bettacraft:panda_garra_bucket" /> [Panda-Saugschmerle](panda_garra.md) | 20–26 | 5 | zu kühl | Freilaicher (feinblättrige Pflanzen, Laichmop) |

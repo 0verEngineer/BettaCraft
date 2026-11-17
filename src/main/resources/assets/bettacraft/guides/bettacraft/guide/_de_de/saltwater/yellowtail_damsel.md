@@ -38,10 +38,10 @@ Der Gelbschwanz-Demoiselle (*Chrysiptera parasema*) aus dem westlichen Pazifik: 
 
 ## Bezug
 
-* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 2,1–2,5 % pro Schwung (etwa 1 von 40–48 Schwüngen).
-* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 4,5–5,4 % pro Schwung (etwa 1 von 19–22 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in warmen Ozeanen (Korallenriffe): 1,7–2 % pro Schwung (etwa 1 von 50–59 Schwüngen).
+* **[Kescher](../equipment/tank_net.md)** in lauwarmen Ozeanen: 4,2–5,1 % pro Schwung (etwa 1 von 20–24 Schwüngen).
 * **Wild** in warmen Ozeanen (Korallenriffe), einzeln (Spawn-Gewicht 5) (Config `features.saltwater.reefFish`).
 * **Wild** in lauwarmen Ozeanen, einzeln (Spawn-Gewicht 6) (Config `features.saltwater.reefFish`).
-* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 4 in diesem Angebot.
+* **Fahrender Händler** (übliche Angebote): 2 für 3 Smaragde; eins von 5 in diesem Angebot.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).

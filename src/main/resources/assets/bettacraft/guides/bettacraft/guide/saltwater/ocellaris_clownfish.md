@@ -35,14 +35,14 @@ The false percula clownfish (*Amphiprion ocellaris*) from the coral reefs of the
 ## Care
 
 * Give every pair a **bubble tip anemone** (see [Corals](corals.md)): adults without an anemone of their own are chased off.
-* At 25–28 °C a fit pair spawns at the **foot of the anemone**; the male guards the eggs, the larvae hatch after a day and a half and eat [fry powder](../tankmates/breeding.md).
+* At 25–28 °C a fit pair spawns at the **foot of the anemone**; the male guards the eggs, the larvae hatch after a day and a half and drift for three days: they need [rotifers](../food/plankton.md) in the water (later also artemia nauplii); without them only a few survive.
 * Without an anemone clownfish live well, but they do not breed.
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 2.5–3 % per swing (about 1 in 34–40 swings).
+* **[Aquarium net](../equipment/tank_net.md)** in warm oceans (coral reefs): 2–2.4 % per swing (about 1 in 41–49 swings).
 * **Wild** in warm oceans (coral reefs), alone (spawn weight 6) (config `features.saltwater.reefFish`).
-* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 4 in this offer.
+* **Wandering trader** (usual offers): 2 for 4 emeralds; one of 5 in this offer.
 * **[Breeding](reef_animals.md)**: Spawns at its anemone, the male guards.
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

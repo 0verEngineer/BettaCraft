@@ -45,7 +45,7 @@ Rechtsklick mit leerer Hand zeigt Wasser, Kultur, Futter und fertige Portionen; 
 ## Bezug
 
 * <ItemLink id="bettacraft:daphnia" />: **Glasflasche** mit Wasser gefüllt in Sümpfen: 8 % pro Flasche, zusätzlich zum Wasser.
-* <ItemLink id="bettacraft:green_water_culture" />: **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 3 Smaragde; eins von etwa 3 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* <ItemLink id="bettacraft:green_water_culture" />: **[Aquarianer](../getting_started/aquarist.md)** (Experte): 1 für 3 Smaragde; eins von etwa 4 in diesem Angebot (Config `features.sources.aquaristVillager`).
 
 Herstellung:
 

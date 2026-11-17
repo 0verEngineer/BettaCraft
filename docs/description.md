@@ -75,8 +75,8 @@ the Mods 10, and fine on its own.
 
 ## Tankmates
 
-- **48 freshwater tankmates** with their own models and behaviour: tetras, rasboras and danios, rainbowfish, corydoras,
-  plecos, loaches, barbs, guppies and endlers (with their own genetics and 28 strains), platys, mollies, swordtails,
+- **50 freshwater tankmates** with their own models and behaviour: tetras (also gold, albino and diamond neons),
+  rasboras and danios, rainbowfish, corydoras (albino and longfin pandas, the bronze cory), plecos, loaches and garras, barbs, guppies and endlers (with their own genetics and 28 strains), platys, mollies, swordtails,
   gouramis, **cichlids** (rams, Apistogramma, angelfish, discus) and **puffers** that eat snails.
 - Shoals, water ranges, predators and prey, fin nippers, and a breeding style for every species: open and cave brooders
   guard their young.
@@ -88,7 +88,9 @@ the Mods 10, and fine on its own.
 
 - Sea water and salinity, protein skimmer, flow pump, live rock and actinic light. Eight corals and the bubble tip
   anemone grow with light, flow, calcium, alkalinity and magnesium from a four-channel dosing pump, and they bleach,
-  glow and give frags. Clownfish spawn at their anemone; tangs, gobies, chromis, damsels, cleaner shrimp, hermit crabs.
+  glow and give frags. Clownfish spawn at their anemone and their larvae need rotifers (cultured on phytoplankton); the
+  Banggai cardinalfish broods in the male's mouth, the mandarinfish lives on the copepods of the live rock; tangs, gobies,
+  chromis, damsels, anthias, cleaner and fire shrimp, hermit crabs.
 - **Seahorses** swim upright, hold on to plants and corals, and the male gives birth from his brood pouch.
 - **Big tanks** up to 32 x 16 x 32 blocks with a size rule for big animals by their real length: the bamboo shark that
   lays egg cases, the blacktip reef shark, eagle and cownose rays, the honeycomb moray, and in fresh water pangasius,

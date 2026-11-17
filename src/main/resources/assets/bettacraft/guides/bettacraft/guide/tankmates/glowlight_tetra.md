@@ -33,6 +33,11 @@ Translucent with a glowing orange-red line from snout to tail.
 | Stocking | counts as 0.35 fish |
 | Breeding | Scatters its eggs (fine plants, spawning mop), 20–50 young |
 | Betta tank | yes |
+| Special | 2 colour varieties |
+
+## Varieties
+
+Varieties: Wild type, Albino. The **Albino** keeps its glowing orange line on a pink-white body and has red eyes. The wild type is dominant, the bred forms are recessive: only two equal alleles show the form (carriers look wild). Of two different bred forms the one listed first shows. Wild fish and the wild-type fish of the trader now and then carry a form hidden; the menu shows the genes in a tooltip. Switch: `features.tankmates.tetraCoryForms`.
 
 ## Breeding
 
@@ -40,9 +45,10 @@ At 25–28 °C a pair scatters 20–50 eggs into fine-leaved plants, java moss o
 
 ## Obtaining
 
-* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.67–0.79 % per swing (about 1 in 126–150 swings), 1–4 at a time.
+* **[Aquarium net](../equipment/tank_net.md)** in jungle water: 0.65–0.77 % per swing (about 1 in 129–153 swings), 1–4 at a time.
 * **Wild** in jungle water, in groups of 3–6 (spawn weight 8) (config `features.tankmates.wildSpawns`).
-* **Wandering trader** (rare offers): 6 for 7 emeralds; one of 12 in this offer.
+* **Wandering trader** (rare offers): 6 for 7 emeralds; one of 13 in this offer.
+* **[Aquarist villager](../getting_started/aquarist.md)** (Master): 2 for 14 emeralds; one of about 20 in this offer (config `features.tankmates.wildSpawns`).
 * **[Breeding](breeding.md)**: Scatters its eggs (fine plants, spawning mop).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).
