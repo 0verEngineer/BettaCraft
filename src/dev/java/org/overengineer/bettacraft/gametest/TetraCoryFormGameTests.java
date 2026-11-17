@@ -124,8 +124,9 @@ public final class TetraCoryFormGameTests {
         TankData t = c.getTank();
         days(h, c, 1, 0.25, 26F);
         check(t.clutches().isEmpty(), "no eggs without a water change");
-        float after = coolChange(h, c);
-        for (int i = 0; i < 20 && t.clutches().stream().noneMatch(k -> k.kind == Clutch.Kind.GLASS); i++) days(h, c, 0.1, 0.1, after);
+        coolChange(h, c);
+        // held at 24 C afterwards (inside the breeding range 22-26 C, whatever the ambient temperature of the test spot)
+        for (int i = 0; i < 30 && t.clutches().stream().noneMatch(k -> k.kind == Clutch.Kind.GLASS); i++) days(h, c, 0.1, 0.1, 24F);
         check(t.clutches().stream().anyMatch(k -> k.kind == Clutch.Kind.GLASS), "eggs on the glass: " + t.clutches().size());
         removeAdults(h, c);
         days(h, c, 2.5, 0.25, 25F);
