@@ -137,6 +137,7 @@ public final class CritterRenderer {
     @Nullable
     static Map.Entry<ResourceLocation, Integer> bodyOverlay(Critter k) {
         if (k.species == CritterSpecies.SULAWESI_SHRIMP) return Map.entry(DOTS, 0xF4F2EE);
+        if (k.species == CritterSpecies.FIRE_SHRIMP) return Map.entry(DOTS, 0xF8F4F0); // M48 part b: white dots on deep red
         if (k.species == CritterSpecies.MARBLED_CRAYFISH) return Map.entry(MARBLE, 0x3A3424); // M29 part d
         if (k.species != CritterSpecies.CARIDINA) return null;
         int c = k.clientColor;
@@ -166,6 +167,7 @@ public final class CritterRenderer {
             case TURBO_SNAIL -> 0x7A7058;
             case HERMIT_CRAB -> 0x3A6AD0; // the blue legs
             case CLEANER_SHRIMP -> 0xF4F0E8;
+            case FIRE_SHRIMP -> 0xF4F0E8;
             case TRUMPET_SNAIL -> 0x8A7A68;
             case ASSASSIN_SNAIL -> 0x6E6A50;
             case TYLOMELANIA -> 0xF0861C; // M25 part c: the orange body of a rabbit snail

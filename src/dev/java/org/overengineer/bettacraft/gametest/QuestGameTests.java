@@ -37,7 +37,7 @@ import org.overengineer.bettacraft.config.Features;
 @PrefixGameTestTemplate(false)
 public final class QuestGameTests {
     private static final String EMPTY = "empty_32x10x32";
-    private static final int QUESTS = 98; // M47: aquarist, frog_tadpole
+    private static final int QUESTS = 103; // M47: aquarist, frog_tadpole; M48: bottom_fish, tetra_cory_form, mandarin, banggai, clown_larvae
 
     private QuestGameTests() {}
 

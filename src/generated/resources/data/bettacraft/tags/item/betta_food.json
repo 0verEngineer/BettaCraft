@@ -37,6 +37,7 @@
       "id": "fisheggs:squid_eggs",
       "required": false
     },
+    "bettacraft:rotifers",
     {
       "id": "fintastic:regular_feed",
       "required": false

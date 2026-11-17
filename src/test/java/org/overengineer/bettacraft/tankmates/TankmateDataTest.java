@@ -47,7 +47,7 @@ class TankmateDataTest {
             assertFalse(s.waters().isEmpty(), s.id() + " can be caught somewhere");
             assertEquals("wild", s.variety(0), s.id() + " wild type first");
         }
-        assertEquals(57, java.util.Arrays.stream(TankmateSpecies.values()).filter(t -> !t.isLarge()).count()); // M30: the big animals apart // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c), M48: + bronze cory, panda garra
+        assertEquals(60, java.util.Arrays.stream(TankmateSpecies.values()).filter(t -> !t.isLarge()).count()); // M30: the big animals apart // M20: + 5 reef fish, M21.5: + green neon, M21.8: + 2 seahorses, M29: + 6 cichlids, + 9 puffers, barbs, loaches, + 12 (part c), M48: + bronze cory, panda garra, mandarin, Banggai, anthias
         // the user's wishes
         assertNotNull(TankmateSpecies.byId("leopard_frog_pleco"));
         assertNotNull(TankmateSpecies.byId("mosquito_rasbora"));

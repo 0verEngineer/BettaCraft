@@ -1273,6 +1273,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 .withStyle(w.skimmers > 0 && !salt ? ChatFormatting.GRAY : ChatFormatting.WHITE);
         c.append(Component.translatable("gui.bettacraft.reef.pumps", w.pumps, Math.round(Math.min(3, w.flow) * 100)));
         if (w.liveRock > 0) c.append(Component.translatable("gui.bettacraft.reef.live_rock", String.format(java.util.Locale.ROOT, "%,d", w.liveRock)));
+        // M48 part b: the copepods of the live rock (in % of what the rock holds), the rotifers and the phytoplankton
+        if (w.copepodCap > 0) c.append(Component.translatable("gui.bettacraft.reef.copepods", Math.round(100 * Math.min(1, w.copepods / w.copepodCap))));
+        if (w.rotifers > 0.05 || w.phytoplankton > 0.05) {
+            c.append(Component.translatable("gui.bettacraft.reef.plankton", String.format(java.util.Locale.ROOT, "%.1f", w.rotifers),
+                    String.format(java.util.Locale.ROOT, "%.1f", w.phytoplankton)));
+        }
         c.append(Component.translatable("gui.bettacraft.reef.spectrum", Math.round(w.spectrum * 100)));
         return c;
     }

@@ -283,6 +283,11 @@ public final class TankMultiblock {
                     merged.tadpoles().add(n);
                 }
                 merged.setTadpoleFood(merged.tadpoleFood() + t.tadpoleFood());
+                // M48 part b: the plankton of the other tanks
+                merged.setCopepods(merged.copepods() + t.copepods());
+                merged.setRotifers(merged.rotifers() + t.rotifers());
+                merged.setPhytoplankton(merged.phytoplankton() + t.phytoplankton());
+                merged.setNauplii(merged.nauplii() + t.nauplii());
             }
         }
         InteriorManager.onTanksMerged(level, olds, merged);

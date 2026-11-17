@@ -115,11 +115,13 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.TURBO_SNAIL, 30 * ner));
                 out.add(new Catch(CritterSpecies.HERMIT_CRAB, 30 * ner));
                 out.add(new Catch(CritterSpecies.CLEANER_SHRIMP, 20));
+                if (CritterSpecies.FIRE_SHRIMP.available()) out.add(new Catch(CritterSpecies.FIRE_SHRIMP, 6)); // M48 part b
             }
             case LUKEWARM_OCEAN -> {
                 out.add(new Catch(CritterSpecies.TURBO_SNAIL, 30 * ner));
                 out.add(new Catch(CritterSpecies.HERMIT_CRAB, 35 * ner));
                 out.add(new Catch(CritterSpecies.CLEANER_SHRIMP, 5));
+                if (CritterSpecies.FIRE_SHRIMP.available()) out.add(new Catch(CritterSpecies.FIRE_SHRIMP, 2)); // M48 part b
             }
             case JUNGLE -> {
                 out.add(new Catch(CritterSpecies.APPLE_SNAIL, 30));

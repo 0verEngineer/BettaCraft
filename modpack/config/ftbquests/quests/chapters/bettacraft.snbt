@@ -1344,6 +1344,47 @@
 			title: "{\"translate\":\"quest.bettacraft.tetra_cory_form.title\"}",
 			x: -2.6d,
 			y: 7.4d
+		},
+		{
+			dependencies: ["385712AF426BACFF"],
+			description: ["{\"translate\":\"quest.bettacraft.mandarin.desc\"}"],
+			id: "0D1A9EFF9B762D61",
+			rewards: [{ id: "3FFBEA8935FDD710", type: "xp", xp: 150 }, { count: 4, id: "4EEE7E3C4B3D8D6E", item: { count: 1, id: "bettacraft:live_rock" }, type: "item" }],
+			tags: ["bettacraft_feature:saltwater.moreReefAnimals", "bettacraft_feature:saltwater.reefFish", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:mandarin_copepods", criterion: "", id: "4A540326CAB218B2", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.mandarin.title\"}",
+			x: 12.0d,
+			y: 9.0d
+		},
+		{
+			dependencies: ["385712AF426BACFF"],
+			description: ["{\"translate\":\"quest.bettacraft.banggai.desc\"}"],
+			id: "001209BB95E4D901",
+			rewards: [{ id: "229CEA2A13711D35", type: "xp", xp: 100 }],
+			tags: ["bettacraft_feature:saltwater.moreReefAnimals", "bettacraft_feature:breeding.enabled", "bettacraft_feature:saltwater.reefFish", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:banggai_young", criterion: "", id: "426403687DFB000C", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.banggai.title\"}",
+			x: 13.5d,
+			y: 9.0d
+		},
+		{
+			dependencies: ["385712AF426BACFF"],
+			description: ["{\"translate\":\"quest.bettacraft.clown_larvae.desc\"}"],
+			id: "6BC35CC922866BC1",
+			rewards: [{ id: "2D2B1CF159BECC96", type: "xp", xp: 250 }, { count: 2, id: "3FFE498AFB0BD7DF", item: { count: 1, id: "bettacraft:rotifer_culture" }, type: "item" }],
+			shape: "hexagon",
+			size: 1.5d,
+			tags: ["bettacraft_feature:saltwater.larvaRearing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:clown_larvae", criterion: "", id: "0526A81ECB2C687E", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.clown_larvae.title\"}",
+			x: 10.5d,
+			y: 9.0d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

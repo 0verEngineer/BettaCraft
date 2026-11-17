@@ -82,7 +82,9 @@ class ReefTest {
                     || s.group() == TankmateSpecies.Group.GOBY || s.group() == TankmateSpecies.Group.DAMSEL || s.group() == TankmateSpecies.Group.SEAHORSE
                     // M30 part c: the sharks, the moray and the sea rays
                     || s.group() == TankmateSpecies.Group.SHARK || s.group() == TankmateSpecies.Group.MORAY || s == TankmateSpecies.SPOTTED_EAGLE_RAY
-                    || s == TankmateSpecies.COWNOSE_RAY;
+                    || s == TankmateSpecies.COWNOSE_RAY
+                    // M48 part b: the mandarin, the Banggai cardinalfish, the anthias
+                    || s.group() == TankmateSpecies.Group.DRAGONET || s.group() == TankmateSpecies.Group.CARDINALFISH || s.group() == TankmateSpecies.Group.ANTHIAS;
             assertEquals(reef, s.marine(), s + " marine");
         }
     }

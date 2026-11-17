@@ -141,6 +141,12 @@ public final class TankData {
     private final List<org.overengineer.bettacraft.entity.frog.Tadpole> tadpoles = new ArrayList<>();
     private int nextFrogBroodId = 1;
     private double tadpoleFood;
+    /**
+     * M48 part b: the plankton of a reef tank in food portions: the copepods of the live rock (the mandarin's food), the
+     * rotifers, the phytoplankton and the artemia nauplii in the water (the clownfish larvae's food chain). Saved under
+     * "plankton" only while there is some; older worlds have none.
+     */
+    private double copepods, rotifers, phytoplankton, nauplii;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -413,6 +419,19 @@ public final class TankData {
     public int nextFrogBroodId() { return nextFrogBroodId++; }
     public double tadpoleFood() { return tadpoleFood; }
     public void setTadpoleFood(double f) { this.tadpoleFood = Double.isFinite(f) ? Math.max(0, f) : 0; }
+    // M48 part b: plankton
+    public double copepods() { return copepods; }
+    public void setCopepods(double v) { this.copepods = clean(v); }
+    public double rotifers() { return rotifers; }
+    public void setRotifers(double v) { this.rotifers = clean(v); }
+    public double phytoplankton() { return phytoplankton; }
+    public void setPhytoplankton(double v) { this.phytoplankton = clean(v); }
+    public double nauplii() { return nauplii; }
+    public void setNauplii(double v) { this.nauplii = clean(v); }
+
+    private static double clean(double v) {
+        return Double.isFinite(v) && v > 1e-6 ? v : 0;
+    }
 
     // M31 terrarium
     public List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches() { return herpClutches; }
@@ -615,6 +634,10 @@ public final class TankData {
         for (var s : o.frogSpawn) if (containsColumn(s.x, s.z)) frogSpawn.add(s.copy());
         for (var k : o.tadpoles) if (contains(BlockPos.containing(k.x, k.y, k.z))) tadpoles.add(k.copy());
         tadpoleFood = o.tadpoleFood;
+        copepods = o.copepods; // M48 part b
+        rotifers = o.rotifers;
+        phytoplankton = o.phytoplankton;
+        nauplii = o.nauplii;
     }
 
     /**
@@ -834,6 +857,14 @@ public final class TankData {
             t.putInt("next_frog_brood", nextFrogBroodId);
             if (tadpoleFood > 0) t.putDouble("tadpole_food", tadpoleFood);
         }
+        if (copepods > 0 || rotifers > 0 || phytoplankton > 0 || nauplii > 0) { // M48 part b
+            CompoundTag p = new CompoundTag();
+            if (copepods > 0) p.putDouble("copepods", copepods);
+            if (rotifers > 0) p.putDouble("rotifers", rotifers);
+            if (phytoplankton > 0) p.putDouble("phytoplankton", phytoplankton);
+            if (nauplii > 0) p.putDouble("nauplii", nauplii);
+            t.put("plankton", p);
+        }
         return t;
     }
 
@@ -983,6 +1014,12 @@ public final class TankData {
         }
         d.nextFrogBroodId = Math.max(maxBrood + 1, t.contains("next_frog_brood", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_frog_brood") : 1);
         d.setTadpoleFood(t.getDouble("tadpole_food"));
+        // M48 part b: plankton (absent in older worlds: none)
+        CompoundTag plankton = t.getCompound("plankton");
+        d.setCopepods(plankton.getDouble("copepods"));
+        d.setRotifers(plankton.getDouble("rotifers"));
+        d.setPhytoplankton(plankton.getDouble("phytoplankton"));
+        d.setNauplii(plankton.getDouble("nauplii"));
         d.recomputeBounds();
         return d;
     }

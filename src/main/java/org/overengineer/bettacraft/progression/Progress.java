@@ -103,6 +103,12 @@ public final class Progress {
     // M48
     /** A bred tetra or cory of an M48 bred form grew up. */
     public static final String TETRA_CORY_FORM = "tetra_cory_form";
+    /** A mandarin lived on the copepods of the live rock (its first meal of them in a tank). */
+    public static final String MANDARIN_COPEPODS = "mandarin_copepods";
+    /** Clownfish larvae raised on rotifers settled as young fish (log tm.clown_larvae_raised). */
+    public static final String CLOWN_LARVAE = "clown_larvae";
+    /** A Banggai male released his young from his mouth (log tm.banggai_born). */
+    public static final String BANGGAI_YOUNG = "banggai_young";
 
     private Progress() {}
 
@@ -155,6 +161,8 @@ public final class Progress {
             case "log.bettacraft.algae_scraped" -> ALGAE_SCRAPED;
             case "log.bettacraft.auto_water_change" -> AUTO_WATER_CHANGE;
             case "log.bettacraft.frog.tadpoles_hatched" -> FROG_TADPOLE; // M47
+            case "log.bettacraft.tm.clown_larvae_raised" -> CLOWN_LARVAE; // M48
+            case "log.bettacraft.tm.banggai_born" -> BANGGAI_YOUNG;
             default -> null;
         };
         if (event != null) awardNear(level, controller, event, 0);

@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "saltwater.larvaRearing"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_phytoplankton": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bettacraft:phytoplankton"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bettacraft:rotifer_culture_start"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_phytoplankton"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bettacraft:rotifer_culture_start"
+    ]
+  }
+}

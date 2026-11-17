@@ -124,8 +124,9 @@ public final class AquaristTrades {
                 new Product(Target.item("artemia_cysts"), 4, 2, 0.25, null), new Product(Target.item("active_soil"), 8, 3, 0.25, null));
         out.add(sell("kits_or_substrate", 3, kit, 10, 8));
         // ---------------------------------------------------------------- expert
-        List<Product> cultures = List.of(new Product(Target.item("infusoria_culture"), 1, 3, 0.4, null),
-                new Product(Target.item("artemia_culture"), 1, 4, 0.3, null), new Product(Target.item("green_water_culture"), 1, 3, 0.3, null));
+        List<Product> cultures = List.of(new Product(Target.item("infusoria_culture"), 1, 3, 0.3, null),
+                new Product(Target.item("artemia_culture"), 1, 4, 0.25, null), new Product(Target.item("green_water_culture"), 1, 3, 0.25, null),
+                new Product(Target.item("rotifer_culture"), 1, 5, 0.2, null)); // M48 part b
         out.add(sell("cultures", 4, cultures, 15, 6));
         List<Product> rare = new ArrayList<>();
         for (PlantSpecies p : RARE_PLANTS) rare.add(new Product(Target.plant(p), 1, 5, 1.0 / RARE_PLANTS.size(), null));

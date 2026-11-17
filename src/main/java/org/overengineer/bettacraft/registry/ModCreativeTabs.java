@@ -146,6 +146,10 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.INFUSORIA.get());
                 out.accept(ModItems.ARTEMIA_CULTURE.get());
                 out.accept(ModItems.ARTEMIA_NAUPLII.get());
+                out.accept(ModItems.PHYTOPLANKTON_CULTURE.get()); // M48 part b
+                out.accept(ModItems.PHYTOPLANKTON.get());
+                out.accept(ModItems.ROTIFER_CULTURE.get());
+                out.accept(ModItems.ROTIFERS.get());
                 out.accept(ModItems.LARVA_TUB.get());
                 out.accept(ModItems.ARTEMIA_HATCHERY.get());
                 // M26: live food cultures and the live food pump

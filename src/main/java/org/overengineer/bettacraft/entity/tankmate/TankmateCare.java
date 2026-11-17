@@ -69,14 +69,24 @@ public final class TankmateCare {
         if (days > 0) advance(level, controller, fish, days);
     }
 
+    /** The health parameters of a species: the bettas', seahorses and (M48 part b) the anthias hungry again sooner. */
+    public static BettaHealth.Params params(TankmateSpecies s) {
+        BettaHealth.Params p = BettaCare.params();
+        if (s.seahorse()) p = org.overengineer.bettacraft.tankmates.Seahorses.params(p); // M21.8: they need food more often
+        if (s.feedingsPerDay() > 1.0) { // M48 part b: the anthias are hungry again after a third of a day
+            p = new BettaHealth.Params(p.daysUntilSick(), p.daysSickUntilDeath(), p.bothBadMultiplier(), p.recoveryPerDay(),
+                    p.hungryAfterDays() / s.feedingsPerDay(), p.diet(), p.care());
+        }
+        return p;
+    }
+
     /** Advances the needs of a tankmate by {@code days} (also used by GameTests). */
     public static void advance(ServerLevel level, TankBlockEntity controller, TankmateEntity fish, double days) {
         // M33 part b: the species' feature off (tankmates, its group, reef fish ...): its care rests, nothing dies
         if (!org.overengineer.bettacraft.config.Features.enabled(fish.species().feature())) return;
         TankData tank = controller.getTank();
         TankmateSpecies s = fish.species();
-        BettaHealth.Params p = BettaCare.params();
-        if (s.seahorse()) p = org.overengineer.bettacraft.tankmates.Seahorses.params(p); // M21.8: they need food more often
+        BettaHealth.Params p = params(s);
         boolean tempOk = s.tolerates(tank.waterTemp());
         double salt = org.overengineer.bettacraft.reef.SaltTolerance.shock(s.salinity(), tank); // M20
         boolean waterBad = TankWater.qualityEnabled() && tank.waterQuality() < s.minQuality() || salt >= org.overengineer.bettacraft.tank.Salinity.STRESS_FROM;

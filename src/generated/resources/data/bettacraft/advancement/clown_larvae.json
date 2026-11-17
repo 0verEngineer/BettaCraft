@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:tankmate_inserted",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "clown_larvae"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.clown_larvae.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:rotifers"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.clown_larvae.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

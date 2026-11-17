@@ -845,6 +845,8 @@ public final class TankView {
         public float fertilizer, fertilizerOver = 1.5F;
         public double springUnits;
         public int skimmers, pumps, liveRock;
+        /** M48 part b: the copepods of the live rock (and their most), the rotifers and the phytoplankton in the water (portions). */
+        public double copepods, copepodCap, rotifers, phytoplankton;
         public double flow, spectrum;
         /** M24: nitrate (mg/L), its change per day, the levels and the water change interval of the difficulty (0 = off). */
         public float nitrate;
@@ -885,6 +887,10 @@ public final class TankView {
             t.putInt("skimmers", skimmers);
             t.putInt("pumps", pumps);
             t.putInt("live_rock", liveRock);
+            t.putDouble("copepods", copepods); // M48 part b
+            t.putDouble("copepod_cap", copepodCap);
+            t.putDouble("rotifers", rotifers);
+            t.putDouble("phytoplankton", phytoplankton);
             t.putDouble("flow", flow);
             t.putDouble("spectrum", spectrum);
             t.putBoolean("q_on", qualityEnabled);
@@ -978,6 +984,10 @@ public final class TankView {
             skimmers = t.getInt("skimmers");
             pumps = t.getInt("pumps");
             liveRock = t.getInt("live_rock");
+            copepods = t.getDouble("copepods"); // M48 part b
+            copepodCap = t.getDouble("copepod_cap");
+            rotifers = t.getDouble("rotifers");
+            phytoplankton = t.getDouble("phytoplankton");
             flow = t.getDouble("flow");
             spectrum = t.getDouble("spectrum");
             qualityEnabled = t.getBoolean("q_on");
@@ -1221,6 +1231,10 @@ public final class TankView {
         w.skimmers = org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
         w.pumps = org.overengineer.bettacraft.reef.TankReef.pumps(level, t);
         w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);
+        w.copepods = t.copepods(); // M48 part b
+        w.copepodCap = org.overengineer.bettacraft.reef.Copepods.capacity(level, t);
+        w.rotifers = t.rotifers();
+        w.phytoplankton = t.phytoplankton();
         w.flow = org.overengineer.bettacraft.reef.TankReef.flow(level, c);
         w.spectrum = org.overengineer.bettacraft.reef.TankReef.spectrum(level, t);
         // M24: nitrate and the water changes

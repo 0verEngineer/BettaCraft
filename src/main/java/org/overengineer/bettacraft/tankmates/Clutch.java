@@ -70,6 +70,8 @@ public final class Clutch {
     public double progress;
     /** Days without a guarding male (cave and foam clutches die without him after a while). */
     public double unguarded;
+    /** M48 part b: clownfish larvae that got rotifers (saved as "rotifers" when true). */
+    public boolean rotifers;
 
     // client view
     public int clientStage = -1;
@@ -112,7 +114,7 @@ public final class Clutch {
         double base = switch (s.breeding()) {
             case GLASS_EGGS -> 0.5;
             case CAVE -> 1.0;
-            case ANEMONE -> 1.0;
+            case ANEMONE -> org.overengineer.bettacraft.reef.ClownLarvae.active() ? org.overengineer.bettacraft.reef.ClownLarvae.larvaDays() : 1.0; // M48 part b
             // M29: the parents keep the wrigglers in a pit or cave; discus young feed on their parents' skin for days more
             case OPEN, CICHLID_CAVE -> s.parentsFeed() ? 2.2 : 1.0;
             case SCATTER -> 0.6;
@@ -159,6 +161,7 @@ public final class Clutch {
         c.building = building;
         c.progress = progress;
         c.unguarded = unguarded;
+        c.rotifers = rotifers;
         return c;
     }
 
@@ -184,6 +187,7 @@ public final class Clutch {
         if (building) t.putBoolean("building", true);
         t.putDouble("progress", progress);
         t.putDouble("unguarded", unguarded);
+        if (rotifers) t.putBoolean("rotifers", true); // M48 part b
         return t;
     }
 
@@ -205,6 +209,7 @@ public final class Clutch {
         c.building = t.getBoolean("building");
         c.progress = t.getDouble("progress");
         c.unguarded = t.getDouble("unguarded");
+        c.rotifers = t.getBoolean("rotifers");
         return c;
     }
 

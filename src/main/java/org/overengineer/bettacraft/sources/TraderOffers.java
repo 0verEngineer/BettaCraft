@@ -231,6 +231,10 @@ public final class TraderOffers {
                             : TankCritters.bagOf(CritterSpecies.HERMIT_CRAB, 3, () -> CritterGenes.WILD, rnd, false);
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 5), Optional.empty(), bag, 3, 1, 0.05F);
                 }));
+        // M48 part b: the fire shrimp (features.saltwater.moreReefAnimals), one at a time
+        out.add(new Offer("fire_shrimp", Slot.RARE, 1, () -> List.of(new Product(Target.critter(CritterSpecies.FIRE_SHRIMP), 1, 8, 1.0, false, null)),
+                (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 8), Optional.empty(),
+                        TankCritters.bagOf(CritterSpecies.FIRE_SHRIMP, 1, () -> CritterGenes.WILD, random::nextLong, false), 3, 1, 0.05F)));
         out.add(new Offer("live_rock", Slot.RARE, 2, () -> List.of(new Product(Target.item("live_rock"), 8, 6)),
                 fixed(6, 2, () -> new ItemStack(ModItems.LIVE_ROCK.get(), 8))));
         return List.copyOf(out);

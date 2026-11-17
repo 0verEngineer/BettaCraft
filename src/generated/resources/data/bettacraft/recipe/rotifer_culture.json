@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "saltwater.larvaRearing"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "bettacraft:rotifers"
+    },
+    {
+      "item": "bettacraft:phytoplankton"
+    },
+    {
+      "item": "bettacraft:phytoplankton"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "bettacraft:rotifer_culture"
+  }
+}

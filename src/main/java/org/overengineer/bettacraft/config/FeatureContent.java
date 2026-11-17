@@ -64,6 +64,7 @@ public final class FeatureContent {
                 "fruit_fly_culture");
         put(Feature.LIVE_FOOD_CULTURES, "tubifex", "daphnia", "mulm", "yeast", "green_water_bottle", "green_water_culture", "tubifex_dish", "daphnia_barrel");
         put(Feature.LIVE_FOOD_PUMP, "live_food_pump");
+        put(Feature.LARVA_REARING, "phytoplankton", "rotifers", "phytoplankton_culture", "rotifer_culture"); // M48 part b
         put(Feature.FOOD_MACHINE, "food_maker", "fish_flakes", "food_granules", "shrimp_food", "shell_food", "frozen_mosquito_larvae", "frozen_artemia",
                 "frozen_daphnia");
         put(Feature.FERTILIZER, "fertilizer_maker", "kelp_meal", "nutrient_salt", "liquid_fertilizer"); // M37 (the crank is core)

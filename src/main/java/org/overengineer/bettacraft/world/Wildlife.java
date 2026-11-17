@@ -248,7 +248,7 @@ public final class Wildlife {
     /** How many animals of one critter species spawn together. */
     public static int[] critterGroup(CritterSpecies s) {
         return switch (s.group()) {
-            case SHRIMP -> s == CritterSpecies.CLEANER_SHRIMP ? new int[]{1, 2} : s == CritterSpecies.SULAWESI_SHRIMP ? new int[]{2, 4} : new int[]{3, 6};
+            case SHRIMP -> s == CritterSpecies.CLEANER_SHRIMP || s == CritterSpecies.FIRE_SHRIMP ? new int[]{1, 2} : s == CritterSpecies.SULAWESI_SHRIMP ? new int[]{2, 4} : new int[]{3, 6};
             case CRAYFISH -> s.big() ? new int[]{1, 1} : new int[]{1, 2}; // M29 part d: the big crayfish alone
             case SNAIL -> s == CritterSpecies.APPLE_SNAIL || s == CritterSpecies.ASSASSIN_SNAIL || s == CritterSpecies.TYLOMELANIA ? new int[]{1, 2} : new int[]{2, 4};
         };

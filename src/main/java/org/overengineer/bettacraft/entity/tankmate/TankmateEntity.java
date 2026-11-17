@@ -50,6 +50,8 @@ public class TankmateEntity extends AbstractFish {
     private static final EntityDataAccessor<Byte> DATA_FLAGS = SynchedEntityData.defineId(TankmateEntity.class, EntityDataSerializers.BYTE);
     public static final int FLAG_SICK = 1, FLAG_GRAVID = 2, FLAG_GUARD = 4, FLAG_GLASS = 8, FLAG_REST = 16, FLAG_STRESS = 32, FLAG_HIDDEN = 64;
     public static final String KEY = "tankmate";
+    /** M48 part b: copepods a mandarin ate since its last meal (portions, not saved). */
+    public double copepodMeal;
     static final double TICKS_PER_DAY = 24000.0;
 
     private final TankmateSpecies species;

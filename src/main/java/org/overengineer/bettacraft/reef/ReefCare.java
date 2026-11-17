@@ -56,7 +56,11 @@ public final class ReefCare {
 
     /** Whether a living cleaner shrimp is in the tank (the fish heal half again as fast). */
     public static boolean cleaners(TankData t) {
-        for (var k : t.critters()) if (k.alive() && k.species == org.overengineer.bettacraft.critters.CritterSpecies.CLEANER_SHRIMP) return true;
+        for (var k : t.critters()) {
+            if (!k.alive()) continue;
+            // M48 part b: the fire shrimp cleans too
+            if (k.species == org.overengineer.bettacraft.critters.CritterSpecies.CLEANER_SHRIMP || k.species == org.overengineer.bettacraft.critters.CritterSpecies.FIRE_SHRIMP) return true;
+        }
         return false;
     }
 

@@ -66,7 +66,11 @@ public enum CritterSpecies {
     FLORIDA_CRAYFISH("florida_crayfish", Group.CRAYFISH, Model.CRAYFISH, 0.8, 0.07, false, Breeding.PAIR_BERRIED, 0.12, 4.0, 3, 6, 6.0, 15, 28, 0.35, 0.25, 0.0,
             new String[]{"blue", "orange"}, 0x6A4634),
     MARBLED_CRAYFISH("marbled_crayfish", Group.CRAYFISH, Model.CRAYFISH, 0.72, 0.065, false, Breeding.PARTHENO, 0.2, 3.0, 3, 6, 5.0, 12, 30, 0.3, 0.2, 0.0,
-            new String[0], 0x6A6248);
+            new String[0], 0x6A6248),
+    // M48 part b: the fire shrimp (blood red cleaner shrimp, Lysmata debelius): deep red with white dots and white legs, shy, hides
+    // in the rock by day; it also cleans the fish (less eagerly than the cleaner shrimp); does not breed in a tank
+    FIRE_SHRIMP("fire_shrimp", Group.SHRIMP, Model.SHRIMP, 0.42, 0.06, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 24, 28, 0.55, 0.05, 0.03,
+            new String[0], 0xB01418);
 
     /** Stocking group: how many of them count as one fish ({@code stocking.*PerFish}). */
     public enum Group { SHRIMP, CRAYFISH, SNAIL }
@@ -184,6 +188,7 @@ public enum CritterSpecies {
             case SULAWESI_SHRIMP, TYLOMELANIA -> Feature.SULAWESI;
             case YELLOW_NERITE -> Feature.SNAIL_COLORS;
             case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> Feature.BIG_CRAYFISH;
+            case FIRE_SHRIMP -> Feature.REEF_ANIMALS; // M48 part b
             default -> null;
         };
     }

@@ -165,7 +165,7 @@ public final class TankmateBreeding {
                 case SCATTER -> scatter(level, c, e.getKey(), e.getValue(), days, full);
                 case LIVEBEARER, MOUTH -> livebearer(level, c, e.getKey(), e.getValue(), by, days, full); // M29 part c: mouthbrooders
                 case FOAM_NEST -> foam(level, c, e.getKey(), e.getValue(), days, now, full);
-                case POUCH -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses
+                case POUCH, MOUTH_MALE -> pouch(level, c, e.getKey(), e.getValue(), days, full); // M21.8 seahorses, M48 the Banggai male
                 case OPEN -> open(level, c, e.getKey(), e.getValue(), days, now, full); // M29 cichlids
                 case CICHLID_CAVE -> cichlidCave(level, c, e.getKey(), e.getValue(), days, now, full);
                 case EGG_CASE -> eggCases(level, c, e.getKey(), e.getValue(), days, full); // M30 part c: the bamboo shark
@@ -959,7 +959,9 @@ public final class TankmateBreeding {
             if (r.nextDouble() >= chance(rate, days)) continue;
             m.setGravid(0, f.genes());
             f.breeding().setCooldown(1.0);
-            TankCare.log(level, c, "log.bettacraft.tm.pouch", TankCare.nameArg(f), TankCare.nameArg(m));
+            // M48 part b: the Banggai female passes her eggs to the male, who takes them into his mouth
+            TankCare.log(level, c, s.breeding() == TankmateSpecies.Breeding.MOUTH_MALE ? "log.bettacraft.tm.banggai_eggs" : "log.bettacraft.tm.pouch",
+                    TankCare.nameArg(f), TankCare.nameArg(m));
             c.markTankChanged();
         }
     }
@@ -967,8 +969,12 @@ public final class TankmateBreeding {
     /** Days the young need until birth: the pouch of a seahorse male, the belly of a livebearer female. */
     public static double gestationDays(TankmateSpecies s) {
         if (s.isLarge()) return gestationDays() * BIG_GESTATION; // M30 part b: a stingray carries her pups about three months
+        if (s.breeding() == TankmateSpecies.Breeding.MOUTH_MALE) return gestationDays() * BANGGAI_GESTATION; // M48 part b
         return s.seahorse() ? Seahorses.pouchDays() : gestationDays();
     }
+
+    /** M48 part b: the Banggai male carries the eggs about half again as long as a livebearer female her young. */
+    public static final double BANGGAI_GESTATION = 1.5;
 
     /** M30 part c: days in the egg case of the bamboo shark (about four months in nature; tankmates.clutchSpeed divides them). */
     public static final double EGG_CASE_DAYS = 10.0;
@@ -1185,6 +1191,13 @@ public final class TankmateBreeding {
                 // eggs grow fungus in bad water
                 if (bad && k.stage() == 0) k.count -= binomial(r, k.count, chance(0.3, days));
             }
+            // M48 part b: clownfish larvae drift and need rotifers (later also artemia nauplii)
+            if (org.overengineer.bettacraft.reef.ClownLarvae.larvae(level, c, k, days, r) && k.count <= 0) {
+                t.clutches().remove(k);
+                TankCare.log(level, c, "log.bettacraft.reef.larvae_died", "@" + k.species.translationKey());
+                changed = true;
+                continue;
+            }
             if (k.count <= 0) {
                 t.clutches().remove(k);
                 TankCare.log(level, c, "log.bettacraft.tm.eggs_eaten", "@" + k.species.translationKey());
@@ -1256,6 +1269,10 @@ public final class TankmateBreeding {
                 "@" + k.species.translationKey(), String.valueOf(made));
         // M32 part d: the young of a breeding box were counted when they were born
         if (k.kind != Clutch.Kind.BOX) org.overengineer.bettacraft.api.ApiEvents.born(level, c, ModEntities.TANKMATES.get(k.species).get(), made, true);
+        // M48 part b: clownfish larvae raised on rotifers settled
+        if (k.rotifers && made > 0 && org.overengineer.bettacraft.reef.ClownLarvae.clownClutch(k)) {
+            TankCare.log(level, c, "log.bettacraft.tm.clown_larvae_raised", "@" + k.species.translationKey(), String.valueOf(made));
+        }
     }
 
     /** Spawns a young tankmate in the tank (offspring, catches, tests). */
@@ -1307,12 +1324,16 @@ public final class TankmateBreeding {
                 Vec3 p = w.clamp(f.position().add((r.nextDouble() - 0.5) * 0.3, 0.05, (r.nextDouble() - 0.5) * 0.3), 0.08 + 1.0 / 16, 0.05 + 1.0 / 16, 0.05);
                 boolean female = r.nextBoolean();
                 TankmateGenes g = org.overengineer.bettacraft.world.Wildlife.mutate(s, TankmateGenes.cross(f.genes(), father, female, r::nextLong), r::nextLong);
-                if (spawn(level, c, s, g, female, LifeStage.FRY, f.generation() + 1, p) != null) made++;
+                // M48 part b: the Banggai young come out of the mouth fully formed
+                LifeStage stage = s.breeding() == TankmateSpecies.Breeding.MOUTH_MALE ? LifeStage.JUVENILE : LifeStage.FRY;
+                if (spawn(level, c, s, g, female, stage, f.generation() + 1, p) != null) made++;
             }
             if (s.seahorse()) {
                 // M21.8: the male pumps the fry out of his pouch
                 level.sendParticles(ParticleTypes.BUBBLE, f.getX(), f.getY() + f.getBbHeight() * 0.4, f.getZ(), 8, 0.05, 0.05, 0.05, 0.01);
                 TankCare.log(level, c, "log.bettacraft.tm.pouch_born", TankCare.nameArg(f), String.valueOf(made));
+            } else if (s.breeding() == TankmateSpecies.Breeding.MOUTH_MALE) {
+                TankCare.log(level, c, "log.bettacraft.tm.banggai_born", TankCare.nameArg(f), String.valueOf(made)); // M48 part b
             } else if (s.mouthbrooder()) {
                 TankCare.log(level, c, "log.bettacraft.tm.mouth_born", TankCare.nameArg(f), String.valueOf(made)); // M29 part c
             } else {

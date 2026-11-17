@@ -170,6 +170,15 @@ public final class ModItems {
             () -> new CultureItem(INFUSORIA, false, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<CultureItem> ARTEMIA_CULTURE = ITEMS.register("artemia_culture",
             () -> new CultureItem(ARTEMIA_NAUPLII, true, new Item.Properties().stacksTo(16)));
+    // M48 part b: the food chain of the clownfish larvae (phytoplankton feeds the rotifers, the rotifers feed the larvae)
+    public static final DeferredItem<Item> PHYTOPLANKTON = ITEMS.register("phytoplankton",
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<Item> ROTIFERS = ITEMS.register("rotifers",
+            () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    public static final DeferredItem<CultureItem> PHYTOPLANKTON_CULTURE = ITEMS.register("phytoplankton_culture",
+            () -> new CultureItem(PHYTOPLANKTON, true, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<CultureItem> ROTIFER_CULTURE = ITEMS.register("rotifer_culture",
+            () -> new CultureItem(ROTIFERS, false, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<ArtemiaCystsItem> ARTEMIA_CYSTS = ITEMS.register("artemia_cysts",
             () -> new ArtemiaCystsItem(new Item.Properties()));
 

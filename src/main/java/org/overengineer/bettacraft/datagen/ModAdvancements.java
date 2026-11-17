@@ -40,7 +40,7 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
             // M47
             "frog_tadpole", "aquarist_trade",
             // M48
-            "tetra_cory_form"};
+            "tetra_cory_form", "mandarin_copepods", "clown_larvae", "banggai_young"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -158,6 +158,12 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         event(mates, "livebearer_litter", ModItems.BREEDING_BOX.get(), AdvancementType.TASK, Progress.LITTER);
         event(mates, "seahorse_fry", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.LINED_SEAHORSE).get(), AdvancementType.GOAL,
                 Progress.SEAHORSE_FRY);
+        // M48 part b: the mandarin on copepods, clownfish larvae raised on rotifers, the Banggai young
+        event(mates, "mandarin_copepods", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.MANDARINFISH).get(), AdvancementType.GOAL,
+                Progress.MANDARIN_COPEPODS);
+        event(mates, "clown_larvae", ModItems.ROTIFERS.get(), AdvancementType.CHALLENGE, Progress.CLOWN_LARVAE);
+        event(mates, "banggai_young", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.BANGGAI_CARDINAL).get(), AdvancementType.GOAL,
+                Progress.BANGGAI_YOUNG);
         event(filled, "critters_bred", ModItems.CRITTER_BUCKET.get(), AdvancementType.TASK, Progress.CRITTERS_BRED);
         event(filled, "algae_scraped", ModItems.ALGAE_SCRAPER.get(), AdvancementType.TASK, Progress.ALGAE_SCRAPED);
         AdvancementHolder palu = event(tank, "paludarium", Items.MOSS_BLOCK, AdvancementType.TASK, Progress.PALUDARIUM);

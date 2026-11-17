@@ -1216,6 +1216,12 @@ def looks(species, variety, female):
         return loach29_look(sp)
     if sp == "bronze_cory":
         return bronze_cory_look(var)
+    if sp == "mandarinfish":
+        return mandarin_look()
+    if sp == "banggai_cardinal":
+        return banggai_look()
+    if sp == "lyretail_anthias":
+        return anthias_look(female)
     if sp == "panda_garra":
         return panda_garra_look()
     if sp in ("zebra_danio", "celestial_pearl_danio"):
@@ -1977,6 +1983,82 @@ def panda_garra_look():
     return Look(body, fins, eye="#141210")
 
 
+# M48 part b: the new reef fish
+
+def mandarin_look():
+    """Mandarin dragonet: a maze of orange wavy bands on bright blue, the head with orange stripes, blue-edged orange fins."""
+
+    def body(t, v, x, z, y):
+        k = math.sin(z * 1.7 + 1.3 * math.sin(y * 1.1 + z * 0.5)) + 0.6 * math.sin(y * 2.3 - z * 0.7)
+        if v > 0.9:
+            return C("#2a6ad0")
+        if k > 0.55:
+            return mix(C("#f07818"), C("#ffa040"), (k - 0.55) / 1.0)
+        if k > 0.35:
+            return C("#1a2a60")
+        return mix(C("#1e78e8"), C("#3aa0ff"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        k = math.sin(a * 9 + abs(b) * 4)
+        if part in ("tail", "dorsal", "dorsal2", "anal") and (a > 0.75 or abs(b) > 0.8):
+            return C("#2a7ae8")
+        if part == "pectoral":
+            return C("#e8a050")
+        return C("#f07a20") if k > 0 else C("#2a6ad8")
+    return Look(body, fins, eye="#c86a10", ring="#2a6ad0")
+
+
+def banggai_look():
+    """Banggai cardinalfish: silver with three black bars (through the eye, from the first dorsal down, from the second dorsal
+    to the anal fin), the rear and the fins black-edged with white dots."""
+    rnd = np.random.default_rng(4821)
+    dots = rnd.random((64, 64))
+
+    def body(t, v, x, z, y):
+        for c, half in ((0.12, 0.035), (0.36, 0.04), (0.6, 0.045)):
+            if abs(t - c - (v - 0.5) * 0.06) < half:
+                return C("#121214")
+        if t > 0.72:
+            k = dots[int(abs(z) * 3.1 + abs(x) * 1.7) % 64, int((y + 20) * 2.9) % 64]
+            return C("#f4f4f0") if k > 0.82 else mix(C("#b8bcc0"), C("#2a2a2e"), smooth(0.72, 0.95, t))
+        return mix(C("#c8ccd0"), C("#eef0f0"), v)
+
+    def fins(part, a, b, t, v, z, y):
+        k = dots[int(a * 37) % 64, int((b + 1) * 21) % 64]
+        if part == "pectoral":
+            return C("#dcdcd8")
+        if k > 0.78:
+            return C("#f8f8f4")
+        return C("#18181c") if part in ("dorsal", "dorsal2", "anal", "pelvic") or abs(b) > 0.6 else C("#3a3a40")
+    return Look(body, fins, eye="#d8b030", ring="#202020")
+
+
+def anthias_look(female):
+    """Lyretail anthias: the female orange-gold with a violet streak from the eye, yellow-orange fins; the male magenta-pink
+    with a red spot on the pectoral, orange-red dorsal tips and long magenta lyre tips on the tail."""
+
+    def body(t, v, x, z, y):
+        if 0.05 < t < 0.3 and abs(v - 0.55 - (t - 0.05) * 0.4) < 0.04:
+            return C("#a060d0") if female else C("#f0a020")
+        if female:
+            return mix(C("#f08a1c"), C("#ffc050"), v)
+        return mix(C("#c02a8a"), C("#f070b0"), v * 0.9)
+
+    def fins(part, a, b, t, v, z, y):
+        if female:
+            if part == "tail" and abs(b) > 0.75:
+                return C("#e05a10")
+            return C("#f4b030") if part != "pectoral" else C("#f8d080")
+        if part == "pectoral":
+            return C("#e02030") if a < 0.4 else C("#f080b8")
+        if part in ("dorsal", "dorsal2") and (b + 1) / 2 > 0.75:
+            return C("#f04020")
+        if part == "tail" and abs(b) > 0.7:
+            return C("#a01870")
+        return C("#d84098")
+    return Look(body, fins, eye="#2a1830", ring="#f0b040" if female else "#e070b0")
+
+
 # M29 part a: cichlid looks
 
 def _spangles(seed):
@@ -2622,6 +2704,10 @@ SPECIES = [
     # M48 part a
     ("bronze_cory", "cory", ["wild", "albino", "gold_laser"], False),
     ("panda_garra", "garra", ["wild"], False),
+    # M48 part b
+    ("mandarinfish", "goby", ["wild"], False),
+    ("banggai_cardinal", "damsel", ["wild"], False),
+    ("lyretail_anthias", "damsel", ["wild"], True),
 ]
 
 

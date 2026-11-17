@@ -39,6 +39,7 @@ public final class TankmateFeeding {
         if (kind == null) return out;
         for (TankmateEntity m : TankmateBreeding.tankmates(level, t)) {
             if (bottomOnly && !bottomFish(m)) continue;
+            if (m.species().copepodEater()) continue; // M48 part b: the mandarin lives on the copepods of the live rock only
             // M21.8: seahorses take live food and artemia only (the fry artemia from birth)
             if (m.species().seahorse() ? Seahorses.canEat(m.lifeStage(), kind) : BettaFood.canEat(m.lifeStage(), m.stageProgress(), kind)) out.add(m);
         }
@@ -78,7 +79,7 @@ public final class TankmateFeeding {
             if (hard && m.species().puffer()) m.wearTeeth();
 
             double overfedDays = m.species().seahorse() ? TankCare.OVERFED_DAYS / Math.max(1.0, ServerConfig.getOr(ServerConfig.SEAHORSE_FEEDINGS, 2.0))
-                    : TankCare.OVERFED_DAYS; // M21.8: seahorses eat often
+                    : TankCare.OVERFED_DAYS / Math.max(1.0, m.species().feedingsPerDay()); // M21.8: seahorses eat often; M48: the anthias too
             if (m.health().daysSinceFed() < overfedDays) overfed++;
 
             m.health().feed();

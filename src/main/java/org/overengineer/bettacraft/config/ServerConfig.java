@@ -277,6 +277,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.BooleanValue SALT_VANILLA_CORALS;
     public static final ModConfigSpec.IntValue REEF_SKIMMER_BLOCKS;
     public static final ModConfigSpec.DoubleValue REEF_LIVE_ROCK_BLOCKS;
+    /** M48 part b: copepods of the live rock (mandarin) and the clownfish larvae. */
+    public static final ModConfigSpec.DoubleValue REEF_COPEPODS_PER_LIVE_ROCK, REEF_MANDARIN_COPEPODS, REEF_CLOWN_LARVA_DAYS, REEF_CLOWN_LARVA_SURVIVAL;
     public static final ModConfigSpec.IntValue REEF_PUMP_BLOCKS;
     public static final ModConfigSpec.DoubleValue REEF_CORAL_GROWTH;
     public static final ModConfigSpec.DoubleValue REEF_CALCIUM_PER_STAGE;
@@ -1027,6 +1029,14 @@ public final class ServerConfig {
         REEF_CALCIUM_DOSE = b.comment("Calcium (mg/L in one water block) one calcium additive adds").defineInRange("calciumPerDose", 200.0, 0.0, 10000.0);
         REEF_NET_SHARE = b.comment("Share of the catches of the aquarium net in warm and lukewarm oceans that are reef fish instead of small",
                         "animals (0 = no fish)").defineInRange("reefNetFishShare", 0.4, 0.0, 1.0);
+        // M48 part b
+        REEF_COPEPODS_PER_LIVE_ROCK = b.comment("Copepods (food portions) the live rock holds at most in salt water, per tank block of live rock (16x16x16",
+                        "interior blocks at scale 16); they grow back by themselves, about a fifth of this per day at half the stock").defineInRange("copepodsPerLiveRock", 24.0, 0.0, 4096.0);
+        REEF_MANDARIN_COPEPODS = b.comment("Copepod portions a grown mandarin eats per day (it takes no other food)").defineInRange("mandarinCopepodsPerDay", 1.0, 0.0, 100.0);
+        REEF_CLOWN_LARVA_DAYS = b.comment("Days the clownfish larvae drift after hatching before they settle as young fish (with",
+                        "features.saltwater.larvaRearing; they need rotifers, later also artemia nauplii)").defineInRange("clownLarvaDays", 3.0, 0.1, 30.0);
+        REEF_CLOWN_LARVA_SURVIVAL = b.comment("Share of the clownfish larvae that survive the larva days without any food in the tank (with food",
+                        "about 80 %)").defineInRange("clownLarvaSurvival", 0.05, 0.0, 1.0);
         b.pop();
 
         b.comment("M21.8: seahorses (lined and dwarf seahorse)").push("seahorses");

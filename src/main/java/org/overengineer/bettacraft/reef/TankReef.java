@@ -44,6 +44,12 @@ public final class TankReef {
 
     /** Water blocks the live rock keeps clean (salt water only): per tank block worth of live rock. */
     public static double liveRockBlocks(ServerLevel level, TankData t) {
+        double n = liveRockTankBlocks(level, t);
+        return n <= 0 ? 0 : n * ServerConfig.getOr(ServerConfig.REEF_LIVE_ROCK_BLOCKS, 24.0);
+    }
+
+    /** M48 part b: tank blocks worth of live rock in the interior (salt water only; 0 in fresh water or without a built interior). */
+    public static double liveRockTankBlocks(ServerLevel level, TankData t) {
         if (!t.marine()) return 0;
         var r = InteriorRegions.get(level.getServer()).get(t.regionId());
         if (r == null || !r.built()) return 0;
@@ -51,7 +57,7 @@ public final class TankReef {
         double n = InteriorManager.equipment(level.getServer(), r).liveRock()
                 + org.overengineer.bettacraft.plants.foreign.ForeignPlants.liveRock(level.getServer(), r) * org.overengineer.bettacraft.plants.foreign.ForeignPlants.factor();
         if (n <= 0) return 0;
-        return n / Math.pow(r.scale(), 3) * ServerConfig.getOr(ServerConfig.REEF_LIVE_ROCK_BLOCKS, 24.0);
+        return n / Math.pow(r.scale(), 3);
     }
 
     /** Flow pumps under water in the interior. */

@@ -104,6 +104,45 @@ def artemia_cysts():
     return grid(CYST_ROWS, CYSTS)
 
 
+# M48 part b: the food chain of the clownfish larvae
+
+PHYTO = {"W": "#5cae7c", "w": "#3f9064", "v": "#2c744e", "d": "#3f9064", "s": "#a8dcb4"}
+
+
+def phytoplankton_culture():
+    """Salt water just starting to green, a green cloud settling at the bottom (not ready)."""
+    pal = {"W": "#86bcc8", "w": "#62a2b4", "v": "#4a8a9c", "d": "#62a2b4", "s": "#d8f0f4"}
+    rng = _rng(4811)
+    cells = [c for c in _liquid_cells() if c[1] >= 12]
+    specks = [cells[i] for i in rng.choice(len(cells), 6, replace=False)]
+    return _bottle(pal, [(x, y, "#3f9a5a" if (x + y) % 2 else "#2e7a46") for x, y in specks])
+
+
+def phytoplankton():
+    """Ready phytoplankton: dense green-teal water."""
+    rng = _rng(4812)
+    cells = _liquid_cells()
+    specks = [cells[i] for i in rng.choice(len(cells), 5, replace=False)]
+    return _bottle(PHYTO, [(x, y, "#7ccc94") for x, y in specks])
+
+
+def rotifer_culture():
+    """Green water with a few pale specks (the rotifers not yet many)."""
+    rng = _rng(4813)
+    cells = _liquid_cells()
+    specks = [cells[i] for i in rng.choice(len(cells), 4, replace=False)]
+    return _bottle(PHYTO, [(x, y, "#e8f4dc") for x, y in specks])
+
+
+def rotifers():
+    """Ready rotifers: paler, yellow-green water full of tiny white specks."""
+    pal = {"W": "#a4c87c", "w": "#88b062", "v": "#6a9248", "d": "#88b062", "s": "#e4f2cc"}
+    rng = _rng(4814)
+    cells = _liquid_cells()
+    specks = [cells[i] for i in rng.choice(len(cells), 12, replace=False)]
+    return _bottle(pal, [(x, y, "#fbfcf0" if (x * 3 + y) % 2 else "#f0f4d8") for x, y in specks])
+
+
 ICONS = {
     "salt_water_bottle": salt_water_bottle,
     "infusoria_culture": infusoria_culture,
@@ -111,6 +150,10 @@ ICONS = {
     "artemia_culture": artemia_culture,
     "artemia_nauplii": artemia_nauplii,
     "artemia_cysts": artemia_cysts,
+    "phytoplankton_culture": phytoplankton_culture,
+    "phytoplankton": phytoplankton,
+    "rotifer_culture": rotifer_culture,
+    "rotifers": rotifers,
 }
 
 

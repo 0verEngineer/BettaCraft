@@ -156,7 +156,7 @@ public final class GuideGen {
             case PUFFER -> "tankmates/puffers.md"; // M29 part b
             case BARB -> "tankmates/barbs.md";
             case RAINBOW -> "tankmates/rainbowfish.md"; // M29 part c
-            case CLOWNFISH, TANG, GOBY, DAMSEL -> "saltwater/reef_animals.md";
+            case CLOWNFISH, TANG, GOBY, DAMSEL, DRAGONET, CARDINALFISH, ANTHIAS -> "saltwater/reef_animals.md"; // M48 part b
             case SEAHORSE -> "saltwater/seahorses.md";
             case CATFISH, BONYTONGUE, RAY, SHARK, MORAY -> "big_tanks.md"; // M30: the big animals hang directly under their chapter
         };

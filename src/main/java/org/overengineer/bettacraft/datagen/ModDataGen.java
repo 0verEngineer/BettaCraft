@@ -677,6 +677,7 @@ public final class ModDataGen {
             DataGenM37.itemModels(this); // M37
             DataGenM41.itemModels(this); // M41
             DataGenM47.itemModels(this); // M47
+            DataGenM48.itemModels(this); // M48 part b: the larvae food chain
             DataGenM27.itemModels(this); // M27
             DataGenM28.itemModels(this); // M28 part c
             DataGenM30.itemModels(this); // M30 part a
@@ -1129,6 +1130,7 @@ public final class ModDataGen {
             DataGenM30.recipes(output, hasIt(ModItems.TANK.get())); // M30 part a
             DataGenM31.recipes(output, hasIt(ModItems.TANK.get())); // M31 part a
             DataGenM47.recipes(output, hasIt(net.minecraft.world.item.Items.GLASS_PANE)); // M47
+            DataGenM48.recipes(output, hasIt(ModItems.SALT_WATER_BOTTLE.get())); // M48 part b
             DataGenM31b.recipes(output, hasIt(ModItems.TANK.get())); // M31 part b
             DataGenM31c.recipes(output, hasIt(ModItems.TANK.get())); // M31 part c
             DataGenM31d.recipes(output, hasIt(ModItems.TANK.get())); // M31 part d
@@ -1516,6 +1518,7 @@ public final class ModDataGen {
             DataGenM31c.itemTags(this::tag); // M31 part c: insects, fruit, prey
             DataGenM31d.itemTags(this::tag); // M31 part d: capture items of other mods
             DataGenM39.itemTags(this::tag); // M39 part a: live, flake and frozen food of other mods
+            DataGenM48.itemTags(this::tag); // M48 part b: rotifers
             // M9: organic matter for the larva tub
             tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
             tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry

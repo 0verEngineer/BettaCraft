@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:tankmate_inserted",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "mandarin_copepods"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.mandarin_copepods.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:mandarinfish_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.mandarin_copepods.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

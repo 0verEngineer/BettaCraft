@@ -325,7 +325,24 @@ public enum TankmateSpecies {
     // likes cool, fast, clear water; scatters its eggs over gravel and plants
     PANDA_GARRA(d("panda_garra", "Garra flavatra", Model.GARRA, Group.LOACH, Breeding.SCATTER, Zone.BOTTOM)
             .size(0.55).temp(20, 26).breed(22, 25).quality(0.6).shoal(5).stock(0.6).brood(10, 40).growth(1.2)
-            .eats(0.3).algae(0.5).egg(0xE8B840, 0x1E1A16).native_(Water.RIVER, 4).trader(Trade.RARE));
+            .eats(0.3).algae(0.5).egg(0xE8B840, 0x1E1A16).native_(Water.RIVER, 4).trader(Trade.RARE)),
+    // ---------------------------------------------------------------- M48 part b: more reef animals (features.saltwater.moreReefAnimals)
+    // the mandarin dragonet of the Indo-Pacific lagoons: blue and orange wavy lines, a slow bottom hoverer that picks copepods
+    // from the live rock all day; takes no prepared food: without enough live rock (and few competitors) it starves
+    MANDARINFISH(d("mandarinfish", "Synchiropus splendidus", Model.GOBY, Group.DRAGONET, Breeding.NONE, Zone.BOTTOM)
+            .size(0.5).temp(24, 28).breed(25, 27).quality(0.65).shoal(1).stock(0.6).brood(0, 0).growth(1.6)
+            .eats(0.1).copepods().egg(0xF07A20, 0x2A70E0).native_(Water.WARM_OCEAN, 3).trader(Trade.RARE).salt(Salinity.Range.MARINE)),
+    // the Banggai cardinalfish of the Banggai islands: silver with three black bars, long fins with white dots; the male carries
+    // the eggs in his mouth for about three weeks and the young come out fully formed: the easy reef fish to breed
+    BANGGAI_CARDINAL(d("banggai_cardinal", "Pterapogon kauderni", Model.DAMSEL, Group.CARDINALFISH, Breeding.MOUTH_MALE, Zone.MID)
+            .size(0.6).hitbox(0.42, 0.42).temp(24, 28).breed(25, 28).quality(0.5).shoal(1).stock(0.8).brood(8, 20).growth(1.4)
+            .eats(0.4).egg(0xE8E8E0, 0x141414).native_(Water.WARM_OCEAN, 4).trader(Trade.COMMON).salt(Salinity.Range.MARINE)),
+    // the lyretail anthias (sea goldie) of the Indo-Pacific reef slopes: a shoaling fairy basslet; the female orange-gold, the
+    // male magenta with a long first dorsal ray and a lyre tail; it picks plankton from the open water and must be fed often
+    LYRETAIL_ANTHIAS(d("lyretail_anthias", "Pseudanthias squamipinnis", Model.DAMSEL, Group.ANTHIAS, Breeding.NONE, Zone.MID)
+            .size(0.6).hitbox(0.42, 0.36).temp(23, 28).breed(25, 27).quality(0.6).shoal(5).stock(0.7).brood(0, 0).growth(1.6)
+            .eats(0.4).feedsOften(3.0).dimorphic().egg(0xF08A20, 0xC03A90).native_(Water.WARM_OCEAN, 6).native_(Water.LUKEWARM_OCEAN, 2)
+            .trader(Trade.RARE).salt(Salinity.Range.MARINE));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -362,7 +379,9 @@ public enum TankmateSpecies {
         /** M30 part b: the rays (motoro stingray; part c: eagle ray, cownose ray). */
         RAY,
         /** M30 part c: the sharks (bamboo shark, blacktip reef shark) and the moray eels. */
-        SHARK, MORAY }
+        SHARK, MORAY,
+        /** M48 part b: the mandarin (a dragonet), the Banggai cardinalfish, the anthias (fairy basslets). */
+        DRAGONET, CARDINALFISH, ANTHIAS }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -403,7 +422,13 @@ public enum TankmateSpecies {
          * M30 part c: an egg-laying shark (bamboo shark): the female lays leathery egg cases (mermaid's purses) near the
          * decoration; each holds one pup that hatches after many days, only when the tank has room for it by the size rule.
          */
-        EGG_CASE
+        EGG_CASE,
+        /**
+         * M48 part b: a male mouthbrooder (Banggai cardinalfish): the female passes her eggs to the male, who carries them in his
+         * mouth for {@link org.overengineer.bettacraft.tankmates.TankmateBreeding#gestationDays(TankmateSpecies)} days; the young
+         * come out fully formed (juveniles, no fry food needed).
+         */
+        MOUTH_MALE
     }
 
     /** Where in the water column a species swims (fractions of the water height, 0 = bottom). */
@@ -517,6 +542,7 @@ public enum TankmateSpecies {
     public Feature feature() {
         if (isLarge()) return Feature.BIG_ANIMALS; // M30
         if (seahorse()) return Feature.SEAHORSES;
+        if (this == MANDARINFISH || this == BANGGAI_CARDINAL || this == LYRETAIL_ANTHIAS) return Feature.REEF_ANIMALS; // M48 part b
         if (marine()) return Feature.REEF_FISH;
         if (cichlid()) return Feature.CICHLIDS;
         if (puffer()) return Feature.PUFFERS;
@@ -588,9 +614,19 @@ public enum TankmateSpecies {
         };
     }
 
-    /** M29 part c: a mouthbrooder (the female carries the eggs, no breeding box). */
+    /** M29 part c: a mouthbrooder (the female carries the eggs, no breeding box; M48: the Banggai male). */
     public boolean mouthbrooder() {
-        return def.breeding == Breeding.MOUTH;
+        return def.breeding == Breeding.MOUTH || def.breeding == Breeding.MOUTH_MALE;
+    }
+
+    /** M48 part b: eats only the copepods of the live rock, no fed food at all (the mandarin). */
+    public boolean copepodEater() {
+        return def.copepods;
+    }
+
+    /** M48 part b: how many times as often as a betta it must be fed (the anthias; 1 = like a betta). */
+    public double feedingsPerDay() {
+        return def.feedings;
     }
 
     /** M21.8: a seahorse (hitches, low flow, live food, brood pouch). */
@@ -719,6 +755,8 @@ public enum TankmateSpecies {
         int shoal = 1, broodMin = 10, broodMax = 30, egg1 = 0x808080, egg2 = 0x404040;
         boolean territorial, bettaTarget, snails, airGulper, nocturnal, broadLeaves, dimorphic, labyrinth, parentsFeed, finNipper;
         double prey, territory;
+        boolean copepods;
+        double feedings = 1.0;
         List<String> varieties = List.of("wild");
         List<String> rare = List.of();
         final List<Water> waters = new java.util.ArrayList<>();
@@ -823,6 +861,8 @@ public enum TankmateSpecies {
         Def territory(double waterBlocks) { territory = waterBlocks; return this; }
         Def parentsFeed() { parentsFeed = true; return this; }
         Def finNipper() { finNipper = true; return this; }
+        Def copepods() { copepods = true; return this; }
+        Def feedsOften(double perDay) { feedings = perDay; return this; }
         Def egg(int a, int b) { egg1 = a; egg2 = b; return this; }
         Def varieties(String... v) { varieties = List.of(v); return this; }
         Def rare(String... v) { rare = List.of(v); return this; }
