@@ -138,7 +138,7 @@ final class DevClientSmokeM23 {
         then(1, () -> mc.setScreen(null));
         then(10, () -> server(p -> {
             BlockPos fp = base.offset(2, 1, 3);
-            if (p.serverLevel().getBlockEntity(fp) instanceof net.minecraft.world.MenuProvider mp) p.openMenu(mp, fp);
+            if (p.serverLevel().getBlockEntity(fp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, fp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen)) LOGGER.error("[smoketest] M23 no filter menu");
@@ -294,7 +294,7 @@ final class DevClientSmokeM23 {
         then(10, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankPos);
             if (c == null) return;
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

@@ -46,6 +46,46 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
         return level.getModelData(pos).get(NeoModelData.prop(key));
     }
 
+    @Override
+    public BakedModel wrap(org.overengineer.bettacraft.platform.client.DynamicModel model) {
+        return new NeoDynamicModel(model);
+    }
+
+    @Override
+    public java.util.List<net.minecraft.client.renderer.block.model.BakedQuad> quads(BakedModel model, @Nullable BlockState state,
+            @Nullable net.minecraft.core.Direction side, RandomSource rand, @Nullable RenderType layer) {
+        return model.getQuads(state, side, rand, ModelData.EMPTY, layer);
+    }
+
+    @Override
+    public java.util.Collection<RenderType> layers(BakedModel model, BlockState state, RandomSource rand) {
+        java.util.List<RenderType> out = new java.util.ArrayList<>(2);
+        for (RenderType rt : model.getRenderTypes(state, rand, ModelData.EMPTY)) out.add(rt);
+        return out;
+    }
+
+    @Override
+    public BakedModel standaloneModel(net.minecraft.resources.ResourceLocation id) {
+        return net.minecraft.client.Minecraft.getInstance().getModelManager()
+                .getModel(net.minecraft.client.resources.model.ModelResourceLocation.standalone(id));
+    }
+
+    @Override
+    public net.minecraft.client.renderer.block.model.BakedQuad quad(int[] vertices, int tint, net.minecraft.core.Direction direction,
+            net.minecraft.client.renderer.texture.TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
+        return new net.minecraft.client.renderer.block.model.BakedQuad(vertices, tint, direction, sprite, shade, ambientOcclusion);
+    }
+
+    @Override
+    public boolean quadAo(net.minecraft.client.renderer.block.model.BakedQuad quad) {
+        return quad.hasAmbientOcclusion();
+    }
+
+    @Override
+    public com.mojang.blaze3d.platform.NativeImage spriteImage(net.minecraft.client.renderer.texture.SpriteContents contents) {
+        return contents.getOriginalImage();
+    }
+
     /** NeoForge's render stage event as the common one. */
     public static RenderLevelStageEvent wrap(net.neoforged.neoforge.client.event.RenderLevelStageEvent e) {
         return new RenderLevelStageEvent(stage(e.getStage()), e.getLevelRenderer(), e.getPoseStack(), e.getModelViewMatrix(), e.getProjectionMatrix(),

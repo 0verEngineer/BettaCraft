@@ -233,7 +233,7 @@ public final class BigTankGameTests {
         // hungry after two days: it loses health; raw fish on the tank feeds the hungriest one
         float hp = d.getHealth();
         org.overengineer.bettacraft.platform.Platform.get().persistentData(d).putLong(DolphinCare.FED, level.getGameTime() - 3 * 24000L);
-        ds.get(1).getPersistentData().putLong(DolphinCare.FED, level.getGameTime());
+        org.overengineer.bettacraft.platform.Platform.get().persistentData(ds.get(1)).putLong(DolphinCare.FED, level.getGameTime());
         DolphinCare.step(level, c, 0.5);
         h.assertTrue(d.getHealth() < hp, "a hungry dolphin loses health: " + hp + " -> " + d.getHealth());
         ServerPlayer p = MockPlayers.serverPlayer(h);

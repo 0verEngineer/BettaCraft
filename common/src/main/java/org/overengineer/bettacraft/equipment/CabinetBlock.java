@@ -41,7 +41,7 @@ import net.minecraft.world.phys.HitResult;
  * resistance, sound and map colour come from the stone block; without the right tool it drops nothing (its contents
  * still drop). Wooden cabinets keep the properties of this block.
  */
-public class CabinetBlock extends BaseEntityBlock {
+public class CabinetBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PickableBlock {
     public static final MapCodec<CabinetBlock> CODEC = simpleCodec(CabinetBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LEFT = BooleanProperty.create("left");

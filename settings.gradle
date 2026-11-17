@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://maven.fabricmc.net/' }
     }
 }
 
@@ -14,4 +15,4 @@ rootProject.name = 'bettacraft'
 // M52: multiloader layout. common: the loader-independent mod (compiled against vanilla Minecraft only, the JUnit tests,
 // the resources and the generated data); neoforge: the NeoForge mod (platform layer, events, capabilities, datagen, the
 // dev source set with the smoke scenes and GameTests). Each loader module compiles the common sources into its own jar.
-include 'common', 'neoforge'
+include 'common', 'neoforge', 'fabric'

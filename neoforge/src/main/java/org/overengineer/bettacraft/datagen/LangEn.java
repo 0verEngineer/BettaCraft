@@ -659,6 +659,10 @@ final class LangEn {
         // M6: handbook, item details (tooltips with Shift, JEI information), advancements
         a.accept("item.bettacraft.guide", "Bettacraft Handbook");
         a.accept("item.bettacraft.guide.tooltip", "Everything about bettas and aquariums");
+        // M52: the handbook as a Patchouli book (Fabric)
+        a.accept("book.bettacraft.handbook.name", "Bettacraft Handbook");
+        a.accept("book.bettacraft.handbook.subtitle", "Bettas, tanks and their care");
+        a.accept("book.bettacraft.handbook.landing", "Everything about bettas, tankmates, plants and the devices of your tanks. Pick a chapter on the left.");
         a.accept("message.bettacraft.guide.received", "You received the Bettacraft Handbook. Right-click it to read.");
         a.accept("message.bettacraft.guide.dropped", "Your inventory is full: the Bettacraft Handbook lies at your feet. For %s seconds only you can pick it up.");
         a.accept("tooltip.bettacraft.hold_shift", "Hold %s for details");

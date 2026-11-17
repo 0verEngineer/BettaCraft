@@ -105,7 +105,7 @@ final class DevClientSmokeM217 {
                 for (int i = 0; i < 9 && i < hotbar.size(); i++) {
                     cab.storage().setStackInSlot(i, CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), hotbar.get(i)));
                 }
-                p.openMenu(cab, at);
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, at);
             }
         }));
         then(20, () -> hoverMenu());

@@ -88,6 +88,11 @@ public interface Platform {
     /** Opens a menu whose client side reads {@code extra} (NeoForge's openMenu with a buffer writer). */
     void openMenu(ServerPlayer player, MenuProvider provider, Consumer<RegistryFriendlyByteBuf> extra);
 
+    /** Opens a menu whose client side reads a block position (NeoForge's openMenu with a position). */
+    default void openMenu(ServerPlayer player, MenuProvider provider, net.minecraft.core.BlockPos pos) {
+        openMenu(player, provider, buf -> buf.writeBlockPos(pos));
+    }
+
     // ---- other mods' blocks and items (capabilities / transfer API)
 
     @Nullable

@@ -57,6 +57,9 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 public final class ForeignBreeding {
+    /** M52: listens to other mods' own breeding events (NeoForge: Fintastic's), set by the loader. */
+    public static Runnable modEventHook = () -> {};
+
     static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/foreign");
     public static final String BROOD = "bettacraft:foreign_brood", REST = "bettacraft:foreign_rest";
     /** M39: the sex of an animal of a sexed profile in its persistent data ({@code true}: female). */

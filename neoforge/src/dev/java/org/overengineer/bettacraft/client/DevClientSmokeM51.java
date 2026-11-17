@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import org.overengineer.bettacraft.platform.item.IItemHandler;
@@ -102,7 +101,7 @@ final class DevClientSmokeM51 {
         // the tank menu with the aquarist button
         then(5, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), own1);
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> shot("tank_menu"));

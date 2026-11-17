@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -277,7 +276,7 @@ public final class FertilizerGameTests {
         // a glass bottle is filled
         m.items().setStackInSlot(FertilizerMakerBlockEntity.BOTTLES, new ItemStack(Items.GLASS_BOTTLE));
         h.assertTrue(m.bottle() && m.items().getStackInSlot(FertilizerMakerBlockEntity.OUTPUT).is(ModItems.LIQUID_FERTILIZER.get()) && m.fertilizer() == 0, "bottled");
-        var cap = level.getCapability(Capabilities.ItemHandler.BLOCK, m.getBlockPos(), Direction.DOWN);
+        var cap = org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, m.getBlockPos(), Direction.DOWN);
         h.assertTrue(cap != null && cap.extractItem(FertilizerMakerBlockEntity.OUTPUT, 1, false).is(ModItems.LIQUID_FERTILIZER.get())
                 && cap.extractItem(FertilizerMakerBlockEntity.MEAL, 1, true).isEmpty(), "hoppers take the bottle, not the ingredients");
         // a second batch into a pipe and a tank (8 water blocks): the tank takes it up to 100 % only
@@ -315,7 +314,7 @@ public final class FertilizerGameTests {
             m.items().setStackInSlot(FertilizerMakerBlockEntity.MEAL, new ItemStack(ModItems.KELP_MEAL.get(), 4));
             m.items().setStackInSlot(FertilizerMakerBlockEntity.SALT, new ItemStack(ModItems.NUTRIENT_SALT.get(), 4));
             m.setWater(4000);
-            h.assertTrue(level.getCapability(Capabilities.EnergyStorage.BLOCK, m.getBlockPos(), null) != null, "energy capability");
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, m.getBlockPos(), null) != null, "energy capability");
             run(level, m, 1);
             h.assertTrue(m.status() == FertilizerMakerBlockEntity.FE_OR_WIND, "FE or the crank: " + m.status());
             int batch = FertilizerMakerBlockEntity.batchTicks(), fe = ServerConfig.getOr(ServerConfig.FERT_MAKER_FE, 10);

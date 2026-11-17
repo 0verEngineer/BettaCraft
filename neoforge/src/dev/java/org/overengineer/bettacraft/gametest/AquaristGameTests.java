@@ -69,8 +69,12 @@ public final class AquaristGameTests {
         return v;
     }
 
-    /** An unemployed villager next to a breeding basin becomes an aquarist (the basin is his point of interest). */
-    @GameTest(template = EMPTY, timeoutTicks = 1600)
+    /**
+     * An unemployed villager next to a breeding basin becomes an aquarist (the basin is his point of interest). M52: in a
+     * batch of its own, the hired aquarists of other tests nearby claim basins and beds (the order of the tests differs
+     * by loader).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 1600, batch = "bettacraft_aquarist_basin")
     public static void basinMakesAnAquarist(GameTestHelper h) {
         BlockPos basin = new BlockPos(8, 1, 8);
         h.setBlock(basin.below(), net.minecraft.world.level.block.Blocks.STONE);

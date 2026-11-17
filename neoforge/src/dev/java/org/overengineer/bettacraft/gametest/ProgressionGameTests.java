@@ -114,7 +114,7 @@ public final class ProgressionGameTests {
             List<ItemEntity> drops = droppedBooks(h, owner);
             h.assertTrue(drops.size() == 1, "one book at the feet, found " + drops.size());
             ItemEntity book = drops.getFirst();
-            h.assertTrue(owner.getUUID().equals(book.getTarget()), "only the owner may pick it up");
+            h.assertTrue(owner.getUUID().equals(GameTestCompat.target(book)), "only the owner may pick it up");
             h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(book).getLong(GuideBook.OWNER_UNTIL) > h.getLevel().getGameTime(), "owner-only time stored");
             // another player cannot take it
             book.playerTouch(other);

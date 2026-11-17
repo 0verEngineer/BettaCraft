@@ -89,7 +89,7 @@ final class DevClientSmokeM7 {
             p.teleportTo(p.serverLevel(), mixMin.getX() + 2.5, mixMin.getY() + 0.5, mixMin.getZ() - 2.5, 0F, 20F);
             if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.get(FishContainers.BFT_FISH_BAG)));
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), mixMin);
-            p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

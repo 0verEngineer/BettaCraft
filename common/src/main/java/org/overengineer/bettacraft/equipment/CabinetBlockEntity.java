@@ -39,7 +39,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * filter item), nine storage slots (hoppers / pipes reach the storage slots only) and (M29.1) slot 10 for an air pump
  * that drives the air stones and sponge filters of the tank above (its hose goes up with the filter hose).
  */
-public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource, org.overengineer.bettacraft.winding.Windable, org.overengineer.bettacraft.platform.model.ModelDataSource {
+public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource, org.overengineer.bettacraft.winding.Windable, org.overengineer.bettacraft.platform.model.ModelDataSource, org.overengineer.bettacraft.platform.BlockEntityLifecycle, org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
     public static final ResourceLocation DEFAULT_WOOD = ResourceLocation.withDefaultNamespace("oak_planks");
     public static final org.overengineer.bettacraft.platform.model.ModelKey<BlockState> WOOD_STATE = new org.overengineer.bettacraft.platform.model.ModelKey<>("wood_state");
     public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SUMP_SLOT = 2 + STORAGE, SLOTS = 3 + STORAGE;

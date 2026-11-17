@@ -4,6 +4,7 @@
   "package": "org.overengineer.bettacraft.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LevelNotifyMixin",
     "ModelDataSourceMixin"
   ],
   "client": [

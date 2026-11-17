@@ -472,7 +472,7 @@ public final class ForeignLandAnimalsGameTests {
             for (var part : a.getParts()) {
                 h.assertTrue(part.position().distanceTo(a.position()) <= 8.0, "its part " + part.position() + " follows the body " + a.position());
             }
-            h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), t).stream().noneMatch(x -> x instanceof net.neoforged.neoforge.entity.PartEntity<?>),
+            h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), t).stream().noneMatch(x -> GameTestCompat.isPart(x)),
                     "the parts are no inhabitants");
             // out with the large net (on a part too: the click goes to the animal)
             ServerPlayer player = MockPlayers.serverPlayer(h);
@@ -485,7 +485,7 @@ public final class ForeignLandAnimalsGameTests {
             ItemStack back = ItemStack.EMPTY;
             for (ItemStack s : player.getInventory().items) if (TransportTubItem.isFilled(s)) back = s;
             h.assertTrue(TransportTubItem.containedType(back) == arapaima, "in the tub");
-            h.assertTrue(h.getLevel().getEntities((Entity) null, box.inflate(4), x -> x instanceof net.neoforged.neoforge.entity.PartEntity<?>).isEmpty(),
+            h.assertTrue(h.getLevel().getEntities((Entity) null, box.inflate(4), x -> GameTestCompat.isPart(x)).isEmpty(),
                     "no part left behind");
             LivingEntity again = put(h, c, back.copy());
             h.assertTrue(again.isAlive() && BigAnimals.isBig(again), "back in from the tub");

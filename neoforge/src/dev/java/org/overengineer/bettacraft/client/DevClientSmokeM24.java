@@ -126,7 +126,7 @@ final class DevClientSmokeM24 {
         then(1, () -> server(p -> p.teleportTo(p.serverLevel(), base.getX() + 2 * SPACING + 5.5, base.getY() + 1.0, base.getZ() - 2.0, 0F, 20F)));
         then(10, () -> server(p -> {
             BlockPos cp = base.offset(2 * SPACING + 5, 1, 1);
-            if (p.serverLevel().getBlockEntity(cp) instanceof net.minecraft.world.MenuProvider mp) p.openMenu(mp, cp);
+            if (p.serverLevel().getBlockEntity(cp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, cp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CrucibleScreen)) LOGGER.error("[smoketest] M24 no crucible menu");
@@ -328,7 +328,7 @@ final class DevClientSmokeM24 {
         then(10, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankPos);
             if (c == null) return;
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

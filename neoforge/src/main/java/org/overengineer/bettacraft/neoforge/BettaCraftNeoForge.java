@@ -50,6 +50,8 @@ public final class BettaCraftNeoForge {
             }
         };
         NeoForgeRegistration.register(modBus);
+        NeoForgeGameEvents.register();
+        org.overengineer.bettacraft.foreign.ForeignBreeding.modEventHook = org.overengineer.bettacraft.foreign.ForeignBreedingNeoForge::hookModEvents;
         org.overengineer.bettacraft.registry.NeoForgeFluids.register(modBus);
         modBus.addListener((EntityAttributeCreationEvent e) -> ModEntities.attributes(e::put));
         modBus.addListener((RegisterSpawnPlacementsEvent e) -> ModEntities.spawnPlacements(new org.overengineer.bettacraft.platform.SpawnPlacementRegistrar() {

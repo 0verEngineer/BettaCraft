@@ -1,9 +1,11 @@
 // M52: multiloader build. The mod lives in common/ (loader-independent code, resources, generated data, JUnit tests) and
 // one module per loader (neoforge/). The release jars land in build/libs of this root project:
-//   bettacraft-neoforge-<minecraft_version>-<mod_version>.jar
-// Run tasks keep their old names (gradlew runClient, runGameTestServer ...) and run the NeoForge module.
+//   bettacraft-neoforge-<minecraft_version>-<mod_version>.jar, bettacraft-fabric-<minecraft_version>-<mod_version>.jar
+// Run tasks keep their old names (gradlew runClient, runGameTestServer ...) and run the NeoForge module; the Fabric ones are
+// runFabricClient, runFabricServer, runFabricGameTest.
 plugins {
     id 'net.neoforged.moddev' version '2.0.148' apply false
+    id 'fabric-loom' version '1.15.5' apply false
 }
 
 tasks.named('wrapper', Wrapper).configure {

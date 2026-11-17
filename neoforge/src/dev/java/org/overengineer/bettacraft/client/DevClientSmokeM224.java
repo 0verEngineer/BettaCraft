@@ -171,7 +171,7 @@ final class DevClientSmokeM224 {
     private void cabinetMenu(String name) {
         then(10, () -> server(p -> {
             BlockPos cp = base.offset(OutletSide.RIGHT.ordinal() * SPACING + 1, 0, 0);
-            if (p.serverLevel().getBlockEntity(cp) instanceof CabinetBlockEntity cab) p.openMenu(cab, cp);
+            if (p.serverLevel().getBlockEntity(cp) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cp);
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen)) LOGGER.error("[smoketest] M22.4 no cabinet menu");

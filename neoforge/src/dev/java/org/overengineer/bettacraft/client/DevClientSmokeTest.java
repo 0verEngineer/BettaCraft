@@ -23,9 +23,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.overengineer.bettacraft.client.screen.TankScreen;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
@@ -282,8 +279,8 @@ final class DevClientSmokeTest {
     private DevClientSmokeTest() {}
 
     static void register() {
-        NeoForge.EVENT_BUS.addListener((ScreenEvent.Opening e) -> {
-            if (!created && e.getNewScreen() instanceof TitleScreen) {
+        org.overengineer.bettacraft.platform.client.ClientEvents.SCREEN_OPENING.add(screen -> {
+            if (!created && screen instanceof TitleScreen) {
                 created = true;
                 Minecraft mc = Minecraft.getInstance();
                 GameRules rules = new GameRules();
@@ -295,10 +292,10 @@ final class DevClientSmokeTest {
                 var preset = Boolean.getBoolean("bettacraft.smoketest.normalworld") ? WorldPresets.NORMAL : WorldPresets.FLAT;
                 mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, Boolean.getBoolean("bettacraft.smoketest.structures"), false),
                         ra -> ra.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(preset).value().createWorldDimensions(),
-                        e.getNewScreen());
+                        screen);
             }
         });
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> tick());
+        org.overengineer.bettacraft.platform.client.ClientEvents.TICK_POST.add(DevClientSmokeTest::tick);
     }
 
     private static void tick() {
@@ -1029,7 +1026,7 @@ final class DevClientSmokeTest {
                     ServerPlayer p = player(mc);
                     p.teleportTo(p.serverLevel(), typesMin.getX() + 4.0, typesMin.getY() + 1.2, typesMin.getZ() - 2.5, 0F, 20F);
                     TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), typesMin);
-                    p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
+                    org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                             buf -> buf.writeBlockPos(c.getBlockPos()));
                 });
                 case 700 -> {

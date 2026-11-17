@@ -35,19 +35,7 @@ public class FloatingPlantFishingModifier extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
-        Vec3 origin = context.getParamOrNull(LootContextParams.ORIGIN);
-        if (origin == null) return loot;
-        Holder<Biome> biome = context.getLevel().getBiome(BlockPos.containing(origin));
-        boolean mangrove = BiomeWaters.mangrove(biome); // M25.1: biome tags, also biome mods
-        if (!mangrove && !BiomeWaters.swampOrBettaBiome(biome)) return loot;
-        double chance = ServerConfig.getOr(ServerConfig.PLANTS_FISHING_CHANCE, 0.06);
-        if (context.getRandom().nextDouble() >= chance) return loot;
-        var r = context.getRandom();
-        ItemStack plant = TankPlants.item(pick(mangrove, r::nextLong));
-        if (plant.isEmpty()) return loot;
-        loot.clear();
-        loot.add(plant);
-        return loot;
+        return LootChanges.floatingPlants(loot, context);
     }
 
     /**
@@ -56,8 +44,7 @@ public class FloatingPlantFishingModifier extends LootModifier {
      * {@link org.overengineer.bettacraft.sources.WildTables#FISHING_FLOATING_MANGROVE}).
      */
     public static FloatingPlantType pick(boolean mangrove, RandomGenerator rnd) {
-        return (mangrove ? org.overengineer.bettacraft.sources.WildTables.FISHING_FLOATING_MANGROVE
-                : org.overengineer.bettacraft.sources.WildTables.FISHING_FLOATING_SWAMP).pick(rnd);
+        return LootChanges.pickFloating(mangrove, rnd);
     }
 
     @Override

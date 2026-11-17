@@ -71,7 +71,7 @@ final class DevClientSmokeM41 {
         then(1, () -> look(base.getX() - 1.6, base.getY() + 1.0, base.getZ() - 1.4, -30F, 14F));
         then(60, () -> shot("goggles"));
         then(1, () -> server(p -> {
-            if (p.serverLevel().getBlockEntity(base.below().east()) instanceof CabinetBlockEntity cab) p.openMenu(cab, cab.getBlockPos());
+            if (p.serverLevel().getBlockEntity(base.below().east()) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
         }));
         then(30, () -> shot("cabinet_menu"));
         then(1, () -> mc.setScreen(null));

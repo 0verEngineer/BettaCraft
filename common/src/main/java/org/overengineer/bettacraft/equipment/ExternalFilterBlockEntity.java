@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.data.schema.Schemas;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** External filter block next to a tank (PLAN 6.2): two heater slots; the heaters stay in the item when it is broken. */
-public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost, org.overengineer.bettacraft.winding.Windable {
+public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost, org.overengineer.bettacraft.winding.Windable, org.overengineer.bettacraft.platform.BlockEntityLifecycle {
     /** Client-side filters currently loaded (bubbles and sound; never touched on the server). */
     public static final java.util.Set<ExternalFilterBlockEntity> CLIENT_LOADED =
             java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());

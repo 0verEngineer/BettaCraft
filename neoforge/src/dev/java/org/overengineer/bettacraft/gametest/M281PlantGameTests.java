@@ -230,7 +230,7 @@ public final class M281PlantGameTests {
         silk.enchant(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH), 1);
         var whole = Block.getDrops(java, level, at, null, null, silk);
         check(whole.size() == 1 && AquaticPlantItem.stage(whole.getFirst()) == PlantSpecies.JAVA_FERN.stages() / 2, "silk touch did not give the plant: " + whole);
-        check(level.getBlockState(at).getCloneItemStack(new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false), level, at, null).getItem()
+        check(level.getBlockState(at).getBlock().getCloneItemStack(level, at, level.getBlockState(at)).getItem()
                 == ModItems.AQUATIC_PLANTS.get(PlantSpecies.JAVA_FERN).get(), "pick block is not the Java fern");
         // the floor gone: it breaks off
         level.setBlock(at.below(), Blocks.WATER.defaultBlockState(), 3);

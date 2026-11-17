@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;

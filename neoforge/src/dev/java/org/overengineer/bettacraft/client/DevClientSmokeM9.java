@@ -74,7 +74,7 @@ final class DevClientSmokeM9 {
         // the tank menu: water tab, then the overview with the warning line
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankMin);
-            p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

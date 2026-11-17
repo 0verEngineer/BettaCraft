@@ -51,7 +51,7 @@ final class DevClientSmokeM26 {
                 pump.doseNow();
                 pump.step(p.serverLevel());
                 if (pump.status() != LiveFoodPumpBlockEntity.PUMPED) LOGGER.error("[smoketest] M26 the live food pump does not pump: {}", pump.status());
-                p.openMenu(pump, base.offset(4, 0, 0));
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, pump, base.offset(4, 0, 0));
             } else LOGGER.error("[smoketest] M26 no live food pump");
         }));
         then(30, () -> {
@@ -73,7 +73,7 @@ final class DevClientSmokeM26 {
                 for (int i = 0; i < 120; i++) m.tick(p.serverLevel(), at, p.serverLevel().getBlockState(at));
                 if (m.status() != org.overengineer.bettacraft.food.FoodMakerBlockEntity.WORKING) LOGGER.error("[smoketest] M26 the food maker does not work: {}", m.status());
                 LOGGER.info("[smoketest] M26 food maker progress {} of {}", m.progress(), org.overengineer.bettacraft.food.FoodMakerBlockEntity.batchTicks());
-                p.openMenu(m, at);
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, m, at);
             } else LOGGER.error("[smoketest] M26 no food maker");
         }));
         then(30, () -> {

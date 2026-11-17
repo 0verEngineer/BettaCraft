@@ -24,5 +24,19 @@ public final class GlassMobRendering {
 
     private GlassMobRendering() {}
 
+    /** Before a living entity is drawn: a climbing spider in glass lies flat on the glass. */
+    public static void pre(LivingEntity e, float partialTick, com.mojang.blaze3d.vertex.PoseStack pose) {
+        if (!(e instanceof net.minecraft.world.entity.monster.Spider s) || !s.isClimbing() || s.getScale() >= GLASS_SCALE) return;
+        net.minecraft.core.Direction wall = net.minecraft.core.Direction.fromYRot(net.minecraft.util.Mth.rotLerp(partialTick, s.yBodyRotO, s.yBodyRot));
+        pose.pushPose();
+        // turn about the horizontal axis along the glass: its front goes up, its belly onto the glass
+        pose.mulPose(com.mojang.math.Axis.of(new org.joml.Vector3f(-wall.getStepZ(), 0, wall.getStepX())).rotationDegrees(90F));
+        TURNED.add(s);
+    }
+
+    /** After it was drawn. */
+    public static void post(LivingEntity e, com.mojang.blaze3d.vertex.PoseStack pose) {
+        if (TURNED.remove(e)) pose.popPose();
+    }
 
 }

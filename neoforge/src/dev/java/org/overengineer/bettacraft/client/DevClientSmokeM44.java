@@ -232,7 +232,7 @@ final class DevClientSmokeM44 {
     }
 
     private static void open(ServerPlayer p, BlockPos pos) {
-        if (p.serverLevel().getBlockEntity(pos) instanceof CabinetBlockEntity be) p.openMenu(be, be.getBlockPos());
+        if (p.serverLevel().getBlockEntity(pos) instanceof CabinetBlockEntity be) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, be, be.getBlockPos());
     }
 
     // ------------------------------------------------------------------ the walk scene

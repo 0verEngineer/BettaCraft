@@ -123,7 +123,7 @@ final class DevClientSmokeM18 {
         then(5, () -> server(p -> {
             p.teleportTo(p.serverLevel(), young.getX() + 1.5, young.getY() + 1.0, young.getZ() - 2.5, 0F, 0F);
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), young);
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

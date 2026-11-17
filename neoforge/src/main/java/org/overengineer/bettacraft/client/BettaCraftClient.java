@@ -39,8 +39,6 @@ import org.overengineer.bettacraft.registry.ModMenus;
 @Mod(value = BettaCraft.MOD_ID, dist = Dist.CLIENT)
 public final class BettaCraftClient {
     /** Tint of the fish overlay of a bag holding a non-betta animal. */
-    private static final int OTHER_FISH_BODY = 0xFFB0B8C0, OTHER_FISH_FINS = 0xFF8A949E;
-
     private static Object lastTankLook;
 
     /** Re-meshes all chunks when the tank look settings changed (called from the config screen's reload). */
@@ -57,8 +55,8 @@ public final class BettaCraftClient {
 
     public BettaCraftClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        // M22.1: the question before animals leave a bucket or a bag into the world
-        org.overengineer.bettacraft.containers.ContainerRules.confirmScreen = org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen::open;
+        // M52: the loader-independent client set-up (hooks, the listeners of the common client events)
+        ClientSetup.init();
         // M21.5: the handbook is registered from code (own <Small> tag for the byline on the start page)
         if (org.overengineer.bettacraft.progression.GuideBook.installed()) org.overengineer.bettacraft.compat.guideme.GuideMEClientCompat.register();
         ClientFeatures.jeiRefresh = () -> org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.applyFeatures();
@@ -84,22 +82,25 @@ public final class BettaCraftClient {
                 net.neoforged.neoforge.client.gui.VanillaGuiLayers.CHAT, org.overengineer.bettacraft.BettaCraft.id("interior_leave_hint"),
                 org.overengineer.bettacraft.client.interior.InteriorLeaveHud::render));
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent e) -> e.registerReloadListener(
-                (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> {
-                    org.overengineer.bettacraft.client.render.BettaSkins.clear();
-                    org.overengineer.bettacraft.client.render.CritterRenderer.reset(); // M14: baked again on the next frame
-                }));
-        modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onModifyBakingResult);
-        modBus.addListener(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::onBlockColors);
-        modBus.addListener(org.overengineer.bettacraft.client.model.CabinetBakedModel::onModifyBakingResult);
-        modBus.addListener(org.overengineer.bettacraft.client.model.FilterPipeModel::onModifyBakingResult); // M40
-        modBus.addListener(org.overengineer.bettacraft.client.model.FilterBundleModel::onRegisterAdditional); // M40 part b: the pipe bundle
-        modBus.addListener(org.overengineer.bettacraft.client.model.FilterBundleModel::onModifyBakingResult);
+                (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> ClientSetup.onResourcesReloaded()));
+        // our dynamic models (cabinets, filter pipes and bundles M40, interior floor, plant meshes M21): client.model.ModelSwaps
+        modBus.addListener((ModelEvent.RegisterAdditional e) -> {
+            for (var id : org.overengineer.bettacraft.client.model.ModelSwaps.extraModels())
+                e.register(net.minecraft.client.resources.model.ModelResourceLocation.standalone(id));
+        });
+        modBus.addListener((ModelEvent.ModifyBakingResult e) -> {
+            org.overengineer.bettacraft.client.model.ModelSwaps.beforeBake();
+            for (var entry : e.getModels().entrySet()) {
+                var swapped = org.overengineer.bettacraft.client.model.ModelSwaps.swap(entry.getKey(), entry.getValue());
+                if (swapped != null) entry.setValue(swapped);
+            }
+        });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RecipesUpdatedEvent e) -> org.overengineer.bettacraft.equipment.CabinetStones.clear());
         // M33 part b: leaving a server goes back to the local feature switches
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut e) -> ClientFeatures.logout());
-        // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior)
-        modBus.addListener(org.overengineer.bettacraft.client.interior.PlantMeshModel::onModifyBakingResult);
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent e) -> org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onRenderStage(NeoForgeClientPlatform.wrap(e)));
+        // M52: the render stages of the miniatures, plant meshes, jets and the decor preview (ClientSetup.init)
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent e) ->
+                org.overengineer.bettacraft.platform.client.ClientEvents.fireRenderLevel(NeoForgeClientPlatform.wrap(e)));
         // M21 follow-up: plant meshes follow their chunks (rebuilt when one arrives again, forgotten when it leaves)
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Load e) -> {
             if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(e.getChunk().getPos().x, e.getChunk().getPos().z);
@@ -125,41 +126,26 @@ public final class BettaCraftClient {
                 org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll();
             }
         });
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> FilterEffects.tick());
-        org.overengineer.bettacraft.client.DeviceEffects.init(); // M23: air pumps, air stones, regulator, particles
-        modBus.addListener((net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent e) -> e.registerSpriteSet(
-                org.overengineer.bettacraft.registry.ModParticles.AIR_BUBBLE.get(), org.overengineer.bettacraft.client.particle.AirBubbleParticle.Provider::new));
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent e) -> ClientSetup.particles(e::registerSpriteSet));
         // M52: the common client events (ClientEvents) from NeoForge's
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> org.overengineer.bettacraft.platform.client.ClientEvents.fireTickPost());
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Opening e) ->
+                org.overengineer.bettacraft.platform.client.ClientEvents.fireScreenOpening(e.getNewScreen()));
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent e) -> {
             if (org.overengineer.bettacraft.platform.client.ClientEvents.fireScroll(e.getScrollDeltaX(), e.getScrollDeltaY())) e.setCanceled(true);
         });
         org.overengineer.bettacraft.client.SoundTest.init(); // M29.1: /bettacraft sounds plays every device sound
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.ItemTooltipEvent e) -> ItemHintTooltips.onTooltip(e.getItemStack(), e.getToolTip()));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.ItemTooltipEvent e) ->
+                org.overengineer.bettacraft.platform.client.ClientEvents.fireTooltip(e.getItemStack(), e.getContext(), e.getToolTip(), e.getFlags()));
 
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent e) -> MiniatureRenderer.onRenderStage(NeoForgeClientPlatform.wrap(e)));
         // M50: the sloshing water of travelling tanks (one step per frame; the blocks leave their water out)
-        org.overengineer.bettacraft.tank.TankBlockEntity.DYNAMIC_WATER = org.overengineer.bettacraft.client.render.TravelWater::drawsWater;
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderFrameEvent.Pre e) -> org.overengineer.bettacraft.client.render.TravelWater.nextFrame());
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
         // M18: colour of the tank lights for the water (their shader light colour: IrisBlockIdsMixin)
-        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> org.overengineer.bettacraft.client.tank.TankLightTint.tick());
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent e) -> org.overengineer.bettacraft.client.decor.DecorPreview.onRenderStage(NeoForgeClientPlatform.wrap(e)));
         // M17: block entities of a dropped client level (dimension change, interior, disconnect) leave the static sets
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.LevelEvent.Unload e) -> {
             if (e.getLevel().isClientSide()) org.overengineer.bettacraft.util.ClientBlockEntitySets.purgeLevel(e.getLevel());
         });
-        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
-            org.overengineer.bettacraft.util.ClientBlockEntitySets.purgeLevel(null);
-            ClientInteriorCache.clear();
-            org.overengineer.bettacraft.client.interior.PlantMeshRenderer.clear();
-            org.overengineer.bettacraft.client.decor.DecorPreview.clear();
-            org.overengineer.bettacraft.client.map.AlarmWaypoints.clear(); // M32 part d
-            // back to the built-in genetics (the next server sends its own); not while our integrated server still runs
-            if (net.minecraft.client.Minecraft.getInstance().getSingleplayerServer() == null) {
-                org.overengineer.bettacraft.genetics.GeneticsData.reset();
-            }
-        });
+        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientSetup.onLogout());
         // M22: the client smoke tests, the showcase tour and the multiplayer test client live in the dev source set
         // (src/dev), which is not part of the released jar; DevClientHooks is only found in development runs
         if (!!org.overengineer.bettacraft.platform.Platform.get().isDevelopment()) {
@@ -170,161 +156,39 @@ public final class BettaCraftClient {
     private static void onClientSetup(FMLClientSetupEvent event) {
         // Client extensions were registered during Minecraft construction (before this event); wrap vanilla water now.
         event.enqueueWork(TankAwareWaterExtensions::install);
-        event.enqueueWork(() -> ItemProperties.register(ModItems.FISH_BAG.get(), BettaCraft.id("filled"),
-                (stack, level, entity, seed) -> FishBagItem.isFilled(stack) ? 1.0F : 0.0F));
-        event.enqueueWork(() -> ItemProperties.register(ModItems.TRANSPORT_TUB.get(), BettaCraft.id("filled"), // M30
-                (stack, level, entity, seed) -> org.overengineer.bettacraft.big.TransportTubItem.isFilled(stack) ? 1.0F : 0.0F));
-        event.enqueueWork(() -> ItemProperties.register(ModItems.MOB_JAR.get(), BettaCraft.id("filled"), // M31 part d
-                (stack, level, entity, seed) -> org.overengineer.bettacraft.mobs.MobJarItem.isFilled(stack) ? 1.0F : 0.0F));
+        event.enqueueWork(() -> ClientSetup.itemProperties(ItemProperties::register));
     }
 
     /** Fish overlay of bucket and bag in the fish's own colours (tint 1 = body, 2 = fins). */
     private static void onItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tint) -> {
-            if (tint == 0 || tint >= 3) return 0xFFFFFFFF; // container and (M21) the glass in front of the fish
-            // M14: a bag of shrimp, crayfish or snails shows the colour of the first one
-            var critters = stack.get(ModDataComponents.CRITTERS.get());
-            if (critters != null && !critters.isEmpty()) {
-                var k = org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
-                int rgb = k == null ? 0x8A8070 : k.genes.rgb(k.species);
-                return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.3F));
-            }
-            // M19: a bag of tankmates in the species' colours (a clutch: cream eggs)
-            if (stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return tint == 1 ? 0xFFEFE4C4 : 0xFFD8C8A0;
-            var tm = org.overengineer.bettacraft.tankmates.TankmateItems.bagSpecies(stack);
-            if (tm != null) return 0xFF000000 | (tint == 1 ? tm.eggColor1() : tm.eggColor2());
-            BettaData d = stack.getItem() instanceof BettaBucketItem ? BettaBucketItem.data(stack) : stack.get(ModDataComponents.FISH_DATA.get());
-            if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
-            return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
-        }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
-        // M22.3: the critter bucket shows the first animal's colour (layer 1 body, layer 2 legs and feelers)
-        event.register((stack, tint) -> {
-            if (tint == 0 || tint >= 3) return 0xFFFFFFFF;
-            var critters = stack.get(ModDataComponents.CRITTERS.get());
-            var k = critters == null || critters.isEmpty() ? null : org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
-            int rgb = k == null ? 0xC8A070 : k.genes.rgb(k.species);
-            if (k != null && (k.species.nerite() || k.species == org.overengineer.bettacraft.critters.CritterSpecies.ASSASSIN_SNAIL)) rgb = k.species.wildColor();
-            return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.35F));
-        }, ModItems.CRITTER_BUCKET.get());
-        // M19: tankmate buckets in the species' colours
-        for (var e : ModItems.TANKMATE_BUCKETS.entrySet()) {
-            var sp = e.getKey();
-            event.register((stack, tint) -> tint == 0 || tint >= 3 ? 0xFFFFFFFF : 0xFF000000 | (tint == 1 ? sp.eggColor1() : sp.eggColor2()), e.getValue().get());
-        }
-        event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
-        // M13: aquarium plants: leaves (layer 0) and rhizome / stem (layer 1) in the colours of the species (red ones as in good light)
-        for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
-            var s = e.getKey();
-            event.register((stack, tint) -> 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s,
-                    tint == 0 ? org.overengineer.bettacraft.plants.PlantPart.LEAF
-                            : org.overengineer.bettacraft.plants.PlantColors.rootLooksLike(s.form()) == org.overengineer.bettacraft.plants.PlantPart.STEM
-                            ? org.overengineer.bettacraft.plants.PlantPart.STEM : org.overengineer.bettacraft.plants.PlantPart.RHIZOME, 2), e.getValue().get());
-        }
-        event.register((stack, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, ModItems.ARTEMIA_HATCHERY.get());
-        event.register((stack, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, ModItems.TUBIFEX_DISH.get()); // M26
-        event.register((stack, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, ModItems.DAPHNIA_BARREL.get());
-        // M18: the panel of the aquarium light in its colour (M29.1: the 3D item tints the panel like the block, tint 0)
-        event.register((stack, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
-                org.overengineer.bettacraft.equipment.TankLightItem.colorOf(stack), true) : 0xFFFFFFFF, ModItems.TANK_LIGHT.get(),
-                ModItems.LED_PANEL.get(), ModItems.HIGH_POWER_LED.get()); // M23: every light tier
+        ClientSetup.itemColors(event::register);
     }
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
-    static final int LARVA_WATER = 0xFF6A7C3A, HATCHERY_WATER = 0xFF4E93C8;
     /** M26: the stale brown water of the tubifex dish and the green water of the daphnia barrel. */
-    static final int TUBIFEX_WATER = 0xFF6E5A3A, DAPHNIA_WATER = 0xFF5E8A3E;
-
     private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
-        // M40 part c: a covered filter pipe or bundle is tinted like its cover (grass, leaves)
-        event.register((state, level, pos, tint) -> {
-            if (level == null || pos == null) return -1;
-            var c = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(level, pos);
-            return c == null ? -1 : net.minecraft.client.Minecraft.getInstance().getBlockColors().getColor(c, level, pos, tint);
-        }, org.overengineer.bettacraft.registry.ModBlocks.FILTER_INLET_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_OUTLET_PIPE.get(),
-                org.overengineer.bettacraft.registry.ModBlocks.FILTER_FRESH_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_WASTE_PIPE.get(),
-                org.overengineer.bettacraft.registry.ModBlocks.FILTER_PIPE_BUNDLE.get());
-        event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
-        // M13: aquarium plants: grey textures tinted per species, part and redness (also in the miniature)
-        for (var b : org.overengineer.bettacraft.registry.ModBlocks.AQUATIC_PLANTS.values()) {
-            event.register((state, level, pos, tint) -> {
-                if (tint != 0 || !(state.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock p)) return 0xFFFFFFFF;
-                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(p.species(), state.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.PART),
-                        state.getValue(org.overengineer.bettacraft.plants.AquaticPlantBlock.TINT));
-            }, b.get());
-        }
-        // M28.1: the wild plants: leaves (0), stalks / stems / rhizome (1) and young leaves (2) in the colours of the species
-        for (var b : org.overengineer.bettacraft.registry.ModBlocks.WILD_PLANTS.values()) {
-            event.register((state, level, pos, tint) -> {
-                if (!(state.getBlock() instanceof org.overengineer.bettacraft.plants.wild.WildPlantBlock w)) return 0xFFFFFFFF;
-                var s = w.species(state);
-                var part = switch (tint) {
-                    case 0 -> org.overengineer.bettacraft.plants.PlantPart.LEAF;
-                    case 1 -> w.kind() == org.overengineer.bettacraft.plants.wild.WildPlantKind.EPIPHYTE
-                            ? org.overengineer.bettacraft.plants.PlantPart.RHIZOME : org.overengineer.bettacraft.plants.PlantPart.STEM;
-                    default -> org.overengineer.bettacraft.plants.PlantPart.TOP;
-                };
-                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s, part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT);
-            }, b.get());
-        }
-        event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());
-        event.register((state, level, pos, tint) -> tint == 0 ? TUBIFEX_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TUBIFEX_DISH.get()); // M26
-        event.register((state, level, pos, tint) -> tint == 0 ? DAPHNIA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.DAPHNIA_BARREL.get());
-        // M18: the panel of the aquarium light in its colour (darker while off)
-        event.register((state, level, pos, tint) -> tint == 0 ? 0xFF000000 | org.overengineer.bettacraft.equipment.TankLightColors.panel(
-                state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.COLOR), state.getValue(org.overengineer.bettacraft.equipment.TankLightBlock.LIT))
-                : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.TANK_LIGHT.get(),
-                org.overengineer.bettacraft.registry.ModBlocks.LED_PANEL.get(), org.overengineer.bettacraft.registry.ModBlocks.HIGH_POWER_LED.get());
+        ClientSetup.blockColors(event::register);
     }
 
     private static void onLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        for (BettaModelDefinitions.Shape s : BettaModelDefinitions.Shape.values()) {
-            event.registerLayerDefinition(BettaRenderer.LAYERS.get(s), () -> BettaModelDefinitions.createBodyLayer(s));
-        }
-        // M14: shrimp, crayfish, snails (drawn by the tank) and the dwarf clawed frog
-        for (var m : org.overengineer.bettacraft.critters.CritterSpecies.Model.values()) {
-            event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.LAYERS.get(m),
-                    () -> org.overengineer.bettacraft.client.model.CritterModelDefinitions.create(org.overengineer.bettacraft.client.render.CritterRenderer.name(m)));
-        }
-        event.registerLayerDefinition(org.overengineer.bettacraft.client.render.CritterRenderer.FROG_LAYER,
-                org.overengineer.bettacraft.client.model.CritterModelDefinitions::createFrogLayer);
-        // M31: the terrarium animals
-        for (String m : org.overengineer.bettacraft.client.model.TerrariumModelDefinitions.MODELS) {
-            event.registerLayerDefinition(org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer.layer(m),
-                    () -> org.overengineer.bettacraft.client.model.TerrariumModelDefinitions.create(m));
-        }
-        // M19: one mesh per tankmate body plan
-        for (var e : org.overengineer.bettacraft.client.render.TankmateRenderer.LAYERS.entrySet()) {
-            String model = org.overengineer.bettacraft.client.render.TankmateRenderer.name(e.getKey());
-            event.registerLayerDefinition(e.getValue(), () -> org.overengineer.bettacraft.client.model.TankmateModelDefinitions.create(model));
-        }
-        // M21.6: the guppy and endler model of the livebearer genetics
-        event.registerLayerDefinition(org.overengineer.bettacraft.client.render.TankmateRenderer.GUPPY_LAYER,
-                org.overengineer.bettacraft.client.model.GuppyModelDefinitions::createLayer);
+        ClientSetup.layers(event::registerLayerDefinition);
     }
 
     private static void onRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.BETTA.get(), BettaRenderer::new);
-        event.registerEntityRenderer(ModEntities.HIRED_AQUARIST.get(), org.overengineer.bettacraft.client.render.AquaristRenderer::new); // M51
-        event.registerEntityRenderer(ModEntities.DWARF_FROG.get(), org.overengineer.bettacraft.client.render.DwarfFrogRenderer::new);
-        event.registerEntityRenderer(ModEntities.MUSK_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "musk_turtle", 0.8F, 0.2F)); // M31
-        event.registerEntityRenderer(ModEntities.SLIDER_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "slider_turtle", 0.9F, 0.3F)); // M31 part b
-        event.registerEntityRenderer(ModEntities.HERMANN_TORTOISE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "hermann_tortoise", 0.85F, 0.28F));
-        event.registerEntityRenderer(ModEntities.REEVES_TURTLE.get(), ctx -> new org.overengineer.bettacraft.client.render.TerrariumAnimalRenderer(ctx, "reeves_turtle", 0.85F, 0.25F));
-        // M31 part c: the amphibians and reptiles (size of the model, shadow, how deep the horned frog sits buried)
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.DART_FROG, 0.3F, 0.08F, 0F);
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.HORNED_FROG, 0.7F, 0.22F, 0.22F);
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, 0.52F, 0.16F, 0F);
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, 0.52F, 0.14F, 0F);
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, 0.88F, 0.2F, 0F);
-        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER, 0.42F, 0.14F, 0F); // M49 part b
-        event.registerEntityRenderer(ModEntities.WILD_CRITTER.get(), org.overengineer.bettacraft.client.render.WildCritterRenderer::new); // M22.3
-        for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
-        event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
-        event.registerBlockEntityRenderer(ModBlockEntities.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forFilter);
-        event.registerBlockEntityRenderer(ModBlockEntities.CABINET.get(), org.overengineer.bettacraft.client.render.FilterRenderer::forCabinet);
-        event.registerBlockEntityRenderer(ModBlockEntities.AIR_PUMP.get(), org.overengineer.bettacraft.client.render.AirHoseRenderer::new); // M23
-        event.registerBlockEntityRenderer(ModBlockEntities.THERMO_HYGROMETER.get(), org.overengineer.bettacraft.client.render.ThermoHygrometerRenderer::new); // M31
-        event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get(), org.overengineer.bettacraft.client.render.MonitorRenderer::new); // M27
+        ClientSetup.renderers(new ClientSetup.Renderers() {
+            @Override
+            public <T extends net.minecraft.world.entity.Entity> void registerEntityRenderer(net.minecraft.world.entity.EntityType<? extends T> type,
+                    net.minecraft.client.renderer.entity.EntityRendererProvider<T> provider) {
+                event.registerEntityRenderer(type, provider);
+            }
+
+            @Override
+            public <T extends net.minecraft.world.level.block.entity.BlockEntity> void registerBlockEntityRenderer(
+                    net.minecraft.world.level.block.entity.BlockEntityType<? extends T> type,
+                    net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider<T> provider) {
+                event.registerBlockEntityRenderer(type, provider);
+            }
+        });
         // M41: the drive adapter's shaft (the block exists only with Create)
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(org.overengineer.bettacraft.compat.create.CreateCompat.MOD_ID)) {
             org.overengineer.bettacraft.compat.create.DriveAdapterRenderer.register(event);
@@ -332,17 +196,13 @@ public final class BettaCraftClient {
     }
 
     private static void onScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenus.TANK.get(), TankScreen::new);
-        event.register(ModMenus.FEEDER.get(), FeederScreen::new);
-        event.register(ModMenus.DOSING_PUMP.get(), org.overengineer.bettacraft.client.screen.DosingPumpScreen::new); // M25 part c
-        event.register(ModMenus.SUMP.get(), org.overengineer.bettacraft.client.screen.SumpScreen::new); // M49
-        event.register(ModMenus.CALCIUM_REACTOR.get(), org.overengineer.bettacraft.client.screen.CalciumReactorScreen::new); // M49
-        event.register(ModMenus.LIVE_FOOD_PUMP.get(), org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen::new); // M26
-        event.register(ModMenus.FOOD_MAKER.get(), org.overengineer.bettacraft.client.screen.FoodMakerScreen::new); // M26 part b
-        event.register(ModMenus.FERTILIZER_MAKER.get(), org.overengineer.bettacraft.client.screen.FertilizerMakerScreen::new); // M37
-        event.register(ModMenus.EXTERNAL_FILTER.get(), org.overengineer.bettacraft.client.screen.ExternalFilterScreen::new);
-        event.register(ModMenus.CRUCIBLE.get(), org.overengineer.bettacraft.client.screen.CrucibleScreen::new); // M24
-        event.register(ModMenus.CABINET.get(), org.overengineer.bettacraft.client.screen.CabinetScreen::new);
+        ClientSetup.screens(new ClientSetup.Screens() {
+            @Override
+            public <M extends net.minecraft.world.inventory.AbstractContainerMenu, U extends net.minecraft.client.gui.screens.Screen & net.minecraft.client.gui.screens.inventory.MenuAccess<M>> void register(
+                    net.minecraft.world.inventory.MenuType<? extends M> type, net.minecraft.client.gui.screens.MenuScreens.ScreenConstructor<M, U> factory) {
+                event.register(type, factory);
+            }
+        });
     }
 
     private static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
@@ -369,9 +229,4 @@ public final class BettaCraftClient {
         };
     }
 
-    /** M31 part c: the renderer of an amphibian or reptile species. */
-    private static void registerHerp(EntityRenderersEvent.RegisterRenderers event, org.overengineer.bettacraft.terrarium.HerpSpecies s, float scale, float shadow,
-                                     float bury) {
-        event.registerEntityRenderer(ModEntities.HERPS.get(s).get(), ctx -> new org.overengineer.bettacraft.client.render.HerpRenderer(ctx, s, scale, shadow, bury));
-    }
 }

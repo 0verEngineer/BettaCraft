@@ -29,7 +29,6 @@ import org.overengineer.bettacraft.sources.TraderOffers;
 import org.overengineer.bettacraft.tank.plants.FloatingPlantType;
 import org.overengineer.bettacraft.tankmates.TankmateItems;
 import org.overengineer.bettacraft.world.AquaticPlantFishing;
-import org.overengineer.bettacraft.world.FloatingPlantFishingModifier;
 
 /**
  * M22.2: the data tables behind the handbook's "Obtaining" sections are the ones the game uses, and the refactoring into
@@ -108,7 +107,7 @@ public final class SourcesGameTests {
                         h.assertTrue(now == before, "aquatic " + w + " roll " + r + ": " + now + " instead of " + before);
                     }
                 }
-                FloatingPlantType f = FloatingPlantFishingModifier.pick(swamp, roll(r)), fb = oldFloating(swamp, r);
+                FloatingPlantType f = org.overengineer.bettacraft.world.LootChanges.pickFloating(swamp, roll(r)), fb = oldFloating(swamp, r);
                 h.assertTrue(f == fb, "floating mangrove=" + swamp + " roll " + r + ": " + f + " instead of " + fb);
             }
         }

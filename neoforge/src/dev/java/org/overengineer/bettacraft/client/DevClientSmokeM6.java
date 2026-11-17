@@ -85,7 +85,7 @@ final class DevClientSmokeM6 {
             p.teleportTo(p.serverLevel(), tank.getX() + 1.0, tank.getY() + 1.0, tank.getZ() - 2.5, 0F, 20F);
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
             if (c == null) return;
-            p.openMenu(new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

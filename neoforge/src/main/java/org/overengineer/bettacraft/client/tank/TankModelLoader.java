@@ -32,7 +32,7 @@ public final class TankModelLoader implements IGeometryLoader<TankModelLoader.Ge
             TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial("particle"));
             // M21.8: the glass of the clear glass item icon
             TextureAtlasSprite clear = context.hasMaterial("clear_icon") ? spriteGetter.apply(context.getMaterial("clear_icon")) : edge;
-            return new TankBakedModel(edge, clear, particle, context.getTransforms(), null, org.overengineer.bettacraft.tank.TankStyle.TEXTURED, null);
+            return new org.overengineer.bettacraft.client.NeoDynamicModel(new TankBakedModel(edge, clear, particle, context.getTransforms(), null, org.overengineer.bettacraft.tank.TankStyle.TEXTURED, null));
         }
     }
 }

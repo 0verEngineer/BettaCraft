@@ -81,7 +81,7 @@ final class DevClientSmokeM38 {
             LOGGER.info("[smoketest] M38 fresh tank: {} plants of other mods, mass {}, floating {}, over the limit {}", e.plants(), Math.round(e.mass()),
                     e.floating(), e.overLimit());
             if (e.plants() < 10) LOGGER.error("[smoketest] M38 too few plants of other mods count: {}", e.plants());
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

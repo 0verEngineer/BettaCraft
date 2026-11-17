@@ -14,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -131,7 +130,7 @@ public final class PowerGameTests {
             h.assertTrue(TankPower.heaterDemand(level, cool) == 0, "a cooler draws nothing while the tank needs heating");
 
             // buffer size
-            var storage = level.getCapability(Capabilities.EnergyStorage.BLOCK, cool.getBlockPos(), null);
+            var storage = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, cool.getBlockPos(), null);
             h.assertTrue(storage != null && storage.getMaxEnergyStored() == 5000, "buffer 5000 FE");
             cool.getTank().setPowerBuffer(0);
             h.assertTrue(storage.receiveEnergy(20000, false) == 5000 && storage.receiveEnergy(1, true) == 0, "takes at most the buffer");

@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.platform.item.IItemHandler;
@@ -132,7 +131,7 @@ public final class FoodMakerGameTests {
             boolean winding = org.overengineer.bettacraft.winding.Winding.enabled();
             h.assertTrue(m.wind(null) == winding, "the crank winds it on FE only with power.winding");
             m.setSpring(0);
-            h.assertTrue(level.getCapability(Capabilities.EnergyStorage.BLOCK, m.getBlockPos(), null) != null, "energy capability");
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, m.getBlockPos(), null) != null, "energy capability");
             m.items().setStackInSlot(0, new ItemStack(Items.EGG));
             m.items().setStackInSlot(1, new ItemStack(Items.WHEAT));
             run(level, m, 1);

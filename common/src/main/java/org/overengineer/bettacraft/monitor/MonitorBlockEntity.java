@@ -39,7 +39,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * data and updates): origin, size, status and layout. The live values come bundled through {@link MonitorDataPayload}
  * and are kept on the client in {@link #clientTanks} / {@link #clientHistory}.
  */
-public class MonitorBlockEntity extends BlockEntity {
+public class MonitorBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
     public static final int ON = 0, NO_POWER = 1, OFF = 2;
     public static final int ENERGY_CAPACITY = 50000;
 

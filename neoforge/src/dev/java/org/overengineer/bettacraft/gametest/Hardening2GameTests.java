@@ -14,7 +14,6 @@ import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Stray;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;

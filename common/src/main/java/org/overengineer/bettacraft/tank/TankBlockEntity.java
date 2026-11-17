@@ -28,7 +28,7 @@ import org.overengineer.bettacraft.registry.ModDataComponents;
  * the {@link TankData}. (PLAN calls the controller "TankControllerBE"; we use one BE type for all tank blocks and the
  * controller role is the non-null {@link #tank} field, which avoids swapping block entities on merge/split.)
  */
-public class TankBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.model.ModelDataSource {
+public class TankBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.model.ModelDataSource, org.overengineer.bettacraft.platform.BlockEntityLifecycle, org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
     public static final ResourceLocation DEFAULT_GLASS = ResourceLocation.withDefaultNamespace("glass");
     public static final org.overengineer.bettacraft.platform.model.ModelKey<BlockState> GLASS_STATE = new org.overengineer.bettacraft.platform.model.ModelKey<>("glass_state");
     /** M11: textured (connected glass texture) or clean (clear glass, edge lines only). */

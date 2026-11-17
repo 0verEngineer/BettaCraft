@@ -26,7 +26,7 @@ import net.minecraft.world.phys.HitResult;
  * coolers (M9) (1x1xN rod, {@link #SIZE}) and the internal filter (2x2xN box at scale 16). Breaking any segment removes the whole
  * piece and gives the item back once. Only the {@link Part#ANCHOR} block (lowest, min x/z) counts as the piece.
  */
-public class SegmentBlock extends Block {
+public class SegmentBlock extends Block implements org.overengineer.bettacraft.platform.PickableBlock {
     public enum Part implements StringRepresentable {
         /** Lowest block with the smallest x/z: represents the whole piece. */
         ANCHOR,

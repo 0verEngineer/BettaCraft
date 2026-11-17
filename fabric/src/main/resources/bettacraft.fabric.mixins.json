@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.overengineer.bettacraft.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnimalBreedMixin",
+    "BlockEntityLoadMixin",
+    "BlockPlaceMixin",
+    "EntityJoinMixin",
+    "EntityPersistentDataMixin",
+    "EntityTickMixin",
+    "ExplosionMixin",
+    "FishingHookMixin",
+    "FurnaceResultSlotMixin",
+    "ItemPickupMixin",
+    "LevelSetBlockMixin",
+    "LivingDropsMixin",
+    "LootTableMixin",
+    "MobMixin",
+    "PistonMixin",
+    "PlayerInteractMixin",
+    "PlayerTickMixin",
+    "ResultSlotMixin",
+    "ServerDestroyMixin",
+    "TadpoleAgeMixin",
+    "VillagerTradeMixin"
+  ],
+  "client": [
+    "ClientDestroyMixin",
+    "LivingRendererMixin",
+    "MouseScrollMixin",
+    "PickBlockMixin",
+    "RenderDataMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

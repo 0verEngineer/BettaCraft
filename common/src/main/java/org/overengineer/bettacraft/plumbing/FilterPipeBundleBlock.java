@@ -57,7 +57,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * <p>
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
-public class FilterPipeBundleBlock extends BaseEntityBlock {
+public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PickableBlock {
     public static final MapCodec<FilterPipeBundleBlock> CODEC = simpleCodec(FilterPipeBundleBlock::new);
     /** The manifold in the middle (in pixels). */
     public static final float HUB_MIN = 3.5F, HUB_MAX = 12.5F;

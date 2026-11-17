@@ -37,6 +37,13 @@ public final class ClientEvents {
     /** An item tooltip is built (lines may be added). */
     public static final List<Tooltip> ITEM_TOOLTIP = new CopyOnWriteArrayList<>();
 
+    /** A screen is about to open (NeoForge: ScreenEvent.Opening; Fabric: before it is initialised). */
+    public static final List<Consumer<net.minecraft.client.gui.screens.Screen>> SCREEN_OPENING = new CopyOnWriteArrayList<>();
+
+    public static void fireScreenOpening(net.minecraft.client.gui.screens.Screen screen) {
+        for (Consumer<net.minecraft.client.gui.screens.Screen> c : SCREEN_OPENING) c.accept(screen);
+    }
+
     public static void fireTickPost() {
         for (Runnable r : TICK_POST) r.run();
     }

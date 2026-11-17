@@ -27,35 +27,7 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD) return;
-        // M31 part b: the wild turtles (creatures on the shore of swamps and rivers, the tortoise on dry land)
-        if (org.overengineer.bettacraft.terrarium.HerpSpawns.enabled()) {
-            for (var e : org.overengineer.bettacraft.terrarium.HerpSpawns.entries(org.overengineer.bettacraft.terrarium.HerpSpawns.home(biome))) {
-                var type = ModEntities.herp(e.species());
-                int[] g = org.overengineer.bettacraft.terrarium.HerpSpawns.group(e.species());
-                builder.getMobSpawnSettings().addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, e.weight(), g[0], g[1]));
-            }
-        }
-        NetCatching.Water w = Wildlife.water(biome);
-        if (w == NetCatching.Water.NONE) return;
-        var spawns = builder.getMobSpawnSettings();
-        if (Features.enabled(Feature.TANKMATES_WILD)) {
-            for (TankmateSpecies s : TankmateSpecies.values()) {
-                if (!s.available()) continue;
-                int weight = Wildlife.fishWeight(s, w);
-                if (weight <= 0) continue;
-                int[] g = Wildlife.group(s);
-                var type = ModEntities.TANKMATES.get(s).get();
-                spawns.addSpawn(type.getCategory(), new MobSpawnSettings.SpawnerData(type, weight, g[0], g[1]));
-            }
-        }
-        if (Features.enabled(Feature.FROGS_WILD)) { // M33: the frogs have their own switch
-            int frog = Wildlife.frogWeight(w);
-            if (frog > 0) spawns.addSpawn(ModEntities.DWARF_FROG.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.DWARF_FROG.get(), frog, 1, 2));
-        }
-        if (Features.enabled(Feature.INVERTEBRATES_WILD)) {
-            int c = Wildlife.critterWeight(w);
-            if (c > 0) spawns.addSpawn(ModEntities.WILD_CRITTER.get().getCategory(), new MobSpawnSettings.SpawnerData(ModEntities.WILD_CRITTER.get(), c, 2, 5));
-        }
+        for (var s : org.overengineer.bettacraft.world.WildSpawns.wildlife(biome)) builder.getMobSpawnSettings().addSpawn(s.category(), s.data());
     }
 
     @Override

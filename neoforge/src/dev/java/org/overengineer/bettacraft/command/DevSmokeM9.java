@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import org.overengineer.bettacraft.compat.info.InfoData;
@@ -85,7 +84,7 @@ final class DevSmokeM9 {
             throw new IllegalStateException("M9: water care (cooler " + cool + ")");
         }
         // capabilities: FE is refused while power is off (default), water pipes work
-        var energy = level.getCapability(Capabilities.EnergyStorage.BLOCK, t, null);
+        var energy = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, t, null);
         IFluidHandler fluid = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, t, null);
         if (fluid == null || (energy == null) == TankPower.anyRequired()) throw new IllegalStateException("M9: tank capabilities (energy " + energy + ")");
         FluidStack drained = fluid.drain(500, IFluidHandler.FluidAction.EXECUTE);

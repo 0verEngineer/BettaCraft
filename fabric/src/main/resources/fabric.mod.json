@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "contact": {
+    "homepage": "https://github.com/0verEngineer/BettaCraft",
+    "sources": "https://github.com/0verEngineer/BettaCraft",
+    "issues": "https://github.com/0verEngineer/BettaCraft/issues"
+  },
+  "license": "${mod_license}",
+  "icon": "bettacraft.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.overengineer.bettacraft.fabric.BettaCraftFabric"
+    ],
+    "client": [
+      "org.overengineer.bettacraft.fabric.client.BettaCraftFabricClient"
+    ],
+    "jade": [
+      "org.overengineer.bettacraft.compat.jade.BettaCraftJadePlugin"
+    ],
+    "jei_mod_plugin": [
+      "org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "accessWidener": "${mod_id}.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*",
+    "forgeconfigapiport": ">=21.1.0"
+  },
+  "suggests": {
+    "patchouli": "*",
+    "modmenu": "*",
+    "jade": "*",
+    "jei": "*",
+    "wthit": "*"
+  }
+}

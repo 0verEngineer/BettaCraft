@@ -15,7 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -248,15 +247,15 @@ public final class WaterGameTests {
         try {
             // default: nothing needs power, no energy capability is offered
             power(false, false, false);
-            h.assertTrue(level.getCapability(Capabilities.EnergyStorage.BLOCK, c.getBlockPos(), null) == null, "no FE storage while power is off");
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, c.getBlockPos(), null) == null, "no FE storage while power is off");
             TankPower.step(level, c, 20);
             h.assertTrue(TankCare.heaterBlocks(level, t) == 16 && TankWater.filterBlocks(level, c) > 0, "everything works without power");
 
             // power required, no FE: heaters, filter and light stop
             power(true, true, true);
-            var tankEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, c.getBlockPos(), null);
-            var filterEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, f.getBlockPos(), null);
-            var lightEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, light, null);
+            var tankEnergy = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, c.getBlockPos(), null);
+            var filterEnergy = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, f.getBlockPos(), null);
+            var lightEnergy = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, light, null);
             h.assertTrue(tankEnergy != null && filterEnergy != null && lightEnergy != null, "energy capabilities on tank, filter and light");
             TankPower.step(level, c, 20);
             h.assertTrue(!c.heatPowered() && !c.filterPowered() && !c.lightPowered(), "unpowered without FE");
@@ -344,8 +343,8 @@ public final class WaterGameTests {
         BlockPos pos = h.absolutePos(rel);
         CultureTubBlockEntity tub = (CultureTubBlockEntity) level.getBlockEntity(pos);
         h.assertTrue(tub != null && tub.artemia(), "hatchery");
-        h.assertTrue(level.getCapability(Capabilities.FluidHandler.BLOCK, pos, null) == null, "no fresh water pipes into the hatchery");
-        var items = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, pos, null) == null, "no fresh water pipes into the hatchery");
+        var items = org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, pos, null);
         h.assertTrue(items != null, "item capability");
         // two salt water bottles: 500 mB, two empty bottles stay inside
         for (int i = 0; i < 2; i++) {

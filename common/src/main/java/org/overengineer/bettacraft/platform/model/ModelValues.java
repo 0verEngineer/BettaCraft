@@ -28,6 +28,13 @@ public final class ModelValues {
         return Collections.unmodifiableMap(values);
     }
 
+    /** A builder that starts with these values. */
+    public Builder derive() {
+        Builder b = new Builder();
+        b.values.putAll(values);
+        return b;
+    }
+
     public boolean isEmpty() {
         return values.isEmpty();
     }

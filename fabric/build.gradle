@@ -1,0 +1,484 @@
+// M52: the Fabric mod (Fabric Loom, Mojang names with Parchment). Compiles the common sources (common/src/main) together with
+// the Fabric platform layer and glue of this module (fabric/src/main) into one jar, remapped to intermediary. The handbook is
+// a Patchouli book converted from the GuideME pages at build time (tools/guide). Run tasks have names of their own
+// (runFabricClient, runFabricServer, runFabricGameTest) so that the plain run tasks stay the NeoForge ones.
+plugins {
+    id 'fabric-loom'
+    id 'java-library'
+}
+
+version = mod_version
+group = mod_group_id
+
+def commonProject = project(':common')
+
+base {
+    // bettacraft-fabric-1.21.1-<mod_version>.jar
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// M52: the plugins of the overlay and recipe viewer mods use only their (loader-independent) APIs: one source, both jars
+def integrationSrc = layout.buildDirectory.dir('generated/integrations')
+tasks.register('integrationSources', Sync) {
+    from(rootProject.file('neoforge/src/main/java')) {
+        include 'org/overengineer/bettacraft/compat/jade/**'
+        include 'org/overengineer/bettacraft/compat/jei/**'
+        include 'org/overengineer/bettacraft/compat/wthit/**'
+    }
+    into integrationSrc
+}
+
+sourceSets {
+    main {
+        java.srcDir(commonProject.file('src/main/java'))
+        java.srcDir(integrationSrc)
+        resources {
+            srcDir(commonProject.file('src/main/resources'))
+            srcDir(commonProject.file('src/generated/resources'))
+            // the Patchouli book made from the GuideME pages (convertGuide)
+            srcDir(layout.buildDirectory.dir('generated/patchouli'))
+            exclude('**/*.bbmodel')
+            exclude('.cache')
+        }
+    }
+    // the converter of the handbook (tools/guide), run by the build
+    guideTool {
+        java.srcDir(rootProject.file('tools/guide/src'))
+    }
+    // development only (GameTests, smoke scenes on Fabric), never in the jar
+    // the dev source set: our Fabric dev code, the stubs of NeoForge's two GameTest annotations and every file of the
+    // NeoForge dev source set that needs nothing else of NeoForge (GameTests, smoke scenes, the showcase), see devExcluded
+    dev {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+        java {
+            srcDir(file('src/devstubs/java'))
+            srcDir(rootProject.file('neoforge/src/dev/java'))
+            exclude { FileTreeElement e -> !e.directory && devExcluded(e.file) }
+        }
+        resources {
+            srcDir(layout.buildDirectory.dir('generated/devresources'))
+            srcDir(rootProject.file('neoforge/src/dev/resources'))
+        }
+    }
+}
+
+// a NeoForge dev file is left out of the Fabric dev source set when it uses NeoForge beyond the two GameTest annotations
+// (stubbed in src/devstubs) or is listed here (it uses one of those files, or a mod that is not on Fabric)
+def devExcludedNames = (project.findProperty('fabricDevExcludes') ?: '').toString().split(',').collect { it.trim() }.findAll { it }
+ext.fabricDevSkip = [
+    // NeoForge-only: Create (not on Fabric), NeoForge's extension methods (harvest, sound type, light by position, destroyed
+    // by player, multipart entities, crafting remainders by stack), recipe conditions read the NeoForge way (feature switches)
+    'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CystGameTests', 'FeatureRestGameTests',
+    'ForeignLandAnimalsGameTests', 'InhabitantGameTests', 'PipeCoverGameTests', 'ReefBreedingGameTests', 'SoakGameTests',
+    'StoneCabinetGameTests',
+    // they use helpers of the ones above
+    'ForeignTerrariumBGameTests', 'MinecraftPetsGameTests', 'WalkGroundGameTests',
+] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13'] as Set
+def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
+ext.devExcluded = { File f ->
+    if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
+    // the optional integration and zoo suites need mods of the NeoForge runs
+    def rel = f.canonicalPath.substring(neoDev.length()).replace(File.separator, '/')
+    if (rel.contains('/gametest/integration/') || rel.contains('/gametest/zoo/')) return true
+    // of the client smoke scenes only those the Fabric client smoke runs (FabricClientSmoke), the rest needs JEI, GuideME ...
+    if (rel.contains('/client/') && !fabricDevClient.contains(f.name - '.java')) return true
+    if (devExcludedNames.contains(f.name - '.java') || fabricDevSkip.contains(f.name - '.java')) return true
+    return f.readLines('UTF-8').any { l -> l.contains('net.neoforged') && !l.contains('"net.neoforged') && !l.contains('net.neoforged.neoforge.gametest.GameTestHolder')
+            && !l.contains('net.neoforged.neoforge.gametest.PrefixGameTestTemplate') }
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/bettacraft.accesswidener')
+    mixin {
+        defaultRefmapName = 'bettacraft.refmap.json'
+    }
+    runs {
+        // runFabricClient [-Pbackground]: the background window like on NeoForge (BackgroundWindowMixin)
+        fabricClient {
+            client()
+            runDir = '../run-fabric'
+            source sourceSets.dev
+            ideConfigGenerated false
+            if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') }) {
+                property 'bettacraft.background', 'true'
+            }
+            if (project.hasProperty('smoketest')) property 'bettacraft.smoketest', 'true'
+            if (project.hasProperty('smoketestfabric')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+            }
+            programArgs '--width', '1280', '--height', '760'
+        }
+        fabricServer {
+            server()
+            runDir = '../run-fabric/server'
+            source sourceSets.dev
+            ideConfigGenerated false
+            if (project.hasProperty('smoketest')) property 'bettacraft.smoketest', 'true'
+            programArgs '--nogui'
+        }
+        // the Fabric GameTest server (fabric-gametest entry points of the dev source set); quits with the result
+        fabricGameTest {
+            server()
+            runDir = '../run-fabric/gametest'
+            source sourceSets.dev
+            ideConfigGenerated false
+            property 'fabric-api.gametest', 'true'
+            property 'fabric-api.gametest.report-file', "${rootProject.projectDir}/run-fabric/gametest/report.xml"
+            if (project.hasProperty('gametests')) property 'bettacraft.gametest.only', project.property('gametests')
+        }
+    }
+}
+
+configurations {
+    devCompileClasspath.extendsFrom compileClasspath
+    devRuntimeClasspath.extendsFrom runtimeClasspath
+}
+loom.createRemapConfigurations(sourceSets.dev)
+
+repositories {
+    maven { name = 'ParchmentMC'; url = 'https://maven.parchmentmc.org' }
+    exclusiveContent {
+        forRepository { maven { name = 'Fuzs'; url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' } }
+        filter { includeGroup 'fuzs.forgeconfigapiport' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'TerraformersMC'; url = 'https://maven.terraformersmc.com/releases/' } }
+        filter { includeGroup 'com.terraformersmc' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'BlameJared (JEI)'; url = 'https://maven.blamejared.com' } }
+        filter { includeGroup 'mezz.jei'; includeGroup 'net.mezzdev.config' }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_mappings_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    // NeoForge's config API on Fabric (the same TOML files and keys); the settings screen through Mod Menu
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"
+    modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}"
+    modLocalRuntime "com.terraformersmc:modmenu:${modmenu_version}"
+    // Team Reborn Energy: the power of the devices on Fabric (1 E = 1 FE), bundled (jar in jar) like other Fabric mods do
+    modImplementation include("teamreborn:energy:${teamreborn_energy_version}") { transitive = false }
+    // the handbook on Fabric (optional at runtime)
+    modCompileOnly "maven.modrinth:patchouli:${patchouli_fabric_version}"
+    if (!project.hasProperty('noPatchouli')) {
+        modLocalRuntime "maven.modrinth:patchouli:${patchouli_fabric_version}"
+        // its nested config library (Fiber; the dev runtime does not load the jars inside a mod jar): extracted, read only
+        localRuntime files({ fileTree(layout.buildDirectory.dir('patchouli-libraries')).include('*.jar').files }) { builtBy 'extractPatchouliLibraries' }
+    }
+
+    // M52: the info overlays and the recipe viewer, the same plugin classes as on NeoForge (neoforge/compat/{jade,jei,wthit},
+    // copied into the Fabric sources by integrationSources); -PfabricOverlays puts Jade and JEI into the dev runtime
+    modCompileOnly "maven.modrinth:jade:${jade_fabric_version}"
+    modCompileOnly "maven.modrinth:jei:${jei_fabric_version}"
+    modCompileOnly("maven.modrinth:wthit:${wthit_fabric_version}") { transitive = false }
+    if (project.hasProperty('fabricOverlays')) {
+        modLocalRuntime "maven.modrinth:jade:${jade_fabric_version}"
+        modLocalRuntime "maven.modrinth:jei:${jei_fabric_version}"
+    }
+
+    guideToolImplementation 'com.google.code.gson:gson:2.11.0'
+
+    devCompileOnly 'org.jetbrains:annotations:24.1.0'
+    // javax.annotation.Nullable of the common code (NeoForge brings it)
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+configurations {
+    patchouliJar { transitive = false }
+}
+dependencies {
+    patchouliJar "maven.modrinth:patchouli:${patchouli_fabric_version}"
+}
+tasks.register('extractPatchouliLibraries', Copy) {
+    def jar = configurations.patchouliJar
+    inputs.files(jar)
+    from({ zipTree(jar.singleFile) }) {
+        include 'META-INF/jars/*.jar'
+        eachFile { it.path = it.name }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('patchouli-libraries')
+}
+
+// ---- the handbook: the GuideME pages -> a Patchouli book (build/generated/patchouli)
+def guideDir = commonProject.file('src/main/resources/assets/bettacraft/guides/bettacraft/guide')
+def patchouliOut = layout.buildDirectory.dir('generated/patchouli')
+tasks.register('convertGuide', JavaExec) {
+    group = 'bettacraft'
+    description = 'Converts the GuideME handbook into the Patchouli book of the Fabric jar (tools/guide)'
+    classpath = sourceSets.guideTool.runtimeClasspath
+    mainClass = 'org.overengineer.bettacraft.guidetool.PatchouliConverter'
+    inputs.dir(guideDir)
+    inputs.files(commonProject.fileTree('src/generated/resources/data/bettacraft/recipe'), commonProject.fileTree('src/main/resources/data/bettacraft/recipe'))
+    outputs.dir(patchouliOut)
+    def out = patchouliOut.get().asFile
+    doFirst { out.deleteDir() }
+    args guideDir.absolutePath,
+            commonProject.file('src/generated/resources/assets/bettacraft/lang/en_us.json').absolutePath,
+            commonProject.file('src/main/resources/assets/bettacraft/lang/de_de.json').absolutePath,
+            out.absolutePath,
+            commonProject.file('src/generated/resources/data/bettacraft/recipe').absolutePath,
+            commonProject.file('src/main/resources/data/bettacraft/recipe').absolutePath
+}
+tasks.named('processResources').configure { dependsOn 'convertGuide', 'renderLayers' }
+
+// ---- our data with NeoForge's conditions and ingredient types, converted for Fabric (build/generated/fabricdata, which wins
+// over the common copies): neoforge:conditions -> fabric:load_conditions, neoforge:components / compound ingredients ->
+// fabric:components / fabric:any. The NeoForge jar keeps the data as it is.
+def fabricDataOut = layout.buildDirectory.dir('generated/fabricdata')
+tasks.register('fabricData') {
+    group = 'bettacraft'
+    def roots = [commonProject.file('src/main/resources'), commonProject.file('src/generated/resources')]
+    roots.each { inputs.dir(new File(it, 'data')) }
+    outputs.dir(fabricDataOut)
+    doLast {
+        def out = fabricDataOut.get().asFile
+        out.deleteDir()
+        def slurper = new groovy.json.JsonSlurper()
+        def conv
+        conv = { Map c ->
+            switch (c.type) {
+                case 'neoforge:mod_loaded': return [condition: 'fabric:all_mods_loaded', values: [c.modid]]
+                case 'neoforge:not': return [condition: 'fabric:not', value: conv(c.value as Map)]
+                case 'neoforge:and': return [condition: 'fabric:and', values: c.values.collect { conv(it as Map) }]
+                case 'neoforge:or': return [condition: 'fabric:or', values: c.values.collect { conv(it as Map) }]
+                case 'neoforge:tag_empty': return [condition: 'fabric:not', value: [condition: 'fabric:tags_populated', registry: 'minecraft:item', values: [c.tag]]]
+                case 'neoforge:true': return [condition: 'fabric:true']
+                case 'neoforge:false': return [condition: 'fabric:not', value: [condition: 'fabric:true']]
+                default:
+                    def m = new LinkedHashMap(c)
+                    m.remove('type')
+                    return [condition: c.type] + m
+            }
+        }
+        def base = { items ->
+            if (items instanceof List) return items.collect { String s -> s.startsWith('#') ? [tag: s.substring(1)] : [item: s] }
+            String s = items as String
+            return s.startsWith('#') ? [tag: s.substring(1)] : [item: s]
+        }
+        def fix
+        fix = { Object node ->
+            if (node instanceof Map) {
+                Map m = node as Map
+                if (m.type == 'neoforge:components') {
+                    return ['fabric:type': 'fabric:components', base: base(m.items), components: m.components, strict: m.strict ?: false]
+                }
+                if (m.type == 'neoforge:compound') {
+                    // plain items and tags: a vanilla ingredient list; anything else: Fabric's any-of ingredient
+                    def kids = m.children.collect { fix(it) }.collectMany { it instanceof List ? it : [it] }
+                    return kids.every { it instanceof Map && (it.containsKey('item') || it.containsKey('tag')) && it.size() == 1 } ? kids
+                            : ['fabric:type': 'fabric:any', ingredients: kids]
+                }
+                def r = new LinkedHashMap()
+                m.each { k, v ->
+                    if (k == 'neoforge:conditions') r['fabric:load_conditions'] = v.collect { conv(it as Map) }
+                    else r[k] = fix(v)
+                }
+                return r
+            }
+            if (node instanceof List) return node.collect { fix(it) }
+            return node
+        }
+        int n = 0
+        roots.each { root ->
+            def data = new File(root, 'data')
+            if (!data.isDirectory()) return
+            data.eachFileRecurse { f ->
+                if (!f.name.endsWith('.json')) return
+                def text = f.getText('UTF-8')
+                if (!text.contains('"neoforge:conditions"') && !text.contains('"neoforge:components"') && !text.contains('"neoforge:compound"')) return
+                def rel = root.toPath().relativize(f.toPath()).toString().replace('\\', '/')
+                def json = fix(slurper.parseText(text))
+                // a shaped key with alternatives (a NeoForge compound): one recipe per alternative (Fabric's shaped keys take one)
+                def variants = [json]
+                if (json instanceof Map && json.type == 'minecraft:crafting_shaped' && json.key instanceof Map) {
+                    json.key.each { k, v ->
+                        if (v instanceof List) variants = variants.collectMany { r -> v.collect { alt -> def c = slurper.parseText(groovy.json.JsonOutput.toJson(r)); c.key[k] = alt; c } }
+                    }
+                }
+                variants.eachWithIndex { r, i ->
+                    def dst = new File(out, i == 0 ? rel : rel.replaceAll(/\.json$/, "_alt${i}.json"))
+                    dst.parentFile.mkdirs()
+                    dst.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(r)), 'UTF-8')
+                }
+                n++
+            }
+        }
+        logger.lifecycle("fabricData: ${n} files converted")
+    }
+}
+sourceSets.main.resources.srcDirs = [fabricDataOut] + sourceSets.main.resources.srcDirs
+tasks.named('processResources', ProcessResources).configure {
+    dependsOn 'fabricData'
+    // the converted copies come first and win
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// ---- the GameTest classes of the Fabric dev source set (FabricGameTests registers them)
+tasks.register('fabricGameTestList') {
+    def out = layout.buildDirectory.file('generated/devresources/bettacraft_fabric_gametests.txt')
+    def dirs = [rootProject.file('neoforge/src/dev/java'), file('src/dev/java')]
+    dirs.each { inputs.dir(it) }
+    inputs.property('skip', fabricDevSkip.toList().sort())
+    outputs.file(out)
+    doLast {
+        def names = []
+        dirs.each { d ->
+            d.eachFileRecurse { f ->
+                if (!f.name.endsWith('.java') || devExcluded(f)) return
+                def text = f.getText('UTF-8')
+                if (!text.contains('@GameTestHolder')) return
+                def pkg = (text =~ /(?m)^package ([\w.]+);/)[0][1]
+                names << pkg + '.' + (f.name - '.java')
+            }
+        }
+        names.sort()
+        out.get().asFile.parentFile.mkdirs()
+        out.get().asFile.text = names.join(System.lineSeparator()) + System.lineSeparator()
+        logger.lifecycle("fabricGameTestList: ${names.size()} GameTest classes")
+    }
+}
+tasks.named('processDevResources').configure { dependsOn 'fabricGameTestList' }
+
+// ---- the render layer of each block (NeoForge reads "render_type" from the models; Fabric needs it in code):
+// blockstates -> first model -> render_type (along the parents in our namespace) -> bettacraft_render_layers.json
+def layersOut = layout.buildDirectory.dir('generated/renderlayers')
+sourceSets.main.resources.srcDir(layersOut)
+tasks.register('renderLayers') {
+    group = 'bettacraft'
+    def roots = [commonProject.file('src/main/resources/assets/bettacraft'), commonProject.file('src/generated/resources/assets/bettacraft')]
+    roots.each { inputs.dir(it) }
+    outputs.dir(layersOut)
+    doLast {
+        def slurper = new groovy.json.JsonSlurper()
+        def find = { String kind, String path -> roots.collect { new File(it, "${kind}/${path}.json") }.find { it.exists() } }
+        def renderType
+        renderType = { String model, int depth ->
+            if (depth > 8 || model == null) return null
+            def id = model.contains(':') ? model : "minecraft:${model}"
+            if (!id.startsWith('bettacraft:')) return null
+            def f = find('models', id.substring('bettacraft:'.length()))
+            if (f == null) return null
+            def json = slurper.parse(f, 'UTF-8')
+            return json.render_type ?: renderType(json.parent as String, depth + 1)
+        }
+        def out = new TreeMap()
+        roots.each { root ->
+            (new File(root, 'blockstates').listFiles() ?: []).findAll { it.name.endsWith('.json') }.each { bs ->
+                def json = slurper.parse(bs, 'UTF-8')
+                def models = []
+                if (json.variants) json.variants.values().each { v -> (v instanceof List ? v : [v]).each { models << it.model } }
+                if (json.multipart) json.multipart.each { p -> (p.apply instanceof List ? p.apply : [p.apply]).each { models << it.model } }
+                def type = models.collect { renderType(it as String, 0) }.find { it != null }
+                if (type != null && type != 'minecraft:solid') out["bettacraft:${bs.name - '.json'}".toString()] = type
+            }
+        }
+        def f = new File(layersOut.get().asFile, 'bettacraft_render_layers.json')
+        f.parentFile.mkdirs()
+        f.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(out)), 'UTF-8')
+        logger.lifecycle("renderLayers: ${out.size()} blocks")
+    }
+}
+
+def replaceProperties = [
+        mod_id         : mod_id,
+        mod_name       : mod_name,
+        mod_version    : mod_version,
+        mod_license    : mod_license,
+        mod_authors    : mod_authors,
+        mod_description: mod_description,
+        minecraft_version: minecraft_version,
+        fabric_loader_version: fabric_loader_version,
+]
+tasks.named('processResources', ProcessResources).configure {
+    inputs.properties replaceProperties
+    filesMatching('fabric.mod.json') { expand replaceProperties }
+    // the GuideME pages are NeoForge's handbook; on Fabric the converted Patchouli book replaces them
+    exclude('assets/bettacraft/guides/**', 'assets/bettacraft/guideme_guides/**')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('jar', Jar).configure {
+    archiveClassifier = 'dev'
+}
+tasks.named('compileJava') { dependsOn 'integrationSources' }
+def licenseModId = mod_id
+tasks.named('remapJar').configure {
+    archiveClassifier = null
+    // the workflows pick the release jars up from the root build/libs
+    destinationDirectory = rootProject.layout.buildDirectory.dir('libs')
+    from(rootProject.file('LICENSE')) { rename { "LICENSE_${licenseModId}" } }
+}
+
+// the released Fabric jar: our classes only (no dev, smoke or GameTest code, no NeoForge stubs), the right version, the
+// mixin configs with their refmap, the converted data and the Patchouli book, no foreign assets
+tasks.register('verifyFabricJar') {
+    group = 'verification'
+    def jarTask = tasks.named('remapJar')
+    dependsOn jarTask
+    def report = layout.buildDirectory.file('verifyFabricJar.txt')
+    def expected = project.findProperty('expectedVersion')
+    def version = project.mod_version
+    outputs.file(report)
+    doLast {
+        def f = jarTask.get().archiveFile.get().asFile
+        def zip = new java.util.zip.ZipFile(f)
+        def names = zip.entries().collect { it.name }
+        def problems = []
+        names.findAll { it.endsWith('.class') }.each { n ->
+            if (!n.startsWith('org/overengineer/bettacraft/')) problems << "foreign class ${n}"
+            if (n.contains('/gametest/') || n.contains('/dev/') || n.contains('DevSmoke') || n.contains('DevClient')) problems << "dev class ${n}"
+        }
+        names.findAll { it.startsWith('assets/') || it.startsWith('data/') }.each { n ->
+            def ns = n.split('/')
+            if (ns.length > 2 && !(ns[1] in ['bettacraft', 'minecraft', 'c', 'fabric', 'neoforge', 'patchouli'])
+                    && !n.startsWith('data/') ) problems << "foreign asset ${n}"
+        }
+        ['fabric.mod.json', 'bettacraft.mixins.json', 'bettacraft.fabric.mixins.json', 'bettacraft.accesswidener',
+         'data/bettacraft/patchouli_books/handbook/book.json', 'bettacraft_render_layers.json',
+         'META-INF/services/org.overengineer.bettacraft.platform.Platform',
+         'META-INF/services/org.overengineer.bettacraft.platform.client.ClientPlatform'].each { need ->
+            if (!names.contains(need)) problems << "missing ${need}"
+        }
+        if (names.any { it.startsWith('assets/bettacraft/guides/') }) problems << 'GuideME pages in the Fabric jar'
+        def modJson = new groovy.json.JsonSlurper().parse(zip.getInputStream(zip.getEntry('fabric.mod.json')))
+        if (modJson.version != version) problems << "fabric.mod.json version ${modJson.version}, expected ${version}"
+        if (expected != null && modJson.version != expected) problems << "fabric.mod.json version ${modJson.version}, tag ${expected}"
+        def recipe = names.find { it.startsWith('data/bettacraft/recipe/') && it.endsWith('.json') }
+        names.findAll { it.startsWith('data/bettacraft/') && it.endsWith('.json') }.each { n ->
+            def t = zip.getInputStream(zip.getEntry(n)).getText('UTF-8')
+            if (t.contains('"neoforge:conditions"') || t.contains('"neoforge:components"')) problems << "unconverted NeoForge data ${n}"
+        }
+        zip.close()
+        def classes = names.count { it.endsWith('.class') }
+        def text = "Fabric jar ${f.name}: ${names.size()} files, ${classes} classes, version ${modJson.version}\n" +
+                (problems ? problems.collect { "PROBLEM: ${it}" }.join('\n') : 'OK') + '\n'
+        report.get().asFile.text = text
+        logger.lifecycle(text.trim())
+        if (problems) throw new GradleException("verifyFabricJar: ${problems.size()} problem(s), see ${report.get().asFile}")
+    }
+}
+tasks.named('check').configure { dependsOn 'verifyFabricJar' }
+
+// Loom's default client / server runs would answer the root's runClient / runServer (meant for NeoForge) as well: off; the
+// Fabric runs are runFabricClient / runFabricServer / runFabricGameTest
+['runClient', 'runServer'].each { n -> tasks.matching { it.name == n }.configureEach { enabled = false } }

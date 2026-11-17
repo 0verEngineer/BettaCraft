@@ -34,6 +34,14 @@ public abstract class BackgroundWindowMixin {
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
     }
 
+    /** M52: Fabric (no early loading window): the window hints before vanilla creates the window. */
+    @Inject(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwCreateWindow(IILjava/lang/CharSequence;JJ)J", remap = false))
+    private void bettacraft$unfocusedHintsVanilla(CallbackInfo ci) {
+        if (!BACKGROUND) return;
+        GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, GLFW.GLFW_FALSE);
+        GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
+    }
+
     @Inject(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setMode()V"))
     private void bettacraft$secondMonitor(CallbackInfo ci) {
         if (!BACKGROUND) return;

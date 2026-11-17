@@ -227,11 +227,11 @@ public final class YoungAndLightGameTests {
             h.assertTrue(sp.getMainHandItem().getCount() == 1, "already red: dye kept");
             // optics only: light level, the counted lights and the light the plants get are the same
             BlockState red = level.getBlockState(abs);
-            h.assertTrue(red.getLightEmission(level, abs) == 15, "light level 15");
+            h.assertTrue(red.getLightEmission() == 15, "light level 15");
             int[] after = TankCare.lights(level, c.getTank());
             h.assertTrue(after[0] == before[0] && after[1] == before[1], "same lights counted");
             h.assertTrue(TankPlants.light(level, c) == lightBefore, "plants get the same light: " + lightBefore + " vs " + TankPlants.light(level, c));
-            for (DyeColor d : DyeColor.values()) h.assertTrue(light(d).getLightEmission(level, abs) == 15, "level 15 for " + d);
+            for (DyeColor d : DyeColor.values()) h.assertTrue(light(d).getLightEmission() == 15, "level 15 for " + d);
         } finally {
             sp.getServer().getPlayerList().remove(sp);
         }

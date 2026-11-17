@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
  * (about five clicks a second, one charge in five seconds). It works before the block's own click, so the food maker's
  * window does not open while you wind it.
  */
-public class CrankItem extends Item {
+public class CrankItem extends Item implements org.overengineer.bettacraft.platform.UseFirstItem {
     public CrankItem(Properties props) {
         super(props);
     }

@@ -131,17 +131,17 @@ final class DevClientSmokeM49 {
         }));
         String lang = mc.options.languageCode;
         screen(p -> {
-            if (p.serverLevel().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) p.openMenu(cab, cab.getBlockPos());
+            if (p.serverLevel().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
         }, "menu_cabinet", lang);
         screen(p -> {
             if (p.serverLevel().getBlockEntity(reef.offset(2, -1, 0)) instanceof CabinetBlockEntity cab) {
                 BlockPos pos = cab.getBlockPos();
-                p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.equipment.SumpMenu(id, inv, cab),
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.equipment.SumpMenu(id, inv, cab),
                         Component.translatable("gui.bettacraft.sump.title")), b -> b.writeBlockPos(pos));
             }
         }, "menu_sump", lang);
         screen(p -> {
-            if (p.serverLevel().getBlockEntity(reef.offset(3, -1, 0)) instanceof CalciumReactorBlockEntity r) p.openMenu(r, r.getBlockPos());
+            if (p.serverLevel().getBlockEntity(reef.offset(3, -1, 0)) instanceof CalciumReactorBlockEntity r) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, r, r.getBlockPos());
         }, "menu_reactor", lang);
         menu(() -> reef, 9, "menu_sump_tab", lang);
         menu(() -> pal, 0, "menu_paludarium", lang);
@@ -350,7 +350,7 @@ final class DevClientSmokeM49 {
         then(10, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank.get());
             if (c == null) return;
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

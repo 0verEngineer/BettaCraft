@@ -210,7 +210,7 @@ public final class TankModeGameTests {
             sp.teleportTo(h.getLevel(), near.getX() + 0.5, near.getY(), near.getZ() + 0.5, 0F, 0F);
             sp.setGameMode(GameType.SURVIVAL);
             check(TankModePayload.apply(sp, new TankModePayload(0, 1)) == TankModePayload.Result.NO_MENU, "no menu open");
-            sp.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, c), Component.literal("tank")),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, new net.minecraft.world.SimpleMenuProvider((id, inv, p) -> new TankMenu(id, inv, c), Component.literal("tank")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
             check(sp.containerMenu instanceof TankMenu, "menu open");
             int id = sp.containerMenu.containerId;

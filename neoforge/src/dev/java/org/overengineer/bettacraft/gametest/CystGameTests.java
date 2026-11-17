@@ -24,7 +24,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -88,7 +87,7 @@ public final class CystGameTests {
         h.setBlock(rel.above().east(), Blocks.GLOWSTONE.defaultBlockState());
         BlockPos pos = h.absolutePos(rel);
         CultureTubBlockEntity tub = (CultureTubBlockEntity) level.getBlockEntity(pos);
-        var items = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        var items = org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, pos, null);
         h.assertTrue(tub != null && items != null, "hatchery with its item handler");
         for (int i = 0; i < 4; i++) items.insertItem(CultureTubBlockEntity.INPUT, new ItemStack(ModItems.SALT_WATER_BOTTLE.get()), false);
         h.assertTrue(items.insertItem(CultureTubBlockEntity.INPUT, jars(1), false).isEmpty(), "one jar in");
@@ -211,7 +210,7 @@ public final class CystGameTests {
         h.assertTrue(in.getCount() == 17 && plain(in), "17 plain jars in the slot: " + in + " " + in.getComponentsPatch());
         h.assertTrue(tub.openedJar().isEmpty() && tub.ingredientUses() == 17, "no open jar left, 17 batches: " + tub.ingredientUses());
         // a jar inserted later stacks onto them
-        var items = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        var items = org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, pos, null);
         h.assertTrue(items != null && items.insertItem(CultureTubBlockEntity.INPUT, jars(1), false).isEmpty(), "a new jar goes onto the old ones");
         tub.setWater(1000);
         tub.items().setStackInSlot(CultureTubBlockEntity.BOTTLES, new ItemStack(Items.GLASS_BOTTLE, 4));

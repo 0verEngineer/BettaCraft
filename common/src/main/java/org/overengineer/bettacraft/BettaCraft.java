@@ -42,6 +42,45 @@ public final class BettaCraft {
         org.overengineer.bettacraft.registry.ModSounds.register();
         org.overengineer.bettacraft.registry.ModParticles.register(); // M23
         org.overengineer.bettacraft.villager.ModVillagers.register(); // M47
+        // M52: the game event handlers (fired by each loader, see platform.event.GameEvents)
+        org.overengineer.bettacraft.platform.event.GameEvents.register(
+                org.overengineer.bettacraft.api.ApiEventsHandlers.class,
+                org.overengineer.bettacraft.aquarist.AquaristArrivalHandlers.class,
+                org.overengineer.bettacraft.big.BigCatchingHandlers.class,
+                org.overengineer.bettacraft.big.TransportTubItemHandlers.class,
+                org.overengineer.bettacraft.command.BettaCraftCommandsHandlers.class,
+                org.overengineer.bettacraft.compat.ModBreedingGoalsHandlers.class,
+                org.overengineer.bettacraft.compat.create.CreateLandingsHandlers.class,
+                org.overengineer.bettacraft.config.WorldConfigMigrationHandlers.class,
+                org.overengineer.bettacraft.containers.BucketCatchingHandlers.class,
+                org.overengineer.bettacraft.critters.CritterEventsHandlers.class,
+                org.overengineer.bettacraft.equipment.MirrorStickItemHandlers.class,
+                org.overengineer.bettacraft.foreign.ForeignBreedingHandlers.class,
+                org.overengineer.bettacraft.foreign.ForeignProfilesHandlers.class,
+                org.overengineer.bettacraft.foreign.ForeignTerrariumHandlers.class,
+                org.overengineer.bettacraft.foreign.ForeignWaterPartHandlers.class,
+                org.overengineer.bettacraft.foreign.MinecraftPetsHandlers.class,
+                org.overengineer.bettacraft.genetics.GeneticsReloadListenerHandlers.class,
+                org.overengineer.bettacraft.mobs.GlassMobEventsHandlers.class,
+                org.overengineer.bettacraft.monitor.MonitorAlarmsHandlers.class,
+                org.overengineer.bettacraft.monitor.MonitorSyncHandlers.class,
+                org.overengineer.bettacraft.plants.PlantEventsHandlers.class,
+                org.overengineer.bettacraft.plants.foreign.ForeignPlantsHandlers.class,
+                org.overengineer.bettacraft.progression.GuideBookHandlers.class,
+                org.overengineer.bettacraft.reef.ReefEventsHandlers.class,
+                org.overengineer.bettacraft.sources.TraderOffersHandlers.class,
+                org.overengineer.bettacraft.tank.ForeignAnimalsHandlers.class,
+                org.overengineer.bettacraft.tank.TankDamageGuardHandlers.class,
+                org.overengineer.bettacraft.tank.TankEventsHandlers.class,
+                org.overengineer.bettacraft.tank.TankMovesHandlers.class,
+                org.overengineer.bettacraft.tank.TankProtectionHandlers.class,
+                org.overengineer.bettacraft.tank.interior.InteriorEventsHandlers.class,
+                org.overengineer.bettacraft.tank.plants.FloatingPlantEventsHandlers.class,
+                org.overengineer.bettacraft.villager.AquaristPricesHandlers.class,
+                org.overengineer.bettacraft.villager.AquaristTradesHandlers.class,
+                org.overengineer.bettacraft.villager.AquaristsHandlers.class,
+                org.overengineer.bettacraft.world.SwampWaterEventsHandlers.class,
+                org.overengineer.bettacraft.world.WildSpawnPassHandlers.class);
         // M22.3: spontaneous mutations of the small animals (wildlife.otherMutationChance)
         org.overengineer.bettacraft.critters.CritterGenes.MUTATION = org.overengineer.bettacraft.world.Wildlife::mutationChance;
         org.overengineer.bettacraft.critters.CritterLife.BIG_PREY = () -> org.overengineer.bettacraft.config.ServerConfig.getOr(

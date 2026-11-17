@@ -66,7 +66,7 @@ final class DevClientSmokeM25c {
             if (p.serverLevel().getBlockEntity(base.offset(15, 0, 0)) instanceof DosingPumpBlockEntity pump) {
                 pump.step(1.0);
                 if (pump.status() != DosingPumpBlockEntity.RUNNING) LOGGER.error("[smoketest] M25c the dosing pump does not run: {}", pump.status());
-                p.openMenu(pump, base.offset(15, 0, 0));
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, pump, base.offset(15, 0, 0));
             } else LOGGER.error("[smoketest] M25c no dosing pump");
         }));
         then(30, () -> {

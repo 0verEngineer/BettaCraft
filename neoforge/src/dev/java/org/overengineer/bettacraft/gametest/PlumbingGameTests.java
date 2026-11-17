@@ -270,10 +270,10 @@ public final class PlumbingGameTests {
         h.setBlock(new BlockPos(5, 2, 1), BuiltInRegistries.BLOCK.get(id).defaultBlockState());
         h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 1))).getValue(PipeBlock.SIDES.get(Direction.EAST)), "the pipe joins the Mekanism tank");
         int moved = batch(h, p);
-        var cap = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(new BlockPos(5, 2, 1)), Direction.WEST);
+        var cap = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, h.absolutePos(new BlockPos(5, 2, 1)), Direction.WEST);
         h.assertTrue(moved > 0 && cap != null && cap.getFluidInTank(0).getAmount() == moved && a.getTank().waterMb() == before - moved,
                 "water in the Mekanism tank: " + moved + " / " + (cap == null ? "no handler" : cap.getFluidInTank(0)));
-        com.mojang.logging.LogUtils.getLogger().info("M24 Mekanism tank holds {} with values {}", cap.getFluidInTank(0), WaterValues.from(org.overengineer.bettacraft.neoforge.transfer.NeoTransfer.fromNeo(cap.getFluidInTank(0))));
+        com.mojang.logging.LogUtils.getLogger().info("M24 Mekanism tank holds {} with values {}", cap.getFluidInTank(0), WaterValues.from(cap.getFluidInTank(0)));
         // and back
         h.setBlock(new BlockPos(3, 2, 1), ModBlocks.WATER_PUMP.get().defaultBlockState().setValue(WaterPumpBlock.FACING, Direction.WEST));
         WaterPumpBlockEntity back = (WaterPumpBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 1)));

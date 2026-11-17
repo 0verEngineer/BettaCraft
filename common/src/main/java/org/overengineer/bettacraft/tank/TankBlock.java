@@ -54,7 +54,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorManager;
  * </ul>
  * Water never spreads out: we never schedule fluid ticks and the outer walls have a full collision face.
  */
-public class TankBlock extends BaseEntityBlock {
+public class TankBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PlayerDestroyable, org.overengineer.bettacraft.platform.PickableBlock {
     public static final MapCodec<TankBlock> CODEC = simpleCodec(TankBlock::new);
 
     public static final BooleanProperty NORTH = BooleanProperty.create("north");

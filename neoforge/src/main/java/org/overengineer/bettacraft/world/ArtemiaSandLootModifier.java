@@ -33,11 +33,7 @@ public class ArtemiaSandLootModifier extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
-        BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-        if (state == null || !state.is(ModTags.ARTEMIA_SAND)) return loot;
-        double chance = ServerConfig.getOr(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE, ServerConfig.ARTEMIA_SAND_CHANCE);
-        if (context.getRandom().nextDouble() < chance) loot.add(item.copy());
-        return loot;
+        return LootChanges.artemiaSand(loot, context, item);
     }
 
     @Override

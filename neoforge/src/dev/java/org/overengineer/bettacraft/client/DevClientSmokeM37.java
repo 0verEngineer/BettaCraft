@@ -78,7 +78,7 @@ final class DevClientSmokeM37 {
             if (p.serverLevel().getBlockEntity(at) instanceof FertilizerMakerBlockEntity m) {
                 for (int i = 0; i < 120; i++) m.tick(p.serverLevel(), at, p.serverLevel().getBlockState(at));
                 if (m.status() != FertilizerMakerBlockEntity.WORKING) LOGGER.error("[smoketest] M37 the fertilizer maker does not work: {}", m.status());
-                p.openMenu(m, at);
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(p, m, at);
             } else LOGGER.error("[smoketest] M37 no fertilizer maker");
         }));
         then(30, () -> {
@@ -95,7 +95,7 @@ final class DevClientSmokeM37 {
         // the cabinet's window with its spring
         then(1, () -> server(p -> {
             BlockPos at = base.offset(1, 0, 2);
-            if (p.serverLevel().getBlockEntity(at) instanceof CabinetBlockEntity cab) p.openMenu(cab, at);
+            if (p.serverLevel().getBlockEntity(at) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, at);
             else LOGGER.error("[smoketest] M37 no cabinet");
         }));
         then(30, () -> {
@@ -114,7 +114,7 @@ final class DevClientSmokeM37 {
             org.overengineer.bettacraft.tank.TankCare.care(p.serverLevel(), c, 20);
             if (!c.filterPowered() || c.springUnits() <= 0) LOGGER.error("[smoketest] M37 the cabinet does not power the tank: filter {}, devices {}",
                     c.filterPowered(), c.springUnits());
-            p.openMenu(new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
+            org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {

@@ -1,8 +1,6 @@
 package org.overengineer.bettacraft.client;
 
 import net.minecraft.world.entity.Mob;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 /**
  * Development only: the client smoke scenes freeze animals for steady screenshots and tag them. Outside a smoke run
@@ -22,7 +20,7 @@ public final class SmokeFreeze {
 
     /** Outside smoke runs: release tagged animals as they join a server level. */
     static void registerRelease() {
-        NeoForge.EVENT_BUS.addListener((EntityJoinLevelEvent e) -> {
+        org.overengineer.bettacraft.platform.event.GameEvents.listen(org.overengineer.bettacraft.platform.event.EntityJoinLevelEvent.class, e -> {
             if (e.getLevel().isClientSide() || !(e.getEntity() instanceof Mob m)) return;
             // untagged: tank animals frozen by smoke runs before the tag existed (tank animals never use NoAI otherwise)
             boolean legacy = m.isNoAi() && org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(m);

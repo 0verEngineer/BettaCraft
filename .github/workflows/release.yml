@@ -3,10 +3,11 @@
 #   2. the jar is built again from the tag and checked (verifyReleaseJar -PexpectedVersion=<tag without v>: no dev /
 #      smoke / GameTest classes, no foreign assets, mods.toml version = tag), the release notes are the top section of
 #      CHANGELOG.md (releaseNotes; it must be the section of this version)
-#   3. GitHub release with the jar and its SHA-256 (prerelease for -alpha / -beta / -rc versions)
+#   3. GitHub release with both jars (M52: NeoForge and Fabric) and their SHA-256 (prerelease for -alpha / -beta / -rc)
 #   4. CurseForge file upload with mc-publish, only if the token secret AND the project id variable are set (channel
-#      alpha / beta / release from the version). Without them the step is skipped, nothing fails. CurseForge is the only
-#      mod site.
+#      alpha / beta / release from the version). Without them the steps are skipped, nothing fails. CurseForge is the
+#      only mod site. M52: two files in the same project, the NeoForge jar with the loader tag neoforge, the Fabric jar
+#      with the loader tag fabric (each with its own dependencies).
 #   5. the CurseForge project description from docs/description.md with absolute image links pinned to the tag
 #      (curseforgeDescription), as a workflow artifact: CurseForge has no API for the description, paste it by hand.
 # Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check, release notes and the description,
@@ -96,11 +97,14 @@ jobs:
         run: |
           chmod +x gradlew
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
-          ./gradlew assemble verifyReleaseJar releaseNotes curseforgeDescription modpackZip ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
+          ./gradlew assemble verifyReleaseJar verifyFabricJar releaseNotes curseforgeDescription modpackZip ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
           cat neoforge/build/verifyReleaseJar.txt
-          jar="build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar"
-          test -f "$jar"
-          (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
+          cat fabric/build/verifyFabricJar.txt
+          for loader in neoforge fabric; do
+            jar="build/libs/bettacraft-$loader-1.21.1-${{ steps.version.outputs.version }}.jar"
+            test -f "$jar"
+            (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
+          done
           cat build/libs/*.sha256
           echo "----- release notes -----"
           cat build/release-notes.md
@@ -114,6 +118,8 @@ jobs:
           path: |
             build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
             build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
             build/release-notes.md
           if-no-files-found: error
@@ -135,12 +141,14 @@ jobs:
           files: |
             build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
             build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
           prerelease: ${{ steps.version.outputs.type != 'release' }}
           make_latest: ${{ steps.version.outputs.type == 'release' }}
           fail_on_unmatched_files: true
 
-      - name: Publish to CurseForge
+      - name: Publish to CurseForge (NeoForge)
         if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -161,10 +169,35 @@ jobs:
             aquaculture(optional)
             naturalist(optional)
           files: build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-          name: Bettacraft ${{ steps.version.outputs.version }}
+          name: Bettacraft ${{ steps.version.outputs.version }} (NeoForge)
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ steps.version.outputs.type }}
           changelog-file: build/release-notes.md
           loaders: neoforge
+          game-versions: "1.21.1"
+          java: "21"
+
+      # M52: the Fabric jar, same project, loader tag fabric. Dependencies (CurseForge slugs, CHECK BEFORE THE FIRST
+      # RELEASE: a wrong slug fails the upload): Fabric API and Forge Config API Port (required), Patchouli (the
+      # handbook), Mod Menu (the config screen), Jade and WTHIT (optional)
+      - name: Publish to CurseForge (Fabric)
+        if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
+          curseforge-dependencies: |
+            fabric-api(required)
+            forge-config-api-port-fabric(required)
+            patchouli-fabric(optional)
+            modmenu(optional)
+            jade(optional)
+            wthit(optional)
+          files: build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
+          name: Bettacraft ${{ steps.version.outputs.version }} (Fabric)
+          version: ${{ steps.version.outputs.version }}+fabric
+          version-type: ${{ steps.version.outputs.type }}
+          changelog-file: build/release-notes.md
+          loaders: fabric
           game-versions: "1.21.1"
           java: "21"

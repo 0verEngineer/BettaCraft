@@ -9,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -62,7 +61,7 @@ public final class FilterMediaAutomationGameTests {
         HopperBlockEntity below = hopper(h, new BlockPos(2, 1, 2), Direction.EAST);
         h.setBlock(new BlockPos(3, 1, 2), Blocks.CHEST); // the hopper below passes on what it pulls
         // the capability: fresh medium in, nothing out while it works, the dirt refused
-        var cap = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(new BlockPos(2, 2, 2)), Direction.UP);
+        var cap = org.overengineer.bettacraft.platform.Platform.get().itemHandler(h.getLevel(), h.absolutePos(new BlockPos(2, 2, 2)), Direction.UP);
         h.assertTrue(cap != null && cap.getSlots() == 1, "the chamber offers one slot");
         h.assertTrue(!cap.isItemValid(0, new ItemStack(net.minecraft.world.item.Items.DIRT)), "only media are valid");
         h.runAfterDelay(40, () -> {
@@ -77,7 +76,7 @@ public final class FilterMediaAutomationGameTests {
             h.runAfterDelay(60, () -> {
                 h.assertTrue(above.getItem(1).isEmpty(), "the second sponge went in: " + above.getItem(1));
                 h.assertTrue(c.medium().is(ModItems.FILTER_FOAM.get()) && c.medium().getDamageValue() == 0, "a fresh sponge is in: " + c.medium());
-                var chest = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(new BlockPos(3, 1, 2)), null);
+                var chest = org.overengineer.bettacraft.platform.Platform.get().itemHandler(h.getLevel(), h.absolutePos(new BlockPos(3, 1, 2)), null);
                 boolean wornOut = false;
                 for (int i = 0; chest != null && i < chest.getSlots(); i++) {
                     ItemStack s = chest.getStackInSlot(i);
@@ -96,8 +95,8 @@ public final class FilterMediaAutomationGameTests {
         Features.set(Feature.FILTER_MEDIA_AUTOMATION, false);
         try {
             FilterChamberBlockEntity c = chamber(h, new BlockPos(2, 2, 2));
-            h.getLevel().invalidateCapabilities(h.absolutePos(new BlockPos(2, 2, 2)));
-            h.assertTrue(h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(new BlockPos(2, 2, 2)), Direction.UP) == null,
+            GameTestCompat.invalidateCapabilities(h.getLevel(), h.absolutePos(new BlockPos(2, 2, 2)));
+            h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().itemHandler(h.getLevel(), h.absolutePos(new BlockPos(2, 2, 2)), Direction.UP) == null,
                     "no capability with the switch off");
             HopperBlockEntity above = hopper(h, new BlockPos(2, 3, 2), Direction.DOWN);
             above.setItem(0, new ItemStack(ModItems.FILTER_FOAM.get(), 1));

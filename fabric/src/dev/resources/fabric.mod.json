@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "bettacraft_dev",
+  "version": "1",
+  "name": "Bettacraft development (smoke tests, GameTests)",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["org.overengineer.bettacraft.fabric.dev.FabricDevSmoke", "org.overengineer.bettacraft.fabric.dev.FabricGameTests"],
+    "client": ["org.overengineer.bettacraft.client.FabricClientSmoke"]
+  },
+  "mixins": ["bettacraft_dev.mixins.json"],
+  "depends": {
+    "bettacraft": "*"
+  }
+}

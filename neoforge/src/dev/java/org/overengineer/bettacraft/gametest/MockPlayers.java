@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
-import net.neoforged.neoforge.network.registration.ChannelAttributes;
 
 /**
  * Mock server players for GameTests, like {@link GameTestHelper#makeMockServerPlayerInLevel()}, but their fake
@@ -45,6 +44,21 @@ final class MockPlayers {
         }
     }
 
+    /** NeoForge: its ad-hoc channel attribute (M52: by reflection, the Fabric GameTests share this class). */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void anyChannel(Connection connection) {
+        try {
+            Class<?> attrs = Class.forName("net.neoforged.neoforge.network.registration.ChannelAttributes");
+            io.netty.util.AttributeKey key = (io.netty.util.AttributeKey) attrs.getField("ADHOC_CHANNELS").get(null);
+            io.netty.channel.Channel channel = (io.netty.channel.Channel) Connection.class.getMethod("channel").invoke(connection);
+            channel.attr(key).set(new AnyChannel());
+        } catch (ClassNotFoundException e) {
+            // Fabric: no such check
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     static ServerPlayer serverPlayer(GameTestHelper h) {
         return serverPlayer(h, false);
     }
@@ -69,7 +83,7 @@ final class MockPlayers {
         };
         Connection connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
-        connection.channel().attr(ChannelAttributes.ADHOC_CHANNELS).set(new AnyChannel());
+        anyChannel(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
         return player;
     }

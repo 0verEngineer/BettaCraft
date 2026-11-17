@@ -20,7 +20,7 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * Substrate of one interior floor block (PLAN 7.2): the block state whose look the floor takes, and whether a block
  * was paid for it (only paid substrate is given back when it is replaced, removed or the tank is broken).
  */
-public class InteriorFloorBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.model.ModelDataSource {
+public class InteriorFloorBlockEntity extends BlockEntity implements org.overengineer.bettacraft.platform.model.ModelDataSource, org.overengineer.bettacraft.platform.ClientSyncedBlockEntity {
     public static final org.overengineer.bettacraft.platform.model.ModelKey<BlockState> SUBSTRATE_STATE = new org.overengineer.bettacraft.platform.model.ModelKey<>("substrate_state");
 
     private BlockState substrate = Blocks.SAND.defaultBlockState();
@@ -84,6 +84,11 @@ public class InteriorFloorBlockEntity extends BlockEntity implements org.overeng
 
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+    }
+
+    @Override
+    public void handleUpdateTag(net.minecraft.nbt.CompoundTag tag, HolderLookup.Provider registries) {
+        loadWithComponents(tag, registries); // NeoForge's default
     }
 
     @Override

@@ -40,6 +40,29 @@ public interface ClientPlatform {
     /** A value of the render data a block entity at {@code pos} gave its model, or null. */
     <T> @Nullable T modelValue(BlockAndTintGetter level, BlockPos pos, ModelKey<T> key);
 
+    /** M52: the loader's adapter that draws one of our dynamic models (NeoForge model data, Fabric's renderer API). */
+    BakedModel wrap(DynamicModel model);
+
+    /** The quads of a (foreign) model without render data, of one render layer (null: all). */
+    java.util.List<net.minecraft.client.renderer.block.model.BakedQuad> quads(BakedModel model, @Nullable BlockState state,
+            @Nullable net.minecraft.core.Direction side, RandomSource rand, @Nullable RenderType layer);
+
+    /** The chunk render layers of a (foreign) model without render data. */
+    java.util.Collection<RenderType> layers(BakedModel model, BlockState state, RandomSource rand);
+
+    /** A model registered as an extra (standalone) model ({@code client.model.ModelSwaps#EXTRA}). */
+    BakedModel standaloneModel(net.minecraft.resources.ResourceLocation id);
+
+    /** A baked quad (NeoForge's carries its own ambient occlusion flag). */
+    net.minecraft.client.renderer.block.model.BakedQuad quad(int[] vertices, int tint, net.minecraft.core.Direction direction,
+            net.minecraft.client.renderer.texture.TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion);
+
+    /** The ambient occlusion flag of a quad (NeoForge), true elsewhere. */
+    boolean quadAo(net.minecraft.client.renderer.block.model.BakedQuad quad);
+
+    /** The pixels of a sprite as loaded (frame 0 on top). */
+    com.mojang.blaze3d.platform.NativeImage spriteImage(net.minecraft.client.renderer.texture.SpriteContents contents);
+
     final class Instance {
         private static final ClientPlatform PLATFORM = ServiceLoader.load(ClientPlatform.class, ClientPlatform.class.getClassLoader()).findFirst()
                 .orElseThrow(() -> new IllegalStateException("Bettacraft: no client platform implementation"));
