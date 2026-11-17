@@ -13,7 +13,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "17"; // M37: water values carry the fertilizer (M36: the server settings packet carries the betta size)
+    public static final String VERSION = "18"; // M50: the state of tanks travelling on Create contraptions (M37: water values carry the fertilizer)
 
     private ModNetwork() {}
 
@@ -43,7 +43,14 @@ public final class ModNetwork {
         })); // M27 (the editor of part b)
         r.playToClient(AlarmWaypointPayload.TYPE, AlarmWaypointPayload.STREAM_CODEC, ModNetwork::onAlarmWaypoint); // M32 part d
         r.playToClient(FeatureSyncPayload.TYPE, FeatureSyncPayload.STREAM_CODEC, ModNetwork::onFeatures); // M33 part b
+        r.playToClient(TravellingTankPayload.TYPE, TravellingTankPayload.STREAM_CODEC, ModNetwork::onTravellingTank); // M50
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+    }
+
+    private static void onTravellingTank(TravellingTankPayload payload, IPayloadContext ctx) {
+        if (FMLEnvironment.dist.isClient() && org.overengineer.bettacraft.compat.create.CreateCompat.loaded()) {
+            ctx.enqueueWork(() -> org.overengineer.bettacraft.compat.create.CreateTravelClient.accept(payload));
+        }
     }
 
     private static void onMonitorData(MonitorDataPayload payload, IPayloadContext ctx) {

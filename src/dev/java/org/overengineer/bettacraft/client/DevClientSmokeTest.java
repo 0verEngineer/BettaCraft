@@ -173,6 +173,9 @@ final class DevClientSmokeTest {
     private static final boolean M48_ONLY = Boolean.getBoolean("bettacraft.smoketest.m48only");
     private static final boolean M49_ONLY = Boolean.getBoolean("bettacraft.smoketest.m49only");
     private static DevClientSmokeM49 m49;
+    /** -Pcreate -Psmoketestm50: tanks on a turning bearing, a minecart contraption in a curve and an airship (M50). */
+    private static final boolean M50_ONLY = Boolean.getBoolean("bettacraft.smoketest.m50only");
+    private static DevClientSmokeM50 m50;
     private static DevClientSmokeM47 m47;
     private static DevClientSmokeM48 m48;
     /** -Pquests -Pkubejs -Psmoketestm45: the quest chapter in the quest book, English and German (M45). */
@@ -435,6 +438,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M50_ONLY) {
+                if (ticks == 60) m50 = new DevClientSmokeM50();
+                if (m50 != null && m50.tick()) {
+                    m50 = null;
+                    LOGGER.info("[smoketest] client world test finished (M50 only)");
                     mc.stop();
                 }
                 return;

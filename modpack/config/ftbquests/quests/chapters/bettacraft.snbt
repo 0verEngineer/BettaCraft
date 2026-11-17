@@ -1478,6 +1478,20 @@
 			title: "{\"translate\":\"quest.bettacraft.amano.title\"}",
 			x: -1.0d,
 			y: 8.6d
+		},
+		{
+			dependencies: ["2E62BB1B7A378210"],
+			description: ["{\"translate\":\"quest.bettacraft.powered_trip.desc\"}"],
+			id: "6EFB410DE3B61DCB",
+			optional: true,
+			rewards: [{ id: "408A4D4D056B7950", type: "xp", xp: 150 }],
+			tags: ["bettacraft_feature:compat.create.travelCare", "bettacraft_feature:compat.create.drive", "bettacraft_mod:create", "bettacraft_needs:power", "bettacraft_optional"],
+			tasks: [
+				{ advancement: "bettacraft:powered_trip", criterion: "", id: "50C6FFCEB0CE7719", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.powered_trip.title\"}",
+			x: 12.2d,
+			y: -6.8d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

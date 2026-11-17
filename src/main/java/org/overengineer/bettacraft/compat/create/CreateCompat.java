@@ -269,6 +269,7 @@ public final class CreateCompat {
     private static void tick(Object context) {
         try {
             if (!(ctxWorld.get(context) instanceof ServerLevel level)) return;
+            CreateTravel.tick(context); // M50: the care on the road
             int region = regionOf((CompoundTag) ctxBlockEntityData.get(context));
             if (region < 0 || level.getGameTime() % 20 != 0) return;
             Object contraption = ctxContraption.get(context);

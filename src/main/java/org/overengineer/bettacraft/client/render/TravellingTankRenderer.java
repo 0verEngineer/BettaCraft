@@ -48,7 +48,8 @@ public final class TravellingTankRenderer {
     public static final Int2ObjectOpenHashMap<Seen> SEEN = new Int2ObjectOpenHashMap<>();
     private static final it.unimi.dsi.fastutil.ints.IntOpenHashSet LOGGED = new it.unimi.dsi.fastutil.ints.IntOpenHashSet();
 
-    private record Animal(Entity entity, double hx, double hy, double hz, float phase, float speed, float radius) {}
+    /** M50: {@code lively} 0..1 from the animal's state on the road (hungry or sick animals swim slower and lower). */
+    private record Animal(Entity entity, double hx, double hy, double hz, float phase, float speed, float radius, float lively, boolean sick) {}
 
     private record Cache(ListTag source, List<Animal> animals) {}
 
@@ -65,6 +66,23 @@ public final class TravellingTankRenderer {
         } catch (ReflectiveOperationException | RuntimeException e) {
             return null;
         }
+    }
+
+    /**
+     * M50: whether this tank block (controller or member) is in a Sable sub-level (on an airship); checked once a second,
+     * on the main thread (its model data leaves the water out when the travelling water is drawn sloshing).
+     */
+    public static boolean travellingBlock(TankBlockEntity be) {
+        Level level = be.getLevel();
+        if (level == null || !level.isClientSide || !SableCompat.loaded()) return false;
+        long now = level.getGameTime();
+        if (be.travelCheckAt == Long.MIN_VALUE || now - be.travelCheckAt >= 20 || now < be.travelCheckAt) {
+            be.travelCheckAt = now;
+            boolean was = be.travelCheck;
+            be.travelCheck = SableCompat.inSubLevel(level, be.getBlockPos());
+            if (was != be.travelCheck) be.requestModelDataUpdate();
+        }
+        return be.travelCheck;
     }
 
     /** Whether this controller is drawn travelling: Create's copy on a contraption, or a tank in a Sable sub-level. */
@@ -85,6 +103,21 @@ public final class TravellingTankRenderer {
         if (!travelling(be)) return;
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
+        if (TravelWater.drawsWater(be)) {
+            // M50: the water sloshes; its blocks leave their water out once they know they travel (re-meshed once)
+            if (!be.contraptionView && !be.sloshMeshed) {
+                be.sloshMeshed = true;
+                for (long l : t.members()) {
+                    BlockPos p = BlockPos.of(l);
+                    if (mc.level.getBlockEntity(p) instanceof TankBlockEntity m) {
+                        travellingBlock(m);
+                        m.requestModelDataUpdate();
+                        mc.levelRenderer.setBlocksDirty(p.getX(), p.getY(), p.getZ(), p.getX(), p.getY(), p.getZ());
+                    }
+                }
+            }
+            TravelWater.render(be, t, partialTick, pose, buffers, light);
+        }
         if (t.regionId() >= 0 && !IrisCompat.renderingShadowPass()) {
             // Create: at once (its contraption blocks, the water too, are drawn before the miniature passes); Sable: queued
             if (be.contraptionView && !IrisCompat.shaderPackInUse()) MiniatureRenderer.drawTravellingNow(t, be.getBlockPos(), new Matrix4f(pose.last().pose()));
@@ -123,7 +156,10 @@ public final class TravellingTankRenderer {
                 } catch (IllegalAccessException ignored) {
                 }
             }
-            out.add(new Animal(e, hx, hy, hz, r.nextFloat() * Mth.TWO_PI, 0.6F + r.nextFloat() * 0.6F, 0.35F + r.nextFloat() * 0.5F));
+            float sat = org.overengineer.bettacraft.tank.TravelCare.satiation(tag);
+            boolean sick = org.overengineer.bettacraft.tank.TravelCare.sick(tag);
+            float lively = sick ? 0.3F : 0.45F + 0.55F * Mth.clamp(sat * 2F, 0F, 1F);
+            out.add(new Animal(e, hx, hy, hz, r.nextFloat() * Mth.TWO_PI, 0.6F + r.nextFloat() * 0.6F, 0.35F + r.nextFloat() * 0.5F, lively, sick));
         }
         be.travelCache = new Cache(src, out);
         return out;
@@ -146,8 +182,8 @@ public final class TravellingTankRenderer {
             double rx = Math.min(a.radius(), Math.max(0, (x1 - x0) / 2)), rz = Math.min(a.radius(), Math.max(0, (z1 - z0) / 2));
             cx = Mth.clamp(cx, x0 + rx, x1 - rx);
             cz = Mth.clamp(cz, z0 + rz, z1 - rz);
-            cy = Mth.clamp(cy, y0, y1);
-            double th = time * 0.035 * a.speed() + a.phase();
+            cy = Mth.clamp(a.sick() ? y0 + (cy - y0) * 0.3 : cy, y0, y1); // M50: a sick animal stays near the floor
+            double th = time * 0.035 * a.speed() * a.lively() + a.phase();
             double px = cx + rx * Math.cos(th), pz = cz + rz * Math.sin(th);
             double py = Mth.clamp(cy + 0.08 * Math.sin(th * 0.5 + a.phase()), y0, y1);
             double dx = -rx * Math.sin(th), dz = rz * Math.cos(th);

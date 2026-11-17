@@ -490,6 +490,7 @@ public class BettaEntity extends AbstractFish {
     @Override
     public void aiStep() {
         super.aiStep();
+        if (tankWater != null && !tankWater.near(position())) tankWater = null; // M50: moved by another mod, the care finds the tank again
         var water = tankWater;
         if (water != null && !level().isClientSide && isInWater()) {
             // Keep our bettas inside the tank water (walls stop them anyway; this keeps them off the surface and, in a

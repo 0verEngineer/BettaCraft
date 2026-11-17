@@ -31,6 +31,14 @@ public final class TankWaterVolume {
     }
 
     /** Bounding box of the water (also covers the notches of a free shape). */
+    /**
+     * M50: whether a point is at this water at all (within a few blocks of its box). An animal far away from the tank it
+     * remembers was moved by another mod (Sable puts an airship down with what swims in it): its remembered water is stale.
+     */
+    public boolean near(net.minecraft.world.phys.Vec3 p) {
+        return box().inflate(4).contains(p);
+    }
+
     public AABB box() {
         return box;
     }

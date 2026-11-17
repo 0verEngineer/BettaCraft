@@ -39,7 +39,9 @@ import org.slf4j.LoggerFactory;
  *     was turned, installs the tank again, releases the packed animals at their places and brings along the animals a
  *     mover left at the old place. Blocks that did not come along count as broken ({@link TankMultiblock#removeBlocks}).</li>
  *     <li>A tank on a moving structure ({@link #TRAVELLING}, Sable sub-levels) keeps its animals packed and its care
- *     paused until it is put down (B2 in the milestone: the trip is drawn, not simulated).</li>
+ *     paused until it is put down (B2 in M32: the trip is drawn, not simulated) - unless {@code features.compat.create.travelCare}
+ *     is on (M50): then the animals whose type Sable keeps in its sub-levels ({@link #RETAIN}, ours by our data) swim on in the
+ *     tank on the airship and its care runs as on the ground; only the others travel packed.</li>
  * </ul>
  */
 @EventBusSubscriber(modid = BettaCraft.MOD_ID)
@@ -58,6 +60,27 @@ public final class TankMoves {
 
     /** Where a point of a moving structure is in the world now (Sable: the ship's pose); set by the Sable compat. */
     public static volatile java.util.function.BiFunction<Level, Vec3, Vec3> PROJECT = (l, p) -> p;
+
+    /**
+     * M50: entity types Sable keeps in its sub-levels ({@code sable:retain_in_sub_level}; all ours are in it by our data). Other
+     * types it would push out of the airship into the world, so they travel packed.
+     */
+    public static final net.minecraft.tags.TagKey<EntityType<?>> RETAIN = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE,
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("sable", "retain_in_sub_level"));
+
+    /** M50: whether an animal of this type swims on in a tank on a moving structure (Sable) instead of travelling packed. */
+    public static boolean swimsOn(EntityType<?> type) {
+        return TravelCare.enabled() && type.is(RETAIN);
+    }
+
+    private static boolean swimsOn(CompoundTag tag) {
+        return EntityType.by(tag).map(TankMoves::swimsOn).orElse(false);
+    }
+
+    /** M50: whether the care of a tank on a moving structure runs (features.compat.create.travelCare). */
+    public static boolean livesOn(Level level, BlockPos pos) {
+        return TravelCare.enabled() && travelling(level, pos);
+    }
 
     /** Interior regions of tanks on Create contraptions (no block entity in the world): where they are now (null = gone). */
     private record TravelSpot(ResourceKey<Level> dim, java.util.function.Supplier<Vec3> where) {}
@@ -89,6 +112,7 @@ public final class TankMoves {
             CompoundTag t = new CompoundTag();
             if (!e.save(t)) continue;
             markPlace(t, e, tank);
+            TravelCare.annotate(t, e); // M50
             list.add(t);
             packedOut.add(e);
         }
@@ -319,11 +343,21 @@ public final class TankMoves {
         boolean travelling = travelling(level, home);
         int released = 0, brought = 0;
         if (travelling) {
-            // on a moving structure the animals travel packed (also the ones a mover left at the old place)
-            stowed.addAll(packAndRemove(level, left, before));
+            // on a moving structure the animals travel packed (also the ones a mover left at the old place); M50: with the
+            // care on the road the ones Sable keeps in its sub-levels swim on in the tank on the airship
+            List<Entity> packNow = new ArrayList<>();
+            for (Entity e : left) {
+                if (e.isAlive() && swimsOn(e.getType()) && place(level, e, map, true, home)) brought++;
+                else packNow.add(e);
+            }
+            stowed.addAll(packAndRemove(level, packNow, before));
+            ListTag keep = new ListTag();
+            ListTag free = new ListTag();
+            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompound(i)) ? free : keep).add(stowed.getCompound(i));
+            released = release(level, free, map, home);
             TankBlockEntity c = TankMultiblock.getController(level, home);
             if (c != null) {
-                c.stowed.addAll(stowed);
+                c.stowed.addAll(keep);
                 c.markTankChanged();
             }
         } else {
@@ -331,9 +365,16 @@ public final class TankMoves {
             for (Entity e : left) if (e.isAlive() && place(level, e, map, true, home)) brought++;
         }
         TankBlockEntity c = TankMultiblock.getController(level, home);
-        if (c != null) c.markTankChanged();
+        if (c != null) {
+            brought += adoptMoved(level, c); // M50: animals the mover took along itself (Sable puts down what swam on its airship)
+            if (be != null && !travelling) {
+                TravelCare.arrived(level, c, be.tripLog); // M50: the trip on a Create contraption into the log
+                be.tripLog = null;
+            }
+            c.markTankChanged();
+        }
         LOGGER.info("Tank {} moved from {} to {} (rotation {}): {} animal(s) released, {} brought along{}", t.id(), from, t.anchor(),
-                java.util.Arrays.toString(map.r()), released, brought, travelling ? ", travelling packed" : "");
+                java.util.Arrays.toString(map.r()), released, brought, travelling ? (TravelCare.enabled() ? ", on a moving structure" : ", travelling packed") : "");
     }
 
     /**
@@ -341,12 +382,39 @@ public final class TankMoves {
      * unless the tank is on a moving structure.
      */
     static void unpackLeftovers(ServerLevel level, BlockPos pos, TankBlockEntity be) {
-        if ((level.getGameTime() + pos.asLong()) % 20 != 0 || travelling(level, pos)) return;
+        if ((level.getGameTime() + pos.asLong()) % 20 != 0) return;
         ListTag stowed = be.stowed;
+        if (travelling(level, pos)) {
+            // M50: on a moving structure the ones that may swim on come out when the care runs on the road
+            ListTag keep = new ListTag(), free = new ListTag();
+            for (int i = 0; i < stowed.size(); i++) (swimsOn(stowed.getCompound(i)) ? free : keep).add(stowed.getCompound(i));
+            if (free.isEmpty()) return;
+            be.stowed = keep;
+            int n = release(level, free, null);
+            be.markTankChanged();
+            LOGGER.info("Tank {} on a moving structure at {} let {} packed animal(s) swim", be.getTank().id(), pos, n);
+            return;
+        }
         be.stowed = new ListTag();
         int n = release(level, stowed, null);
         be.markTankChanged();
         LOGGER.info("Tank {} at {} unpacked {} animal(s)", be.getTank().id(), pos, n);
+    }
+
+    /**
+     * M50: animals of the tank (by its id) the mover took along itself, inside the arrived tank but still adopted by its old
+     * controller position (Sable moves what is in its plot when it puts an airship down): adopted by the new controller.
+     */
+    private static int adoptMoved(ServerLevel level, TankBlockEntity c) {
+        int n = 0;
+        for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) {
+            TankRef ref = e.getData(org.overengineer.bettacraft.registry.ModAttachments.TANK_REF.get());
+            if (c.getBlockPos().equals(ref.controller())) continue;
+            TankInhabitants.adopt(e, c);
+            c.getTank().inhabitants().add(e.getUUID());
+            n++;
+        }
+        return n;
     }
 
     /** Key of a packed animal's place in its tank (from the tank's lowest corner), for drawing it while the tank travels. */
@@ -370,6 +438,7 @@ public final class TankMoves {
             CompoundTag t = new CompoundTag();
             if (!e.isAlive() || !e.save(t)) continue;
             markPlace(t, e, tank);
+            TravelCare.annotate(t, e); // M50
             out.add(t);
             e.discard();
         }

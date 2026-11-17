@@ -26,6 +26,8 @@ public final class ClientConfig {
     public static final ModConfigSpec.BooleanValue INTERIOR_LEAVE_HINT;
     /** M18: how strongly coloured tank lights tint the water (0 = not at all). */
     public static final ModConfigSpec.DoubleValue LIGHT_TINT;
+    /** M50: how strongly the water of a travelling tank sloshes (0 = flat like a standing tank). */
+    public static final ModConfigSpec.DoubleValue TRAVEL_SLOSHING;
     /** M23: volume of the device sounds per kind (times the power regulator of the device). */
     public static final ModConfigSpec.DoubleValue VOLUME_FILTER, VOLUME_AIR_PUMP, VOLUME_AIR_STONE, VOLUME_FLOW_PUMP, VOLUME_FEEDER;
     /**
@@ -60,6 +62,9 @@ public final class ClientConfig {
                 .defineInRange("signScale", 1.0, 0.5, 2.0);
         LIGHT_TINT = b.comment("How strongly coloured aquarium lights tint the water of their tank: 0 = not at all (the light colour only shows at the lamp), 1 = water in the light colour")
                 .defineInRange("lightTint", 0.6, 0.0, 1.0);
+        TRAVEL_SLOSHING = b.comment("How strongly the water of a tank on a Create contraption or an airship sloshes when it speeds up, brakes or takes",
+                        "a curve: the surface tilts and waves run over it (0 = off: flat water as in a standing tank, 1 = natural, 2 = twice as much)")
+                .defineInRange("travelSloshing", 1.0, 0.0, 2.0);
         WALK_ANIMATION_BOOST = b.comment("Leg movement of mobs and animals walking in tanks and terraria: they walk slowly there and the mobs in glass are shrunk, "
                 + "so vanilla barely moves their legs (they glide). auto = matched to their size (1.5 for shrunk mobs, 3 for animals in real size), "
                 + "a number from 0.1 to 10 = that factor for all, 0 = like vanilla")

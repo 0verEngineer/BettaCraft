@@ -40,6 +40,8 @@ public class TankBlockEntity extends BlockEntity {
      * the fluid pass that draws the tank water in the world).
      */
     public static final ModelProperty<Boolean> WATER_IN_MODEL = new ModelProperty<>();
+    /** M50: the water of this travelling tank block is drawn sloshing by its controller's renderer, not by the model or fluid. */
+    public static final ModelProperty<Boolean> WATER_DYNAMIC = new ModelProperty<>();
 
     /** Client-side controllers currently loaded (used by the miniature renderer; never touched on the server). */
     public static final Set<TankBlockEntity> CLIENT_CONTROLLERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -175,10 +177,18 @@ public class TankBlockEntity extends BlockEntity {
     public boolean contraptionView;
     /** M32 part b (client): the swimming animals drawn while travelling, and when the client last checked for a sub-level. */
     public Object travelCache;
+    /** M50 (client): the water of this travelling tank is drawn sloshing, its blocks were told to leave theirs out. */
+    public boolean sloshMeshed;
+    /** M50 (client): decides whether a tank block's water is drawn sloshing by the travelling renderer (set by the client). */
+    public static volatile java.util.function.Predicate<TankBlockEntity> DYNAMIC_WATER = be -> false;
     public long travelCheckAt = Long.MIN_VALUE;
     public boolean travelCheck;
 
     public net.minecraft.nbt.ListTag stowed() { return stowed; }
+
+    /** M50: the summary of a trip on a Create contraption ({@link TravelCare#TRIP_KEY}), written into the log on arrival. Transient. */
+    @Nullable
+    CompoundTag tripLog;
 
     /** M32 part b (client): Create's copy of a tank block on a contraption (its level is the contraption's, not the world). */
     public boolean onContraption() {
@@ -317,6 +327,7 @@ public class TankBlockEntity extends BlockEntity {
             if (!at.equals(worldPosition)) movedFrom = at;
         }
         stowed = tag.getList("stowed", Tag.TAG_COMPOUND).copy();
+        tripLog = tag.contains(TravelCare.TRIP_KEY, Tag.TAG_COMPOUND) ? tag.getCompound(TravelCare.TRIP_KEY).copy() : null; // M50
         if (tag.contains("tank", Tag.TAG_COMPOUND)) {
             tank = TankData.load(tag.getCompound("tank"));
         } else if (tag.contains("tank_view", Tag.TAG_COMPOUND)) {
@@ -437,7 +448,8 @@ public class TankBlockEntity extends BlockEntity {
     @Override
     public ModelData getModelData() {
         var b = ModelData.builder().with(GLASS_STATE, getGlassState()).with(STYLE, style);
-        if (onContraption()) b.with(WATER_IN_MODEL, true);
+        if (DYNAMIC_WATER.test(this)) b.with(WATER_DYNAMIC, true); // M50
+        else if (onContraption()) b.with(WATER_IN_MODEL, true);
         return b.build();
     }
 

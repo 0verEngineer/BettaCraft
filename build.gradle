@@ -373,6 +373,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm50')) {
+                // gradlew runClient -Pcreate -Psmoketestm50 : the M50 scene (a tank on a fast turning bearing that stops at once,
+                // a tank on a minecart contraption in a rail curve: the water sloshes; a tank on a Sable airship with live bettas)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m50only', 'true'
+            }
             if (project.hasProperty('smoketestm49')) {
                 // gradlew runClient -Psmoketestm49 : the M49 scene (a reef tank on cabinets with a sump and a calcium reactor, the
                 // cabinet, sump and reactor windows and the tab "Sump"; a brackish paludarium with a mangrove, archerfish,
@@ -918,9 +924,19 @@ tasks.register('runMultiplayerTest') {
         logs.deleteDir()
         logs.mkdirs()
         def runDir = file('run')
-        // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage / -Pcreate are not part of this test
+        // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage are not part of this test; M50: -Pcreate puts
+        // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
+        def mpCreate = project.hasProperty('create')
         ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods', 'run/integration-mods', 'run/zoo-mods'].each { d ->
-            (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j -> new File(runDir, "mods/${j.name}").delete() }
+            (file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j ->
+                ['mods', 'client1/mods', 'client2/mods'].each { m ->
+                    def dst = new File(runDir, "${m}/${j.name}")
+                    if (mpCreate && d == 'run/create-mods') {
+                        dst.parentFile.mkdirs()
+                        java.nio.file.Files.copy(j.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                    } else dst.delete()
+                }
+            }
         }
         def props = new Properties()
         def sp = new File(runDir, 'server.properties')

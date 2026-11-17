@@ -625,6 +625,7 @@ public class TankmateEntity extends AbstractFish {
     @Override
     public void aiStep() {
         super.aiStep();
+        if (tankWater != null && !tankWater.near(position())) tankWater = null; // M50: moved by another mod, the care finds the tank again
         TankWaterVolume w = tankWater;
         if (w != null && !level().isClientSide && isInWater()) {
             // keep the whole fish inside the water of the tank (not in the glass, not above the surface); 1.33.3: the

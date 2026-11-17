@@ -54,6 +54,8 @@ public final class TankWaterRenderer {
         if (state.getValue(TankBlock.FILL) <= 0) return;
         // with a shader pack the tank model draws the water instead (see TankBakedModel#waterQuads)
         if (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) return;
+        // M50: a travelling tank (airship) draws its sloshing water itself (the model data of the block says so)
+        if (Boolean.TRUE.equals(level.getModelData(pos).get(org.overengineer.bettacraft.tank.TankBlockEntity.WATER_DYNAMIC))) return;
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
         int light = LevelRenderer.getLightColor(level, pos);

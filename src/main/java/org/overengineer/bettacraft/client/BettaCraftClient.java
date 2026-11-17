@@ -127,6 +127,9 @@ public final class BettaCraftClient {
         NeoForge.EVENT_BUS.addListener(ItemHintTooltips::onTooltip);
 
         NeoForge.EVENT_BUS.addListener(MiniatureRenderer::onRenderStage);
+        // M50: the sloshing water of travelling tanks (one step per frame; the blocks leave their water out)
+        org.overengineer.bettacraft.tank.TankBlockEntity.DYNAMIC_WATER = org.overengineer.bettacraft.client.render.TravelWater::drawsWater;
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderFrameEvent.Pre e) -> org.overengineer.bettacraft.client.render.TravelWater.nextFrame());
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> ClientInteriorCache.tick());
         // M18: colour of the tank lights for the water (their shader light colour: IrisBlockIdsMixin)
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post e) -> org.overengineer.bettacraft.client.tank.TankLightTint.tick());

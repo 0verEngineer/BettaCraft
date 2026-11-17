@@ -136,6 +136,19 @@ final class DevClientSmokeMP {
                 then(40, () -> sendAquatic(s[0]));
             }
             case "use" -> use("sneak".equals(args));
+            case "travel" -> {
+                // M50: the tank on the turning bearing: the states of the travelling tank this client got, the contraption, the
+                // packed animals its copy of the tank shows
+                BlockPos at = pos(args);
+                whenReady(20, 8, () -> travelReceived() > 0, () -> {
+                    Minecraft mc = Minecraft.getInstance();
+                    var list = mc.level.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, new net.minecraft.world.phys.AABB(at).inflate(6),
+                            e -> e.getType().toShortString().contains("contraption"));
+                    int packed = -1;
+                    for (var e : list) packed = Math.max(packed, travelPacked(e));
+                    send("travel " + travelReceived() + " " + !list.isEmpty() + " " + packed);
+                });
+            }
             case "light" -> {
                 // M18: the colour of the dyed light and the tint of its tank's water on this client
                 String[] s = args.split(";", 2);
@@ -911,6 +924,28 @@ final class DevClientSmokeMP {
 
     private static void then(int delay, Runnable action) {
         steps.add(new Step(delay, action));
+    }
+
+    /** M50: how many states of travelling tanks this client got (only with Create). */
+    private static int travelReceived() {
+        return net.neoforged.fml.ModList.get().isLoaded("create") ? org.overengineer.bettacraft.compat.create.CreateTravelClient.received : -1;
+    }
+
+    /** M50: the packed animals of the tank on this contraption entity as this client's copy of it shows them (reflection on Create). */
+    private static int travelPacked(net.minecraft.world.entity.Entity contraption) {
+        try {
+            Object c = contraption.getClass().getMethod("getContraption").invoke(contraption);
+            @SuppressWarnings("unchecked")
+            java.util.Map<BlockPos, ?> blocks = (java.util.Map<BlockPos, ?>) c.getClass().getMethod("getBlocks").invoke(c);
+            int n = -1;
+            for (BlockPos local : blocks.keySet()) {
+                Object be = c.getClass().getMethod("getBlockEntityClientSide", BlockPos.class).invoke(c, local);
+                if (be instanceof org.overengineer.bettacraft.tank.TankBlockEntity t && t.contraptionView) n = Math.max(n, t.stowed().size());
+            }
+            return n;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return -2;
+        }
     }
 
     /**

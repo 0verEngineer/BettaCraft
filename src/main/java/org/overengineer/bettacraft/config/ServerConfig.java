@@ -193,6 +193,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue DRIVE_FULL_SPEED, DRIVE_FE, DRIVE_MAX_FE;
     public static final ModConfigSpec.DoubleValue DRIVE_STRESS_PER_FE, DRIVE_IDLE_STRESS, DRIVE_FE_PER_SPRING_TICK;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> DRIVE_CABINET_SIDES;
+    /** M50: the care of tanks on Create contraptions (features.compat.create.travelCare). */
+    public static final ModConfigSpec.DoubleValue TRAVEL_DYNAMO_SPEED;
+    public static final ModConfigSpec.IntValue TRAVEL_BATTERY_FE;
     public static final ModConfigSpec.DoubleValue FERT_PORTION_BLOCKS, FERT_DECAY, FERT_PLANT_USE, FERT_BOOST, FERT_OVERDOSE, FERT_ALGAE, FERT_PIPE_UP_TO;
     public static final ModConfigSpec.IntValue FERT_MAKER_TICKS, FERT_MAKER_FE;
     public static final ModConfigSpec.DoubleValue DIET_VARIETY_DAYS;
@@ -833,6 +836,16 @@ public final class ServerConfig {
                 .defineListAllowEmpty("cabinetSides", java.util.List.of("back", "left", "right", "front", "bottom"), () -> "back",
                         o -> o instanceof String str && org.overengineer.bettacraft.equipment.DriveSide.byIdOrNull(str) != null
                                 && org.overengineer.bettacraft.equipment.DriveSide.byIdOrNull(str) != org.overengineer.bettacraft.equipment.DriveSide.NONE);
+        b.pop();
+
+        b.comment("M50: tanks on Create contraptions (features.compat.create.travelCare): their data is simulated during the trip, the filters,",
+                "heaters and coolers that travel along take the tank's FE (its buffer, FE batteries of the contraption next to the tank, drive",
+                "adapters of the contraption at the tank that turn with the trip)").push("createTravel");
+        TRAVEL_DYNAMO_SPEED = b.comment("Speed of the contraption (blocks per second) at which a drive adapter travelling at the tank gives the full",
+                        "power of an input (createDrive.fePerTickPerInput; slower proportionally)")
+                .defineInRange("dynamoFullSpeed", 8.0, 0.1, 1000.0);
+        TRAVEL_BATTERY_FE = b.comment("FE per tick the tank takes at most from each FE battery of the contraption next to it (0: none)")
+                .defineInRange("batteryFePerTick", 256, 0, 10000000);
         b.pop();
 
         b.comment("M37: liquid fertilizer (features.fertilizer.enabled): it speeds up the growth of the aquarium and floating plants of",

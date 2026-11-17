@@ -226,6 +226,7 @@ public final class DevSmokeMP {
             case "precustom" -> check(name + ": server preset custom again: " + text.substring(10)
                     + " (expected true custom true NORMAL)", text.equals("precustom true custom true NORMAL"));
             case "error" -> fail(name + ": " + text.substring(6));
+            case "travel" -> checkTravel(name, a); // M50
             default -> { }
         }
         reports.put(name + ":" + a[0] + (a.length > 1 && java.util.Set.of("state", "aqua", "critters", "seen", "mini", "mine", "sizes").contains(a[0]) ? a[1] : "")
@@ -1473,6 +1474,7 @@ public final class DevSmokeMP {
             org.overengineer.bettacraft.command.PresetCommand.apply(server, org.overengineer.bettacraft.config.Preset.CUSTOM, false);
             say("preset", "all", "precustom");
         }, () -> reports.containsKey(P1 + ":precustom") && reports.containsKey(P2 + ":precustom"), 20 * 30));
+        if (net.neoforged.fml.ModList.get().isLoaded("create")) travel(); // M50: with -Pcreate a tank turns on a bearing
         steps.add(new Step("third look", () -> say("state", "all", "3," + tankArg()),
                 () -> reports.containsKey(P1 + ":state3") && reports.containsKey(P2 + ":state3"), 20 * 30));
         steps.add(new Step("quit", () -> say("quit", "all", ""), () -> server.getPlayerList().getPlayerCount() == 0, 20 * 60));
@@ -1517,6 +1519,126 @@ public final class DevSmokeMP {
             failures.add("exception " + e);
             finish();
         }
+    }
+
+    // ------------------------------------------------------------------ M50: a tank on a turning bearing (only with Create)
+
+    private static BlockPos travelBearing;
+    private static net.minecraft.world.level.block.entity.BlockEntity travelBearingBe;
+    private static net.minecraft.world.entity.Entity travelContraption;
+    private static java.util.UUID travelTank;
+    private static final List<java.util.UUID> travelBettas = new ArrayList<>();
+    private static float travelAngle = Float.NaN;
+
+    private static java.lang.reflect.Field field(Class<?> c, String name) throws NoSuchFieldException {
+        for (Class<?> k = c; k != null; k = k.getSuperclass()) {
+            try {
+                java.lang.reflect.Field f = k.getDeclaredField(name);
+                f.setAccessible(true);
+                return f;
+            } catch (NoSuchFieldException ignored) {
+            }
+        }
+        throw new NoSuchFieldException(name);
+    }
+
+    /** M50: before the block entities tick, the bearing is turned on (it would put its contraption down without a motor). */
+    @SubscribeEvent
+    public static void onServerTickPre(net.neoforged.neoforge.event.tick.ServerTickEvent.Pre event) {
+        if (ENABLED && !finished) turnBearing();
+    }
+
+    /** Holds the bearing (no motor) at the next angle: it turns by hand, 3 degrees a tick. */
+    private static void turnBearing() {
+        if (travelBearingBe == null || Float.isNaN(travelAngle)) return;
+        try {
+            travelAngle += 3F;
+            field(travelBearingBe.getClass(), "assembleNextTick").setBoolean(travelBearingBe, false);
+            field(travelBearingBe.getClass(), "angle").setFloat(travelBearingBe, travelAngle);
+        } catch (ReflectiveOperationException e) {
+            fail("bearing: " + e);
+        }
+    }
+
+    /**
+     * M50: a stocked tank above the main tank goes onto a mechanical bearing that turns: both clients see the contraption,
+     * get the state of the travelling tank (its two packed bettas) and report it; put down again, both bettas are back in
+     * the world exactly once.
+     */
+    private static void travel() {
+        steps.add(new Step("travel: assemble", () -> {
+            ServerLevel level = server.overworld();
+            travelBearing = mainMin.offset(1, 9, 1);
+            clearTravel(level); // the dev world keeps what an earlier run left there
+            var bearing = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.parse("create:mechanical_bearing"));
+            net.minecraft.world.level.block.state.BlockState s = bearing.defaultBlockState();
+            for (var p : s.getProperties()) if (p.getName().equals("facing")) s = s.setValue((net.minecraft.world.level.block.state.properties.DirectionProperty) p, net.minecraft.core.Direction.UP);
+            level.setBlock(travelBearing, s, 3);
+            travelBearingBe = level.getBlockEntity(travelBearing);
+            List<BlockPos> blocks = new ArrayList<>();
+            for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) blocks.add(travelBearing.offset(x, 1, z));
+            for (BlockPos p : blocks) level.setBlock(p, ModBlocks.TANK.get().defaultBlockState(), 2);
+            TankMultiblock.formAll(level, blocks);
+            TankBlockEntity c = TankMultiblock.getController(level, travelBearing.above());
+            TankInteractions.changeWater(level, c, 2000);
+            travelTank = c.getTank().id();
+            travelBettas.clear();
+            for (boolean female : new boolean[]{false, true}) {
+                var d = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(
+                        net.minecraft.util.RandomSource.create(female ? 4 : 3)), female, 0);
+                TankInhabitants.insert(level, c, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d),
+                        org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false);
+            }
+            for (var e : TankInhabitants.liveInhabitants(level, c.getTank())) travelBettas.add(e.getUUID());
+            try {
+                travelBearingBe.getClass().getMethod("assemble").invoke(travelBearingBe);
+                travelContraption = (net.minecraft.world.entity.Entity) field(travelBearingBe.getClass(), "movedContraption").get(travelBearingBe);
+            } catch (ReflectiveOperationException e) {
+                fail("travel: bearing " + e);
+            }
+            check("travel: the bearing took the tank with " + travelBettas.size() + " bettas", travelContraption != null && travelBettas.size() == 2);
+            travelAngle = 0F;
+            turnBearing();
+            say("travel", "all", travelBearing.getX() + "," + travelBearing.getY() + "," + travelBearing.getZ());
+        }, () -> reports.containsKey(P1 + ":travel") && reports.containsKey(P2 + ":travel"), 20 * 40));
+        steps.add(new Step("travel: put down", () -> {
+            travelAngle = Float.NaN;
+            try {
+                field(travelBearingBe.getClass(), "angle").setFloat(travelBearingBe, 0F);
+                if (travelContraption != null) travelContraption.getClass().getMethod("setAngle", float.class).invoke(travelContraption, 0F);
+                travelBearingBe.getClass().getMethod("disassemble").invoke(travelBearingBe);
+            } catch (ReflectiveOperationException e) {
+                fail("travel: disassembly " + e);
+            }
+        }, () -> {
+            TankBlockEntity c = TankMultiblock.getController(server.overworld(), travelBearing.above());
+            return c != null && c.getTank().id().equals(travelTank) && TankInhabitants.liveInhabitants(server.overworld(), c.getTank()).size() == 2;
+        }, 20 * 15));
+        steps.add(new Step("travel: check", () -> {
+            int once = 0;
+            for (var u : travelBettas) if (server.overworld().getEntity(u) != null) once++;
+            TankBlockEntity c = TankMultiblock.getController(server.overworld(), travelBearing.above());
+            check("travel: both bettas are back exactly once (" + once + ")", once == 2);
+            check("travel: the trip is in the tank's log", c != null && c.getTank().log().stream().anyMatch(l -> l.key().equals("log.bettacraft.travel.arrived")));
+            clearTravel(server.overworld());
+        }, () -> true, 20));
+    }
+
+    /** Removes the travel stage (tank blocks, bearing, bettas) around the bearing's place. */
+    private static void clearTravel(ServerLevel level) {
+        net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(travelBearing).inflate(4);
+        for (var e : level.getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class, box)) e.discard();
+        for (BlockPos p : BlockPos.betweenClosed(travelBearing.offset(-2, 0, -2), travelBearing.offset(3, 3, 3))) {
+            level.removeBlockEntity(p);
+            level.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2 | 16);
+        }
+    }
+
+    private static void checkTravel(String name, String[] a) {
+        // travel <states received> <contraption seen> <packed animals on the client's copy>
+        int received = a.length > 1 ? Integer.parseInt(a[1]) : -1, packed = a.length > 3 ? Integer.parseInt(a[3]) : -1;
+        check(name + ": travelling tank states received " + received + ", contraption seen " + (a.length > 2 ? a[2] : "?") + ", packed " + packed + " (server 2)",
+                received > 0 && a.length > 2 && "true".equals(a[2]) && packed == 2);
     }
 
     private static void finish() {

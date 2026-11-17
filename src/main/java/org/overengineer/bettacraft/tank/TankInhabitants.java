@@ -194,7 +194,7 @@ public final class TankInhabitants {
             player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
             return ItemInteractionResult.CONSUME;
         }
-        if (TankMoves.travelling(level, pos)) { // M32 part b: on an airship the animals travel packed
+        if (TankMoves.travelling(level, pos) && !TankMoves.swimsOn(type)) { // M32 part b: on an airship the animals travel packed (M50: ours swim on)
             player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
             return ItemInteractionResult.CONSUME;
         }

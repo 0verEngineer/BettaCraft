@@ -53,8 +53,9 @@ public final class TankCare {
         if (be.orphanCheck > 0 && --be.orphanCheck == 0 && level instanceof ServerLevel s) TankMultiblock.repairOrphan(s, pos, be);
         if (!(level instanceof ServerLevel server) || !be.isController()) return;
         if (!be.stowed.isEmpty()) TankMoves.unpackLeftovers(server, pos, be);
-        // M32 part b: on a moving structure (Sable sub-level) the care is paused and the animals travel packed
-        if ((level.getGameTime() + pos.asLong()) % INTERVAL == 0 && TankMoves.travelling(level, pos)) return;
+        // M32 part b: on a moving structure (Sable sub-level) the care is paused and the animals travel packed (M50: unless
+        // the care runs on the road, features.compat.create.travelCare)
+        if ((level.getGameTime() + pos.asLong()) % INTERVAL == 0 && TankMoves.travelling(level, pos) && !TravelCare.enabled()) return;
         // the air gap below the glass (tank.waterHeadroom) is in the fill states: recompute them once after loading and
         // whenever the config changes, not only on the next change of the water amount
         int headroom = TankData.headroom();
@@ -75,6 +76,10 @@ public final class TankCare {
         if (!ServerConfig.getOr(ServerConfig.SIMULATE_UNLOADED_TIME, false)) dt = Math.min(dt, INTERVAL * 5L);
         be.lastCareTick = now;
         care(server, be, dt);
+        // M50: a tank whose devices run on power on an airship
+        if (be.lastDemand > 0 && be.filterPowered && be.heatPowered && TankMoves.livesOn(level, pos)) {
+            org.overengineer.bettacraft.progression.Progress.awardNear(server, be, org.overengineer.bettacraft.progression.Progress.POWERED_TRIP, 0);
+        }
         if ((now / INTERVAL) % (RECONCILE_INTERVAL / INTERVAL) == 0) {
             TankInhabitants.reconcile(server, be);
         }
@@ -130,6 +135,8 @@ public final class TankCare {
 
     public static float ambient(ServerLevel level, TankData tank) {
         BlockPos c = BlockPos.containing(TankInhabitants.tankBox(tank).getCenter());
+        // M50: on an airship (Sable sub-level) the air of the place where the ship is, not of its plot far away
+        if (TankMoves.travelling(level, c)) return TravelCare.ambientAt(level, TankMoves.PROJECT.apply(level, TankInhabitants.tankBox(tank).getCenter()));
         float biome = level.getBiome(c).value().getBaseTemperature();
         float t = TankTemperature.ambientFromBiome(biome);
         if (level.dimensionType().hasSkyLight() && !level.dimensionType().hasFixedTime()) {

@@ -95,6 +95,8 @@ public final class Progress {
     public static final String CREATE_DRIVE = "create_drive";
     /** A tank arrived somewhere else in one piece (Create contraption, Sable sub-level). */
     public static final String TRAVELLED = "travelling_tank";
+    /** M50: the devices of a travelling tank ran on the power of its contraption or airship. */
+    public static final String POWERED_TRIP = "powered_trip";
     // M47
     /** The first tadpoles of the dwarf clawed frogs hatched in a tank (log frog.tadpoles_hatched). */
     public static final String FROG_TADPOLE = "frog_tadpole";

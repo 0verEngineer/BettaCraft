@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:travelling_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "powered_trip"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.powered_trip.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:redstone_torch"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.powered_trip.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

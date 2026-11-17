@@ -219,6 +219,8 @@ QUESTS = [
     ("mudskipper", [adv("mudskipper_paludarium")], ["paludarium"], -8.75, -1.60, 100, None),
     ("mangrove", [adv("mangrove_grown")], ["plants"], -1.00, -5.00, 100, None),
     ("amano", [adv("amano_young")], ["critters_bred"], -1.00, 8.60, 250, "hexagon"),
+    # ------------------------------------------------------------ M50: the care on the road (Create, optional)
+    ("powered_trip", [adv("powered_trip")], ["travelling_tank"], 12.25, -6.75, 150, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -255,13 +257,14 @@ OWN_FEATURES = {
     "mandarin": ["REEF_ANIMALS"], "banggai": ["REEF_ANIMALS", "BREEDING"], "clown_larvae": ["LARVA_REARING"],
     "sump": ["SUMP"], "refugium": ["REFUGIUM"], "calcium_reactor": ["CALCIUM_REACTOR"], "archerfish": ["ARCHERFISH"],
     "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
+    "powered_trip": ["CREATE_TRAVEL_CARE"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
-MODS = {"travelling_tank": ["create"], "create_drive": ["create"]}
-NEEDS_POWER = {"powered", "wound_up"}
+MODS = {"travelling_tank": ["create"], "create_drive": ["create"], "powered_trip": ["create"]}
+NEEDS_POWER = {"powered", "wound_up", "powered_trip"}
 # Optional by design: they never block the chapter (Create, power, the fight).
-OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "fight"}
+OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "fight", "powered_trip"}
 
 # Item rewards besides the xp (C2): small and of the quest's own features (QuestChapterTest checks that).
 REWARDS = {

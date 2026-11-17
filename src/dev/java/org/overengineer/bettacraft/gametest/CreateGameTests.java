@@ -69,23 +69,23 @@ public final class CreateGameTests {
 
     private CreateGameTests() {}
 
-    private static boolean create() {
+    static boolean create() {
         return ModList.get().isLoaded("create");
     }
 
-    private static Block block(String id) {
+    static Block block(String id) {
         Block b = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id));
         if (b == Blocks.AIR) throw new GameTestAssertException("no block " + id);
         return b;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static BlockState with(BlockState s, String property, Comparable value) {
+    static BlockState with(BlockState s, String property, Comparable value) {
         for (Property<?> p : s.getProperties()) if (p.getName().equals(property)) return s.setValue((Property) p, value);
         throw new GameTestAssertException("no property " + property + " on " + s);
     }
 
-    private static Field field(Class<?> c, String name) {
+    static Field field(Class<?> c, String name) {
         for (Class<?> k = c; k != null; k = k.getSuperclass()) {
             try {
                 Field f = k.getDeclaredField(name);
@@ -97,13 +97,13 @@ public final class CreateGameTests {
         throw new GameTestAssertException("no field " + c.getName() + "." + name);
     }
 
-    private static Method method(Class<?> c, String name, int params) {
+    static Method method(Class<?> c, String name, int params) {
         for (Method m : c.getMethods()) if (m.getName().equals(name) && m.getParameterCount() == params) return m;
         throw new GameTestAssertException("no method " + c.getName() + "." + name);
     }
 
     /** A tank of sx x sy x sz blocks at rel (x, y, z), full of water, with two bettas and two snails. */
-    private static TankBlockEntity stockedTank(GameTestHelper h, int x, int y, int z, int sx, int sy, int sz) {
+    static TankBlockEntity stockedTank(GameTestHelper h, int x, int y, int z, int sx, int sy, int sz) {
         TankBlockEntity c = CritterGameTests.tank(h, x, y, z, sx, sy, sz, (long) sx * sy * sz * 1000L);
         c.getTank().setWaterQuality(1F);
         RandomSource r = RandomSource.create(32);
@@ -114,20 +114,20 @@ public final class CreateGameTests {
         return c;
     }
 
-    private static List<UUID> animals(GameTestHelper h, TankBlockEntity c) {
+    static List<UUID> animals(GameTestHelper h, TankBlockEntity c) {
         List<UUID> out = new ArrayList<>();
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) out.add(e.getUUID());
         return out;
     }
 
     /** How many live entities with this id the level has (0 while packed, exactly 1 afterwards). */
-    private static int alive(ServerLevel level, UUID id) {
+    static int alive(ServerLevel level, UUID id) {
         Entity e = level.getEntity(id);
         return e != null && e.isAlive() ? 1 : 0;
     }
 
     /** The bearing below {@code anchor} (rel), facing up, and its block entity. */
-    private static BlockEntity bearing(GameTestHelper h, BlockPos rel) {
+    static BlockEntity bearing(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, with(block("create:mechanical_bearing").defaultBlockState(), "facing", Direction.UP));
         BlockEntity be = h.getBlockEntity(rel);
         if (be == null) throw new GameTestAssertException("no bearing block entity");
@@ -135,7 +135,7 @@ public final class CreateGameTests {
     }
 
     /** Assembles the bearing's contraption; returns the contraption entity. */
-    private static Entity assemble(BlockEntity bearing) throws Exception {
+    static Entity assemble(BlockEntity bearing) throws Exception {
         method(bearing.getClass(), "assemble", 0).invoke(bearing);
         Object moved = field(bearing.getClass(), "movedContraption").get(bearing);
         if (moved == null) {
@@ -147,7 +147,7 @@ public final class CreateGameTests {
     }
 
     /** A bearing without rotation would put its contraption down again on its next tick: it waits for the test. */
-    private static void hold(BlockEntity bearing) {
+    static void hold(BlockEntity bearing) {
         try {
             field(bearing.getClass(), "assembleNextTick").setBoolean(bearing, false);
         } catch (IllegalAccessException e) {
@@ -156,7 +156,7 @@ public final class CreateGameTests {
     }
 
     /** Puts the contraption down after moving it by {@code offset} and turning it by {@code angle} degrees. */
-    private static void disassemble(BlockEntity bearing, Entity contraption, BlockPos offset, float angle) throws Exception {
+    static void disassemble(BlockEntity bearing, Entity contraption, BlockPos offset, float angle) throws Exception {
         contraption.setPos(contraption.getX() + offset.getX(), contraption.getY() + offset.getY(), contraption.getZ() + offset.getZ());
         method(contraption.getClass(), "setAngle", 1).invoke(contraption, angle);
         method(bearing.getClass(), "disassemble", 0).invoke(bearing);
@@ -386,12 +386,16 @@ public final class CreateGameTests {
      * same tank (region, water) with its bettas packed and its care paused. Disassembled a quarter turned onto the ground
      * again, the bettas come back into the turned tank.
      */
-    @GameTest(template = EMPTY, batch = "bettacraft_create", timeoutTicks = 300)
+    @GameTest(template = EMPTY, batch = "bettacraft_create_config", timeoutTicks = 300)
     public static void airshipCarriesTank(GameTestHelper h) throws Exception {
         if (!ModList.get().isLoaded("sable")) {
             h.succeed();
             return;
         }
+        // M50: this is the trip with features.compat.create.travelCare off (M32 B2); with it on see CreateTravelGameTests
+        boolean saved = Features.own(Feature.CREATE_TRAVEL_CARE);
+        Features.set(Feature.CREATE_TRAVEL_CARE, false);
+        CreateTravelGameTests.atEnd(h, () -> Features.set(Feature.CREATE_TRAVEL_CARE, saved));
         ServerLevel level = h.getLevel();
         TankBlockEntity c = stockedTank(h, 12, 3, 22, 2, 1, 3);
         UUID tankId = c.getTank().id();
@@ -449,7 +453,7 @@ public final class CreateGameTests {
     // ------------------------------------------------------------------ M32 part c: endings without a landing
 
     /** The tank (controller) with this id within {@code r} blocks of {@code at}, or null. */
-    private static TankBlockEntity tankNear(ServerLevel level, BlockPos at, UUID id, int r) {
+    static TankBlockEntity tankNear(ServerLevel level, BlockPos at, UUID id, int r) {
         for (BlockPos p : BlockPos.betweenClosed(at.offset(-r, -r, -r), at.offset(r, r, r))) {
             TankBlockEntity k = TankMultiblock.getController(level, p);
             if (k != null && k.getTank().id().equals(id)) return k;

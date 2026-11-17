@@ -1606,6 +1606,7 @@ public final class ModDataGen {
             // M16: axolotls hunt small fish and fry
             var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH, EntityType.AXOLOTL);
             for (var e : Compat.PREDATORS) predators.addOptional(e);
+            DataGenM50.entityTags(this::tag); // M50: Sable keeps our animals in its airships
             var prey = tag(ModTags.BETTA_PREY);
             for (var e : Compat.PREY) prey.addOptional(e);
             // M28.1: every animal of the mod, and the ones that spawn wild (for commands: @e[type=#bettacraft:all_animals])

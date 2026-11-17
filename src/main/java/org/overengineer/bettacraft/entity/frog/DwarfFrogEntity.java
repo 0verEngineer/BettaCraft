@@ -285,6 +285,7 @@ public class DwarfFrogEntity extends AbstractFish {
                 if (lastFed == NEVER) lastFed = server.getGameTime();
             }
         }
+        if (tankWater != null && !tankWater.near(position())) tankWater = null; // M50: moved by another mod (Sable)
         if (tankWater == null) {
             breath = -1;
             surfacing = false;

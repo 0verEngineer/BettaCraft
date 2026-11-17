@@ -117,6 +117,11 @@ public class TankBakedModel implements IDynamicBakedModel {
         return Boolean.TRUE.equals(data.get(TankBlockEntity.WATER_IN_MODEL));
     }
 
+    /** M50: the water of a travelling tank block sloshes, drawn by its controller's renderer (none in the model). */
+    private static boolean waterDynamic(ModelData data) {
+        return Boolean.TRUE.equals(data.get(TankBlockEntity.WATER_DYNAMIC));
+    }
+
     private TankStyle styleOf(ModelData data) {
         if (fixedGlass != null) return fixedStyle;
         TankStyle s = data.get(TankBlockEntity.STYLE);
@@ -127,7 +132,7 @@ public class TankBakedModel implements IDynamicBakedModel {
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData data, @Nullable RenderType renderType) {
         if (side == null) {
             // with a shader pack the water is part of the block model (shaders then treat it like tinted glass)
-            if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent())
+            if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent()) && !waterDynamic(data)
                     && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) {
                 return waterQuads(state, data);
             }
@@ -182,7 +187,7 @@ public class TankBakedModel implements IDynamicBakedModel {
 
     @Override
     public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
-        ChunkRenderTypeSet own = state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0
+        ChunkRenderTypeSet own = state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0 && !waterDynamic(data)
                 && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))
                 ? ChunkRenderTypeSet.of(RenderType.cutout(), RenderType.translucent()) : ChunkRenderTypeSet.of(RenderType.cutout());
         if (styleOf(data) == TankStyle.CLEAN) return own;
