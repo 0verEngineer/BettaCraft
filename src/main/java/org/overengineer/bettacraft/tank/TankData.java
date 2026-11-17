@@ -133,6 +133,14 @@ public final class TankData {
     /** M31 part b: turtle eggs buried in the land (saved under "turtle_eggs" only while there are some). */
     private final List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches = new ArrayList<>();
     private int nextHerpClutchId = 1;
+    /**
+     * M47 part c: frog spawn at the surface and the tadpoles of the dwarf clawed frogs (saved under "frog_spawn" and
+     * "tadpoles" only while there are some; older worlds have none), and the fine food in the water for the tadpoles.
+     */
+    private final List<org.overengineer.bettacraft.entity.frog.FrogSpawn> frogSpawn = new ArrayList<>();
+    private final List<org.overengineer.bettacraft.entity.frog.Tadpole> tadpoles = new ArrayList<>();
+    private int nextFrogBroodId = 1;
+    private double tadpoleFood;
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -399,6 +407,13 @@ public final class TankData {
     public void setLightOn(int minutes) { this.lightOn = Math.floorMod(minutes, 24 * 60); }
     public void setLightOff(int minutes) { this.lightOff = Math.floorMod(minutes, 24 * 60); }
 
+    // M47 part c: frog breeding
+    public List<org.overengineer.bettacraft.entity.frog.FrogSpawn> frogSpawn() { return frogSpawn; }
+    public List<org.overengineer.bettacraft.entity.frog.Tadpole> tadpoles() { return tadpoles; }
+    public int nextFrogBroodId() { return nextFrogBroodId++; }
+    public double tadpoleFood() { return tadpoleFood; }
+    public void setTadpoleFood(double f) { this.tadpoleFood = Double.isFinite(f) ? Math.max(0, f) : 0; }
+
     // M31 terrarium
     public List<org.overengineer.bettacraft.terrarium.HerpClutch> herpClutches() { return herpClutches; }
     public int nextHerpClutchId() { return nextHerpClutchId++; }
@@ -593,6 +608,13 @@ public final class TankData {
         herpClutches.clear();
         nextHerpClutchId = Math.max(nextHerpClutchId, o.nextHerpClutchId);
         for (var c : o.herpClutches) if (contains(BlockPos.containing(c.x, c.y + 0.01, c.z))) herpClutches.add(c.copy());
+        // M47 part c: the frog spawn and the tadpoles inside this part stay
+        frogSpawn.clear();
+        tadpoles.clear();
+        nextFrogBroodId = Math.max(nextFrogBroodId, o.nextFrogBroodId);
+        for (var s : o.frogSpawn) if (containsColumn(s.x, s.z)) frogSpawn.add(s.copy());
+        for (var k : o.tadpoles) if (contains(BlockPos.containing(k.x, k.y, k.z))) tadpoles.add(k.copy());
+        tadpoleFood = o.tadpoleFood;
     }
 
     /**
@@ -672,6 +694,20 @@ public final class TankData {
             net.minecraft.world.phys.Vec3 v = map.point(c.x, c.y, c.z);
             c.x = v.x; c.y = v.y; c.z = v.z;
             if (interior != null) c.interior = interior.applyAsLong(c.interior);
+        }
+        // M47 part c: the frog spawn floats with the surface (lying on its side the tank loses it), the tadpoles go along
+        if (!upright) frogSpawn.clear();
+        for (var s : frogSpawn) {
+            net.minecraft.world.phys.Vec3 v = map.point(s.x, s.y, s.z);
+            s.x = v.x; s.y = v.y; s.z = v.z;
+        }
+        for (var k : tadpoles) {
+            net.minecraft.world.phys.Vec3 v = map.point(k.x, k.y, k.z);
+            if (contains(BlockPos.containing(v.x, v.y, v.z))) {
+                k.x = v.x; k.y = v.y; k.z = v.z;
+            } else {
+                k.x = a.getX() + 0.5; k.y = a.getY() + 0.5; k.z = a.getZ() + 0.5;
+            }
         }
         if (upright) front = map.direction(front);
         layerCounts = null;
@@ -787,6 +823,16 @@ public final class TankData {
             for (var c : herpClutches) te.add(c.save());
             t.put("turtle_eggs", te);
             t.putInt("next_turtle_clutch", nextHerpClutchId);
+        }
+        if (!frogSpawn.isEmpty() || !tadpoles.isEmpty() || tadpoleFood > 0) { // M47 part c
+            ListTag fs = new ListTag();
+            for (var s : frogSpawn) fs.add(s.save());
+            t.put("frog_spawn", fs);
+            ListTag tp = new ListTag();
+            for (var k : tadpoles) tp.add(k.save());
+            t.put("tadpoles", tp);
+            t.putInt("next_frog_brood", nextFrogBroodId);
+            if (tadpoleFood > 0) t.putDouble("tadpole_food", tadpoleFood);
         }
         return t;
     }
@@ -919,6 +965,24 @@ public final class TankData {
             maxTurtle = Math.max(maxTurtle, c.id);
         }
         d.nextHerpClutchId = Math.max(maxTurtle + 1, t.contains("next_turtle_clutch", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_turtle_clutch") : 1);
+        // M47 part c: frog spawn and tadpoles (absent in older worlds: none)
+        int maxBrood = 0;
+        ListTag fs = t.getList("frog_spawn", Tag.TAG_COMPOUND);
+        for (int i = 0; i < fs.size(); i++) {
+            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompound(i));
+            if (s == null) continue;
+            d.frogSpawn.add(s);
+            maxBrood = Math.max(maxBrood, s.id);
+        }
+        ListTag tp = t.getList("tadpoles", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tp.size(); i++) {
+            var k = org.overengineer.bettacraft.entity.frog.Tadpole.load(tp.getCompound(i));
+            if (k == null) continue;
+            d.tadpoles.add(k);
+            maxBrood = Math.max(maxBrood, k.id);
+        }
+        d.nextFrogBroodId = Math.max(maxBrood + 1, t.contains("next_frog_brood", Tag.TAG_ANY_NUMERIC) ? t.getInt("next_frog_brood") : 1);
+        d.setTadpoleFood(t.getDouble("tadpole_food"));
         d.recomputeBounds();
         return d;
     }
@@ -952,6 +1016,17 @@ public final class TankData {
             t.put("clutches", tc);
         }
         if (breedingBox) t.putBoolean("breeding_box", true);
+        if (!frogSpawn.isEmpty()) { // M47 part c
+            ListTag fs = new ListTag();
+            for (var s : frogSpawn) fs.add(s.save());
+            t.put("frog_spawn", fs);
+        }
+        if (!tadpoles.isEmpty()) {
+            ListTag tp = new ListTag();
+            double days = org.overengineer.bettacraft.entity.frog.FrogBreeding.tadpoleDays();
+            for (var k : tadpoles) tp.add(k.saveClientView(days));
+            t.put("tadpoles", tp);
+        }
         if (salinity > 0) t.putFloat("salinity", salinity);
         if (terrariumWorthSaving()) t.put("terrarium", saveTerrarium()); // M31: the thermometer, the miniature and the turtles' client side
         return t;
@@ -1000,6 +1075,13 @@ public final class TankData {
             if (c != null) d.clutches.add(c);
         }
         d.breedingBox = t.getBoolean("breeding_box");
+        ListTag fs = t.getList("frog_spawn", Tag.TAG_COMPOUND); // M47 part c
+        for (int i = 0; i < fs.size(); i++) {
+            var s = org.overengineer.bettacraft.entity.frog.FrogSpawn.load(fs.getCompound(i));
+            if (s != null) d.frogSpawn.add(s);
+        }
+        ListTag tp = t.getList("tadpoles", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tp.size(); i++) d.tadpoles.add(org.overengineer.bettacraft.entity.frog.Tadpole.loadClientView(tp.getCompound(i)));
         d.salinity = Salinity.clampSalinity(t.getFloat("salinity"));
         if (t.contains("terrarium", Tag.TAG_COMPOUND)) d.loadTerrarium(t.getCompound("terrarium")); // M31
         return d;

@@ -270,6 +270,19 @@ public final class TankMultiblock {
                 for (var o : t.critterObjects()) merged.critterObjects().add(o.copy(merged.nextCritterId()));
                 merged.setCritterFood(merged.critterFood() + t.critterFood());
                 for (var e : t.algae().long2ObjectEntrySet()) merged.algae().put(e.getLongKey(), e.getValue().clone());
+                // M47 part c: the frog spawn and the tadpoles too
+                for (var s : t.frogSpawn()) {
+                    var n = new org.overengineer.bettacraft.entity.frog.FrogSpawn(merged.nextFrogBroodId(), s.x, s.y, s.z, s.count);
+                    n.age = s.age;
+                    merged.frogSpawn().add(n);
+                }
+                for (var k : t.tadpoles()) {
+                    var n = new org.overengineer.bettacraft.entity.frog.Tadpole(merged.nextFrogBroodId(), k.x, k.y, k.z);
+                    n.age = k.age;
+                    n.hunger = k.hunger;
+                    merged.tadpoles().add(n);
+                }
+                merged.setTadpoleFood(merged.tadpoleFood() + t.tadpoleFood());
             }
         }
         InteriorManager.onTanksMerged(level, olds, merged);

@@ -24,6 +24,7 @@ public class DwarfFrogRenderer extends MobRenderer<DwarfFrogEntity, DwarfFrogMod
 
     @Override
     protected void scale(DwarfFrogEntity frog, PoseStack pose, float partialTick) {
-        pose.scale(SCALE, SCALE, SCALE);
+        float k = SCALE * frog.sizeFactor(); // M47: froglets are smaller
+        pose.scale(k, k, k);
     }
 }

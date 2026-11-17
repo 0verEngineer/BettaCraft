@@ -472,6 +472,7 @@ public final class TankInhabitants {
     public static boolean isAdult(Entity e) {
         if (e instanceof BettaEntity b) return b.isAdult();
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return m.isAdult();
+        if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity f) return f.isAdult(); // M47: froglets
         return !(e instanceof LivingEntity le) || !le.isBaby();
     }
 

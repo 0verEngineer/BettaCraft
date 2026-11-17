@@ -102,6 +102,7 @@ public final class TankCare {
         org.overengineer.bettacraft.tank.algae.TankAlgae.step(server, be, dt / 24000.0); // M14
         org.overengineer.bettacraft.critters.TankCritters.step(server, be, dt / 24000.0); // M14
         TankFrogs.step(server, be); // M14
+        org.overengineer.bettacraft.entity.frog.FrogBreeding.step(server, be, dt / 24000.0); // M47 part c: amplexus, spawn, tadpoles
         AxolotlCare.step(server, be, dt / 24000.0); // M29 part d
         org.overengineer.bettacraft.big.DolphinCare.step(server, be, dt / 24000.0); // M30
         org.overengineer.bettacraft.terrarium.TerrariumCare.step(server, be, dt / 24000.0); // M31: the needs of the terrarium animals
@@ -337,16 +338,18 @@ public final class TankCare {
                 : new ArrayList<>();
         if (round != null) frogs.removeIf(f -> round.contains(f.getUUID()));
         boolean critters = org.overengineer.bettacraft.critters.TankCritters.wantFood(controller.getTank());
+        // M47 part c: the tadpoles take fine food (infusoria, artemia nauplii, fry food)
+        boolean tadpoles = !wafer && org.overengineer.bettacraft.entity.frog.FrogBreeding.wantFood(controller.getTank(), kind);
         // M31: the terrarium animals (turtles ...) eat what is meant for them
         List<Entity> terra = wafer ? new ArrayList<>() : org.overengineer.bettacraft.terrarium.TerrariumFeeding.eaters(level, controller.getTank(), kind);
         if (round != null) terra.removeIf(e -> round.contains(e.getUUID()));
         // M32 part a: the animals of other mods with a profile
         List<net.minecraft.world.entity.LivingEntity> foreign = wafer ? new ArrayList<>() : org.overengineer.bettacraft.foreign.ForeignCare.eaters(level, controller.getTank(), food, kind);
         if (round != null) foreign.removeIf(e -> round.contains(e.getUUID()));
-        if (fish.isEmpty() && mates.isEmpty() && frogs.isEmpty() && !critters && terra.isEmpty() && foreign.isEmpty()) return 0;
+        if (fish.isEmpty() && mates.isEmpty() && frogs.isEmpty() && !critters && !tadpoles && terra.isEmpty() && foreign.isEmpty()) return 0;
         fish.sort(Comparator.comparingDouble((BettaEntity b) -> b.health().daysSinceFed()).reversed());
         int per = BettaFood.fishPerItem(kind);
-        int mouths = fish.size() + mates.size() + frogs.size() + terra.size() + foreign.size() + (critters ? 1 : 0);
+        int mouths = fish.size() + mates.size() + frogs.size() + terra.size() + foreign.size() + (critters ? 1 : 0) + (tadpoles ? 1 : 0);
         int items = Math.min(maxItems, (mouths + per - 1) / per);
         int fed = Math.min(fish.size(), items * per);
         int overfed = 0;
@@ -365,6 +368,11 @@ public final class TankCare {
         int frogsFed = TankFrogs.feed(level, controller, kind, Math.min(left, frogs.size()), !fish.isEmpty(), false);
         if (round != null) for (var f : frogs) if (f.daysSinceFed() <= 1e-6) round.add(f.getUUID());
         left -= frogsFed;
+        if (tadpoles) { // M47 part c: one item's share for the tadpoles (at least one portion)
+            int took = org.overengineer.bettacraft.entity.frog.FrogBreeding.feed(controller.getTank(), kind, Math.max(1, Math.min(Math.max(0, left), per)));
+            if (took > 0) log(level, controller, "log.bettacraft.frog.tadpoles_fed", "@" + food.getDescriptionId());
+            left -= took;
+        }
         left -= org.overengineer.bettacraft.terrarium.TerrariumFeeding.feed(terra, Math.max(0, Math.min(left, terra.size())), round); // M31
         left -= org.overengineer.bettacraft.foreign.ForeignCare.feed(foreign, Math.max(0, Math.min(left, foreign.size())), round); // M32 part a
         // M39 part b: the clean-up crew of a terrarium (woodlice, snails) eats the leftovers and the food the bettas did not need
@@ -385,6 +393,7 @@ public final class TankCare {
         if (!wafer && !eaters(level, tank, kind).isEmpty()) return true;
         if (!org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(level, tank, kind, wafer).isEmpty()) return true;
         if (TankFrogs.eats(kind) && !wafer && !TankFrogs.frogs(level, tank).isEmpty()) return true;
+        if (!wafer && org.overengineer.bettacraft.entity.frog.FrogBreeding.wantFood(tank, kind)) return true; // M47 part c
         if (!wafer && !org.overengineer.bettacraft.terrarium.TerrariumFeeding.eaters(level, tank, kind).isEmpty()) return true; // M31
         if (!wafer && !org.overengineer.bettacraft.foreign.ForeignCare.eaters(level, tank, food, kind).isEmpty()) return true; // M32 part a
         return org.overengineer.bettacraft.critters.TankCritters.wantFood(tank);
@@ -404,6 +413,7 @@ public final class TankCare {
                 org.overengineer.bettacraft.tankmates.TankmateFeeding.eaters(server, tank, BettaFood.kind(stack), wafer);
         boolean others = (TankFrogs.eats(BettaFood.kind(stack)) && !wafer && !TankFrogs.frogs(server, tank).isEmpty())
                 || !mates.isEmpty() || org.overengineer.bettacraft.critters.TankCritters.wantFood(tank)
+                || !wafer && org.overengineer.bettacraft.entity.frog.FrogBreeding.wantFood(tank, BettaFood.kind(stack)) // M47 part c
                 || !wafer && !org.overengineer.bettacraft.terrarium.TerrariumFeeding.eaters(server, tank, BettaFood.kind(stack)).isEmpty() // M31
                 || !wafer && !org.overengineer.bettacraft.foreign.ForeignCare.eaters(server, tank, stack, BettaFood.kind(stack)).isEmpty(); // M32 part a
         if (fish.isEmpty() && !others) {

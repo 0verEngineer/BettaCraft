@@ -610,6 +610,23 @@ def frog_bucket_icon() -> np.ndarray:
     return img
 
 
+def frog_brood() -> np.ndarray:
+    """M47 part c: 16x16 cells of 4x4 texels for the frog spawn and the tadpoles (FrogBroodRenderer): row 0: egg yolk
+    (dark brown), jelly (clear, pale green-grey; drawn translucent), tadpole body (dark olive grey), tail (pale, see-through);
+    row 1: legs (olive), eye (black)."""
+    rng = np.random.default_rng(4747)
+    img = np.zeros((16, 16, 4))
+    cells = [("#2a1e16", 1.0), ("#d8e0cc", 1.0), ("#3e3a2c", 1.0), ("#a8a490", 0.85), ("#5a5640", 1.0), ("#101010", 1.0)]
+    for i, (col, a) in enumerate(cells):
+        x0, y0 = (i % 4) * 4, (i // 4) * 4
+        c = np.array([int(col[k:k + 2], 16) / 255.0 for k in (1, 3, 5)])
+        for y in range(4):
+            for x in range(4):
+                img[y0 + y, x0 + x, :3] = np.clip(c * (0.92 + 0.16 * rng.random()), 0, 1)
+                img[y0 + y, x0 + x, 3] = a
+    return img
+
+
 def write_all() -> list:
     written = []
     models, sizes = {}, {}
@@ -635,6 +652,7 @@ def write_all() -> list:
     for st in range(1, 5):
         written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))
     written.append(save_png(scraper_icon(), ITEM_TEX / "algae_scraper.png"))
+    written.append(save_png(frog_brood(), CRIT_TEX / "frog_brood.png"))  # M47 part c
     # the frog bucket: buckets.py (M21, in the style of the active bucket variant)
     return written
 

@@ -224,6 +224,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue CRITTERS_MUD_CHANCE;
     public static final ModConfigSpec.DoubleValue FROGS_FOOD_SHARE;
     public static final ModConfigSpec.DoubleValue FROGS_AIR_MINUTES;
+    /** M47 part c: frog breeding. */
+    public static final ModConfigSpec.DoubleValue FROGS_BREEDING_SPEED, FROGS_SPAWN_HATCH_DAYS, FROGS_TADPOLE_DAYS, FROGS_FROGLET_DAYS;
+    public static final ModConfigSpec.IntValue FROGS_MAX_TADPOLES;
     public static final ModConfigSpec.IntValue STOCKING_SNAILS_PER_FISH;
     public static final ModConfigSpec.IntValue STOCKING_SHRIMP_PER_FISH;
     public static final ModConfigSpec.IntValue STOCKING_CRAYFISH_PER_FISH;
@@ -914,6 +917,17 @@ public final class ServerConfig {
                 .defineInRange("frogAirMinutes", 2.0, 0.25, 60.0);
         FROGS_STARVE_DAYS = b.comment("Days without food after which a frog starts to starve (loses health now and then)")
                 .defineInRange("frogStarveDays", 4.0, 0.5, 100.0);
+        FROGS_BREEDING_SPEED = b.comment("M47: how readily a frog pair goes into amplexus after a cool water change at 24-28 °C (1 = normal, 0 = never;",
+                        "features.frogs.breeding)")
+                .defineInRange("frogBreedingSpeed", 1.0, 0.0, 10.0);
+        FROGS_SPAWN_HATCH_DAYS = b.comment("Days the frog spawn floats at the surface until the tadpoles hatch")
+                .defineInRange("frogSpawnHatchDays", 2.0, 0.1, 30.0);
+        FROGS_TADPOLE_DAYS = b.comment("Days a tadpole needs (with fine food: infusoria, artemia nauplii, fry food) to become a froglet")
+                .defineInRange("tadpoleDays", 6.0, 0.5, 100.0);
+        FROGS_FROGLET_DAYS = b.comment("Days a froglet needs to grow up (it breeds only then)")
+                .defineInRange("frogletDays", 4.0, 0.1, 100.0);
+        FROGS_MAX_TADPOLES = b.comment("Most tadpoles in one tank (eggs beyond that do not hatch)")
+                .defineInRange("maxTadpoles", 40, 0, 500);
         b.pop();
 
         b.comment("Stocking: how many small animals count as one fish for the stocking limits (tank.hardCapPerWaterBlock ...)").push("stocking");

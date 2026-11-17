@@ -59,6 +59,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
         CritterRenderer.render(be, t, partialTick, pose, buffers); // M14
         AlgaeRenderer.render(be, t, pose, buffers); // M14
         ClutchRenderer.render(be, t, partialTick, pose, buffers); // M19
+        FrogBroodRenderer.render(be, t, partialTick, pose, buffers); // M47 part c
         if (!t.signVisible() || t.name().isEmpty()) return;
         Direction front = t.front();
         SignPosition sp = t.signPos();

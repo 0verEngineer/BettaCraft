@@ -7,7 +7,7 @@ import org.overengineer.bettacraft.entity.frog.DwarfFrogEntity;
 
 /**
  * M14: the dwarf clawed frog ({@link CritterModelDefinitions#createFrogLayer()}): the hind legs kick while it swims, the
- * front legs paddle, at the surface it points its nose up to breathe.
+ * front legs paddle, at the surface it points its nose up to breathe. M47: in amplexus the male clasps the female.
  */
 public class DwarfFrogModel extends HierarchicalModel<DwarfFrogEntity> {
     private final ModelPart root, frog, body, head, armRight, armLeft, legRight, legLeft;
@@ -41,5 +41,19 @@ public class DwarfFrogModel extends HierarchicalModel<DwarfFrogEntity> {
         this.frog.xRot = breathing ? -0.6F : (frog.isInWater() && frog.getDeltaMovement().y > 0.01 ? -0.3F : 0F);
         head.xRot = breathing ? -0.15F : Mth.sin(ageInTicks * 0.05F) * 0.03F;
         body.xRot = 0;
+        if (frog.claspedForRender() != null) {
+            // M47: amplexus: the male holds the female around the waist with his front legs, the hind legs pressed to her
+            armRight.yRot = 0.9F;
+            armLeft.yRot = -0.9F;
+            armRight.zRot = -0.5F;
+            armLeft.zRot = 0.5F;
+            legRight.yRot = -0.25F + Mth.sin(ageInTicks * 0.3F) * 0.05F;
+            legLeft.yRot = 0.25F - Mth.sin(ageInTicks * 0.3F) * 0.05F;
+            this.frog.xRot = -0.12F;
+            head.xRot = 0.05F;
+        } else {
+            armRight.zRot = 0;
+            armLeft.zRot = 0;
+        }
     }
 }
