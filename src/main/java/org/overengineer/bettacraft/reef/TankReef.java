@@ -25,7 +25,7 @@ public final class TankReef {
 
     /** Protein skimmers hanging on the tank (also without salt water; for the power and the menu). */
     public static int skimmerCount(Level level, TankBlockEntity c) {
-        return TankEquipment.skimmers(level, c).size();
+        return TankEquipment.skimmers(level, c).size() + org.overengineer.bettacraft.equipment.Sump.skimmers(level, c); // M49: also in the sumps
     }
 
     /** Water blocks the skimmers keep clean: only in salt water (no foam in fresh water) and with power. */

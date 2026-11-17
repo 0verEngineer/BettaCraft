@@ -21,6 +21,7 @@ import filter_lines
 import chemistry
 import co2_osmosis
 import reef_dosing
+import sump_brackish
 import live_food
 import food_maker
 import monitor
@@ -74,6 +75,7 @@ def main() -> int:
     written += chemistry.write_all()  # M25
     written += co2_osmosis.write_all()  # M25 part b
     written += reef_dosing.write_all()  # M25 part c
+    written += sump_brackish.write_all()  # M49
     written += live_food.write_all()  # M26 part a
     written += food_maker.write_all()  # M26 part b
     written += monitor.write_all()  # M27

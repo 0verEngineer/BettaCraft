@@ -109,6 +109,21 @@ public final class Progress {
     public static final String CLOWN_LARVAE = "clown_larvae";
     /** A Banggai male released his young from his mouth (log tm.banggai_born). */
     public static final String BANGGAI_YOUNG = "banggai_young";
+    // M49
+    /** A sump sits in a cabinet under a tank (menu opened). */
+    public static final String SUMP = "sump_installed";
+    /** A calcium reactor dissolves coral rubble into a tank (players near it). */
+    public static final String CALCIUM_REACTOR = "calcium_reactor";
+    /** An archerfish shot an insect down. */
+    public static final String ARCHER_SHOT = "archerfish_shot";
+    /** An archerfish splashed the player. */
+    public static final String ARCHER_SPLASH = "archerfish_splash";
+    /** A mudskipper lives in a brackish paludarium (menu opened). */
+    public static final String MUDSKIPPER = "mudskipper_paludarium";
+    /** A mangrove in a tank grew its crown over the water (log mangrove.crown). */
+    public static final String MANGROVE = "mangrove_grown";
+    /** Amano larvae settled as young shrimp in brackish water (log amano.young). */
+    public static final String AMANO_YOUNG = "amano_young";
 
     private Progress() {}
 
@@ -163,6 +178,8 @@ public final class Progress {
             case "log.bettacraft.frog.tadpoles_hatched" -> FROG_TADPOLE; // M47
             case "log.bettacraft.tm.clown_larvae_raised" -> CLOWN_LARVAE; // M48
             case "log.bettacraft.tm.banggai_born" -> BANGGAI_YOUNG;
+            case "log.bettacraft.mangrove.crown" -> MANGROVE; // M49
+            case "log.bettacraft.amano.young" -> AMANO_YOUNG;
             default -> null;
         };
         if (event != null) awardNear(level, controller, event, 0);
@@ -210,6 +227,8 @@ public final class Progress {
             award(player, IDEAL_TEMPERATURE);
         }
         if (!TankEquipment.filters(player.level(), controller).isEmpty()) award(player, FILTER);
+        if (!org.overengineer.bettacraft.equipment.Sump.hosts(player.level(), controller).isEmpty()) award(player, SUMP); // M49
+        if (org.overengineer.bettacraft.terrarium.Mudskippers.happy(player.serverLevel(), t)) award(player, MUDSKIPPER); // M49
         // M45: states of the tank
         if (t.terrariumMode() == org.overengineer.bettacraft.terrarium.TerrariumMode.PALUDARIUM) award(player, PALUDARIUM);
         if (org.overengineer.bettacraft.tank.TankPower.anyRequired() && t.powerBuffer() > 0) award(player, POWERED);

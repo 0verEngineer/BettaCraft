@@ -80,7 +80,9 @@ public record TerrariumNeeds(Habitat habitat, Range air, Range humidity, double 
     public enum Problem {
         WRONG_HABITAT, TOO_COLD, TOO_HOT, TOO_DRY, TOO_HUMID, NO_UV, NO_BASKING, TOO_LITTLE_LAND, TOO_LITTLE_WATER, WATER_COLD, WATER_HOT,
         /** M31 part b: the tank is smaller than the grown animal needs (stress only). */
-        TOO_SMALL;
+        TOO_SMALL,
+        /** M49: a brackish water animal (the mudskipper) in fresh water (stress only). */
+        FRESH_WATER;
 
         public String translationKey() {
             return "gui.bettacraft.terrarium.problem." + name().toLowerCase(java.util.Locale.ROOT);

@@ -614,8 +614,8 @@ public final class TankInhabitants {
             tank.inhabitants().clear();
             tank.inhabitants().addAll(keep);
         }
-        controller.setCrowded(isOvercrowded(adults, tank.waterBlocks())
-                || land > 0 && isOvercrowded(land, tank.waterBlocks() + org.overengineer.bettacraft.terrarium.TerrariumAnimals.landBlocks(tank)));
+        controller.setCrowded(isOvercrowded(adults, tank.systemBlocks())
+                || land > 0 && isOvercrowded(land, tank.systemBlocks() + org.overengineer.bettacraft.terrarium.TerrariumAnimals.landBlocks(tank)));
         if (changed) controller.markTankChanged();
     }
 

@@ -403,6 +403,26 @@ MANGROVE_ROOT = [
     "................",
 ]
 
+# M49: the tall stilt roots: a trunk high up on long arches
+MANGROVE_STILT = [
+    "....kkk.kkk.....",
+    "....kLk.kLk.....",
+    ".....kLkLk......",
+    "......kHLk......",
+    "......kHLk......",
+    "......kHMk......",
+    ".....kRkkRk.....",
+    "....kRk..kRk....",
+    "...kRk....kRk...",
+    "..kRMk....kMRk..",
+    "..kRk..kk..kRk..",
+    ".kRMk.kRRk.kMRk.",
+    ".kRk.kRk.kRk.kRk",
+    "kRMk.kRk..kRkkMk",
+    "kDDk.kDk..kDk.kD",
+    "................",
+]
+
 SPIDER_P = {"k": "#3a2a14", "H": "#e0c48e", "L": "#c4a46a", "M": "#a2844e", "D": "#806434"}
 SPIDERWOOD = [
     "k.....k...k....k",
@@ -594,6 +614,7 @@ ICONS = {
     "decor_ruin_column": (RUIN_COLUMN, RUIN_P),  # M28
     "decor_diver_helmet": (DIVER_HELMET, HELMET_P),  # M28
     "decor_treasure_chest": (TREASURE_CHEST, CHEST_P),  # M28
+    "decor_mangrove_stilt_roots": (MANGROVE_STILT, MANGROVE_P),  # M49
 }
 
 

@@ -73,6 +73,8 @@ public final class ItemHints {
             "crank", "fertilizer_maker", "kelp_meal", "nutrient_salt", "liquid_fertilizer", "fertilizer_canister",
             // M41: the drive adapter (only registered with Create)
             "drive_adapter",
+            // M49: the sump, its refugium, the calcium reactor
+            "sump", "chaetomorpha", "calcium_reactor", "coral_rubble",
             // M30: catching big animals
             "large_net", "transport_tub", "steel_leader",
             // M47: the workplace of the aquarist villager

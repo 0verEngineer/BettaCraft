@@ -192,6 +192,21 @@ public final class TraderOffers {
                     turtle.discard();
                     return new MerchantOffer(new ItemCost(Items.EMERALD, 7), Optional.empty(), bucket, 2, 1, 0.05F);
                 }));
+        // M49 part b: the mudskipper in its terrarium box (features.brackish.mudskipper)
+        out.add(new Offer("mudskipper", Slot.RARE, 2, () -> List.of(new Product(Target.item("mudskipper_box"), 1, 6, 1.0, false, Feature.MUDSKIPPER.key())),
+                (trader, random) -> {
+                    if (!Features.enabled(Feature.MUDSKIPPER)) return null;
+                    var m = org.overengineer.bettacraft.registry.ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER).create(trader.level());
+                    if (m == null) return null;
+                    ItemStack box = m.getBucketItemStack();
+                    m.saveToBucketTag(box);
+                    m.discard();
+                    return new MerchantOffer(new ItemCost(Items.EMERALD, 6), Optional.empty(), box, 2, 1, 0.05F);
+                }));
+        // M49 part b: Amano shrimp in a fish bag (features.brackish.amanoShrimp)
+        out.add(new Offer("amano_shrimp", Slot.USUAL, 3, () -> List.of(new Product(Target.critter(CritterSpecies.AMANO_SHRIMP), 3, 5, 1.0, false, null)),
+                (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, 5), Optional.empty(),
+                        TankCritters.bagOf(CritterSpecies.AMANO_SHRIMP, 3, () -> CritterGenes.WILD, random::nextLong, false), 3, 1, 0.05F)));
         // ---------------------------------------------------------------- M19 tankmates: two usual offers, one rare
         out.add(new Offer("tankmates_1", Slot.USUAL, 3, () -> fishPool(TankmateSpecies.Trade.COMMON, false), TankmateTrades.listing(TankmateSpecies.Trade.COMMON)));
         out.add(new Offer("tankmates_2", Slot.USUAL, 3, () -> fishPool(TankmateSpecies.Trade.COMMON, false), TankmateTrades.listing(TankmateSpecies.Trade.COMMON)));
@@ -237,6 +252,9 @@ public final class TraderOffers {
                         TankCritters.bagOf(CritterSpecies.FIRE_SHRIMP, 1, () -> CritterGenes.WILD, random::nextLong, false), 3, 1, 0.05F)));
         out.add(new Offer("live_rock", Slot.RARE, 2, () -> List.of(new Product(Target.item("live_rock"), 8, 6)),
                 fixed(6, 2, () -> new ItemStack(ModItems.LIVE_ROCK.get(), 8))));
+        // M49 part a: Chaetomorpha for the refugium of a sump (features.sump.refugium)
+        out.add(new Offer("chaetomorpha", Slot.RARE, 3, () -> List.of(new Product(Target.item("chaetomorpha"), 4, 3)),
+                fixed(3, 3, () -> new ItemStack(ModItems.CHAETOMORPHA.get(), 4))));
         return List.copyOf(out);
     }
 

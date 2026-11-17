@@ -196,6 +196,8 @@ public final class TankView {
     public final Tech tech = new Tech();
     /** M31: terrarium / paludarium climate (the climate tab, only shown for those modes). */
     public final Climate climate = new Climate();
+    /** M49: the sumps under the tank ({@link org.overengineer.bettacraft.equipment.Sump#view}; empty without one): the tab "Sump". */
+    public CompoundTag sump = new CompoundTag();
     /** M12: floating plants (water tab, plants page). */
     public final Plants plants = new Plants();
     /** M13: aquarium plants of the interior (second page of the plants tab). */
@@ -1124,7 +1126,7 @@ public final class TankView {
         }
         out.put("inhabitants", inh);
         out.putInt("adults", TankInhabitants.countAdults(live));
-        out.putInt("hard_cap", TankInhabitants.hardCap(t.waterBlocks()));
+        out.putInt("hard_cap", TankInhabitants.hardCap(t.systemBlocks()));
         TankInhabitants.Stocking st = TankInhabitants.breakdown(live, t);
         out.putDouble("stock", st.total());
         out.putDouble("stock_adults", st.adults());
@@ -1178,6 +1180,7 @@ public final class TankView {
         out.put("water_care", water(level, controller, live).save());
         out.put("tech", tech(level, controller).save());
         out.put("climate", climate(level, controller, live).save()); // M31
+        out.put("sump", org.overengineer.bettacraft.equipment.Sump.view(level, controller)); // M49
         out.put("plants", plants(level, controller).save());
         out.put("aquatic", aquatic(level, controller).save());
         return out;
@@ -1404,6 +1407,7 @@ public final class TankView {
         v.water.load(t.getCompound("water_care"));
         v.tech.load(t.getCompound("tech"));
         v.climate.load(t.getCompound("climate")); // M31
+        v.sump = t.getCompound("sump"); // M49
         v.plants.load(t.getCompound("plants"));
         v.aquatic.load(t.getCompound("aquatic"));
         v.breeding = t.getCompound("breeding");

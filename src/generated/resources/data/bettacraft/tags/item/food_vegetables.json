@@ -7,6 +7,7 @@
     {
       "id": "#c:foods/vegetable",
       "required": false
-    }
+    },
+    "bettacraft:chaetomorpha"
   ]
 }

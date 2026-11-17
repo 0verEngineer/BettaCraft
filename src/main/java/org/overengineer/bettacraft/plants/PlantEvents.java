@@ -47,8 +47,48 @@ public final class PlantEvents {
         InteriorPlants.onBreak(level, e.getPos(), s, e.getPlayer());
     }
 
+    /** M49: a mangrove propagule placed in an interior grows into a mangrove of its tank. */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onPlace(BlockEvent.EntityPlaceEvent e) {
+        if (e.isCanceled() || !(e.getLevel() instanceof ServerLevel level) || !InteriorManager.isInterior(level)) return;
+        if (e.getPlacedBlock().is(Blocks.MANGROVE_PROPAGULE)) Mangroves.placedInInterior(level, e.getPos());
+    }
+
+    /** M49: a mangrove propagule used on a tank from outside is planted at the floor under the spot looked at. */
+    private static boolean propagule(PlayerInteractEvent.RightClickBlock e) {
+        ItemStack stack = e.getItemStack();
+        Level level = e.getLevel();
+        if (!stack.is(net.minecraft.world.item.Items.MANGROVE_PROPAGULE) || !(level.getBlockState(e.getPos()).getBlock() instanceof TankBlock)) return false;
+        if (!Mangroves.enabled() || InteriorManager.isInterior(level)) return false;
+        TankBlockEntity c = TankMultiblock.getController(level, e.getPos());
+        if (c == null || c.getTank() == null) return false;
+        e.setCanceled(true);
+        e.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
+        if (!(level instanceof ServerLevel server)) return true;
+        Player player = e.getEntity();
+        if (!TankInhabitants.canModify(player, c.getTank())) {
+            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            return true;
+        }
+        var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(server, c);
+        int scale = r == null ? 16 : r.scale();
+        var hit = e.getHitVec().getLocation();
+        int lx = (int) Math.floor((hit.x - c.getTank().min().getX()) * scale), lz = (int) Math.floor((hit.z - c.getTank().min().getZ()) * scale);
+        String err = Mangroves.plant(server, c, lx, lz);
+        if (err != null) {
+            player.displayClientMessage(Component.translatable(err).withStyle(ChatFormatting.GOLD), true);
+            return true;
+        }
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        level.playSound(null, e.getPos(), SoundEvents.MANGROVE_ROOTS_PLACE, SoundSource.BLOCKS, 0.8F, 1.0F);
+        org.overengineer.bettacraft.tank.TankCare.log(server, c, "log.bettacraft.mangrove.planted", org.overengineer.bettacraft.tank.TankCare.nameArg(player));
+        player.displayClientMessage(Component.translatable("message.bettacraft.mangrove.planted").withStyle(ChatFormatting.GREEN), true);
+        return true;
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock e) {
+        if (propagule(e)) return; // M49
         ItemStack stack = e.getItemStack();
         if (!stack.is(Tags.Items.TOOLS_SHEAR)) return;
         Level level = e.getLevel();

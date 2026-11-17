@@ -27,6 +27,8 @@ public class CabinetMenu extends AbstractContainerMenu {
     public static final int AIR_PUMP_X = 74, AIR_PUMP_Y = 44;
     /** Menu slot indices. */
     public static final int FILTER = 0, HEATER0 = 1, AIR_PUMP = 3, STORAGE0 = 4, PLAYER0 = 4 + CabinetBlockEntity.STORAGE;
+    /** M49: the sump slot between the heaters and the air pump (after the player inventory in the menu), and the button that opens its chambers. */
+    public static final int SUMP_X = 55, SUMP_Y = 44, SUMP = PLAYER0 + 36, BUTTON_SUMP = 60;
     /** M22.4: menu button ids 0..3 set the outlet side ({@link OutletSide} ordinal). */
     public static final int BUTTON_OUTLET0 = 0;
     /** M41: menu buttons: the next / previous side of the Create shaft that the server allows. */
@@ -82,6 +84,17 @@ public class CabinetMenu extends AbstractContainerMenu {
             for (int c = 0; c < 9; c++)
                 addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
         for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
+        addSlot(new SlotItemHandler(items, CabinetBlockEntity.SUMP_SLOT, SUMP_X, SUMP_Y) { // M49
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return Sump.isSump(stack);
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         addPowerSlot(cabinet);
         outlet.set(cabinet == null ? -1 : outletValue(cabinet));
         addDataSlot(new net.minecraft.world.inventory.DataSlot() {
@@ -200,6 +213,13 @@ public class CabinetMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (powerButton(player, id, cabinet)) return true;
+        if (cabinet != null && id == BUTTON_SUMP) { // M49: the chambers of the sump in their own window
+            if (!Sump.enabled() || !cabinet.hasSump() || !(player instanceof net.minecraft.server.level.ServerPlayer sp)) return false;
+            net.minecraft.core.BlockPos pos = cabinet.getBlockPos();
+            sp.openMenu(new net.minecraft.world.SimpleMenuProvider((cid, pinv, p) -> new SumpMenu(cid, pinv, cabinet),
+                    net.minecraft.network.chat.Component.translatable("gui.bettacraft.sump.title")), b -> b.writeBlockPos(pos));
+            return true;
+        }
         if (cabinet != null && (id == BUTTON_DRIVE_NEXT || id == BUTTON_DRIVE_PREVIOUS)) { // M41
             if (!org.overengineer.bettacraft.tank.TankDrive.cabinetsEnabled()) return false;
             cabinet.setDriveSide(nextAllowed(cabinet.driveSetting(), id == BUTTON_DRIVE_NEXT));
@@ -254,14 +274,21 @@ public class CabinetMenu extends AbstractContainerMenu {
         return !items.getStackInSlot(CabinetBlockEntity.FILTER_SLOT).isEmpty();
     }
 
+    /** M49: a sump sits in its slot. */
+    public boolean hasSump() {
+        return !items.getStackInSlot(CabinetBlockEntity.SUMP_SLOT).isEmpty();
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack s = slot.getItem();
         ItemStack copy = s.copy();
-        if (index < PLAYER0) {
-            if (!moveItemStackTo(s, PLAYER0, slots.size(), true)) return ItemStack.EMPTY;
+        if (index < PLAYER0 || index == SUMP) {
+            if (!moveItemStackTo(s, PLAYER0, PLAYER0 + 36, true)) return ItemStack.EMPTY;
+        } else if (Sump.isSump(s) && !slots.get(SUMP).hasItem()) { // M49
+            if (!moveItemStackTo(s, SUMP, SUMP + 1, false)) return ItemStack.EMPTY;
         } else if (s.is(ModItems.EXTERNAL_FILTER.get()) && !slots.get(FILTER).hasItem()) {
             if (!moveItemStackTo(s, FILTER, FILTER + 1, false)) return ItemStack.EMPTY;
         } else if (s.is(ModItems.AIR_PUMP.get()) && !slots.get(AIR_PUMP).hasItem()) { // M29.1

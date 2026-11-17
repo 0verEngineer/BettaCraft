@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=east": {
+      "model": "bettacraft:block/calcium_reactor",
+      "y": 90
+    },
+    "active=false,facing=north": {
+      "model": "bettacraft:block/calcium_reactor"
+    },
+    "active=false,facing=south": {
+      "model": "bettacraft:block/calcium_reactor",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "bettacraft:block/calcium_reactor",
+      "y": 270
+    },
+    "active=true,facing=east": {
+      "model": "bettacraft:block/calcium_reactor_on",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "bettacraft:block/calcium_reactor_on"
+    },
+    "active=true,facing=south": {
+      "model": "bettacraft:block/calcium_reactor_on",
+      "y": 180
+    },
+    "active=true,facing=west": {
+      "model": "bettacraft:block/calcium_reactor_on",
+      "y": 270
+    }
+  }
+}

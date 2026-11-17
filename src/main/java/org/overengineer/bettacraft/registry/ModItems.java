@@ -84,6 +84,7 @@ public final class ModItems {
     private static int[] eggColours(org.overengineer.bettacraft.terrarium.HerpSpecies s) {
         return switch (s.id()) {
             case "dart_frog" -> new int[]{0x2050C8, 0x101418};
+            case "mudskipper" -> new int[]{0x6E6A52, 0x4C90D8}; // M49
             case "horned_frog" -> new int[]{0x6E9A3A, 0x6A3A20};
             case "leopard_gecko" -> new int[]{0xE8C858, 0x3A3028};
             case "crested_gecko" -> new int[]{0xB8783A, 0xE0C08A};
@@ -175,6 +176,12 @@ public final class ModItems {
             () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
     public static final DeferredItem<Item> ROTIFERS = ITEMS.register("rotifers",
             () -> new org.overengineer.bettacraft.containers.PourableBottleItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE)));
+    // M49 part a: the sump, the Chaetomorpha of its refugium, the calcium reactor and its coral rubble
+    public static final DeferredItem<org.overengineer.bettacraft.equipment.SumpItem> SUMP = ITEMS.register("sump",
+            () -> new org.overengineer.bettacraft.equipment.SumpItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> CHAETOMORPHA = ITEMS.register("chaetomorpha", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CORAL_RUBBLE = ITEMS.register("coral_rubble", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<BlockItem> CALCIUM_REACTOR = ITEMS.registerSimpleBlockItem(ModBlocks.CALCIUM_REACTOR);
     public static final DeferredItem<CultureItem> PHYTOPLANKTON_CULTURE = ITEMS.register("phytoplankton_culture",
             () -> new CultureItem(PHYTOPLANKTON, true, new Item.Properties().stacksTo(16)));
     public static final DeferredItem<CultureItem> ROTIFER_CULTURE = ITEMS.register("rotifer_culture",

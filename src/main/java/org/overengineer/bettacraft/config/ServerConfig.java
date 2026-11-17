@@ -279,6 +279,9 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue REEF_LIVE_ROCK_BLOCKS;
     /** M48 part b: copepods of the live rock (mandarin) and the clownfish larvae. */
     public static final ModConfigSpec.DoubleValue REEF_COPEPODS_PER_LIVE_ROCK, REEF_MANDARIN_COPEPODS, REEF_CLOWN_LARVA_DAYS, REEF_CLOWN_LARVA_SURVIVAL;
+    /** M49: the sump, its refugium and the calcium reactor; the brackish water animals and the mangroves. */
+    public static final ModConfigSpec.DoubleValue SUMP_WATER_BLOCKS, REFUGIUM_NITRATE, CHAETO_DOUBLING_DAYS, CALCIUM_REACTOR_CA, CALCIUM_REACTOR_RUBBLE;
+    public static final ModConfigSpec.DoubleValue ARCHER_INSECTS, ARCHER_SPLASH, AMANO_LARVA_DAYS, AMANO_FRESH_LARVA_DAYS, AMANO_LARVA_SURVIVAL, MANGROVE_STAGE_DAYS;
     public static final ModConfigSpec.IntValue REEF_PUMP_BLOCKS;
     public static final ModConfigSpec.DoubleValue REEF_CORAL_GROWTH;
     public static final ModConfigSpec.DoubleValue REEF_CALCIUM_PER_STAGE;
@@ -1187,6 +1190,28 @@ public final class ServerConfig {
         SIZE_BETTA = b.comment("Size of the bettas (all species, every life stage in proportion): NORMAL = smaller, about halfway between",
                         "DragN's Just Bettas and the size before Bettacraft 1.28 (0.77 of it); LARGE = the size before 1.28")
                 .defineEnum("betta", AnimalSize.NORMAL);
+        b.pop();
+        b.comment("M49 part a: the sump in the cabinet (features.sump.enabled), its refugium and the calcium reactor").push("sump");
+        SUMP_WATER_BLOCKS = b.comment("Water blocks a sump in a cabinet adds to the tank above (the waste, the nitrate and the dosed values spread",
+                        "over it, and it counts for the stocking)").defineInRange("sumpWaterBlocks", 0.5, 0.0, 8.0);
+        REFUGIUM_NITRATE = b.comment("Nitrate (mg/L in one water block) one Chaetomorpha in a lit refugium takes up per day").defineInRange("refugiumNitratePerAlgae", 0.6, 0.0, 100.0);
+        CHAETO_DOUBLING_DAYS = b.comment("Days in which the Chaetomorpha of a lit refugium doubles while it is young (it slows down towards a",
+                        "full chamber of 16)").defineInRange("chaetoDoublingDays", 4.0, 0.1, 100.0);
+        CALCIUM_REACTOR_CA = b.comment("Calcium (mg/L in one water block) a running calcium reactor adds per day; the alkalinity follows in the ratio",
+                        "the stony corals use up").defineInRange("calciumReactorCalciumPerDay", 40.0, 0.0, 10000.0);
+        CALCIUM_REACTOR_RUBBLE = b.comment("Coral rubble a running calcium reactor dissolves per day").defineInRange("calciumReactorRubblePerDay", 2.0, 0.0, 64.0);
+        b.pop();
+        b.comment("M49 part b: the brackish water animals and the mangroves (features.brackish.enabled)").push("brackish");
+        ARCHER_INSECTS = b.comment("Insects per day that come to the plants above an open tank with an archerfish (the plants of a paludarium,",
+                        "a mangrove over the water, leaves or flowers on top of the tank) by day").defineInRange("archerfishInsectsPerDay", 6.0, 0.0, 200.0);
+        ARCHER_SPLASH = b.comment("Chance per second that an archerfish splashes a player whose head is over its open tank (harmless)")
+                .defineInRange("archerfishSplashChance", 0.02, 0.0, 1.0);
+        AMANO_LARVA_DAYS = b.comment("Days the Amano larvae drift in brackish water before they settle as young shrimp").defineInRange("amanoLarvaDays", 3.0, 0.1, 30.0);
+        AMANO_FRESH_LARVA_DAYS = b.comment("Days the Amano larvae live in fresh water (time to net them into a brackish tank)").defineInRange("amanoFreshLarvaDays", 1.0, 0.0, 30.0);
+        AMANO_LARVA_SURVIVAL = b.comment("Share of the Amano larvae that come through in brackish water without phytoplankton in the tank (with",
+                        "phytoplankton about twice as many, at most 80 %)").defineInRange("amanoLarvaSurvival", 0.35, 0.0, 1.0);
+        MANGROVE_STAGE_DAYS = b.comment("Days between two growth stages of a mangrove in a tank interior (in light; brackish water a third faster)")
+                .defineInRange("mangroveStageDays", 1.5, 0.05, 100.0);
         b.pop();
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
         GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",

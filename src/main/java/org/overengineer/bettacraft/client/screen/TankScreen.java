@@ -50,7 +50,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int ENTER_X = 176;
 
     /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
-    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES, CLIMATE }
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES, CLIMATE, SUMP }
 
     /** Scale of the tab labels: seven tabs fit into the 236 px of the menu (also the longer German labels). */
     /** Scale of the tab labels: 0.75, smaller when the eight labels (M23) would not fit otherwise (set in init). */
@@ -69,6 +69,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Nullable
     private Button tabClimate;
     private boolean climateTabShown;
+    /** M49: the sump tab, only while a sump sits in a cabinet under the tank. */
+    @Nullable
+    private Button tabSump;
+    private boolean sumpTabShown;
     private final List<AbstractWidget> devices = new ArrayList<>();
     private Button timerButton;
     private Button thinButton;
@@ -172,8 +176,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         // widths follow the scaled labels, the rest of the 236 px is shared out
         TankView cv = view();
         climateTabShown = cv != null && cv.climate.hasLand();
-        Tab[] order = climateTabShown ? new Tab[]{Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.CLIMATE, Tab.PLANTS, Tab.INTERIOR, Tab.LOG}
-                : new Tab[]{Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES, Tab.PLANTS, Tab.INTERIOR, Tab.LOG};
+        sumpTabShown = cv != null && cv.sump.contains("count");
+        java.util.List<Tab> tabList = new java.util.ArrayList<>(java.util.List.of(Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES));
+        if (sumpTabShown) tabList.add(Tab.SUMP); // M49
+        if (climateTabShown) tabList.add(Tab.CLIMATE);
+        tabList.addAll(java.util.List.of(Tab.PLANTS, Tab.INTERIOR, Tab.LOG));
+        Tab[] order = tabList.toArray(new Tab[0]);
         String[] keys = new String[order.length];
         for (int i = 0; i < order.length; i++) keys[i] = order[i].name().toLowerCase(java.util.Locale.ROOT);
         int[] labels = new int[order.length];
@@ -190,6 +198,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             tx += widths[i];
         }
         tabClimate = null;
+        tabSump = null;
         for (int i = 0; i < order.length; i++) {
             switch (order[i]) {
                 case OVERVIEW -> tabOverview = tabs[i];
@@ -198,12 +207,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 case WATER -> tabWater = tabs[i];
                 case DEVICES -> tabDevices = tabs[i];
                 case CLIMATE -> tabClimate = tabs[i];
+                case SUMP -> tabSump = tabs[i];
                 case PLANTS -> tabPlants = tabs[i];
                 case INTERIOR -> tabInterior = tabs[i];
                 case LOG -> tabLog = tabs[i];
             }
         }
         if (!climateTabShown && tab == Tab.CLIMATE) tab = Tab.OVERVIEW;
+        if (!sumpTabShown && tab == Tab.SUMP) tab = Tab.OVERVIEW;
         // M23: dimmer, daylight timer with on and off time
         devices.clear();
         devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_DIMMER, -10)).bounds(x + 62, y + 98, 14, 13).build()));
@@ -514,6 +525,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabPlants.active = tab != Tab.PLANTS;
         tabDevices.active = tab != Tab.DEVICES;
         if (tabClimate != null) tabClimate.active = tab != Tab.CLIMATE;
+        if (tabSump != null) tabSump.active = tab != Tab.SUMP;
         boolean lightControls = tab == Tab.DEVICES && v != null && v.tech.timerFeature;
         for (AbstractWidget w : devices) {
             w.visible = lightControls;
@@ -620,7 +632,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         super.containerTick();
         // M31: the tank became a terrarium / paludarium or an aquarium again: the tabs are laid out anew
         TankView cv = view();
-        if (cv != null && cv.climate.hasLand() != climateTabShown) {
+        if (cv != null && (cv.climate.hasLand() != climateTabShown || cv.sump.contains("count") != sumpTabShown)) {
             flushName();
             rebuildWidgets();
             return;
@@ -777,6 +789,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             }
             case DEVICES -> drawDevices(g, v);
             case CLIMATE -> drawClimate(g, v);
+            case SUMP -> drawSump(g, v);
             case PLANTS -> {
                 if (aquaticPage) drawAquatic(g, v);
                 else drawPlants(g, v);
@@ -1149,6 +1162,44 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     }
 
     /** M31: the climate tab of a terrarium or paludarium. */
+    /** M49: the sump tab: the water it adds, its chambers, the refugium and the devices beside its cabinet. */
+    private void drawSump(GuiGraphics g, TankView v) {
+        net.minecraft.nbt.CompoundTag s = v.sump;
+        int x = 11, y = 20, w = 226;
+        int n = s.getInt("count");
+        double blocks = s.getDouble("blocks"), tank = s.getDouble("tank_blocks");
+        fitLine(g, Component.translatable("gui.bettacraft.sump.line", n, fmt2(blocks), fmt2(tank + blocks)), x, y, TEXT_LIGHT, w);
+        y += 11;
+        fitLine(g, Component.translatable(s.getBoolean("running") ? "gui.bettacraft.sump.pump_on" : "gui.bettacraft.sump.pump_off")
+                .withStyle(s.getBoolean("running") ? ChatFormatting.GREEN : ChatFormatting.RED), x, y, TEXT_LIGHT, w);
+        y += 13;
+        fitLine(g, Component.translatable("gui.bettacraft.sump.heaters_line", s.getInt("heaters")).withStyle(s.getInt("heaters") > 0 ? ChatFormatting.GOLD : ChatFormatting.GRAY),
+                x, y, TEXT_LIGHT, w);
+        y += 11;
+        fitLine(g, Component.translatable("gui.bettacraft.sump.skimmer_line", s.getInt("skimmers")).withStyle(s.getInt("skimmers") > 0 ? ChatFormatting.AQUA : ChatFormatting.GRAY),
+                x, y, TEXT_LIGHT, w);
+        y += 11;
+        int media = s.getInt("media");
+        fitLine(g, (media == 0 ? Component.translatable("gui.bettacraft.sump.media_none")
+                : Component.translatable("gui.bettacraft.sump.media_line", media, Math.round(s.getDouble("media_blocks")), Math.round(s.getDouble("dirt") * 100)))
+                .withStyle(media == 0 ? ChatFormatting.GRAY : s.getDouble("dirt") >= 0.75 ? ChatFormatting.GOLD : ChatFormatting.WHITE), x, y, TEXT_LIGHT, w);
+        y += 13;
+        int algae = s.getInt("algae");
+        MutableComponent ref;
+        if (!s.getBoolean("refugium_on")) ref = Component.translatable("gui.bettacraft.sump.refugium_off").withStyle(ChatFormatting.GRAY);
+        else if (algae == 0) ref = Component.translatable("gui.bettacraft.sump.refugium_empty").withStyle(ChatFormatting.GRAY);
+        else if (s.getInt("lit") == 0) ref = Component.translatable("gui.bettacraft.sump.refugium_dark", algae).withStyle(ChatFormatting.GOLD);
+        else ref = Component.translatable("gui.bettacraft.sump.refugium_line", algae, org.overengineer.bettacraft.equipment.Sump.MAX_ALGAE, fmt2(s.getDouble("uptake")),
+                Math.round((1 - s.getDouble("algae_factor")) * 100)).withStyle(ChatFormatting.GREEN);
+        fitLine(g, ref, x, y, TEXT_LIGHT, w);
+        y += 13;
+        MutableComponent dev = Component.translatable("gui.bettacraft.sump.devices", s.getInt("sensors"), s.getInt("dosing"));
+        if (s.getBoolean("reactor")) dev.append("  ").append(Component.translatable("gui.bettacraft.sump.reactor"));
+        fitLine(g, dev.withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT, w);
+        y += 11;
+        fitLine(g, Component.translatable("gui.bettacraft.sump.hint").withStyle(ChatFormatting.DARK_GRAY), x, y, TEXT_LIGHT, w);
+    }
+
     private void drawClimate(GuiGraphics g, TankView v) {
         TankView.Climate c = v.climate;
         int x = 11, y = 20, w = 226;

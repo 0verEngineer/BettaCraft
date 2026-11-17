@@ -301,6 +301,7 @@ public final class BettaCraftClient {
         registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, 0.52F, 0.16F, 0F);
         registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, 0.52F, 0.14F, 0F);
         registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, 0.88F, 0.2F, 0F);
+        registerHerp(event, org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER, 0.42F, 0.14F, 0F); // M49 part b
         event.registerEntityRenderer(ModEntities.WILD_CRITTER.get(), org.overengineer.bettacraft.client.render.WildCritterRenderer::new); // M22.3
         for (var t : ModEntities.TANKMATES.values()) event.registerEntityRenderer(t.get(), org.overengineer.bettacraft.client.render.TankmateRenderer::new); // M19
         event.registerBlockEntityRenderer(ModBlockEntities.TANK.get(), TankSignRenderer::new);
@@ -319,6 +320,8 @@ public final class BettaCraftClient {
         event.register(ModMenus.TANK.get(), TankScreen::new);
         event.register(ModMenus.FEEDER.get(), FeederScreen::new);
         event.register(ModMenus.DOSING_PUMP.get(), org.overengineer.bettacraft.client.screen.DosingPumpScreen::new); // M25 part c
+        event.register(ModMenus.SUMP.get(), org.overengineer.bettacraft.client.screen.SumpScreen::new); // M49
+        event.register(ModMenus.CALCIUM_REACTOR.get(), org.overengineer.bettacraft.client.screen.CalciumReactorScreen::new); // M49
         event.register(ModMenus.LIVE_FOOD_PUMP.get(), org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen::new); // M26
         event.register(ModMenus.FOOD_MAKER.get(), org.overengineer.bettacraft.client.screen.FoodMakerScreen::new); // M26 part b
         event.register(ModMenus.FERTILIZER_MAKER.get(), org.overengineer.bettacraft.client.screen.FertilizerMakerScreen::new); // M37

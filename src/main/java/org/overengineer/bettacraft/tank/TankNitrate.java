@@ -121,7 +121,7 @@ public final class TankNitrate {
     /** How the stocking of this tank compares to a normally stocked one (animals per water block / reference). */
     public static double load(ServerLevel level, TankData t) {
         double ref = ServerConfig.getOr(ServerConfig.NITRATE_REFERENCE_STOCKING, 0.5);
-        return TankWater.animals(TankInhabitants.liveInhabitants(level, t), t) / Math.max(1.0, t.waterBlocks()) / ref;
+        return TankWater.animals(TankInhabitants.liveInhabitants(level, t), t) / Math.max(1.0, t.systemBlocks()) / ref;
     }
 
     /**

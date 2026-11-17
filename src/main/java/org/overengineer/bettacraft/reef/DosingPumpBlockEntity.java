@@ -138,6 +138,12 @@ public class DosingPumpBlockEntity extends BlockEntity implements MenuProvider {
             if (!level.isLoaded(n)) continue;
             TankBlockEntity c = TankMultiblock.getController(level, n);
             if (c != null) add(out, c);
+            // M49: the tank above a cabinet with a sump next to the pump
+            if (level.getBlockEntity(n) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab && cab.hasSump()
+                    && org.overengineer.bettacraft.equipment.Sump.enabled() && cab.tankBlockPos() != null) {
+                TankBlockEntity t = TankMultiblock.getController(level, cab.tankBlockPos());
+                if (t != null) add(out, t);
+            }
             if (Features.enabled(Feature.PIPES) && d != getBlockState().getValue(DosingPumpBlock.FACING) && level.getBlockState(n).getBlock() instanceof PipeBlock) {
                 PipeNetwork net = PipeNetwork.of(level, n);
                 if (net == null) continue;

@@ -210,6 +210,15 @@ QUESTS = [
     ("mandarin", [adv("mandarin_copepods")], ["reef_fish"], 12.00, 9.00, 150, None),
     ("banggai", [adv("banggai_young")], ["reef_fish"], 13.50, 9.00, 100, None),
     ("clown_larvae", [adv("clown_larvae")], ["reef_fish"], 10.50, 9.00, 250, "hexagon"),
+    # ------------------------------------------------------------ M49 part a: the sump, its refugium, the calcium reactor
+    ("sump", [adv("sump_installed")], ["cabinet"], 5.60, -1.00, 75, None),
+    ("refugium", [item("chaetomorpha")], ["sump"], 7.00, -0.90, 50, None),
+    ("calcium_reactor", [adv("calcium_reactor")], ["dosing", "sump"], 18.00, 7.50, 150, None),
+    # ------------------------------------------------------------ M49 part b: brackish water
+    ("archerfish", [adv("archerfish_shot")], ["tankmates"], -6.40, 4.20, 75, None),
+    ("mudskipper", [adv("mudskipper_paludarium")], ["paludarium"], -8.75, -1.60, 100, None),
+    ("mangrove", [adv("mangrove_grown")], ["plants"], -1.00, -5.00, 100, None),
+    ("amano", [adv("amano_young")], ["critters_bred"], -1.00, 8.60, 250, "hexagon"),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -244,6 +253,8 @@ OWN_FEATURES = {
     "aquarist": ["AQUARIST_VILLAGER"], "frog_tadpole": ["FROG_BREEDING"],
     "bottom_fish": ["MORE_BOTTOM_FISH"], "tetra_cory_form": ["TANKMATE_FORMS", "BREEDING"],
     "mandarin": ["REEF_ANIMALS"], "banggai": ["REEF_ANIMALS", "BREEDING"], "clown_larvae": ["LARVA_REARING"],
+    "sump": ["SUMP"], "refugium": ["REFUGIUM"], "calcium_reactor": ["CALCIUM_REACTOR"], "archerfish": ["ARCHERFISH"],
+    "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
@@ -297,6 +308,10 @@ REWARDS = {
     "tetra_cory_form": [("spawning_mop", 1)],
     "mandarin": [("live_rock", 4)],
     "clown_larvae": [("rotifer_culture", 2)],
+    "sump": [("chaetomorpha", 4)],
+    "calcium_reactor": [("coral_rubble", 16)],
+    "archerfish": [("fruit_fly_culture", 2)],
+    "amano": [("phytoplankton_culture", 2)],
 }
 
 FIRST_CHAPTER = 33  # quests of the chapter of 1.25.0 (ids, tasks, dependencies frozen)

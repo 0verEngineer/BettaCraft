@@ -65,6 +65,10 @@ public final class FeatureContent {
         put(Feature.LIVE_FOOD_CULTURES, "tubifex", "daphnia", "mulm", "yeast", "green_water_bottle", "green_water_culture", "tubifex_dish", "daphnia_barrel");
         put(Feature.LIVE_FOOD_PUMP, "live_food_pump");
         put(Feature.LARVA_REARING, "phytoplankton", "rotifers", "phytoplankton_culture", "rotifer_culture"); // M48 part b
+        put(Feature.SUMP, "sump"); // M49 part a
+        put(Feature.REFUGIUM, "chaetomorpha");
+        put(Feature.CALCIUM_REACTOR, "calcium_reactor", "coral_rubble");
+        put(Feature.MANGROVES, "decor_mangrove_stilt_roots"); // M49 part b
         put(Feature.FOOD_MACHINE, "food_maker", "fish_flakes", "food_granules", "shrimp_food", "shell_food", "frozen_mosquito_larvae", "frozen_artemia",
                 "frozen_daphnia");
         put(Feature.FERTILIZER, "fertilizer_maker", "kelp_meal", "nutrient_salt", "liquid_fertilizer"); // M37 (the crank is core)
@@ -87,7 +91,7 @@ public final class FeatureContent {
             String id = path.substring(0, path.length() - suffix.length());
             TankmateSpecies t = TankmateSpecies.byId(id);
             if (t != null) out.add(t.feature());
-            for (HerpSpecies h : HerpSpecies.ALL) if (h.id().equals(id)) out.add(h.turtle() ? Feature.TURTLES : Feature.HERPS);
+            for (HerpSpecies h : HerpSpecies.ALL) if (h.id().equals(id)) out.add(h.feature()); // M49: the mudskipper its own
         }
         String plant = path.startsWith("wild_") ? path.substring(5) : path;
         PlantSpecies p = PlantSpecies.byIdOrNull(plant);

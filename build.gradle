@@ -1154,6 +1154,7 @@ tasks.register('verifyReleaseJar') {
                 ~/^data\/bettacraft\/.+\.(json|nbt|mcfunction)$/,
                 ~/^data\/[a-z0-9_.-]+\/tags\/.+\.json$/,
                 ~/^data\/neoforge\/loot_modifiers\/global_loot_modifiers\.json$/,
+                ~/^data\/neoforge\/data_maps\/item\/compostables\.json$/, // M49: the Chaetomorpha goes into the composter
         ]
         def forbidden = [
                 (~/(^|\/)Dev(Smoke|ClientSmoke|ClientShowcase|ClientHooks|Showcase|Upgrade)[^\/]*\.class$/): 'development class',

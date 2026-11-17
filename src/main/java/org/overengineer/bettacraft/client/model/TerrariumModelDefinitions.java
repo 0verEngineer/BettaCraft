@@ -14,7 +14,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
  * Textures: textures/entity/terrarium/<texture>.png (box UV; a model can have several, its varieties).
  */
 public final class TerrariumModelDefinitions {
-    public static final String[] MODELS = {"musk_turtle", "slider_turtle", "hermann_tortoise", "reeves_turtle", "dart_frog", "dart_frog_tadpole", "horned_frog", "leopard_gecko", "crested_gecko", "corn_snake"};
+    public static final String[] MODELS = {"musk_turtle", "slider_turtle", "hermann_tortoise", "reeves_turtle", "dart_frog", "dart_frog_tadpole", "horned_frog", "leopard_gecko", "crested_gecko", "corn_snake", "mudskipper"};
 
     private TerrariumModelDefinitions() {}
 
@@ -30,6 +30,7 @@ public final class TerrariumModelDefinitions {
             case "leopard_gecko" -> createLeopardgeckoLayer();
             case "crested_gecko" -> createCrestedgeckoLayer();
             case "corn_snake" -> createCornsnakeLayer();
+            case "mudskipper" -> createMudskipperLayer();
             default -> throw new IllegalArgumentException(model);
         };
     }
@@ -345,6 +346,43 @@ public final class TerrariumModelDefinitions {
         g_seg8.addOrReplaceChild("scales", CubeListBuilder.create().texOffs(14, 14).addBox(-0.75F, -0.585F, -1.9F, 1.5F, 1.17F, 3.8F), PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
         PartDefinition g_seg9 = root.addOrReplaceChild("seg9", CubeListBuilder.create(), PartPose.offset(0F, -0.35F, 20.4F));
         g_seg9.addOrReplaceChild("scales", CubeListBuilder.create().texOffs(26, 14).addBox(-0.45F, -0.35F, -1.9F, 0.9F, 0.7F, 3.8F), PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
+        return LayerDefinition.create(mesh, 64, 64);
+    }
+
+    public static LayerDefinition createMudskipperLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root = root.addOrReplaceChild("animal", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition g_body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0F, -1.8F, 0F));
+        g_body.addOrReplaceChild("trunk", CubeListBuilder.create().texOffs(0, 0).addBox(-1.4F, -1.2F, -2.8F, 2.8F, 2.4F, 5.6F), PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("dorsal1", CubeListBuilder.create().texOffs(31, 0).addBox(-0.15F, -0.8F, -1.3F, 0.3F, 1.6F, 2.6F), PartPose.offsetAndRotation(0F, -1.9F, -0.4F, 0F, 0F, 0F));
+        PartDefinition g_head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offset(0F, -1.9F, -2.8F));
+        g_head.addOrReplaceChild("skull", CubeListBuilder.create().texOffs(18, 0).addBox(-1.5F, -1.3F, -1.4F, 3F, 2.6F, 2.8F), PartPose.offsetAndRotation(0F, -0.1F, -1.4F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("snout", CubeListBuilder.create().texOffs(8, 9).addBox(-1.2F, -0.8F, -0.45F, 2.4F, 1.6F, 0.9F), PartPose.offsetAndRotation(0F, 0.2F, -3.2F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(16, 9).addBox(-0.45F, -0.45F, -0.45F, 0.9F, 0.9F, 0.9F), PartPose.offsetAndRotation(0.75F, -1.75F, -1.8F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(21, 9).addBox(-0.45F, -0.45F, -0.45F, 0.9F, 0.9F, 0.9F), PartPose.offsetAndRotation(-0.75F, -1.75F, -1.8F, 0F, 0F, 0F));
+        PartDefinition g_tail = root.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offset(0F, -1.7F, 2.8F));
+        g_tail.addOrReplaceChild("base", CubeListBuilder.create().texOffs(38, 0).addBox(-1.05F, -0.95F, -1.4F, 2.1F, 1.9F, 2.8F), PartPose.offsetAndRotation(0F, 0F, 1.4F, 0F, 0F, 0F));
+        g_tail.addOrReplaceChild("dorsal2", CubeListBuilder.create().texOffs(55, 0).addBox(-0.15F, -0.5F, -1.2F, 0.3F, 1F, 2.4F), PartPose.offsetAndRotation(0F, -1.4F, 1.2F, 0F, 0F, 0F));
+        PartDefinition g_tail_tip = root.addOrReplaceChild("tail_tip", CubeListBuilder.create(), PartPose.offset(0F, -1.6F, 5.6F));
+        g_tail_tip.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(0, 9).addBox(-0.65F, -0.7F, -1.1F, 1.3F, 1.4F, 2.2F), PartPose.offsetAndRotation(0F, 0F, 1.1F, 0F, 0F, 0F));
+        g_tail_tip.addOrReplaceChild("end", CubeListBuilder.create().texOffs(49, 0).addBox(-0.15F, -1.2F, -0.9F, 0.3F, 2.4F, 1.8F), PartPose.offsetAndRotation(0F, -0.1F, 3F, 0F, 0F, 0F));
+        PartDefinition g_leg_fr = root.addOrReplaceChild("leg_fr", CubeListBuilder.create(), PartPose.offset(1.4F, -1.3F, -1.6F));
+        g_leg_fr.addOrReplaceChild("upper", CubeListBuilder.create().texOffs(26, 9).addBox(-0.6F, -0.35F, -0.45F, 1.2F, 0.7F, 0.9F), PartPose.offsetAndRotation(0.5F, 0F, 0F, 0F, 0F, 0F));
+        g_leg_fr.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(32, 9).addBox(-0.35F, -0.45F, -0.4F, 0.7F, 0.9F, 0.8F), PartPose.offsetAndRotation(1F, 0.7F, -0.1F, 0F, 0F, 0F));
+        g_leg_fr.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(36, 9).addBox(-0.8F, -0.15F, -0.8F, 1.6F, 0.3F, 1.6F), PartPose.offsetAndRotation(1.3F, 1.15F, -0.4F, 0F, 0F, 0F));
+        PartDefinition g_leg_fl = root.addOrReplaceChild("leg_fl", CubeListBuilder.create(), PartPose.offset(-1.4F, -1.3F, -1.6F));
+        g_leg_fl.addOrReplaceChild("upper", CubeListBuilder.create().texOffs(44, 9).addBox(-0.6F, -0.35F, -0.45F, 1.2F, 0.7F, 0.9F), PartPose.offsetAndRotation(-0.5F, 0F, 0F, 0F, 0F, 0F));
+        g_leg_fl.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(50, 9).addBox(-0.35F, -0.45F, -0.4F, 0.7F, 0.9F, 0.8F), PartPose.offsetAndRotation(-1F, 0.7F, -0.1F, 0F, 0F, 0F));
+        g_leg_fl.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(54, 9).addBox(-0.8F, -0.15F, -0.8F, 1.6F, 0.3F, 1.6F), PartPose.offsetAndRotation(-1.3F, 1.15F, -0.4F, 0F, 0F, 0F));
+        PartDefinition g_leg_br = root.addOrReplaceChild("leg_br", CubeListBuilder.create(), PartPose.offset(0.7F, -0.7F, 1F));
+        g_leg_br.addOrReplaceChild("upper", CubeListBuilder.create().texOffs(0, 14).addBox(-0.3F, -0.25F, -0.3F, 0.6F, 0.5F, 0.6F), PartPose.offsetAndRotation(0.2F, 0F, 0F, 0F, 0F, 0F));
+        g_leg_br.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(18, 14).addBox(-0.25F, -0.2F, -0.25F, 0.5F, 0.4F, 0.5F), PartPose.offsetAndRotation(0.3F, 0.3F, 0.2F, 0F, 0F, 0F));
+        g_leg_br.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(4, 14).addBox(-0.45F, -0.15F, -0.45F, 0.9F, 0.3F, 0.9F), PartPose.offsetAndRotation(0.4F, 0.55F, 0.4F, 0F, 0F, 0F));
+        PartDefinition g_leg_bl = root.addOrReplaceChild("leg_bl", CubeListBuilder.create(), PartPose.offset(-0.7F, -0.7F, 1F));
+        g_leg_bl.addOrReplaceChild("upper", CubeListBuilder.create().texOffs(9, 14).addBox(-0.3F, -0.25F, -0.3F, 0.6F, 0.5F, 0.6F), PartPose.offsetAndRotation(-0.2F, 0F, 0F, 0F, 0F, 0F));
+        g_leg_bl.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(21, 14).addBox(-0.25F, -0.2F, -0.25F, 0.5F, 0.4F, 0.5F), PartPose.offsetAndRotation(-0.3F, 0.3F, 0.2F, 0F, 0F, 0F));
+        g_leg_bl.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(13, 14).addBox(-0.45F, -0.15F, -0.45F, 0.9F, 0.3F, 0.9F), PartPose.offsetAndRotation(-0.4F, 0.55F, 0.4F, 0F, 0F, 0F));
         return LayerDefinition.create(mesh, 64, 64);
     }
 

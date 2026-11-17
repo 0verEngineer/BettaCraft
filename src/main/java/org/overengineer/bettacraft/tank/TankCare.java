@@ -86,6 +86,7 @@ public final class TankCare {
         if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
         TankPower.step(server, be, dt);
         TankDrive.step(server, be, dt); // M41: Create's rotation refills the buffer with what the devices took
+        org.overengineer.bettacraft.equipment.Sump.step(server, be, dt / 24000.0); // M49: the water of the sumps, their media and refugia
         updateTemperature(server, be, dt / 24000.0);
         TankWater.step(server, be, dt / 24000.0);
         TankNitrate.step(server, be, dt / 24000.0); // M24: nitrate rises, water changes lower it
@@ -115,6 +116,9 @@ public final class TankCare {
         org.overengineer.bettacraft.foreign.MinecraftPets.step(server, be, dt / 24000.0); // M39 part c: the needs of the Minecraft pets, no farm, bait
         TankBreeding.step(server, be, dt / 24000.0);
         org.overengineer.bettacraft.tankmates.TankmateBreeding.step(server, be, dt / 24000.0); // M19
+        org.overengineer.bettacraft.tankmates.Archerfish.step(server, be, dt / 24000.0); // M49: insects above the water, the shots
+        org.overengineer.bettacraft.plants.Mangroves.step(server, be, dt / 24000.0); // M49: the mangroves of the interior
+        org.overengineer.bettacraft.critters.AmanoLarvae.step(server, be, dt / 24000.0); // M49: the Amano larvae die or settle
         org.overengineer.bettacraft.reef.ReefCare.step(server, be, dt / 24000.0); // M20: salt shock of frogs and foreign animals
         org.overengineer.bettacraft.reef.ReefDosing.step(server, be, dt / 24000.0); // M25 part c: magnesium and trace elements
         org.overengineer.bettacraft.reef.Copepods.step(server, be, dt / 24000.0); // M48 part b: the copepods of the live rock, the mandarins
@@ -318,6 +322,9 @@ public final class TankCare {
 
     /** As {@link #feed(ServerLevel, TankBlockEntity, ItemStack, int)}; skips and collects the fish fed in this {@code round}. */
     public static int feed(ServerLevel level, TankBlockEntity controller, ItemStack food, int maxItems, @Nullable java.util.Set<java.util.UUID> round) {
+        // M49: fruit flies over a tank with an archerfish: let out above the water for it to shoot
+        int released = org.overengineer.bettacraft.tankmates.Archerfish.release(level, controller, food, maxItems);
+        if (released > 0) return released;
         BettaFood.Kind kind = BettaFood.kind(food);
         if (kind == null || maxItems <= 0) return 0;
         // M26 part b: shrimp food goes to the shrimp, crayfish and snails only (twice the food of a leftover)

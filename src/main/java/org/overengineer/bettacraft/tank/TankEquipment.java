@@ -185,6 +185,7 @@ public final class TankEquipment {
             if (level.isLoaded(p) && level.getBlockEntity(p) instanceof FilterHost f && f.hasFilter()) out.add(f);
         }
         for (CabinetBlockEntity cab : cabinets(level, c)) if (cab.hasFilter()) out.add(cab);
+        out.addAll(org.overengineer.bettacraft.equipment.Sump.hosts(level, c)); // M49: the return pumps of the sumps
         return out;
     }
 

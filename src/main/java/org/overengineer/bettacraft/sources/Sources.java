@@ -240,6 +240,7 @@ public final class Sources {
                 case JUNGLE -> Where.JUNGLE_FLOOR;
                 case ARID -> Where.ARID;
                 case WOODLAND -> Where.WOODLAND;
+                case MANGROVE -> Where.MANGROVE; // M49
             };
             int[] g = org.overengineer.bettacraft.terrarium.HerpSpawns.group(e.species());
             out.add(new Source(Source.Kind.SPAWN, Target.item(e.species().containerId()), where, e.weight(), e.weight(), g[0], g[1], 0, false,

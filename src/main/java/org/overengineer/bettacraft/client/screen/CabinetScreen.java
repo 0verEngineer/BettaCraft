@@ -47,6 +47,12 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_FRONT0 + (hasShiftDown() ? f.previous() : f.next()).ordinal());
         }));
         jointButton = addRenderableWidget(new JointButton(leftPos + JOINT_X, topPos + FRONT_Y));
+        // M49: opens the chambers of the sump (above its slot)
+        sumpButton = addRenderableWidget(new TankScreen.FitButton(leftPos + CabinetMenu.SUMP_X - 1, topPos + CabinetMenu.SUMP_Y - 14, 18, 12,
+                Component.translatable("gui.bettacraft.cabinet.sump_open"), b -> {
+            if (minecraft != null && minecraft.gameMode != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CabinetMenu.BUTTON_SUMP);
+        }));
+        sumpButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.cabinet.sump_open.tooltip")));
         updateOutlet();
     }
 
@@ -160,6 +166,8 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     }
 
     private TankScreen.FitButton powerBtn;
+    /** M49: the button that opens the sump chambers. */
+    private TankScreen.FitButton sumpButton;
 
     /** M23: the power regulator button: click +10 %, sneak + click -10 % (tooltip explains). */
     private TankScreen.FitButton powerButton(int x, int y, int w, int h, java.util.function.IntSupplier value, int containerId) {
@@ -202,6 +210,11 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
             g.blit(TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 176, 50, 16, 16);
         }
         SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
+        if (org.overengineer.bettacraft.equipment.Sump.enabled() || menu.hasSump()) { // M49: the sump slot
+            g.blit(TEXTURE, leftPos + CabinetMenu.SUMP_X - 1, topPos + CabinetMenu.SUMP_Y - 1, 176, 0, 18, 18);
+            if (!menu.hasSump()) g.fill(leftPos + CabinetMenu.SUMP_X + 2, topPos + CabinetMenu.SUMP_Y + 5, leftPos + CabinetMenu.SUMP_X + 14,
+                    topPos + CabinetMenu.SUMP_Y + 13, 0x557AA8C0); // a hint of water
+        }
         if (menu.hasFilter()) {
             for (int i = 0; i < 2; i++) {
                 int x = leftPos + CabinetMenu.HEATER_X + i * 18, y = topPos + CabinetMenu.HEATER_Y;
@@ -229,6 +242,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         if (hoveredSlot == null || hoveredSlot.hasItem() || !menu.getCarried().isEmpty()) return;
         int i = hoveredSlot.index;
         String key = i == CabinetMenu.AIR_PUMP ? "gui.bettacraft.cabinet.air_pump.tooltip"
+                : i == CabinetMenu.SUMP ? "gui.bettacraft.cabinet.sump.tooltip"
                 : i == CabinetMenu.FILTER ? "gui.bettacraft.cabinet.filter"
                 : i >= CabinetMenu.HEATER0 && i < CabinetMenu.HEATER0 + 2 && menu.hasFilter() ? "gui.bettacraft.cabinet.heaters" : null;
         if (key != null) g.renderTooltip(font, font.split(Component.translatable(key), 180), mouseX, mouseY);
@@ -239,6 +253,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         updateOutlet();
         updateFront();
         if (driveButton != null) driveButton.update();
+        if (sumpButton != null) sumpButton.visible = menu.hasSump() && org.overengineer.bettacraft.equipment.Sump.enabled();
         if (powerBtn != null) {
             powerBtn.visible = Features.enabled(Feature.POWER_REGULATOR) && menu.hasFilter();
             powerBtn.setMessage(Component.literal(menu.power() * 10 + "%"));

@@ -352,6 +352,10 @@ public final class ModBlocks {
                     .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollission().pushReaction(PushReaction.DESTROY)));
 
     /** M25 part c: the dosing pump of a reef tank. */
+    /** M49 part a: the calcium reactor. */
+    public static final DeferredBlock<org.overengineer.bettacraft.reef.CalciumReactorBlock> CALCIUM_REACTOR = BLOCKS.register("calcium_reactor",
+            () -> new org.overengineer.bettacraft.reef.CalciumReactorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.GLASS).noOcclusion()));
     public static final DeferredBlock<org.overengineer.bettacraft.reef.DosingPumpBlock> DOSING_PUMP = BLOCKS.register("dosing_pump",
             () -> new org.overengineer.bettacraft.reef.DosingPumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));

@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:fill_tank",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "amano_young"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.amano_young.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:critter_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.amano_young.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

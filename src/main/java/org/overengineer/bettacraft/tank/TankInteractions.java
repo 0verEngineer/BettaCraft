@@ -47,6 +47,8 @@ public final class TankInteractions {
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.reef.ClownLarvae.useOnTank(stack, level, pos, player, hand); // M48 part b: phytoplankton
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
+        r = org.overengineer.bettacraft.critters.AmanoLarvae.useOnTank(stack, level, pos, player, hand); // M49: a bag of Amano larvae
+        if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.chem.ChemItem.useOnTank(stack, level, pos, player, hand); // M25: measuring, salt, leaves
         if (r != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) return r;
         r = org.overengineer.bettacraft.fertilizer.Fertilizer.useOnTank(stack, level, pos, player, hand); // M37: a portion of fertilizer

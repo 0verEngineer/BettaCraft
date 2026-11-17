@@ -72,6 +72,8 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     private Vec3 nestTarget;
     /** The air of its tank was below {@link #FROST} at the last care step. */
     private boolean frost;
+    /** M49: a brackish water animal sits in fresh water (set by the care step). */
+    private boolean fresh;
     private int nestTicks;
 
     public HerpEntity(EntityType<? extends Animal> type, Level level, HerpSpecies species) {
@@ -271,6 +273,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             setBrumating(false);
         }
         frost = t.hasClimate() && t.airTemp() < FROST;
+        fresh = species.brackish() && org.overengineer.bettacraft.terrarium.Mudskippers.fresh(t); // M49
         if (isBrumating()) pauseHunger(days);
         super.onTerrariumCare(level, c, adjust(a), days);
     }
@@ -278,6 +281,12 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     /** A brumating tortoise does not mind the cold, the missing basking spot or UV; frost and the wrong tank still count. */
     @Override
     public TerrariumNeeds.Assessment adjust(TerrariumNeeds.Assessment a) {
+        if (fresh) { // M49: the mudskipper in fresh water
+            EnumSet<TerrariumNeeds.Problem> p = EnumSet.noneOf(TerrariumNeeds.Problem.class);
+            p.addAll(a.problems());
+            p.add(TerrariumNeeds.Problem.FRESH_WATER);
+            a = new TerrariumNeeds.Assessment(p, a.severity() + 0.1);
+        }
         if (!isBrumating() || a.fine()) return a;
         EnumSet<TerrariumNeeds.Problem> left = EnumSet.noneOf(TerrariumNeeds.Problem.class);
         for (var p : a.problems()) {
@@ -441,6 +450,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             case FROG -> SoundEvents.FROG_HURT;
             case GECKO -> SoundEvents.ARMADILLO_HURT;
             case SNAKE -> SoundEvents.CAT_HISS;
+            case MUDSKIPPER -> SoundEvents.TROPICAL_FISH_HURT;
         };
     }
 
@@ -451,6 +461,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             case FROG -> SoundEvents.FROG_DEATH;
             case GECKO -> SoundEvents.ARMADILLO_DEATH;
             case SNAKE -> SoundEvents.CAT_HISS;
+            case MUDSKIPPER -> SoundEvents.TROPICAL_FISH_DEATH;
         };
     }
 
@@ -480,6 +491,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
         switch (species.body()) {
             case TURTLE -> playSound(isBaby() ? SoundEvents.TURTLE_SHAMBLE_BABY : SoundEvents.TURTLE_SHAMBLE, 0.15F, 1.0F);
             case FROG -> playSound(SoundEvents.FROG_STEP, 0.1F, 1.4F);
+            case MUDSKIPPER -> playSound(SoundEvents.TROPICAL_FISH_FLOP, 0.06F, 1.6F);
             default -> playSound(SoundEvents.ARMADILLO_STEP, 0.08F, 1.5F);
         }
     }

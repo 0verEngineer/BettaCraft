@@ -46,7 +46,8 @@ public class FishBagItem extends Item {
     }
 
     public static boolean isFilled(ItemStack stack) {
-        return stack.has(ModDataComponents.BAG_ENTITY.get()) || stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get());
+        return stack.has(ModDataComponents.BAG_ENTITY.get()) || stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())
+                || stack.has(ModDataComponents.CRITTER_LARVAE.get()); // M49
     }
 
     @Nullable
@@ -122,6 +123,10 @@ public class FishBagItem extends Item {
             org.overengineer.bettacraft.containers.ContainerRules.pour(level, player,
                     org.overengineer.bettacraft.containers.ContainerRules.pourSpot(player, getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY)));
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        }
+        if (stack.has(ModDataComponents.CRITTER_LARVAE.get())) { // M49: larvae only go into a tank
+            if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.amano.larvae_need_tank"), true);
+            return InteractionResultHolder.fail(stack);
         }
         if (stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return releaseCritters(level, player, hand, stack);
         EntityType<?> type = containedType(stack);

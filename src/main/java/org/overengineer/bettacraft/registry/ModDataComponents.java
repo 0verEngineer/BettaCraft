@@ -81,6 +81,9 @@ public final class ModDataComponents {
     /** M19: a clutch of tankmate eggs (or larvae) taken out of a tank with the net, in a fish bag ({@code Clutch#save}). */
     public static final Supplier<DataComponentType<net.minecraft.nbt.CompoundTag>> TANKMATE_CLUTCH = COMPONENTS.registerComponentType("tankmate_clutch",
             b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG));
+    /** M49 part b: a cloud of Amano larvae in a fish bag (the saved {@link org.overengineer.bettacraft.critters.CritterObject}). */
+    public static final Supplier<DataComponentType<net.minecraft.nbt.CompoundTag>> CRITTER_LARVAE = COMPONENTS.registerComponentType("critter_larvae",
+            b -> b.persistent(net.minecraft.nbt.CompoundTag.CODEC).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG));
 
     /** M25: CO2 in a gas cylinder (bubble-days: days at one bubble per second; missing = empty). */
     public static final Supplier<DataComponentType<Float>> CO2_GAS = COMPONENTS.registerComponentType("co2_gas",

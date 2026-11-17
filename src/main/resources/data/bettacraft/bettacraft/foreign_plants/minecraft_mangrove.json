@@ -1,0 +1,8 @@
+{
+  "blocks": [
+    "minecraft:mangrove_leaves",
+    "minecraft:mangrove_propagule"
+  ],
+  "role": "stem",
+  "required": false
+}

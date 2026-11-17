@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:enter_interior",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "mangrove_grown"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.mangrove_grown.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:mangrove_propagule"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.mangrove_grown.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

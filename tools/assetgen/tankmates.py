@@ -1224,6 +1224,8 @@ def looks(species, variety, female):
         return anthias_look(female)
     if sp == "panda_garra":
         return panda_garra_look()
+    if sp == "archerfish":
+        return archer_look()
     if sp in ("zebra_danio", "celestial_pearl_danio"):
         return danio_look(sp, var, female)
     if sp in ("forktail_rainbow", "neon_dwarf_rainbow"):
@@ -1890,6 +1892,30 @@ def barb_look(sp, var, female):
             return C("#1e1410")
         return C("#e8d8c0")
     return Look(body, fins, eye="#d02828" if var == "albino" else "#141414")
+
+
+def archer_look():
+    """M49: the banded archerfish: silver-white with a yellowish-olive back, four to five black wedge bars from the back down
+    the flank (the first through the eye), the dorsal and anal fins dusky with dark tips, a pale greyish tail."""
+    rnd = _spangles(4931)
+
+    def body(t, v, x, z, y):
+        k = rnd[int(abs(z) * 2.9 + abs(x)) % 64, int((y + 30) * 2.4) % 64]
+        bars = ((0.1, 0.03, 0.75), (0.32, 0.045, 0.62), (0.52, 0.04, 0.5), (0.7, 0.04, 0.45), (0.86, 0.03, 0.4))
+        for c, half, depth in bars:
+            if abs(t - c) < half * (1.3 - v * 0.5) and v < depth + 0.35:
+                return C("#141414")
+        base = mix(C("#c8c49a"), C("#f2f2ea"), min(1.0, v * 1.4))
+        return mix(base, C("#ffffff"), 0.35) if k > 0.85 else base
+
+    def fins(part, a, b, t, v, z, y):
+        h = (b + 1) / 2
+        if part in ("dorsal", "anal"):
+            return C("#1a1a1a") if h > 0.55 else C("#8a8670")
+        if part == "tail":
+            return C("#b8b8a8")
+        return C("#e8e4d4")
+    return Look(body, fins, eye="#141414")
 
 
 def loach29_look(sp):
@@ -2708,6 +2734,8 @@ SPECIES = [
     ("mandarinfish", "goby", ["wild"], False),
     ("banggai_cardinal", "damsel", ["wild"], False),
     ("lyretail_anthias", "damsel", ["wild"], True),
+    # M49 part b
+    ("archerfish", "barb", ["wild"], False),
 ]
 
 

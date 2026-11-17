@@ -171,6 +171,70 @@ def crested_gecko() -> list[Group]:
     return [body, head, tail, tip] + _gecko_legs(-2.2, 3.0, 1.8, 1.8)
 
 
+# ---------------------------------------------------------------------------------------------- M49: the mudskipper
+
+def mudskipper() -> list[Group]:
+    """A goby on land: a round, tapering body, a blunt head with the bulging eyes on top, two dorsal fins (the first a high
+    sail), the pectoral fins as front legs (it skips on them), small pelvic fins under the belly, a rounded tail fin. The parts
+    carry the gecko's names, so it moves with the gecko's model."""
+    body = Group("body", pivot=(0, -1.8, 0), cubes=[
+        c("trunk", (0, -1.8, 0.0), (2.8, 2.4, 5.6), (0, 0, 0), "skin"),
+        c("dorsal1", (0, -3.7, -0.4), (0.3, 1.6, 2.6), (0, 0, 0), "fin"),
+    ])
+    head = Group("head", pivot=(0, -1.9, -2.8), cubes=[
+        c("skull", (0, -2.0, -4.2), (3.0, 2.6, 2.8), (0, 0, 0), "head"),
+        c("snout", (0, -1.7, -6.0), (2.4, 1.6, 0.9), (0, 0, 0), "head"),
+        c("eye_r", (0.75, -3.65, -4.6), (0.9, 0.9, 0.9), (0, 0, 0), "eye"),
+        c("eye_l", (-0.75, -3.65, -4.6), (0.9, 0.9, 0.9), (0, 0, 0), "eye"),
+    ])
+    tail = Group("tail", pivot=(0, -1.7, 2.8), cubes=[
+        c("base", (0, -1.7, 4.2), (2.1, 1.9, 2.8), (0, 0, 0), "skin"),
+        c("dorsal2", (0, -3.1, 4.0), (0.3, 1.0, 2.4), (0, 0, 0), "fin"),
+    ])
+    tip = Group("tail_tip", pivot=(0, -1.6, 5.6), cubes=[
+        c("tip", (0, -1.6, 6.7), (1.3, 1.4, 2.2), (0, 0, 0), "skin"),
+        c("end", (0, -1.7, 8.6), (0.3, 2.4, 1.8), (0, 0, 0), "fin"),
+    ])
+    legs = []
+    for name, sx, z, big in (("leg_fr", 1, -1.6, True), ("leg_fl", -1, -1.6, True), ("leg_br", 1, 1.0, False), ("leg_bl", -1, 1.0, False)):
+        if big:  # the pectoral fins: a muscular base and a broad fan on the ground
+            cubes = [c("upper", (1.9 * sx, -1.3, z), (1.2, 0.7, 0.9), (0, 0, 0), "limb"),
+                     c("lower", (2.4 * sx, -0.6, z - 0.1), (0.7, 0.9, 0.8), (0, 0, 0), "limb"),
+                     c("foot", (2.7 * sx, -0.15, z - 0.4), (1.6, 0.3, 1.6), (0, 0, 0), "finfoot")]
+        else:  # the small pelvic fins under the belly
+            cubes = [c("upper", (0.9 * sx, -0.7, z), (0.6, 0.5, 0.6), (0, 0, 0), "limb"),
+                     c("lower", (1.0 * sx, -0.4, z + 0.2), (0.5, 0.4, 0.5), (0, 0, 0), "limb"),
+                     c("foot", (1.1 * sx, -0.15, z + 0.4), (0.9, 0.3, 0.9), (0, 0, 0), "finfoot")]
+        legs.append(Group(name, pivot=(1.4 * sx if big else 0.7 * sx, -1.3 if big else -0.7, z), cubes=cubes))
+    return [body, head, tail, tip] + legs
+
+
+def _mudskipper(cu, face, px, py, pz, rng):
+    """Grey-olive with darker blotches and tiny blue spots, a pale belly; the dorsal fins dusky with a blue and orange edge;
+    dark bulging eyes."""
+    if cu.pattern == "eye":
+        return np.array([0.10, 0.10, 0.09]) if face != "top" else np.array([0.55, 0.50, 0.32])
+    if cu.pattern == "fin":
+        edge = py < -4.2 or (cu.name == "end" and abs(py + 1.7) > 0.9)
+        if edge:
+            return np.array([0.25, 0.55, 0.85]) if rng.random() < 0.6 else np.array([0.92, 0.55, 0.22])
+        return np.clip(np.array([0.36, 0.34, 0.28]) * (0.9 + 0.2 * rng.random()), 0, 1)
+    if cu.pattern == "finfoot":
+        return np.clip(np.array([0.48, 0.45, 0.36]) * _shade(face), 0, 1)
+    if face == "bottom":
+        return np.clip(np.array([0.84, 0.80, 0.70]) * _shade(face) + (rng.random() - 0.5) * 0.03, 0, 1)
+    col = np.array([0.46, 0.44, 0.34])
+    cell = (math.floor(px * 1.3), math.floor(pz * 1.3), math.floor(py * 1.3))
+    h = ((cell[0] * 73856093) ^ (cell[1] * 19349663) ^ (cell[2] * 83492791)) % 100
+    if h < 28:
+        col = np.array([0.30, 0.29, 0.22])
+    elif h > 93:
+        col = np.array([0.35, 0.62, 0.92])  # the little blue spots
+    if face in ("east", "west") and py > -1.2:
+        col = np.array([0.74, 0.70, 0.60])
+    return np.clip(col * _shade(face) + (rng.random() - 0.5) * 0.04, 0, 1)
+
+
 # ---------------------------------------------------------------------------------------------- the snake
 
 SNAKE_SEGMENTS = 10
@@ -379,8 +443,8 @@ def _corn(morph: str):
 
 
 MODELS = {"dart_frog": dart_frog, "dart_frog_tadpole": tadpole, "horned_frog": horned_frog, "leopard_gecko": leopard_gecko,
-          "crested_gecko": crested_gecko, "corn_snake": corn_snake}
-COLOURS = {"dart_frog_tadpole": _tadpole}
+          "crested_gecko": crested_gecko, "corn_snake": corn_snake, "mudskipper": mudskipper}
+COLOURS = {"dart_frog_tadpole": _tadpole, "mudskipper": _mudskipper}
 TEXTURES = {
     "dart_frog": {f"dart_frog_{k}": _dart(k) for k in ("tinctorius", "auratus", "leucomelas")},
     "horned_frog": {"horned_frog_green": _horned(True), "horned_frog_brown": _horned(False)},

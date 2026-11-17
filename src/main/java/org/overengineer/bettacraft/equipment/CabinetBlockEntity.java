@@ -44,7 +44,7 @@ import org.overengineer.bettacraft.registry.ModItems;
 public class CabinetBlockEntity extends BlockEntity implements MenuProvider, FilterHost, AirSource, org.overengineer.bettacraft.winding.Windable {
     public static final ResourceLocation DEFAULT_WOOD = ResourceLocation.withDefaultNamespace("oak_planks");
     public static final ModelProperty<BlockState> WOOD_STATE = new ModelProperty<>();
-    public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SLOTS = 2 + STORAGE;
+    public static final int FILTER_SLOT = 0, STORAGE = 9, AIR_PUMP_SLOT = 1 + STORAGE, SUMP_SLOT = 2 + STORAGE, SLOTS = 3 + STORAGE;
     /** Client-side cabinets currently loaded with a filter (bubbles and sound; never touched on the server). */
     public static final Set<CabinetBlockEntity> CLIENT_FILTERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
     /** M29.1: client-side cabinets currently loaded with an air pump (hum; never touched on the server). */
@@ -82,6 +82,8 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     private boolean clientHasFilter;
     /** M29.1: client copy of whether the air pump slot is filled. */
     private boolean clientHasAirPump;
+    /** M49: client copy of whether the sump slot is filled. */
+    private boolean clientHasSump;
     /** M29.1: air stones and sponge filters the air pump in the cabinet drives right now (server: set by the care step; synced). */
     private int airDriven;
 
@@ -89,21 +91,24 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             if (slot == AIR_PUMP_SLOT) return stack.is(ModItems.AIR_PUMP.get()); // M29.1
+            if (slot == SUMP_SLOT) return Sump.isSump(stack); // M49
             return slot != FILTER_SLOT || stack.is(ModItems.EXTERNAL_FILTER.get());
         }
 
         @Override
         public int getSlotLimit(int slot) {
-            return slot == FILTER_SLOT || slot == AIR_PUMP_SLOT ? 1 : 64;
+            return slot == FILTER_SLOT || slot == AIR_PUMP_SLOT || slot == SUMP_SLOT ? 1 : 64;
         }
 
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
             if (slot == AIR_PUMP_SLOT && getStackInSlot(AIR_PUMP_SLOT).isEmpty()) airDriven = 0;
-            if ((slot == FILTER_SLOT || slot == AIR_PUMP_SLOT) && level != null && !level.isClientSide) {
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
-                if (slot == AIR_PUMP_SLOT) {
+            if ((slot == FILTER_SLOT || slot == AIR_PUMP_SLOT || slot == SUMP_SLOT) && level != null && !level.isClientSide) {
+                boolean had = slot == SUMP_SLOT && clientHasSump; // M49: the chambers change every few seconds: update the client only when it comes or goes
+                clientHasSump = !getStackInSlot(SUMP_SLOT).isEmpty();
+                if (slot != SUMP_SLOT || had != clientHasSump) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+                if (slot == AIR_PUMP_SLOT || slot == SUMP_SLOT) {
                     var tank = FilterHost.tankOf(level, tankBlockPos());
                     if (tank != null) org.overengineer.bettacraft.tank.TankEquipment.invalidate(tank);
                 }
@@ -254,6 +259,22 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
 
     public ItemStack filterItem() {
         return items.getStackInSlot(FILTER_SLOT);
+    }
+
+    // ------------------------------------------------------------------ M49 sump
+
+    /** The sump item in the cabinet (empty if none). */
+    public ItemStack sumpItem() {
+        return items.getStackInSlot(SUMP_SLOT);
+    }
+
+    public void setSumpItem(ItemStack stack) {
+        items.setStackInSlot(SUMP_SLOT, stack);
+    }
+
+    /** Whether a sump sits in the cabinet (client: as the server sent it). */
+    public boolean hasSump() {
+        return level != null && level.isClientSide ? clientHasSump : !sumpItem().isEmpty();
     }
 
     // ------------------------------------------------------------------ M29.1 air pump
@@ -421,6 +442,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         airDriven = Math.max(0, tag.getInt("air_driven"));
         if (tag.contains("has_filter")) clientHasFilter = tag.getBoolean("has_filter");
         if (tag.contains("has_air_pump")) clientHasAirPump = tag.getBoolean("has_air_pump");
+        clientHasSump = tag.contains("has_sump") ? tag.getBoolean("has_sump") : !items.getStackInSlot(SUMP_SLOT).isEmpty(); // M49
         loadM23(tag);
         if (level == null || !level.isClientSide) spring.load(tag, "spring"); // M37 (not in the client copy)
         if (level != null && level.isClientSide) afterClientUpdate(old);
@@ -433,6 +455,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         tag.putString("wood", wood.toString());
         tag.putBoolean("has_filter", !filterItem().isEmpty());
         tag.putBoolean("has_air_pump", hasAirPump()); // M29.1
+        tag.putBoolean("has_sump", hasSump()); // M49
         tag.putInt("air_driven", airDriven);
         tag.putString("outlet", outletSide().id()); // M22.4: the effective side
         tag.putString("drive", driveSide().id()); // M41: the effective side
@@ -460,6 +483,7 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         wood = w == null ? DEFAULT_WOOD : w;
         clientHasFilter = tag.getBoolean("has_filter");
         clientHasAirPump = tag.getBoolean("has_air_pump"); // M29.1
+        clientHasSump = tag.getBoolean("has_sump"); // M49
         airDriven = Math.max(0, tag.getInt("air_driven"));
         outlet = OutletSide.byId(tag.getString("outlet"));
         drive = DriveSide.byId(tag.getString("drive")); // M41

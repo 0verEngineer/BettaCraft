@@ -10,7 +10,9 @@ import net.minecraft.nbt.Tag;
  */
 public final class CritterObject {
     /** M29 part d: AXOLOTL_EGGS, the eggs of a vanilla axolotl on a plant ({@link org.overengineer.bettacraft.tank.AxolotlCare}). */
-    public enum Kind { CLUTCH, MOLT, AXOLOTL_EGGS }
+    public enum Kind { CLUTCH, MOLT, AXOLOTL_EGGS,
+        /** M49 part b: the drifting larvae of the Amano shrimp ({@link AmanoLarvae}). */
+        LARVAE }
 
     public final int id;
     public final Kind kind;
@@ -76,6 +78,7 @@ public final class CritterObject {
             case "clutch" -> Kind.CLUTCH;
             case "molt" -> Kind.MOLT;
             case "axolotl_eggs" -> Kind.AXOLOTL_EGGS;
+            case "larvae" -> Kind.LARVAE; // M49
             default -> null;
         };
         if (k == null) return null;

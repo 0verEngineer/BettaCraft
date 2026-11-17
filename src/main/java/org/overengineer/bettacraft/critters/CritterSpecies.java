@@ -70,7 +70,12 @@ public enum CritterSpecies {
     // M48 part b: the fire shrimp (blood red cleaner shrimp, Lysmata debelius): deep red with white dots and white legs, shy, hides
     // in the rock by day; it also cleans the fish (less eagerly than the cleaner shrimp); does not breed in a tank
     FIRE_SHRIMP("fire_shrimp", Group.SHRIMP, Model.SHRIMP, 0.42, 0.06, true, Breeding.NONE, 0, 0, 0, 0, 3.0, 24, 28, 0.55, 0.05, 0.03,
-            new String[0], 0xB01418);
+            new String[0], 0xB01418),
+    // M49 part b: the Amano shrimp (Caridina multidentata) of the coastal rivers of Japan and Taiwan: about 5 cm, grey and
+    // translucent with a dotted line along the side, the strongest algae eater of the small shrimp. It mates in fresh water,
+    // but its larvae drift down to the sea: in a tank they only grow up in brackish water ({@link AmanoLarvae})
+    AMANO_SHRIMP("amano_shrimp", Group.SHRIMP, Model.SHRIMP, 0.42, 0.08, true, Breeding.PAIR_BERRIED, 0.18, 3.0, 8, 18, 6.0, 18, 28, 0.45, 0.05, 0.5,
+            new String[0], 0x8A8C7A);
 
     /** Stocking group: how many of them count as one fish ({@code stocking.*PerFish}). */
     public enum Group { SHRIMP, CRAYFISH, SNAIL }
@@ -189,6 +194,7 @@ public enum CritterSpecies {
             case YELLOW_NERITE -> Feature.SNAIL_COLORS;
             case FLORIDA_CRAYFISH, MARBLED_CRAYFISH -> Feature.BIG_CRAYFISH;
             case FIRE_SHRIMP -> Feature.REEF_ANIMALS; // M48 part b
+            case AMANO_SHRIMP -> Feature.AMANO_SHRIMP; // M49 part b
             default -> null;
         };
     }

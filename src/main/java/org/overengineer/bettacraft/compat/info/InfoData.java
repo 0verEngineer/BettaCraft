@@ -200,6 +200,15 @@ public final class InfoData {
             int n = 0;
             for (int i = 0; i < cab.storage().getSlots(); i++) n += cab.storage().getStackInSlot(i).getCount();
             out.putInt("storage", n);
+            if (cab.hasSump() && org.overengineer.bettacraft.equipment.Sump.enabled()) { // M49: the sump and its chambers
+                var ch = org.overengineer.bettacraft.equipment.Sump.read(cab.sumpItem());
+                int h = 0;
+                for (int i = 0; i < 2; i++) if (!ch.get(org.overengineer.bettacraft.equipment.Sump.HEATER0 + i).isEmpty()) h++;
+                int m = 0;
+                for (int i = 0; i < 2; i++) if (!ch.get(org.overengineer.bettacraft.equipment.Sump.MEDIA0 + i).isEmpty()) m++;
+                out.putIntArray("sump", new int[]{h, ch.get(org.overengineer.bettacraft.equipment.Sump.SKIMMER).isEmpty() ? 0 : 1, m,
+                        ch.get(org.overengineer.bettacraft.equipment.Sump.ALGAE).getCount(), ch.get(org.overengineer.bettacraft.equipment.Sump.LIGHT).isEmpty() ? 0 : 1});
+            }
         }
         return out;
     }

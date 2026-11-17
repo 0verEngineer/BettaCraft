@@ -117,6 +117,8 @@ public final class ModCreativeTabs {
                 // M25 part c: reef dosing
                 for (var it : java.util.List.of(ModItems.DOSING_PUMP, ModItems.DOSING_CANISTER, ModItems.CALCIUM_CANISTER, ModItems.ALKALINITY_CANISTER,
                         ModItems.MAGNESIUM_CANISTER, ModItems.TRACE_CANISTER)) out.accept(it.get());
+                // M49 part a: the sump, its refugium, the calcium reactor
+                for (var it : java.util.List.of(ModItems.SUMP, ModItems.CHAETOMORPHA, ModItems.CALCIUM_REACTOR, ModItems.CORAL_RUBBLE)) out.accept(it.get());
                 // M31: terrarium devices
                 for (var it : java.util.List.of(ModItems.HEAT_MAT, ModItems.BASKING_LAMP, ModItems.MISTER, ModItems.THERMO_HYGROMETER)) out.accept(it.get());
                 // M41: the drive adapter (only with Create)

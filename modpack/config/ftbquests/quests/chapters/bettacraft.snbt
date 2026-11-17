@@ -1385,6 +1385,99 @@
 			title: "{\"translate\":\"quest.bettacraft.clown_larvae.title\"}",
 			x: 10.5d,
 			y: 9.0d
+		},
+		{
+			dependencies: ["488926E66E35A9EC"],
+			description: ["{\"translate\":\"quest.bettacraft.sump.desc\"}"],
+			id: "4DCACB4D4287A6E0",
+			rewards: [{ id: "79C54E9EDF716090", type: "xp", xp: 75 }, { count: 4, id: "7E05EEFF85CDCB19", item: { count: 1, id: "bettacraft:chaetomorpha" }, type: "item" }],
+			tags: ["bettacraft_feature:sump.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:sump_installed", criterion: "", id: "39A267F96DAF8FDE", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.sump.title\"}",
+			x: 5.6d,
+			y: -1.0d
+		},
+		{
+			dependencies: ["4DCACB4D4287A6E0"],
+			description: ["{\"translate\":\"quest.bettacraft.refugium.desc\"}"],
+			id: "071A5E9C6657C571",
+			rewards: [{ id: "4ECA8BA22EF38404", type: "xp", xp: 50 }],
+			tags: ["bettacraft_feature:sump.refugium"],
+			tasks: [
+				{ id: "03ECF31F4146AF8C", item: { count: 1, id: "bettacraft:chaetomorpha" }, type: "item" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.refugium.title\"}",
+			x: 7.0d,
+			y: -0.9d
+		},
+		{
+			dependencies: ["30B15AE3CC36ACF4", "4DCACB4D4287A6E0"],
+			description: ["{\"translate\":\"quest.bettacraft.calcium_reactor.desc\"}"],
+			id: "1EAFF37C7C37FC32",
+			rewards: [{ id: "6007171288E411C9", type: "xp", xp: 150 }, { count: 16, id: "5CF976536864A275", item: { count: 1, id: "bettacraft:coral_rubble" }, type: "item" }],
+			tags: ["bettacraft_feature:sump.calciumReactor", "bettacraft_feature:corals.reefDosing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:calcium_reactor", criterion: "", id: "2B5146DAC125E0D0", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.calcium_reactor.title\"}",
+			x: 18.0d,
+			y: 7.5d
+		},
+		{
+			dependencies: ["54D6D4C90E19DD2D"],
+			description: ["{\"translate\":\"quest.bettacraft.archerfish.desc\"}"],
+			id: "3BB1DF945431649D",
+			rewards: [{ id: "0DBEAA6FF0C24F69", type: "xp", xp: 75 }, { count: 2, id: "30C77681FF992E90", item: { count: 1, id: "bettacraft:fruit_fly_culture" }, type: "item" }],
+			tags: ["bettacraft_feature:brackish.archerfish"],
+			tasks: [
+				{ advancement: "bettacraft:archerfish_shot", criterion: "", id: "03BB13DCF13BE375", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.archerfish.title\"}",
+			x: -6.4d,
+			y: 4.2d
+		},
+		{
+			dependencies: ["3474EC678152B36E"],
+			description: ["{\"translate\":\"quest.bettacraft.mudskipper.desc\"}"],
+			id: "12E8BD7D9E1D81FE",
+			rewards: [{ id: "27234B6C6A2C414D", type: "xp", xp: 100 }],
+			tags: ["bettacraft_feature:brackish.mudskipper"],
+			tasks: [
+				{ advancement: "bettacraft:mudskipper_paludarium", criterion: "", id: "403BB2399DF30E02", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.mudskipper.title\"}",
+			x: -8.8d,
+			y: -1.6d
+		},
+		{
+			dependencies: ["75D3903D1DF5B32F"],
+			description: ["{\"translate\":\"quest.bettacraft.mangrove.desc\"}"],
+			id: "29CE184E06DB9FA6",
+			rewards: [{ id: "7FA9D4B54AE47134", type: "xp", xp: 100 }],
+			tags: ["bettacraft_feature:brackish.mangroves", "bettacraft_feature:aquaticPlants.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:mangrove_grown", criterion: "", id: "4010E893530509F8", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.mangrove.title\"}",
+			x: -1.0d,
+			y: -5.0d
+		},
+		{
+			dependencies: ["2754F2DD6EA86AEC"],
+			description: ["{\"translate\":\"quest.bettacraft.amano.desc\"}"],
+			id: "3D46AA8518E83DD2",
+			rewards: [{ id: "78E792F5977F068A", type: "xp", xp: 250 }, { count: 2, id: "1C6EE05210C3F1EF", item: { count: 1, id: "bettacraft:phytoplankton_culture" }, type: "item" }],
+			shape: "hexagon",
+			size: 1.5d,
+			tags: ["bettacraft_feature:brackish.amanoShrimp", "bettacraft_feature:breeding.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:amano_young", criterion: "", id: "2053CA53751E75DB", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.amano.title\"}",
+			x: -1.0d,
+			y: 8.6d
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

@@ -196,11 +196,22 @@ def mob_jar_filled():
     return _jar(True)
 
 
+def mudskipper_box():
+    # M49: the grey-olive mudskipper peeking over the lid, its two bulging eyes on top, a pectoral fin on the edge
+    return _paint(_box(False), [
+        "...ee.ee...",
+        "..eKeeKe...",
+        ".gggggggggf",
+        "fgGgggGgggf",
+        ".wwwwwwww..",
+    ], {"e": "#5a5440", "K": "#141412", "g": "#6e6a52", "G": "#4c90d8", "f": "#4a4636", "w": "#d0c8b0"}, 2, 0)
+
+
 def textures() -> dict[str, np.ndarray]:
     return {"dart_frog_box": dart_frog_box(), "horned_frog_box": horned_frog_box(), "leopard_gecko_box": leopard_gecko_box(),
             "crested_gecko_box": crested_gecko_box(), "corn_snake_box": corn_snake_box(), "crickets": crickets(),
             "fruit_flies": fruit_flies(), "cricket_culture": cricket_culture(), "fruit_fly_culture": fruit_fly_culture(),
-            "mob_jar": mob_jar(), "mob_jar_filled": mob_jar_filled()}
+            "mob_jar": mob_jar(), "mob_jar_filled": mob_jar_filled(), "mudskipper_box": mudskipper_box()}
 
 
 def write_all() -> list:

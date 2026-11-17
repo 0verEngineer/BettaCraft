@@ -123,6 +123,8 @@ public final class CritterLife {
         public int rotted;
         public double foodEaten;
         public int berried;
+        /** M49: Amano females that let their larvae out. */
+        public int larvae;
 
         void born(Critter c) {
             born.add(c);
@@ -447,7 +449,13 @@ public final class CritterLife {
                 case PAIR_BERRIED, PAIR_CLUTCH, PAIR -> {
                     if (!c.female) continue;
                     if (c.berried()) {
-                        if (s.breeding() == CritterSpecies.Breeding.PAIR_BERRIED && c.eggs >= s.eggDays()) {
+                        if (s.breeding() == CritterSpecies.Breeding.PAIR_BERRIED && c.eggs >= s.eggDays() && AmanoLarvae.hasLarvae(s)) {
+                            // M49 part b: the Amano female lets her larvae out; they drift (and need brackish water to grow up)
+                            objects.add(AmanoLarvae.hatch(c, ids.getAsInt(), rnd));
+                            r.larvae++;
+                            c.eggs = -1;
+                            c.father = null;
+                        } else if (s.breeding() == CritterSpecies.Breeding.PAIR_BERRIED && c.eggs >= s.eggDays()) {
                             int n = s.broodMin() + rnd.nextInt(s.broodMax() - s.broodMin() + 1);
                             n = Math.min(n, Math.max(0, env.cap() - alive));
                             for (int i = 0; i < n; i++) {
@@ -464,6 +472,7 @@ public final class CritterLife {
                     }
                     if (alive >= env.cap() || rate <= 0) continue;
                     if (s.breeding() == CritterSpecies.Breeding.PAIR_CLUTCH && !env.air()) continue;
+                    if (AmanoLarvae.hasLarvae(s) && !AmanoLarvae.matesIn(env.salinity())) continue; // M49: the Amanos mate in fresh water
                     Critter male = mate(list, c, rnd);
                     if (male == null || rnd.nextDouble() >= 1 - Math.exp(-rate * days)) continue;
                     if (s.breeding() == CritterSpecies.Breeding.PAIR) {

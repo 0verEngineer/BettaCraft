@@ -57,6 +57,7 @@ class LangCompletenessTest {
             "bettacraft.configuration.size.normal", // M36
             "gui.bettacraft.tank_mode.aquarium", "gui.bettacraft.tank_mode.paludarium", "gui.bettacraft.tank_mode.terrarium", // M33.1
             "block.bettacraft.thermo_hygrometer", "monitor.bettacraft.value.uv",
+            "bettacraft.configuration.features.sump.refugium", "gui.bettacraft.sump.refugium", "gui.bettacraft.tab.sump", "item.bettacraft.chaetomorpha", // M49
             // M33: the switches of other mods are named after the mod
             "bettacraft.configuration.features.compat.betterFishTanks", "bettacraft.configuration.features.compat.create",
             "bettacraft.configuration.features.compat.create.enabled", "bettacraft.configuration.features.compat.enderio",

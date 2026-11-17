@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "brackish.mangroves"
+    },
+    {
+      "type": "bettacraft:feature",
+      "feature": "decor.enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_roots"
+    },
+    {
+      "item": "minecraft:mangrove_log"
+    },
+    {
+      "item": "minecraft:mangrove_log"
+    },
+    {
+      "item": "minecraft:mud"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:decor_mangrove_stilt_roots"
+  }
+}

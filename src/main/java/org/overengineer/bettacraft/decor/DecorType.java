@@ -52,7 +52,10 @@ public enum DecorType {
     RUIN_COLUMN(7, 9, 4),
     DIVER_HELMET(7, 8, 7),
     /** With an air stone among its coins: bubbles when an air pump drives it. */
-    TREASURE_CHEST(6, 5, 6);
+    TREASURE_CHEST(6, 5, 6),
+    // M49 part b: the brackish water theme
+    /** Tall mangrove stilt roots that stand out of the water of a paludarium (mudskippers climb on them). */
+    MANGROVE_STILT_ROOTS(14, 18, 10);
 
     public final int sizeX, sizeY, sizeZ;
 

@@ -182,6 +182,12 @@ public final class InfoLines {
             out.add(d.getBoolean("has_filter") ? Component.translatable("jade.bettacraft.cabinet.filter", d.getInt("heaters"))
                     : Component.translatable("jade.bettacraft.cabinet.no_filter").withStyle(ChatFormatting.GRAY));
             out.add(Component.translatable("jade.bettacraft.cabinet.storage", d.getInt("storage")));
+            int[] s = d.getIntArray("sump"); // M49
+            if (s.length == 5) {
+                out.add(Component.translatable("jade.bettacraft.cabinet.sump", s[0], s[1], s[2]).withStyle(ChatFormatting.AQUA));
+                if (s[3] > 0) out.add(Component.translatable(s[4] > 0 ? "jade.bettacraft.cabinet.refugium" : "jade.bettacraft.cabinet.refugium_dark", s[3])
+                        .withStyle(s[4] > 0 ? ChatFormatting.GREEN : ChatFormatting.GOLD));
+            }
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.heaters", d.getInt("heaters"), d.getInt("heat")));
         }

@@ -114,7 +114,7 @@ public final class TankmateBreeding {
     /** The tank is at its stocking limit: no new spawns (like the small animals, M14). */
     public static boolean full(ServerLevel level, TankBlockEntity c, List<Entity> live) {
         TankData t = c.getTank();
-        return TankInhabitants.stocking(live, t) >= TankInhabitants.hardCap(t.waterBlocks()) - 1e-6
+        return TankInhabitants.stocking(live, t) >= TankInhabitants.hardCap(t.systemBlocks()) - 1e-6
                 || live.size() >= ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64);
     }
 

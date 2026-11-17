@@ -316,7 +316,7 @@ public final class FrogBreeding {
         TankData t = c.getTank();
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         return live.size() < ServerConfig.getOr(ServerConfig.TANK_MAX_ENTITIES, 64)
-                && TankInhabitants.stocking(live, t) < TankInhabitants.hardCap(t.waterBlocks()) - 1e-6;
+                && TankInhabitants.stocking(live, t) < TankInhabitants.hardCap(t.systemBlocks()) - 1e-6;
     }
 
     /** A new froglet in the tank at {@code p}. */

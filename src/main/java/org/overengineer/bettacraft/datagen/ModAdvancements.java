@@ -40,7 +40,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
             // M47
             "frog_tadpole", "aquarist_trade",
             // M48
-            "tetra_cory_form", "mandarin_copepods", "clown_larvae", "banggai_young"};
+            "tetra_cory_form", "mandarin_copepods", "clown_larvae", "banggai_young",
+            // M49
+            "sump_installed", "calcium_reactor", "archerfish_shot", "archerfish_splash", "mudskipper_paludarium", "mangrove_grown", "amano_young"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -188,6 +190,16 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
         // M48: a bred form of a tetra or a cory
         event(inserted, "tetra_cory_form", ModItems.FISH_BAG.get(), AdvancementType.GOAL, Progress.TETRA_CORY_FORM);
+        // M49 part a: the sump under the tank, the calcium reactor; part b: the brackish water theme
+        AdvancementHolder sump = event(tank, "sump_installed", ModItems.SUMP.get(), AdvancementType.TASK, Progress.SUMP);
+        event(sump, "calcium_reactor", ModItems.CALCIUM_REACTOR.get(), AdvancementType.GOAL, Progress.CALCIUM_REACTOR);
+        AdvancementHolder archer = event(mates, "archerfish_shot", tm.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.ARCHERFISH).get(),
+                AdvancementType.TASK, Progress.ARCHER_SHOT);
+        event(archer, "archerfish_splash", Items.WATER_BUCKET, AdvancementType.TASK, Progress.ARCHER_SPLASH);
+        event(palu, "mudskipper_paludarium", ModItems.HERP_BOXES.get(org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER).get(),
+                AdvancementType.GOAL, Progress.MUDSKIPPER);
+        event(interior, "mangrove_grown", Items.MANGROVE_PROPAGULE, AdvancementType.GOAL, Progress.MANGROVE);
+        event(filled, "amano_young", ModItems.CRITTER_BUCKET.get(), AdvancementType.CHALLENGE, Progress.AMANO_YOUNG);
     }
 
     private AdvancementHolder event(AdvancementHolder parent, String name, ItemLike icon, AdvancementType type, String event) {

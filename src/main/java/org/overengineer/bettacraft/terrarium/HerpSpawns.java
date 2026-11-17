@@ -58,7 +58,9 @@ public final class HerpSpawns {
     public static final double PASS_CHANCE = 0.25;
 
     /** The places of the animals (for the handbook {@code Sources}). */
-    public enum Home { SWAMP, RIVER, DRY_LAND, JUNGLE, ARID, WOODLAND }
+    public enum Home { SWAMP, RIVER, DRY_LAND, JUNGLE, ARID, WOODLAND,
+        /** M49: the mangrove swamps (the swamp animals live there too, the mudskipper only there). */
+        MANGROVE }
 
     /** One spawn entry: species, home, CREATURE spawn weight. */
     public record Entry(HerpSpecies species, Home home, int weight) {}
@@ -70,13 +72,16 @@ public final class HerpSpawns {
             // part c
             new Entry(HerpSpecies.HORNED_FROG, Home.SWAMP, 1), new Entry(HerpSpecies.HORNED_FROG, Home.DRY_LAND, 2),
             new Entry(HerpSpecies.DART_FROG, Home.JUNGLE, 4), new Entry(HerpSpecies.CRESTED_GECKO, Home.JUNGLE, 3),
-            new Entry(HerpSpecies.LEOPARD_GECKO, Home.ARID, 4), new Entry(HerpSpecies.CORN_SNAKE, Home.WOODLAND, 3));
+            new Entry(HerpSpecies.LEOPARD_GECKO, Home.ARID, 4), new Entry(HerpSpecies.CORN_SNAKE, Home.WOODLAND, 3),
+            // M49 part b: the mudskipper on the mud of the mangroves
+            new Entry(HerpSpecies.MUDSKIPPER, Home.MANGROVE, 6));
 
     private HerpSpawns() {}
 
     /** The home of a biome (null = no animals). Swamps before rivers before jungles; then the dry and the wooded lands. */
     @Nullable
     public static Home home(Holder<Biome> b) {
+        if (BiomeWaters.mangrove(b)) return Home.MANGROVE; // M49
         if (BiomeWaters.swamp(b)) return Home.SWAMP;
         if (BiomeWaters.river(b)) return Home.RIVER;
         if (BiomeWaters.jungle(b)) return Home.JUNGLE;
@@ -88,11 +93,13 @@ public final class HerpSpawns {
 
     /** The switch of a species' wild spawns. */
     public static boolean enabled(HerpSpecies s) {
+        if (s.brackish()) return Features.enabled(Feature.MUDSKIPPER); // M49: its own switch
         return Features.enabled(s.turtle() ? Feature.WILD_TURTLES : Feature.WILD_HERPS); // M33: with their parents
     }
 
     /** The config key of that switch (handbook sources). */
     public static String featureKey(HerpSpecies s) {
+        if (s.brackish()) return Feature.MUDSKIPPER.key(); // M49
         return (s.turtle() ? Feature.WILD_TURTLES : Feature.WILD_HERPS).key();
     }
 
@@ -100,7 +107,8 @@ public final class HerpSpawns {
     public static List<Entry> entries(@Nullable Home home) {
         List<Entry> out = new ArrayList<>();
         if (home == null) return out;
-        for (Entry e : TABLE) if (e.home == home && enabled(e.species)) out.add(e);
+        // M49: the mangroves have the swamp animals besides their own (they were swamps before)
+        for (Entry e : TABLE) if ((e.home == home || home == Home.MANGROVE && e.home == Home.SWAMP) && enabled(e.species)) out.add(e);
         return out;
     }
 

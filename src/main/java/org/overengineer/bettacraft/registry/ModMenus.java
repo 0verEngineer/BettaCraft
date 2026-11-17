@@ -45,5 +45,11 @@ public final class ModMenus {
         MENUS.register(bus);
     }
 
+    /** M49 part a: the chambers of the sump and the calcium reactor. */
+    public static final Supplier<MenuType<org.overengineer.bettacraft.equipment.SumpMenu>> SUMP = MENUS.register("sump",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.equipment.SumpMenu::new));
+    public static final Supplier<MenuType<org.overengineer.bettacraft.reef.CalciumReactorMenu>> CALCIUM_REACTOR = MENUS.register("calcium_reactor",
+            () -> IMenuTypeExtension.create(org.overengineer.bettacraft.reef.CalciumReactorMenu::new));
+
     private ModMenus() {}
 }

@@ -138,6 +138,7 @@ public final class CritterRenderer {
     static Map.Entry<ResourceLocation, Integer> bodyOverlay(Critter k) {
         if (k.species == CritterSpecies.SULAWESI_SHRIMP) return Map.entry(DOTS, 0xF4F2EE);
         if (k.species == CritterSpecies.FIRE_SHRIMP) return Map.entry(DOTS, 0xF8F4F0); // M48 part b: white dots on deep red
+        if (k.species == CritterSpecies.AMANO_SHRIMP) return Map.entry(DOTS, 0x4A3A2E); // M49: the dotted line on grey
         if (k.species == CritterSpecies.MARBLED_CRAYFISH) return Map.entry(MARBLE, 0x3A3424); // M29 part d
         if (k.species != CritterSpecies.CARIDINA) return null;
         int c = k.clientColor;
@@ -344,6 +345,26 @@ public final class CritterRenderer {
             boolean was = eggs.visible;
             eggs.visible = true;
             eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xF07AA8));
+            eggs.visible = was;
+            return;
+        }
+        if (o.kind == CritterObject.Kind.LARVAE) {
+            // M49: a faint cloud of Amano larvae: tiny pale specks in the water
+            ModelPart eggs = group(CritterSpecies.Model.SHRIMP, "eggs");
+            if (eggs == null) return;
+            vc = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
+            boolean was = eggs.visible;
+            eggs.visible = true;
+            float t = (net.minecraft.Util.getMillis() % 100000L) / 1000F + o.yaw;
+            for (int i = 0; i < 9; i++) {
+                pose.pushPose();
+                float a = i * 2.39F + t * 0.3F;
+                pose.translate(net.minecraft.util.Mth.cos(a) * (0.03F + i * 0.012F), net.minecraft.util.Mth.sin(t * 0.7F + i) * 0.03F + (i % 3) * 0.03F,
+                        net.minecraft.util.Mth.sin(a) * (0.03F + i * 0.012F));
+                pose.scale(0.18F, -0.18F, -0.18F);
+                eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xE8ECE0));
+                pose.popPose();
+            }
             eggs.visible = was;
             return;
         }

@@ -804,6 +804,36 @@ def mangrove_root() -> Voxels:
     return v
 
 
+def mangrove_stilt_roots() -> Voxels:
+    """M49: mangrove stilt roots, 14 x 14, 18 high: a trunk high up on six long arching stilt roots that reach the floor far
+    out, a forked crown stump on top; it stands out of the water of a paludarium, and mudskippers climb on the roots."""
+    v = Voxels()
+    rnd = random.Random(4921)
+    cx, cz = 6.5, 6.5
+    foot = 9
+    for y in range(foot, 16):
+        for x in (6, 7):
+            v.set(x, y, 6, "mangrove_log[axis=y]")
+    for y in range(15, 18):
+        v.set(5 if y < 17 else 4, y, 7, "mangrove_log[axis=y]")
+        v.set(8 if y < 17 else 9, y, 5, "mangrove_log[axis=y]")
+    for i in range(6):
+        ang = i * math.pi / 3 + rnd.uniform(-0.25, 0.25)
+        r = rnd.uniform(5.2, 6.4)
+        start = (cx, foot + rnd.uniform(0.0, 2.5), cz)
+        prev = start
+        for s in range(1, 13):
+            t = s / 12
+            p = (cx + math.cos(ang) * r * t, start[1] * (1 - t ** 1.7), cz + math.sin(ang) * r * t)
+            _line(v, prev, p, "mangrove_roots")
+            prev = p
+        v.set(int(round(prev[0])), 0, int(round(prev[2])), "muddy_mangrove_roots")
+    for (x, y, z) in list(v.blocks):
+        if not (0 <= x < 14 and 0 <= z < 14):
+            v.remove(x, y, z)
+    return v
+
+
 def spiderwood() -> Voxels:
     """M28: spiderwood, 8 x 8, 10 high: a light root stock with fine branches that spread out and fork again and again."""
     v = Voxels()
@@ -996,6 +1026,7 @@ M28_DECOR = {
     "ruin_column": ruin_column,
     "diver_helmet": diver_helmet,
     "treasure_chest": treasure_chest,
+    "mangrove_stilt_roots": mangrove_stilt_roots,  # M49
 }
 
 
@@ -1199,7 +1230,7 @@ def write_all() -> list:
     for name, f in DECOR.items():
         v = f()
         sx, sy, sz = v.size()
-        assert max(sx, sz) <= (14 if name in ("spawning_cave", "shipwreck", "dino_skull", "rowing_boat", "ship_bow", "clay_tubes") else 8), f"{name}: footprint {sx}x{sz} too big"
+        assert max(sx, sz) <= (14 if name in ("spawning_cave", "shipwreck", "dino_skull", "rowing_boat", "ship_bow", "clay_tubes", "mangrove_stilt_roots") else 8), f"{name}: footprint {sx}x{sz} too big"
         p = STRUCT_DIR / f"{name}.nbt"
         p.write_bytes(structure_nbt(v))
         out.append(p)

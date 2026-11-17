@@ -68,7 +68,9 @@ public record HerpSpecies(String id, String latin, Body body, TerrariumNeeds nee
                           boolean tadpoles, boolean pureVarieties, double morphChance) {
 
     /** Body plans: each has its own model, gait and sounds. */
-    public enum Body { TURTLE, FROG, GECKO, SNAKE }
+    public enum Body { TURTLE, FROG, GECKO, SNAKE,
+        /** M49 part b: the mudskipper, a fish on land (the gecko's parts: pectoral fins as front legs, the tail with its fin). */
+        MUDSKIPPER }
 
     public static final HerpSpecies MUSK = builder("musk_turtle", "Sternotherus odoratus", Body.TURTLE)
             .needs(TerrariumNeeds.builder(TerrariumNeeds.Habitat.PALUDARIUM).air(18, 32).water(20, 28).land(0.05, 0.6).build())
@@ -120,8 +122,19 @@ public record HerpSpecies(String id, String latin, Body body, TerrariumNeeds nee
             .diet(TerrariumFood.Diet.PREY).stock(4.0).starve(40.0).meals(5.0).genetic(28.0).eggs(5.0, 4, 8).grow(10.0, 0.35F)
             .varieties(1, "wild", "amelanistic", "anerythristic").morphs(0.04).brumates().build();
 
+    /**
+     * M49 part b: the Atlantic mudskipper (<i>Periophthalmus barbarus</i>) of the West African mangroves: a goby that lives on the
+     * mud, breathes air through its wet skin, skips over the land on its pectoral fins and climbs roots and the glass; it needs
+     * a brackish paludarium with land and water, warm and humid air; eats insects and small crustaceans; it digs burrows in the
+     * mud to breed, which never works in a tank.
+     */
+    public static final HerpSpecies MUDSKIPPER = builder("mudskipper", "Periophthalmus barbarus", Body.MUDSKIPPER)
+            .needs(TerrariumNeeds.builder(TerrariumNeeds.Habitat.PALUDARIUM).air(24, 32).humidity(70, 100).water(24, 30).land(0.3, 0.8).build())
+            .gait(new LandWalker.Gait(0.03, 0.035, false, 0.6, 0.35, 0.1, 0.3, 0.1, LandWalker.Style.CLIMB, 0.25, false))
+            .diet(TerrariumFood.Diet.INSECTS, TerrariumFood.Diet.SMALL_INSECTS).stock(1.0).starve(8.0).genetic(27.0).grow(6.0, 0.4F).noBreeding().build();
+
     public static final List<HerpSpecies> TURTLES = List.of(MUSK, SLIDER, HERMANN, REEVES);
-    public static final List<HerpSpecies> ALL = List.of(MUSK, SLIDER, HERMANN, REEVES, DART_FROG, HORNED_FROG, LEOPARD_GECKO, CRESTED_GECKO, CORN_SNAKE);
+    public static final List<HerpSpecies> ALL = List.of(MUSK, SLIDER, HERMANN, REEVES, DART_FROG, HORNED_FROG, LEOPARD_GECKO, CRESTED_GECKO, CORN_SNAKE, MUDSKIPPER);
 
     /** Texture of a variety ({@code slider_turtle_scripta}); the plain id for a species with one variety. */
     public String texture(int variety) {
@@ -167,6 +180,18 @@ public record HerpSpecies(String id, String latin, Body body, TerrariumNeeds nee
 
     public boolean turtle() {
         return body == Body.TURTLE;
+    }
+
+    /** M49: the switch of the species: the turtles, the mudskipper (brackish water) or the amphibians and reptiles. */
+    public org.overengineer.bettacraft.config.Feature feature() {
+        if (turtle()) return org.overengineer.bettacraft.config.Feature.TURTLES;
+        if (body == Body.MUDSKIPPER) return org.overengineer.bettacraft.config.Feature.MUDSKIPPER;
+        return org.overengineer.bettacraft.config.Feature.HERPS;
+    }
+
+    /** M49: lives in brackish water only (fresh water stresses it). */
+    public boolean brackish() {
+        return body == Body.MUDSKIPPER;
     }
 
     @Nullable

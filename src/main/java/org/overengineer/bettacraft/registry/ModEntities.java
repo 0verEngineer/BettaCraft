@@ -69,6 +69,7 @@ public final class ModEntities {
         herp(m, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, 0.36F, 0.16F);
         herp(m, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, 0.32F, 0.14F);
         herp(m, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, 0.5F, 0.12F);
+        herp(m, org.overengineer.bettacraft.terrarium.HerpSpecies.MUDSKIPPER, 0.28F, 0.16F); // M49 part b
         return java.util.Collections.unmodifiableMap(m);
     }
 

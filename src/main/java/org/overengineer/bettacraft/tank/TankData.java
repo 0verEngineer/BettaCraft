@@ -147,6 +147,9 @@ public final class TankData {
      * "plankton" only while there is some; older worlds have none.
      */
     private double copepods, rotifers, phytoplankton, nauplii;
+    /** M49: flies for the archerfish (in the plankton compound) and the mangroves of the interior. */
+    private double flies;
+    private final List<org.overengineer.bettacraft.plants.Mangroves.Tree> mangroves = new ArrayList<>();
 
     /** Client-side copy: box, summary values and (M10) the member set, sent as a bit set for non-cuboid shapes. */
     private boolean clientView;
@@ -425,6 +428,11 @@ public final class TankData {
     public double rotifers() { return rotifers; }
     public void setRotifers(double v) { this.rotifers = clean(v); }
     public double phytoplankton() { return phytoplankton; }
+    /** M49: insects above the water that an archerfish shoots down (fruit flies let out over the tank, insects at the plants). */
+    public double flies() { return flies; }
+    public void setFlies(double v) { this.flies = Math.min(64, clean(v)); }
+    /** M49: the mangroves growing in the interior ({@link org.overengineer.bettacraft.plants.Mangroves}). */
+    public List<org.overengineer.bettacraft.plants.Mangroves.Tree> mangroves() { return mangroves; }
     public void setPhytoplankton(double v) { this.phytoplankton = clean(v); }
     public double nauplii() { return nauplii; }
     public void setNauplii(double v) { this.nauplii = clean(v); }
@@ -567,6 +575,25 @@ public final class TankData {
         return waterMb / (double) MB_PER_BLOCK;
     }
 
+    /** M49: water blocks of the sumps in the cabinets below (set by every care step, not saved; 0 without water in the tank). */
+    private double sumpBlocks;
+
+    public double sumpBlocks() {
+        return sumpBlocks;
+    }
+
+    public void setSumpBlocks(double blocks) {
+        sumpBlocks = Double.isFinite(blocks) ? Math.max(0, blocks) : 0;
+    }
+
+    /**
+     * M49: the water of the whole system: the tank and its sumps (the waste, the nitrate and the dosed values spread over it, and
+     * it counts for the stocking). The same as {@link #waterBlocks()} without a sump or water.
+     */
+    public double systemBlocks() {
+        return waterMb <= 0 ? 0 : waterBlocks() + sumpBlocks;
+    }
+
     /** Copies name, sign, front, lock, temperatures, owner and log (not geometry, water, equipment or inhabitants). */
     public void copySettingsFrom(TankData o) {
         owner = o.owner;
@@ -638,6 +665,9 @@ public final class TankData {
         rotifers = o.rotifers;
         phytoplankton = o.phytoplankton;
         nauplii = o.nauplii;
+        flies = o.flies; // M49
+        mangroves.clear();
+        for (var m : o.mangroves) mangroves.add(m.copy());
     }
 
     /**
@@ -857,13 +887,19 @@ public final class TankData {
             t.putInt("next_frog_brood", nextFrogBroodId);
             if (tadpoleFood > 0) t.putDouble("tadpole_food", tadpoleFood);
         }
-        if (copepods > 0 || rotifers > 0 || phytoplankton > 0 || nauplii > 0) { // M48 part b
+        if (copepods > 0 || rotifers > 0 || phytoplankton > 0 || nauplii > 0 || flies > 0) { // M48 part b
             CompoundTag p = new CompoundTag();
+            if (flies > 0) p.putDouble("flies", flies); // M49
             if (copepods > 0) p.putDouble("copepods", copepods);
             if (rotifers > 0) p.putDouble("rotifers", rotifers);
             if (phytoplankton > 0) p.putDouble("phytoplankton", phytoplankton);
             if (nauplii > 0) p.putDouble("nauplii", nauplii);
             t.put("plankton", p);
+        }
+        if (!mangroves.isEmpty()) { // M49
+            ListTag ml = new ListTag();
+            for (var m : mangroves) ml.add(m.save());
+            t.put("mangroves", ml);
         }
         return t;
     }
@@ -1020,6 +1056,11 @@ public final class TankData {
         d.setRotifers(plankton.getDouble("rotifers"));
         d.setPhytoplankton(plankton.getDouble("phytoplankton"));
         d.setNauplii(plankton.getDouble("nauplii"));
+        d.setFlies(plankton.getDouble("flies")); // M49
+        for (Tag e : t.getList("mangroves", Tag.TAG_COMPOUND)) {
+            var m = org.overengineer.bettacraft.plants.Mangroves.Tree.load((CompoundTag) e);
+            if (m != null) d.mangroves.add(m);
+        }
         d.recomputeBounds();
         return d;
     }

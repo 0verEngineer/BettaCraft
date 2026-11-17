@@ -104,6 +104,7 @@ public final class NetCatching {
                 out.add(new Catch(CritterSpecies.RED_NERITE, 5));
                 if (CritterSpecies.YELLOW_NERITE.available()) out.add(new Catch(CritterSpecies.YELLOW_NERITE, 4)); // M21.5
                 out.add(new Catch(CritterSpecies.ASSASSIN_SNAIL, 4));
+                if (CritterSpecies.AMANO_SHRIMP.available()) out.add(new Catch(CritterSpecies.AMANO_SHRIMP, 10 * p)); // M49: in the brackish river mouths
             }
             case BEACH -> {
                 out.add(new Catch(CritterSpecies.ZEBRA_NERITE, 30 * ner));

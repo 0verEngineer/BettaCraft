@@ -12,6 +12,7 @@
     "bettacraft:leopard_gecko",
     "bettacraft:crested_gecko",
     "bettacraft:corn_snake",
+    "bettacraft:mudskipper",
     "bettacraft:neon_tetra",
     "bettacraft:cardinal_tetra",
     "bettacraft:green_neon_tetra",
@@ -81,6 +82,7 @@
     "bettacraft:panda_garra",
     "bettacraft:mandarinfish",
     "bettacraft:banggai_cardinal",
-    "bettacraft:lyretail_anthias"
+    "bettacraft:lyretail_anthias",
+    "bettacraft:archerfish"
   ]
 }

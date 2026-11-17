@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:archerfish_shot",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "archerfish_splash"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.archerfish_splash.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.archerfish_splash.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

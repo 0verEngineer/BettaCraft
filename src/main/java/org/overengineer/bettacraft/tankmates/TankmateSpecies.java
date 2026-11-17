@@ -342,7 +342,14 @@ public enum TankmateSpecies {
     LYRETAIL_ANTHIAS(d("lyretail_anthias", "Pseudanthias squamipinnis", Model.DAMSEL, Group.ANTHIAS, Breeding.NONE, Zone.MID)
             .size(0.6).hitbox(0.42, 0.36).temp(23, 28).breed(25, 27).quality(0.6).shoal(5).stock(0.7).brood(0, 0).growth(1.6)
             .eats(0.4).feedsOften(3.0).dimorphic().egg(0xF08A20, 0xC03A90).native_(Water.WARM_OCEAN, 6).native_(Water.LUKEWARM_OCEAN, 2)
-            .trader(Trade.RARE).salt(Salinity.Range.MARINE));
+            .trader(Trade.RARE).salt(Salinity.Range.MARINE)),
+    // ---------------------------------------------------------------- M49 part b: the brackish water of the mangroves (features.brackish.archerfish)
+    // the banded archerfish of the mangroves from India to northern Australia: silver-white with four to five black wedge bars,
+    // big eyes, a pointed head and the dorsal fin far back; it swims under the surface and shoots insects off the leaves above
+    // with a jet of water from its mouth; lives in brackish water, takes fresh water too; does not breed in a tank
+    ARCHERFISH(d("archerfish", "Toxotes jaculatrix", Model.BARB, Group.ARCHERFISH, Breeding.NONE, Zone.UPPER)
+            .size(1.0).hitbox(0.55, 0.42).temp(24, 30).breed(26, 29).quality(0.5).shoal(3).stock(2.0).brood(0, 0).growth(2.0)
+            .eats(0.6).prey(0.25).egg(0xE8E8D8, 0x18181A).native_(Water.MANGROVE, 5).trader(Trade.RARE).salt(Salinity.Range.BRACKISH));
 
     /** Body plan of the renderer (and of {@code tools/assetgen/tankmates.py}). */
     public enum Model { TETRA, RASBORA, CORY, PLECO, OTO, KUHLI, LOACH, LIVEBEARER, PLATY, GOURAMI, CLOWN, TANG, GOBY, DAMSEL, SEAHORSE,
@@ -381,7 +388,9 @@ public enum TankmateSpecies {
         /** M30 part c: the sharks (bamboo shark, blacktip reef shark) and the moray eels. */
         SHARK, MORAY,
         /** M48 part b: the mandarin (a dragonet), the Banggai cardinalfish, the anthias (fairy basslets). */
-        DRAGONET, CARDINALFISH, ANTHIAS }
+        DRAGONET, CARDINALFISH, ANTHIAS,
+        /** M49 part b: the archerfish of the mangroves. */
+        ARCHERFISH }
 
     public enum Breeding {
         /** The female glues the eggs onto the glass, decoration and leaves; a cool water change sets them off (corydoras, otocinclus). */
@@ -550,6 +559,7 @@ public enum TankmateSpecies {
         if (newGourami()) return Feature.GOURAMIS;
         if (communityFish()) return Feature.COMMUNITY_FISH;
         if (this == BRONZE_CORY || this == PANDA_GARRA) return Feature.MORE_BOTTOM_FISH; // M48 part a
+        if (this == ARCHERFISH) return Feature.ARCHERFISH; // M49 part b
         return this == GREEN_NEON_TETRA ? Feature.GREEN_NEON : Feature.TANKMATES;
     }
 

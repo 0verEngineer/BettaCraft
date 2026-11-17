@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:sump_installed",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "calcium_reactor"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.calcium_reactor.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:calcium_reactor"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.calcium_reactor.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

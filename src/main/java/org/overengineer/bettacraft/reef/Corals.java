@@ -104,7 +104,7 @@ public final class Corals {
     public static void useCalcium(TankData t) {
         double per = ServerConfig.getOr(ServerConfig.REEF_CALCIUM_PER_STAGE, 40.0);
         if (per <= 0 || t.waterMb() <= 0) return;
-        t.setCalcium((float) Math.max(0, t.calcium() - per / Math.max(1.0, t.waterBlocks())));
+        t.setCalcium((float) Math.max(0, t.calcium() - per / Math.max(1.0, t.systemBlocks())));
         ReefDosing.useWithCalcium(t, per); // M25 part c: the alkalinity and a little magnesium go with it
     }
 }

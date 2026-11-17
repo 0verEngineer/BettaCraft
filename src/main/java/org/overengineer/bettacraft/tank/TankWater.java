@@ -112,7 +112,7 @@ public final class TankWater {
             // M37: external filters wound with the crank clean on their own spring
             double wound = 0;
             for (var f : TankEquipment.filters(level, c)) if (TankPower.filterRuns(c, f)) wound += f.powerShare();
-            return rock + multi + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
+            return rock + multi + org.overengineer.bettacraft.equipment.Sump.mediaBlocks(level, c) + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
                     + wound * (double) ServerConfig.getOr(ServerConfig.WATER_QUALITY_EXTERNAL_FILTER_BLOCKS, 32);
         }
         // M23: every filter by its power regulator, the corner filters too
@@ -124,7 +124,8 @@ public final class TankWater {
                 + in[1] * (double) ServerConfig.getOr(ServerConfig.FILTER_CORNER_BLOCKS, 20)
                 + sponge * (double) ServerConfig.getOr(ServerConfig.FILTER_SPONGE_BLOCKS, 12)
                 // M20: in salt water the protein skimmers and the live rock clean too
-                + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock + multi;
+                + org.overengineer.bettacraft.reef.TankReef.skimmerBlocks(level, c) + rock + multi
+                + org.overengineer.bettacraft.equipment.Sump.mediaBlocks(level, c); // M49: the filter media in the sumps
     }
 
     /** Bioload: adult animals count 1, young bettas a quarter. */
@@ -186,7 +187,7 @@ public final class TankWater {
         TankData tank = c.getTank();
         if (qualityEnabled() && tank.waterMb() > 0) {
             float before = tank.waterQuality();
-            float q = WaterQuality.step(before, days, animals(TankInhabitants.liveInhabitants(level, tank), tank), tank.waterBlocks(),
+            float q = WaterQuality.step(before, days, animals(TankInhabitants.liveInhabitants(level, tank), tank), tank.systemBlocks(),
                     filterBlocks(level, c), params());
             if (q != before) {
                 tank.setWaterQuality(q);
@@ -237,7 +238,7 @@ public final class TankWater {
         // M14: shrimp, crayfish and snails eat the leftovers first
         portions = org.overengineer.bettacraft.critters.TankCritters.eatLeftovers(tank, portions);
         if (!qualityEnabled() || portions <= 0) return;
-        tank.setWaterQuality(WaterQuality.overfed(tank.waterQuality(), portions, tank.waterBlocks(), filterBlocks(level, c), params()));
+        tank.setWaterQuality(WaterQuality.overfed(tank.waterQuality(), portions, tank.systemBlocks(), filterBlocks(level, c), params()));
         c.setChanged();
     }
 }

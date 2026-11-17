@@ -257,7 +257,7 @@ public final class TankCritters {
         boolean dry = t.waterMb() <= 0;
         // breeding stops at the limit of the tank, and when the stocking (fish + small animals) is at the hard cap
         int cap = maxPerTank();
-        if (TankInhabitants.stocking(level, t) >= TankInhabitants.hardCap(t.waterBlocks()) - 1e-6) cap = Math.min(cap, alive(t));
+        if (TankInhabitants.stocking(level, t) >= TankInhabitants.hardCap(t.systemBlocks()) - 1e-6) cap = Math.min(cap, alive(t));
         CritterLife.Env env = new CritterLife.Env(dry ? 0F : t.waterQuality(), TankWater.qualityEnabled() || dry, t.waterTemp(), adults,
                 hiding(level, t), cap, breeding(), Double.isFinite(terrain.airTop()),
                 ServerConfig.getOr(ServerConfig.CRITTERS_BETTAS_HUNT, true), t.salinity(), org.overengineer.bettacraft.reef.SaltTolerance.speed(),
@@ -626,6 +626,7 @@ public final class TankCritters {
     @Nullable
     public static Component net(ServerLevel level, TankBlockEntity c, Player player, Aimed a) {
         TankData t = c.getTank();
+        if (a.object() != null && a.object().kind == CritterObject.Kind.LARVAE) return AmanoLarvae.net(level, c, player, a.object()); // M49
         if (a.object() != null) {
             t.critterObjects().remove(a.object());
             c.markTankChanged();

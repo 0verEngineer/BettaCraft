@@ -107,6 +107,10 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.reef.DosingPumpBlockEntity::new, ModBlocks.DOSING_PUMP.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.reef.CalciumReactorBlockEntity>> CALCIUM_REACTOR = BLOCK_ENTITIES.register("calcium_reactor",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.reef.CalciumReactorBlockEntity::new, ModBlocks.CALCIUM_REACTOR.get()).build(null)); // M49
+
+    @SuppressWarnings("DataFlowIssue")
     public static final Supplier<BlockEntityType<org.overengineer.bettacraft.food.LiveCultureBlockEntity>> LIVE_CULTURE = BLOCK_ENTITIES.register("live_culture",
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.food.LiveCultureBlockEntity::new, ModBlocks.TUBIFEX_DISH.get(), ModBlocks.DAPHNIA_BARREL.get()).build(null));
     @SuppressWarnings("DataFlowIssue")

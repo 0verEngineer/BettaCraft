@@ -40,6 +40,7 @@ public final class SaltTolerance {
             case ZEBRA_NERITE, HORNED_NERITE, OLIVE_NERITE, RED_NERITE, YELLOW_NERITE -> Range.NERITE;
             case CLEANER_SHRIMP, TURBO_SNAIL, FIRE_SHRIMP -> Range.MARINE; // M48 part b: the fire shrimp
             case HERMIT_CRAB -> Range.HARDY_MARINE;
+            case AMANO_SHRIMP -> Range.BRACKISH; // M49: fresh to brackish (the young grow up in brackish water)
             default -> Range.FRESH;
         };
     }

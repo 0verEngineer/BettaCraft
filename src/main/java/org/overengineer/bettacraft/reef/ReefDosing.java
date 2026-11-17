@@ -65,7 +65,7 @@ public final class ReefDosing {
             org.overengineer.bettacraft.fertilizer.Fertilizer.doseMl(t, ml);
             return;
         }
-        double add = WaterChemistry.dose(ml, a.perMl(), Math.max(1.0, t.waterBlocks()));
+        double add = WaterChemistry.dose(ml, a.perMl(), Math.max(1.0, t.systemBlocks()));
         if (add <= 0) return;
         switch (a) {
             case CALCIUM -> t.setCalcium((float) (t.calcium() + add));
@@ -85,7 +85,7 @@ public final class ReefDosing {
     /** A stony coral used {@code calcium} (mg/L in one water block): the matching alkalinity and magnesium go too. */
     public static void useWithCalcium(TankData t, double calcium) {
         if (!enabled() || calcium <= 0 || t.waterMb() <= 0) return;
-        double blocks = Math.max(1.0, t.waterBlocks());
+        double blocks = Math.max(1.0, t.systemBlocks());
         t.setKh((float) (t.kh() - WaterChemistry.khForCalcium(calcium) * KH_SHARE / blocks));
         t.setMagnesium((float) (t.magnesium() - WaterChemistry.magnesiumForCalcium(calcium) / blocks));
     }

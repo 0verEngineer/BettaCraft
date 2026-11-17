@@ -82,6 +82,7 @@ public class LevelSensorBlockEntity extends BlockEntity {
         Status st;
         int added = 0;
         TankBlockEntity c = org.overengineer.bettacraft.equipment.AirPumpBlockEntity.findTank(level, worldPosition);
+        if (c == null) c = org.overengineer.bettacraft.equipment.Sump.tankBeside(level, worldPosition); // M49: next to the cabinet of a sump
         var filter = c == null ? org.overengineer.bettacraft.filter.FilterWater.filterNextTo(level, worldPosition) : null;
         if (c == null && filter == null) c = WaterSources.tank(level, worldPosition, true); // the filter switch off: its first tank, as before
         int viaFilter = 0;
