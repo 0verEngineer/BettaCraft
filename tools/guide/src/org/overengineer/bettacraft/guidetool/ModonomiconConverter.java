@@ -120,6 +120,12 @@ public final class ModonomiconConverter {
         }
         children.values().forEach(l -> l.sort(Comparator.comparingInt((String c) -> pages.get(c).position()).thenComparing(c -> c)));
         for (Page p : pages.values()) if (p.parent() == null) number(p.path(), new int[]{0});
+        // M52c: Modonomicon 2.x (26.1.2) links are <category>/<entry>; the entry ids keep the rest of the path in one segment
+        for (Page p : pages.values()) {
+            String eid = PatchouliConverter.entryId(p.path()), top = topOf(p.path());
+            String rest = eid.equals(top) ? top : eid.startsWith(top + "/") ? eid.substring(top.length() + 1) : eid;
+            links.put(eid, top + "/" + rest.replace('/', '.'));
+        }
 
         Map<String, String> en = lang(enLang), de = lang(deLang);
         Map<String, String> enKeys = new TreeMap<>(), deKeys = new TreeMap<>();
@@ -134,8 +140,18 @@ public final class ModonomiconConverter {
             List<Item> itEn = new EntryBuilder(p, lEn, out, true).build();
             List<Item> itDe = new EntryBuilder(dePageMap.get(p.path()), lDe, out, false).build();
             JsonArray pg = pages(p.path(), itEn, itDe, enKeys, deKeys);
+            // M52c: Modonomicon 2.x (26.1.2): every page has an id (its anchor) and a title (empty: none)
+            for (int n = 0; n < pg.size(); n++) {
+                JsonObject po = pg.get(n).getAsJsonObject();
+                if (!po.has("id")) po.addProperty("id", "p" + n);
+                if (!po.has("title")) po.addProperty("title", "");
+                if (!po.has("text") && !po.get("type").getAsString().endsWith("_recipe")) po.addProperty("text", "");
+            }
             JsonObject e = new JsonObject();
-            e.addProperty("category", topOf(p.path()));
+            // M52c: Modonomicon 2.x (26.1.2) dispatches entries by their type
+            e.addProperty("type", "modonomicon:content");
+            e.addProperty("id", NS + ":" + link(id));
+            e.addProperty("category", NS + ":" + topOf(p.path()));
             e.addProperty("name", key(id, "name"));
             enKeys.put(key(id, "name"), p.title());
             deKeys.put(key(id, "name"), dePageMap.get(p.path()).title());
@@ -186,6 +202,13 @@ public final class ModonomiconConverter {
     private void number(String path, int[] next) {
         order.put(path, next[0]++);
         for (String c : children.getOrDefault(path, List.of())) number(c, next);
+    }
+
+    /** M52c: the entry ids in the form of Modonomicon 2.x (category, then the entry), by the GuideME page id. */
+    private final Map<String, String> links = new java.util.HashMap<>();
+
+    private String link(String entryId) {
+        return links.getOrDefault(entryId, entryId);
     }
 
     private String topOf(String path) {
@@ -348,7 +371,7 @@ public final class ModonomiconConverter {
         String name = itemName(id, lang).replace("[", "(").replace("]", ")");
         if (OPTIONAL_ITEMS.contains(id)) return "**" + name + "**";
         String entry = itemEntry.get(id);
-        if (entry != null && (from == null || !entry.equals(PatchouliConverter.entryId(from)))) return "[" + name + "](entry://" + entry + ")";
+        if (entry != null && (from == null || !entry.equals(PatchouliConverter.entryId(from)))) return "[" + name + "](entry://" + link(entry) + ")";
         return "[" + name + "](item://" + id + ")";
     }
 
@@ -374,7 +397,7 @@ public final class ModonomiconConverter {
             else {
                 String target = resolve(from, url.replaceAll("#.*$", ""));
                 if (target == null && !url.startsWith("#")) warnings.add(from + ": link to a missing page " + url);
-                rep = target != null ? "[" + text + "](entry://" + PatchouliConverter.entryId(target) + ")" : text;
+                rep = target != null ? "[" + text + "](entry://" + link(PatchouliConverter.entryId(target)) + ")" : text;
             }
             m.appendReplacement(sb, Matcher.quoteReplacement(rep));
         }
@@ -490,7 +513,7 @@ public final class ModonomiconConverter {
                     paragraph(para);
                     for (String c : children.getOrDefault(page.path(), List.of())) {
                         String title = writeAssets ? ModonomiconConverter.this.pages.get(c).title() : germanTitle(c);
-                        add("- [" + title + "](entry://" + PatchouliConverter.entryId(c) + ")", false, true);
+                        add("- [" + title + "](entry://" + link(PatchouliConverter.entryId(c)) + ")", false, true);
                     }
                     continue;
                 }

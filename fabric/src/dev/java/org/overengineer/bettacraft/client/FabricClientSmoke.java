@@ -37,7 +37,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
         private static final String[][] PAGES = {
                 {"landing", null, "0"}, {"species", "tankmates/neon_tetra", "0"}, {"device", "equipment/air_pump", "2"},
                 {"device_recipe", "equipment/air_pump", "8"}, {"multiblock", "aquarium/shapes", "2"},
-                {"entity", "bettas", "0"}, {"table", "aquarium/temperature", "2"}};
+                {"entity", "bettas/bettas", "0"}, {"table", "aquarium/temperature", "2"}};
         private final java.util.Deque<Runnable> steps = new java.util.ArrayDeque<>();
         private int wait;
 
@@ -84,7 +84,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
         private static void open(String entry, int page) {
             net.minecraft.resources.Identifier bookId = org.overengineer.bettacraft.BettaCraft.id("handbook");
-            // M52b: the handbook is a Modonomicon book on Fabric 1.21.11 (entries bettacraft:<category>/<page>)
+            // M52b/M52c: the handbook is a Modonomicon book on Fabric (entries bettacraft:<category>/<rest of the page path, "." for "/">)
             var gui = com.klikli_dev.modonomicon.client.gui.BookGuiManager.get();
             if (entry == null) gui.openBook(com.klikli_dev.modonomicon.client.gui.book.BookAddress.defaultFor(bookId));
             else gui.openEntry(bookId, org.overengineer.bettacraft.BettaCraft.id(entry), page);
