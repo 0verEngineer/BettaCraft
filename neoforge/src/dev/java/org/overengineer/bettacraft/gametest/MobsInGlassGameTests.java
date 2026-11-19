@@ -297,8 +297,12 @@ public final class MobsInGlassGameTests {
         DataComponentType<Object> soul = (DataComponentType<Object>) BuiltInRegistries.DATA_COMPONENT_TYPE.getValue(MobCaptures.SOUL);
         if (soul == null || soul.codec() == null) throw new GameTestFailure("no enderio:soul component");
         try {
-            Object value = soul.codec().parse(NbtOps.INSTANCE, TagParser.parseCompoundFully("{entity_type:\"minecraft:spider\",entity_tag:{id:\"minecraft:spider\",Health:4.0f}}"))
-                    .getOrThrow();
+            // M52c: EnderIO 9 (26.1) names the keys EntityType / EntityTag, older versions entity_type / entity_tag
+            var nbt = TagParser.parseCompoundFully("{EntityType:\"minecraft:spider\",EntityTag:{id:\"minecraft:spider\",Health:4.0f}}");
+            var parsed = soul.codec().parse(NbtOps.INSTANCE, nbt);
+            if (parsed.error().isPresent()) parsed = soul.codec().parse(NbtOps.INSTANCE,
+                    TagParser.parseCompoundFully("{entity_type:\"minecraft:spider\",entity_tag:{id:\"minecraft:spider\",Health:4.0f}}"));
+            Object value = parsed.getOrThrow();
             vial.set(soul, value);
         } catch (Exception e) {
             throw new GameTestFailure("soul: " + e);

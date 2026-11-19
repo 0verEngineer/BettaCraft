@@ -18,7 +18,8 @@ import org.overengineer.bettacraft.registry.ModTags;
  * (no compile dependency; the component value is written to NBT with its own codec):
  * <ul>
  *     <li>EnderIO {@code enderio:soul_vial}: component {@code enderio:soul} = {@code {entity_type: "minecraft:zombie",
- *     entity_tag: {id: "minecraft:zombie", ...the entity}}} (older saves {@code {entityTag: {...}}}); the empty vial is the
+ *     entity_tag: {id: "minecraft:zombie", ...the entity}}} (EnderIO 9 on 26.1: {@code EntityType} / {@code EntityTag}; older saves
+ *     {@code {entityTag: {...}}}); the empty vial is the
  *     same item without the component.</li>
  *     <li>Industrial Foregoing {@code industrialforegoing:mob_imprisonment_tool}: component
  *     {@code industrialforegoing:mob_imprisonment} = the entity ({@code saveWithoutId}) with its type in {@code entity}.</li>
@@ -96,10 +97,13 @@ public final class MobCaptures {
         if (!(t instanceof CompoundTag c)) return null;
         switch (f) {
             case SOUL_VIAL -> {
-                for (String k : new String[]{"entity_tag", "entityTag"}) {
+                // M52c: EnderIO 9 (26.1) writes EntityType / EntityTag
+                for (String k : new String[]{"EntityTag", "entity_tag", "entityTag"}) {
                     if (NbtCompat.has(c, k, Tag.TAG_COMPOUND)) {
                         CompoundTag e = c.getCompoundOrEmpty(k).copy();
-                        if (!NbtCompat.has(e, "id", Tag.TAG_STRING) && NbtCompat.has(c, "entity_type", Tag.TAG_STRING)) e.putString("id", c.getStringOr("entity_type", ""));
+                        for (String typeKey : new String[]{"EntityType", "entity_type"}) {
+                            if (!NbtCompat.has(e, "id", Tag.TAG_STRING) && NbtCompat.has(c, typeKey, Tag.TAG_STRING)) e.putString("id", c.getStringOr(typeKey, ""));
+                        }
                         return NbtCompat.has(e, "id", Tag.TAG_STRING) ? e : null;
                     }
                 }

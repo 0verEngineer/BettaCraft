@@ -68,6 +68,11 @@ class GlassMobTest {
         assertEquals("minecraft:spider", old.getStringOr("id", ""));
         CompoundTag noId = MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{entity_type:\"minecraft:husk\",entity_tag:{Health:5.0f}}"));
         assertEquals("minecraft:husk", noId.getStringOr("id", ""));
+        // M52c: EnderIO 9 (26.1) writes EntityType / EntityTag (the tag without id: the type names it)
+        CompoundTag eio9 = MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{EntityType:\"minecraft:spider\",EntityTag:{Health:4.0f}}"));
+        assertNotNull(eio9);
+        assertEquals("minecraft:spider", eio9.getStringOr("id", ""));
+        assertEquals(4.0F, eio9.getFloatOr("Health", 0f));
         assertNull(MobCaptures.parse(MobCaptures.Format.SOUL_VIAL, snbt("{}")), "an empty vial");
     }
 
