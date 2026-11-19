@@ -73,7 +73,7 @@ public final class FabricGameEvents {
                 var state = level.getBlockState(hit.getBlockPos());
                 var stack = player.getItemInHand(hand);
                 var r = state.useItemOn(stack, level, player, hand, hit);
-                if (r.consumesAction()) return r.result();
+                if (r.consumesAction()) return r;
                 if (r == net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND && hand == net.minecraft.world.InteractionHand.MAIN_HAND) {
                     var r2 = state.useWithoutItem(level, player, hit);
                     if (r2.consumesAction()) return r2;
@@ -94,7 +94,7 @@ public final class FabricGameEvents {
             var e = post(new PlayerInteractEvent.RightClickItem(player, hand));
             if (!e.isCanceled()) return InteractionResult.PASS;
             InteractionResult r = orFail(e.getCancellationResult());
-            return new InteractionResultHolder<>(r, player.getItemInHand(hand));
+            return r;
         });
         AttackBlockCallback.EVENT.register((player, level, hand, pos, dir) -> {
             var e = post(new PlayerInteractEvent.LeftClickBlock(player, pos));
@@ -126,9 +126,14 @@ public final class FabricGameEvents {
                 }
 
                 @Override
-                public java.util.concurrent.CompletableFuture<Void> reload(PreparationBarrier barrier, ResourceManager rm, ProfilerFiller p1,
-                        ProfilerFiller p2, java.util.concurrent.Executor bg, java.util.concurrent.Executor game) {
-                    return l.reload(barrier, rm, p1, p2, bg, game);
+                public void prepareSharedState(SharedState state) {
+                    l.prepareSharedState(state);
+                }
+
+                @Override
+                public java.util.concurrent.CompletableFuture<Void> reload(SharedState state, java.util.concurrent.Executor bg, PreparationBarrier barrier,
+                        java.util.concurrent.Executor game) {
+                    return l.reload(state, bg, barrier, game);
                 }
             });
         }
@@ -143,15 +148,19 @@ public final class FabricGameEvents {
                 post(new VillagerTradesEvent(prof, map));
                 for (int lvl = 1; lvl <= 5; lvl++) {
                     List<VillagerTrades.ItemListing> added = map.get(lvl);
-                    if (!added.isEmpty()) TradeOfferHelper.registerVillagerOffers(prof, lvl, list -> list.addAll(added));
+                    var key = BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(prof).orElseThrow();
+                    if (!added.isEmpty()) TradeOfferHelper.registerVillagerOffers(key, lvl, list -> list.addAll(added));
                 }
             }
         }
         if (GameEvents.has(WandererTradesEvent.class)) {
             List<VillagerTrades.ItemListing> generic = new ArrayList<>(), rare = new ArrayList<>();
             post(new WandererTradesEvent(generic, rare));
-            if (!generic.isEmpty()) TradeOfferHelper.registerWanderingTraderOffers(1, list -> list.addAll(generic));
-            if (!rare.isEmpty()) TradeOfferHelper.registerWanderingTraderOffers(2, list -> list.addAll(rare));
+            // 1.21.5: the trader's pools by id (1.21.1's levels 1 and 2 are the common and the special pool)
+            TradeOfferHelper.registerWanderingTraderOffers(b -> {
+                if (!generic.isEmpty()) b.addOffersToPool(TradeOfferHelper.WanderingTraderOffersBuilder.SELL_COMMON_ITEMS_POOL, generic.toArray(VillagerTrades.ItemListing[]::new));
+                if (!rare.isEmpty()) b.addOffersToPool(TradeOfferHelper.WanderingTraderOffersBuilder.SELL_SPECIAL_ITEMS_POOL, rare.toArray(VillagerTrades.ItemListing[]::new));
+            });
         }
     }
 }

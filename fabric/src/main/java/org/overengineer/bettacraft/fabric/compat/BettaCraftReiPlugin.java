@@ -40,11 +40,10 @@ public final class BettaCraftReiPlugin implements REIClientPlugin {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        var rm = registry.getRecipeManager();
-        for (var h : rm.getAllRecipesFor(ModRecipes.CRUCIBLE_TYPE.get())) registry.add(new Simple(CRUCIBLE, h.value().ingredients(), h.value().result()));
-        for (var h : org.overengineer.bettacraft.food.FoodMakerBlockEntity.recipes(rm)) {
-            registry.add(new Simple(FOOD_MAKER, h.value().ingredients(), h.value().result()));
-        }
+        // M52b: clients have no recipe manager since 1.21.2: the recipes our recipe sync sent (crafting.RecipeSync)
+        var synced = org.overengineer.bettacraft.crafting.RecipeSync.client();
+        for (var h : synced.crucible()) registry.add(new Simple(CRUCIBLE, h.value().ingredients(), h.value().result()));
+        for (var h : synced.foodMaker()) registry.add(new Simple(FOOD_MAKER, h.value().ingredients(), h.value().result()));
         for (RecipeViewerInfo.Page p : RecipeViewerInfo.pages()) {
             BuiltinClientPlugin.getInstance().registerInformation(EntryIngredients.ofItemStacks(p.stacks()), p.stacks().get(0).getHoverName(),
                     lines -> {
@@ -57,6 +56,17 @@ public final class BettaCraftReiPlugin implements REIClientPlugin {
     record Simple(CategoryIdentifier<Simple> category, List<EntryIngredient> inputs, List<EntryIngredient> outputs) implements Display {
         Simple(CategoryIdentifier<Simple> category, List<SizedIngredient> in, ItemStack out) {
             this(category, in.stream().map(s -> EntryIngredients.ofItemStacks(List.of(s.getItems()))).toList(), List.of(EntryIngredients.of(out)));
+        }
+
+        @Override
+        public java.util.Optional<net.minecraft.resources.Identifier> getDisplayLocation() {
+            return java.util.Optional.empty();
+        }
+
+        /** Client-side displays only (made from the synced recipes, never sent by REI). */
+        @Override
+        public me.shedaniel.rei.api.common.display.DisplaySerializer<? extends Display> getSerializer() {
+            return null;
         }
 
         @Override

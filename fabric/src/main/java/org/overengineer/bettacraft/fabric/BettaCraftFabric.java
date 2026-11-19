@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.fabric;
 
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -28,14 +28,14 @@ public final class BettaCraftFabric implements ModInitializer {
         // the configs first: the feature switches decide registration details and the conditions
         var dir = FabricLoader.getInstance().getConfigDir();
         org.overengineer.bettacraft.config.FeatureMigration.migrateServerFile(dir.resolve(BettaCraft.MOD_ID + "-server.toml"));
-        NeoForgeConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.SERVER, ServerConfig.SPEC);
+        ConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.SERVER, ServerConfig.SPEC);
         org.overengineer.bettacraft.config.FeatureMigration.migrateFile(dir.resolve(BettaCraft.MOD_ID + "-common.toml"));
-        NeoForgeConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.COMMON, CommonConfig.SPEC);
-        NeoForgeConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.CLIENT, ClientConfig.SPEC);
+        ConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.COMMON, CommonConfig.SPEC);
+        ConfigRegistry.INSTANCE.register(BettaCraft.MOD_ID, ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
         BettaCraft.init();
         FabricConditions.register();
-        org.overengineer.bettacraft.progression.GuideBook.backend = new PatchouliBook();
+        org.overengineer.bettacraft.progression.GuideBook.backend = new ModonomiconBook();
         FabricRegistration.registerAll();
         ModEntities.attributes(FabricDefaultAttributeRegistry::register);
         ModEntities.spawnPlacements(SpawnPlacements::register);
@@ -49,7 +49,7 @@ public final class BettaCraftFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> FabricPlatform.server = null);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> BettaCraft.onTagsUpdated());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> BettaCraft.onPlayerLoggedIn(handler.player));
-        NeoForgeModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
+        ModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
             var server = FabricPlatform.server;
             if (server == null) return;
             if (config.getSpec() == CommonConfig.SPEC) server.execute(() -> BettaCraft.onCommonConfigReloaded(server));

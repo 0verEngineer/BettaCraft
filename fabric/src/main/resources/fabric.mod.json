@@ -44,20 +44,18 @@
   ],
   "accessWidener": "${mod_id}.accesswidener",
   "depends": {
-    "fabricloader": ">=0.16.0",
-    "minecraft": "~1.21.1",
+    "fabricloader": ">=0.17.0",
+    "minecraft": "1.21.11",
     "java": ">=21",
     "fabric-api": "*",
-    "forgeconfigapiport": ">=21.1.0"
+    "forgeconfigapiport": ">=21.11.0"
   },
   "suggests": {
-    "patchouli": "*",
+    "modonomicon": "*",
     "modmenu": "*",
     "jade": "*",
     "jei": "*",
     "wthit": "*",
-    "theoneprobe": "*",
-    "roughlyenoughitems": "*",
-    "emi": "*"
+    "roughlyenoughitems": "*"
   }
 }

@@ -58,10 +58,10 @@ public final class FabricWorld {
     private static void biomes() {
         BiomeModification m = BiomeModifications.create(BettaCraft.id("spawns"));
         m.add(ModificationPhase.ADDITIONS, BiomeSelectors.tag(tag("bettacraft:betta_spawn_biomes")), (sel, ctx) -> {
-            for (WildSpawns.Spawn s : WildSpawns.bettas()) ctx.getSpawnSettings().addSpawn(s.category(), s.data());
+            for (WildSpawns.Spawn s : WildSpawns.bettas()) ctx.getSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
         });
         m.add(ModificationPhase.ADDITIONS, BiomeSelectors.all(), (sel, ctx) -> {
-            for (WildSpawns.Spawn s : WildSpawns.wildlife(sel.getBiomeRegistryEntry())) ctx.getSpawnSettings().addSpawn(s.category(), s.data());
+            for (WildSpawns.Spawn s : WildSpawns.wildlife(sel.getBiomeRegistryEntry())) ctx.getSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
         });
         // the wild corals: #bettacraft:coral_reef_biomes or (#c:is_ocean and #c:is_hot)
         BiomeModifications.addFeature(BiomeSelectors.tag(tag("bettacraft:coral_reef_biomes"))

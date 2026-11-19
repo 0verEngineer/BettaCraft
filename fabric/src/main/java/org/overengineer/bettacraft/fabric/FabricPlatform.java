@@ -131,7 +131,7 @@ public final class FabricPlatform implements Platform {
         if (fluid == Fluids.EMPTY) return "block.minecraft.air";
         if (fluid.isSame(Fluids.WATER)) return "block.minecraft.water";
         if (fluid.isSame(Fluids.LAVA)) return "block.minecraft.lava";
-        var key = fluid.builtInRegistryHolder().key().location();
+        var key = fluid.builtInRegistryHolder().key().identifier();
         if (key.getNamespace().equals("bettacraft")) return "fluid_type.bettacraft." + key.getPath().replaceFirst("^flowing_", "");
         Component name = FluidVariantAttributes.getName(FluidVariant.of(fluid));
         return name.getContents() instanceof TranslatableContents t ? t.getKey() : name.getString();
@@ -349,8 +349,9 @@ public final class FabricPlatform implements Platform {
     @Override
     @SuppressWarnings("unchecked")
     public SpawnEggItem spawnEgg(Supplier<? extends EntityType<? extends Mob>> type, int background, int highlight, Item.Properties props) {
-        // the entity types are registered before the items (vanilla registry order), so the type is there
-        return new SpawnEggItem((EntityType<? extends Mob>) type.get(), background, highlight, props);
+        // the entity types are registered before the items (vanilla registry order), so the type is there; M52b: no colours
+        // since 1.21.5 (each egg has its texture)
+        return new SpawnEggItem(props.spawnEgg((EntityType<? extends Mob>) type.get()));
     }
 
     @Override
@@ -368,18 +369,6 @@ public final class FabricPlatform implements Platform {
         return biome.climateSettings.downfall();
     }
 
-
-    /** {@code {"item": ...}} or {@code {"tag": ...}}: the flat ingredient of a sized ingredient (vanilla values). */
-    static final class FlatIngredient {
-        static final com.mojang.serialization.MapCodec<Ingredient> MAP_CODEC = com.mojang.serialization.Codec.mapEither(
-                ItemStack.SIMPLE_ITEM_CODEC.fieldOf("item"), TagKey.codec(Registries.ITEM).fieldOf("tag")
-        ).xmap(e -> e.map(Ingredient::of, Ingredient::of), ing -> {
-            ItemStack[] items = ing.getItems();
-            return com.mojang.datafixers.util.Either.left(items.length == 0 ? ItemStack.EMPTY : items[0]);
-        });
-
-        private FlatIngredient() {}
-    }
 
     @Override
     public String modVersion(String modId) {

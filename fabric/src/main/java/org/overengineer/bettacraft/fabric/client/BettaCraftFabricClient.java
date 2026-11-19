@@ -113,14 +113,14 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents.CHUNK_UNLOAD.register((level, chunk) ->
                 org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(chunk.getPos().x, chunk.getPos().z));
         // M11 / M21: the tank look and the plant meshes are baked into the chunk meshes: rebuild them on a config change
-        fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
+        fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
             if (config.getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
             if (config.getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) {
                 rebuildChunks();
                 org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll();
             }
         });
-        fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeModConfigEvents.loading(BettaCraft.MOD_ID).register(config -> {
+        fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents.loading(BettaCraft.MOD_ID).register(config -> {
             if (config.getSpec() == org.overengineer.bettacraft.config.CommonConfig.SPEC) org.overengineer.bettacraft.client.interior.MiniatureSway.reset();
         });
         // M22.1: the swaying plants' tag; the stone cabinet recipes (NeoForge: RecipesUpdatedEvent; both come on join and reload)

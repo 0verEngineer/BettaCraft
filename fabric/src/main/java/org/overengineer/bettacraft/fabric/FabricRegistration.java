@@ -30,7 +30,7 @@ final class FabricRegistration {
         List<DeferredRegister<?>> regs = new ArrayList<>(DeferredRegister.registered());
         for (Registry<?> registry : BuiltInRegistries.REGISTRY) {
             for (DeferredRegister<?> reg : regs) {
-                if (!reg.getRegistryKey().location().equals(registry.key().location())) continue;
+                if (!reg.getRegistryKey().identifier().equals(registry.key().identifier())) continue;
                 for (Map.Entry<Identifier, ? extends Supplier<?>> e : reg.takeEntries().entrySet()) {
                     Object value = e.getValue().get();
                     var holder = Registry.registerForHolder((Registry) registry, e.getKey(), value);
@@ -44,8 +44,8 @@ final class FabricRegistration {
             }
         }
         for (DeferredRegister<?> reg : regs) {
-            if (BuiltInRegistries.REGISTRY.getValue(reg.getRegistryKey().location()) == null) {
-                throw new IllegalStateException("Bettacraft: no registry " + reg.getRegistryKey().location() + " on Fabric");
+            if (BuiltInRegistries.REGISTRY.getValue(reg.getRegistryKey().identifier()) == null) {
+                throw new IllegalStateException("Bettacraft: no registry " + reg.getRegistryKey().identifier() + " on Fabric");
             }
         }
         for (Attachment<?> a : Attachment.all()) attach(a);

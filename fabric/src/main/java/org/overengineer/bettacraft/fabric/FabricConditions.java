@@ -32,7 +32,7 @@ final class FabricConditions {
         }
 
         @Override
-        public boolean test(@Nullable net.minecraft.core.HolderLookup.Provider registries) {
+        public boolean test(net.minecraft.resources.RegistryOps.@Nullable RegistryInfoLookup registries) {
             return Features.enabled(feature);
         }
     }
@@ -48,7 +48,7 @@ final class FabricConditions {
         }
 
         @Override
-        public boolean test(@Nullable net.minecraft.core.HolderLookup.Provider registries) {
+        public boolean test(net.minecraft.resources.RegistryOps.@Nullable RegistryInfoLookup registries) {
             return CommonConfig.getOr(CommonConfig.RECIPE_FISH_BAG, CommonConfig.FishBagRecipe.AUTO).name().equalsIgnoreCase(fishBag);
         }
     }
