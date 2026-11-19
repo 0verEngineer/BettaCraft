@@ -12,7 +12,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * M52c (26.1): item modifier {@code bettacraft:trade} ({@code {"function": "bettacraft:trade", "offer":
+ * M52c (26.1): item modifier {@code bettacraft:trade} ({@code {"type": "bettacraft:trade", "offer":
  * "wandering_trader/dwarf_crayfish"}}) of our {@code villager_trade} entries: marks the entry as one of our offers made in
  * code ({@link BettaTrades#listing}). {@code VillagerTradeOfferMixin} makes the whole offer from the listing (price, uses,
  * experience); applied on its own (another mod reading the trade) it gives the goods of such an offer.

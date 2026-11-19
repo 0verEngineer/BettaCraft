@@ -207,17 +207,27 @@ public final class FromResources {
 
     // ------------------------------------------------------------------ fluid container items (M52e: 26.3)
 
+    /**
+     * One item of the stack in a slot of its own: a container item may turn into another item (a filled bucket into an empty
+     * one), which an item access straight on a stack does not allow.
+     */
+    private static net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler slot(ItemStack stack) {
+        return new net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler(
+                net.minecraft.core.NonNullList.of(ItemStack.EMPTY, stack.copyWithCount(1)));
+    }
+
     /** The fluid of an item (a bucket, another mod's tank item), working on a copy of one item of the stack. */
     public static java.util.Optional<org.overengineer.bettacraft.platform.fluid.IFluidHandlerItem> fluidItem(ItemStack stack) {
         if (stack.isEmpty()) return java.util.Optional.empty();
-        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack.copyWithCount(1));
+        var slot = slot(stack);
+        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forHandlerIndexStrict(slot, 0);
         ResourceHandler<FluidResource> h = access.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM);
         if (h == null) return java.util.Optional.empty();
         IFluidHandler f = fluids(h);
         return java.util.Optional.of(new org.overengineer.bettacraft.platform.fluid.IFluidHandlerItem() {
             @Override
             public ItemStack getContainer() {
-                return access.getResource().toStack(access.getAmount());
+                return slot.getResource(0).toStack(slot.getAmountAsInt(0));
             }
 
             @Override
@@ -263,7 +273,8 @@ public final class FromResources {
      */
     public static @Nullable ItemStack moveWithContainer(ItemStack container, IFluidHandler other, int maxAmount, boolean execute, boolean fromItem) {
         if (container.isEmpty() || other == null) return null;
-        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(container.copyWithCount(1));
+        var slot = slot(container);
+        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forHandlerIndexStrict(slot, 0);
         ResourceHandler<FluidResource> item = access.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM);
         ResourceHandler<FluidResource> tank = NeoResources.fluids(other);
         if (item == null || tank == null) return null;
@@ -271,7 +282,7 @@ public final class FromResources {
             int moved = fromItem ? net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(item, tank, r -> true, maxAmount, tx)
                     : net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(tank, item, r -> true, maxAmount, tx);
             if (moved <= 0) return null;
-            ItemStack result = access.getResource().toStack(access.getAmount());
+            ItemStack result = slot.getResource(0).toStack(slot.getAmountAsInt(0));
             if (execute) tx.commit();
             return result;
         }

@@ -1,6 +1,6 @@
 {
   "given_item_modifier": {
-    "function": "bettacraft:trade",
+    "type": "bettacraft:trade",
     "offer": "wandering_trader/plant_red_tiger_lotus"
   },
   "gives": {

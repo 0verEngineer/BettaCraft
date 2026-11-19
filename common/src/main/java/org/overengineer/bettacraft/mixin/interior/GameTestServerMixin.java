@@ -10,6 +10,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
  * GameTest server only: vanilla bakes the test world with an empty dimension registry, so datapack dimensions (our
@@ -25,5 +26,16 @@ public abstract class GameTestServerMixin {
                                                                              Operation<WorldDimensions.Complete> original,
                                                                              @Local(argsOnly = true) WorldLoader.DataLoadContext context) {
         return original.call(dims, context.datapackDimensions().lookupOrThrow(net.minecraft.core.registries.Registries.LEVEL_STEM));
+    }
+
+    /**
+     * M52e: 26.3 tests in a sandstone desert ({@code flat_all_dimensions}); the GameTests of the mod were written for the
+     * plains of the flat world (temperature, rain, the ground at the test structures), as vanilla had it up to 26.2.
+     */
+    @ModifyArg(method = "lambda$create$1", require = 1, at = @At(value = "INVOKE",
+            target = "getOrThrow(Lnet/minecraft/resources/ResourceKey;)Lnet/minecraft/core/Holder$Reference;"))
+    private static net.minecraft.resources.ResourceKey<?> bettacraft$plainsWorld(net.minecraft.resources.ResourceKey<?> preset) {
+        return preset == net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT_ALL_DIMENSIONS
+                ? net.minecraft.world.level.levelgen.presets.WorldPresets.FLAT : preset;
     }
 }

@@ -293,7 +293,7 @@ public final class YoungAndLightGameTests {
     @GameTest(template = EMPTY)
     public static void oldLightsLoadWhite(GameTestHelper h) {
         CompoundTag t = new CompoundTag();
-        t.putString("Name", BettaCraft.id("tank_light").toString());
+        t.putString("id", BettaCraft.id("tank_light").toString());
         CompoundTag p = new CompoundTag();
         p.putString("axis", "z");
         p.putString("hanging", "false");
@@ -301,7 +301,7 @@ public final class YoungAndLightGameTests {
         p.putString("neg", "true");
         p.putString("pos", "false");
         p.putString("powered", "false");
-        t.put("Properties", p);
+        t.put("properties", p); // M52e: 26.3 block state keys (id, properties)
         BlockState s = NbtUtils.readBlockState(h.getLevel().holderLookup(Registries.BLOCK), t);
         h.assertTrue(s.is(ModBlocks.TANK_LIGHT.get()), "a light: " + s);
         h.assertTrue(s.getValue(TankLightBlock.COLOR) == DyeColor.WHITE, "white");

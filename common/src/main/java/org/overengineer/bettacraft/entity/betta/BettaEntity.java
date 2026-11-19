@@ -393,6 +393,7 @@ public class BettaEntity extends AbstractFish {
             DamageSource src = pendingAttacker instanceof net.minecraft.world.entity.LivingEntity le
                     ? damageSources().mobAttack(le) : damageSources().generic();
             setInvulnerableTime(0);
+            damageCooldownTime = 0; // M52e: 26.3 keeps the damage cooldown of living entities here
             hurt(src, dmg);
         }
     }

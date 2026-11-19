@@ -214,6 +214,7 @@ public final class AxolotlCare {
                     float hit = (float) Math.floor(pending);
                     pending -= hit;
                     a.setInvulnerableTime(0);
+                    a.damageCooldownTime = 0; // M52e: the damage cooldown of 26.3
                     a.hurt(level.damageSources().generic(), hit);
                 }
                 d.putDouble(HEAT, pending);

@@ -43,7 +43,7 @@ final class TradeData implements DataProvider {
             t.add("gives", gives);
             // M52e (26.3): one item modifier (given_item_modifier) instead of a list
             JsonObject f = new JsonObject();
-            f.addProperty("function", BettaCraft.id("trade").toString());
+            f.addProperty("type", BettaCraft.id("trade").toString()); // M52e: loot functions are dispatched by "type" (26.3)
             f.addProperty("offer", e.id());
             t.add("given_item_modifier", f);
             all.add(DataProvider.saveStable(cache, t, trades.json(BettaCraft.id(e.id()))));

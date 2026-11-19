@@ -20,8 +20,22 @@ public final class NeoLoaderHooks implements LoaderHooks {
     /** M52e: NeoForge decides the load conditions when it reads the registry: here by hand ({@code neoforge:conditions}). */
     @Override
     public boolean recipeAllowed(JsonElement json, MinecraftServer server) {
+        var registries = server.registryAccess();
+        // the tags as the server has them loaded (tag conditions such as neoforge:tag_empty)
+        ICondition.IContext tags = new ICondition.IContext() {
+            @Override
+            public <T> boolean isTagLoaded(net.minecraft.tags.TagKey<T> key) {
+                return registries.lookup(key.registry()).flatMap(r -> r.get(key)).isPresent();
+            }
+
+            @Override
+            public <T> java.util.Collection<net.minecraft.core.Holder<T>> getTag(net.minecraft.tags.TagKey<T> key) {
+                return registries.lookup(key.registry()).flatMap(r -> r.get(key))
+                        .map(set -> (java.util.Collection<net.minecraft.core.Holder<T>>) set.stream().toList()).orElse(java.util.List.of());
+            }
+        };
         var ops = new net.neoforged.neoforge.common.conditions.ConditionalOps<>(
-                server.registryAccess().createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE), ICondition.IContext.TAGS_INVALID);
+                registries.createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE), tags);
         return ICondition.conditionsMatched(ops, json);
     }
 
