@@ -126,6 +126,8 @@ neoForge {
             if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }) {
                 systemProperty 'bettacraft.background', 'true'
             }
+            // M52e: -Pvulkan starts the client on 26.3's Vulkan backend (launch argument, overrides the video setting)
+            if (project.hasProperty('vulkan')) programArguments.addAll '--graphicsBackend', 'vulkan'
             // M52d: the dev runtime validates every draw (26.2); Iris 1.11.4's shadow pipelines trip a bounds bug of that validation
             // (index past the pipeline's vertex bindings), production has no validation: off for shader runs
             if (project.hasProperty('shaders')) systemProperty 'neoforge.disableGlValidation', 'true'
@@ -912,6 +914,11 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
         // M52d: NeoForge 26.2 warns about the deprecated logoFile of other mods (YACL) on a screen that waits for a click;
         // background runs have nobody to click it
         def neoClient = rootProject.file(runRoot + '/config/neoforge-client.toml')
+        // M52e: a fresh run directory has no client config yet: start it with the warnings off
+        if (background && !neoClient.exists()) {
+            neoClient.parentFile.mkdirs()
+            neoClient.setText('showLoadWarnings = false' + System.lineSeparator(), 'UTF-8')
+        }
         if (background && neoClient.exists()) {
             def text = neoClient.getText('UTF-8')
             def updated = text.replaceAll(/showLoadWarnings = true/, 'showLoadWarnings = false')

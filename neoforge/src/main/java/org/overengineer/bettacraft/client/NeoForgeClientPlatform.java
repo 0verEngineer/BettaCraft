@@ -187,7 +187,10 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
     static void fire(net.neoforged.neoforge.client.event.RenderLevelStageEvent e, RenderLevelStageEvent.Stage... stages) {
         Minecraft mc = Minecraft.getInstance();
         PoseStack ps = e.getPoseStack() != null ? e.getPoseStack() : new PoseStack();
+        boolean shadow = org.overengineer.bettacraft.client.interior.IrisCompat.renderingShadowPass();
         for (RenderLevelStageEvent.Stage s : stages) {
+            // M52e: the stages of the main pass ran before it; here their draws go into the pass (not in Iris' shadow pass)
+            if (!shadow && org.overengineer.bettacraft.client.render.LevelDraws.replay(s, null)) continue;
             org.overengineer.bettacraft.platform.client.ClientEvents.fireRenderLevel(new RenderLevelStageEvent(s, e.getLevelRenderer(), ps,
                     new org.joml.Matrix4f(e.getModelViewMatrix()), RenderFrame.projection(), (int) mc.level.getGameTime(), mc.getDeltaTracker(),
                     mc.gameRenderer.mainCamera(), RenderFrame.frustum()));

@@ -41,6 +41,7 @@
     "client.FluidRendererMixin",
     "client.IrisBlockIdsMixin",
     "client.LevelRendererFrustumMixin",
+    "client.LevelRendererPassMixin",
     "client.LivingEntityRendererGlassMixin",
     "client.LivingEntityRenderStateMixin"
   ],

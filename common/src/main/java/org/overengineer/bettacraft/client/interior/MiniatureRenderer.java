@@ -521,30 +521,45 @@ public final class MiniatureRenderer {
      * reads the model-view and atlas size from {@code TerrainUniform} and the section position from {@code ChunkSection};
      * textures are uniforms of the pass and pipelines are compiled ones, as in {@code ChunkSectionsToRender$DrawSeparate}.
      */
+    private static net.minecraft.client.renderer.DynamicGpuDataStorageMapped<net.minecraft.client.renderer.DynamicGpuData.ChunkSectionInfo> chunkSections;
+    private static long chunkSectionsFrame = -1;
+
+    /** M52e: the chunk section uniforms of the miniature draws (a ring buffer of its own, recycled every frame). */
+    private static net.minecraft.client.renderer.DynamicGpuDataStorageMapped<net.minecraft.client.renderer.DynamicGpuData.ChunkSectionInfo> chunkSections() {
+        if (chunkSections == null) chunkSections = new net.minecraft.client.renderer.DynamicGpuDataStorageMapped<>("Bettacraft miniature chunk sections",
+                net.minecraft.client.renderer.DynamicGpuData.CHUNK_SECTION_UBO_SIZE, com.mojang.renderpearl.api.buffers.GpuBuffer.USAGE_UNIFORM, 8);
+        long frame = org.overengineer.bettacraft.client.render.LevelDraws.frame();
+        if (frame != chunkSectionsFrame) {
+            chunkSectionsFrame = frame;
+            chunkSections.endFrame();
+        }
+        return chunkSections;
+    }
+
     static void drawWithModelView(Matrix4f mv, int chunkX, int chunkY, int chunkZ, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
         Minecraft mc = Minecraft.getInstance();
         var atlas = mc.getTextureManager().getTexture(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).getTextureView();
         var gpuData = RenderSystem.getDynamicUniforms();
         var terrain = gpuData.writeTerrainTransform(mv, atlas.getWidth(0), atlas.getHeight(0));
-        var section = gpuData.writeChunkSections(new net.minecraft.client.renderer.DynamicGpuData.ChunkSectionInfo(chunkX, chunkY, chunkZ, 1.0F))[0];
+        // our own chunk section storage: vanilla's switches between a uniform and an instanced vertex storage (multi-draw
+        // indirect) and closes the other one, which would take away vanilla's (or ours) in the middle of the frame
+        var section = chunkSections().writeData(new net.minecraft.client.renderer.DynamicGpuData.ChunkSectionInfo(chunkX, chunkY, chunkZ, 1.0F));
         int maxIndices = 0;
         for (List<MiniatureMesh.Buffer> l : byLayer.values()) for (MiniatureMesh.Buffer b : l) maxIndices = Math.max(maxIndices, b.indexCount());
         RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS);
-        com.mojang.renderpearl.api.buffers.GpuBuffer indices = quads.getBuffer(maxIndices);
+        quads.getBuffer(maxIndices); // sized now, before the pass (a later tank may grow it again: the op takes the current one)
         var sampler = RenderSystem.getSamplerCache().getSampler(com.mojang.renderpearl.api.textures.AddressMode.CLAMP_TO_EDGE,
                 com.mojang.renderpearl.api.textures.AddressMode.CLAMP_TO_EDGE, com.mojang.renderpearl.api.textures.FilterMode.LINEAR,
                 com.mojang.renderpearl.api.textures.FilterMode.LINEAR, true);
-        var target = mc.gameRenderer.mainRenderTarget();
-        try (com.mojang.renderpearl.api.commands.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
-                () -> "Bettacraft miniature", target.getColorTextureView(), java.util.Optional.empty(),
-                target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
-            RenderSystem.bindDefaultUniforms(pass);
+        // M52e: a draw op (into the main pass of 26.3, see LevelDraws); everything above is uploaded before the pass
+        var lightmap = mc.gameRenderer.lightmap();
+        var lightSampler = RenderSystem.getSamplerCache().getClampToEdge(com.mojang.renderpearl.api.textures.FilterMode.LINEAR);
+        org.overengineer.bettacraft.client.render.LevelDraws.add(pass -> {
             pass.setUniform("TerrainUniform", terrain);
             pass.setUniform("ChunkSection", section);
             pass.setUniform("Sampler0", atlas, sampler);
-            pass.setUniform("Sampler2", mc.gameRenderer.lightmap(),
-                    RenderSystem.getSamplerCache().getClampToEdge(com.mojang.renderpearl.api.textures.FilterMode.LINEAR));
-            pass.setIndexBuffer(indices, quads.type());
+            pass.setUniform("Sampler2", lightmap, lightSampler);
+            pass.setIndexBuffer(quads.getBuffer(), quads.type());
             for (var e : byLayer.entrySet()) {
                 pass.setPipeline(RenderSystem.getCompiledPipeline(e.getKey().pipeline(false)));
                 for (MiniatureMesh.Buffer b : e.getValue()) {
@@ -552,7 +567,7 @@ public final class MiniatureRenderer {
                     pass.drawIndexed(b.indexCount(), 1, 0, 0, 0);
                 }
             }
-        }
+        });
     }
 
     /**

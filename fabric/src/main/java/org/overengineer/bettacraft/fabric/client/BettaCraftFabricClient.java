@@ -203,7 +203,10 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
     public static void fire(com.mojang.blaze3d.vertex.@org.jetbrains.annotations.Nullable PoseStack matrices, RenderLevelStageEvent.Stage... stages) {
         Minecraft mc = Minecraft.getInstance();
         var ps = matrices != null ? matrices : new com.mojang.blaze3d.vertex.PoseStack();
+        boolean shadow = org.overengineer.bettacraft.client.interior.IrisCompat.renderingShadowPass();
         for (RenderLevelStageEvent.Stage s : stages) {
+            // M52e: the stages of the main pass ran before it; here their draws go into the pass (not in Iris' shadow pass)
+            if (!shadow && org.overengineer.bettacraft.client.render.LevelDraws.replay(s, null)) continue;
             ClientEvents.fireRenderLevel(new RenderLevelStageEvent(s, mc.levelRenderer, ps, org.overengineer.bettacraft.platform.client.RenderFrame.modelView(),
                     org.overengineer.bettacraft.platform.client.RenderFrame.projection(), (int) mc.level.getGameTime(), mc.getDeltaTracker(),
                     mc.gameRenderer.mainCamera(), org.overengineer.bettacraft.platform.client.RenderFrame.frustum()));
