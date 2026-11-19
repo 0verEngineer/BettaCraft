@@ -439,7 +439,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void alexsCavesSpongeCounts(GameTestHelper h) {
         boolean ac = block("alexscaves:ping_pong_sponge") != null;
-        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac) throw new GameTestFailure("-Paquatic but Alex's Caves is not loaded");
+        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac && !org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains("alexscaves")) throw new GameTestFailure("-Paquatic but Alex's Caves is not loaded");
         if (!ac) {
             h.succeed();
             return;

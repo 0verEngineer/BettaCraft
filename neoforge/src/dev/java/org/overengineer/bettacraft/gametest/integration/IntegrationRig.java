@@ -100,6 +100,33 @@ final class IntegrationRig {
 
     // ------------------------------------------------------------------ reflection
 
+    /** Whether the object has a method of that name and parameter count (its class or a superclass). */
+    static boolean has(Object o, String name, int params) {
+        for (Class<?> k = o.getClass(); k != null; k = k.getSuperclass()) {
+            for (Method m : k.getDeclaredMethods()) if (m.getName().equals(name) && m.getParameterCount() == params) return true;
+        }
+        for (Method m : o.getClass().getMethods()) if (m.getName().equals(name) && m.getParameterCount() == params) return true;
+        return false;
+    }
+
+    /**
+     * Puts a stack into a slot of another mod's item handler: {@code setStackInSlot} (the IItemHandler of 1.21.x and handlers
+     * that keep it), else the transfer API of NeoForge 26.1 ({@code ItemStacksResourceHandler#set(slot, ItemResource, amount)}).
+     */
+    static void setSlot(Object handler, int slot, net.minecraft.world.item.ItemStack stack) {
+        if (has(handler, "setStackInSlot", 2)) {
+            call(handler, "setStackInSlot", slot, stack);
+            return;
+        }
+        Object resource;
+        try {
+            resource = Class.forName("net.neoforged.neoforge.transfer.item.ItemResource").getMethod("of", net.minecraft.world.item.ItemStack.class).invoke(null, stack);
+        } catch (ReflectiveOperationException e) {
+            throw new GameTestFailure("API changed: no ItemResource.of: " + e);
+        }
+        call(handler, "set", slot, resource, stack.getCount());
+    }
+
     static Method method(Class<?> c, String name, int params) {
         for (Class<?> k = c; k != null; k = k.getSuperclass()) {
             for (Method m : k.getDeclaredMethods()) {

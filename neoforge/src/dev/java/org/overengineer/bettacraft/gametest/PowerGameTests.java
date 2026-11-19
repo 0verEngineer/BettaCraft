@@ -71,6 +71,16 @@ public final class PowerGameTests {
         return BuiltInRegistries.BLOCK.getOptional(Identifier.parse(id)).orElseThrow(() -> new GameTestFailure("no block " + id));
     }
 
+    /**
+     * The creative FE source for the EnderIO conduit tests: EnderIO's creative power block, or (M52c: EnderIO 9 on 26.1 has none)
+     * Powah's creative cell, which pushes into its neighbours too.
+     */
+    private static Block creativePower() {
+        return BuiltInRegistries.BLOCK.getOptional(Identifier.parse("enderio:creative_power"))
+                .or(() -> BuiltInRegistries.BLOCK.getOptional(Identifier.parse("powah:energy_cell_creative")))
+                .orElseThrow(() -> new GameTestFailure("no creative power block (EnderIO or Powah)"));
+    }
+
     private static boolean loaded(String... mods) {
         for (String m : mods) if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)) return false;
         return true;
@@ -231,17 +241,22 @@ public final class PowerGameTests {
         }
         PowerConfig saved = PowerConfig.current();
         ServerConfig.POWER_FILTER.set(true);
-        ServerLevel level = h.getLevel();
-        // conduit -> filter
-        TankBlockEntity a = tank(h, 6, 1, 2, 1, 1, 1);
-        filter(h, new BlockPos(5, 1, 2), Direction.EAST);
-        h.setBlock(new BlockPos(2, 1, 2), block("enderio:creative_power"));
-        conduit(h, new BlockPos(3, 1, 2));
-        conduit(h, new BlockPos(4, 1, 2));
-        // creative power right next to a light on another tank
-        TankBlockEntity b = tank(h, 4, 1, 6, 1, 1, 1);
-        h.setBlock(new BlockPos(4, 2, 6), ModBlocks.TANK_LIGHT.get().defaultBlockState());
-        h.setBlock(new BlockPos(5, 2, 6), block("enderio:creative_power"));
+        TankBlockEntity a, b;
+        try { // M52c: a failing setup (another EnderIO version) must not leave the power options on for later batches
+            // conduit -> filter
+            a = tank(h, 6, 1, 2, 1, 1, 1);
+            filter(h, new BlockPos(5, 1, 2), Direction.EAST);
+            h.setBlock(new BlockPos(2, 1, 2), creativePower());
+            conduit(h, new BlockPos(3, 1, 2));
+            conduit(h, new BlockPos(4, 1, 2));
+            // creative power right next to a light on another tank
+            b = tank(h, 4, 1, 6, 1, 1, 1);
+            h.setBlock(new BlockPos(4, 2, 6), ModBlocks.TANK_LIGHT.get().defaultBlockState());
+            h.setBlock(new BlockPos(5, 2, 6), creativePower());
+        } catch (RuntimeException e) {
+            saved.apply();
+            throw e;
+        }
         h.runAfterDelay(80, () -> {
             long viaFilter = a.getTank().powerBuffer(), viaLight = b.getTank().powerBuffer();
             saved.apply();
@@ -260,11 +275,17 @@ public final class PowerGameTests {
         }
         PowerConfig saved = PowerConfig.current();
         ServerConfig.POWER_FILTER.set(true);
-        h.setBlock(new BlockPos(4, 1, 2), ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
-        TankBlockEntity c = tank(h, 4, 2, 2, 1, 1, 1);
-        h.setBlock(new BlockPos(1, 1, 2), block("enderio:creative_power"));
-        conduit(h, new BlockPos(2, 1, 2));
-        conduit(h, new BlockPos(3, 1, 2));
+        TankBlockEntity c;
+        try { // M52c: a failing setup must not leave the power options on
+            h.setBlock(new BlockPos(4, 1, 2), ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
+            c = tank(h, 4, 2, 2, 1, 1, 1);
+            h.setBlock(new BlockPos(1, 1, 2), creativePower());
+            conduit(h, new BlockPos(2, 1, 2));
+            conduit(h, new BlockPos(3, 1, 2));
+        } catch (RuntimeException e) {
+            saved.apply();
+            throw e;
+        }
         h.runAfterDelay(80, () -> {
             long got = c.getTank().powerBuffer();
             saved.apply();

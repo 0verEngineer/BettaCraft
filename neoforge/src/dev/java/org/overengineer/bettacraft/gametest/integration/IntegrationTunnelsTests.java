@@ -93,7 +93,9 @@ public final class IntegrationTunnelsTests {
         if (index < 0) throw new GameTestFailure("no boolean export aspect in " + names);
         call(call(state, "getInventory"), "setItem", index, trueCard());
         Object target = callStatic("org.cyclops.integrateddynamics.api.part.PartTarget", "fromCenter", (Level) level, h.absolutePos(rel), side);
-        call(type, "updateActivation", target, state, null);
+        // M52c: Integrated Dynamics 1.37 (26.1) has updateActivation(target, state, player, boolean)
+        if (has(type, "updateActivation", 4)) call(type, "updateActivation", target, state, null, false);
+        else call(type, "updateActivation", target, state, null);
         return names.get(index);
     }
 

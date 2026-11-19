@@ -196,7 +196,9 @@ public final class ModpackEventGameTests {
             c.setLayout(l);
             Features.set(Feature.ALARM_WAYPOINTS, false);
             MonitorSync.cycle(level, c);
-            h.assertTrue(caught(TankAlarmEvent.class).size() == 1, "the event still comes");
+            // M52c: only this tank's events (tests of other batches run alongside in the integration suite)
+            long ours = caught(TankAlarmEvent.class).stream().filter(e -> t.getTank().id().equals(e.getTankId())).count();
+            h.assertTrue(ours == 1, "the event still comes (" + ours + " of " + caught(TankAlarmEvent.class).size() + ")");
             h.assertTrue(!MonitorAlarms.waypointOpen(t.getTank().id()), "but no waypoint");
             t.getTank().setWaterTemp(25F);
             MonitorSync.cycle(level, c);
@@ -204,7 +206,8 @@ public final class ModpackEventGameTests {
             CAUGHT.clear();
             t.getTank().setWaterTemp(30F);
             MonitorSync.cycle(level, c);
-            h.assertTrue(CAUGHT.isEmpty(), "events off: nothing posted (" + CAUGHT.size() + ")");
+            long after = CAUGHT.stream().filter(e -> t.getTank().id().equals(e.getTankId())).count();
+            h.assertTrue(after == 0, "events off: nothing posted (" + after + ")");
         } finally {
             Features.set(Feature.MODPACK_EVENTS, events);
             Features.set(Feature.ALARM_WAYPOINTS, waypoints);

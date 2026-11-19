@@ -25,7 +25,13 @@ public final class DevBiomeMods {
     private DevBiomeMods() {}
 
     public static boolean present() {
-        return org.overengineer.bettacraft.platform.Platform.get().isModLoaded("regions_unexplored") && org.overengineer.bettacraft.platform.Platform.get().isModLoaded("biomeswevegone");
+        // M52c: a mod without a build for this Minecraft version is not needed (Oh The Biomes We've Gone on 26.1.2)
+        return loadedOrGap("regions_unexplored") && loadedOrGap("biomeswevegone")
+                && (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("regions_unexplored") || org.overengineer.bettacraft.platform.Platform.get().isModLoaded("biomeswevegone"));
+    }
+
+    private static boolean loadedOrGap(String mod) {
+        return org.overengineer.bettacraft.platform.Platform.get().isModLoaded(mod) || org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains(mod);
     }
 
     private record Want(String id, NetCatching.Water water, boolean corals) {}
@@ -48,6 +54,8 @@ public final class DevBiomeMods {
         List<String> out = new ArrayList<>();
         var reg = access.lookupOrThrow(Registries.BIOME);
         for (Want w : WANTS) {
+            String mod = w.id().substring(0, w.id().indexOf(':'));
+            if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(mod) && org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains(mod)) continue;
             var key = ResourceKey.create(Registries.BIOME, Identifier.parse(w.id()));
             var holder = reg.get(key);
             if (holder.isEmpty()) {

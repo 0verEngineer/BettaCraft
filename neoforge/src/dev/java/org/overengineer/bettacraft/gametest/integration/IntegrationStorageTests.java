@@ -109,9 +109,11 @@ public final class IntegrationStorageTests {
         Object execute = enumValue("com.refinedmods.refinedstorage.api.core.Action", "EXECUTE");
         Object accepted = enumValue("com.refinedmods.refinedstorage.api.autocrafting.task.ExternalPatternSink$Result", "ACCEPTED");
         Object[] result = {null};
+        // M52c: Refined Storage 3.2 (26.1) calls the step insertAll (accept before)
+        String step = IntegrationRig.has(crafter, "insertAll", 2) ? "insertAll" : "accept";
         h.onEachTick(() -> {
             if (accepted.equals(result[0])) return;
-            result[0] = call(crafter, "accept", ingredients, execute); // a step of a task; rejected until the node is active
+            result[0] = call(crafter, step, ingredients, execute); // a step of a task; rejected until the node is active
             if (accepted.equals(result[0])) m.setSpring(FoodMakerBlockEntity.springMax());
         });
         h.succeedWhen(() -> {

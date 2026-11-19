@@ -234,9 +234,9 @@ public final class IntegrationTransportTests {
         callStatic("com.direwolf20.laserio.common.items.cards.BaseCard", "setTransferMode", extract, (byte) 1); // EXTRACT
         callStatic("com.direwolf20.laserio.common.items.cards.BaseCard", "setTransferMode", insert, (byte) 0); // INSERT
         Object[] caches = (Object[]) field(na, "nodeSideCaches");
-        call(field(caches[aSide.ordinal()], "itemHandler"), "setStackInSlot", 0, extract);
+        setSlot(field(caches[aSide.ordinal()], "itemHandler"), 0, extract); // M52c: LaserIO on the 26.1 transfer API
         Object[] cachesB = (Object[]) field(nb, "nodeSideCaches");
-        call(field(cachesB[bSide.ordinal()], "itemHandler"), "setStackInSlot", 0, insert);
+        setSlot(field(cachesB[bSide.ordinal()], "itemHandler"), 0, insert);
         call(na, "updateThisNode");
         call(nb, "updateThisNode");
     }
@@ -307,9 +307,9 @@ public final class IntegrationTransportTests {
         FeederBlockEntity f2 = feeder(h, new BlockPos(3, 2, 4));
         Object router = be(h, new BlockPos(2, 2, 2)), router2 = be(h, new BlockPos(2, 2, 4));
         call(call(router, "getModules"), "setStackInSlot", 0, routerModule("modularrouters:sender_module_1"));
-        call(call(router, "getBuffer"), "insertItem", 0, new ItemStack(ModItems.BETTA_PELLETS.get(), 16), false);
+        buffer(router, new ItemStack(ModItems.BETTA_PELLETS.get(), 16));
         call(call(router2, "getModules"), "setStackInSlot", 0, routerModule("modularrouters:sender_module_1"));
-        call(call(router2, "getBuffer"), "insertItem", 0, new ItemStack(Items.DIRT, 16), false);
+        buffer(router2, new ItemStack(Items.DIRT, 16));
         h.succeedWhen(() -> {
             h.assertTrue(count(f, ModItems.BETTA_PELLETS.get()) == 16, "the sender module moved all pellets into the feeder: " + count(f, ModItems.BETTA_PELLETS.get()));
             h.assertTrue(count(f2, Items.DIRT) == 0, "no dirt in the other feeder");
@@ -337,7 +337,7 @@ public final class IntegrationTransportTests {
             throw new GameTestFailure("Modular Routers API changed: " + e);
         }
         call(call(router, "getModules"), "setStackInSlot", 0, module);
-        call(call(router, "getBuffer"), "insertItem", 0, new ItemStack(Items.WATER_BUCKET), false);
+        buffer(router, new ItemStack(Items.WATER_BUCKET));
         h.succeedWhen(() -> {
             h.assertTrue(t.getTank().waterMb() >= 1000, "the fluid module emptied the bucket into the tank: " + t.getTank().waterMb());
             h.assertTrue(((ItemStack) call(router, "getBufferItemStack")).is(Items.BUCKET), "an empty bucket is left");
@@ -434,5 +434,12 @@ public final class IntegrationTransportTests {
             h.assertTrue(got > 0, "XNet delivers FE to the tank, buffer " + got);
             h.succeed();
         });
+    }
+
+    /** M52c: the buffer of a Modular Router (insertItem of 1.21.x, the slot of the 26.1 transfer API). */
+    private static void buffer(Object router, ItemStack stack) {
+        Object buffer = call(router, "getBuffer");
+        if (has(buffer, "insertItem", 3)) call(buffer, "insertItem", 0, stack, false);
+        else setSlot(buffer, 0, stack);
     }
 }
