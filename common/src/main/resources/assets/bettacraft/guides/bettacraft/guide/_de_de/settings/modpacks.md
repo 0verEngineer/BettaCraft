@@ -21,7 +21,8 @@ Die Tabelle steht auf der [Einstellungsseite](../settings.md) unter Feature-Scha
 
 ## Kapitel für FTB Quests
 
-`config/ftbquests/quests/chapters/bettacraft.snbt` ist das Kapitel **Bettacraft**: seit 1.36.0 96 Quests (vorher 33)
+`config/ftbquests/quests/chapters/bettacraft.json5` (Minecraft 26.1.2; FTB Quests für 1.21.x: `bettacraft.snbt`) ist das
+Kapitel **Bettacraft**: seit 1.36.0 96 Quests (vorher 33)
 in Zweigen vom ersten Becken aus:
 
 1. **Das erste Becken:** bauen, füllen, Heizer, Filter und Licht.
@@ -49,7 +50,7 @@ Gegenstände: Pflanzenstecklinge, Futter, ein Ersatz-Testkit, Filtermedien, Salz
 Übersetzungsschlüssel von Bettacraft (`quest.bettacraft.*`), also kommt jede Sprache der Mod auch in die Quests (Englisch
 und Deutsch). Die Datei nach `config/ftbquests/quests/chapters/` kopieren und `/ftbquests reload` ausführen oder neu
 starten: Das Kapitel erscheint in der Standardgruppe; verschieben, Belohnungen ändern oder Quests ergänzen geht im
-Quest-Editor wie bei jedem Kapitel. FTB Quests verschiebt die Texte beim ersten Speichern in seine `lang/en_us.snbt`; dort
+Quest-Editor wie bei jedem Kapitel. FTB Quests verschiebt die Texte beim ersten Speichern in seine `lang/en_us.json5` (1.21.x: `lang/en_us.snbt`); dort
 bleiben es Übersetzungsschlüssel.
 
 **Aktualisieren:** IDs, Aufgaben und Abhängigkeiten der Quests ändern sich nie; eine neuere Fassung der Datei ersetzt also
@@ -58,7 +59,10 @@ schon hat, erfüllen die Fortschritts-Aufgaben neuer Quests von selbst (FTB Ques
 Quest beginnen darf).
 
 **Abgeschaltete Features:** Jede Quest trägt FTB-Quests-Tags für die [Feature-Schalter](../settings.md), die sie braucht
-(`bettacraft_feature:<Pfad>`, auch die der Quests davor), `bettacraft_mod:create` und `bettacraft_needs:power`. Das
+(`bettacraft_feature_<Pfad>`, auch die der Quests davor), `bettacraft_mod_create` und `bettacraft_needs_power`.
+FTB Quests 26.1 behält nur Tags aus Kleinbuchstaben, Ziffern und `_`, daher steht der Pfad klein und mit `__` für `.`
+(`bettacraft_feature_tankmates__livebearergenetics`); auf 1.21.x heißen die Tags `bettacraft_feature:<Pfad>`,
+`bettacraft_mod:create` und `bettacraft_needs:power`. Das
 Skript `kubejs/server_scripts/bettacraft_quests.js` (KubeJS) blendet Quests aus, deren Schalter aus sind: Sie werden
 unsichtbar und optional, blockieren das Kapitel also nie, und kommen zurück, wenn der Schalter wieder an ist (es läuft beim
 Serverstart, beim Einloggen eines Spielers und beim Neuladen der Configs; in die Quest-Datei schreibt es nichts). Ohne

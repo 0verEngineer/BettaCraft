@@ -75,6 +75,23 @@ public final class BettacraftApi {
     /** M45: the quest tag of quests that are optional by design (they stay optional while shown). */
     public static final String TAG_OPTIONAL = "bettacraft_optional";
 
+    /*
+     * M52c: FTB Quests 26.1 keeps only tags of [a-z0-9_] (others are dropped on load). The same tags in that form: the feature
+     * path in lower case with "__" for "." (bettacraft_feature_tankmates__livebearergenetics), bettacraft_mod_<modid> and
+     * bettacraft_needs_power. questTagsOn understands both forms.
+     */
+    /** M52c: the prefix of the quest tags for a feature switch in FTB Quests 26.1 ({@code bettacraft_feature_corals__enabled}). */
+    public static final String TAG_FEATURE_LOWER = "bettacraft_feature_";
+    /** M52c: the prefix of the quest tags for another mod in FTB Quests 26.1 ({@code bettacraft_mod_create}). */
+    public static final String TAG_MOD_LOWER = "bettacraft_mod_";
+    /** M52c: the quest tag of quests that need power, in FTB Quests 26.1. */
+    public static final String TAG_NEEDS_POWER_LOWER = "bettacraft_needs_power";
+
+    /** M52c: the quest tag of a feature switch in the form FTB Quests 26.1 keeps ({@code bettacraft_feature_corals__enabled}). */
+    public static String featureQuestTag(String path) {
+        return TAG_FEATURE_LOWER + path.toLowerCase(java.util.Locale.ROOT).replace(".", "__");
+    }
+
     /**
      * Whether the feature switch of this path is on ({@code tankmates.livebearerGenetics}, {@code corals.enabled}; the switch
      * itself, its parents and the features it requires, see {@code config/bettacraft-common.toml}). An unknown path counts as on.
@@ -95,10 +112,16 @@ public final class BettacraftApi {
         try {
             Class<?> base = Class.forName("dev.ftb.mods.ftbquests.quest.QuestObjectBase");
             Object msg = Class.forName("dev.ftb.mods.ftbquests.net.EditObjectResponseMessage").getConstructor(base).newInstance(questObject);
-            // FTB Quests' payloads go through Architectury's network (its own wrapper), not NeoForge's PacketDistributor
-            Class.forName("dev.architectury.networking.NetworkManager")
-                    .getMethod("sendToPlayers", Iterable.class, net.minecraft.network.protocol.common.custom.CustomPacketPayload.class)
-                    .invoke(null, server.getPlayerList().getPlayers(), msg);
+            Class<?> payload = net.minecraft.network.protocol.common.custom.CustomPacketPayload.class;
+            try {
+                // M52c: FTB Quests 26.1 sends through FTB Library's own network
+                Class.forName("dev.ftb.mods.ftblibrary.platform.network.Server2PlayNetworking")
+                        .getMethod("sendToAllPlayers", net.minecraft.server.MinecraftServer.class, payload).invoke(null, server, msg);
+            } catch (ClassNotFoundException | NoSuchMethodException e) {
+                // FTB Quests of 1.21.x: through Architectury's network (its own wrapper), not NeoForge's PacketDistributor
+                Class.forName("dev.architectury.networking.NetworkManager").getMethod("sendToPlayers", Iterable.class, payload)
+                        .invoke(null, server.getPlayerList().getPlayers(), msg);
+            }
             return true;
         } catch (ReflectiveOperationException | ClassCastException | LinkageError e) {
             com.mojang.logging.LogUtils.getLogger().warn("Could not send the changed quest {}: {}", questObject, e.toString());
@@ -116,6 +139,11 @@ public final class BettacraftApi {
             if (t.startsWith(TAG_FEATURE) && !featureEnabled(t.substring(TAG_FEATURE.length()))) return false;
             if (t.startsWith(TAG_MOD) && !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(t.substring(TAG_MOD.length()))) return false;
             if (t.equals(TAG_NEEDS_POWER) && !org.overengineer.bettacraft.tank.TankPower.anyRequired()) return false;
+            if (t.startsWith(TAG_FEATURE_LOWER)) {
+                for (Feature f : Feature.values()) if (featureQuestTag(f.path()).equals(t) && !Features.enabled(f)) return false;
+            }
+            if (t.startsWith(TAG_MOD_LOWER) && !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(t.substring(TAG_MOD_LOWER.length()))) return false;
+            if (t.equals(TAG_NEEDS_POWER_LOWER) && !org.overengineer.bettacraft.tank.TankPower.anyRequired()) return false;
         }
         return true;
     }

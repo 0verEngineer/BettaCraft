@@ -21,7 +21,8 @@ values the pack changes itself still win, and `presetKeep` keeps single defaults
 
 ## FTB Quests chapter
 
-`config/ftbquests/quests/chapters/bettacraft.snbt` is the chapter **Bettacraft**: since 1.36.0 96 quests (33 before) in
+`config/ftbquests/quests/chapters/bettacraft.json5` (Minecraft 26.1.2; FTB Quests of 1.21.x: `bettacraft.snbt`) is the
+chapter **Bettacraft**: since 1.36.0 96 quests (33 before) in
 branches from the first tank:
 
 1. **The first tank:** build it, fill it, a heater, a filter and a light.
@@ -49,14 +50,17 @@ cuttings, food, a spare test kit, filter media, salt, a few glass pipes. The tex
 (`quest.bettacraft.*`), so every language of the mod is in the quests too (English and German). Copy the file into
 `config/ftbquests/quests/chapters/` and run `/ftbquests reload` or restart: the chapter appears in the default group;
 move it, change rewards or add quests in the quest editor as with any chapter. FTB Quests moves the texts into its
-`lang/en_us.snbt` the first time it saves; they stay translation keys there.
+`lang/en_us.json5` (1.21.x: `lang/en_us.snbt`) the first time it saves; they stay translation keys there.
 
 **Updating:** the ids, tasks and dependencies of the quests never change, so a newer version of the file replaces the old
 quests instead of adding them twice, and every player keeps their progress. Advancements a player already has complete
 the advancement tasks of new quests by themselves (FTB Quests checks them every few ticks once the quest may start).
 
 **Switched-off features:** every quest has FTB Quests tags for the [feature switches](../settings.md) it needs
-(`bettacraft_feature:<path>`, also those of the quests before it), `bettacraft_mod:create` and `bettacraft_needs:power`.
+(`bettacraft_feature_<path>`, also those of the quests before it), `bettacraft_mod_create` and `bettacraft_needs_power`.
+FTB Quests 26.1 keeps only tags of lower case letters, digits and `_`, so the path is in lower case with `__` for `.`
+(`bettacraft_feature_tankmates__livebearergenetics`); on 1.21.x the tags are `bettacraft_feature:<path>`,
+`bettacraft_mod:create` and `bettacraft_needs:power`.
 The script `kubejs/server_scripts/bettacraft_quests.js` (KubeJS) hides the quests whose switches are off: they become
 invisible and optional, so they never block the chapter, and come back when the switch is on again (it runs when the
 server starts, when a player logs in and when the configs are reloaded; it writes nothing into the quest file). Without

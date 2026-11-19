@@ -877,7 +877,9 @@ def extraMods = [
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach { t ->
     def base = t.name == 'runGameTestServer' ? gameTestDir : runRoot
     def copies = [
-            [src: rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: withGroup('quests')],
+            [src: rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.json5'), dst: rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.json5'), on: withGroup('quests')],
+            // M52c: FTB Quests 26.1 keeps the texts of the chapter in its lang folder
+            [src: rootProject.file('modpack/config/ftbquests/quests/lang/en_us/chapters/bettacraft.json5'), dst: rootProject.file(base + '/config/ftbquests/quests/lang/en_us/chapters/bettacraft.json5'), on: withGroup('quests')],
             [src: rootProject.file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: rootProject.file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: withGroup('kubejs')],
             [src: rootProject.file('modpack/kubejs/server_scripts/bettacraft_quests.js'), dst: rootProject.file(base + '/kubejs/server_scripts/bettacraft_quests.js'), on: withGroup('kubejs')], // M45
     ]

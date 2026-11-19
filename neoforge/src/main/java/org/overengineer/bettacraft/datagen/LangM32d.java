@@ -17,7 +17,7 @@ final class LangM32d {
         a.accept("waypoint.bettacraft.alarm", "Tank alarm: %s (%s)");
         a.accept("waypoint.bettacraft.tank", "Tank");
 
-        // the FTB Quests chapter (modpack/config/ftbquests/quests/chapters/bettacraft.snbt)
+        // the FTB Quests chapter (modpack/config/ftbquests/quests/chapters/bettacraft.json5)
         a.accept("quest.bettacraft.chapter.title", "Bettacraft");
         a.accept("quest.bettacraft.chapter.subtitle", "From the first tank to the reef and the terrarium");
         q(a, "first_tank", "Glass House", "Place tank blocks: one block is a small aquarium, blocks next to or on top of each other join into a bigger one, in any connected shape. The Bettacraft handbook explains everything step by step.");

@@ -1,11 +1,11 @@
-"""M32 part d, M45: writes the FTB Quests chapter "Bettacraft" for modpacks (modpack/config/ftbquests/quests/chapters/bettacraft.snbt).
+"""M32 part d, M45: writes the FTB Quests chapter "Bettacraft" for modpacks (modpack/config/ftbquests/quests/chapters/bettacraft.json5).
 
 The chapter is a progression from the first tank in branches: bettas and their breeding, water care and technology
 (filters, pipes, the multiblock filter), plants, food, the reef, tankmates and livebearer genetics, small animals and
 frogs, terraria, paludaria and turtles, big animals, guests (axolotls, pets, mobs, animals of other mods) and the
 optional Create quests, with advancement and item tasks. Titles and descriptions are JSON text components with
 translation keys (quest.bettacraft.<quest>.title / .desc), so the texts come from the mod's own en_us / de_de lang files
-and every language of the mod works. FTB Quests moves the inline texts into its lang/en_us.snbt on the first load (that
+and every language of the mod works. FTB Quests moves the inline texts into its lang/en_us.json5 (26.1; lang/en_us.snbt before) on the first load (that
 is its migration of older chapter files); they stay translation keys there.
 
 The ids are fixed (from a hash of the quest name), so a new version of the file replaces the old quests instead of adding
@@ -13,9 +13,11 @@ copies, and players keep their progress. The 33 quests of the first chapter (1.2
 and xp rewards for good (src/test/resources/quests/chapter_1.25.0.txt, QuestChapterTest); new quests may depend on them,
 never the other way round, and only rewards may be added to them.
 
-M45: every quest carries FTB Quests tags for the feature switches it belongs to (bettacraft_feature:<path>, its own and
-those of its dependencies, so a quest of a switch that is off never waits for a hidden quest), bettacraft_mod:<modid> for
-quests of another mod (Create) and bettacraft_needs:power for quests that only work with a power option on. The example
+M45: every quest carries FTB Quests tags for the feature switches it belongs to (bettacraft_feature_<path>, its own and
+those of its dependencies, so a quest of a switch that is off never waits for a hidden quest), bettacraft_mod_<modid> for
+quests of another mod (Create) and bettacraft_needs_power for quests that only work with a power option on. M52c: FTB
+Quests 26.1 keeps only tags of [a-z0-9_], so the path is in lower case with "__" for "." (1.21.x: bettacraft_feature:<path>,
+bettacraft_mod:<modid>, bettacraft_needs:power; BettacraftApi.questTagsOn reads both). The example
 script modpack/kubejs/server_scripts/bettacraft_quests.js hides the quests whose tags are off (BettacraftApi.questTagsOn).
 Item rewards belong to the quest's features too (the test checks it).
 
@@ -28,7 +30,12 @@ import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.snbt")
+# M52c: FTB Quests 26.1 reads JSON5 chapters only (the text written below is JSON5 and SNBT at once: no number suffixes)
+OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.json5")
+# M52c: FTB Quests 26.1 keeps the texts of a chapter apart, in lang/<locale>/chapters/<chapter>.json5 (keys
+# <type>.<id>.title / quest_desc / chapter_subtitle); it ignores the inline texts of the chapter file (kept for the tests).
+# Our texts stay translation components, so the mod's own lang files give every language: en_us (the fallback) is enough.
+LANG_OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "lang", "en_us", "chapters", "bettacraft.json5")
 FEATURE_JAVA = os.path.join(ROOT, "common", "src", "main", "java", "org", "overengineer", "bettacraft", "config", "Feature.java")
 
 
@@ -386,11 +393,12 @@ def main():
         L.append("\t\t\trewards: [%s]," % ", ".join(rewards))
         if shape:
             L.append("\t\t\tshape: %s," % s(shape))
-            L.append("\t\t\tsize: 1.5d,")
-        tags = ["bettacraft_feature:" + FEATURES[f]["path"] for f in eff[name]]
-        tags += ["bettacraft_mod:" + m for m in MODS.get(name, [])]
+            L.append("\t\t\tsize: 1.5,")
+        # M52c: FTB Quests 26.1 keeps only tags of [a-z0-9_]: the feature path in lower case, "__" for "."
+        tags = ["bettacraft_feature_" + FEATURES[f]["path"].lower().replace(".", "__") for f in eff[name]]
+        tags += ["bettacraft_mod_" + m for m in MODS.get(name, [])]
         if name in NEEDS_POWER:
-            tags.append("bettacraft_needs:power")
+            tags.append("bettacraft_needs_power")
         if name in OPTIONAL:
             tags.append("bettacraft_optional")
         if tags:
@@ -405,8 +413,8 @@ def main():
                 L.append("\t\t\t\t{ id: %s, item: { count: %d, id: %s }, type: \"item\" }%s" % (tid, t["count"], s(t["item"]), sep))
         L.append("\t\t\t],")
         L.append("\t\t\ttitle: %s," % s(text("quest.bettacraft.%s.title" % name)))
-        L.append("\t\t\tx: %.1fd," % x)
-        L.append("\t\t\ty: %.1fd" % y)
+        L.append("\t\t\tx: %.1f," % x)
+        L.append("\t\t\ty: %.1f" % y)
         L.append("\t\t}" + ("," if qi < len(QUESTS) - 1 else ""))
     L.append("\t],")
     L.append("\tsubtitle: [%s]," % s(text("quest.bettacraft.chapter.subtitle")))
@@ -415,6 +423,14 @@ def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(L) + "\n")
+    lang = {"chapter.%s.title" % qid("chapter"): text("quest.bettacraft.chapter.title"),
+            "chapter.%s.chapter_subtitle" % qid("chapter"): [text("quest.bettacraft.chapter.subtitle")]}
+    for q in QUESTS:
+        lang["quest.%s.title" % qid(q[0])] = text("quest.bettacraft.%s.title" % q[0])
+        lang["quest.%s.quest_desc" % qid(q[0])] = [text("quest.bettacraft.%s.desc" % q[0])]
+    os.makedirs(os.path.dirname(LANG_OUT), exist_ok=True)
+    with open(LANG_OUT, "w", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(lang, ensure_ascii=False, indent=2) + "\n")
     print("wrote %s (%d quests, %d new)" % (OUT, len(QUESTS), len(QUESTS) - FIRST_CHAPTER))
     readme_table(eff)
     if os.environ.get("PREVIEW"):

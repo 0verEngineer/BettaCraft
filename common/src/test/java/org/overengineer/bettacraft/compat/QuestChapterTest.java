@@ -29,7 +29,7 @@ import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.FeatureContent;
 
 /**
- * M32 part d, M45: the FTB Quests chapter for modpacks ({@code modpack/config/ftbquests/quests/chapters/bettacraft.snbt}, made
+ * M32 part d, M45: the FTB Quests chapter for modpacks ({@code modpack/config/ftbquests/quests/chapters/bettacraft.json5}, made
  * by {@code tools/modpack/ftbquests_chapter.py}) is valid SNBT, its ids are unique 16-digit hex numbers, every dependency is
  * a quest of the chapter (no cycles), every advancement task names one of our advancements, every item task and item reward
  * one of our items, and every text is a translation key that en_us and de_de have. M45: the quests of the first chapter
@@ -43,7 +43,7 @@ class QuestChapterTest {
         return Path.of(System.getProperty("bettacraft.projectDir", "."));
     }
 
-    private static final Path CHAPTER = Path.of(System.getProperty("bettacraft.rootDir", ".."), "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.snbt").toAbsolutePath();
+    private static final Path CHAPTER = Path.of(System.getProperty("bettacraft.rootDir", ".."), "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.json5").toAbsolutePath();
 
     /** M45: the feature groups without a quest of their own, and why. */
     static final Map<Feature, String> NO_QUEST = new EnumMap<>(Feature.class);
@@ -239,11 +239,13 @@ class QuestChapterTest {
         List<Feature> out = new ArrayList<>();
         for (Tag t : q.getListOrEmpty("tags")) {
             String s = org.overengineer.bettacraft.util.NbtCompat.asString(t);
-            if (s.startsWith(BettacraftApi.TAG_FEATURE)) {
-                Feature f = Feature.byPath(s.substring(BettacraftApi.TAG_FEATURE.length()));
+            // M52c: FTB Quests 26.1 drops every tag that is not [a-z0-9_] on load
+            if (!s.matches("^[a-z0-9_]*$")) problems.add(q.getStringOr("id", "") + ": tag " + s + " is dropped by FTB Quests 26.1");
+            if (s.startsWith(BettacraftApi.TAG_FEATURE_LOWER)) {
+                Feature f = java.util.Arrays.stream(Feature.values()).filter(x -> BettacraftApi.featureQuestTag(x.path()).equals(s)).findFirst().orElse(null);
                 if (f == null) problems.add(q.getStringOr("id", "") + ": unknown feature tag " + s);
                 else out.add(f);
-            } else if (!s.equals(BettacraftApi.TAG_OPTIONAL) && !s.equals(BettacraftApi.TAG_NEEDS_POWER) && !s.equals(BettacraftApi.TAG_MOD + "create")) {
+            } else if (!s.equals(BettacraftApi.TAG_OPTIONAL) && !s.equals(BettacraftApi.TAG_NEEDS_POWER_LOWER) && !s.equals(BettacraftApi.TAG_MOD_LOWER + "create")) {
                 problems.add(q.getStringOr("id", "") + ": unknown tag " + s);
             }
         }
@@ -271,7 +273,7 @@ class QuestChapterTest {
                 for (Feature f : features(dq, problems)) if (!covered(tags, f)) problems.add(e.getKey() + ": depends on a quest of " + f.path());
                 for (Tag t : dq.getListOrEmpty("tags")) {
                     String s = org.overengineer.bettacraft.util.NbtCompat.asString(t);
-                    if ((s.startsWith(BettacraftApi.TAG_MOD) || s.equals(BettacraftApi.TAG_NEEDS_POWER))
+                    if ((s.startsWith(BettacraftApi.TAG_MOD_LOWER) || s.equals(BettacraftApi.TAG_NEEDS_POWER_LOWER))
                             && q.getListOrEmpty("tags").stream().noneMatch(x -> org.overengineer.bettacraft.util.NbtCompat.asString(x).equals(s))) {
                         problems.add(e.getKey() + ": depends on a quest with " + s);
                     }

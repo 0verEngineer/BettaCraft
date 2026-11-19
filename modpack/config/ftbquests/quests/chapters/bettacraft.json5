@@ -14,13 +14,13 @@
 			id: "5C6C5D793BB24640",
 			rewards: [{ id: "21B15C3FDDDBA9F1", type: "xp", xp: 25 }],
 			shape: "hexagon",
-			size: 1.5d,
+			size: 1.5,
 			tasks: [
 				{ advancement: "bettacraft:build_tank", criterion: "", id: "29CD6C7D62D1094A", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.first_tank.title\"}",
-			x: 0.0d,
-			y: 0.0d
+			x: 0.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["5C6C5D793BB24640"],
@@ -31,8 +31,8 @@
 				{ advancement: "bettacraft:fill_tank", criterion: "", id: "28BED090E50AD396", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fill_tank.title\"}",
-			x: 2.0d,
-			y: 0.0d
+			x: 2.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["6058DB3D7A2AAD93"],
@@ -45,204 +45,204 @@
 				{ id: "0165606AE37F33D5", item: { count: 1, id: "bettacraft:tank_light" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.equipment.title\"}",
-			x: 4.0d,
-			y: 0.0d
+			x: 4.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["6058DB3D7A2AAD93"],
 			description: ["{\"translate\":\"quest.bettacraft.catch_betta.desc\"}"],
 			id: "0FA8EE109B98994D",
 			rewards: [{ id: "5E4922ED31378250", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:catch_betta", criterion: "", id: "7AF7BB827224C5BB", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.catch_betta.title\"}",
-			x: 2.0d,
-			y: 2.0d
+			x: 2.0,
+			y: 2.0
 		},
 		{
 			dependencies: ["0FA8EE109B98994D"],
 			description: ["{\"translate\":\"quest.bettacraft.insert_betta.desc\"}"],
 			id: "009F38F06F92C81B",
 			rewards: [{ id: "53AF3D499E95B2A4", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:insert_betta", criterion: "", id: "10592EAA5C1B8863", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.insert_betta.title\"}",
-			x: 4.0d,
-			y: 2.0d
+			x: 4.0,
+			y: 2.0
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.pellets.desc\"}"],
 			id: "6267BCB864A08A07",
 			rewards: [{ id: "739177BCB6A81169", type: "xp", xp: 25 }, { count: 8, id: "7166FAAB4152973C", item: { count: 1, id: "bettacraft:betta_pellets" }, type: "item" }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:pellets", criterion: "", id: "3B03A689CA98FE47", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pellets.title\"}",
-			x: 6.0d,
-			y: 2.0d
+			x: 6.0,
+			y: 2.0
 		},
 		{
 			dependencies: ["6267BCB864A08A07"],
 			description: ["{\"translate\":\"quest.bettacraft.feeder.desc\"}"],
 			id: "53F328A57993B302",
 			rewards: [{ id: "4CB5CF917C73157C", type: "xp", xp: 50 }, { count: 8, id: "42CEC4E54A04461F", item: { count: 1, id: "bettacraft:betta_pellets" }, type: "item" }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:feeder", criterion: "", id: "02D092DF1BEFCA78", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.feeder.title\"}",
-			x: 8.0d,
-			y: 2.0d
+			x: 8.0,
+			y: 2.0
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.test_kits.desc\"}"],
 			id: "344884F1CB23D20A",
 			rewards: [{ id: "2F93F1FAD9EC7C98", type: "xp", xp: 50 }, { count: 2, id: "5B87C948D5CADFC6", item: { count: 1, id: "bettacraft:almond_leaf" }, type: "item" }],
-			tags: ["bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "7D0C32D32FA66367", item: { count: 1, id: "bettacraft:ph_test_kit" }, type: "item" },
 				{ id: "6C1167EDA2595897", item: { count: 1, id: "bettacraft:tds_meter" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.test_kits.title\"}",
-			x: 4.0d,
-			y: 6.0d
+			x: 4.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["344884F1CB23D20A"],
 			description: ["{\"translate\":\"quest.bettacraft.water_change.desc\"}"],
 			id: "620436BD548D0A1A",
 			rewards: [{ id: "47ACE991083C3798", type: "xp", xp: 50 }, { count: 1, id: "20316E7605F79B87", item: { count: 1, id: "bettacraft:ph_test_kit" }, type: "item" }],
-			tags: ["bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:water_change", criterion: "", id: "17D1DB4ED30DDDB2", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.water_change.title\"}",
-			x: 6.0d,
-			y: 6.0d
+			x: 6.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["332DA21D75F9F762", "009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.tropical.desc\"}"],
 			id: "043434008FB3F75F",
 			rewards: [{ id: "7E7D1C5E66A90F1F", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:ideal_temperature", criterion: "", id: "67CE8F22EA146838", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.tropical.title\"}",
-			x: 6.0d,
-			y: 0.0d
+			x: 6.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["620436BD548D0A1A"],
 			description: ["{\"translate\":\"quest.bettacraft.external_filter.desc\"}"],
 			id: "56ED14C9233146D9",
 			rewards: [{ id: "7FCAD9497EF8E2CF", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:filter", criterion: "", id: "05AA0F6F3161E8C4", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.external_filter.title\"}",
-			x: 8.0d,
-			y: 6.0d
+			x: 8.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["56ED14C9233146D9"],
 			description: ["{\"translate\":\"quest.bettacraft.reverse_osmosis.desc\"}"],
 			id: "026F97513CEA5B07",
 			rewards: [{ id: "2ACE34038D88CC4B", type: "xp", xp: 100 }, { count: 1, id: "011CA90A9251B013", item: { count: 1, id: "bettacraft:ro_prefilter" }, type: "item" }],
-			tags: ["bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "09CC177709EA2302", item: { count: 1, id: "bettacraft:ro_unit" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.reverse_osmosis.title\"}",
-			x: 10.0d,
-			y: 6.0d
+			x: 10.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["043434008FB3F75F"],
 			description: ["{\"translate\":\"quest.bettacraft.nest.desc\"}"],
 			id: "342BC3FE4B8D6476",
 			rewards: [{ id: "4805E898A823DC66", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:nest_built", criterion: "", id: "7C92F48995947208", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.nest.title\"}",
-			x: 8.0d,
-			y: 0.0d
+			x: 8.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["342BC3FE4B8D6476"],
 			description: ["{\"translate\":\"quest.bettacraft.spawned.desc\"}"],
 			id: "2DC6A271E943D192",
 			rewards: [{ id: "44DD4E9D39680947", type: "xp", xp: 75 }, { count: 2, id: "25750723806A7F86", item: { count: 1, id: "bettacraft:fry_powder" }, type: "item" }],
-			tags: ["bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:spawned", criterion: "", id: "4FB8940B85DB0199", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.spawned.title\"}",
-			x: 10.0d,
-			y: 0.0d
+			x: 10.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["2DC6A271E943D192"],
 			description: ["{\"translate\":\"quest.bettacraft.fry_food.desc\"}"],
 			id: "61414968449F2D18",
 			rewards: [{ id: "3A40A1B0F2B4CD5C", type: "xp", xp: 75 }, { count: 4, id: "3E6E175D00862EBD", item: { count: 1, id: "bettacraft:artemia_cysts" }, type: "item" }],
-			tags: ["bettacraft_feature:liveFood.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:fry_food", criterion: "", id: "45F044EC2BEB1E17", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fry_food.title\"}",
-			x: 12.0d,
-			y: 0.0d
+			x: 12.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["61414968449F2D18"],
 			description: ["{\"translate\":\"quest.bettacraft.fry_free.desc\"}"],
 			id: "7FD751D21437F1EE",
 			rewards: [{ id: "3362E41AF519CE18", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:liveFood.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:fry_free", criterion: "", id: "06BF42AFDF335C77", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fry_free.title\"}",
-			x: 14.0d,
-			y: 0.0d
+			x: 14.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["7FD751D21437F1EE"],
 			description: ["{\"translate\":\"quest.bettacraft.grown_up.desc\"}"],
 			id: "01E489221BBC716C",
 			rewards: [{ id: "7F61AAC25AC96EDC", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:liveFood.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:grown_up", criterion: "", id: "0F8BF9B49CB7AEE2", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.grown_up.title\"}",
-			x: 16.0d,
-			y: 0.0d
+			x: 16.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["01E489221BBC716C"],
 			description: ["{\"translate\":\"quest.bettacraft.variety.desc\"}"],
 			id: "71B6790E967289AB",
 			rewards: [{ id: "5696F3FDE0383852", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:liveFood.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:variety_bred", criterion: "", id: "4134870387D558CD", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.variety.title\"}",
-			x: 18.0d,
-			y: 0.0d
+			x: 18.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["71B6790E967289AB"],
@@ -250,107 +250,107 @@
 			id: "036D50BEE6808EDA",
 			rewards: [{ id: "2BB439E72801BBEE", type: "xp", xp: 250 }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:liveFood.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_livefood__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:dynasty", criterion: "", id: "39A7633F51AE6793", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.dynasty.title\"}",
-			x: 20.0d,
-			y: 0.0d
+			x: 20.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["6058DB3D7A2AAD93"],
 			description: ["{\"translate\":\"quest.bettacraft.interior.desc\"}"],
 			id: "644840C2E1FE3E99",
 			rewards: [{ id: "2E83984A594B3729", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:enter_interior", criterion: "", id: "3A73BFF371DE009A", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.interior.title\"}",
-			x: 1.0d,
-			y: -2.0d
+			x: 1.0,
+			y: -2.0
 		},
 		{
 			dependencies: ["644840C2E1FE3E99"],
 			description: ["{\"translate\":\"quest.bettacraft.substrate.desc\"}"],
 			id: "658550899CE36974",
 			rewards: [{ id: "0C63EA196114F611", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:substrate", criterion: "", id: "3ECA8BA41EB55AAB", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.substrate.title\"}",
-			x: 1.0d,
-			y: -3.5d
+			x: 1.0,
+			y: -3.5
 		},
 		{
 			dependencies: ["658550899CE36974"],
 			description: ["{\"translate\":\"quest.bettacraft.plants.desc\"}"],
 			id: "75D3903D1DF5B32F",
 			rewards: [{ id: "054B8C285176655F", type: "xp", xp: 50 }, { count: 2, id: "1DF356AA56C8EAF9", item: { count: 1, id: "bettacraft:java_moss" }, type: "item" }, { count: 1, id: "72E4B35A9F7B3205", item: { count: 1, id: "bettacraft:anubias_nana" }, type: "item" }],
-			tags: ["bettacraft_feature:aquaticPlants.enabled", "bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_aquaticplants__enabled", "bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ id: "0AD936D09725EA33", item: { count: 1, id: "bettacraft:java_fern" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.plants.title\"}",
-			x: 1.0d,
-			y: -5.0d
+			x: 1.0,
+			y: -5.0
 		},
 		{
 			dependencies: ["75D3903D1DF5B32F"],
 			description: ["{\"translate\":\"quest.bettacraft.co2.desc\"}"],
 			id: "5ECEBCDAC99C2BB8",
 			rewards: [{ id: "5E995724B2FBAEC5", type: "xp", xp: 100 }, { count: 2, id: "5C8D5EAFBE6A8A2A", item: { count: 1, id: "bettacraft:hemianthus_callitrichoides" }, type: "item" }],
-			tags: ["bettacraft_feature:co2.enabled", "bettacraft_feature:aquaticPlants.enabled", "bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_co2__enabled", "bettacraft_feature_aquaticplants__enabled", "bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ id: "22E5A7A68193C56F", item: { count: 1, id: "bettacraft:bio_co2" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.co2.title\"}",
-			x: 1.0d,
-			y: -6.5d
+			x: 1.0,
+			y: -6.5
 		},
 		{
 			dependencies: ["026F97513CEA5B07"],
 			description: ["{\"translate\":\"quest.bettacraft.sea_water.desc\"}"],
 			id: "7DB42509E4844F84",
 			rewards: [{ id: "698FE0B0D303CEF0", type: "xp", xp: 75 }, { count: 4, id: "7B313C0C6E271132", item: { count: 1, id: "bettacraft:sea_salt" }, type: "item" }],
-			tags: ["bettacraft_feature:saltwater.enabled", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__enabled", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "1E21331ED997E61E", item: { count: 1, id: "bettacraft:sea_salt" }, type: "item" },
 				{ id: "470E2992C9F86DB7", item: { count: 1, id: "bettacraft:sea_water_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.sea_water.title\"}",
-			x: 12.0d,
-			y: 6.0d
+			x: 12.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["7DB42509E4844F84"],
 			description: ["{\"translate\":\"quest.bettacraft.skimmer.desc\"}"],
 			id: "02C60C6563D36E9F",
 			rewards: [{ id: "4294551D4979B081", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:saltwater.enabled", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__enabled", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "60CDAD576D9DC422", item: { count: 1, id: "bettacraft:protein_skimmer" }, type: "item" },
 				{ id: "68CACDD22415AF6B", item: { count: 1, id: "bettacraft:live_rock" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.skimmer.title\"}",
-			x: 14.0d,
-			y: 6.0d
+			x: 14.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["02C60C6563D36E9F"],
 			description: ["{\"translate\":\"quest.bettacraft.corals.desc\"}"],
 			id: "554CC8B275E53450",
 			rewards: [{ id: "1B4BC43FD7508592", type: "xp", xp: 100 }, { count: 1, id: "350B569F010030DE", item: { count: 1, id: "bettacraft:zoanthus" }, type: "item" }],
-			tags: ["bettacraft_feature:corals.enabled", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_corals__enabled", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "49807A4867A76887", item: { count: 1, id: "bettacraft:green_star_polyps" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.corals.title\"}",
-			x: 16.0d,
-			y: 6.0d
+			x: 16.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["554CC8B275E53450"],
@@ -358,40 +358,40 @@
 			id: "30B15AE3CC36ACF4",
 			rewards: [{ id: "1118E7FAD1A46048", type: "xp", xp: 150 }, { count: 1, id: "409345CD504FE478", item: { count: 1, id: "bettacraft:calcium_canister" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:corals.reefDosing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_corals__reefdosing", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "395FE0D4E9195ACB", item: { count: 1, id: "bettacraft:dosing_pump" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.dosing.title\"}",
-			x: 18.0d,
-			y: 6.0d
+			x: 18.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["332DA21D75F9F762"],
 			description: ["{\"translate\":\"quest.bettacraft.big_tank.desc\"}"],
 			id: "4E30D3D4FB9A8E8A",
 			rewards: [{ id: "38EBD19D292D4E57", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:bigTanks.enabled"],
+			tags: ["bettacraft_feature_bigtanks__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:big_tank", criterion: "", id: "705E44149F08E55F", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.big_tank.title\"}",
-			x: 4.0d,
-			y: -2.0d
+			x: 4.0,
+			y: -2.0
 		},
 		{
 			dependencies: ["4E30D3D4FB9A8E8A"],
 			description: ["{\"translate\":\"quest.bettacraft.food_maker.desc\"}"],
 			id: "10F8033E9470D0A8",
 			rewards: [{ id: "50D57A41C3886C8E", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:foodMachine.enabled", "bettacraft_feature:bigTanks.enabled"],
+			tags: ["bettacraft_feature_foodmachine__enabled", "bettacraft_feature_bigtanks__enabled"],
 			tasks: [
 				{ id: "2DC1F3014BAC6910", item: { count: 1, id: "bettacraft:food_maker" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.food_maker.title\"}",
-			x: 5.6d,
-			y: -3.5d
+			x: 5.6,
+			y: -3.5
 		},
 		{
 			dependencies: ["4E30D3D4FB9A8E8A"],
@@ -399,42 +399,42 @@
 			id: "5E03E6A535E43F5C",
 			rewards: [{ id: "1209648F8B67CC4F", type: "xp", xp: 100 }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:monitors.enabled", "bettacraft_feature:bigTanks.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_monitors__enabled", "bettacraft_feature_bigtanks__enabled"],
 			tasks: [
 				{ id: "4EEAA97CCD6F35BA", item: { count: 1, id: "bettacraft:monitor" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.monitor.title\"}",
-			x: 4.0d,
-			y: -3.8d
+			x: 4.0,
+			y: -3.8
 		},
 		{
 			dependencies: ["5C6C5D793BB24640"],
 			description: ["{\"translate\":\"quest.bettacraft.terrarium.desc\"}"],
 			id: "0F6FB9FD16071253",
 			rewards: [{ id: "3072F0D31A575701", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:terrariums.herps"],
+			tags: ["bettacraft_feature_terrariums__herps"],
 			tasks: [
 				{ id: "56DAD42465C684E7", item: { count: 1, id: "bettacraft:terrarium_box" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.terrarium.title\"}",
-			x: -3.5d,
-			y: -3.0d
+			x: -3.5,
+			y: -3.0
 		},
 		{
 			dependencies: ["0F6FB9FD16071253"],
 			description: ["{\"translate\":\"quest.bettacraft.terrarium_gear.desc\"}"],
 			id: "7CAC1CAEA3250091",
 			rewards: [{ id: "4CB462F8B92176A1", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:terrariums.devices", "bettacraft_feature:terrariums.herps"],
+			tags: ["bettacraft_feature_terrariums__devices", "bettacraft_feature_terrariums__herps"],
 			tasks: [
 				{ id: "74509642D4A275EF", item: { count: 1, id: "bettacraft:basking_lamp" }, type: "item" },
 				{ id: "2B6432C028923419", item: { count: 1, id: "bettacraft:mister" }, type: "item" },
 				{ id: "501489FDE8652A1B", item: { count: 1, id: "bettacraft:thermo_hygrometer" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.terrarium_gear.title\"}",
-			x: -3.5d,
-			y: -4.5d
+			x: -3.5,
+			y: -4.5
 		},
 		{
 			dependencies: ["7CAC1CAEA3250091"],
@@ -442,66 +442,66 @@
 			id: "579C634651FDB567",
 			rewards: [{ id: "2232AE0934C4BA6C", type: "xp", xp: 150 }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:terrariums.devices", "bettacraft_feature:terrariums.herps"],
+			size: 1.5,
+			tags: ["bettacraft_feature_terrariums__devices", "bettacraft_feature_terrariums__herps"],
 			tasks: [
 				{ id: "292702D89F8B53F2", item: { count: 1, id: "bettacraft:leopard_gecko_box" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.gecko.title\"}",
-			x: -5.2d,
-			y: -4.5d
+			x: -5.2,
+			y: -4.5
 		},
 		{
 			dependencies: ["53F328A57993B302"],
 			description: ["{\"translate\":\"quest.bettacraft.varied_diet.desc\"}"],
 			id: "5365BC09764502A3",
 			rewards: [{ id: "72A004DB6FA60111", type: "xp", xp: 75 }, { count: 8, id: "2757DC056A9B32DC", item: { count: 1, id: "bettacraft:betta_pellets" }, type: "item" }],
-			tags: ["bettacraft_feature:foodVariety.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_foodvariety__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:varied_diet", criterion: "", id: "1AD77C40A34012FC", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.varied_diet.title\"}",
-			x: 10.0d,
-			y: 2.0d
+			x: 10.0,
+			y: 2.0
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.mirror.desc\"}"],
 			id: "5C7D443EA9761181",
 			rewards: [{ id: "17F1C8FFA94A7DFD", type: "xp", xp: 25 }, { count: 4, id: "0734DDCB3ABB3460", item: { count: 1, id: "bettacraft:betta_pellets" }, type: "item" }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:mirror", criterion: "", id: "5E4D3F1B06370C93", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mirror.title\"}",
-			x: 3.0d,
-			y: 4.5d
+			x: 3.0,
+			y: 4.5
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.recovered.desc\"}"],
 			id: "48BC2BEAAA2FF6CD",
 			rewards: [{ id: "2C55DBE69041D78C", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:recovered", criterion: "", id: "515CDC9465EBA1D0", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.recovered.title\"}",
-			x: 5.0d,
-			y: 4.5d
+			x: 5.0,
+			y: 4.5
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.magnifier.desc\"}"],
 			id: "7FB8180F6FB93733",
 			rewards: [{ id: "3B05EE745E39C0E6", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:breeding.magnifier", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_breeding__magnifier", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "32A11E65FFA7A21F", item: { count: 1, id: "bettacraft:magnifier" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.magnifier.title\"}",
-			x: 6.0d,
-			y: 3.5d
+			x: 6.0,
+			y: 3.5
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
@@ -509,13 +509,13 @@
 			id: "6D7B663D4A57F256",
 			optional: true,
 			rewards: [{ id: "7C847B0A826F2807", type: "xp", xp: 10 }],
-			tags: ["bettacraft_feature:bettas.enabled", "bettacraft_optional"],
+			tags: ["bettacraft_feature_bettas__enabled", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:fight", criterion: "", id: "0334B2933ABBFA8D", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fight.title\"}",
-			x: 2.0d,
-			y: 3.5d
+			x: 2.0,
+			y: 3.5
 		},
 		{
 			dependencies: ["6058DB3D7A2AAD93"],
@@ -526,8 +526,8 @@
 				{ id: "213B1A59C110B291", item: { count: 1, id: "bettacraft:fish_bag" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fish_bag.title\"}",
-			x: -0.5d,
-			y: 3.2d
+			x: -0.5,
+			y: 3.2
 		},
 		{
 			dependencies: ["332DA21D75F9F762"],
@@ -538,8 +538,8 @@
 				{ advancement: "bettacraft:cabinet", criterion: "", id: "5D2A922D61F023C6", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.cabinet.title\"}",
-			x: 7.0d,
-			y: -2.0d
+			x: 7.0,
+			y: -2.0
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
@@ -550,74 +550,74 @@
 				{ advancement: "bettacraft:cooler", criterion: "", id: "41A075FFDB96E24D", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.cooler.title\"}",
-			x: 9.0d,
-			y: -2.0d
+			x: 9.0,
+			y: -2.0
 		},
 		{
 			dependencies: ["72A818B1562BE874"],
 			description: ["{\"translate\":\"quest.bettacraft.aeration.desc\"}"],
 			id: "01682CC883D50A03",
 			rewards: [{ id: "669BCFD36C6A1684", type: "xp", xp: 50 }, { count: 1, id: "1576AA4334FFD6AE", item: { count: 1, id: "bettacraft:air_stone" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.aeration"],
+			tags: ["bettacraft_feature_equipment__aeration"],
 			tasks: [
 				{ id: "4C7CF097E9BF0E71", item: { count: 1, id: "bettacraft:air_pump" }, type: "item" },
 				{ id: "04627F10896C1E9D", item: { count: 1, id: "bettacraft:air_stone" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.aeration.title\"}",
-			x: 11.0d,
-			y: -1.4d
+			x: 11.0,
+			y: -1.4
 		},
 		{
 			dependencies: ["72A818B1562BE874"],
 			description: ["{\"translate\":\"quest.bettacraft.sponge_filter.desc\"}"],
 			id: "3C39DABF588FD0F0",
 			rewards: [{ id: "5F3F21AF8AF4D775", type: "xp", xp: 25 }, { count: 1, id: "366445F27653CD6F", item: { count: 1, id: "bettacraft:intake_sponge" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.moreInternalFilters"],
+			tags: ["bettacraft_feature_equipment__moreinternalfilters"],
 			tasks: [
 				{ id: "1E61D518841B6EEB", item: { count: 1, id: "bettacraft:sponge_filter" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.sponge_filter.title\"}",
-			x: 11.2d,
-			y: -2.9d
+			x: 11.2,
+			y: -2.9
 		},
 		{
 			dependencies: ["72A818B1562BE874"],
 			description: ["{\"translate\":\"quest.bettacraft.led_lights.desc\"}"],
 			id: "679658351E0E4A16",
 			rewards: [{ id: "10B4CAD0ADBB6A7D", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:equipment.ledTiers"],
+			tags: ["bettacraft_feature_equipment__ledtiers"],
 			tasks: [
 				{ id: "30D3868105E00787", item: { count: 1, id: "bettacraft:led_panel" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.led_lights.title\"}",
-			x: 10.5d,
-			y: -4.2d
+			x: 10.5,
+			y: -4.2
 		},
 		{
 			dependencies: ["679658351E0E4A16"],
 			description: ["{\"translate\":\"quest.bettacraft.light_timer.desc\"}"],
 			id: "3578E8796184ABEA",
 			rewards: [{ id: "76481379739BCAC8", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:equipment.lightTimer", "bettacraft_feature:equipment.ledTiers"],
+			tags: ["bettacraft_feature_equipment__lighttimer", "bettacraft_feature_equipment__ledtiers"],
 			tasks: [
 				{ advancement: "bettacraft:light_timer", criterion: "", id: "6BD972B026ADD056", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.light_timer.title\"}",
-			x: 12.2d,
-			y: -4.8d
+			x: 12.2,
+			y: -4.8
 		},
 		{
 			dependencies: ["3C39DABF588FD0F0"],
 			description: ["{\"translate\":\"quest.bettacraft.regulator.desc\"}"],
 			id: "6D64AA4FC08CF1F8",
 			rewards: [{ id: "60CD48829AAC7755", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:power.regulator", "bettacraft_feature:equipment.moreInternalFilters"],
+			tags: ["bettacraft_feature_power__regulator", "bettacraft_feature_equipment__moreinternalfilters"],
 			tasks: [
 				{ advancement: "bettacraft:regulator", criterion: "", id: "1073AB0550A2768D", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.regulator.title\"}",
-			x: 13.2d,
-			y: -2.9d
+			x: 13.2,
+			y: -2.9
 		},
 		{
 			dependencies: ["6D64AA4FC08CF1F8"],
@@ -625,13 +625,13 @@
 			id: "53877E113DB3552D",
 			optional: true,
 			rewards: [{ id: "374B6D23CD4D1FE7", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:power.regulator", "bettacraft_feature:equipment.moreInternalFilters", "bettacraft_needs:power", "bettacraft_optional"],
+			tags: ["bettacraft_feature_power__regulator", "bettacraft_feature_equipment__moreinternalfilters", "bettacraft_needs_power", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:powered", criterion: "", id: "2B977E76339EEB4F", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.powered.title\"}",
-			x: 15.2d,
-			y: -2.9d
+			x: 15.2,
+			y: -2.9
 		},
 		{
 			dependencies: ["6D64AA4FC08CF1F8"],
@@ -639,88 +639,88 @@
 			id: "470E699F3A213CE3",
 			optional: true,
 			rewards: [{ id: "1B25523F41AC382C", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:power.winding", "bettacraft_feature:power.regulator", "bettacraft_feature:equipment.moreInternalFilters", "bettacraft_needs:power", "bettacraft_optional"],
+			tags: ["bettacraft_feature_power__winding", "bettacraft_feature_power__regulator", "bettacraft_feature_equipment__moreinternalfilters", "bettacraft_needs_power", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:wound_up", criterion: "", id: "560EF1527750F618", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.wound_up.title\"}",
-			x: 14.8d,
-			y: -4.4d
+			x: 14.8,
+			y: -4.4
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.pipes.desc\"}"],
 			id: "75F7A0B9785676A9",
 			rewards: [{ id: "162F93A277401CD4", type: "xp", xp: 50 }, { count: 8, id: "0B001A565F1363BD", item: { count: 1, id: "bettacraft:glass_pipe" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.enabled"],
+			tags: ["bettacraft_feature_pipes__enabled"],
 			tasks: [
 				{ id: "2F4E5EFF16CA9D5D", item: { count: 1, id: "bettacraft:water_pump" }, type: "item" },
 				{ id: "608186008E06FA54", item: { count: 1, id: "bettacraft:glass_pipe" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pipes.title\"}",
-			x: 6.0d,
-			y: -4.8d
+			x: 6.0,
+			y: -4.8
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.stainless_steel.desc\"}"],
 			id: "4F5509F16121A7AD",
 			rewards: [{ id: "0EA71C0B43FAC15E", type: "xp", xp: 75 }, { count: 2, id: "3C988266C33EA4E9", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.stainlessSteel", "bettacraft_feature:pipes.enabled"],
+			tags: ["bettacraft_feature_equipment__stainlesssteel", "bettacraft_feature_pipes__enabled"],
 			tasks: [
 				{ id: "57913F6BFDA42EE8", item: { count: 1, id: "bettacraft:crucible" }, type: "item" },
 				{ id: "7D77B75C156E8A4E", item: { count: 1, id: "bettacraft:stainless_steel_ingot" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.stainless_steel.title\"}",
-			x: 4.5d,
-			y: -5.8d
+			x: 4.5,
+			y: -5.8
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.interior_pipes.desc\"}"],
 			id: "0AF865004DBC0D91",
 			rewards: [{ id: "2DC711E0143F95B9", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:pipes.interiorPipes"],
+			tags: ["bettacraft_feature_pipes__interiorpipes"],
 			tasks: [
 				{ id: "6C62B6B5D436F923", item: { count: 1, id: "bettacraft:bulkhead" }, type: "item" },
 				{ id: "3599143BFF3386FF", item: { count: 1, id: "bettacraft:spray_bar" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.interior_pipes.title\"}",
-			x: 4.0d,
-			y: -7.8d
+			x: 4.0,
+			y: -7.8
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.auto_water_change.desc\"}"],
 			id: "42BEF0FC5132BF87",
 			rewards: [{ id: "70357322CFA6A81A", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:pipes.autoWaterChange"],
+			tags: ["bettacraft_feature_pipes__autowaterchange"],
 			tasks: [
 				{ advancement: "bettacraft:auto_water_change", criterion: "", id: "47A6B1B5721B5791", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.auto_water_change.title\"}",
-			x: 5.5d,
-			y: -6.8d
+			x: 5.5,
+			y: -6.8
 		},
 		{
 			dependencies: ["75F7A0B9785676A9"],
 			description: ["{\"translate\":\"quest.bettacraft.top_off.desc\"}"],
 			id: "216DE45855BE76D6",
 			rewards: [{ id: "19ADEE7F5958E452", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:pipes.topOff"],
+			tags: ["bettacraft_feature_pipes__topoff"],
 			tasks: [
 				{ id: "75E4440D64B10009", item: { count: 1, id: "bettacraft:level_sensor" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.top_off.title\"}",
-			x: 7.0d,
-			y: -8.2d
+			x: 7.0,
+			y: -8.2
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.multiblock_filter.desc\"}"],
 			id: "510CECC79FBBC892",
 			rewards: [{ id: "346BDAF1CFFB607E", type: "xp", xp: 100 }, { count: 2, id: "6BC0B35C8C6C6B00", item: { count: 1, id: "bettacraft:filter_foam" }, type: "item" }, { count: 1, id: "66716D4DCE6BCDAB", item: { count: 1, id: "bettacraft:activated_carbon" }, type: "item" }],
-			tags: ["bettacraft_feature:equipment.multiblockFilter"],
+			tags: ["bettacraft_feature_equipment__multiblockfilter"],
 			tasks: [
 				{ id: "2386D801CE0C98F2", item: { count: 1, id: "bettacraft:filter_chamber" }, type: "item" },
 				{ id: "7E79CC115418A5E3", item: { count: 1, id: "bettacraft:filter_pump_head" }, type: "item" },
@@ -728,15 +728,15 @@
 				{ id: "1EBE8585A7B1FCA7", item: { count: 1, id: "bettacraft:filter_outlet" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.multiblock_filter.title\"}",
-			x: 7.2d,
-			y: -6.5d
+			x: 7.2,
+			y: -6.5
 		},
 		{
 			dependencies: ["510CECC79FBBC892"],
 			description: ["{\"translate\":\"quest.bettacraft.filter_lines.desc\"}"],
 			id: "1A4B85F432B08214",
 			rewards: [{ id: "62CC162FFF15E01D", type: "xp", xp: 75 }, { count: 1, id: "2F5E8EEEEF944729", item: { count: 1, id: "bettacraft:intake_guard" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.filterLines"],
+			tags: ["bettacraft_feature_pipes__filterlines"],
 			tasks: [
 				{ id: "59D5DE93BFA1411F", item: { count: 1, id: "bettacraft:filter_inlet_pipe" }, type: "item" },
 				{ id: "117E314DED29E40F", item: { count: 1, id: "bettacraft:filter_outlet_pipe" }, type: "item" },
@@ -744,8 +744,8 @@
 				{ id: "6DF31B6543BD44CF", item: { count: 1, id: "bettacraft:outlet_guard" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.filter_lines.title\"}",
-			x: 8.8d,
-			y: -7.5d
+			x: 8.8,
+			y: -7.5
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
@@ -753,107 +753,107 @@
 			id: "59751637124444CF",
 			rewards: [{ id: "7C5C34C8AD830752", type: "xp", xp: 150 }, { count: 2, id: "51B3410C45636B80", item: { count: 1, id: "bettacraft:ceramic_rings" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:pipes.filterLines"],
+			size: 1.5,
+			tags: ["bettacraft_feature_pipes__filterlines"],
 			tasks: [
 				{ advancement: "bettacraft:shared_filter", criterion: "", id: "13F2FFB9D95E5B82", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.shared_filter.title\"}",
-			x: 10.8d,
-			y: -7.8d
+			x: 10.8,
+			y: -7.8
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
 			description: ["{\"translate\":\"quest.bettacraft.filter_water.desc\"}"],
 			id: "6F98F06CCF52AFE0",
 			rewards: [{ id: "0C976183E158E118", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:pipes.filterWater"],
+			tags: ["bettacraft_feature_pipes__filterwater"],
 			tasks: [
 				{ id: "452E9D124996F6CA", item: { count: 1, id: "bettacraft:filter_fresh_port" }, type: "item" },
 				{ id: "440512EC07DFBCC2", item: { count: 1, id: "bettacraft:filter_waste_port" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.filter_water.title\"}",
-			x: 8.8d,
-			y: -9.0d
+			x: 8.8,
+			y: -9.0
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
 			description: ["{\"translate\":\"quest.bettacraft.pipe_covers.desc\"}"],
 			id: "4AFD01C67F21FCE0",
 			rewards: [{ id: "1769961B006CCD11", type: "xp", xp: 25 }, { count: 4, id: "6BE0E543E6B98DAB", item: { count: 1, id: "bettacraft:pipe_cover" }, type: "item" }],
-			tags: ["bettacraft_feature:pipes.pipeCovers"],
+			tags: ["bettacraft_feature_pipes__pipecovers"],
 			tasks: [
 				{ id: "3F257BF8E8882277", item: { count: 1, id: "bettacraft:pipe_cover" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pipe_covers.title\"}",
-			x: 10.5d,
-			y: -9.5d
+			x: 10.5,
+			y: -9.5
 		},
 		{
 			dependencies: ["644840C2E1FE3E99"],
 			description: ["{\"translate\":\"quest.bettacraft.decor.desc\"}"],
 			id: "31C624DAC367A3E0",
 			rewards: [{ id: "528D2F6C30F4841D", type: "xp", xp: 25 }, { count: 1, id: "1CFE2AA3206F16DB", item: { count: 1, id: "bettacraft:decor_driftwood" }, type: "item" }],
-			tags: ["bettacraft_feature:decor.enabled", "bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_decor__enabled", "bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:decor", criterion: "", id: "19A9B974BF07765A", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.decor.title\"}",
-			x: -1.0d,
-			y: -3.5d
+			x: -1.0,
+			y: -3.5
 		},
 		{
 			dependencies: ["6058DB3D7A2AAD93"],
 			description: ["{\"translate\":\"quest.bettacraft.floating_plants.desc\"}"],
 			id: "3748EDB07ADB9D32",
 			rewards: [{ id: "795B6EB0C63D5BB2", type: "xp", xp: 25 }, { count: 2, id: "7C61907374FEE931", item: { count: 1, id: "bettacraft:duckweed" }, type: "item" }],
-			tags: ["bettacraft_feature:floatingPlants.enabled"],
+			tags: ["bettacraft_feature_floatingplants__enabled"],
 			tasks: [
 				{ id: "5FA248BF5197501E", item: { count: 1, id: "bettacraft:salvinia" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.floating_plants.title\"}",
-			x: -1.0d,
-			y: -2.0d
+			x: -1.0,
+			y: -2.0
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
 			description: ["{\"translate\":\"quest.bettacraft.algae.desc\"}"],
 			id: "52B4B50D3EFCDA8E",
 			rewards: [{ id: "58B9505BE7BABB7B", type: "xp", xp: 25 }, { count: 4, id: "681C29E80C392CCB", item: { count: 1, id: "bettacraft:algae_wafer" }, type: "item" }],
-			tags: ["bettacraft_feature:algae.enabled"],
+			tags: ["bettacraft_feature_algae__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:algae_scraped", criterion: "", id: "0852104E54A20EE8", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.algae.title\"}",
-			x: -1.8d,
-			y: 1.8d
+			x: -1.8,
+			y: 1.8
 		},
 		{
 			dependencies: ["75D3903D1DF5B32F"],
 			description: ["{\"translate\":\"quest.bettacraft.fertilizer.desc\"}"],
 			id: "61570953972B32EB",
 			rewards: [{ id: "38BA5251658ABB75", type: "xp", xp: 75 }, { count: 2, id: "3D8749DE2C6E980A", item: { count: 1, id: "bettacraft:ludwigia_repens" }, type: "item" }, { count: 2, id: "1ED8642C5E8EE4EE", item: { count: 1, id: "bettacraft:rotala_rotundifolia" }, type: "item" }],
-			tags: ["bettacraft_feature:fertilizer.enabled", "bettacraft_feature:aquaticPlants.enabled", "bettacraft_feature:interior.enabled"],
+			tags: ["bettacraft_feature_fertilizer__enabled", "bettacraft_feature_aquaticplants__enabled", "bettacraft_feature_interior__enabled"],
 			tasks: [
 				{ id: "5A9B6F034FF4452A", item: { count: 1, id: "bettacraft:fertilizer_maker" }, type: "item" },
 				{ id: "7368D33A2361DA15", item: { count: 1, id: "bettacraft:liquid_fertilizer" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fertilizer.title\"}",
-			x: -1.0d,
-			y: -6.5d
+			x: -1.0,
+			y: -6.5
 		},
 		{
 			dependencies: ["30B15AE3CC36ACF4"],
 			description: ["{\"translate\":\"quest.bettacraft.fertilizer_dosing.desc\"}"],
 			id: "7A46AACB03781D58",
 			rewards: [{ id: "338662B99C634F38", type: "xp", xp: 100 }, { count: 2, id: "525F146485780EA9", item: { count: 1, id: "bettacraft:liquid_fertilizer" }, type: "item" }],
-			tags: ["bettacraft_feature:fertilizer.dosing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_fertilizer__dosing", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "5A2442F8DD37913B", item: { count: 1, id: "bettacraft:fertilizer_canister" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.fertilizer_dosing.title\"}",
-			x: 20.0d,
-			y: 6.0d
+			x: 20.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["5C6C5D793BB24640"],
@@ -864,61 +864,61 @@
 				{ advancement: "bettacraft:swamp_water", criterion: "", id: "79354209710E925C", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.swamp_water.title\"}",
-			x: -2.0d,
-			y: 0.0d
+			x: -2.0,
+			y: 0.0
 		},
 		{
 			dependencies: ["3430A4A0B81203DE"],
 			description: ["{\"translate\":\"quest.bettacraft.mosquito_larvae.desc\"}"],
 			id: "3862216ED34872FD",
 			rewards: [{ id: "44AF0F6B827A1683", type: "xp", xp: 25 }, { count: 4, id: "335BF26E5DE49DC3", item: { count: 1, id: "bettacraft:artemia_cysts" }, type: "item" }],
-			tags: ["bettacraft_feature:liveFood.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:mosquito_larvae", criterion: "", id: "78CE05298DA16244", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mosquito_larvae.title\"}",
-			x: -4.0d,
-			y: 0.2d
+			x: -4.0,
+			y: 0.2
 		},
 		{
 			dependencies: ["3862216ED34872FD"],
 			description: ["{\"translate\":\"quest.bettacraft.food_bred.desc\"}"],
 			id: "487074730F490CA1",
 			rewards: [{ id: "02563698554E4008", type: "xp", xp: 75 }, { count: 8, id: "7C3E720CCD102F56", item: { count: 1, id: "bettacraft:mosquito_larvae" }, type: "item" }],
-			tags: ["bettacraft_feature:liveFood.enabled"],
+			tags: ["bettacraft_feature_livefood__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:food_bred", criterion: "", id: "629FB29852018088", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.food_bred.title\"}",
-			x: -6.0d,
-			y: 0.2d
+			x: -6.0,
+			y: 0.2
 		},
 		{
 			dependencies: ["487074730F490CA1"],
 			description: ["{\"translate\":\"quest.bettacraft.cultures.desc\"}"],
 			id: "50881BA3D01EA5FB",
 			rewards: [{ id: "75C9518E8E66353D", type: "xp", xp: 75 }, { count: 4, id: "4406BEB951F636CD", item: { count: 1, id: "bettacraft:daphnia" }, type: "item" }],
-			tags: ["bettacraft_feature:liveFood.cultures"],
+			tags: ["bettacraft_feature_livefood__cultures"],
 			tasks: [
 				{ id: "0C8E369C03706C64", item: { count: 1, id: "bettacraft:tubifex_dish" }, type: "item" },
 				{ id: "58F0D7C0E023B03B", item: { count: 1, id: "bettacraft:daphnia_barrel" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.cultures.title\"}",
-			x: -8.0d,
-			y: 0.2d
+			x: -8.0,
+			y: 0.2
 		},
 		{
 			dependencies: ["50881BA3D01EA5FB"],
 			description: ["{\"translate\":\"quest.bettacraft.live_food_pump.desc\"}"],
 			id: "5081D90A0F2A12AF",
 			rewards: [{ id: "06B326059E216F89", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:liveFood.pump", "bettacraft_feature:liveFood.cultures"],
+			tags: ["bettacraft_feature_livefood__pump", "bettacraft_feature_livefood__cultures"],
 			tasks: [
 				{ id: "1F766126E6C2F792", item: { count: 1, id: "bettacraft:live_food_pump" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.live_food_pump.title\"}",
-			x: -10.0d,
-			y: 0.2d
+			x: -10.0,
+			y: 0.2
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
@@ -926,53 +926,53 @@
 			id: "54D6D4C90E19DD2D",
 			rewards: [{ id: "5FBF60CBD62C2CB9", type: "xp", xp: 25 }, { count: 2, id: "1263D9D939BAEB35", item: { count: 1, id: "bettacraft:fish_bag" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:tankmates.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_tankmates__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:tankmate_inserted", criterion: "", id: "66DE003C67B2E562", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.tankmates.title\"}",
-			x: -2.5d,
-			y: 3.2d
+			x: -2.5,
+			y: 3.2
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.livebearer_litter.desc\"}"],
 			id: "5FF59AD48EFAA8B9",
 			rewards: [{ id: "30FE4794D093BBED", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:tankmates.enabled"],
+			tags: ["bettacraft_feature_tankmates__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:livebearer_litter", criterion: "", id: "7306CDE90CBDDE57", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.livebearer_litter.title\"}",
-			x: -4.5d,
-			y: 2.0d
+			x: -4.5,
+			y: 2.0
 		},
 		{
 			dependencies: ["5FF59AD48EFAA8B9"],
 			description: ["{\"translate\":\"quest.bettacraft.guppy_strain.desc\"}"],
 			id: "02B45FD53E5A02C9",
 			rewards: [{ id: "387B6071CA459C5B", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:tankmates.livebearerGenetics"],
+			tags: ["bettacraft_feature_tankmates__livebearergenetics"],
 			tasks: [
 				{ advancement: "bettacraft:guppy_strain", criterion: "", id: "50B24476ECBD035E", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.guppy_strain.title\"}",
-			x: -6.5d,
-			y: 2.0d
+			x: -6.5,
+			y: 2.0
 		},
 		{
 			dependencies: ["02B45FD53E5A02C9"],
 			description: ["{\"translate\":\"quest.bettacraft.guppy_hybrid.desc\"}"],
 			id: "4DADA7BCF76545ED",
 			rewards: [{ id: "572A1609274CC007", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:tankmates.livebearerGenetics"],
+			tags: ["bettacraft_feature_tankmates__livebearergenetics"],
 			tasks: [
 				{ advancement: "bettacraft:guppy_hybrid", criterion: "", id: "41D3157920968B92", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.guppy_hybrid.title\"}",
-			x: -8.5d,
-			y: 1.8d
+			x: -8.5,
+			y: 1.8
 		},
 		{
 			dependencies: ["02B45FD53E5A02C9"],
@@ -980,249 +980,249 @@
 			id: "0E08C6DA6E5B7931",
 			rewards: [{ id: "33AA13C2E60C086F", type: "xp", xp: 250 }, { count: 4, id: "4526D9BD3376FDE6", item: { count: 1, id: "bettacraft:fish_bag" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:tankmates.livebearerGenetics"],
+			size: 1.5,
+			tags: ["bettacraft_feature_tankmates__livebearergenetics"],
 			tasks: [
 				{ advancement: "bettacraft:guppy_collection", criterion: "", id: "20A83860538A1487", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.guppy_collection.title\"}",
-			x: -8.5d,
-			y: 3.5d
+			x: -8.5,
+			y: 3.5
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.community_fish.desc\"}"],
 			id: "3DEFAAC36C44BDCA",
 			rewards: [{ id: "7D000EC5599965D2", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:tankmates.communityFish"],
+			tags: ["bettacraft_feature_tankmates__communityfish"],
 			tasks: [
 				{ id: "2B4ED81302CF1F50", item: { count: 1, id: "bettacraft:zebra_danio_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.community_fish.title\"}",
-			x: -2.7d,
-			y: 5.7d
+			x: -2.7,
+			y: 5.7
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.cichlids.desc\"}"],
 			id: "4FB87B30EB5E39ED",
 			rewards: [{ id: "09D87EFE055EB566", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:tankmates.cichlids"],
+			tags: ["bettacraft_feature_tankmates__cichlids"],
 			tasks: [
 				{ id: "58C6A502F53FFA23", item: { count: 1, id: "bettacraft:ram_cichlid_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.cichlids.title\"}",
-			x: -4.1d,
-			y: 5.2d
+			x: -4.1,
+			y: 5.2
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.puffers.desc\"}"],
 			id: "6325160EE909C53F",
 			rewards: [{ id: "3F55131E5B990F75", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:tankmates.puffers"],
+			tags: ["bettacraft_feature_tankmates__puffers"],
 			tasks: [
 				{ id: "01B8D3E0AA730524", item: { count: 1, id: "bettacraft:dwarf_puffer_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.puffers.title\"}",
-			x: -4.9d,
-			y: 3.9d
+			x: -4.9,
+			y: 3.9
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.barbs_loaches.desc\"}"],
 			id: "5A3E6EF6E0E8C0E6",
 			rewards: [{ id: "28B5E6C8E59B7C6F", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:tankmates.barbsAndLoaches"],
+			tags: ["bettacraft_feature_tankmates__barbsandloaches"],
 			tasks: [
 				{ id: "32F3D2E3DAEC43FA", item: { count: 1, id: "bettacraft:tiger_barb_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.barbs_loaches.title\"}",
-			x: -4.4d,
-			y: 7.9d
+			x: -4.4,
+			y: 7.9
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.gouramis.desc\"}"],
 			id: "7F9D295353C2087A",
 			rewards: [{ id: "36B2C9B0A00F730F", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:tankmates.gouramis"],
+			tags: ["bettacraft_feature_tankmates__gouramis"],
 			tasks: [
 				{ id: "63CC89A285027C6A", item: { count: 1, id: "bettacraft:honey_gourami_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.gouramis.title\"}",
-			x: -6.7d,
-			y: 5.9d
+			x: -6.7,
+			y: 5.9
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
 			description: ["{\"translate\":\"quest.bettacraft.critters.desc\"}"],
 			id: "0C0C9070FC75B9C4",
 			rewards: [{ id: "34E715CD5419AF40", type: "xp", xp: 25 }, { count: 4, id: "364A025DC605D294", item: { count: 1, id: "bettacraft:algae_wafer" }, type: "item" }],
-			tags: ["bettacraft_feature:invertebrates.enabled"],
+			tags: ["bettacraft_feature_invertebrates__enabled"],
 			tasks: [
 				{ id: "423E73729DC9CB40", item: { count: 1, id: "bettacraft:critter_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.critters.title\"}",
-			x: -1.0d,
-			y: 5.2d
+			x: -1.0,
+			y: 5.2
 		},
 		{
 			dependencies: ["0C0C9070FC75B9C4"],
 			description: ["{\"translate\":\"quest.bettacraft.critters_bred.desc\"}"],
 			id: "2754F2DD6EA86AEC",
 			rewards: [{ id: "4D046860D2DF9EEE", type: "xp", xp: 75 }, { count: 8, id: "469F208337F59860", item: { count: 1, id: "bettacraft:algae_wafer" }, type: "item" }],
-			tags: ["bettacraft_feature:invertebrates.enabled"],
+			tags: ["bettacraft_feature_invertebrates__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:critters_bred", criterion: "", id: "2FAA3743AEDF1C93", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.critters_bred.title\"}",
-			x: -1.5d,
-			y: 7.0d
+			x: -1.5,
+			y: 7.0
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
 			description: ["{\"translate\":\"quest.bettacraft.frogs.desc\"}"],
 			id: "4E1E551B96DB1C2E",
 			rewards: [{ id: "7EAF23A0E5B2FC2A", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:frogs.enabled"],
+			tags: ["bettacraft_feature_frogs__enabled"],
 			tasks: [
 				{ id: "7CC4B49CB7A37AB6", item: { count: 1, id: "bettacraft:dwarf_frog_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.frogs.title\"}",
-			x: 1.2d,
-			y: 4.8d
+			x: 1.2,
+			y: 4.8
 		},
 		{
 			dependencies: ["7DB42509E4844F84"],
 			description: ["{\"translate\":\"quest.bettacraft.reef_fish.desc\"}"],
 			id: "385712AF426BACFF",
 			rewards: [{ id: "5D9A02A5A1A0628D", type: "xp", xp: 75 }, { count: 4, id: "6A6840572D6977E9", item: { count: 1, id: "bettacraft:sea_salt" }, type: "item" }],
-			tags: ["bettacraft_feature:saltwater.reefFish", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__reeffish", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "633EA21B1054A610", item: { count: 1, id: "bettacraft:ocellaris_clownfish_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.reef_fish.title\"}",
-			x: 12.0d,
-			y: 7.5d
+			x: 12.0,
+			y: 7.5
 		},
 		{
 			dependencies: ["7DB42509E4844F84"],
 			description: ["{\"translate\":\"quest.bettacraft.seahorse.desc\"}"],
 			id: "60AF085A2D36CD9A",
 			rewards: [{ id: "2C42048F534EFC1F", type: "xp", xp: 75 }, { count: 1, id: "17BF69176C339D97", item: { count: 1, id: "bettacraft:live_rock" }, type: "item" }],
-			tags: ["bettacraft_feature:saltwater.seahorses", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__seahorses", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ id: "431FCED07080FFCE", item: { count: 1, id: "bettacraft:lined_seahorse_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.seahorse.title\"}",
-			x: 14.0d,
-			y: 7.5d
+			x: 14.0,
+			y: 7.5
 		},
 		{
 			dependencies: ["60AF085A2D36CD9A"],
 			description: ["{\"translate\":\"quest.bettacraft.seahorse_fry.desc\"}"],
 			id: "2F171F3395355E51",
 			rewards: [{ id: "40559E9A43E6C750", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:saltwater.seahorses", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__seahorses", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:seahorse_fry", criterion: "", id: "7EB68D19EC1A301C", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.seahorse_fry.title\"}",
-			x: 16.0d,
-			y: 7.5d
+			x: 16.0,
+			y: 7.5
 		},
 		{
 			dependencies: ["5C6C5D793BB24640"],
 			description: ["{\"translate\":\"quest.bettacraft.paludarium.desc\"}"],
 			id: "3474EC678152B36E",
 			rewards: [{ id: "45A15636071DCB85", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:terrariums.enabled"],
+			tags: ["bettacraft_feature_terrariums__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:paludarium", criterion: "", id: "0DE5BA52FA05C703", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.paludarium.title\"}",
-			x: -3.0d,
-			y: -1.2d
+			x: -3.0,
+			y: -1.2
 		},
 		{
 			dependencies: ["3474EC678152B36E"],
 			description: ["{\"translate\":\"quest.bettacraft.turtles.desc\"}"],
 			id: "11149ADEF1FED706",
 			rewards: [{ id: "204E2A1CC1DFA92E", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:turtles.enabled"],
+			tags: ["bettacraft_feature_turtles__enabled"],
 			tasks: [
 				{ id: "0E738AC923E78368", item: { count: 1, id: "bettacraft:musk_turtle_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.turtles.title\"}",
-			x: -5.0d,
-			y: -1.2d
+			x: -5.0,
+			y: -1.2
 		},
 		{
 			dependencies: ["11149ADEF1FED706"],
 			description: ["{\"translate\":\"quest.bettacraft.turtle_clutch.desc\"}"],
 			id: "26B4EE0DC56C6964",
 			rewards: [{ id: "32D0D200889E5D19", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:turtles.breeding"],
+			tags: ["bettacraft_feature_turtles__breeding"],
 			tasks: [
 				{ advancement: "bettacraft:turtle_clutch", criterion: "", id: "2DDE1766BD94C5D5", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.turtle_clutch.title\"}",
-			x: -7.0d,
-			y: -1.2d
+			x: -7.0,
+			y: -1.2
 		},
 		{
 			dependencies: ["11149ADEF1FED706"],
 			description: ["{\"translate\":\"quest.bettacraft.sea_turtle.desc\"}"],
 			id: "566F679B73D0E1DF",
 			rewards: [{ id: "00C4B0095A962CD1", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:turtles.seaTurtles"],
+			tags: ["bettacraft_feature_turtles__seaturtles"],
 			tasks: [
 				{ advancement: "bettacraft:sea_turtle", criterion: "", id: "05D89C4CC54B6640", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.sea_turtle.title\"}",
-			x: -7.0d,
-			y: -2.8d
+			x: -7.0,
+			y: -2.8
 		},
 		{
 			dependencies: ["3474EC678152B36E"],
 			description: ["{\"translate\":\"quest.bettacraft.pets.desc\"}"],
 			id: "7BEBD68AF3590E4A",
 			rewards: [{ id: "405EA553A4567D55", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:foreignAnimals.vanillaPets", "bettacraft_feature:terrariums.enabled"],
+			tags: ["bettacraft_feature_foreignanimals__vanillapets", "bettacraft_feature_terrariums__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:pet_terrarium", criterion: "", id: "61C8707CF7D13E55", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.pets.title\"}",
-			x: -5.0d,
-			y: -2.8d
+			x: -5.0,
+			y: -2.8
 		},
 		{
 			dependencies: ["579C634651FDB567"],
 			description: ["{\"translate\":\"quest.bettacraft.herp_clutch.desc\"}"],
 			id: "327AF685E7AA88BD",
 			rewards: [{ id: "4D7C4C00E2E4093B", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:terrariums.herpBreeding", "bettacraft_feature:terrariums.devices"],
+			tags: ["bettacraft_feature_terrariums__herpbreeding", "bettacraft_feature_terrariums__devices"],
 			tasks: [
 				{ advancement: "bettacraft:herp_clutch", criterion: "", id: "5C146B6D47D0EE68", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.herp_clutch.title\"}",
-			x: -7.2d,
-			y: -4.5d
+			x: -7.2,
+			y: -4.5
 		},
 		{
 			dependencies: ["4E30D3D4FB9A8E8A"],
 			description: ["{\"translate\":\"quest.bettacraft.big_gear.desc\"}"],
 			id: "34FD9DC948DEEB04",
 			rewards: [{ id: "13308B258D7BF9D7", type: "xp", xp: 75 }, { count: 1, id: "32D70DF9BAC1577F", item: { count: 1, id: "bettacraft:steel_leader" }, type: "item" }],
-			tags: ["bettacraft_feature:bigTanks.bigAnimals"],
+			tags: ["bettacraft_feature_bigtanks__biganimals"],
 			tasks: [
 				{ id: "6EAE3883F1308A84", item: { count: 1, id: "bettacraft:large_net" }, type: "item" },
 				{ id: "2FD25B0128FCD32E", item: { count: 1, id: "bettacraft:transport_tub" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.big_gear.title\"}",
-			x: 2.4d,
-			y: -3.2d
+			x: 2.4,
+			y: -3.2
 		},
 		{
 			dependencies: ["34FD9DC948DEEB04"],
@@ -1230,40 +1230,40 @@
 			id: "0C77EF36233BC80D",
 			rewards: [{ id: "74F8AEDCABCDA2B0", type: "xp", xp: 150 }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:bigTanks.bigAnimals"],
+			size: 1.5,
+			tags: ["bettacraft_feature_bigtanks__biganimals"],
 			tasks: [
 				{ advancement: "bettacraft:big_animal", criterion: "", id: "428461D78DAE14FD", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.big_animal.title\"}",
-			x: 2.8d,
-			y: -5.2d
+			x: 2.8,
+			y: -5.2
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
 			description: ["{\"translate\":\"quest.bettacraft.foreign_animal.desc\"}"],
 			id: "7AFF8293ED1A4F63",
 			rewards: [{ id: "2B90A6D8F29F295E", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:foreignAnimals.enabled"],
+			tags: ["bettacraft_feature_foreignanimals__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:foreign_animal", criterion: "", id: "0157DEC3141F3A67", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.foreign_animal.title\"}",
-			x: 0.5d,
-			y: 7.2d
+			x: 0.5,
+			y: 7.2
 		},
 		{
 			dependencies: ["1B3A9B6D7AD9A5B2"],
 			description: ["{\"translate\":\"quest.bettacraft.mob_in_glass.desc\"}"],
 			id: "36D9BBBFAAF4B61C",
 			rewards: [{ id: "09097390DD5BE844", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:mobsInGlass.enabled"],
+			tags: ["bettacraft_feature_mobsinglass__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:mob_in_glass", criterion: "", id: "70FE34526D435C19", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mob_in_glass.title\"}",
-			x: 2.2d,
-			y: 8.2d
+			x: 2.2,
+			y: 8.2
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
@@ -1271,13 +1271,13 @@
 			id: "663B15EEFEA08E9F",
 			optional: true,
 			rewards: [{ id: "62167B57652FAC37", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:compat.create.drive", "bettacraft_mod:create", "bettacraft_optional"],
+			tags: ["bettacraft_feature_compat__create__drive", "bettacraft_mod_create", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:create_drive", criterion: "", id: "5193E1A6A7477D64", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.create_drive.title\"}",
-			x: 8.8d,
-			y: -5.2d
+			x: 8.8,
+			y: -5.2
 		},
 		{
 			dependencies: ["663B15EEFEA08E9F"],
@@ -1285,91 +1285,91 @@
 			id: "2E62BB1B7A378210",
 			optional: true,
 			rewards: [{ id: "394F0C191755B698", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:compat.create.contraptions", "bettacraft_feature:compat.create.drive", "bettacraft_mod:create", "bettacraft_optional"],
+			tags: ["bettacraft_feature_compat__create__contraptions", "bettacraft_feature_compat__create__drive", "bettacraft_mod_create", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:travelling_tank", criterion: "", id: "711C5EC0B9388805", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.travelling_tank.title\"}",
-			x: 10.5d,
-			y: -6.0d
+			x: 10.5,
+			y: -6.0
 		},
 		{
 			dependencies: ["009F38F06F92C81B"],
 			description: ["{\"translate\":\"quest.bettacraft.aquarist.desc\"}"],
 			id: "4069EE4320B460B1",
 			rewards: [{ id: "1F7AF8A60383E4E2", type: "xp", xp: 50 }, { count: 1, id: "7F878C3CF36709F5", item: { count: 1, id: "bettacraft:breeding_basin" }, type: "item" }],
-			tags: ["bettacraft_feature:sources.aquaristVillager", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_sources__aquaristvillager", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:aquarist_trade", criterion: "", id: "4BD154AED43B13C1", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.aquarist.title\"}",
-			x: 7.5d,
-			y: 4.0d
+			x: 7.5,
+			y: 4.0
 		},
 		{
 			dependencies: ["4E1E551B96DB1C2E"],
 			description: ["{\"translate\":\"quest.bettacraft.frog_tadpole.desc\"}"],
 			id: "15CA0D23F64FC275",
 			rewards: [{ id: "51CEC9D867289AB3", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:frogs.breeding"],
+			tags: ["bettacraft_feature_frogs__breeding"],
 			tasks: [
 				{ advancement: "bettacraft:frog_tadpole", criterion: "", id: "733902E838E2900B", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.frog_tadpole.title\"}",
-			x: 3.0d,
-			y: 6.0d
+			x: 3.0,
+			y: 6.0
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.bottom_fish.desc\"}"],
 			id: "49F42BF6BE489467",
 			rewards: [{ id: "0E65E63E38654E9E", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:tankmates.moreBottomFish"],
+			tags: ["bettacraft_feature_tankmates__morebottomfish"],
 			tasks: [
 				{ id: "79A6B50CE446F72A", item: { count: 1, id: "bettacraft:bronze_cory_bucket" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.bottom_fish.title\"}",
-			x: -1.2d,
-			y: 6.0d
+			x: -1.2,
+			y: 6.0
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.tetra_cory_form.desc\"}"],
 			id: "25371DCC86813117",
 			rewards: [{ id: "5FF2049D45926630", type: "xp", xp: 100 }, { count: 1, id: "64907CC1CE2FBDBD", item: { count: 1, id: "bettacraft:spawning_mop" }, type: "item" }],
-			tags: ["bettacraft_feature:tankmates.tetraCoryForms", "bettacraft_feature:breeding.enabled"],
+			tags: ["bettacraft_feature_tankmates__tetracoryforms", "bettacraft_feature_breeding__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:tetra_cory_form", criterion: "", id: "542F5694E22D217D", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.tetra_cory_form.title\"}",
-			x: -2.6d,
-			y: 7.4d
+			x: -2.6,
+			y: 7.4
 		},
 		{
 			dependencies: ["385712AF426BACFF"],
 			description: ["{\"translate\":\"quest.bettacraft.mandarin.desc\"}"],
 			id: "0D1A9EFF9B762D61",
 			rewards: [{ id: "3FFBEA8935FDD710", type: "xp", xp: 150 }, { count: 4, id: "4EEE7E3C4B3D8D6E", item: { count: 1, id: "bettacraft:live_rock" }, type: "item" }],
-			tags: ["bettacraft_feature:saltwater.moreReefAnimals", "bettacraft_feature:saltwater.reefFish", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__morereefanimals", "bettacraft_feature_saltwater__reeffish", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:mandarin_copepods", criterion: "", id: "4A540326CAB218B2", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mandarin.title\"}",
-			x: 12.0d,
-			y: 9.0d
+			x: 12.0,
+			y: 9.0
 		},
 		{
 			dependencies: ["385712AF426BACFF"],
 			description: ["{\"translate\":\"quest.bettacraft.banggai.desc\"}"],
 			id: "001209BB95E4D901",
 			rewards: [{ id: "229CEA2A13711D35", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:saltwater.moreReefAnimals", "bettacraft_feature:breeding.enabled", "bettacraft_feature:saltwater.reefFish", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_saltwater__morereefanimals", "bettacraft_feature_breeding__enabled", "bettacraft_feature_saltwater__reeffish", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:banggai_young", criterion: "", id: "426403687DFB000C", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.banggai.title\"}",
-			x: 13.5d,
-			y: 9.0d
+			x: 13.5,
+			y: 9.0
 		},
 		{
 			dependencies: ["385712AF426BACFF"],
@@ -1377,92 +1377,92 @@
 			id: "6BC35CC922866BC1",
 			rewards: [{ id: "2D2B1CF159BECC96", type: "xp", xp: 250 }, { count: 2, id: "3FFE498AFB0BD7DF", item: { count: 1, id: "bettacraft:rotifer_culture" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:saltwater.larvaRearing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_saltwater__larvarearing", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:clown_larvae", criterion: "", id: "0526A81ECB2C687E", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.clown_larvae.title\"}",
-			x: 10.5d,
-			y: 9.0d
+			x: 10.5,
+			y: 9.0
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.sump.desc\"}"],
 			id: "4DCACB4D4287A6E0",
 			rewards: [{ id: "79C54E9EDF716090", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:sump.enabled"],
+			tags: ["bettacraft_feature_sump__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:sump_installed", criterion: "", id: "39A267F96DAF8FDE", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.sump.title\"}",
-			x: 5.6d,
-			y: -1.0d
+			x: 5.6,
+			y: -1.0
 		},
 		{
 			dependencies: ["4DCACB4D4287A6E0"],
 			description: ["{\"translate\":\"quest.bettacraft.refugium.desc\"}"],
 			id: "071A5E9C6657C571",
 			rewards: [{ id: "4ECA8BA22EF38404", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:sump.refugium"],
+			tags: ["bettacraft_feature_sump__refugium"],
 			tasks: [
 				{ id: "03ECF31F4146AF8C", item: { count: 1, id: "bettacraft:chaetomorpha" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.refugium.title\"}",
-			x: 7.0d,
-			y: -0.9d
+			x: 7.0,
+			y: -0.9
 		},
 		{
 			dependencies: ["30B15AE3CC36ACF4", "4DCACB4D4287A6E0"],
 			description: ["{\"translate\":\"quest.bettacraft.calcium_reactor.desc\"}"],
 			id: "1EAFF37C7C37FC32",
 			rewards: [{ id: "6007171288E411C9", type: "xp", xp: 150 }, { count: 16, id: "5CF976536864A275", item: { count: 1, id: "bettacraft:coral_rubble" }, type: "item" }],
-			tags: ["bettacraft_feature:sump.calciumReactor", "bettacraft_feature:corals.reefDosing", "bettacraft_feature:osmosis.enabled", "bettacraft_feature:waterChemistry.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_sump__calciumreactor", "bettacraft_feature_corals__reefdosing", "bettacraft_feature_osmosis__enabled", "bettacraft_feature_waterchemistry__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:calcium_reactor", criterion: "", id: "2B5146DAC125E0D0", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.calcium_reactor.title\"}",
-			x: 18.0d,
-			y: 7.5d
+			x: 18.0,
+			y: 7.5
 		},
 		{
 			dependencies: ["54D6D4C90E19DD2D"],
 			description: ["{\"translate\":\"quest.bettacraft.archerfish.desc\"}"],
 			id: "3BB1DF945431649D",
 			rewards: [{ id: "0DBEAA6FF0C24F69", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:brackish.archerfish"],
+			tags: ["bettacraft_feature_brackish__archerfish"],
 			tasks: [
 				{ advancement: "bettacraft:archerfish_shot", criterion: "", id: "03BB13DCF13BE375", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.archerfish.title\"}",
-			x: -6.4d,
-			y: 4.2d
+			x: -6.4,
+			y: 4.2
 		},
 		{
 			dependencies: ["3474EC678152B36E"],
 			description: ["{\"translate\":\"quest.bettacraft.mudskipper.desc\"}"],
 			id: "12E8BD7D9E1D81FE",
 			rewards: [{ id: "27234B6C6A2C414D", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:brackish.mudskipper"],
+			tags: ["bettacraft_feature_brackish__mudskipper"],
 			tasks: [
 				{ advancement: "bettacraft:mudskipper_paludarium", criterion: "", id: "403BB2399DF30E02", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mudskipper.title\"}",
-			x: -8.8d,
-			y: -1.6d
+			x: -8.8,
+			y: -1.6
 		},
 		{
 			dependencies: ["75D3903D1DF5B32F"],
 			description: ["{\"translate\":\"quest.bettacraft.mangrove.desc\"}"],
 			id: "29CE184E06DB9FA6",
 			rewards: [{ id: "7FA9D4B54AE47134", type: "xp", xp: 100 }],
-			tags: ["bettacraft_feature:brackish.mangroves", "bettacraft_feature:aquaticPlants.enabled"],
+			tags: ["bettacraft_feature_brackish__mangroves", "bettacraft_feature_aquaticplants__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:mangrove_grown", criterion: "", id: "4010E893530509F8", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.mangrove.title\"}",
-			x: -1.0d,
-			y: -5.0d
+			x: -1.0,
+			y: -5.0
 		},
 		{
 			dependencies: ["2754F2DD6EA86AEC"],
@@ -1470,14 +1470,14 @@
 			id: "3D46AA8518E83DD2",
 			rewards: [{ id: "78E792F5977F068A", type: "xp", xp: 250 }, { count: 4, id: "52F44DC1D654BB85", item: { count: 1, id: "bettacraft:fish_bag" }, type: "item" }],
 			shape: "hexagon",
-			size: 1.5d,
-			tags: ["bettacraft_feature:brackish.amanoShrimp", "bettacraft_feature:breeding.enabled"],
+			size: 1.5,
+			tags: ["bettacraft_feature_brackish__amanoshrimp", "bettacraft_feature_breeding__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:amano_young", criterion: "", id: "2053CA53751E75DB", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.amano.title\"}",
-			x: -1.0d,
-			y: 8.6d
+			x: -1.0,
+			y: 8.6
 		},
 		{
 			dependencies: ["2E62BB1B7A378210"],
@@ -1485,26 +1485,26 @@
 			id: "6EFB410DE3B61DCB",
 			optional: true,
 			rewards: [{ id: "408A4D4D056B7950", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:compat.create.travelCare", "bettacraft_feature:compat.create.drive", "bettacraft_mod:create", "bettacraft_needs:power", "bettacraft_optional"],
+			tags: ["bettacraft_feature_compat__create__travelcare", "bettacraft_feature_compat__create__drive", "bettacraft_mod_create", "bettacraft_needs_power", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:powered_trip", criterion: "", id: "50C6FFCEB0CE7719", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.powered_trip.title\"}",
-			x: 12.2d,
-			y: -6.8d
+			x: 12.2,
+			y: -6.8
 		},
 		{
 			dependencies: ["2DC6A271E943D192"],
 			description: ["{\"translate\":\"quest.bettacraft.aquarist_hired.desc\"}"],
 			id: "4B6906DE47FD1153",
 			rewards: [{ id: "51B665498763D596", type: "xp", xp: 150 }],
-			tags: ["bettacraft_feature:aquaristNpc.enabled", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tags: ["bettacraft_feature_aquaristnpc__enabled", "bettacraft_feature_breeding__enabled", "bettacraft_feature_bettas__enabled"],
 			tasks: [
 				{ advancement: "bettacraft:aquarist_hired", criterion: "", id: "0689FAEAD74F1A25", type: "advancement" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.aquarist_hired.title\"}",
-			x: 11.0d,
-			y: 1.1d
+			x: 11.0,
+			y: 1.1
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

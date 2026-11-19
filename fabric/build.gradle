@@ -549,14 +549,18 @@ tasks.matching { it.name == 'runFabricGameTest' }.configureEach {
 // -Pquests: the FTB Quests chapter of modpack/ into the Fabric runs (replaced every run, removed without the flag)
 tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGameTest'] }.configureEach { t ->
     def base = t.name == 'runFabricGameTest' ? "${fabricRunRoot}/gametest" : t.name == 'runFabricServer' ? "${fabricRunRoot}/server" : fabricRunRoot
-    def src = rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt')
-    def dst = rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt')
+    // M52c: the chapter and (FTB Quests 26.1) its texts in the lang folder
+    def files = ['chapters/bettacraft.json5', 'lang/en_us/chapters/bettacraft.json5'].collect { rel ->
+        [src: rootProject.file('modpack/config/ftbquests/quests/' + rel), dst: rootProject.file(base + '/config/ftbquests/quests/' + rel)]
+    }
     def on = project.hasProperty('quests')
     t.doFirst {
-        if (on) {
-            dst.parentFile.mkdirs()
-            java.nio.file.Files.copy(src.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
-        } else if (dst.exists()) dst.delete()
+        files.each { f ->
+            if (on) {
+                f.dst.parentFile.mkdirs()
+                java.nio.file.Files.copy(f.src.toPath(), f.dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+            } else if (f.dst.exists()) f.dst.delete()
+        }
     }
 }
 

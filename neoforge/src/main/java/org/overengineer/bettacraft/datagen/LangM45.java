@@ -55,7 +55,7 @@ final class LangM45 {
         a.accept("advancements.bettacraft.travelling_tank.title", "Mobile Aquarium");
         a.accept("advancements.bettacraft.travelling_tank.description", "A tank arrives in one piece somewhere else on a contraption");
 
-        // the quests (modpack/config/ftbquests/quests/chapters/bettacraft.snbt)
+        // the quests (modpack/config/ftbquests/quests/chapters/bettacraft.json5)
         q(a, "varied_diet", "Balanced Diet", "Feed different kinds of food: pellets, flakes, granules, frozen and live food. A varied diet speeds up the recovery and shows in the colours of the bettas; the tank menu shows the food groups a fish ate lately. Open the menu of such a tank.");
         q(a, "mirror", "Mirror, Mirror", "Hold a mirror stick to the glass: a male betta flares at his reflection. A little flaring keeps him fit.");
         q(a, "recovered", "Back on Fin", "Nurse a sick or injured betta back to health: clean, warm water and good food.");

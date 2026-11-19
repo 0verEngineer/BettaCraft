@@ -67,8 +67,36 @@ public final class QuestGameTests {
      */
     private static Component title(GameTestHelper h, Object questObject) throws ReflectiveOperationException {
         String raw = (String) call(questObject, "getRawTitle");
+        if (raw == null || raw.isEmpty()) raw = translatedTitle(questObject);
         Method parse = Class.forName("dev.ftb.mods.ftbquests.util.TextUtils").getMethod("parseRawText", String.class, HolderLookup.Provider.class);
         return (Component) parse.invoke(null, raw, h.getLevel().registryAccess());
+    }
+
+    /**
+     * M52c: FTB Quests 26.1 moves the titles of a chapter into its translation tables on load ({@code lang/<locale>.json5}); the
+     * raw title is empty then. The title of the fallback locale (en_us): our JSON text component with the translation key.
+     */
+    private static String translatedTitle(Object questObject) throws ReflectiveOperationException {
+        Object file = questFile();
+        Object manager = file.getClass().getMethod("getTranslationManager").invoke(file);
+        Class<?> keyType = Class.forName("dev.ftb.mods.ftbquests.quest.translation.TranslationKey");
+        Object titleKey = keyType.getField("TITLE").get(null);
+        String locale = (String) file.getClass().getMethod("getFallbackLocale").invoke(file);
+        Class<?> base = Class.forName("dev.ftb.mods.ftbquests.quest.QuestObjectBase");
+        Object t = manager.getClass().getMethod("getStringTranslation", base, String.class, keyType).invoke(manager, questObject, locale, titleKey);
+        return ((java.util.Optional<?>) t).map(Object::toString).orElse("");
+    }
+
+    /** The quest progress of the player's team: getOrCreateTeamData(Entity) before FTB Quests 26.1, getTeamData(Player) since. */
+    private static Object teamData(Object file, ServerPlayer sp) throws ReflectiveOperationException {
+        try {
+            return file.getClass().getMethod("getOrCreateTeamData", net.minecraft.world.entity.Entity.class).invoke(file, sp);
+        } catch (NoSuchMethodException e) {
+            Object known = file.getClass().getMethod("getTeamData", net.minecraft.world.entity.player.Player.class).invoke(file, sp);
+            if (known instanceof java.util.Optional<?> o && o.isPresent()) return o.get();
+            // the personal team of a player has the player's UUID
+            return file.getClass().getMethod("getOrCreateTeamData", java.util.UUID.class).invoke(file, sp.getUUID());
+        }
     }
 
     private static Object questFile() throws ReflectiveOperationException {
@@ -96,8 +124,26 @@ public final class QuestGameTests {
     /** The data of a quest as FTB Quests writes it (invisible, optional ...). */
     private static CompoundTag data(GameTestHelper h, Object quest) throws ReflectiveOperationException {
         CompoundTag nbt = new CompoundTag();
-        quest.getClass().getMethod("writeData", CompoundTag.class, HolderLookup.Provider.class).invoke(quest, nbt, h.getLevel().registryAccess());
-        return nbt;
+        for (Method m : quest.getClass().getMethods()) {
+            if (!m.getName().equals("writeData") || m.getParameterCount() != 2 || m.getParameterTypes()[1] != HolderLookup.Provider.class) continue;
+            Class<?> type = m.getParameterTypes()[0];
+            if (type == CompoundTag.class) {
+                m.invoke(quest, nbt, h.getLevel().registryAccess());
+                return nbt;
+            }
+            if (type.getName().equals("de.marhali.json5.Json5Object")) {
+                // M52c: FTB Quests 26.1 keeps its data as JSON5; the two flags the tests read
+                Object json = type.getConstructor().newInstance();
+                m.invoke(quest, json, h.getLevel().registryAccess());
+                for (String key : new String[]{"invisible", "optional"}) {
+                    if (!(boolean) type.getMethod("has", String.class).invoke(json, key)) continue;
+                    Object element = type.getMethod("get", String.class).invoke(json, key);
+                    nbt.putBoolean(key, (boolean) element.getClass().getMethod("getAsBoolean").invoke(element));
+                }
+                return nbt;
+            }
+        }
+        throw new NoSuchMethodException("writeData of " + quest.getClass().getName());
     }
 
     @SuppressWarnings("unchecked")
@@ -186,7 +232,7 @@ public final class QuestGameTests {
             Map<String, Object> q = quests(h);
             for (String a : List.of("build_tank", "swamp_water", "mosquito_larvae", "paludarium")) grant(sp, a);
             Object file = questFile();
-            Object team = file.getClass().getMethod("getOrCreateTeamData", net.minecraft.world.entity.Entity.class).invoke(file, sp);
+            Object team = teamData(file, sp);
             Method completed = team.getClass().getMethod("isCompleted", Class.forName("dev.ftb.mods.ftbquests.quest.QuestObject"));
             // the player tick of FTB Quests (a mock player is not ticked by a connection; the client smoke has a real one)
             h.onEachTick(() -> LoaderHooks.get().playerTickPost(sp));

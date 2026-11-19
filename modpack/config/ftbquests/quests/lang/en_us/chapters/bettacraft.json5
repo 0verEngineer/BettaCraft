@@ -1,0 +1,454 @@
+{
+  "chapter.0FF5E06CEEDCCE85.title": "{\"translate\":\"quest.bettacraft.chapter.title\"}",
+  "chapter.0FF5E06CEEDCCE85.chapter_subtitle": [
+    "{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"
+  ],
+  "quest.5C6C5D793BB24640.title": "{\"translate\":\"quest.bettacraft.first_tank.title\"}",
+  "quest.5C6C5D793BB24640.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.first_tank.desc\"}"
+  ],
+  "quest.6058DB3D7A2AAD93.title": "{\"translate\":\"quest.bettacraft.fill_tank.title\"}",
+  "quest.6058DB3D7A2AAD93.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fill_tank.desc\"}"
+  ],
+  "quest.332DA21D75F9F762.title": "{\"translate\":\"quest.bettacraft.equipment.title\"}",
+  "quest.332DA21D75F9F762.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.equipment.desc\"}"
+  ],
+  "quest.0FA8EE109B98994D.title": "{\"translate\":\"quest.bettacraft.catch_betta.title\"}",
+  "quest.0FA8EE109B98994D.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.catch_betta.desc\"}"
+  ],
+  "quest.009F38F06F92C81B.title": "{\"translate\":\"quest.bettacraft.insert_betta.title\"}",
+  "quest.009F38F06F92C81B.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.insert_betta.desc\"}"
+  ],
+  "quest.6267BCB864A08A07.title": "{\"translate\":\"quest.bettacraft.pellets.title\"}",
+  "quest.6267BCB864A08A07.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.pellets.desc\"}"
+  ],
+  "quest.53F328A57993B302.title": "{\"translate\":\"quest.bettacraft.feeder.title\"}",
+  "quest.53F328A57993B302.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.feeder.desc\"}"
+  ],
+  "quest.344884F1CB23D20A.title": "{\"translate\":\"quest.bettacraft.test_kits.title\"}",
+  "quest.344884F1CB23D20A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.test_kits.desc\"}"
+  ],
+  "quest.620436BD548D0A1A.title": "{\"translate\":\"quest.bettacraft.water_change.title\"}",
+  "quest.620436BD548D0A1A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.water_change.desc\"}"
+  ],
+  "quest.043434008FB3F75F.title": "{\"translate\":\"quest.bettacraft.tropical.title\"}",
+  "quest.043434008FB3F75F.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.tropical.desc\"}"
+  ],
+  "quest.56ED14C9233146D9.title": "{\"translate\":\"quest.bettacraft.external_filter.title\"}",
+  "quest.56ED14C9233146D9.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.external_filter.desc\"}"
+  ],
+  "quest.026F97513CEA5B07.title": "{\"translate\":\"quest.bettacraft.reverse_osmosis.title\"}",
+  "quest.026F97513CEA5B07.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.reverse_osmosis.desc\"}"
+  ],
+  "quest.342BC3FE4B8D6476.title": "{\"translate\":\"quest.bettacraft.nest.title\"}",
+  "quest.342BC3FE4B8D6476.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.nest.desc\"}"
+  ],
+  "quest.2DC6A271E943D192.title": "{\"translate\":\"quest.bettacraft.spawned.title\"}",
+  "quest.2DC6A271E943D192.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.spawned.desc\"}"
+  ],
+  "quest.61414968449F2D18.title": "{\"translate\":\"quest.bettacraft.fry_food.title\"}",
+  "quest.61414968449F2D18.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fry_food.desc\"}"
+  ],
+  "quest.7FD751D21437F1EE.title": "{\"translate\":\"quest.bettacraft.fry_free.title\"}",
+  "quest.7FD751D21437F1EE.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fry_free.desc\"}"
+  ],
+  "quest.01E489221BBC716C.title": "{\"translate\":\"quest.bettacraft.grown_up.title\"}",
+  "quest.01E489221BBC716C.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.grown_up.desc\"}"
+  ],
+  "quest.71B6790E967289AB.title": "{\"translate\":\"quest.bettacraft.variety.title\"}",
+  "quest.71B6790E967289AB.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.variety.desc\"}"
+  ],
+  "quest.036D50BEE6808EDA.title": "{\"translate\":\"quest.bettacraft.dynasty.title\"}",
+  "quest.036D50BEE6808EDA.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.dynasty.desc\"}"
+  ],
+  "quest.644840C2E1FE3E99.title": "{\"translate\":\"quest.bettacraft.interior.title\"}",
+  "quest.644840C2E1FE3E99.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.interior.desc\"}"
+  ],
+  "quest.658550899CE36974.title": "{\"translate\":\"quest.bettacraft.substrate.title\"}",
+  "quest.658550899CE36974.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.substrate.desc\"}"
+  ],
+  "quest.75D3903D1DF5B32F.title": "{\"translate\":\"quest.bettacraft.plants.title\"}",
+  "quest.75D3903D1DF5B32F.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.plants.desc\"}"
+  ],
+  "quest.5ECEBCDAC99C2BB8.title": "{\"translate\":\"quest.bettacraft.co2.title\"}",
+  "quest.5ECEBCDAC99C2BB8.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.co2.desc\"}"
+  ],
+  "quest.7DB42509E4844F84.title": "{\"translate\":\"quest.bettacraft.sea_water.title\"}",
+  "quest.7DB42509E4844F84.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.sea_water.desc\"}"
+  ],
+  "quest.02C60C6563D36E9F.title": "{\"translate\":\"quest.bettacraft.skimmer.title\"}",
+  "quest.02C60C6563D36E9F.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.skimmer.desc\"}"
+  ],
+  "quest.554CC8B275E53450.title": "{\"translate\":\"quest.bettacraft.corals.title\"}",
+  "quest.554CC8B275E53450.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.corals.desc\"}"
+  ],
+  "quest.30B15AE3CC36ACF4.title": "{\"translate\":\"quest.bettacraft.dosing.title\"}",
+  "quest.30B15AE3CC36ACF4.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.dosing.desc\"}"
+  ],
+  "quest.4E30D3D4FB9A8E8A.title": "{\"translate\":\"quest.bettacraft.big_tank.title\"}",
+  "quest.4E30D3D4FB9A8E8A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.big_tank.desc\"}"
+  ],
+  "quest.10F8033E9470D0A8.title": "{\"translate\":\"quest.bettacraft.food_maker.title\"}",
+  "quest.10F8033E9470D0A8.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.food_maker.desc\"}"
+  ],
+  "quest.5E03E6A535E43F5C.title": "{\"translate\":\"quest.bettacraft.monitor.title\"}",
+  "quest.5E03E6A535E43F5C.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.monitor.desc\"}"
+  ],
+  "quest.0F6FB9FD16071253.title": "{\"translate\":\"quest.bettacraft.terrarium.title\"}",
+  "quest.0F6FB9FD16071253.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.terrarium.desc\"}"
+  ],
+  "quest.7CAC1CAEA3250091.title": "{\"translate\":\"quest.bettacraft.terrarium_gear.title\"}",
+  "quest.7CAC1CAEA3250091.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.terrarium_gear.desc\"}"
+  ],
+  "quest.579C634651FDB567.title": "{\"translate\":\"quest.bettacraft.gecko.title\"}",
+  "quest.579C634651FDB567.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.gecko.desc\"}"
+  ],
+  "quest.5365BC09764502A3.title": "{\"translate\":\"quest.bettacraft.varied_diet.title\"}",
+  "quest.5365BC09764502A3.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.varied_diet.desc\"}"
+  ],
+  "quest.5C7D443EA9761181.title": "{\"translate\":\"quest.bettacraft.mirror.title\"}",
+  "quest.5C7D443EA9761181.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mirror.desc\"}"
+  ],
+  "quest.48BC2BEAAA2FF6CD.title": "{\"translate\":\"quest.bettacraft.recovered.title\"}",
+  "quest.48BC2BEAAA2FF6CD.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.recovered.desc\"}"
+  ],
+  "quest.7FB8180F6FB93733.title": "{\"translate\":\"quest.bettacraft.magnifier.title\"}",
+  "quest.7FB8180F6FB93733.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.magnifier.desc\"}"
+  ],
+  "quest.6D7B663D4A57F256.title": "{\"translate\":\"quest.bettacraft.fight.title\"}",
+  "quest.6D7B663D4A57F256.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fight.desc\"}"
+  ],
+  "quest.1B3A9B6D7AD9A5B2.title": "{\"translate\":\"quest.bettacraft.fish_bag.title\"}",
+  "quest.1B3A9B6D7AD9A5B2.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fish_bag.desc\"}"
+  ],
+  "quest.488926E66E35A9EC.title": "{\"translate\":\"quest.bettacraft.cabinet.title\"}",
+  "quest.488926E66E35A9EC.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.cabinet.desc\"}"
+  ],
+  "quest.72A818B1562BE874.title": "{\"translate\":\"quest.bettacraft.cooler.title\"}",
+  "quest.72A818B1562BE874.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.cooler.desc\"}"
+  ],
+  "quest.01682CC883D50A03.title": "{\"translate\":\"quest.bettacraft.aeration.title\"}",
+  "quest.01682CC883D50A03.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.aeration.desc\"}"
+  ],
+  "quest.3C39DABF588FD0F0.title": "{\"translate\":\"quest.bettacraft.sponge_filter.title\"}",
+  "quest.3C39DABF588FD0F0.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.sponge_filter.desc\"}"
+  ],
+  "quest.679658351E0E4A16.title": "{\"translate\":\"quest.bettacraft.led_lights.title\"}",
+  "quest.679658351E0E4A16.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.led_lights.desc\"}"
+  ],
+  "quest.3578E8796184ABEA.title": "{\"translate\":\"quest.bettacraft.light_timer.title\"}",
+  "quest.3578E8796184ABEA.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.light_timer.desc\"}"
+  ],
+  "quest.6D64AA4FC08CF1F8.title": "{\"translate\":\"quest.bettacraft.regulator.title\"}",
+  "quest.6D64AA4FC08CF1F8.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.regulator.desc\"}"
+  ],
+  "quest.53877E113DB3552D.title": "{\"translate\":\"quest.bettacraft.powered.title\"}",
+  "quest.53877E113DB3552D.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.powered.desc\"}"
+  ],
+  "quest.470E699F3A213CE3.title": "{\"translate\":\"quest.bettacraft.wound_up.title\"}",
+  "quest.470E699F3A213CE3.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.wound_up.desc\"}"
+  ],
+  "quest.75F7A0B9785676A9.title": "{\"translate\":\"quest.bettacraft.pipes.title\"}",
+  "quest.75F7A0B9785676A9.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.pipes.desc\"}"
+  ],
+  "quest.4F5509F16121A7AD.title": "{\"translate\":\"quest.bettacraft.stainless_steel.title\"}",
+  "quest.4F5509F16121A7AD.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.stainless_steel.desc\"}"
+  ],
+  "quest.0AF865004DBC0D91.title": "{\"translate\":\"quest.bettacraft.interior_pipes.title\"}",
+  "quest.0AF865004DBC0D91.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.interior_pipes.desc\"}"
+  ],
+  "quest.42BEF0FC5132BF87.title": "{\"translate\":\"quest.bettacraft.auto_water_change.title\"}",
+  "quest.42BEF0FC5132BF87.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.auto_water_change.desc\"}"
+  ],
+  "quest.216DE45855BE76D6.title": "{\"translate\":\"quest.bettacraft.top_off.title\"}",
+  "quest.216DE45855BE76D6.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.top_off.desc\"}"
+  ],
+  "quest.510CECC79FBBC892.title": "{\"translate\":\"quest.bettacraft.multiblock_filter.title\"}",
+  "quest.510CECC79FBBC892.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.multiblock_filter.desc\"}"
+  ],
+  "quest.1A4B85F432B08214.title": "{\"translate\":\"quest.bettacraft.filter_lines.title\"}",
+  "quest.1A4B85F432B08214.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.filter_lines.desc\"}"
+  ],
+  "quest.59751637124444CF.title": "{\"translate\":\"quest.bettacraft.shared_filter.title\"}",
+  "quest.59751637124444CF.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.shared_filter.desc\"}"
+  ],
+  "quest.6F98F06CCF52AFE0.title": "{\"translate\":\"quest.bettacraft.filter_water.title\"}",
+  "quest.6F98F06CCF52AFE0.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.filter_water.desc\"}"
+  ],
+  "quest.4AFD01C67F21FCE0.title": "{\"translate\":\"quest.bettacraft.pipe_covers.title\"}",
+  "quest.4AFD01C67F21FCE0.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.pipe_covers.desc\"}"
+  ],
+  "quest.31C624DAC367A3E0.title": "{\"translate\":\"quest.bettacraft.decor.title\"}",
+  "quest.31C624DAC367A3E0.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.decor.desc\"}"
+  ],
+  "quest.3748EDB07ADB9D32.title": "{\"translate\":\"quest.bettacraft.floating_plants.title\"}",
+  "quest.3748EDB07ADB9D32.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.floating_plants.desc\"}"
+  ],
+  "quest.52B4B50D3EFCDA8E.title": "{\"translate\":\"quest.bettacraft.algae.title\"}",
+  "quest.52B4B50D3EFCDA8E.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.algae.desc\"}"
+  ],
+  "quest.61570953972B32EB.title": "{\"translate\":\"quest.bettacraft.fertilizer.title\"}",
+  "quest.61570953972B32EB.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fertilizer.desc\"}"
+  ],
+  "quest.7A46AACB03781D58.title": "{\"translate\":\"quest.bettacraft.fertilizer_dosing.title\"}",
+  "quest.7A46AACB03781D58.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.fertilizer_dosing.desc\"}"
+  ],
+  "quest.3430A4A0B81203DE.title": "{\"translate\":\"quest.bettacraft.swamp_water.title\"}",
+  "quest.3430A4A0B81203DE.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.swamp_water.desc\"}"
+  ],
+  "quest.3862216ED34872FD.title": "{\"translate\":\"quest.bettacraft.mosquito_larvae.title\"}",
+  "quest.3862216ED34872FD.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mosquito_larvae.desc\"}"
+  ],
+  "quest.487074730F490CA1.title": "{\"translate\":\"quest.bettacraft.food_bred.title\"}",
+  "quest.487074730F490CA1.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.food_bred.desc\"}"
+  ],
+  "quest.50881BA3D01EA5FB.title": "{\"translate\":\"quest.bettacraft.cultures.title\"}",
+  "quest.50881BA3D01EA5FB.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.cultures.desc\"}"
+  ],
+  "quest.5081D90A0F2A12AF.title": "{\"translate\":\"quest.bettacraft.live_food_pump.title\"}",
+  "quest.5081D90A0F2A12AF.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.live_food_pump.desc\"}"
+  ],
+  "quest.54D6D4C90E19DD2D.title": "{\"translate\":\"quest.bettacraft.tankmates.title\"}",
+  "quest.54D6D4C90E19DD2D.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.tankmates.desc\"}"
+  ],
+  "quest.5FF59AD48EFAA8B9.title": "{\"translate\":\"quest.bettacraft.livebearer_litter.title\"}",
+  "quest.5FF59AD48EFAA8B9.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.livebearer_litter.desc\"}"
+  ],
+  "quest.02B45FD53E5A02C9.title": "{\"translate\":\"quest.bettacraft.guppy_strain.title\"}",
+  "quest.02B45FD53E5A02C9.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.guppy_strain.desc\"}"
+  ],
+  "quest.4DADA7BCF76545ED.title": "{\"translate\":\"quest.bettacraft.guppy_hybrid.title\"}",
+  "quest.4DADA7BCF76545ED.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.guppy_hybrid.desc\"}"
+  ],
+  "quest.0E08C6DA6E5B7931.title": "{\"translate\":\"quest.bettacraft.guppy_collection.title\"}",
+  "quest.0E08C6DA6E5B7931.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.guppy_collection.desc\"}"
+  ],
+  "quest.3DEFAAC36C44BDCA.title": "{\"translate\":\"quest.bettacraft.community_fish.title\"}",
+  "quest.3DEFAAC36C44BDCA.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.community_fish.desc\"}"
+  ],
+  "quest.4FB87B30EB5E39ED.title": "{\"translate\":\"quest.bettacraft.cichlids.title\"}",
+  "quest.4FB87B30EB5E39ED.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.cichlids.desc\"}"
+  ],
+  "quest.6325160EE909C53F.title": "{\"translate\":\"quest.bettacraft.puffers.title\"}",
+  "quest.6325160EE909C53F.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.puffers.desc\"}"
+  ],
+  "quest.5A3E6EF6E0E8C0E6.title": "{\"translate\":\"quest.bettacraft.barbs_loaches.title\"}",
+  "quest.5A3E6EF6E0E8C0E6.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.barbs_loaches.desc\"}"
+  ],
+  "quest.7F9D295353C2087A.title": "{\"translate\":\"quest.bettacraft.gouramis.title\"}",
+  "quest.7F9D295353C2087A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.gouramis.desc\"}"
+  ],
+  "quest.0C0C9070FC75B9C4.title": "{\"translate\":\"quest.bettacraft.critters.title\"}",
+  "quest.0C0C9070FC75B9C4.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.critters.desc\"}"
+  ],
+  "quest.2754F2DD6EA86AEC.title": "{\"translate\":\"quest.bettacraft.critters_bred.title\"}",
+  "quest.2754F2DD6EA86AEC.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.critters_bred.desc\"}"
+  ],
+  "quest.4E1E551B96DB1C2E.title": "{\"translate\":\"quest.bettacraft.frogs.title\"}",
+  "quest.4E1E551B96DB1C2E.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.frogs.desc\"}"
+  ],
+  "quest.385712AF426BACFF.title": "{\"translate\":\"quest.bettacraft.reef_fish.title\"}",
+  "quest.385712AF426BACFF.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.reef_fish.desc\"}"
+  ],
+  "quest.60AF085A2D36CD9A.title": "{\"translate\":\"quest.bettacraft.seahorse.title\"}",
+  "quest.60AF085A2D36CD9A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.seahorse.desc\"}"
+  ],
+  "quest.2F171F3395355E51.title": "{\"translate\":\"quest.bettacraft.seahorse_fry.title\"}",
+  "quest.2F171F3395355E51.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.seahorse_fry.desc\"}"
+  ],
+  "quest.3474EC678152B36E.title": "{\"translate\":\"quest.bettacraft.paludarium.title\"}",
+  "quest.3474EC678152B36E.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.paludarium.desc\"}"
+  ],
+  "quest.11149ADEF1FED706.title": "{\"translate\":\"quest.bettacraft.turtles.title\"}",
+  "quest.11149ADEF1FED706.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.turtles.desc\"}"
+  ],
+  "quest.26B4EE0DC56C6964.title": "{\"translate\":\"quest.bettacraft.turtle_clutch.title\"}",
+  "quest.26B4EE0DC56C6964.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.turtle_clutch.desc\"}"
+  ],
+  "quest.566F679B73D0E1DF.title": "{\"translate\":\"quest.bettacraft.sea_turtle.title\"}",
+  "quest.566F679B73D0E1DF.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.sea_turtle.desc\"}"
+  ],
+  "quest.7BEBD68AF3590E4A.title": "{\"translate\":\"quest.bettacraft.pets.title\"}",
+  "quest.7BEBD68AF3590E4A.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.pets.desc\"}"
+  ],
+  "quest.327AF685E7AA88BD.title": "{\"translate\":\"quest.bettacraft.herp_clutch.title\"}",
+  "quest.327AF685E7AA88BD.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.herp_clutch.desc\"}"
+  ],
+  "quest.34FD9DC948DEEB04.title": "{\"translate\":\"quest.bettacraft.big_gear.title\"}",
+  "quest.34FD9DC948DEEB04.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.big_gear.desc\"}"
+  ],
+  "quest.0C77EF36233BC80D.title": "{\"translate\":\"quest.bettacraft.big_animal.title\"}",
+  "quest.0C77EF36233BC80D.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.big_animal.desc\"}"
+  ],
+  "quest.7AFF8293ED1A4F63.title": "{\"translate\":\"quest.bettacraft.foreign_animal.title\"}",
+  "quest.7AFF8293ED1A4F63.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.foreign_animal.desc\"}"
+  ],
+  "quest.36D9BBBFAAF4B61C.title": "{\"translate\":\"quest.bettacraft.mob_in_glass.title\"}",
+  "quest.36D9BBBFAAF4B61C.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mob_in_glass.desc\"}"
+  ],
+  "quest.663B15EEFEA08E9F.title": "{\"translate\":\"quest.bettacraft.create_drive.title\"}",
+  "quest.663B15EEFEA08E9F.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.create_drive.desc\"}"
+  ],
+  "quest.2E62BB1B7A378210.title": "{\"translate\":\"quest.bettacraft.travelling_tank.title\"}",
+  "quest.2E62BB1B7A378210.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.travelling_tank.desc\"}"
+  ],
+  "quest.4069EE4320B460B1.title": "{\"translate\":\"quest.bettacraft.aquarist.title\"}",
+  "quest.4069EE4320B460B1.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.aquarist.desc\"}"
+  ],
+  "quest.15CA0D23F64FC275.title": "{\"translate\":\"quest.bettacraft.frog_tadpole.title\"}",
+  "quest.15CA0D23F64FC275.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.frog_tadpole.desc\"}"
+  ],
+  "quest.49F42BF6BE489467.title": "{\"translate\":\"quest.bettacraft.bottom_fish.title\"}",
+  "quest.49F42BF6BE489467.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.bottom_fish.desc\"}"
+  ],
+  "quest.25371DCC86813117.title": "{\"translate\":\"quest.bettacraft.tetra_cory_form.title\"}",
+  "quest.25371DCC86813117.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.tetra_cory_form.desc\"}"
+  ],
+  "quest.0D1A9EFF9B762D61.title": "{\"translate\":\"quest.bettacraft.mandarin.title\"}",
+  "quest.0D1A9EFF9B762D61.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mandarin.desc\"}"
+  ],
+  "quest.001209BB95E4D901.title": "{\"translate\":\"quest.bettacraft.banggai.title\"}",
+  "quest.001209BB95E4D901.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.banggai.desc\"}"
+  ],
+  "quest.6BC35CC922866BC1.title": "{\"translate\":\"quest.bettacraft.clown_larvae.title\"}",
+  "quest.6BC35CC922866BC1.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.clown_larvae.desc\"}"
+  ],
+  "quest.4DCACB4D4287A6E0.title": "{\"translate\":\"quest.bettacraft.sump.title\"}",
+  "quest.4DCACB4D4287A6E0.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.sump.desc\"}"
+  ],
+  "quest.071A5E9C6657C571.title": "{\"translate\":\"quest.bettacraft.refugium.title\"}",
+  "quest.071A5E9C6657C571.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.refugium.desc\"}"
+  ],
+  "quest.1EAFF37C7C37FC32.title": "{\"translate\":\"quest.bettacraft.calcium_reactor.title\"}",
+  "quest.1EAFF37C7C37FC32.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.calcium_reactor.desc\"}"
+  ],
+  "quest.3BB1DF945431649D.title": "{\"translate\":\"quest.bettacraft.archerfish.title\"}",
+  "quest.3BB1DF945431649D.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.archerfish.desc\"}"
+  ],
+  "quest.12E8BD7D9E1D81FE.title": "{\"translate\":\"quest.bettacraft.mudskipper.title\"}",
+  "quest.12E8BD7D9E1D81FE.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mudskipper.desc\"}"
+  ],
+  "quest.29CE184E06DB9FA6.title": "{\"translate\":\"quest.bettacraft.mangrove.title\"}",
+  "quest.29CE184E06DB9FA6.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.mangrove.desc\"}"
+  ],
+  "quest.3D46AA8518E83DD2.title": "{\"translate\":\"quest.bettacraft.amano.title\"}",
+  "quest.3D46AA8518E83DD2.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.amano.desc\"}"
+  ],
+  "quest.6EFB410DE3B61DCB.title": "{\"translate\":\"quest.bettacraft.powered_trip.title\"}",
+  "quest.6EFB410DE3B61DCB.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.powered_trip.desc\"}"
+  ],
+  "quest.4B6906DE47FD1153.title": "{\"translate\":\"quest.bettacraft.aquarist_hired.title\"}",
+  "quest.4B6906DE47FD1153.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.aquarist_hired.desc\"}"
+  ]
+}
