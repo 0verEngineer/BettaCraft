@@ -1,3 +1,4 @@
+// M52b: the 1.21.11 port of this file (Mojang names of 1.21.11; the platform item handler).
 package org.overengineer.bettacraft.command;
 
 import com.google.gson.GsonBuilder;
@@ -13,7 +14,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -126,7 +127,7 @@ public final class DevUpgradeReference {
                 BlockPos cp = at.offset(x, 0, 0);
                 level.setBlockAndUpdate(cp, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
                 if (level.getBlockEntity(cp) instanceof CabinetBlockEntity cab) {
-                    cab.setWood(ResourceLocation.withDefaultNamespace(woods[i]));
+                    cab.setWood(Identifier.withDefaultNamespace(woods[i]));
                     if (x == 0) {
                         ItemStack f = new ItemStack(ModItems.EXTERNAL_FILTER.get());
                         FilterHeaters.write(f, List.of(new ItemStack(i % 2 == 0 ? ModItems.HEATER_MEDIUM.get() : ModItems.HEATER_SMALL.get()), ItemStack.EMPTY));
@@ -162,7 +163,7 @@ public final class DevUpgradeReference {
         // chests with every item of the mod
         List<ItemStack> all = new ArrayList<>();
         for (var e : BuiltInRegistries.ITEM.entrySet()) {
-            if (!e.getKey().location().getNamespace().equals("bettacraft")) continue;
+            if (!e.getKey().identifier().getNamespace().equals("bettacraft")) continue;
             all.add(new ItemStack(e.getValue()));
         }
         all.add(BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(BettaGenome.randomDomestic(r), true, level.getGameTime())));
@@ -212,7 +213,7 @@ public final class DevUpgradeReference {
         root.addProperty("version", net.neoforged.fml.ModList.get().getModContainerById("bettacraft").map(m -> m.getModInfo().getVersion().toString()).orElse("?"));
         root.addProperty("gameTime", level.getGameTime());
         JsonArray tanks = new JsonArray(), chests = new JsonArray();
-        BlockPos spawn = level.getSharedSpawnPos();
+        BlockPos spawn = level.getRespawnData().pos();
         int cx0 = (spawn.getX() >> 4) - 2, cz0 = (spawn.getZ() >> 4) - 2;
         for (int cx = cx0; cx < cx0 + 14; cx++)
             for (int cz = cz0; cz < cz0 + 10; cz++) {
@@ -293,7 +294,7 @@ public final class DevUpgradeReference {
         BlockPos lo = t.min().offset(-1, -1, -1), hi = t.max().offset(1, 1, 1);
         for (BlockPos p : BlockPos.betweenClosed(lo, hi)) {
             BlockState s = level.getBlockState(p);
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
+            Identifier id = BuiltInRegistries.BLOCK.getKey(s.getBlock());
             if (!id.getNamespace().equals("bettacraft") || s.is(ModBlocks.TANK.get())) continue;
             JsonObject e = new JsonObject();
             e.addProperty("pos", p.asLong());
@@ -314,7 +315,7 @@ public final class DevUpgradeReference {
         return o;
     }
 
-    private static String items(net.neoforged.neoforge.items.IItemHandler h) {
+    private static String items(org.overengineer.bettacraft.platform.item.IItemHandler h) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < h.getSlots(); i++) {
             ItemStack s = h.getStackInSlot(i);

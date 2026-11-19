@@ -18,6 +18,10 @@ git -C "$REPO" worktree add --detach "$WT" "$COMMIT"
 # the dev code is in src/main up to 1.13.x and in the dev source set src/dev from 1.14.0 (M22) on
 CMD="$WT/src/main/java/org/overengineer/bettacraft/command"
 if [ -f "$WT/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/src/dev/java/org/overengineer/bettacraft/command"; fi
+# M52 multiloader layout: the dev source set is neoforge/src/dev; M52b (1.21.11): the runs live in run/1.21.11
+if [ -f "$WT/neoforge/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/neoforge/src/dev/java/org/overengineer/bettacraft/command"; fi
+SAVES_REL="run/saves"
+if grep -q "run/1.21.11" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL="run/1.21.11/saves"; fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
 SHOW="$CMD/DevShowcase.java"
 # extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.
@@ -52,10 +56,10 @@ PY
 # its own run directory (nothing is shared with this repo's run/)
 (cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q)
 grep -q "MANIFEST WRITTEN" "$WT/build/showcase/server.log" || { echo "no manifest, see $WT/build/showcase/server.log"; exit 1; }
-rm -rf "$REPO/run/saves/$NAME"
-mkdir -p "$REPO/run/saves"
-cp -r "$WT/run/saves/Bettacraft Schaukasten" "$REPO/run/saves/$NAME"
-rm -f "$REPO/run/saves/$NAME/session.lock"
-echo "commit $COMMIT built $(date)" > "$REPO/run/saves/$NAME/bettacraft_reference_version.txt"
+rm -rf "$REPO/$SAVES_REL/$NAME"
+mkdir -p "$REPO/$SAVES_REL"
+cp -r "$WT/$SAVES_REL/Bettacraft Schaukasten" "$REPO/$SAVES_REL/$NAME"
+rm -f "$REPO/$SAVES_REL/$NAME/session.lock"
+echo "commit $COMMIT built $(date)" > "$REPO/$SAVES_REL/$NAME/bettacraft_reference_version.txt"
 git -C "$REPO" worktree remove --force "$WT"
-echo "reference world: $REPO/run/saves/$NAME"
+echo "reference world: $REPO/$SAVES_REL/$NAME"
