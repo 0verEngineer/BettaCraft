@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Development only ({@code -Dbettacraft.background=true}, set for the client smoke tests and {@code -Pbackground}):
@@ -34,12 +35,28 @@ public abstract class BackgroundWindowMixin {
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
     }
 
-    /** M52: Fabric (no early loading window): the window hints before vanilla creates the window. */
-    @Inject(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwCreateWindow(IILjava/lang/CharSequence;JJ)J", remap = false))
-    private void bettacraft$unfocusedHintsVanilla(CallbackInfo ci) {
+    /**
+     * 26.x: the window is created in the static {@code createGlfwWindow} (after the backend's own hints), not in the
+     * constructor any more; the hints go right before {@code glfwCreateWindow}. Without them the window takes the focus
+     * and captures the mouse of the developer.
+     */
+    @Inject(method = "createGlfwWindow", require = 1, at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwCreateWindow(IILjava/lang/CharSequence;JJ)J", remap = false))
+    private static void bettacraft$unfocusedHintsVanilla(CallbackInfoReturnable<Long> cir) {
         if (!BACKGROUND) return;
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
+        HINTS_APPLIED = true;
+    }
+
+    private static boolean HINTS_APPLIED;
+
+    /** Verifiable: whether the background window really came up without the focus (logged once, after it is shown). */
+    @Inject(method = "<init>", require = 1, at = @At("TAIL"))
+    private void bettacraft$logFocus(CallbackInfo ci) {
+        if (!BACKGROUND) return;
+        boolean focused = GLFW.glfwGetWindowAttrib(((Window) (Object) this).handle(), GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
+        org.slf4j.LoggerFactory.getLogger("bettacraft/background").info("[background] window created: hints applied {}, focused {}",
+                HINTS_APPLIED, focused);
     }
 
     @Inject(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setMode()V"))
