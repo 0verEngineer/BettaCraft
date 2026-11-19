@@ -237,7 +237,9 @@ On **Minecraft 26.2** everything works as on 26.1.2 (the trades are data there t
 integration there: FTB Quests (so there is no quest chapter), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
 Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Better Fish Tanks, Fintastic, Critters and Companions, The
 Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes
-We've Gone and EMI. Naturalist is back on 26.2 (NeoForge and Fabric).
+We've Gone and EMI. Naturalist is back on 26.2 (NeoForge and Fabric). In a **peaceful** world 26.2 has no monsters at all: a mob jar
+with a monster can neither be opened nor put into a terrarium there, and a monster in a terrarium is gone once its chunk is
+loaded in peaceful (like every other monster).
 
 ## Other mods
 

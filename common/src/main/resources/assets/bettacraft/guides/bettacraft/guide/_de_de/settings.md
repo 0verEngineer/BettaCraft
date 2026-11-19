@@ -244,7 +244,9 @@ Auf **Minecraft 26.2** funktioniert alles wie auf 26.1.2 (auch dort ist der Hand
 keine Anbindung: FTB Quests (daher gibt es kein Quest-Kapitel), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
 Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Better Fish Tanks, Fintastic, Critters and Companions, The
 Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes
-We've Gone und EMI. Naturalist gibt es auf 26.2 wieder (NeoForge und Fabric).
+We've Gone und EMI. Naturalist gibt es auf 26.2 wieder (NeoForge und Fabric). In einer **friedlichen** Welt gibt es auf 26.2 gar keine
+Monster: Ein Monsterglas lässt sich dort weder öffnen noch in ein Terrarium setzen, und ein Monster im Terrarium ist weg, sobald
+sein Chunk im friedlichen Modus geladen wird (wie jedes andere Monster).
 
 ## Andere Mods
 

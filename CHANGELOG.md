@@ -4,6 +4,39 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.2)
+
+The same version for **Minecraft 26.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.2-<version>.jar` and
+`bettacraft-fabric-26.2-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.2 they load as
+usual. 26.2 gets this release and afterwards fixes for severe bugs only.
+
+### Added
+- **Minecraft 26.2**: NeoForge 26.2.0.95+ and Fabric (Fabric Loader 0.18.4+, Fabric API 0.161+, Forge Config API Port
+  26.2). The same content, ids, configs and handbook as on 26.1.2. 26.2 has no patch versions; the jars declare 26.2.
+- **Handbook:** GuideME on NeoForge (GuideME 26.2 is an alpha), a **Modonomicon** book on Fabric, English and German.
+- **Naturalist** is back (it has a 26.2 version on both loaders): its animals get our care and breeding again.
+
+### Fixed
+- A fish heading for a spot on the glass right above the floor no longer keeps pushing into the floor: it stands up there.
+- Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
+
+### Changed (Minecraft 26.2 itself)
+- Everything that drew into Minecraft's removed buffer sources (the miniature's plant meshes and sway, filter jets, the
+  decor preview, monitor, sign and thermo-hygrometer text) uses 26.2's feature rendering; the look is unchanged.
+- Generated recipes and loot tables leave out the default values (26.2 writes them so); data packs keep working.
+- The mod list shows the banner and the icon (`bannerFile` / `iconFile`; `logoFile` is deprecated in NeoForge 26.2).
+- **Peaceful worlds have no monsters at all** in 26.2: a mob jar with a monster can neither be opened nor put into a
+  terrarium there (the jar stays full), and a monster in a terrarium is gone once its chunk loads in peaceful, like every
+  monster of 26.2.
+
+### Known gaps on 26.2
+- No 26.2 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
+  Mekanism (and Mekanism Covers), Flux Networks, EnderIO, Oritech, Industrial Foregoing, Refined Storage, LaserIO, Cable
+  Facades, Better Fish Tanks, Fintastic, Critters and Companions, The Undergarden, Ice and Fire, Sushi Go Crafting, Twilight
+  Forest, Regions Unexplored, Oh The Biomes We've Gone, Alex's Caves, Cataclysm, Deeper and Darker, Fish Eggs and EMI.
+  Applied Energistics 2 (alpha), Powah (alpha), Pipez, Integrated Dynamics, XNet, Modular Routers, Aquaculture and the
+  GuideME handbook are NeoForge only.
+
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.1.2)
 
 The same version for **Minecraft 26.1.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.1.2-<version>.jar` and

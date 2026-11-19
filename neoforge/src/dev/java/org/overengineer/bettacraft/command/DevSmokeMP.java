@@ -1065,7 +1065,11 @@ public final class DevSmokeMP {
             }
             // M31 part d: a zombie from a mob jar into the terrarium: shrunk on every client (the synced scale attribute)
             for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
+            // M52d: 26.2 has no monsters at all in a peaceful world (not created, not loaded, not taken out of a jar); the smoke
+            // world is peaceful, so this step plays on easy
+            server.setDifficulty(net.minecraft.world.Difficulty.EASY, true);
             var zombie = net.minecraft.world.entity.EntityTypes.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            check("a zombie for the mob jar", zombie != null);
             if (zombie != null) {
                 zombie.setHealth(1F);
                 var jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(zombie);
