@@ -19,6 +19,8 @@ as usual.
 
 ### Fixed
 - Mining an aquarium no longer crashes the client on 26.1 (the crack overlay asks block models without a block).
+- The tooltip lines of our blocks no longer push out those of other mods that add a block item tooltip too (sathlib in
+  ATM11): they come from an inject instead of an added method.
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
@@ -29,10 +31,15 @@ as usual.
   priorities keep their order.
 - Blocks get their render layer from their textures (26.1 has no `render_type` any more); the look is unchanged.
 - Recipes and loot keep their results as item templates (26.1); data packs for our recipe types use the same JSON.
+- **Quest chapter as JSON5:** FTB Quests 26.1 reads chapters as `.json5` only; the chapter of the modpack files is
+  `config/ftbquests/quests/chapters/bettacraft.json5` (same quests and ids). The KubeJS quest script and
+  `BettacraftApi.sendQuestEdit` follow FTB Quests 26.1 (JSON5 quest data, FTB Library's network).
+- The EnderIO 9 alloy recipe and soul vials (`EntityType` / `EntityTag`) of 26.1.
 
 ### Known gaps on 26.1.2
-- Create (with Sable and Aeronautics), Mekanism, Industrial Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic,
-  Naturalist, Critters and Companions and EMI have no 26.1.2 version: their integrations stay out of this version.
+- Create (with Sable and Aeronautics), Mekanism (and Mekanism Covers), Flux Networks, Industrial Foregoing, Farmer's
+  Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker,
+  Fish Eggs, Oh The Biomes We've Gone and EMI have no 26.1.2 version: their integrations stay out of this version.
   Applied Energistics 2, KubeJS, Aquaculture and Cable Facades exist for NeoForge only.
 
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 1.21.11)

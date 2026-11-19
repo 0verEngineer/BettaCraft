@@ -229,8 +229,9 @@ animals) are shown as items, and after changing the language the book shows the 
 On **Minecraft 26.1.2** (Fabric also 26.1 and 26.1.1) everything works as on 1.21.1, with two differences of Minecraft itself: the offers of the
 wandering trader and the aquarist are data (`villager_trade`, in the trade tags `minecraft:wandering_trader/common` /
 `uncommon` and `bettacraft:aquarist/level_1` ... `level_5`), so data packs can remove or add single offers; and mods
-without a 26.1.2 version (Create, Mekanism, Industrial Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic,
-Naturalist, Critters and Companions, EMI) have no integration there.
+without a 26.1.2 version (Create, Mekanism, Flux Networks, Industrial Foregoing, Farmer's Delight, Better Fish Tanks,
+Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes We've Gone, EMI)
+have no integration there. The FTB Quests chapter is `bettacraft.json5` there (FTB Quests 26.1 reads JSON5).
 
 ## Other mods
 
