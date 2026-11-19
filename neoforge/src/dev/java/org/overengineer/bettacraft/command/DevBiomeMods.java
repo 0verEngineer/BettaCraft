@@ -30,6 +30,11 @@ public final class DevBiomeMods {
                 && (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("regions_unexplored") || org.overengineer.bettacraft.platform.Platform.get().isModLoaded("biomeswevegone"));
     }
 
+    /** M52d: neither mapped biome mod has a build for this Minecraft version (26.2): nothing to test, not a missing jar. */
+    public static boolean allWithoutBuild() {
+        return org.overengineer.bettacraft.gametest.framework.VersionGaps.allWithoutBuild("regions_unexplored", "biomeswevegone");
+    }
+
     private static boolean loadedOrGap(String mod) {
         return org.overengineer.bettacraft.platform.Platform.get().isModLoaded(mod) || org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains(mod);
     }

@@ -118,7 +118,7 @@ public final class BiomeWatersGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void biomeModBiomesMapToTheirWaters(GameTestHelper h) {
         if (!DevBiomeMods.present()) {
-            check(!DevBiomeMods.REQUIRED, "-Pbiomes but the biome mods are not loaded");
+            check(!DevBiomeMods.REQUIRED || DevBiomeMods.allWithoutBuild(), "-Pbiomes but the biome mods are not loaded");
             h.succeed();
             return;
         }
