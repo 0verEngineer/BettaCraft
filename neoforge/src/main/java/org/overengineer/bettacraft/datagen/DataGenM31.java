@@ -129,7 +129,7 @@ final class DataGenM31 {
         DataGenM291.block(p.withExistingParent("thermo_hygrometer", p.modLoc("block/thermo_hygrometer")), 1.3F, 0, 0, 0);
         // the musk turtle: a bucket of water with the turtle, the spawn egg
         p.withExistingParent("musk_turtle_bucket", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/musk_turtle_bucket"));
-        p.withExistingParent("musk_turtle_spawn_egg", p.mcLoc("item/template_spawn_egg"));
+        p.withExistingParent("musk_turtle_spawn_egg", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/musk_turtle_spawn_egg"));
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {

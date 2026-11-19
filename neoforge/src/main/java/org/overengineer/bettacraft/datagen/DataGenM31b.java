@@ -71,7 +71,7 @@ final class DataGenM31b {
             p.withExistingParent(b, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + b));
         }
         for (String e : new String[]{"slider_turtle_spawn_egg", "hermann_tortoise_spawn_egg", "reeves_turtle_spawn_egg"}) {
-            p.withExistingParent(e, p.mcLoc("item/template_spawn_egg"));
+            p.withExistingParent(e, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + e));
         }
     }
 

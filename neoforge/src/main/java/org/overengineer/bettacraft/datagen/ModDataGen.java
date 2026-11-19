@@ -708,14 +708,14 @@ public final class ModDataGen {
                     .texture("layer0", modLoc("item/fish_bag")).texture("layer1", modLoc("item/fish_bag_fish")).texture("layer2", modLoc("item/fish_bag_fish_fins"));
             withExistingParent("fish_bag", mcLoc("item/generated")).texture("layer0", modLoc("item/fish_bag"))
                     .override().predicate(BettaCraft.id("filled"), 1.0F).model(filledBag).end();
-            withExistingParent("betta_spawn_egg", mcLoc("item/template_spawn_egg"));
+            withExistingParent("betta_spawn_egg", mcLoc("item/generated")).texture("layer0", modLoc("item/betta_spawn_egg"));
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
             handheldItem(ModItems.MIRROR_STICK.get());
             handheldItem(ModItems.AQUARIUM_NET.get());
             handheldItem(ModItems.ALGAE_SCRAPER.get()); // M14
             basicItem(ModItems.FROG_BUCKET.get());
-            withExistingParent("dwarf_frog_spawn_egg", mcLoc("item/template_spawn_egg"));
+            withExistingParent("dwarf_frog_spawn_egg", mcLoc("item/generated")).texture("layer0", modLoc("item/dwarf_frog_spawn_egg"));
             for (var p : ModItems.FLOATING_PLANTS.values()) basicItem(p.get());
             basicItem(ModItems.MOSQUITO_LARVAE.get());
             basicItem(ModItems.SALT_WATER_BOTTLE.get());
@@ -739,7 +739,7 @@ public final class ModDataGen {
                 if (!sp.isLarge()) withExistingParent(sp.bucketId(), mcLoc("item/generated")) // M30: no bucket for a big animal
                         .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc(fish))
                         .texture("layer2", modLoc(fish + "_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
-                withExistingParent(sp.spawnEggId(), mcLoc("item/template_spawn_egg"));
+                withExistingParent(sp.spawnEggId(), mcLoc("item/generated")).texture("layer0", modLoc("item/" + sp.spawnEggId()));
             }
             basicItem(ModItems.BREEDING_BOX.get());
             basicItem(ModItems.FRY_POWDER.get());

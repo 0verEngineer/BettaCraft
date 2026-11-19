@@ -59,7 +59,7 @@ final class DataGenM31c {
 
     static void itemModels(ItemModelProvider p) {
         for (var s : ModItems.HERP_BOXES.keySet()) p.withExistingParent(s.containerId(), p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s.containerId()));
-        for (var s : ModItems.HERP_SPAWN_EGGS.keySet()) p.withExistingParent(s.spawnEggId(), p.mcLoc("item/template_spawn_egg"));
+        for (var s : ModItems.HERP_SPAWN_EGGS.keySet()) p.withExistingParent(s.spawnEggId(), p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + s.spawnEggId()));
         for (String i : new String[]{"crickets", "fruit_flies", "cricket_culture", "fruit_fly_culture"}) {
             p.withExistingParent(i, p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/" + i));
         }
