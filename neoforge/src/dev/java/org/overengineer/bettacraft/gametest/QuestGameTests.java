@@ -72,7 +72,7 @@ public final class QuestGameTests {
     }
 
     private static Object questFile() throws ReflectiveOperationException {
-        Object file = Class.forName("dev.ftb.mods.ftbquests.quest.ServerQuestFile").getField("INSTANCE").get(null);
+        Object file = serverQuestFile(); // M52b: FTB Quests 2111 has getInstance() instead of the field INSTANCE
         if (file == null) throw new GameTestFailure("FTB Quests has no quest file");
         return file;
     }
@@ -270,5 +270,15 @@ public final class QuestGameTests {
             ApiEvents.featuresChanged(h.getLevel().getServer());
         }
         h.succeed();
+    }
+
+    /** The server's quest file: the field INSTANCE (FTB Quests 2101, 1.21.1) or getInstance() (2111, 1.21.11). */
+    private static Object serverQuestFile() throws ReflectiveOperationException {
+        Class<?> c = Class.forName("dev.ftb.mods.ftbquests.quest.ServerQuestFile");
+        try {
+            return c.getField("INSTANCE").get(null);
+        } catch (NoSuchFieldException e) {
+            return c.getMethod("getInstance").invoke(null);
+        }
     }
 }

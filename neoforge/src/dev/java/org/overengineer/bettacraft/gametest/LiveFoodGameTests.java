@@ -141,29 +141,32 @@ public final class LiveFoodGameTests {
         ServerLevel level = h.getLevel();
         LiveCultureBlockEntity b = culture(h, new BlockPos(2, 1, 2), false);
         light(h, new BlockPos(2, 2, 2));
-        h.assertTrue("water".equals(b.blocker(level)), "needs water: " + b.blocker(level));
-        b.setWater(4000);
-        h.assertTrue("animals".equals(b.blocker(level)), "needs daphnia: " + b.blocker(level));
-        h.assertTrue(b.insertOne(new ItemStack(ModItems.DAPHNIA.get()), false) && b.insertOne(new ItemStack(ModItems.DAPHNIA.get()), false), "two starters");
-        h.assertTrue("hungry".equals(b.blocker(level)), "needs food: " + b.blocker(level));
-        h.assertTrue(b.automation().insertItem(LiveCultureBlockEntity.INPUT, new ItemStack(ModItems.GREEN_WATER_BOTTLE.get()), false).isEmpty(), "green water");
-        h.assertTrue(b.bottles() == 1 && b.automation().extractItem(LiveCultureBlockEntity.BOTTLES, 4, false).is(Items.GLASS_BOTTLE), "its bottle comes out");
-        b.insertOne(new ItemStack(ModItems.YEAST.get()), false);
-        h.assertTrue(b.blocker(level) == null, "lit, fed: " + b.blocker(level) + " light " + level.getMaxLocalRawBrightness(h.absolutePos(new BlockPos(2, 2, 2))));
-        double p = b.model().population;
-        for (int i = 0; i < 3; i++) {
-            b.model().food = 1;
-            b.advance(level, 1.0);
-        }
-        h.assertTrue(b.model().population > 0.7, "grew " + p + " -> " + b.model().population);
-        CultureModel.Event e = CultureModel.Event.NONE;
-        for (int i = 0; i < 6 && e != CultureModel.Event.COLLAPSE_CROWDED; i++) {
-            b.model().food = 1;
-            e = b.advance(level, 0.5);
-        }
-        h.assertTrue(e == CultureModel.Event.COLLAPSE_CROWDED && b.model().population < 0.2, "collapsed: " + e + " " + b.model().population);
-        h.assertTrue(!b.hot(level), "the test biome is not hot");
-        h.succeed();
+        // M52b: the light engine needs a few ticks for the light block (checked at once it was dark now and then)
+        h.runAfterDelay(5, () -> {
+            h.assertTrue("water".equals(b.blocker(level)), "needs water: " + b.blocker(level));
+            b.setWater(4000);
+            h.assertTrue("animals".equals(b.blocker(level)), "needs daphnia: " + b.blocker(level));
+            h.assertTrue(b.insertOne(new ItemStack(ModItems.DAPHNIA.get()), false) && b.insertOne(new ItemStack(ModItems.DAPHNIA.get()), false), "two starters");
+            h.assertTrue("hungry".equals(b.blocker(level)), "needs food: " + b.blocker(level));
+            h.assertTrue(b.automation().insertItem(LiveCultureBlockEntity.INPUT, new ItemStack(ModItems.GREEN_WATER_BOTTLE.get()), false).isEmpty(), "green water");
+            h.assertTrue(b.bottles() == 1 && b.automation().extractItem(LiveCultureBlockEntity.BOTTLES, 4, false).is(Items.GLASS_BOTTLE), "its bottle comes out");
+            b.insertOne(new ItemStack(ModItems.YEAST.get()), false);
+            h.assertTrue(b.blocker(level) == null, "lit, fed: " + b.blocker(level) + " light " + level.getMaxLocalRawBrightness(h.absolutePos(new BlockPos(2, 2, 2))));
+            double p = b.model().population;
+            for (int i = 0; i < 3; i++) {
+                b.model().food = 1;
+                b.advance(level, 1.0);
+            }
+            h.assertTrue(b.model().population > 0.7, "grew " + p + " -> " + b.model().population);
+            CultureModel.Event e = CultureModel.Event.NONE;
+            for (int i = 0; i < 6 && e != CultureModel.Event.COLLAPSE_CROWDED; i++) {
+                b.model().food = 1;
+                e = b.advance(level, 0.5);
+            }
+            h.assertTrue(e == CultureModel.Event.COLLAPSE_CROWDED && b.model().population < 0.2, "collapsed: " + e + " " + b.model().population);
+            h.assertTrue(!b.hot(level), "the test biome is not hot");
+            h.succeed();
+        });
     }
 
     /** The pump takes daphnia from the barrel and pumps them through a pipe into a tank where a betta eats them. */

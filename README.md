@@ -243,6 +243,13 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 On NeoForge no other mod is required. Create, AE2, KubeJS, Aquaculture and Fintastic exist only for NeoForge, so their
 integrations are NeoForge only.
 
+### Versions and loaders
+
+| Minecraft | NeoForge | Fabric | Handbook (NeoForge / Fabric) | Notes |
+|---|---|---|---|---|
+| 1.21.1 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | main version (ATM10), fully maintained |
+| 1.21.11 | 21.11.40+ | Loader 0.19+, Fabric API 0.141+ | GuideME / Modonomicon | `bettacraft-<loader>-1.21.11-<version>.jar`; one release, then severe fixes only. Create, AE2, Refined Storage, KubeJS, the power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version |
+
 ## Optional integrations
 
 | Mod | What you get |

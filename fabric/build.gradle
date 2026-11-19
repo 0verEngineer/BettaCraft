@@ -205,9 +205,10 @@ dependencies {
 
     // optional mod groups of the Fabric dev runs (official jars copied into <fabricRunRoot>/<group>, never committed):
     // -Poverlays (Jade, JEI, WTHIT, TOP), -Prei, -Pemi, -Pfabricintegration (Refined Storage, JourneyMap, Better Fish Tanks,
-    // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams)
+    // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams), M52b: -Pshaders
+    // (Sodium, Iris; the shader pack in <fabricRunRoot>/shaderpacks)
     def groupJars = [:] // file name -> jar: a library in several groups (Architectury, Cloth Config) only once
-    [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods'].each { flag, dir ->
+    [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods', shaders: 'shader-mods'].each { flag, dir ->
         if (project.hasProperty(flag)) {
             rootProject.file("${fabricRunRoot}/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') }?.each { groupJars.putIfAbsent(it.name, it) }
         }
@@ -223,6 +224,8 @@ dependencies {
                 from(zipTree(j)) {
                     include 'META-INF/jars/*.jar'
                     exclude '**/energy-*.jar'
+                    // M52b: Night Config comes with Forge Config API Port (an older copy nested in another mod would win)
+                    exclude '**/core-3.*.jar', '**/toml-3.*.jar'
                     eachFile { it.path = it.name }
                     includeEmptyDirs = false
                 }

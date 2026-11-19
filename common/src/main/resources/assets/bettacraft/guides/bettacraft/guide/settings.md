@@ -222,6 +222,10 @@ craft a book with betta pellets, or ask an operator for `/guideme give <player> 
 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift) and in JEI.
 
+On **Fabric** the handbook is a book of another mod with the same pages: **Patchouli** on Minecraft 1.21.1,
+**Modonomicon** on 1.21.11 (Patchouli has no 1.21.11 version). There the scenes of this handbook (tank shapes, animals)
+are shown as items, and after changing the language the book shows the new one once you join the world again.
+
 ## Other mods
 
 * **Jade, The One Probe and WTHIT:** (with several of them only the first one, see `compat.overlayProvider`) looking at an aquarium shows its name, temperature, water and animals (sneak for

@@ -227,6 +227,11 @@ Exemplar: Stelle es aus einem Buch und Betta-Pellets her, oder bitte einen Opera
 
 Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) und in JEI.
 
+Auf **Fabric** ist das Handbuch ein Buch einer anderen Mod mit denselben Seiten: **Patchouli** auf Minecraft 1.21.1,
+**Modonomicon** auf 1.21.11 (Patchouli gibt es für 1.21.11 nicht). Dort erscheinen die Szenen dieses Handbuchs
+(Beckenformen, Tiere) als Items, und nach einem Sprachwechsel zeigt das Buch die neue Sprache, sobald du die Welt neu
+betrittst.
+
 ## Andere Mods
 
 * **Jade, The One Probe und WTHIT:** (bei mehreren nur das erste, siehe `compat.overlayProvider`) Der Blick auf ein Aquarium zeigt Name, Temperatur, Wasser und Tiere (schleichen

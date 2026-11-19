@@ -126,6 +126,9 @@ final class DevClientSmokeM216 {
         then(1, () -> mc.options.hideGui = true);
         guide("en");
         then(1, () -> language("de_de"));
+        // M52b: GuideME picks the pages of a language (_de_de) when the resources are loaded: a full reload first
+        then(1, () -> mc.reloadResourcePacks());
+        then(200, () -> {});
         guide("de");
         then(1, () -> language(lang));
         then(1, () -> mc.setScreen(null));

@@ -4,6 +4,31 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.42.0-beta.1] - 2026-11-19 (Minecraft 1.21.11)
+
+The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-neoforge-1.21.11-<version>.jar` and
+`bettacraft-fabric-1.21.11-<version>.jar`. Worlds do not move between Minecraft versions; within 1.21.11 they load as usual.
+
+### Added
+- **Minecraft 1.21.11**: NeoForge 21.11 and Fabric (Fabric Loader 0.19+, Fabric API 0.141+, Forge Config API Port 21.11).
+  The same content, ids, data and configs as on 1.21.1.
+- **Handbook on Fabric 1.21.11** as a **Modonomicon** book (optional dependency; Patchouli has no 1.21.11 version), made
+  from the same pages as the GuideME handbook, English and German. NeoForge keeps GuideME.
+
+### Changed (Minecraft 1.21.11 itself)
+- Spawn eggs have their own procedural textures (since 1.21.5 spawn eggs are no longer tinted).
+- Recipes use the ingredient format of 1.21.2+ (affects data packs of others for our recipe types only).
+- Flat worlds have their generator's sea level (−63) since 1.21.2: wild bettas and the other wild animals spawn by it.
+- An artemia culture in the inventory ripens on the server only (1.21.5 gives no slot any more), at the same rate.
+
+### Known gaps on 1.21.11
+- Create (with Sable and Aeronautics), Applied Energistics 2, Refined Storage, KubeJS, the power mods of ATM10, Cable
+  Facades, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version: their
+  integrations stay out of this version. The One Probe exists for NeoForge only.
+- Modonomicon handbook: the tank shapes and the animals of the GuideME scenes are shown as items (Modonomicon's
+  multiblock and entity pages are drawn away from their frame in its 1.21.11 version); after changing the language,
+  join the world again for the handbook's new language.
+
 ## [1.42.0-beta.1] - 2026-11-17
 
 Bettacraft runs on Fabric too: the first multiloader version, one code base for NeoForge and Fabric 1.21.1.

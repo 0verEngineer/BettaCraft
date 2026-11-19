@@ -12,6 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * (the flat test world: -63, below the ground). The GameTests build their open water at the sea level, above the test
  * structures; the test world keeps the old answer so they find the same conditions. Never active outside a GameTest
  * server.
+ * <p>It ships in the jars like {@link GameTestServerMixin}: NeoForge reads mixin configs only from the mod's own
+ * {@code neoforge.mods.toml} (the dev source set is no mod of its own), so a dev-only config is not possible there; the
+ * check is one {@code instanceof} on a call that is not hot.
  */
 @Mixin(ServerLevel.class)
 public abstract class GameTestSeaLevelMixin {

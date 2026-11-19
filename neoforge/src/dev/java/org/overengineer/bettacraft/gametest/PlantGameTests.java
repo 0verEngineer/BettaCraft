@@ -584,7 +584,8 @@ public final class PlantGameTests {
             java.util.Set<FloatingPlantType> seen = java.util.EnumSet.noneOf(FloatingPlantType.class);
             for (String biome : new String[]{"minecraft:swamp", "minecraft:mangrove_swamp", "minecraft:plains"}) {
                 BlockPos at = h.absolutePos(new BlockPos(16, 2, 16));
-                var filled = net.minecraft.server.commands.FillBiomeCommand.fill(level, at.offset(-8, 0, -8), at.offset(8, 8, 8),
+                // M52b: from 8 below as well: getBiome samples a neighbouring quart cell (fuzzy zoom), also below
+                var filled = net.minecraft.server.commands.FillBiomeCommand.fill(level, at.offset(-8, -8, -8), at.offset(8, 8, 8),
                         level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
                                 .getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BIOME, net.minecraft.resources.Identifier.parse(biome))));
                 filled.ifRight(e -> h.assertTrue(false, "fillbiome " + biome + ": " + e.getMessage()));
