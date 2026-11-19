@@ -1,6 +1,5 @@
 {
   "type": "bettacraft:tank_style",
-  "category": "misc",
   "from": "textured",
   "group": "bettacraft:tank_style",
   "ingredients": [

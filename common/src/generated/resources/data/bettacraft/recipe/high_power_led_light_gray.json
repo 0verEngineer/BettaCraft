@@ -6,7 +6,6 @@
     }
   ],
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "group": "bettacraft:high_power_led_dye",
   "ingredients": [
     "bettacraft:high_power_led",

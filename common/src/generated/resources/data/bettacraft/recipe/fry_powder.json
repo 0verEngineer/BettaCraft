@@ -6,7 +6,6 @@
     }
   ],
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "bettacraft:betta_pellets",
     "bettacraft:betta_pellets",

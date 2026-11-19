@@ -6,7 +6,6 @@
     }
   ],
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "P": "bettacraft:water_pump",
     "R": "#c:dusts/redstone",

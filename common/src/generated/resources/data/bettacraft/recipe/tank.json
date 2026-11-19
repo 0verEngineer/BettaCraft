@@ -1,6 +1,5 @@
 {
   "type": "bettacraft:tank",
-  "category": "misc",
   "key": {
     "G": "#c:glass_blocks",
     "I": "#c:ingots/iron"

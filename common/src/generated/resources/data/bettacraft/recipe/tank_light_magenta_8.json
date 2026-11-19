@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "bettacraft:tank_light_dye8",
   "key": {
     "D": "minecraft:magenta_dye",

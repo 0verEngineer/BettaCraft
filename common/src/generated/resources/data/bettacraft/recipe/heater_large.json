@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "bettacraft:heater_medium",
     "bettacraft:heater_medium",

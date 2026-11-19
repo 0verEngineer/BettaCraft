@@ -6,7 +6,6 @@
     }
   ],
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "group": "bettacraft:led_panel_dye",
   "ingredients": [
     "bettacraft:led_panel",

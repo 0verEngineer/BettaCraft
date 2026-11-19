@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "group": "bettacraft:tank_light_dye",
   "ingredients": [
     "bettacraft:tank_light",

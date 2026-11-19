@@ -6,7 +6,6 @@
     }
   ],
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "bettacraft:swamp_water_bottle",
     "#minecraft:leaves"

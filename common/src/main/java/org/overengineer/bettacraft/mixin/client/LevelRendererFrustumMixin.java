@@ -17,10 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererFrustumMixin {
-    @Inject(method = "renderLevel", at = @At("HEAD"))
+    @Inject(method = "render", at = @At("HEAD")) // M52d: 26.2 renamed renderLevel to render (without the sections)
     private void bettacraft$frustum(com.mojang.blaze3d.resource.GraphicsResourceAllocator allocator, net.minecraft.client.DeltaTracker deltaTracker,
             boolean renderOutline, CameraRenderState cameraState, Matrix4fc modelView, com.mojang.blaze3d.buffers.GpuBufferSlice terrainFog,
-            org.joml.Vector4f fogColor, boolean shouldRenderSky, net.minecraft.client.renderer.chunk.ChunkSectionsToRender sections, CallbackInfo ci) {
+            org.joml.Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         RenderFrame.capture(cameraState.cullFrustum, new Matrix4f(modelView), cameraState.projectionMatrix);
     }
 }

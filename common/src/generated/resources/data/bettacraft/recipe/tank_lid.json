@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "N": "#c:nuggets/iron",
     "P": "#c:glass_panes"

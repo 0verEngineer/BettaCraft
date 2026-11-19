@@ -6,8 +6,6 @@
     }
   ],
   "type": "minecraft:smelting",
-  "category": "misc",
-  "cookingtime": 200,
   "experience": 0.05,
   "ingredient": "minecraft:birch_leaves",
   "result": {

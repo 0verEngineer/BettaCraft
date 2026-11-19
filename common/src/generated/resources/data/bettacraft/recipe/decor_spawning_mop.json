@@ -10,7 +10,6 @@
     }
   ],
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     "bettacraft:spawning_mop",
     "bettacraft:spawning_mop",

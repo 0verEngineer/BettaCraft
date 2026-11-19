@@ -1,6 +1,5 @@
 {
   "type": "bettacraft:cabinet",
-  "category": "misc",
   "key": {
     "C": "#c:chests/wooden",
     "P": "#minecraft:planks",
