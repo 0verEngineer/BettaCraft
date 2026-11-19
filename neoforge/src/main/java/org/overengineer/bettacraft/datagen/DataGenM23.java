@@ -221,10 +221,10 @@ final class DataGenM23 {
                 .unlockedBy("has_light", hasLight).save(out, RecipeCompat.key(BettaCraft.id("high_power_led")));
         // colour like the bar (M18): one item and a dye
         for (DyeColor c : DyeColor.values()) {
-            DyeItem dye = DyeItem.byColor(c);
+            net.minecraft.world.item.Item dye = RecipeCompat.dye(c);
             for (var led : java.util.List.of(ModItems.LED_PANEL, ModItems.HIGH_POWER_LED)) {
                 String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(led.get()).getPath();
-                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, TankLightItem.of(led.get(), c, 1))
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, TankLightItem.template(led.get(), c, 1))
                         .requires(led.get()).requires(dye)
                         .group("bettacraft:" + id + "_dye")
                         .unlockedBy("has_light", hasLight)

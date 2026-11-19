@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BlockModelRotation;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -62,7 +61,10 @@ public final class BlockModelItem implements ItemModel {
     /** Per variant (glass + style, planks): its quads; the list is also the GUI cache identity of the variant. */
     private final Map<Object, List<BakedQuad>> variants = new ConcurrentHashMap<>();
 
-    private BlockModelItem(Kind kind, List<BakedQuad> baseQuads, ModelRenderProperties properties) {
+    private final org.joml.Matrix4fc transformation;
+
+    private BlockModelItem(Kind kind, List<BakedQuad> baseQuads, ModelRenderProperties properties, org.joml.Matrix4fc transformation) {
+        this.transformation = transformation;
         this.kind = kind;
         this.baseQuads = baseQuads;
         this.properties = properties;
@@ -82,15 +84,16 @@ public final class BlockModelItem implements ItemModel {
             layer.setFoilType(ItemStackRenderState.FoilType.STANDARD);
             state.setAnimated();
         }
-        layer.setRenderType(kind == Kind.TANK ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockSheet());
-        layer.setExtents(() -> net.minecraft.client.renderer.item.BlockModelWrapper.computeExtents(quads));
+        // M52c (26.1): every quad carries its item render type (translucent glass and water, cutout frame)
+        layer.setLocalTransform(transformation);
+        layer.setExtents(() -> net.minecraft.client.renderer.item.CuboidItemModelWrapper.computeExtents(quads));
         properties.applyToLayer(layer, context);
         layer.prepareQuadList().addAll(quads);
     }
 
     private List<BakedQuad> tankQuads(ItemStack stack) {
         BlockState block = ModBlocks.TANK.get().defaultBlockState();
-        DynamicModel dm = ClientPlatform.get().dynamic(Minecraft.getInstance().getBlockRenderer().getBlockModel(block));
+        DynamicModel dm = ClientPlatform.get().dynamic(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(block));
         if (!(dm instanceof TankBakedModel tank)) return baseQuads;
         TankBakedModel item = tank.forItem(stack);
         return variants.computeIfAbsent(item, k -> {
@@ -118,12 +121,12 @@ public final class BlockModelItem implements ItemModel {
         }
 
         @Override
-        public ItemModel bake(ItemModel.BakingContext context) {
+        public ItemModel bake(ItemModel.BakingContext context, org.joml.Matrix4fc transformation) {
             var baker = context.blockModelBaker();
             var resolved = baker.getModel(model);
             var slots = resolved.getTopTextureSlots();
             List<BakedQuad> quads = kind == Kind.CABINET ? resolved.bakeTopGeometry(slots, baker, BlockModelRotation.IDENTITY).getAll() : List.of();
-            return new BlockModelItem(kind, quads, ModelRenderProperties.fromResolvedModel(baker, resolved, slots));
+            return new BlockModelItem(kind, quads, ModelRenderProperties.fromResolvedModel(baker, resolved, slots), transformation);
         }
 
         @Override

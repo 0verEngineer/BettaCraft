@@ -96,7 +96,7 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
         if (part != Part.CHAMBER || !(stack.getItem() instanceof FilterMediaItem)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!(level.getBlockEntity(pos) instanceof FilterChamberBlockEntity ch)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!ch.medium().isEmpty()) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.chamber.full").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.chamber.full").withStyle(ChatFormatting.GOLD));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide()) {

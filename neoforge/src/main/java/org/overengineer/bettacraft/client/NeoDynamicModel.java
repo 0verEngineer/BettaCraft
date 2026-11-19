@@ -2,14 +2,14 @@ package org.overengineer.bettacraft.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
 import net.minecraft.util.TriState;
@@ -21,7 +21,8 @@ import org.overengineer.bettacraft.platform.model.ModelValues;
 /**
  * M52: one of our {@link DynamicModel}s as a NeoForge model. M52b (1.21.11): a {@link DynamicBlockStateModel} whose parts
  * are the model's quads of one chunk layer each; the block entity's model data (read from the level, as NeoForge does
- * since 21.5) becomes the render values. The items of the mod draw with {@code client.item.BlockModelItem}.
+ * since 21.5) becomes the render values. The items of the mod draw with {@code client.item.BlockModelItem}. M52c (26.1): the
+ * quads carry their chunk layer themselves.
  */
 public final class NeoDynamicModel implements DynamicBlockStateModel {
     private final DynamicModel dynamic;
@@ -40,11 +41,11 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
     }
 
     @Override
-    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         collect(state, random, values(level, pos, state), parts);
     }
 
-    void collect(@Nullable BlockState state, RandomSource random, ModelValues data, List<BlockModelPart> parts) {
+    void collect(@Nullable BlockState state, RandomSource random, ModelValues data, List<BlockStateModelPart> parts) {
         for (ChunkSectionLayer layer : dynamic.layers(state, random, data)) {
             @SuppressWarnings("unchecked")
             List<BakedQuad>[] sides = new List[7];
@@ -55,13 +56,26 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
     }
 
     @Override
-    public TextureAtlasSprite particleIcon() {
-        return dynamic.particle(ModelValues.EMPTY);
+    public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial() {
+        return new net.minecraft.client.resources.model.sprite.Material.Baked(dynamic.particle(ModelValues.EMPTY), false);
     }
 
     @Override
-    public TextureAtlasSprite particleIcon(BlockAndTintGetter level, BlockPos pos, BlockState state) {
-        return dynamic.particle(values(level, pos, state));
+    public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return new net.minecraft.client.resources.model.sprite.Material.Baked(dynamic.particle(values(level, pos, state)), false);
+    }
+
+    /** M52c (26.1): without the level the model may draw translucent quads (glass, water) and animated ones (water). */
+    @Override
+    public int materialFlags() {
+        return BakedQuad.FLAG_TRANSLUCENT | BakedQuad.FLAG_ANIMATED;
+    }
+
+    @Override
+    public int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        int flags = BakedQuad.FLAG_ANIMATED;
+        for (ChunkSectionLayer l : dynamic.layers(state, RandomSource.create(42L), values(level, pos, state))) if (l.translucent()) flags |= BakedQuad.FLAG_TRANSLUCENT;
+        return flags;
     }
 
     @Override
@@ -70,7 +84,7 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
     }
 
     /** The quads of one chunk layer. */
-    record Part(ChunkSectionLayer layer, List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle) implements BlockModelPart {
+    record Part(ChunkSectionLayer layer, List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle) implements BlockStateModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return sides[side == null ? 6 : side.ordinal()];
@@ -82,13 +96,14 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
         }
 
         @Override
-        public TextureAtlasSprite particleIcon() {
-            return particle;
+        public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial() {
+            return new net.minecraft.client.resources.model.sprite.Material.Baked(particle, false);
         }
 
+        /** M52c (26.1): the quads carry their chunk layer; the flags follow the part's layer. */
         @Override
-        public ChunkSectionLayer getRenderType(BlockState state) {
-            return layer;
+        public int materialFlags() {
+            return layer.translucent() ? BakedQuad.FLAG_TRANSLUCENT : 0;
         }
 
         @Override
@@ -97,9 +112,9 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
         }
     }
 
-    static List<BakedQuad> all(List<BlockModelPart> parts) {
+    static List<BakedQuad> all(List<BlockStateModelPart> parts) {
         List<BakedQuad> out = new ArrayList<>();
-        for (BlockModelPart p : parts) {
+        for (BlockStateModelPart p : parts) {
             for (Direction d : Direction.values()) out.addAll(p.getQuads(d));
             out.addAll(p.getQuads(null));
         }

@@ -61,7 +61,7 @@ final class DevClientSmokeM32d {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         base = p.blockPosition().offset(0, 0, 40);
         for (int x = -3; x <= 4; x++) for (int z = -2; z <= 3; z++) level.setBlock(base.offset(x, -1, z), Blocks.STONE_BRICKS.defaultBlockState(), 2);
         List<BlockPos> blocks = List.of(base, base.east(), base.above(), base.above().east());

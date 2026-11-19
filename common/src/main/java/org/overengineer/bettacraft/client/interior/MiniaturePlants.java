@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
@@ -165,7 +164,7 @@ public final class MiniaturePlants {
             int y = Math.clamp(Math.floorDiv(Math.max(0, BlockPos.getY(k)), region.scale), 0, t.sizeY() - 1);
             int z = Math.clamp(Math.floorDiv(BlockPos.getZ(k), region.scale), 0, t.sizeZ() - 1);
             p.set(min.getX() + x, min.getY() + y, min.getZ() + z);
-            l[i] = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, p), level.getBrightness(LightLayer.SKY, p));
+            l[i] = net.minecraft.util.LightCoordsUtil.pack(level.getBrightness(LightLayer.BLOCK, p), level.getBrightness(LightLayer.SKY, p));
         }
         m.lights = l;
     }

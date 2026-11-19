@@ -124,9 +124,13 @@ final class NeoForgeGameEvents {
             });
         }
         for (EventPriority p : types.getOrDefault(BlockEvent.BreakEvent.class, Set.of())) {
-            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.level.BlockEvent.BreakEvent.class, e -> {
+            // M52c (26.1): BreakBlockEvent fires on both sides; ours stays a server event (as 1.21.x's BreakEvent), a
+            // cancelled break sends the block back to the client
+            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.level.block.BreakBlockEvent.class, e -> {
+                if (e.getLevel().isClientSide()) return;
                 var s = new BlockEvent.BreakEvent(e.getLevel(), e.getPos(), e.getState(), e.getPlayer());
                 fire(e, s, p);
+                if (e.isCanceled()) e.setNotifyClient(true);
             });
         }
         for (EventPriority p : types.getOrDefault(BlockEvent.EntityPlaceEvent.class, Set.of())) {
@@ -250,25 +254,13 @@ final class NeoForgeGameEvents {
                 for (int i = 0; i < listeners.size(); i++) e.addListener(org.overengineer.bettacraft.BettaCraft.id("reload_" + p.name().toLowerCase(java.util.Locale.ROOT) + "_" + i), listeners.get(i));
             });
         }
-        for (EventPriority p : types.getOrDefault(VillagerTradesEvent.class, Set.of())) {
-            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.village.VillagerTradesEvent.class, e -> {
-                var s = new VillagerTradesEvent(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getValue(e.getType()), e.getTrades());
-                fire(e, s, p);
-            });
-        }
-        for (EventPriority p : types.getOrDefault(WandererTradesEvent.class, Set.of())) {
-            NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.village.WandererTradesEvent.class, e -> {
-                var s = new WandererTradesEvent(e.getGenericTrades(), e.getRareTrades());
-                fire(e, s, p);
-            });
-        }
         // a common event type without its line here would silently never fire
         for (Class<?> c : types.keySet()) {
             if (!KNOWN.contains(c)) throw new IllegalStateException("Bettacraft: no NeoForge event for " + c.getName());
         }
     }
 
-    private static final Set<Class<?>> KNOWN = Set.of(ServerTickEvent.Post.class, ServerStartedEvent.class, ServerStoppedEvent.class, ServerAboutToStartEvent.class, LevelTickEvent.Post.class, PlayerTickEvent.Post.class, EntityTickEvent.Post.class, PlayerEvent.PlayerLoggedInEvent.class, PlayerEvent.PlayerLoggedOutEvent.class, PlayerEvent.ItemCraftedEvent.class, PlayerEvent.ItemSmeltedEvent.class, PlayerInteractEvent.EntityInteract.class, PlayerInteractEvent.RightClickBlock.class, PlayerInteractEvent.RightClickItem.class, PlayerInteractEvent.LeftClickBlock.class, EntityJoinLevelEvent.class, EntityLeaveLevelEvent.class, BlockEvent.BreakEvent.class, BlockEvent.EntityPlaceEvent.class, LivingDeathEvent.class, LivingDropsEvent.class, LivingExperienceDropEvent.class, LivingConversionEvent.Pre.class, LivingConversionEvent.Post.class, LivingDamageEvent.Pre.class, LivingChangeTargetEvent.class, MobDespawnEvent.class, BabyEntitySpawnEvent.class, ItemFishedEvent.class, ItemEntityPickupEvent.Pre.class, TradeWithVillagerEvent.class, ExplosionEvent.Detonate.class, PistonEvent.Pre.class, TagsUpdatedEvent.class, OnDatapackSyncEvent.class, RegisterCommandsEvent.class, AddReloadListenerEvent.class, VillagerTradesEvent.class, WandererTradesEvent.class);
+    private static final Set<Class<?>> KNOWN = Set.of(ServerTickEvent.Post.class, ServerStartedEvent.class, ServerStoppedEvent.class, ServerAboutToStartEvent.class, LevelTickEvent.Post.class, PlayerTickEvent.Post.class, EntityTickEvent.Post.class, PlayerEvent.PlayerLoggedInEvent.class, PlayerEvent.PlayerLoggedOutEvent.class, PlayerEvent.ItemCraftedEvent.class, PlayerEvent.ItemSmeltedEvent.class, PlayerInteractEvent.EntityInteract.class, PlayerInteractEvent.RightClickBlock.class, PlayerInteractEvent.RightClickItem.class, PlayerInteractEvent.LeftClickBlock.class, EntityJoinLevelEvent.class, EntityLeaveLevelEvent.class, BlockEvent.BreakEvent.class, BlockEvent.EntityPlaceEvent.class, LivingDeathEvent.class, LivingDropsEvent.class, LivingExperienceDropEvent.class, LivingConversionEvent.Pre.class, LivingConversionEvent.Post.class, LivingDamageEvent.Pre.class, LivingChangeTargetEvent.class, MobDespawnEvent.class, BabyEntitySpawnEvent.class, ItemFishedEvent.class, ItemEntityPickupEvent.Pre.class, TradeWithVillagerEvent.class, ExplosionEvent.Detonate.class, PistonEvent.Pre.class, TagsUpdatedEvent.class, OnDatapackSyncEvent.class, RegisterCommandsEvent.class, AddReloadListenerEvent.class);
 
     private static void fire(net.neoforged.bus.api.Event e, GameEvent s, EventPriority p) {
         boolean cancellable = e instanceof ICancellableEvent && s.isCancelable();

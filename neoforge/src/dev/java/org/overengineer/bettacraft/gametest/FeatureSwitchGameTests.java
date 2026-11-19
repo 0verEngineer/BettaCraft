@@ -158,20 +158,20 @@ public final class FeatureSwitchGameTests {
         var neon = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get();
         check(offers(h, trader, "tankmates_1"), "tankmates on: the trader sells them");
         check(!NetCatching.fishTable(NetCatching.Water.JUNGLE).isEmpty(), "tankmates on: the net brings fish");
-        check(Wildlife.checkFish(neon, level, EntitySpawnReason.NATURAL, spot, level.random), "tankmates on: wild ones spawn");
+        check(Wildlife.checkFish(neon, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "tankmates on: wild ones spawn");
         Map<Feature, Boolean> saved = off(Feature.CICHLIDS);
         try {
             check(!NetCatching.fishTable(NetCatching.Water.JUNGLE).containsKey(TankmateSpecies.DISCUS), "cichlids off: no discus in the net");
             check(NetCatching.fishTable(NetCatching.Water.JUNGLE).containsKey(TankmateSpecies.NEON_TETRA), "cichlids off: neons stay");
             var discus = ModEntities.TANKMATES.get(TankmateSpecies.DISCUS).get();
-            check(!Wildlife.checkFish(discus, level, EntitySpawnReason.NATURAL, spot, level.random), "cichlids off: no wild discus");
+            check(!Wildlife.checkFish(discus, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "cichlids off: no wild discus");
             restore(saved);
             saved = off(Feature.TANKMATES);
             check(!offers(h, trader, "tankmates_1") && !offers(h, trader, "tankmates_rare"), "off: the trader sells none");
             check(!offers(h, trader, "reef_fish"), "off: no reef fish either (they need the tankmates)");
             for (NetCatching.Water w : NetCatching.Water.values()) check(NetCatching.fishTable(w).isEmpty(), "off: fish in the net in " + w);
-            check(!Wildlife.checkFish(neon, level, EntitySpawnReason.NATURAL, spot, level.random), "off: a wild neon spawns");
-            check(Wildlife.checkFish(neon, level, EntitySpawnReason.SPAWN_ITEM_USE, spot, level.random), "off: spawn eggs still work");
+            check(!Wildlife.checkFish(neon, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "off: a wild neon spawns");
+            check(Wildlife.checkFish(neon, level, EntitySpawnReason.SPAWN_ITEM_USE, spot, level.getRandom()), "off: spawn eggs still work");
             check(Wildlife.fishWeight(TankmateSpecies.NEON_TETRA, NetCatching.Water.JUNGLE) == 0, "off: spawn weight");
         } finally {
             restore(saved);
@@ -200,7 +200,7 @@ public final class FeatureSwitchGameTests {
                 check(NetCatching.table(w, true, false, false).stream().allMatch(c -> c.species() == null), "off: small animals in the net in " + w);
             }
             check(!CritterSpecies.TRUMPET_SNAIL.available(), "off: no trumpet snails from mud");
-            check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.NATURAL, spot, level.random), "off: wild critters spawn");
+            check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "off: wild critters spawn");
             check(NetCatching.table(NetCatching.Water.SWAMP, false, false, false).stream().anyMatch(c -> c.species() == null),
                     "off: the frog of the swamp stays in the net");
         } finally {
@@ -290,13 +290,13 @@ public final class FeatureSwitchGameTests {
         var betta = ModEntities.BETTA.get();
         Map<Feature, Boolean> saved = off(Feature.BETTAS_WILD);
         try {
-            check(!SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.NATURAL, spot, level.random), "wild spawns off: a betta spawns");
-            check(SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.SPAWN_ITEM_USE, spot, level.random), "wild spawns off: spawn eggs");
+            check(!SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "wild spawns off: a betta spawns");
+            check(SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.SPAWN_ITEM_USE, spot, level.getRandom()), "wild spawns off: spawn eggs");
             check(Features.enabled(Feature.WILD_BETTAS), "a sibling stays on");
             restore(saved);
             saved = off(Feature.BETTAS);
             check(!Features.enabled(Feature.BETTAS_WILD) && !Features.enabled(Feature.WILD_BETTAS), "bettas off: their sub-switches");
-            check(!SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.NATURAL, spot, level.random), "bettas off: a betta spawns");
+            check(!SpawnPlacements.checkSpawnRules(betta, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "bettas off: a betta spawns");
             check(Wildlife.wildBettaSpecies(0.01) == org.overengineer.bettacraft.genetics.BettaSpecies.SPLENDENS, "bettas off: no wild species");
         } finally {
             restore(saved);

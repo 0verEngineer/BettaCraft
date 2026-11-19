@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -27,7 +27,8 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         // flame between the inputs and the fuel (full while lava or FE heats it)
         CrucibleBlockEntity.Heat src = menu.source();
@@ -39,15 +40,14 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        super.renderLabels(g, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractLabels(g, mouseX, mouseY);
         Component src = Component.translatable("gui.bettacraft.crucible.heat." + menu.source().name().toLowerCase(java.util.Locale.ROOT));
-        g.drawString(font, src.copy().withStyle(ChatFormatting.DARK_GRAY), 86, 62, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+        g.text(font, src.copy().withStyle(ChatFormatting.DARK_GRAY), 86, 62, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 }

@@ -2,10 +2,12 @@ package org.overengineer.bettacraft.tank;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -22,7 +24,8 @@ public class TankStyleRecipe extends ShapelessRecipe {
     private final TankStyle from;
 
     public TankStyleRecipe(ShapelessRecipe base, TankStyle from) {
-        super(base.group(), base.category(), base.assemble(CraftingInput.EMPTY, null), base.placementInfo().ingredients());
+        super(new Recipe.CommonInfo(base.showNotification()), new CraftingRecipe.CraftingBookInfo(base.category(), base.group()),
+                org.overengineer.bettacraft.crafting.RecipeCompat.resultTemplate(base), base.placementInfo().ingredients());
         this.from = from;
     }
 
@@ -48,8 +51,8 @@ public class TankStyleRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return super.assemble(input, registries);
+    public ItemStack assemble(CraftingInput input) {
+        return super.assemble(input);
     }
 
     @Override
@@ -58,24 +61,17 @@ public class TankStyleRecipe extends ShapelessRecipe {
         return (RecipeSerializer) ModRecipes.TANK_STYLE.get();
     }
 
-    public static class Serializer implements RecipeSerializer<TankStyleRecipe> {
-        private static final MapCodec<TankStyleRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                ((ShapelessRecipe.Serializer) RecipeSerializer.SHAPELESS_RECIPE).codec().forGetter(r -> r),
-                TankStyle.CODEC.fieldOf("from").forGetter(TankStyleRecipe::from)
-        ).apply(i, TankStyleRecipe::new));
-        private static final StreamCodec<RegistryFriendlyByteBuf, TankStyleRecipe> STREAM_CODEC = StreamCodec.composite(
-                ShapelessRecipe.Serializer.STREAM_CODEC, r -> r,
-                TankStyle.STREAM_CODEC, TankStyleRecipe::from,
-                TankStyleRecipe::new);
+    private static final MapCodec<TankStyleRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            ShapelessRecipe.MAP_CODEC.forGetter(r -> r),
+            TankStyle.CODEC.fieldOf("from").forGetter(TankStyleRecipe::from)
+    ).apply(i, TankStyleRecipe::new));
+    private static final StreamCodec<RegistryFriendlyByteBuf, TankStyleRecipe> STREAM_CODEC = StreamCodec.composite(
+            ShapelessRecipe.STREAM_CODEC, r -> r,
+            TankStyle.STREAM_CODEC, TankStyleRecipe::from,
+            TankStyleRecipe::new);
 
-        @Override
-        public MapCodec<TankStyleRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, TankStyleRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    /** M52c (26.1): a recipe serializer is a record of the two codecs. */
+    public static RecipeSerializer<TankStyleRecipe> serializer() {
+        return new RecipeSerializer<>(CODEC, STREAM_CODEC);
     }
 }

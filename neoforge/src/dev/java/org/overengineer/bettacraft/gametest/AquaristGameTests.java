@@ -16,7 +16,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.inventory.MerchantContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -92,12 +91,12 @@ public final class AquaristGameTests {
     /** Each level has its two offers, every listing gives an offer, the shown items are what the table says. */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void tradesOnEveryLevel(GameTestHelper h) {
-        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
+        var trades = org.overengineer.bettacraft.gametest.framework.DevTrades.aquarist(h.getLevel());
         check(trades != null, "no trades for the aquarist");
         Villager v = aquarist(h, new BlockPos(3, 1, 3), 1);
         var rnd = h.getLevel().getRandom();
         for (int level = 1; level <= 5; level++) {
-            VillagerTrades.ItemListing[] list = trades.get(level);
+            org.overengineer.bettacraft.villager.TradeListing[] list = trades.get(level);
             check(list != null && list.length == 2, "level " + level + ": " + (list == null ? 0 : list.length) + " offers");
             for (int k = 0; k < 2; k++) {
                 for (int i = 0; i < 20; i++) {
@@ -155,7 +154,7 @@ public final class AquaristGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m47_prices", timeoutTicks = 100)
     public static void pricesByGenes(GameTestHelper h) {
         Villager v = aquarist(h, new BlockPos(3, 1, 3), 2);
-        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
+        var trades = org.overengineer.bettacraft.gametest.framework.DevTrades.aquarist(h.getLevel());
         MerchantOffer bucketOffer = trades.get(1)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()), bagOffer = trades.get(2)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom());
         try {
             ItemStack plain = betta(BettaGenome.DEFAULT, 0, "adult");
@@ -206,7 +205,7 @@ public final class AquaristGameTests {
         Features.set(Feature.AQUARIST_VILLAGER, false);
         var poi = PoiTypes.forState(ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         List<String> problems = new ArrayList<>();
-        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
+        var trades = org.overengineer.bettacraft.gametest.framework.DevTrades.aquarist(h.getLevel());
         for (int level = 1; level <= 5; level++) for (var l : trades.get(level)) if (l.getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()) != null) problems.add("level " + level);
         if (poi.isPresent() && ModVillagers.AQUARIST.get().acquirableJobSite().test(poi.get())) problems.add("the basin is taken");
         h.runAfterDelay(210, () -> {

@@ -129,6 +129,6 @@ public final class WaterLimit {
 
     /** Tells the player why the water stays out (action bar). */
     public static void tell(ServerLevel level, TankBlockEntity c, @Nullable Player player) {
-        if (player != null) player.displayClientMessage(message(level, c), true);
+        if (player != null) player.sendOverlayMessage(message(level, c));
     }
 }

@@ -11,7 +11,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -30,17 +32,17 @@ import org.overengineer.bettacraft.registry.ModRecipes;
  * in {@code bettacraft:wood}, like the planks of a wooden cabinet. Off with {@code features.equipment.stoneCabinets}.
  */
 public class StoneCabinetRecipe extends ShapedRecipe {
-    public StoneCabinetRecipe(String group, CraftingBookCategory category, ShapedRecipePattern pattern, ItemStack result, boolean showNotification) {
-        super(group, category, pattern, result, showNotification);
+    public StoneCabinetRecipe(Recipe.CommonInfo common, CraftingRecipe.CraftingBookInfo book, ShapedRecipePattern pattern, ItemStackTemplate result) {
+        super(common, book, pattern, result);
     }
 
     /** The shown result is a cabinet of stone bricks (JEI without the extension, recipe book, handbook); {@link #assemble} sets the real stone. */
     public static StoneCabinetRecipe of(ShapedRecipe base) {
-        ItemStack shown = base.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, null);
-        if (!shown.has(org.overengineer.bettacraft.registry.ModDataComponents.WOOD.get())) {
-            CabinetBlockItem.setWood(shown, net.minecraft.resources.Identifier.withDefaultNamespace("stone_bricks"));
-        }
-        return new StoneCabinetRecipe(base.group(), base.category(), base.pattern, shown, base.showNotification());
+        // M52c (26.1): the template, not a stack (no item components while recipes are read)
+        ItemStackTemplate shown = org.overengineer.bettacraft.crafting.RecipeCompat.withDefault(org.overengineer.bettacraft.crafting.RecipeCompat.resultTemplate(base),
+                org.overengineer.bettacraft.registry.ModDataComponents.WOOD.get(), net.minecraft.resources.Identifier.withDefaultNamespace("stone_bricks"));
+        return new StoneCabinetRecipe(new Recipe.CommonInfo(base.showNotification()), new CraftingRecipe.CraftingBookInfo(base.category(), base.group()), base.pattern,
+                shown);
     }
 
     @Override
@@ -49,8 +51,8 @@ public class StoneCabinetRecipe extends ShapedRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = super.assemble(input, registries);
+    public ItemStack assemble(CraftingInput input) {
+        ItemStack result = super.assemble(input);
         Item stone = input.width() == 3 && input.height() == 3 ? input.getItem(0, 2).getItem() : null;
         if (stone instanceof BlockItem bi) CabinetBlockItem.setWood(result, BuiltInRegistries.BLOCK.getKey(bi.getBlock()));
         return result;
@@ -82,23 +84,17 @@ public class StoneCabinetRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<StoneCabinetRecipe> getSerializer() {
-        return ModRecipes.STONE_CABINET.get();
+    @SuppressWarnings("unchecked")
+    public RecipeSerializer<ShapedRecipe> getSerializer() {
+        // M52c (26.1): ShapedRecipe narrows the serializer type; ours serializes a subclass
+        return (RecipeSerializer<ShapedRecipe>) (RecipeSerializer<?>) ModRecipes.STONE_CABINET.get();
     }
 
-    public static class Serializer implements RecipeSerializer<StoneCabinetRecipe> {
-        private static final MapCodec<StoneCabinetRecipe> CODEC = ShapedRecipe.Serializer.CODEC.xmap(StoneCabinetRecipe::of, r -> r);
-        private static final StreamCodec<RegistryFriendlyByteBuf, StoneCabinetRecipe> STREAM_CODEC =
-                ShapedRecipe.Serializer.STREAM_CODEC.map(StoneCabinetRecipe::of, r -> r);
+    private static final MapCodec<StoneCabinetRecipe> CODEC = ShapedRecipe.MAP_CODEC.xmap(StoneCabinetRecipe::of, r -> r);
+    private static final StreamCodec<RegistryFriendlyByteBuf, StoneCabinetRecipe> STREAM_CODEC = ShapedRecipe.STREAM_CODEC.map(StoneCabinetRecipe::of, r -> r);
 
-        @Override
-        public MapCodec<StoneCabinetRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, StoneCabinetRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    /** M52c (26.1): a recipe serializer is a record of the two codecs. */
+    public static RecipeSerializer<StoneCabinetRecipe> serializer() {
+        return new RecipeSerializer<>(CODEC, STREAM_CODEC);
     }
 }

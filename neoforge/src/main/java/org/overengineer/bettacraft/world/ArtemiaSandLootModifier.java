@@ -21,19 +21,25 @@ import org.overengineer.bettacraft.registry.ModTags;
  */
 public class ArtemiaSandLootModifier extends LootModifier {
     public static final MapCodec<ArtemiaSandLootModifier> CODEC = RecordCodecBuilder.mapCodec(i -> codecStart(i)
-            .and(ItemStack.CODEC.fieldOf("item").forGetter(m -> m.item))
+            .and(net.minecraft.world.item.ItemStackTemplate.CODEC.fieldOf("item").forGetter(m -> m.item))
             .apply(i, ArtemiaSandLootModifier::new));
 
-    private final ItemStack item;
+    // M52c (26.1): a template (the item components are bound after the data is read)
+    private final net.minecraft.world.item.ItemStackTemplate item;
 
-    public ArtemiaSandLootModifier(LootItemCondition[] conditions, ItemStack item) {
-        super(conditions);
+    /** M52c (26.1): NeoForge's loot modifiers carry a priority. */
+    public ArtemiaSandLootModifier(LootItemCondition[] conditions, net.minecraft.world.item.ItemStackTemplate item) {
+        this(conditions, net.neoforged.neoforge.common.loot.IGlobalLootModifier.DEFAULT_PRIORITY, item);
+    }
+
+    public ArtemiaSandLootModifier(LootItemCondition[] conditions, int priority, net.minecraft.world.item.ItemStackTemplate item) {
+        super(conditions, priority);
         this.item = item;
     }
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
-        return LootChanges.artemiaSand(loot, context, item);
+        return LootChanges.artemiaSand(loot, context, item.create());
     }
 
     @Override

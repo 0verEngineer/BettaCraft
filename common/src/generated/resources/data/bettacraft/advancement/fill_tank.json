@@ -17,7 +17,6 @@
       "translate": "advancements.bettacraft.fill_tank.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:water_bucket"
     },
     "title": {

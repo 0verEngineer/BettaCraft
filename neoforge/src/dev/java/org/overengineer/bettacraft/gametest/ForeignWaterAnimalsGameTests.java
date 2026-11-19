@@ -151,7 +151,7 @@ public final class ForeignWaterAnimalsGameTests {
         EntityType<?> featherback = type("fintastic:featherback"), coelacanth = type("fintastic:coelacanth"), arapaima = type("fintastic:arapaima");
         h.assertTrue(Math.abs(BigAnimals.length(arapaima, null) - 2.5) < 1e-6, "the arapaima is 2.5 m");
         h.assertTrue(TankInhabitants.accepts(arapaima, null) == TankInhabitants.Acceptance.BIG, "the arapaima is a big animal, not blacklisted");
-        h.assertTrue(type("fintastic:arapaima").is(ModTags.PREDATORS), "a big predator");
+        h.assertTrue(type("fintastic:arapaima").builtInRegistryHolder().is(ModTags.PREDATORS), "a big predator");
         TankBlockEntity small = tank(h, 1, 1, 6, 3, 4, 26F);
         expect(h, small, holder(h, featherback, true), TOO_SMALL, "featherback into 6 x 3 x 4");
         TankBlockEntity mid = tank(h, 1, 7, 10, 3, 5, 26F);
@@ -399,7 +399,7 @@ public final class ForeignWaterAnimalsGameTests {
         expect(h, mid, holder(h, manta, true), TOO_SMALL, "manta ray into 12 x 3 x 6");
         expect(h, mid, holder(h, shark, true), TOO_SMALL, "shark into 12 x 3 x 6");
         expect(h, big, holder(h, manta, true), null, "manta ray into 30 x 8 x 15");
-        h.assertTrue(Math.abs(BigAnimals.length(shark, null) - 2.0) < 1e-6 && shark.is(ModTags.PREDATORS), "the shark: 2 m, a predator");
+        h.assertTrue(Math.abs(BigAnimals.length(shark, null) - 2.0) < 1e-6 && shark.builtInRegistryHolder().is(ModTags.PREDATORS), "the shark: 2 m, a predator");
         // the crab
         TankBlockEntity palu = ForeignTerrariumGameTests.paludarium(h, 20, 1, 6, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         expect(h, palu, ForeignTerrariumGameTests.container(h, crab, false, false), null, "crab into a paludarium");

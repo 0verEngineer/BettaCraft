@@ -103,7 +103,7 @@ public class MobJarItem extends Item {
         if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         Component no = refusal(target);
         if (no != null) {
-            player.displayClientMessage(no, true);
+            player.sendOverlayMessage(no);
             if (GlassMobs.species(target.getType()) != null) player.getCooldowns().addCooldown(stack, COOLDOWN);
             return InteractionResult.FAIL;
         }

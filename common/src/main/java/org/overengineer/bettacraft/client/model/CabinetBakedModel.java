@@ -9,10 +9,10 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
@@ -51,7 +51,7 @@ public class CabinetBakedModel extends WrappedModel {
     public static List<BakedQuad> retextureAll(List<BakedQuad> quads, BlockState wood) {
         TextureAtlasSprite target = woodSprite(wood);
         List<BakedQuad> out = new ArrayList<>(quads.size());
-        for (BakedQuad q : quads) out.add(q.sprite().contents().name().equals(PLACEHOLDER) ? retexture(q, target) : q);
+        for (BakedQuad q : quads) out.add(q.materialInfo().sprite().contents().name().equals(PLACEHOLDER) ? retexture(q, target) : q);
         return List.copyOf(out);
     }
 
@@ -68,15 +68,15 @@ public class CabinetBakedModel extends WrappedModel {
 
     static TextureAtlasSprite woodSprite(BlockState wood) {
         return WOOD_SPRITES.computeIfAbsent(wood, w -> {
-            BlockStateModel m = Minecraft.getInstance().getBlockRenderer().getBlockModel(w);
+            BlockStateModel m = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(w);
             RandomSource r = RandomSource.create(42);
             for (Direction d : new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.UP}) {
                 List<BakedQuad> q = ClientPlatform.get().quads(m, w, d, r, null);
-                if (!q.isEmpty() && q.getFirst().sprite().atlasLocation().equals(TextureAtlas.LOCATION_BLOCKS)) return q.getFirst().sprite();
+                if (!q.isEmpty() && q.getFirst().materialInfo().sprite().atlasLocation().equals(TextureAtlas.LOCATION_BLOCKS)) return q.getFirst().materialInfo().sprite();
             }
             List<BakedQuad> q = ClientPlatform.get().quads(m, w, null, r, null);
-            if (!q.isEmpty()) return q.getFirst().sprite();
-            return m.particleIcon();
+            if (!q.isEmpty()) return q.getFirst().materialInfo().sprite();
+            return m.particleMaterial().sprite();
         });
     }
 
@@ -91,7 +91,7 @@ public class CabinetBakedModel extends WrappedModel {
         List<BakedQuad> orig = ClientPlatform.get().quads(originalModel, state, side, rand, renderType);
         TextureAtlasSprite target = woodSprite(wood);
         List<BakedQuad> out = new ArrayList<>(orig.size());
-        for (BakedQuad q : orig) out.add(q.sprite().contents().name().equals(PLACEHOLDER) ? retexture(q, target) : q);
+        for (BakedQuad q : orig) out.add(q.materialInfo().sprite().contents().name().equals(PLACEHOLDER) ? retexture(q, target) : q);
         // the generated cabinet models are plain JSON models: their quads do not depend on the render type
         List<BakedQuad> result = List.copyOf(out);
         perSide[idx] = result;
@@ -100,7 +100,7 @@ public class CabinetBakedModel extends WrappedModel {
 
     /** Copies the quad with UVs moved from the placeholder sprite into {@code target}. */
     static BakedQuad retexture(BakedQuad q, TextureAtlasSprite target) {
-        TextureAtlasSprite src = q.sprite();
+        TextureAtlasSprite src = q.materialInfo().sprite();
         int[] v = org.overengineer.bettacraft.platform.client.ClientPlatform.get().vertices(q).clone();
         int stride = v.length / 4;
         for (int i = 0; i < 4; i++) {
@@ -112,7 +112,7 @@ public class CabinetBakedModel extends WrappedModel {
             v[o] = Float.floatToRawIntBits(target.getU0() + fu * (target.getU1() - target.getU0()));
             v[o + 1] = Float.floatToRawIntBits(target.getV0() + fv * (target.getV1() - target.getV0()));
         }
-        return ClientPlatform.get().quad(v, q.tintIndex(), q.direction(), target, q.shade(), ClientPlatform.get().quadAo(q));
+        return ClientPlatform.get().quad(v, q.materialInfo().tintIndex(), q.direction(), target, q.materialInfo().shade(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
     }
 
     /** M21.7: a quarter texel inside the sprite (a UV exactly on its edge can pick a texel of the neighbouring atlas texture). */

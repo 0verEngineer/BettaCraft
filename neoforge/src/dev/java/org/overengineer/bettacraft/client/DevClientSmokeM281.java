@@ -96,7 +96,7 @@ final class DevClientSmokeM281 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(-30, 4, 380); // above the superflat ground (its floor lies at the bottom of the world)
         int total = 0, floatingTotal = 0;
         for (int i = 0; i < 4; i++) {

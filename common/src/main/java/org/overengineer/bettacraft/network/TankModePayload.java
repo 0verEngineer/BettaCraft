@@ -49,12 +49,12 @@ public record TankModePayload(int containerId, int mode) implements CustomPacket
         TankData t = c.getTank();
         ServerLevel level = player.level();
         if (!TankInhabitants.canModify(player, t)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return Result.LOCKED;
         }
         // M33 part d pattern: claims / spawn protection and the build rights of the player
         if (!player.mayBuild() || !level.isLoaded(c.getBlockPos()) || !level.mayInteract(player, c.getBlockPos())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank_mode.protected").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank_mode.protected").withStyle(ChatFormatting.RED));
             return Result.PROTECTED;
         }
         long now = level.getGameTime();
@@ -68,11 +68,11 @@ public record TankModePayload(int containerId, int mode) implements CustomPacket
         TankCare.log(level, c, "log.bettacraft.tank_mode.set", TankCare.nameArg(player), "@" + mode.translationKey());
         // nothing is removed: a fixed type that does not fit the water says so, and only keeps more water out
         if (WaterLimit.limits(t) && t.waterMb() > WaterLimit.maxWaterMb(level, c)) {
-            player.displayClientMessage(Component.translatable(mode == TankModeSetting.TERRARIUM ? "message.bettacraft.tank_mode.water_stays_terrarium"
-                    : "message.bettacraft.tank_mode.water_stays_paludarium", WaterLimit.maxWaterMb(level, c)).withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable(mode == TankModeSetting.TERRARIUM ? "message.bettacraft.tank_mode.water_stays_terrarium"
+                    : "message.bettacraft.tank_mode.water_stays_paludarium", WaterLimit.maxWaterMb(level, c)).withStyle(ChatFormatting.GOLD));
         } else {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank_mode.set", Component.translatable(mode.translationKey()))
-                    .withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank_mode.set", Component.translatable(mode.translationKey()))
+                    .withStyle(ChatFormatting.GREEN));
         }
         c.setChanged();
         c.markTankChanged();

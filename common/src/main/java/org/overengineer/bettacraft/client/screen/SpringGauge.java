@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -13,7 +13,7 @@ final class SpringGauge {
 
     private SpringGauge() {}
 
-    static void draw(GuiGraphics g, int x, int y, int h, int pct) {
+    static void draw(GuiGraphicsExtractor g, int x, int y, int h, int pct) {
         if (pct < 0) return;
         g.fill(x - 1, y - 1, x + W + 1, y + h + 1, 0xFF555555);
         g.fill(x, y, x + W, y + h, 0xFF2A2A2A);
@@ -27,7 +27,7 @@ final class SpringGauge {
         return mouseX >= x - 1 && mouseX < x + W + 1 && mouseY >= y - 1 && mouseY < y + h + 1;
     }
 
-    static void tooltip(GuiGraphics g, Font font, int mouseX, int mouseY, int pct) {
+    static void tooltip(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY, int pct) {
         if (pct < 0) return;
         g.setTooltipForNextFrame(font, font.split(Component.translatable("gui.bettacraft.spring.tooltip", pct), 200), mouseX, mouseY);
     }

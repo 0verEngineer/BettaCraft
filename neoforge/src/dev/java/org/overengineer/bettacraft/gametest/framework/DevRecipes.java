@@ -12,7 +12,7 @@ public final class DevRecipes {
         if (recipe instanceof org.overengineer.bettacraft.crucible.CrucibleRecipe c) return c.getResultItem(null);
         if (recipe instanceof org.overengineer.bettacraft.food.FoodMakerRecipe f) return f.getResultItem(null);
         for (var d : recipe.display()) {
-            if (d.result() instanceof SlotDisplay.ItemStackSlotDisplay i) return i.stack();
+            if (d.result() instanceof SlotDisplay.ItemStackSlotDisplay i) return i.stack().create();
             if (d.result() instanceof SlotDisplay.ItemSlotDisplay i) return new ItemStack(i.item());
         }
         return ItemStack.EMPTY;

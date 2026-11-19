@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -59,7 +59,7 @@ final class DevClientSmokeM291 {
         LOGGER.info("[smoketest] M29.1 item grid: {} block items", items.size());
         int prevScale = mc.options.guiScale().get();
         then(1, () -> mc.options.guiScale().set(2));
-        then(1, mc::resizeDisplay);
+        then(1, mc::resizeGui);
         int perPage = Grid.COLS * Grid.ROWS;
         int pages = (items.size() + perPage - 1) / perPage;
         for (int p = 0; p < pages; p++) {
@@ -82,7 +82,7 @@ final class DevClientSmokeM291 {
         then(15, () -> shot("items_zoom"));
         then(1, () -> mc.setScreen(null));
         then(1, () -> mc.options.guiScale().set(prevScale));
-        then(1, mc::resizeDisplay);
+        then(1, mc::resizeGui);
     }
 
     private static boolean plant(ItemStack s) {
@@ -103,7 +103,7 @@ final class DevClientSmokeM291 {
         }
 
         @Override
-        public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
             g.fill(0, 0, width, height, 0xFF8B8B8B);
             int cols = scale > 3F ? 5 : scale > 1.5F ? COLS : COLS * 2;
             int cw = width / cols, ch = height / (scale > 3F ? 3 : ROWS);
@@ -114,7 +114,7 @@ final class DevClientSmokeM291 {
                 pose.pushMatrix();
                 pose.translate(cx + (cw - 16 * scale) / 2F, cy + 3);
                 pose.scale(scale, scale);
-                g.renderItem(items.get(i), 0, 0);
+                g.item(items.get(i), 0, 0);
                 pose.popMatrix();
                 String id = BuiltInRegistries.ITEM.getKey(items.get(i).getItem()).getPath();
                 pose.pushMatrix();
@@ -122,14 +122,14 @@ final class DevClientSmokeM291 {
                 pose.scale(0.5F, 0.5F);
                 int max = (cw - 4) * 2;
                 String s = font.plainSubstrByWidth(id, max);
-                g.drawString(font, s, 0, 0, 0xFF202020, false);
-                if (s.length() < id.length()) g.drawString(font, font.plainSubstrByWidth(id.substring(s.length()), max), 0, 9, 0xFF202020, false);
+                g.text(font, s, 0, 0, 0xFF202020, false);
+                if (s.length() < id.length()) g.text(font, font.plainSubstrByWidth(id.substring(s.length()), max), 0, 9, 0xFF202020, false);
                 pose.popMatrix();
             }
         }
 
         @Override
-        public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {}
+        public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {}
 
         @Override
         public boolean isPauseScreen() {

@@ -26,6 +26,13 @@ public class TankLightItem extends BlockItem {
     }
 
     /** One light of the given colour (white: the plain item). */
+    /** M52c (26.1): the stack template of a light of a colour (recipes, made before the item components are bound). */
+    public static net.minecraft.world.item.ItemStackTemplate template(net.minecraft.world.level.ItemLike item, DyeColor color, int count) {
+        var b = net.minecraft.core.component.DataComponentPatch.builder();
+        if (color != DyeColor.WHITE) b.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(TankLightBlock.COLOR, color));
+        return new net.minecraft.world.item.ItemStackTemplate(item.asItem().builtInRegistryHolder(), count, b.build());
+    }
+
     public static ItemStack of(net.minecraft.world.level.ItemLike item, DyeColor color, int count) {
         ItemStack s = new ItemStack(item, count);
         if (color != DyeColor.WHITE) s.set(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY.with(TankLightBlock.COLOR, color));

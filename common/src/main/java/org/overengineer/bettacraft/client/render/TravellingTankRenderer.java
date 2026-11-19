@@ -190,7 +190,7 @@ public final class TravellingTankRenderer {
                 var state = dispatcher.extractEntity(e, partialTick);
                 state.lightCoords = light;
                 state.shadowPieces.clear();
-                dispatcher.submit(state, mc.gameRenderer.getLevelRenderState().cameraRenderState, px, py, pz, pose, LegacyBlockEntityRenderer.collector());
+                dispatcher.submit(state, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState, px, py, pz, pose, LegacyBlockEntityRenderer.collector());
             } catch (RuntimeException ex) {
                 if (!failedOnce) {
                     failedOnce = true;

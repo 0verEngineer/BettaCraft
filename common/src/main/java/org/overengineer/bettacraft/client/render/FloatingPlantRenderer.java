@@ -93,7 +93,7 @@ public final class FloatingPlantRenderer {
             col.set(Mth.floor(x), layer, Mth.floor(z));
             double y = surfaceY(level, col, dry, t);
             float bob = p.type.movable() ? (float) Math.sin(time * 0.07 + p.id * 1.7) * BOB : 0;
-            int light = LevelRenderer.getLightColor(level, col);
+            int light = LevelRenderer.getLightCoords(level, col);
             pose.pushPose();
             float above = layered ? layerOffset(rank.getOrDefault(p, 0)) : 0;
             pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob + above, z - origin.getZ());
@@ -131,48 +131,48 @@ public final class FloatingPlantRenderer {
         float grow = 0.5F + 0.5F * p.size;
         switch (p.type) {
             case DUCKWEED -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(DUCKWEED));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(DUCKWEED));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 // a second, smaller patch turned against the first: looks less like a square
                 flat(pose, vc, r * 0.35F, -r * 0.2F, r * 0.7F, LEAF_STEP * 3, 0xFFFFFFFF, light, 0.9F);
             }
             case FROGBIT -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(FROGBIT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(FROGBIT));
                 rosette(pose, vc, p, r, 3 + Math.floorMod(p.id, 3), 0.55F, 0.5F, 0xFFFFFFFF, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.55F, 3, FROGBIT_ROOTS, light);
             }
             case SALVINIA -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(SALVINIA));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(SALVINIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 flat(pose, vc, r * 0.25F, r * 0.3F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 1.4F);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light);
             }
             case RED_ROOT_FLOATER -> {
                 int tint = FloatingPlantSim.redRootLeafTint(p.red);
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(RED_ROOT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(RED_ROOT));
                 rosette(pose, vc, p, r, 4 + Math.floorMod(p.id, 3), 0.5F, 0.42F, tint, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, FloatingPlantSim.redRootRootTint(p.red), light);
             }
             case LILY_PAD -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(LILY_PAD));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(LILY_PAD));
                 flat(pose, vc, 0, 0, r, 0, LILY_TINT, light);
             }
             // M28: water lettuce: a cup of velvety leaves standing up a little, long feathery roots
             case WATER_LETTUCE -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(WATER_LETTUCE));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(WATER_LETTUCE));
                 cup(pose, vc, p, r, 5 + Math.floorMod(p.id, 3), 0.62F, 0.45F, 0xFFFFFFFF, light);
                 if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 3, LETTUCE_ROOTS, light);
             }
             // hornwort: a loose tuft at the surface, its shoots hanging deep into the water
             case HORNWORT -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(HORNWORT));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(HORNWORT));
                 flat(pose, vc, 0, 0, r, 0, HORNWORT_TINT, light);
                 flat(pose, vc, -r * 0.3F, r * 0.25F, r * 0.7F, LEAF_STEP * 3, HORNWORT_TINT, light, 1.1F);
                 strips(pose, buffers, HORNWORT_SHOOTS, (float) (p.type.rootLength() * (dry ? 0.0 : grow)), r * 0.75F, 3, HORNWORT_TINT, light);
             }
             // floating Riccia: a bright cushion of forked thalli
             case RICCIA -> {
-                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(RICCIA));
+                VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(RICCIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 flat(pose, vc, r * 0.3F, -r * 0.25F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 0.7F);
             }
@@ -243,7 +243,7 @@ public final class FloatingPlantRenderer {
     /** Crossed vertical strips of a texture hanging down {@code length} blocks (M28: also the hornwort shoots). */
     private static void strips(PoseStack pose, MultiBufferSource buffers, Identifier tex, float length, float width, int planes, int argb, int light) {
         if (length <= 0.01F) return;
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(tex));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(tex));
         PoseStack.Pose last = pose.last();
         Matrix4f m = last.pose();
         float v1 = Math.min(1, length / 0.45F);

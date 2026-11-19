@@ -449,10 +449,10 @@ public final class TankBreeding {
         double rate = ServerConfig.getOr(ServerConfig.COMBAT_PREDATOR_ATTACKS_PER_DAY, 4.0);
         if (rate <= 0) return;
         for (Entity pred : live) {
-            if (!pred.isAlive() || !pred.getType().is(ModTags.PREDATORS) || !(pred instanceof LivingEntity predator)) continue;
+            if (!pred.isAlive() || !pred.is(ModTags.PREDATORS) || !(pred instanceof LivingEntity predator)) continue;
             List<LivingEntity> prey = new ArrayList<>();
             for (Entity e : live) {
-                if (e != pred && e.isAlive() && e instanceof LivingEntity le && !e.getType().is(ModTags.PREDATORS)
+                if (e != pred && e.isAlive() && e instanceof LivingEntity le && !e.is(ModTags.PREDATORS)
                         && gameWidth(e) <= PREY_MAX_WIDTH) prey.add(le);
             }
             if (prey.isEmpty()) continue;
@@ -478,7 +478,7 @@ public final class TankBreeding {
     private static void eatPrey(ServerLevel level, TankBlockEntity controller, List<Entity> live, List<BettaEntity> bettas) {
         if (!org.overengineer.bettacraft.config.Care.canDie()) return; // M33 part c: care.mode NO_DEATH / DECOR: nobody is eaten
         List<Entity> prey = new ArrayList<>();
-        for (Entity e : live) if (e.isAlive() && e.getType().is(ModTags.BETTA_PREY)) prey.add(e);
+        for (Entity e : live) if (e.isAlive() && e.is(ModTags.BETTA_PREY)) prey.add(e);
         if (prey.isEmpty()) return;
         BettaHealth.Params p = BettaCare.params();
         for (BettaEntity b : bettas) {
@@ -512,14 +512,14 @@ public final class TankBreeding {
                     else males++;
                 } else if (b.lifeStage() == LifeStage.FRY) fry++;
             }
-            if (e.getType().is(ModTags.PREDATORS)) predator = true;
+            if (e.is(ModTags.PREDATORS)) predator = true;
         }
         List<String> out = new ArrayList<>();
         BubbleNest n = tank.nest();
         if (n != null && n.hasEggs() && females > 0) out.add("remove_female");
         if (fry > 0 && males > 0) out.add("remove_male");
         if (males >= 2 && ServerConfig.getOr(ServerConfig.COMBAT_MALES_FIGHT, true)) out.add("fight");
-        if (predator && live.stream().anyMatch(e -> !e.getType().is(ModTags.PREDATORS) && gameWidth(e) <= PREY_MAX_WIDTH)) out.add("predator");
+        if (predator && live.stream().anyMatch(e -> !e.is(ModTags.PREDATORS) && gameWidth(e) <= PREY_MAX_WIDTH)) out.add("predator");
         if (org.overengineer.bettacraft.tank.plants.TankPlants.dense(tank)) out.add("dense_plants"); // M12
         else if (org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), tank)) out.add("overgrown"); // M13
         out.addAll(org.overengineer.bettacraft.tankmates.TankmateBreeding.warnings(level, controller)); // M19

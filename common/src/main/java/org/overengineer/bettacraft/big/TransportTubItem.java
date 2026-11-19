@@ -125,20 +125,20 @@ public class TransportTubItem extends Item {
         if (isFilled(stack) || !target.isAlive() || target instanceof Player) return InteractionResult.PASS;
         if (!BigAnimals.isBig(target)) {
             if (!player.level().isClientSide() && TankInhabitants.isWaterAnimal(target)) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.big.tub_small", target.getDisplayName()), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.big.tub_small", target.getDisplayName()));
             }
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         // a wild one does not let itself be scooped up: the large net first
         if (!TankInhabitants.hasTankRef(target) && wild(target)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.big.needs_net", target.getDisplayName()), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.big.needs_net", target.getDisplayName()));
             return InteractionResult.CONSUME;
         }
         if (TankInhabitants.hasTankRef(target) && player.level() instanceof ServerLevel sl) {
             var c = TankInhabitants.resolveController(sl, target);
             if (c != null && !TankInhabitants.canModify(player, c.getTank())) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
                 return InteractionResult.CONSUME;
             }
         }
@@ -168,14 +168,14 @@ public class TransportTubItem extends Item {
             if (!level.getBlockState(pos.above()).getCollisionShape(level, pos.above()).isEmpty()) return InteractionResult.FAIL;
             pos = pos.above();
         } else if (!level.getFluidState(pos).is(FluidTags.WATER)) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"));
             return InteractionResult.FAIL;
         }
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
             Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
             if (e == null) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;
             }
             e.snapTo(pos.getX() + 0.5, pos.getY() + (land ? 0.0 : 0.1), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
@@ -183,7 +183,7 @@ public class TransportTubItem extends Item {
             if (e instanceof Mob m) m.setPersistenceRequired();
             TankInhabitants.release(e);
             if (!server.tryAddFreshEntityWithPassengers(e)) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;
             }
             level.playSound(null, pos, land ? SoundEvents.ARMOR_EQUIP_LEATHER.value() : SoundEvents.BUCKET_EMPTY_FISH, SoundSource.PLAYERS, 1.0F, 0.7F);

@@ -94,22 +94,22 @@ public final class BettaGameTests {
      * @param environments registers an environment by id and returns its holder
      * @param instances registers a test instance by id
      */
-    public static void registerInstances(BiFunction<Identifier, TestEnvironmentDefinition, Holder<TestEnvironmentDefinition>> environments,
+    public static void registerInstances(BiFunction<Identifier, TestEnvironmentDefinition<?>, Holder<TestEnvironmentDefinition<?>>> environments,
             BiConsumer<Identifier, GameTestInstance> instances) {
-        Map<Identifier, Holder<TestEnvironmentDefinition>> envs = new LinkedHashMap<>();
+        Map<Identifier, Holder<TestEnvironmentDefinition<?>>> envs = new LinkedHashMap<>();
         for (Entry e : all()) {
-            Holder<TestEnvironmentDefinition> env = envs.computeIfAbsent(e.environment(),
+            Holder<TestEnvironmentDefinition<?>> env = envs.computeIfAbsent(e.environment(),
                     id -> environments.apply(id, new TestEnvironmentDefinition.AllOf(List.of())));
             instances.accept(e.id(), instance(e, env));
         }
         LOGGER.info("[gametest] registered {} GameTests in {} batches", all().size(), envs.size());
     }
 
-    public static GameTestInstance instance(Entry e, Holder<TestEnvironmentDefinition> env) {
+    public static GameTestInstance instance(Entry e, Holder<TestEnvironmentDefinition<?>> env) {
         TestFunction f = e.function();
-        TestData<Holder<TestEnvironmentDefinition>> data = new TestData<>(env, Identifier.parse(f.structureName()), f.maxTicks(),
+        TestData<Holder<TestEnvironmentDefinition<?>>> data = new TestData<>(env, Identifier.parse(f.structureName()), f.maxTicks(),
                 (int) f.setupTicks(), f.required(), f.rotation(), f.manualOnly(), Math.max(1, f.maxAttempts()),
-                Math.max(1, f.requiredSuccesses()), f.skyAccess());
+                Math.max(1, f.requiredSuccesses()), f.skyAccess(), 0); // M52c: padding (26.1)
         return new FunctionGameTestInstance(ResourceKey.create(Registries.TEST_FUNCTION, e.id()), data);
     }
 

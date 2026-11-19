@@ -173,15 +173,15 @@ public final class Fertilizer {
         if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         if (!enabled()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.fertilizer.off").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.fertilizer.off").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         boolean wasOver = overdosed(t);
@@ -190,8 +190,8 @@ public final class Fertilizer {
         level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.7F, 1.2F);
         int pct = Math.round(t.fertilizer() * 100);
         boolean over = overdosed(t);
-        player.displayClientMessage(Component.translatable(over ? "message.bettacraft.fertilizer.overdosed" : "message.bettacraft.fertilizer.dosed", pct)
-                .withStyle(over ? ChatFormatting.GOLD : ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable(over ? "message.bettacraft.fertilizer.overdosed" : "message.bettacraft.fertilizer.dosed", pct)
+                .withStyle(over ? ChatFormatting.GOLD : ChatFormatting.GREEN));
         if (over && !wasOver) TankCare.log((ServerLevel) level, c, "log.bettacraft.fertilizer_overdosed", String.valueOf(pct));
         c.markTankChanged();
         return InteractionResult.CONSUME;

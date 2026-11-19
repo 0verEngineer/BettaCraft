@@ -11,7 +11,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -147,11 +146,11 @@ public final class SourcesGameTests {
         WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
         var rnd = h.getLevel().getRandom();
         // every offer of the table reaches the trader (NeoForge builds his lists from the WandererTradesEvent)
-        Set<VillagerTrades.ItemListing> registered = new HashSet<>();
-        for (int level = 1; level <= 2; level++) registered.addAll(List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level)));
+        Set<org.overengineer.bettacraft.villager.TradeListing> registered = new HashSet<>();
+        for (int level = 1; level <= 2; level++) registered.addAll(List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(h.getLevel(), level)));
         for (TraderOffers.Offer o : TraderOffers.all()) {
             h.assertTrue(registered.contains(o.gatedListing()), "offer " + o.id() + " is not among the trader's listings");
-            boolean usual = List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(1)).contains(o.gatedListing());
+            boolean usual = List.of(org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(h.getLevel(), 1)).contains(o.gatedListing());
             h.assertTrue(usual == (o.slot() == TraderOffers.Slot.USUAL), "offer " + o.id() + " in the wrong slot");
             Set<String> seen = new HashSet<>();
             for (int i = 0; i < 60; i++) {

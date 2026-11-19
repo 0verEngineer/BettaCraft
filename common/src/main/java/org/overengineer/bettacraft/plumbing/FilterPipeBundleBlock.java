@@ -185,7 +185,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
         return s != null ? s : state.getSoundType();
     }
 
-    public BlockState getAppearance(BlockState state, net.minecraft.world.level.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+    public BlockState getAppearance(BlockState state, net.minecraft.client.renderer.block.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
         BlockState c = PipeCovers.coverAt(level, pos);
         return c != null ? c : state;
     }
@@ -285,14 +285,14 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
      */
     public static boolean addLine(Level level, BlockPos pos, PipeLine line, @Nullable Player player, @Nullable ItemStack stack) {
         if (!Features.enabled(Feature.FILTER_LINES)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD));
             return false;
         }
         BlockState s = level.getBlockState(pos);
         if (!FilterPipes.isPipe(s)) return false;
         int lines = FilterPipes.packed(level, pos, s);
         if (FilterPipes.present(FilterPipes.slot(lines, line))) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_bundle.has_line").withStyle(ChatFormatting.GOLD), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_bundle.has_line").withStyle(ChatFormatting.GOLD));
             return false;
         }
         if (s.getBlock() instanceof FilterPipeBlock) {
@@ -361,7 +361,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
                 PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
                 if (l == null) return InteractionResult.FAIL;
                 if (FilterPipes.junction(FilterPipes.at(level, pos, l))) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD));
                 } else if (makeJunction(level, pos, l)) {
                     if (!player.getAbilities().instabuild) stack.shrink(1);
                     level.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 0.8F, 1.1F);

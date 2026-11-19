@@ -202,7 +202,7 @@ public final class CritterRenderer {
         for (Critter k : t.critters()) {
             double x = k.renderX(time, TankPlants.SYNC_TICKS), y = k.renderY(time, TankPlants.SYNC_TICKS), z = k.renderZ(time, TankPlants.SYNC_TICKS);
             at.set(Mth.floor(x), Mth.floor(y + 0.05), Mth.floor(z));
-            int light = LevelRenderer.getLightColor(level, at);
+            int light = LevelRenderer.getLightCoords(level, at);
             pose.pushPose();
             pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
             orient(pose, k.face, k.renderYaw(time, TankPlants.SYNC_TICKS));
@@ -211,7 +211,7 @@ public final class CritterRenderer {
         }
         for (CritterObject o : t.critterObjects()) {
             at.set(Mth.floor(o.x), Mth.floor(o.y), Mth.floor(o.z));
-            int light = LevelRenderer.getLightColor(level, at);
+            int light = LevelRenderer.getLightCoords(level, at);
             pose.pushPose();
             pose.translate(o.x - origin.getX(), o.y - origin.getY(), o.z - origin.getZ());
             orient(pose, o.face, o.yaw);
@@ -299,7 +299,7 @@ public final class CritterRenderer {
         if (soft) body = CritterGenes.mix(body, 0xF4ECE0, 0.45F);
         if (!alive) body = dead(body);
         int skin = alive ? skinColor(k) : dead(skinColor(k));
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(m)));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURES.get(m)));
         int ov = OverlayTexture.NO_OVERLAY;
         for (Map.Entry<String, ModelPart> e : GROUPS.get(m).entrySet()) {
             ModelPart p = e.getValue();
@@ -321,14 +321,14 @@ public final class CritterRenderer {
         ModelPart bodyPart = group(m, "body");
         if (bo != null && bodyPart != null && bodyPart.visible) {
             int oc = soft ? CritterGenes.mix(bo.getValue(), 0xF4ECE0, 0.45F) : bo.getValue();
-            bodyPart.render(pose, buffers.getBuffer(RenderTypes.entityCutoutNoCull(bo.getKey())), light, ov, argb(alive ? oc : dead(oc)));
+            bodyPart.render(pose, buffers.getBuffer(RenderTypes.entityCutout(bo.getKey())), light, ov, argb(alive ? oc : dead(oc)));
         }
         // M21.5: lines or bands over the shell (same model part, an overlay texture with its own colour)
         if (lk.kind() != org.overengineer.bettacraft.critters.CritterLooks.Lines.NONE) {
             ModelPart shell = group(m, "shell");
             if (shell != null && shell.visible) {
                 int lc = alive ? lk.lines() : dead(lk.lines());
-                shell.render(pose, buffers.getBuffer(RenderTypes.entityCutoutNoCull(LINES.get(lk.kind()))), light, ov, argb(lc));
+                shell.render(pose, buffers.getBuffer(RenderTypes.entityCutout(LINES.get(lk.kind()))), light, ov, argb(lc));
             }
         }
     }
@@ -342,7 +342,7 @@ public final class CritterRenderer {
             // about 0.1 blocks wide and 0.12 high on the glass, 0.06 thick
             pose.translate(0, -0.06F, 0); // the egg group floats above its origin in the model: down onto the glass
             pose.scale(0.72F, -0.85F, -0.65F);
-            vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
+            vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
             boolean was = eggs.visible;
             eggs.visible = true;
             eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xF07AA8));
@@ -353,7 +353,7 @@ public final class CritterRenderer {
             // M49: a faint cloud of Amano larvae: tiny pale specks in the water
             ModelPart eggs = group(CritterSpecies.Model.SHRIMP, "eggs");
             if (eggs == null) return;
-            vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
+            vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
             boolean was = eggs.visible;
             eggs.visible = true;
             float t = (net.minecraft.util.Util.getMillis() % 100000L) / 1000F + o.yaw;
@@ -373,7 +373,7 @@ public final class CritterRenderer {
             // M29 part d: axolotl eggs on a plant: a few small, pale, jelly-coated eggs (the egg group of the shrimp model)
             ModelPart eggs = group(CritterSpecies.Model.SHRIMP, "eggs");
             if (eggs == null) return;
-            vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
+            vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURES.get(CritterSpecies.Model.SHRIMP)));
             boolean was = eggs.visible;
             eggs.visible = true;
             for (int i = 0; i < 5; i++) {
@@ -393,7 +393,7 @@ public final class CritterRenderer {
         if (bodyPart == null) return;
         float s = (float) (o.species.length() * Math.max(0.3F, o.size));
         pose.scale(s, -s, -s);
-        vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(TEXTURES.get(m)));
+        vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURES.get(m)));
         bodyPart.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xE8E0D2));
         ModelPart claws = group(m, "claws");
         if (claws != null) claws.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(0xE0D8CA));

@@ -143,7 +143,7 @@ final class DevClientSmokeM13 {
         then(1, () -> {
             language(lang);
             mc.options.guiScale().set(0);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));

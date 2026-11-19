@@ -90,8 +90,8 @@ public final class ChunkUnloadGameTests {
     }
 
     private static void force(ServerLevel level, BlockPos min, boolean on) {
-        ChunkPos a = new ChunkPos(min), b = new ChunkPos(min.offset(3, 0, 2));
-        for (int x = a.x; x <= b.x; x++) for (int z = a.z; z <= b.z; z++) level.setChunkForced(x, z, on);
+        ChunkPos a = ChunkPos.containing(min), b = ChunkPos.containing(min.offset(3, 0, 2));
+        for (int x = a.x(); x <= b.x(); x++) for (int z = a.z(); z <= b.z(); z++) level.setChunkForced(x, z, on);
     }
 
     /** Waits (tick by tick, at most {@code max}) until {@code done}, then runs {@code then}; fails with {@code what} after that. */
@@ -131,7 +131,7 @@ public final class ChunkUnloadGameTests {
             done.run();
             return;
         }
-        ChunkPos cp = new ChunkPos(min);
+        ChunkPos cp = ChunkPos.containing(min);
         // round 1: release the chunk in the tick right after the controller's care step
         int wait = round == 1 ? (int) Math.floorMod(-(level.getGameTime() + min.asLong() + 1), 20) + 1 : 40;
         h.runAfterDelay(Math.max(1, wait), () -> {
@@ -140,7 +140,7 @@ public final class ChunkUnloadGameTests {
             Snapshot before = snapshot(level, c.getTank());
             check(round + " (before)", expect, before);
             force(level, min, false);
-            await(h, 1200, () -> !level.hasChunk(cp.x, cp.z) && level.getEntity(expect.animals().keySet().iterator().next()) == null,
+            await(h, 1200, () -> !level.hasChunk(cp.x(), cp.z()) && level.getEntity(expect.animals().keySet().iterator().next()) == null,
                     "round " + round + ": the chunk did not unload", () -> {
                         force(level, min, true);
                         int back = round == 2 ? 1 : 10;

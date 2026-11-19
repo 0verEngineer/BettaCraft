@@ -1005,7 +1005,7 @@ final class DevClientSmokeMP {
             sizeSet = true;
             mc.getWindow().setWindowed(1280, 960);
             mc.options.guiScale().set(3);
-            mc.resizeDisplay();
+            mc.resizeGui();
         }
         if (readyIn > 0 && --readyIn == 0) {
             if (clientTank() != null) {

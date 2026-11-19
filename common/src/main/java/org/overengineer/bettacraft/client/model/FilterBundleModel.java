@@ -6,9 +6,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
@@ -54,7 +54,7 @@ public final class FilterBundleModel extends WrappedModel {
     @Override
     public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer renderType) {
         BlockState c = data.get(FilterPipeBlockEntity.COVER);
-        if (c != null) return ClientPlatform.get().quads(Minecraft.getInstance().getBlockRenderer().getBlockModel(c), c, side, rand, renderType);
+        if (c != null) return ClientPlatform.get().quads(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(c), c, side, rand, renderType);
         List<BakedQuad> out = new ArrayList<>(super.quads(state, side, rand, data, renderType));
         Integer lines = data.get(FilterPipeBlockEntity.LINES);
         if (lines == null) return out;
@@ -77,12 +77,12 @@ public final class FilterBundleModel extends WrappedModel {
     public java.util.Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data) {
         BlockState c = data.get(FilterPipeBlockEntity.COVER);
         if (c == null) return super.layers(state, rand, data);
-        return ClientPlatform.get().layers(Minecraft.getInstance().getBlockRenderer().getBlockModel(c), c, rand);
+        return ClientPlatform.get().layers(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(c), c, rand);
     }
 
     @Override
     public net.minecraft.client.renderer.texture.TextureAtlasSprite particle(ModelValues data) {
         BlockState c = data.get(FilterPipeBlockEntity.COVER);
-        return c == null ? super.particle(data) : Minecraft.getInstance().getBlockRenderer().getBlockModel(c).particleIcon();
+        return c == null ? super.particle(data) : Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(c).particleMaterial().sprite();
     }
 }

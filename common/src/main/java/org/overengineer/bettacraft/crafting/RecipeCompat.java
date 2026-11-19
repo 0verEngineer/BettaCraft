@@ -43,4 +43,35 @@ public final class RecipeCompat {
     public static List<ItemStack> stacks(Optional<Ingredient> ingredient) {
         return ingredient.map(RecipeCompat::stacks).orElse(List.of());
     }
+
+    /**
+     * M52c (26.1): the result template of a crafting recipe, without making a stack (recipes are read before the item
+     * components are bound, so {@code assemble} cannot run while a recipe is decoded).
+     */
+    public static net.minecraft.world.item.ItemStackTemplate resultTemplate(Recipe<?> recipe) {
+        for (var d : recipe.display()) {
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay i) return i.stack();
+        }
+        throw new IllegalArgumentException("no fixed result: " + recipe);
+    }
+
+    /** M52c: the template with a component set in its patch unless the patch already has it. */
+    public static <T> net.minecraft.world.item.ItemStackTemplate withDefault(net.minecraft.world.item.ItemStackTemplate t,
+            net.minecraft.core.component.DataComponentType<T> type, T value) {
+        var b = net.minecraft.core.component.DataComponentPatch.builder();
+        boolean has = false;
+        for (var e : t.components().entrySet()) {
+            if (e.getKey() == type) has = true;
+            copy(b, e.getKey(), e.getValue());
+        }
+        if (has) return t;
+        b.set(type, value);
+        return new net.minecraft.world.item.ItemStackTemplate(t.item(), t.count(), b.build());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void copy(net.minecraft.core.component.DataComponentPatch.Builder b, net.minecraft.core.component.DataComponentType<T> type, Optional<?> value) {
+        if (value.isPresent()) b.set(type, (T) value.get());
+        else b.remove(type);
+    }
 }

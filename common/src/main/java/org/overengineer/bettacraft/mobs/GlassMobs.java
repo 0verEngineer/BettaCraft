@@ -108,7 +108,7 @@ public final class GlassMobs {
         GlassMobSpecies s = DEFAULTS.get(id);
         if (s != null) return s;
         if (type.getCategory() == MobCategory.MONSTER && InhabitantRules.matches(rules.allow(), id.toString())
-                && !type.is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) {
+                && !type.builtInRegistryHolder().is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) {
             return GlassMobSpecies.generic(id, type.getDimensions().width(), type.getDimensions().height());
         }
         return null;
@@ -442,12 +442,12 @@ public final class GlassMobs {
             server.sendParticles(ParticleTypes.HEART, m.getX(), m.getY() + m.getBbHeight() + 0.1, m.getZ(), 2, 0.05, 0.05, 0.05, 0.0);
             server.playSound(null, m.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.5F, 1.4F);
             TankCare.log(server, c, "log.bettacraft.glass.fed", TankCare.nameArg(m), "@" + one.getItem().getDescriptionId());
-            player.displayClientMessage(Component.translatable("message.bettacraft.terrarium.ate", m.getDisplayName(), one.getHoverName()), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.terrarium.ate", m.getDisplayName(), one.getHoverName()));
             return InteractionResult.CONSUME;
         }
         Component bait = layBait(server, c, stack, player);
         if (bait == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
-        player.displayClientMessage(bait, true);
+        player.sendOverlayMessage(bait);
         return InteractionResult.CONSUME;
     }
 

@@ -5,9 +5,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,25 +35,25 @@ public final class SubstrateFloorModel extends WrappedModel {
     public List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer renderType) {
         BlockState s = substrate(data);
         if (s == null) return super.quads(state, side, rand, data, renderType);
-        return ClientPlatform.get().quads(Minecraft.getInstance().getBlockRenderer().getBlockModel(s), s, side, rand, renderType);
+        return ClientPlatform.get().quads(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(s), s, side, rand, renderType);
     }
 
     @Override
     public java.util.Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data) {
         BlockState s = substrate(data);
         if (s == null) return super.layers(state, rand, data);
-        return ClientPlatform.get().layers(Minecraft.getInstance().getBlockRenderer().getBlockModel(s), s, rand);
+        return ClientPlatform.get().layers(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(s), s, rand);
     }
 
     @Override
     public net.minecraft.client.renderer.texture.TextureAtlasSprite particle(ModelValues data) {
         BlockState s = substrate(data);
-        return s == null ? super.particle(data) : Minecraft.getInstance().getBlockRenderer().getBlockModel(s).particleIcon();
+        return s == null ? super.particle(data) : Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(s).particleMaterial().sprite();
     }
 
     /** The floor is tinted like its substrate (grass, moss). */
-    public static int blockColor(BlockState state, @Nullable net.minecraft.world.level.BlockAndTintGetter level, @Nullable net.minecraft.core.BlockPos pos, int tint) {
+    public static int blockColor(BlockState state, @Nullable net.minecraft.client.renderer.block.BlockAndTintGetter level, @Nullable net.minecraft.core.BlockPos pos, int tint) {
         if (level == null || pos == null || !(level.getBlockEntity(pos) instanceof InteriorFloorBlockEntity be)) return -1;
-        return Minecraft.getInstance().getBlockColors().getColor(be.substrate(), level, pos, tint);
+        return org.overengineer.bettacraft.client.ClientSetup.tint(be.substrate(), level, pos, tint);
     }
 }

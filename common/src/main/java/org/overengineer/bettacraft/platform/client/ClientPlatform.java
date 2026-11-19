@@ -6,14 +6,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Function;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.platform.model.ModelKey;
@@ -59,8 +59,11 @@ public interface ClientPlatform {
     /** A model registered as an extra (standalone) model ({@code client.model.ModelSwaps#EXTRA}). */
     BlockStateModel standaloneModel(net.minecraft.resources.Identifier id);
 
-    /** A baked quad from the 1.21.1 vertex layout (NeoForge's carries its colours, normals and ambient occlusion flag). */
-    BakedQuad quad(int[] vertices, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion);
+    /**
+     * A baked quad from the 1.21.1 vertex layout (NeoForge's carries its colours, normals and ambient occlusion flag).
+     * M52c (26.1): every quad carries the chunk layer it is drawn in.
+     */
+    BakedQuad quad(int[] vertices, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion, ChunkSectionLayer layer);
 
     /** The 1.21.1 vertex layout of a quad (positions, colours, UVs and normals as far as the loader keeps them). */
     int[] vertices(BakedQuad quad);

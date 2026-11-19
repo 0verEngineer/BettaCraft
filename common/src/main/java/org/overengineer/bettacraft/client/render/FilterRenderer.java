@@ -53,7 +53,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
         if (p == null) return;
         BlockPos pos = be.getBlockPos();
         Vec3 origin = new Vec3(pos.getX(), pos.getY(), pos.getZ());
-        int hoseLight = LevelRenderer.getLightColor(level, BlockPos.containing(p.top()));
+        int hoseLight = LevelRenderer.getLightCoords(level, BlockPos.containing(p.top()));
         Vec3 source = null;
         if (be.getBlockState().getBlock() instanceof CabinetBlock && be instanceof CabinetBlockEntity cab) {
             // M22.4: out of the cabinet's side towards the wall of its outlet
@@ -65,7 +65,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
         double share = ((FilterHost) be).powerShare(); // M23: the power regulator
         if (share <= 0) return;
         float time = (level.getGameTime() + partialTick) / 20F;
-        int jetLight = LevelRenderer.getLightColor(level, BlockPos.containing(p.nozzle()));
+        int jetLight = LevelRenderer.getLightCoords(level, BlockPos.containing(p.nozzle()));
         Vec3 n = p.nozzle();
         Vec3 start = n.add(p.inward().getStepX() * 0.1, 0, p.inward().getStepZ() * 0.1);
         FilterFlow.Path shifted = new FilterFlow.Path(p.bottom(), p.top(), p.inside(), start, p.inward(), p.surfaceY(), true);

@@ -520,7 +520,7 @@ public class AquaristEntity extends PathfinderMob {
     // ------------------------------------------------------------------ wage
 
     static long day(Level level) {
-        return Math.floorDiv(level.getDayTime(), 24000L);
+        return Math.floorDiv(level.getOverworldClockTime(), 24000L);
     }
 
     /** Once per in-game day (the first time he is loaded on a new day): the wage, or one more day without it. */
@@ -666,7 +666,7 @@ public class AquaristEntity extends PathfinderMob {
     /** Day for his work: 0:00 to 12:00 of the day (6 to 18 o'clock). */
     boolean workTime() {
         if (alwaysDay) return true;
-        long t = Math.floorMod(level().getDayTime(), 24000L);
+        long t = Math.floorMod(level().getOverworldClockTime(), 24000L);
         return t < 12000L || t >= 23500L;
     }
 
@@ -947,8 +947,8 @@ public class AquaristEntity extends PathfinderMob {
         ItemStack held = player.getItemInHand(hand);
         if (held.is(Items.NAME_TAG) && player.getUUID().equals(employer) && phase() == Phase.HIRED) return InteractionResult.PASS; // the name tag renames him
         if (!boss) {
-            sp.displayClientMessage(Component.translatable(phase() == Phase.OFFERING ? "message.bettacraft.aquarist.offers_to"
-                    : "message.bettacraft.aquarist.works_for", getName(), employerName()), true);
+            sp.sendOverlayMessage(Component.translatable(phase() == Phase.OFFERING ? "message.bettacraft.aquarist.offers_to"
+                    : "message.bettacraft.aquarist.works_for", getName(), employerName()));
             return InteractionResult.CONSUME;
         }
         if (phase() == Phase.LEAVING) return InteractionResult.CONSUME;

@@ -117,7 +117,7 @@ final class DevClientSmokeM41 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         base = p.blockPosition().offset(0, 3, 40);
         Block adapter = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("bettacraft", "drive_adapter"));
         if (block("create:creative_motor") == Blocks.AIR || adapter == Blocks.AIR) {

@@ -42,7 +42,7 @@ public class PlumbingItem extends BlockItem {
     }
 
     private static void say(Player p, Level level, String key, Object... args) {
-        if (!level.isClientSide() && p != null) p.displayClientMessage(Component.translatable(key, args).withStyle(ChatFormatting.GOLD), true);
+        if (!level.isClientSide() && p != null) p.sendOverlayMessage(Component.translatable(key, args).withStyle(ChatFormatting.GOLD));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class PlumbingItem extends BlockItem {
         interior.setBlock(best, org.overengineer.bettacraft.registry.ModBlocks.BULKHEAD.get().defaultBlockState(), Block.UPDATE_ALL);
         if (player != null) {
             if (!player.getAbilities().instabuild) stack.shrink(1);
-            player.displayClientMessage(Component.translatable("message.bettacraft.bulkhead.installed").withStyle(ChatFormatting.AQUA), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.bulkhead.installed").withStyle(ChatFormatting.AQUA));
         }
         level.playSound(null, pos, net.minecraft.sounds.SoundEvents.COPPER_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 0.8F, 1.2F);
         return InteractionResult.CONSUME;

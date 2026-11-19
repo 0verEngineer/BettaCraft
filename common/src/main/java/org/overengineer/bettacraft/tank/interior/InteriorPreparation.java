@@ -57,7 +57,7 @@ public final class InteriorPreparation {
             this.region = region;
             int[] c = InteriorManager.shellChunks(region);
             for (int cx = c[0]; cx <= c[1]; cx++)
-                for (int cz = c[2]; cz <= c[3]; cz++) chunks.add(ChunkPos.asLong(cx, cz));
+                for (int cz = c[2]; cz <= c[3]; cz++) chunks.add(ChunkPos.pack(cx, cz));
         }
     }
 
@@ -82,7 +82,7 @@ public final class InteriorPreparation {
         Job job = JOBS.computeIfAbsent(region.id(), k -> new Job(region));
         if (player != null) {
             job.players.add(player.getUUID());
-            player.displayClientMessage(Component.translatable("message.bettacraft.interior.preparing"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.interior.preparing"));
         }
     }
 
@@ -118,7 +118,7 @@ public final class InteriorPreparation {
             int windowEnd = Math.min(job.chunks.size(), job.nextChunk + WINDOW);
             boolean refresh = job.ticks - job.lastRefresh >= REFRESH_TICKS;
             for (int i = refresh ? job.nextChunk : Math.max(job.nextChunk, job.ticketedTo); i < windowEnd; i++) {
-                ChunkPos cp = new ChunkPos(job.chunks.getLong(i));
+                ChunkPos cp = ChunkPos.unpack(job.chunks.getLong(i));
                 level.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), cp, 0); // adding it again renews its lifespan
             }
             if (refresh) job.lastRefresh = job.ticks;
@@ -151,7 +151,7 @@ public final class InteriorPreparation {
                 int pct = job.nextChunk * 100 / Math.max(1, job.chunks.size());
                 for (UUID u : job.players) {
                     ServerPlayer p = server.getPlayerList().getPlayer(u);
-                    if (p != null) p.displayClientMessage(Component.translatable("message.bettacraft.interior.preparing_progress", pct), true);
+                    if (p != null) p.sendOverlayMessage(Component.translatable("message.bettacraft.interior.preparing_progress", pct));
                 }
             }
         }

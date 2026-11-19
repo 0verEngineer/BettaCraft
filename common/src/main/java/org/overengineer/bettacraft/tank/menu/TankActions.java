@@ -166,7 +166,7 @@ public final class TankActions {
                     if (n == 0) error = Component.translatable("message.bettacraft.critters.no_clutches");
                     else {
                         TankCare.log(player.level(), controller, "log.bettacraft.clutch_removed", TankCare.nameArg(player));
-                        player.displayClientMessage(Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN), true);
+                        player.sendOverlayMessage(Component.translatable("message.bettacraft.critters.clutch_removed").withStyle(ChatFormatting.GREEN));
                     }
                 }
             }
@@ -184,7 +184,7 @@ public final class TankActions {
             }
         }
         if (error != null) {
-            player.displayClientMessage(error.copy().withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(error.copy().withStyle(ChatFormatting.RED));
         } else {
             // M17: only a change goes to the clients near the tank (a refused action sent the whole tank view to all)
             controller.markTankChanged();
@@ -217,7 +217,7 @@ public final class TankActions {
         if (!done) return Component.translatable("message.bettacraft.critters.none_of_kind");
         org.overengineer.bettacraft.genetics.MagnifierItem.wear(player, magnifier, null);
         player.level().playSound(null, controller.getBlockPos(), net.minecraft.sounds.SoundEvents.SPYGLASS_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.2F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.magnifier.analysed", 1).withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.magnifier.analysed", 1).withStyle(ChatFormatting.GREEN));
         TankCare.log(player.level(), controller, "log.bettacraft.analysed", TankCare.nameArg(player), "1");
         return null;
     }

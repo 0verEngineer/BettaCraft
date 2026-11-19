@@ -28,13 +28,15 @@
     "mob.MobGlassMixin",
     "mob.SlimeGlassMixin",
     "mob.ZombieGlassMixin",
-    "villager.MerchantContainerMixin"
+    "villager.MerchantContainerMixin",
+    "villager.VillagerTradeOfferMixin"
   ],
   "client": [
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
     "client.CreativeModeTabsAccessor",
+    "client.FluidRendererMixin",
     "client.IrisBlockIdsMixin",
     "client.LevelRendererFrustumMixin",
     "client.LivingEntityRendererGlassMixin",

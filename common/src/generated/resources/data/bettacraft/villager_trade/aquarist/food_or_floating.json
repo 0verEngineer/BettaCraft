@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "aquarist/food_or_floating"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:betta_pellets"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

@@ -42,7 +42,7 @@ public final class BigAnimals {
         var p = org.overengineer.bettacraft.foreign.ForeignProfiles.of(type);
         if (p != null && p.bigLength() > 0) return p.bigLength();
         if (type == EntityType.TURTLE) return org.overengineer.bettacraft.terrarium.SeaTurtles.LENGTH_M;
-        if (!type.is(ModTags.BIG_TANK_ANIMALS)) return 0;
+        if (!type.builtInRegistryHolder().is(ModTags.BIG_TANK_ANIMALS)) return 0;
         float w = e != null ? e.getBbWidth() : type.getDimensions().width(), h = e != null ? e.getBbHeight() : type.getDimensions().height();
         // a young one is judged by its adult size (it grows in the tank)
         if (e instanceof net.minecraft.world.entity.LivingEntity le && le.isBaby()) {

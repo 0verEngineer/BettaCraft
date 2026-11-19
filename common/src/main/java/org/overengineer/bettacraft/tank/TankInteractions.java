@@ -72,7 +72,7 @@ public final class TankInteractions {
         }
         TankData tank = controller.getTank();
         if (!TankInhabitants.canModify(player, tank)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         if (fill) {
@@ -82,7 +82,7 @@ public final class TankInteractions {
                 return InteractionResult.CONSUME;
             }
             if (tank.waterMb() + TankData.MB_PER_BLOCK > tank.capacityMb()) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.full"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.full"));
                 return InteractionResult.CONSUME;
             }
             float qualityBefore = tank.waterQuality();
@@ -106,13 +106,13 @@ public final class TankInteractions {
             level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
         } else {
             if (tank.waterMb() < TankData.MB_PER_BLOCK) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_enough_water"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_enough_water"));
                 return InteractionResult.CONSUME;
             }
             double minFill = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.TANK_MIN_FILL_TO_INSERT, 0.5);
             if (tank.waterMb() - TankData.MB_PER_BLOCK < minFill * tank.capacityMb() && !TankInhabitants.liveInhabitants(server, tank).isEmpty()) {
                 // keep the inhabitants in water
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.keep_water", Math.round(minFill * 100)), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.keep_water", Math.round(minFill * 100)));
                 return InteractionResult.CONSUME;
             }
             boolean salty = tank.marine();
@@ -220,11 +220,11 @@ public final class TankInteractions {
         TankBlockEntity controller = TankMultiblock.getController(player.level(), pos);
         TankBlockEntity be = TankMultiblock.getBE(player.level(), pos);
         if (controller == null || be == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_formed"));
             return;
         }
         TankData t = controller.getTank();
-        player.displayClientMessage(Component.translatable("message.bettacraft.tank.info",
-                t.sizeX(), t.sizeY(), t.sizeZ(), t.waterMb(), t.capacityMb(), t.scale(), be.getGlassId().toString()), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.info",
+                t.sizeX(), t.sizeY(), t.sizeZ(), t.waterMb(), t.capacityMb(), t.scale(), be.getGlassId().toString()));
     }
 }

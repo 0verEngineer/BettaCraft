@@ -187,7 +187,7 @@ public final class InteriorPlants {
             return false;
         }
         if (player != null && !InteriorManager.canBuild(player, pos)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return false;
         }
         if (!level.getBlockState(pos).canBeReplaced()) {
@@ -240,7 +240,7 @@ public final class InteriorPlants {
     }
 
     private static void message(@Nullable Player player, String key, ChatFormatting color) {
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.aquatic." + key).withStyle(color), true);
+        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.aquatic." + key).withStyle(color));
     }
 
     // ------------------------------------------------------------------ growth (care loop)
@@ -844,7 +844,7 @@ public final class InteriorPlants {
         PlantSpecies s = speciesOf(interior.getBlockState(pos));
         if (r == null || s == null) return;
         if (!InteriorManager.canBuild(player, pos)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return;
         }
         InteriorPlant p = ownerOf(r, pos, s);
@@ -893,8 +893,8 @@ public final class InteriorPlants {
                 shears.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 0.7F, 1.4F);
-            player.displayClientMessage(Component.translatable("message.bettacraft.aquatic.trimmed", n,
-                    Component.translatable(item(p.species, 0).getItem().getDescriptionId())).withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.aquatic.trimmed", n,
+                    Component.translatable(item(p.species, 0).getItem().getDescriptionId())).withStyle(ChatFormatting.GREEN));
         }
         InteriorRegions.get(interior.getServer()).setDirty();
         TankBlockEntity c = controller(interior.getServer(), r);

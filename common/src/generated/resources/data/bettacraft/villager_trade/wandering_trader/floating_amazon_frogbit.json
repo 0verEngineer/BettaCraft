@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/floating_amazon_frogbit"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:amazon_frogbit"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

@@ -2,7 +2,7 @@ package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -61,37 +61,37 @@ public class WaterChangerScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         WaterChangerBlockEntity w = be();
         if (w != null && toggle != null) toggle.setMessage(Component.translatable(w.enabled() ? "gui.bettacraft.water_changer.on" : "gui.bettacraft.water_changer.off"));
-        super.render(g, mouseX, mouseY, partialTick);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (w == null) return;
-        g.drawCenteredString(font, title, left + W / 2, top + 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-        g.drawString(font, Component.translatable("gui.bettacraft.water_changer.interval", w.intervalDays()), left + 10, top + 34, 0xFFE0E0E0);
-        g.drawString(font, Component.translatable("gui.bettacraft.water_changer.share", w.share()), left + 10, top + 54, 0xFFE0E0E0);
+        g.centeredText(font, title, left + W / 2, top + 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        g.text(font, Component.translatable("gui.bettacraft.water_changer.interval", w.intervalDays()), left + 10, top + 34, 0xFFE0E0E0);
+        g.text(font, Component.translatable("gui.bettacraft.water_changer.share", w.share()), left + 10, top + 54, 0xFFE0E0E0);
         Minecraft mc = Minecraft.getInstance();
         long now = mc.level == null ? 0 : mc.level.getGameTime();
         Component status = Component.translatable("gui.bettacraft.water_changer.status." + w.status().name().toLowerCase(java.util.Locale.ROOT), w.lastMb());
-        g.drawString(font, status.copy().withStyle(w.status() == WaterChangerBlockEntity.Status.CHANGED || w.status() == WaterChangerBlockEntity.Status.WAITING
+        g.text(font, status.copy().withStyle(w.status() == WaterChangerBlockEntity.Status.CHANGED || w.status() == WaterChangerBlockEntity.Status.WAITING
                 ? ChatFormatting.AQUA : ChatFormatting.GOLD), left + 10, top + 98, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         if (w.filterTanks() > 0) { // M40 part b: on a multiblock filter
-            g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter", w.filterTanks()).withStyle(ChatFormatting.DARK_AQUA), left + 10, top + 126, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-            if (w.lastWasteMb() > 0) g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter_waste", w.lastWasteMb())
+            g.text(font, Component.translatable("gui.bettacraft.water_changer.filter", w.filterTanks()).withStyle(ChatFormatting.DARK_AQUA), left + 10, top + 126, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            if (w.lastWasteMb() > 0) g.text(font, Component.translatable("gui.bettacraft.water_changer.filter_waste", w.lastWasteMb())
                     .withStyle(ChatFormatting.GRAY), left + 10, top + 138, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
         if (w.last() >= 0 && w.enabled()) {
             double days = Math.max(0, (w.last() + w.intervalDays() * 24000L - now) / 24000.0);
-            g.drawString(font, Component.translatable("gui.bettacraft.water_changer.next", String.format(java.util.Locale.ROOT, "%.1f", days))
+            g.text(font, Component.translatable("gui.bettacraft.water_changer.next", String.format(java.util.Locale.ROOT, "%.1f", days))
                     .withStyle(ChatFormatting.GRAY), left + 10, top + 112, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.water_changer.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0));
+        g.centeredText(font, Component.translatable("gui.bettacraft.water_changer.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0));
     }
 
     @Override
-    public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(g, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.fill(left, top, left + W, top + H, 0xE0101418);
-        g.renderOutline(left, top, W, H, 0xFF6080A0);
+        g.outline(left, top, W, H, 0xFF6080A0);
     }
 
     @Override

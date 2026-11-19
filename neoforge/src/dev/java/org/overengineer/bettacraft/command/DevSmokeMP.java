@@ -606,11 +606,11 @@ public final class DevSmokeMP {
         TankInteractions.changeWater(level, lc, 7000 - lc.getTank().waterMb());
         for (int i = 0; i < 6; i++) TankPlants.add(lc, FloatingPlantType.DUCKWEED, lMin.getX() + 0.5 + (i % 3) * 0.6, lMin.getZ() + 1.5 + (i / 3) * 0.8, 0.6F, i);
         // a bright, quiet stage
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         level.getGameRules().set(GameRules.ADVANCE_TIME, false, server);
         level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, server);
         level.getGameRules().set(GameRules.SPAWN_MOBS, false, server);
-        level.setWeatherParameters(6000, 0, false, false);
+        level.getServer().setWeatherParameters(6000, 0, false, false);
         server.setDifficulty(Difficulty.PEACEFUL, true);
         savedEvaporation = ServerConfig.getOr(ServerConfig.EVAPORATION_ENABLED, true);
         LOGGER.info("[smoketest] MP stage at {}: main tank {} blocks, {} mB, {} plants, {} animals; L tank {} blocks, {} plants", base,

@@ -61,7 +61,7 @@ final class DataGenM28 {
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
         // alder cones: birch leaves dried like the almond leaves (alder and birch are one family)
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, net.minecraft.world.item.crafting.CookingBookCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 200)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone")));
         SimpleCookingRecipeBuilder.smoking(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 100)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone_smoking")));

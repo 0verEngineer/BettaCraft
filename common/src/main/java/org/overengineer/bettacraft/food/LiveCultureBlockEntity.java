@@ -410,9 +410,9 @@ public class LiveCultureBlockEntity extends BlockEntity {
                 model.rinse(1000);
                 model.food = Math.max(0, model.food - 0.1);
                 setChanged();
-                player.displayClientMessage(Component.translatable("message.bettacraft.live_culture.rinsed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.live_culture.rinsed"));
             } else {
-                player.displayClientMessage(Component.translatable("message.bettacraft.culture.full_water"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.culture.full_water"));
                 return true;
             }
             if (!player.getAbilities().instabuild) player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
@@ -455,12 +455,12 @@ public class LiveCultureBlockEntity extends BlockEntity {
         level.sendParticles(ParticleTypes.SPLASH, worldPosition.getX() + 0.5, worldPosition.getY() + (tubifex() ? 0.35 : 0.95),
                 worldPosition.getZ() + 0.5, 8, 0.25, 0.02, 0.25, 0.02);
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.FOOD_BRED, n);
-        if (poor) player.displayClientMessage(Component.translatable("message.bettacraft.live_culture.poor_harvest").withStyle(ChatFormatting.GOLD), true);
+        if (poor) player.sendOverlayMessage(Component.translatable("message.bettacraft.live_culture.poor_harvest").withStyle(ChatFormatting.GOLD));
         return true;
     }
 
     public void showStatus(Level level, Player player) {
-        player.displayClientMessage(status(level), true);
+        player.sendOverlayMessage(status(level));
     }
 
     public MutableComponent status(Level level) {

@@ -101,7 +101,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
 
     @Override
     public void submit(MobState<TankmateEntity> state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
-                       net.minecraft.client.renderer.state.CameraRenderState camera) {
+                       net.minecraft.client.renderer.state.level.CameraRenderState camera) {
         if (state.model instanceof TankmateModel m) this.model = m;
         super.submit(state, pose, collector, camera);
     }
@@ -115,7 +115,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
     protected RenderType getRenderType(MobState<TankmateEntity> state, boolean bodyVisible, boolean translucent, boolean glowing) {
         Identifier tex = getTextureLocation(state);
         if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(tex) : null;
-        return RenderTypes.entityCutout(tex);
+        return RenderTypes.entityCutoutCull(tex);
     }
 
     @Override

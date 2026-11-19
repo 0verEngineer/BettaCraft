@@ -130,11 +130,11 @@ public final class InteriorGround {
         int x = r.originX() + lx, z = r.originZ() + lz;
         LevelChunk chunk = interior.getChunkSource().getChunkNow(x >> 4, z >> 4);
         if (chunk == null) {
-            long key = ChunkPos.asLong(x >> 4, z >> 4);
+            long key = ChunkPos.pack(x >> 4, z >> 4);
             long now = interior.getGameTime();
             if (now - m.ticketTime.getOrDefault(key, -1000L) > 200) {
                 m.ticketTime.put(key, now);
-                interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), new ChunkPos(key), 0);
+                interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), ChunkPos.unpack(key), 0);
             }
             return UNKNOWN;
         }

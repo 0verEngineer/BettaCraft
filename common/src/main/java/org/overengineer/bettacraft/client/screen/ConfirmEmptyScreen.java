@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -58,22 +58,22 @@ public final class ConfirmEmptyScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         int left = (width - W) / 2, top = (height - H) / 2;
         g.fill(left, top, left + W, top + H, 0xE0101820);
-        g.renderOutline(left, top, W, H, 0xFF6A8CA8);
-        g.renderItem(stack, left + 10, top + 9);
-        g.drawString(font, title, left + 32, top + 13, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        g.outline(left, top, W, H, 0xFF6A8CA8);
+        g.item(stack, left + 10, top + 9);
+        g.text(font, title, left + 32, top + 13, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         Component what = Component.translatable("gui.bettacraft.confirm_empty.text", stack.getHoverName());
         int y = top + 32;
         for (var line : font.split(what, W - 20)) {
-            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xC8D2DC));
+            g.text(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xC8D2DC));
             y += 10;
         }
         // the buttons over the box
-        cancel.render(g, mouseX, mouseY, partialTick);
-        empty.render(g, mouseX, mouseY, partialTick);
+        cancel.extractRenderState(g, mouseX, mouseY, partialTick);
+        empty.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 
     @Override

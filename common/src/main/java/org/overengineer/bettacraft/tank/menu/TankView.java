@@ -825,7 +825,7 @@ public final class TankView {
         x.lightOn = t.lightOn();
         x.lightOff = t.lightOff();
         x.timer = t.lightTimer();
-        x.factor = org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getDayTime());
+        x.factor = org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getOverworldClockTime());
         return x;
     }
 

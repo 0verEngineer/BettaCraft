@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "aquarist/shrimp_or_snails"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:fish_bag"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

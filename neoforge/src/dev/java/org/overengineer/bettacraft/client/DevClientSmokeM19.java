@@ -173,7 +173,7 @@ final class DevClientSmokeM19 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         reach(p, false);
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         base = p.blockPosition().offset(0, 0, -10);
         // community tank 5x3x3, planted, with a cave
         community = base;

@@ -198,7 +198,7 @@ public class Co2StationBlockEntity extends BlockEntity {
 
     public void insert(Player player, InteractionHand hand, ItemStack stack) {
         if (hasCylinder()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.co2_station.occupied").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.co2_station.occupied").withStyle(ChatFormatting.GOLD));
             return;
         }
         items.setStackInSlot(0, stack.copyWithCount(1));
@@ -228,7 +228,7 @@ public class Co2StationBlockEntity extends BlockEntity {
             else if (noPower) c = Component.translatable("message.bettacraft.co2_station.no_power", pct).withStyle(ChatFormatting.GOLD);
             else c = Component.translatable("message.bettacraft.co2_station.filling", pct, f).withStyle(ChatFormatting.AQUA);
         }
-        player.displayClientMessage(c, true);
+        player.sendOverlayMessage(c);
     }
 
     public int lastFires() {

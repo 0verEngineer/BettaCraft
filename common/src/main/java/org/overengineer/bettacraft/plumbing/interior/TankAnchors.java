@@ -203,7 +203,7 @@ public final class TankAnchors {
     }
 
     private static void say(@Nullable Player p, String key, ChatFormatting color, Object... args) {
-        if (p != null) p.displayClientMessage(Component.translatable(key, args).withStyle(color), true);
+        if (p != null) p.sendOverlayMessage(Component.translatable(key, args).withStyle(color));
     }
 
     /**

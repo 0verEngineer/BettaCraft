@@ -674,23 +674,23 @@ public final class HiredAquaristGameTests {
         UUID id = npc.getUUID();
         // he walks off to a place far away (the chunks of the GameTest structures are forced and never unload)
         BlockPos far = h.absolutePos(BlockPos.ZERO).offset(3200, 0, 0);
-        ChunkPos cp = new ChunkPos(far);
-        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, true);
+        ChunkPos cp = ChunkPos.containing(far);
+        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x() + x, cp.z() + z, true);
         Runnable release = () -> {
-            for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, false);
+            for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x() + x, cp.z() + z, false);
         };
         await(h, 400, () -> level.isPositionEntityTicking(far), "the far chunks load", () -> {
             level.setBlock(far.below(), Blocks.STONE.defaultBlockState(), 3);
             TankBlockEntity farTank = tankAt(h, far.offset(3, 0, 0), sp.getUUID());
             UUID farId = farTank.getTank().id();
             npc.teleportTo(far.getX() + 0.5, far.getY(), far.getZ() + 0.5);
-            await(h, 100, () -> level.getEntity(id) != null && new ChunkPos(level.getEntity(id).blockPosition()).equals(cp), "he is there", () -> {
-                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, false);
-                await(h, 1500, () -> level.getEntity(id) == null && !level.hasChunk(cp.x, cp.z), "his chunk unloads", () -> {
+            await(h, 100, () -> level.getEntity(id) != null && ChunkPos.containing(level.getEntity(id).blockPosition()).equals(cp), "he is there", () -> {
+                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x() + x, cp.z() + z, false);
+                await(h, 1500, () -> level.getEntity(id) == null && !level.hasChunk(cp.x(), cp.z()), "his chunk unloads", () -> {
                     check(AquaristWork.tank(level, npc, farId) == null, "a tank in an unloaded chunk is not his to touch");
                     AquaristRecords.PlayerRecord r0 = AquaristRecords.get(level.getServer()).player(sp.getUUID());
                     check(id.equals(r0.npc) && r0.hired, "unloaded he stays hired");
-                    for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x + x, cp.z + z, true);
+                    for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x() + x, cp.z() + z, true);
                     await(h, 600, () -> level.getEntity(id) instanceof AquaristEntity, "he comes back", () -> {
                         AquaristEntity back = (AquaristEntity) level.getEntity(id);
                         check(back.carriedAnimals().size() == 1 && count(back.bag(), ModItems.BETTA_PELLETS.get()) == food, "with the young and the food");
@@ -795,7 +795,7 @@ public final class HiredAquaristGameTests {
             check(TankInhabitants.accepts(npc.getType(), npc) != TankInhabitants.Acceptance.OK, "no tank takes him");
             ServerPlayer stranger = MockPlayers.serverPlayer(h);
             stranger.snapTo(npc.position().add(1, 0, 0));
-            var r = npc.interact(stranger, net.minecraft.world.InteractionHand.MAIN_HAND);
+            var r = npc.interact(stranger, net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             check(r == net.minecraft.world.InteractionResult.CONSUME, "a stranger only gets told whose he is: " + r);
             h.getLevel().getServer().getPlayerList().remove(stranger);
             // the marks on the tank survive saving; an older tank has none

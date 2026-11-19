@@ -65,7 +65,7 @@ public final class PlantEventsHandlers {
             e.setCancellationResult(InteractionResult.SUCCESS);
             if (!(level instanceof ServerLevel server)) return;
             if (!TankInhabitants.canModify(player, c.getTank())) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
                 return;
             }
             InteriorPlants.trimFromOutside(server, c, player, stack, e.getHand());
@@ -82,7 +82,7 @@ public final class PlantEventsHandlers {
             if (level.getRandom().nextDouble() < ServerConfig.getOr(ServerConfig.AQUATIC_MOSS_CHANCE, 0.5)) {
                 ItemStack moss = InteriorPlants.item(PlantSpecies.JAVA_MOSS, 0);
                 if (!player.getInventory().add(moss)) player.drop(moss, false);
-                player.displayClientMessage(Component.translatable("message.bettacraft.aquatic.moss_found").withStyle(ChatFormatting.GREEN), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.aquatic.moss_found").withStyle(ChatFormatting.GREEN));
             }
         }
     }
@@ -100,7 +100,7 @@ public final class PlantEventsHandlers {
         if (!(level instanceof ServerLevel server)) return true;
         Player player = e.getEntity();
         if (!TankInhabitants.canModify(player, c.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return true;
         }
         var r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(server, c);
@@ -109,13 +109,13 @@ public final class PlantEventsHandlers {
         int lx = (int) Math.floor((hit.x - c.getTank().min().getX()) * scale), lz = (int) Math.floor((hit.z - c.getTank().min().getZ()) * scale);
         String err = Mangroves.plant(server, c, lx, lz);
         if (err != null) {
-            player.displayClientMessage(Component.translatable(err).withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable(err).withStyle(ChatFormatting.GOLD));
             return true;
         }
         if (!player.getAbilities().instabuild) stack.shrink(1);
         level.playSound(null, e.getPos(), SoundEvents.MANGROVE_ROOTS_PLACE, SoundSource.BLOCKS, 0.8F, 1.0F);
         org.overengineer.bettacraft.tank.TankCare.log(server, c, "log.bettacraft.mangrove.planted", org.overengineer.bettacraft.tank.TankCare.nameArg(player));
-        player.displayClientMessage(Component.translatable("message.bettacraft.mangrove.planted").withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.mangrove.planted").withStyle(ChatFormatting.GREEN));
         return true;
     }
 }

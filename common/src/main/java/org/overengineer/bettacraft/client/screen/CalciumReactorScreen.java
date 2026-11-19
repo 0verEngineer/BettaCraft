@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,14 +13,13 @@ public class CalciumReactorScreen extends AbstractContainerScreen<CalciumReactor
     private static final int BG = 0xFFC6C6C6, DARK = 0xFF555555, LIGHT = 0xFFFFFFFF, SLOT = 0xFF8B8B8B, TEXT = 0x404040;
 
     public CalciumReactorScreen(CalciumReactorMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 166;
+        super(menu, inv, title, 176, 166);
         inventoryLabelY = CalciumReactorMenu.INV_Y - 11;
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -38,9 +37,9 @@ public class CalciumReactorScreen extends AbstractContainerScreen<CalciumReactor
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+        g.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         Component st = CalciumReactorBlockEntity.statusText(menu.status(), menu.tanks());
         int col = menu.status() == CalciumReactorBlockEntity.RUNNING ? 0x206020 : 0x9A5A10;
         small(g, st, imageWidth / 2, 52, col, imageWidth - 8);
@@ -50,20 +49,19 @@ public class CalciumReactorScreen extends AbstractContainerScreen<CalciumReactor
         }
     }
 
-    private void small(GuiGraphics g, Component c, int cx, int y, int color, int max) {
+    private void small(GuiGraphicsExtractor g, Component c, int cx, int y, int color, int max) {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
         g.pose().pushMatrix();
         g.pose().translate(cx, y);
         g.pose().scale(s, s);
-        g.drawString(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+        g.text(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
         g.pose().popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 }

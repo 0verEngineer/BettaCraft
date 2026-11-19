@@ -7,7 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -190,51 +190,51 @@ public class AquaristScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         MutableComponent head = Component.literal(view.getStringOr("name", "")).withStyle(ChatFormatting.AQUA)
                 .append(Component.literal(" – ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.translatable("entity.bettacraft.hired_aquarist").withStyle(ChatFormatting.GRAY));
-        g.drawCenteredString(font, head, left + W / 2, top + 7, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        g.centeredText(font, head, left + W / 2, top + 7, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         if (offering()) renderOffer(g);
         else renderHired(g);
     }
 
-    private void renderOffer(GuiGraphics g) {
+    private void renderOffer(GuiGraphicsExtractor g) {
         int y = top + 26;
         Component text = Component.translatable("gui.bettacraft.aquarist.offer_text", view.getStringOr("employer", ""));
         for (FormattedCharSequence line : font.split(text, W - 20)) {
-            g.drawString(font, line, left + 10, y, 0xFFE0E0E0);
+            g.text(font, line, left + 10, y, 0xFFE0E0E0);
             y += 10;
         }
         y += 6;
         Component pay = !view.getBooleanOr("wage", false) ? Component.translatable("message.bettacraft.aquarist.offer.free")
                 : Component.translatable("message.bettacraft.aquarist.offer.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0));
         for (FormattedCharSequence line : font.split(pay.copy().withStyle(ChatFormatting.GOLD), W - 20)) {
-            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            g.text(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         y += 6;
         for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.offer_home").withStyle(ChatFormatting.GRAY), W - 20)) {
-            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            g.text(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         if (view.contains("offer_left")) {
             double days = view.getLongOr("offer_left", 0L) / 24000.0;
-            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.offer_left", String.format(java.util.Locale.ROOT, "%.1f", days))
+            g.text(font, Component.translatable("gui.bettacraft.aquarist.offer_left", String.format(java.util.Locale.ROOT, "%.1f", days))
                     .withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 48, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
         if (!view.getBooleanOr("boss", false)) {
-            g.drawCenteredString(font, Component.translatable("message.bettacraft.aquarist.not_yours").withStyle(ChatFormatting.RED), left + W / 2, top + H - 10, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            g.centeredText(font, Component.translatable("message.bettacraft.aquarist.not_yours").withStyle(ChatFormatting.RED), left + W / 2, top + H - 10, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
     }
 
-    private void renderHired(GuiGraphics g) {
+    private void renderHired(GuiGraphicsExtractor g) {
         String status = view.getStringOr("status", "");
         boolean bad = status.equals("no_workplace") || status.equals("no_bed") || status.equals("unpaid") || status.equals("off");
         Component st = Component.translatable("gui.bettacraft.aquarist.status", Component.translatable("gui.bettacraft.aquarist.status." + status)
                 .withStyle(bad ? ChatFormatting.RED : ChatFormatting.GREEN), view.getStringOr("employer", ""));
-        g.drawString(font, st, left + 8, top + 20, 0xFFE0E0E0);
+        g.text(font, st, left + 8, top + 20, 0xFFE0E0E0);
         Component wp = view.contains("workplace") ? Component.translatable("gui.bettacraft.aquarist.workplace", pos(view.getLongOr("workplace", 0L)))
                 : Component.translatable("gui.bettacraft.aquarist.no_workplace").withStyle(ChatFormatting.RED);
         Component bed = view.contains("bed") ? Component.translatable("gui.bettacraft.aquarist.bed", pos(view.getLongOr("bed", 0L)))
@@ -272,7 +272,7 @@ public class AquaristScreen extends Screen {
             fit(g, Component.translatable("gui.bettacraft.aquarist.tank." + v).withStyle(verdictColor(v)), left + 166, y, 120);
             y += 9;
         }
-        if (list.isEmpty()) g.drawString(font, Component.translatable("gui.bettacraft.aquarist.no_tanks").withStyle(ChatFormatting.GRAY), left + 12, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        if (list.isEmpty()) g.text(font, Component.translatable("gui.bettacraft.aquarist.no_tanks").withStyle(ChatFormatting.GRAY), left + 12, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
     }
 
     private static String name(CompoundTag c) {
@@ -281,25 +281,25 @@ public class AquaristScreen extends Screen {
     }
 
     /** A line that is drawn smaller when it does not fit. */
-    private void fit(GuiGraphics g, Component c, int x, int y, int room) {
+    private void fit(GuiGraphicsExtractor g, Component c, int x, int y, int room) {
         int w = font.width(c);
         if (w <= room) {
-            g.drawString(font, c, x, y, 0xFFE0E0E0);
+            g.text(font, c, x, y, 0xFFE0E0E0);
             return;
         }
         float s = Math.max(0.6F, room / (float) w);
         g.pose().pushMatrix();
         g.pose().translate(x, (float) (y + (1 - s) * 4));
         g.pose().scale(s, s);
-        g.drawString(font, c, 0, 0, 0xFFE0E0E0);
+        g.text(font, c, 0, 0, 0xFFE0E0E0);
         g.pose().popMatrix();
     }
 
     @Override
-    public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(g, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.fill(left, top, left + W, top + H, 0xE0101418);
-        g.renderOutline(left, top, W, H, 0xFF4FA3A0);
+        g.outline(left, top, W, H, 0xFF4FA3A0);
         if (!offering()) {
             g.fill(left + 4, top + 72, left + W - 4, top + 73, 0x804FA3A0);
             g.fill(left + 4, top + 128, left + W - 4, top + 129, 0x804FA3A0);

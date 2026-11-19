@@ -73,7 +73,7 @@ public class ChemItem extends Item {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(level) && player != null
                 && !org.overengineer.bettacraft.tank.interior.InteriorManager.canBuild(player, pos)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.FAIL;
         }
         if (player != null && !level.mayInteract(player, pos)) return InteractionResult.FAIL;
@@ -97,28 +97,28 @@ public class ChemItem extends Item {
         if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankChemistry.enabled()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.chem.off").withStyle(ChatFormatting.GRAY), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.chem.off").withStyle(ChatFormatting.GRAY));
             return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         ServerLevel server = (ServerLevel) level;
         TankChemistry.Drivers d = TankChemistry.drivers(server, c);
         switch (item.kind) {
             case TDS_METER -> {
-                player.displayClientMessage(tdsLine(t, d), true);
+                player.sendOverlayMessage(tdsLine(t, d));
                 level.playSound(null, pos, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.4F, 1.8F);
             }
             case PH_TEST -> {
-                player.displayClientMessage(phLine(t, TankChemistry.phTarget(t, d)), true);
+                player.sendOverlayMessage(phLine(t, TankChemistry.phTarget(t, d)));
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.4F);
                 if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
             case REMINERALISER, ALMOND_LEAF, ALDER_CONE -> {
                 if (!TankInhabitants.canModify(player, t)) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
                     return InteractionResult.CONSUME;
                 }
                 if (item.kind == Kind.REMINERALISER) remineralise(stack, server, pos, player, c);
@@ -131,7 +131,7 @@ public class ChemItem extends Item {
     private static void remineralise(ItemStack stack, ServerLevel level, BlockPos pos, Player player, TankBlockEntity c) {
         TankData t = c.getTank();
         if (t.salinity() >= Salinity.BRACKISH_FROM) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.chem.salty").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.chem.salty").withStyle(ChatFormatting.GOLD));
             return;
         }
         double per = ServerConfig.getOr(ServerConfig.CHEM_REMINERAL_PPM, 400.0);
@@ -139,7 +139,7 @@ public class ChemItem extends Item {
         if (player.isShiftKeyDown()) {
             n = WaterChemistry.portionsTo(t.tds(), t.waterMb(), TankChemistry.REMINERALISE_TARGET, per);
             if (n <= 0) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.chem.hard_enough", Math.round(t.tds())).withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.chem.hard_enough", Math.round(t.tds())).withStyle(ChatFormatting.GOLD));
                 return;
             }
         }
@@ -147,7 +147,7 @@ public class ChemItem extends Item {
         t.setTds(WaterChemistry.remineralise(t.tds(), t.waterMb(), n, per));
         if (!player.getAbilities().instabuild) stack.shrink(n);
         level.playSound(null, pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 1.6F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.chem.remineralised", n, Math.round(t.tds())), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.chem.remineralised", n, Math.round(t.tds())));
         c.markTankChanged();
     }
 
@@ -158,7 +158,7 @@ public class ChemItem extends Item {
         t.setTannin(WaterChemistry.addLeaves(t.tannin(), t.waterMb(), 1, per));
         if (!player.getAbilities().instabuild) stack.shrink(1);
         level.playSound(null, pos, SoundEvents.AZALEA_LEAVES_PLACE, SoundSource.BLOCKS, 0.7F, 1.0F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.chem.leaf", Math.round(t.tannin() * 100)), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.chem.leaf", Math.round(t.tannin() * 100)));
         c.markTankChanged();
     }
 

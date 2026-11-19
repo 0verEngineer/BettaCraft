@@ -11,7 +11,6 @@
   "experience": 0.1,
   "ingredient": "bettacraft:swamp_water_bottle",
   "result": {
-    "count": 1,
     "id": "bettacraft:mosquito_larvae"
   }
 }

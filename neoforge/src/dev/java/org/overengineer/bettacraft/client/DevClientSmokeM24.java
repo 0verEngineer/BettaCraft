@@ -159,8 +159,8 @@ final class DevClientSmokeM24 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(24000, 0, false, false);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -14; z < 9; z++) {
@@ -354,7 +354,7 @@ final class DevClientSmokeM24 {
         then(1, () -> {
             gui = mc.options.guiScale().get();
             mc.options.guiScale().set(2);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         for (String page : new String[]{"equipment/crucible.md", "equipment/pipes.md", "equipment/bulkhead.md", "equipment/multiblock_filter.md",
                 "equipment/filter_media.md", "equipment/water_change.md", "equipment/top_off.md", "aquarium/nitrate.md"}) {
@@ -365,7 +365,7 @@ final class DevClientSmokeM24 {
         then(1, () -> {
             mc.setScreen(null);
             mc.options.guiScale().set(gui);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 

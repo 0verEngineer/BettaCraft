@@ -101,18 +101,18 @@ public final class TankmateItems {
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_formed"));
             return InteractionResult.CONSUME;
         }
         if (!TankInhabitants.canModify(player, c.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         Component msg;
         if (box) msg = installBox(server, c, player, stack);
         else if (group) msg = insertGroup(server, c, player, hand, stack);
         else msg = insertClutch(server, c, player, hand, stack);
-        if (msg != null) player.displayClientMessage(msg, true);
+        if (msg != null) player.sendOverlayMessage(msg);
         return InteractionResult.CONSUME;
     }
 
@@ -334,8 +334,8 @@ public final class TankmateItems {
         for (CompoundTag f : bagFish(stack)) {
             TankmateEntity e = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e == null) continue;
-            e.snapTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4, pos.getY() + 0.2, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4,
-                    player == null ? level.random.nextFloat() * 360F : player.getYRot(), 0);
+            e.snapTo(pos.getX() + 0.5 + (level.getRandom().nextDouble() - 0.5) * 0.4, pos.getY() + 0.2, pos.getZ() + 0.5 + (level.getRandom().nextDouble() - 0.5) * 0.4,
+                    player == null ? level.getRandom().nextFloat() * 360F : player.getYRot(), 0);
             e.loadFromBucketTag(f);
             e.setFromBucket(true);
             if (level.addFreshEntity(e)) n++;

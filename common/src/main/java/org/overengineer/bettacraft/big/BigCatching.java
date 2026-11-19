@@ -72,7 +72,7 @@ public final class BigCatching {
     /** Puts the tub with the catch where the empty tub was. */
     static void give(Player p, int slot, ItemStack tub, Component name) {
         org.overengineer.bettacraft.containers.AnimalContainers.give(p, slot, tub);
-        p.displayClientMessage(Component.translatable("message.bettacraft.big.caught", name).withStyle(ChatFormatting.GREEN), true);
+        p.sendOverlayMessage(Component.translatable("message.bettacraft.big.caught", name).withStyle(ChatFormatting.GREEN));
         p.level().playSound(null, p.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.PLAYERS, 1.0F, 0.6F);
     }
 
@@ -85,18 +85,18 @@ public final class BigCatching {
         if (!Features.enabled(Feature.BIG_ANIMALS)) return true;
         int slot = emptyTub(player);
         if (slot < 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.big.need_tub_net"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.big.need_tub_net"));
             return true;
         }
         if (!player.getAbilities().instabuild) tool.hurtAndBreak(1, player, hand.asEquipmentSlot());
         RandomGenerator r = NetCatching.random(level);
         TankmateSpecies s = roll(level, water, r);
         if (s == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.big.nothing_here"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.big.nothing_here"));
             return true;
         }
         if (r.nextDouble() >= ServerConfig.getOr(ServerConfig.BIG_NET_CHANCE, 0.04)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.net.empty"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.net.empty"));
             return true;
         }
         ItemStack tub = caught(level, s, r);

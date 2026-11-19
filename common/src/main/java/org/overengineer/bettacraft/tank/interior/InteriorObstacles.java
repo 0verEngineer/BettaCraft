@@ -118,11 +118,11 @@ public final class InteriorObstacles {
             for (int z = z0; z < z0 + g.cell; z++) {
                 LevelChunk chunk = interior.getChunkSource().getChunkNow(x >> 4, z >> 4);
                 if (chunk == null) {
-                    long key = ChunkPos.asLong(x >> 4, z >> 4);
+                    long key = ChunkPos.pack(x >> 4, z >> 4);
                     long now = interior.getGameTime();
                     if (now - g.ticketTime.getOrDefault(key, -1000L) > 200) {
                         g.ticketTime.put(key, now);
-                        interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), new ChunkPos(key), 0);
+                        interior.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.INTERIOR.get(), ChunkPos.unpack(key), 0);
                     }
                     return UNKNOWN;
                 }

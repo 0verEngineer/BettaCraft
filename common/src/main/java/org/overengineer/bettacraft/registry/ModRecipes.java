@@ -11,18 +11,18 @@ public final class ModRecipes {
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, BettaCraft.MOD_ID);
 
-    public static final Supplier<RecipeSerializer<TankRecipe>> TANK = SERIALIZERS.register("tank", TankRecipe.Serializer::new);
+    public static final Supplier<RecipeSerializer<TankRecipe>> TANK = SERIALIZERS.register("tank", TankRecipe::serializer);
 
     /** M11: textured vanilla-glass tank to clean tank and back. */
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.tank.TankStyleRecipe>> TANK_STYLE = SERIALIZERS.register("tank_style",
-            org.overengineer.bettacraft.tank.TankStyleRecipe.Serializer::new);
+            org.overengineer.bettacraft.tank.TankStyleRecipe::serializer);
 
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.CabinetRecipe>> CABINET = SERIALIZERS.register("cabinet",
-            org.overengineer.bettacraft.equipment.CabinetRecipe.Serializer::new);
+            org.overengineer.bettacraft.equipment.CabinetRecipe::serializer);
 
     /** M21.7: the cabinet of any stone (with the slabs of the same stone). */
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.equipment.StoneCabinetRecipe>> STONE_CABINET = SERIALIZERS.register("stone_cabinet",
-            org.overengineer.bettacraft.equipment.StoneCabinetRecipe.Serializer::new);
+            org.overengineer.bettacraft.equipment.StoneCabinetRecipe::serializer);
 
     // M24: the crucible (stainless steel)
     public static final DeferredRegister<net.minecraft.world.item.crafting.RecipeType<?>> TYPES =
@@ -30,13 +30,13 @@ public final class ModRecipes {
     public static final Supplier<net.minecraft.world.item.crafting.RecipeType<org.overengineer.bettacraft.crucible.CrucibleRecipe>> CRUCIBLE_TYPE =
             TYPES.register("crucible", () -> simpleType("crucible"));
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.crucible.CrucibleRecipe>> CRUCIBLE = SERIALIZERS.register("crucible",
-            org.overengineer.bettacraft.crucible.CrucibleRecipe.Serializer::new);
+            org.overengineer.bettacraft.crucible.CrucibleRecipe::serializer);
 
     // M26 part b: the food maker
     public static final Supplier<net.minecraft.world.item.crafting.RecipeType<org.overengineer.bettacraft.food.FoodMakerRecipe>> FOOD_MAKER_TYPE =
             TYPES.register("food_maker", () -> simpleType("food_maker"));
     public static final Supplier<RecipeSerializer<org.overengineer.bettacraft.food.FoodMakerRecipe>> FOOD_MAKER = SERIALIZERS.register("food_maker",
-            org.overengineer.bettacraft.food.FoodMakerRecipe.Serializer::new);
+            org.overengineer.bettacraft.food.FoodMakerRecipe::serializer);
 
     public static void register() {
         SERIALIZERS.register();

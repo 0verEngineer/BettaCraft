@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.command;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.compat.info.InfoData;
 import org.overengineer.bettacraft.registry.ModBlocks;
@@ -80,8 +79,8 @@ final class DevSmokeM12 {
             if (e.getValue().get() == null) throw new IllegalStateException("M12: item " + e.getKey() + " missing");
         }
         boolean frogbit = false, red = false;
-        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
-            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
+        for (var tradePool : org.overengineer.bettacraft.gametest.framework.DevTrades.wandererPools(level)) {
+            for (org.overengineer.bettacraft.villager.TradeListing l : tradePool.getLeft()) {
                 {
                     // M33: the listings are wrapped by their feature switches; the plant ones need no trader
                     net.minecraft.world.item.trading.MerchantOffer offer;

@@ -31,7 +31,7 @@ public final class TankProtectionHandlers {
         if (!(e.getLevel() instanceof Level level) || level.isClientSide()) return;
         if (protectedBy(level, e.getPos()) == null) return;
         e.setCanceled(true);
-        if (e.getPlayer() instanceof ServerPlayer sp) sp.displayClientMessage(message(), true);
+        if (e.getPlayer() instanceof ServerPlayer sp) sp.sendOverlayMessage(message());
     }
 
     @SubscribeEvent

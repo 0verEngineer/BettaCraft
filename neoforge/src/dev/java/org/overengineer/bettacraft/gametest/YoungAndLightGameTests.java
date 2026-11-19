@@ -285,7 +285,7 @@ public final class YoungAndLightGameTests {
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
         return level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level)
-                .map(r -> r.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
+                .map(r -> r.value().assemble(in)).orElse(ItemStack.EMPTY);
     }
 
     /** Lights of worlds from before M18 have no colour property in their saved state: they load white. */

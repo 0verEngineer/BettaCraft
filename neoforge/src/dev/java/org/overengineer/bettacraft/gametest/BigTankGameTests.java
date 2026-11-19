@@ -150,7 +150,7 @@ public final class BigTankGameTests {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-            fish.interact(p, InteractionHand.MAIN_HAND);
+            fish.interact(p, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertTrue(fish.isAlive() && !fish.isRemoved(), "a water bucket does not take a pangasius");
             h.assertTrue(p.getMainHandItem().is(Items.WATER_BUCKET), "the bucket stays a water bucket");
             ItemStack bag = new ItemStack(ModItems.FISH_BAG.get());

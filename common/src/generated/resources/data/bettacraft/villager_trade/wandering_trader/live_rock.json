@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/live_rock"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:live_rock"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

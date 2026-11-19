@@ -87,9 +87,11 @@ public final class TankFrogs {
         if (frogs.isEmpty()) return false;
         int n = feed(level, c, kind, BettaFood.fishPerItem(kind), true, true);
         if (n <= 0) return false;
+        // M52c: the particle item before the stack shrinks (a particle of an empty stack throws since 26.1)
+        var shown = net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack.copyWithCount(1));
         if (!player.getAbilities().instabuild) stack.shrink(1);
         for (DwarfFrogEntity f : frogs) {
-            level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(net.minecraft.core.particles.ParticleTypes.ITEM, stack.copyWithCount(1)),
+            level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(net.minecraft.core.particles.ParticleTypes.ITEM, shown),
                     f.getX(), f.getY() + 0.2, f.getZ(), 6, 0.05, 0.05, 0.05, 0.01);
         }
         return true;

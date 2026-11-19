@@ -19,7 +19,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -658,7 +657,7 @@ public final class CritterGameTests {
         Set<CritterSpecies> generic = EnumSet.noneOf(CritterSpecies.class), rare = EnumSet.noneOf(CritterSpecies.class);
         boolean frog = false, coloured = false;
         for (int level = 1; level <= 2; level++) {
-            for (VillagerTrades.ItemListing l : org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level)) {
+            for (org.overengineer.bettacraft.villager.TradeListing l : org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(h.getLevel(), level)) {
                 var offer = l.getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (offer == null) continue;
                 ItemStack r = offer.getResult();

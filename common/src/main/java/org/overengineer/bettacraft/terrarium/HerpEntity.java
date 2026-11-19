@@ -82,7 +82,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     public HerpEntity(EntityType<? extends Animal> type, Level level, HerpSpecies species) {
         super(type, level);
         this.species = species;
-        this.female = level.random.nextBoolean();
+        this.female = level.getRandom().nextBoolean();
     }
 
     public static AttributeSupplier.Builder createAttributes(HerpSpecies s) {
@@ -450,13 +450,17 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
 
     // ------------------------------------------------------------------ sounds by body plan (vanilla sounds)
 
+    /** M52c (26.1): the hiss of the classic cat (the cat sounds are sound variants since 26.1). */
+    private static final SoundEvent CAT_HISS = SoundEvents.CAT_SOUNDS.get(net.minecraft.world.entity.animal.feline.CatSoundVariants.SoundSet.CLASSIC)
+            .adultSounds().hissSound().value();
+
     @Override
     protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
         return switch (species.body()) {
             case TURTLE -> isBaby() ? SoundEvents.TURTLE_HURT_BABY : SoundEvents.TURTLE_HURT;
             case FROG -> SoundEvents.FROG_HURT;
             case GECKO -> SoundEvents.ARMADILLO_HURT;
-            case SNAKE -> SoundEvents.CAT_HISS;
+            case SNAKE -> CAT_HISS; // M52c (26.1): the cat sounds are variants
             case MUDSKIPPER -> SoundEvents.TROPICAL_FISH_HURT;
         };
     }
@@ -467,7 +471,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             case TURTLE -> isBaby() ? SoundEvents.TURTLE_DEATH_BABY : SoundEvents.TURTLE_DEATH;
             case FROG -> SoundEvents.FROG_DEATH;
             case GECKO -> SoundEvents.ARMADILLO_DEATH;
-            case SNAKE -> SoundEvents.CAT_HISS;
+            case SNAKE -> CAT_HISS; // M52c (26.1): the cat sounds are variants
             case MUDSKIPPER -> SoundEvents.TROPICAL_FISH_DEATH;
         };
     }

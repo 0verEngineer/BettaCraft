@@ -407,7 +407,7 @@ public final class ForeignTerrariumGameTests {
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.TERRARIUM_BOX.get(), 4));
             LivingEntity t = wild(h, tortoise.type(), new Vec3(4, 2, 28));
             player.snapTo(t.getX() + 1, t.getY(), t.getZ());
-            player.interactOn(t, InteractionHand.MAIN_HAND);
+            player.interactOn(t, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertFalse(t.isAlive(), "the tortoise went into the box");
             ItemStack filled = ItemStack.EMPTY;
             for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.isFilled(s)) filled = s;
@@ -419,7 +419,7 @@ public final class ForeignTerrariumGameTests {
             LivingEntity allay = wild(h, EntityType.ALLAY, new Vec3(10, 2, 28));
             h.assertTrue(says(ForeignTerrarium.boxRefusal(player, allay), "message.bettacraft.box.refused"), "an allay has no profile");
             allay.discard();
-            player.interactOn(cow, InteractionHand.MAIN_HAND);
+            player.interactOn(cow, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertTrue(cow.isAlive(), "the cow stays");
             LivingEntity g = wild(h, alligator.type(), new Vec3(14, 2, 28));
             h.assertTrue(says(ForeignTerrarium.boxRefusal(player, g), "message.bettacraft.box.too_big"), "the alligator is too big for the box");

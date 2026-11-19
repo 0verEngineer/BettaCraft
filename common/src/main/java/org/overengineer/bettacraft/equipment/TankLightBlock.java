@@ -17,7 +17,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
@@ -86,9 +85,11 @@ public class TankLightBlock extends Block implements BlockRemoval {
     /** M18: a dye colours the whole bar (one dye for the bar); a bar that already has the colour keeps the dye. */
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(stack.getItem() instanceof DyeItem dye)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        // M52c (26.1): a dye is an item with the dye component
+        net.minecraft.world.item.DyeColor dye = stack.get(net.minecraft.core.component.DataComponents.DYE);
+        if (dye == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!player.mayUseItemAt(pos, hit.getDirection(), stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (dyeBar(level, pos, state, dye.getDyeColor(), level.isClientSide()) == 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (dyeBar(level, pos, state, dye, level.isClientSide()) == 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!level.isClientSide()) {
             level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
             stack.consume(1, player);

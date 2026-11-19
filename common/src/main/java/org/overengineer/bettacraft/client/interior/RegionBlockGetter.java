@@ -4,8 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import javax.annotation.Nullable;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -97,9 +96,10 @@ final class RegionBlockGetter implements BlockAndTintGetter {
         return (lightAt(pos) & 15) >= 15;
     }
 
+    /** M52c (26.1): the face shading of the level ({@code getShade} became the level's cardinal lighting). */
     @Override
-    public float getShade(Direction direction, boolean shade) {
-        return level.getShade(direction, shade);
+    public net.minecraft.world.level.CardinalLighting cardinalLighting() {
+        return level.cardinalLighting();
     }
 
     @Override

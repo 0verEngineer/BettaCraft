@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/plant_amazon_sword"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:amazon_sword"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

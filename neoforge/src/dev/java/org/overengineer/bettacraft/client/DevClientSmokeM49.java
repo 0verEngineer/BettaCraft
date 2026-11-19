@@ -153,7 +153,7 @@ final class DevClientSmokeM49 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         reach(p, false);
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         // part a: a 3x2x2 reef tank on a row of cabinets, the sump in the middle one
         reef = base.offset(0, 1, 0);
@@ -305,7 +305,7 @@ final class DevClientSmokeM49 {
         }
         if (best != null) {
             c.getTank().setFlies(c.getTank().flies() + 1);
-            Archerfish.shoot(level, c, best, crown != null ? crown.add(level.random.nextDouble() * 0.3 - 0.15, 0, -0.2) : best.position().add(0, 1.2, 0));
+            Archerfish.shoot(level, c, best, crown != null ? crown.add(level.getRandom().nextDouble() * 0.3 - 0.15, 0, -0.2) : best.position().add(0, 1.2, 0));
             return;
         }
         LOGGER.error("[smoketest] M49 no archerfish to shoot");

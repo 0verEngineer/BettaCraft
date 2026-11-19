@@ -114,6 +114,18 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         return bind(true).tags();
     }
 
+    /** M52c (26.1): the data components of the entry (items: bound at every resource reload). */
+    @Override
+    public net.minecraft.core.component.DataComponentMap components() {
+        return bind(true).components();
+    }
+
+    @Override
+    public boolean areComponentsBound() {
+        Holder<R> h = bind(false);
+        return h != null && h.areComponentsBound();
+    }
+
     @Override
     public Either<ResourceKey<R>, R> unwrap() {
         return Either.left(key);

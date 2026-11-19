@@ -121,8 +121,8 @@ public final class DevShowcase {
                 // added to a chunk whose entities are still loading is lost)
                 boolean ready = true;
                 for (ChunkPos cp : forced) {
-                    level.getChunk(cp.x, cp.z);
-                    ready &= level.areEntitiesLoaded(cp.toLong());
+                    level.getChunk(cp.x(), cp.z());
+                    ready &= level.areEntitiesLoaded(cp.pack());
                 }
                 if (!ready && ticks < 1200) return;
                 builtAt = ticks;
@@ -148,7 +148,7 @@ public final class DevShowcase {
                 LOGGER.info("[showcase] {} fish and frogs alive in the world", live);
                 logChunks(server, "before saving");
                 LOGGER.info("[showcase] saving");
-                for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
+                for (ChunkPos cp : forced) level.setChunkForced(cp.x(), cp.z(), false);
                 server.saveEverything(false, true, true);
                 if (afterSave != null) afterSave.accept(server, level);
                 LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks ({} named), {} animals, {} plants", tanks, named, animals, plants);
@@ -175,8 +175,8 @@ public final class DevShowcase {
         rules.set(GameRules.ADVANCE_WEATHER, false, server);
         rules.set(GameRules.SPAWN_PATROLS, false, server);
         rules.set(GameRules.SPAWN_WANDERING_TRADERS, false, server);
-        level.setDayTime(6000);
-        level.setWeatherParameters(120000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(120000, 0, false, false);
         // M21.5: power off in this world (filters, heaters and pumps run without FE)
         for (var v : List.of(org.overengineer.bettacraft.config.ServerConfig.POWER_HEATER, org.overengineer.bettacraft.config.ServerConfig.POWER_FILTER,
                 org.overengineer.bettacraft.config.ServerConfig.POWER_LIGHT)) {
@@ -200,8 +200,9 @@ public final class DevShowcase {
                 java.lang.reflect.Field f = net.minecraft.world.level.storage.PrimaryLevelData.class.getDeclaredField("settings");
                 f.setAccessible(true);
                 var s = (net.minecraft.world.level.LevelSettings) f.get(pd);
-                f.set(pd, new net.minecraft.world.level.LevelSettings("Bettacraft Schaukasten", net.minecraft.world.level.GameType.CREATIVE, false,
-                        net.minecraft.world.Difficulty.PEACEFUL, true, s.gameRules(), s.getDataConfiguration()));
+                f.set(pd, new net.minecraft.world.level.LevelSettings("Bettacraft Schaukasten", net.minecraft.world.level.GameType.CREATIVE,
+                        new net.minecraft.world.level.LevelSettings.DifficultySettings(net.minecraft.world.Difficulty.PEACEFUL, false, false), true,
+                        s.dataConfiguration()));
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             LOGGER.warn("[showcase] could not switch on cheats: {}", e.toString());

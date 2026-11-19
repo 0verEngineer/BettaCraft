@@ -25,7 +25,7 @@ sourceSets.test.java.srcDir(commonProject.file('src/test/java'))
 sourceSets.test.resources.srcDir(commonProject.file('src/test/resources'))
 
 base {
-    // bettacraft-neoforge-1.21.11-<mod_version>.jar
+    // bettacraft-neoforge-26.1.2-<mod_version>.jar
     archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
@@ -103,14 +103,14 @@ def zooGroups = ['aquatic', 'biomes', 'create']
 def withGroup = { String name -> project.hasProperty(name) || integration || (zoo && name in zooGroups) }
 // a group whose mods the run requires (biomes, aquatic: some tests then insist on them); not in a partial CI run
 def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) || (zoo && name in zooGroups) }
-// M52b: every run of this branch (Minecraft 1.21.11) has its game directories under runRoot (default run/1.21.11, -PrunDir=...),
+// M52b/M52c: every run of this branch (Minecraft 26.1.2) has its game directories under runRoot (default run/26.1.2, -PrunDir=...),
 // never in run/ itself: the worlds, configs and mods folders there are the 1.21.1 ones of master. The folders of the optional
-// mod groups are under runRoot too (run/1.21.11/shader-mods ...: jars for Minecraft 1.21.11; run/power-mods ... hold 1.21.1 ones).
-def runRoot = (project.findProperty('runDir') ?: 'run/1.21.11').toString()
+// mod groups are under runRoot too (run/26.1.2/shader-mods ...: jars for Minecraft 26.1.2; run/power-mods ... hold 1.21.1 ones).
+def runRoot = (project.findProperty('runDir') ?: 'run/26.1.2').toString()
 def gameTestDir = runRoot + (integration ? '/gametest-integration' : zoo ? '/gametest-zoo' : '/gametest')
 
-// Minecraft 1.21.1 ships Java 21. The foojay resolver (settings.gradle) downloads it if missing.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+// Minecraft 26.1 ships Java 25. The foojay resolver (settings.gradle) downloads it if missing.
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     version = project.neo_version

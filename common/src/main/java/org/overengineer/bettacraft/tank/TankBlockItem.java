@@ -41,6 +41,12 @@ public class TankBlockItem extends BlockItem {
         return stack;
     }
 
+    /** M52c (26.1): the stack template of a tank item (recipes and data, made before the item components are bound). */
+    public static net.minecraft.world.item.ItemStackTemplate template(net.minecraft.world.level.ItemLike item, Identifier glass, TankStyle style, int count) {
+        return new net.minecraft.world.item.ItemStackTemplate(item.asItem().builtInRegistryHolder(), count, net.minecraft.core.component.DataComponentPatch.builder()
+                .set(ModDataComponents.GLASS.get(), glass).set(ModDataComponents.TANK_STYLE.get(), style).build());
+    }
+
     /** A tank item of the given glass and style. */
     public static ItemStack of(net.minecraft.world.level.ItemLike item, Identifier glass, TankStyle style, int count) {
         ItemStack s = new ItemStack(item, count);

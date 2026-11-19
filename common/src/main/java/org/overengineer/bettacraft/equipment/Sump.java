@@ -205,7 +205,7 @@ public final class Sump {
                     if (!(m.getItem() instanceof FilterMediaItem fm) || !m.isDamageableItem()) continue;
                     double add = dirt * fm.medium().dirtRate() * FilterMediaItem.MAX_DIRT;
                     int whole = (int) Math.floor(add);
-                    if (level.random.nextDouble() < add - whole) whole++; // the fraction by chance (one step is a few hundredths)
+                    if (level.getRandom().nextDouble() < add - whole) whole++; // the fraction by chance (one step is a few hundredths)
                     if (whole <= 0 || m.getDamageValue() >= m.getMaxDamage()) continue;
                     m.setDamageValue(Math.min(m.getMaxDamage(), m.getDamageValue() + whole));
                     changed = true;

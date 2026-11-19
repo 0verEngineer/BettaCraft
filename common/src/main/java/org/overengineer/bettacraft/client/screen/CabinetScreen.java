@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.client.screen;
 import net.minecraft.client.Minecraft;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -89,14 +89,14 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
 
         @Override
-        protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick) { // M52b
+        protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) { // M52b
             boolean on = menu.joints();
             if (shown == null || shown != on) {
                 shown = on;
                 setTooltip(Tooltip.create(Component.translatable(on ? "gui.bettacraft.cabinet.joints.on" : "gui.bettacraft.cabinet.joints.off")
                         .append(NL).append(Component.translatable("gui.bettacraft.cabinet.joints.tooltip").withStyle(net.minecraft.ChatFormatting.GRAY))));
             }
-            renderDefaultSprite(g); // the picture instead of the label
+            extractDefaultSprite(g); // the picture instead of the label
             int x = getX() + 3, y = getY() + 3, w = getWidth() - 6, h = getHeight() - 6;
             g.fill(x, y, x + w, y + h, 0xFFB08A58); // two doors in planks colour
             if (on) g.fill(x + w / 2, y, x + w / 2 + 1, y + h, 0xFF2A2320); // the joint
@@ -139,18 +139,18 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
 
         @Override
-        protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick) { // M52b
-            renderDefaultSprite(g); // the picture instead of the label
+        protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) { // M52b
+            extractDefaultSprite(g); // the picture instead of the label
             if (shown == null) return;
             net.minecraft.world.item.Item shaft = net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(
                     Identifier.fromNamespaceAndPath("create", "shaft"));
-            g.renderItem(new net.minecraft.world.item.ItemStack(shaft), getX() + 1, getY() + 1);
+            g.item(new net.minecraft.world.item.ItemStack(shaft), getX() + 1, getY() + 1);
             g.nextStratum(); // M52b: above the item (the GUI draws in strata since 1.21.6)
             if (shown == org.overengineer.bettacraft.equipment.DriveSide.NONE) {
                 g.fill(getX() + 1, getY() + 1, getX() + DRIVE_S - 1, getY() + DRIVE_S - 1, 0x99404040); // greyed: no shaft
             } else {
                 String letter = Component.translatable(shown.translationKey() + ".short").getString();
-                g.drawString(font, letter, getX() + DRIVE_S - 1 - font.width(letter), getY() + DRIVE_S - 9, org.overengineer.bettacraft.client.ClientCompat.textColor(allowed ? 0xFFFFFF : 0xFF5555), true);
+                g.text(font, letter, getX() + DRIVE_S - 1 - font.width(letter), getY() + DRIVE_S - 9, org.overengineer.bettacraft.client.ClientCompat.textColor(allowed ? 0xFFFFFF : 0xFF5555), true);
             }
         }
 
@@ -192,7 +192,8 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         if (!menu.getSlot(CabinetMenu.FILTER).hasItem()) {
             g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.FILTER_X, topPos + CabinetMenu.FILTER_Y, 176, 34, 16, 16, 256, 256);
@@ -216,20 +217,20 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         // M44: the title leaves room for the front button (long wood names are cut)
         boolean room = frontButton != null && frontButton.visible;
         String t = room ? font.plainSubstrByWidth(title.getString(), FRONT_X - titleLabelX - 2) : title.getString();
-        g.drawString(font, t, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+        g.text(font, t, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+        g.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
         Component f = Component.translatable("gui.bettacraft.cabinet.filter");
-        g.drawString(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
+        g.text(font, font.plainSubstrByWidth(f.getString(), 50), CabinetMenu.FILTER_X + 20, CabinetMenu.FILTER_Y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
         // M29.1: the heaters' label gave way to the air pump slot; empty slots explain themselves in a tooltip
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
-        super.renderTooltip(g, mouseX, mouseY);
+    protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractTooltip(g, mouseX, mouseY);
         if (hoveredSlot == null || hoveredSlot.hasItem() || !menu.getCarried().isEmpty()) return;
         int i = hoveredSlot.index;
         String key = i == CabinetMenu.AIR_PUMP ? "gui.bettacraft.cabinet.air_pump.tooltip"
@@ -240,7 +241,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         updateOutlet();
         updateFront();
         if (driveButton != null) driveButton.update();
@@ -249,8 +250,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
             powerBtn.visible = Features.enabled(Feature.POWER_REGULATOR) && menu.hasFilter();
             powerBtn.setMessage(Component.literal(menu.power() * 10 + "%"));
         }
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
     }
 

@@ -110,7 +110,7 @@ public class ThermoHygrometerBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = tank(level, pos, state);
-        player.displayClientMessage(readout(c == null ? null : c.getTank()), true);
+        player.sendOverlayMessage(readout(c == null ? null : c.getTank()));
         return InteractionResult.CONSUME;
     }
 

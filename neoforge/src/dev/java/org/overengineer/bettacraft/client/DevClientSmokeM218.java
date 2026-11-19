@@ -152,7 +152,7 @@ final class DevClientSmokeM218 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         serverStack = new ItemStack(ModItems.ARTEMIA_CYSTS.get()).getMaxStackSize();
         base = p.blockPosition().offset(0, 0, -10);
         reef = base;

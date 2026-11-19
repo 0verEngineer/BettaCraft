@@ -32,7 +32,17 @@ public final class ModVillagers {
 
     public static final DeferredHolder<VillagerProfession, VillagerProfession> AQUARIST = PROFESSIONS.register("aquarist",
             () -> new VillagerProfession(net.minecraft.network.chat.Component.translatable("entity.minecraft.villager.bettacraft.aquarist"), ModVillagers::isBasin, ModVillagers::isBasin, ImmutableSet.of(), ImmutableSet.of(),
-                    SoundEvents.VILLAGER_WORK_FISHERMAN));
+                    SoundEvents.VILLAGER_WORK_FISHERMAN, tradeSets()));
+
+    /** M52c (26.1): the trade set of each level ({@code data/bettacraft/trade_set/aquarist/level_<n>}, see {@link BettaTrades}). */
+    private static it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraft.resources.ResourceKey<net.minecraft.world.item.trading.TradeSet>> tradeSets() {
+        var m = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<net.minecraft.resources.ResourceKey<net.minecraft.world.item.trading.TradeSet>>();
+        for (int lvl = 1; lvl <= 5; lvl++) {
+            m.put(lvl, net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.TRADE_SET,
+                    org.overengineer.bettacraft.BettaCraft.id(BettaTrades.aquaristTradeSet(lvl))));
+        }
+        return it.unimi.dsi.fastutil.ints.Int2ObjectMaps.unmodifiable(m);
+    }
 
     private ModVillagers() {}
 

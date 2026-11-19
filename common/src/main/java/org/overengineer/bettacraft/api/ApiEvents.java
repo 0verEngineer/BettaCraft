@@ -110,7 +110,7 @@ public final class ApiEvents {
         if (attacker instanceof BettaEntity b && victim instanceof BettaEntity f && f.isFemale() && !b.isFemale()) return "chased";
         if (attacker instanceof BettaEntity) return "fight";
         if (attacker instanceof Player) return "player";
-        if (attacker != null && attacker.getType().is(ModTags.PREDATORS)) return "predator";
+        if (attacker != null && attacker.is(ModTags.PREDATORS)) return "predator";
         if (attacker != null) return "killed";
         if (source.is(DamageTypes.DROWN)) return "drowned";
         if (source.is(DamageTypes.STARVE)) return "starved";

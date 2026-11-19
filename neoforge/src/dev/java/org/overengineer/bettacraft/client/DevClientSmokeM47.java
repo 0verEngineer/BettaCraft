@@ -19,7 +19,6 @@ import net.minecraft.tags.StructureTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -122,10 +121,10 @@ final class DevClientSmokeM47 {
 
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
         level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, level.getServer());
-        level.setWeatherParameters(12000, 0, false, false);
+        level.getServer().setWeatherParameters(12000, 0, false, false);
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
     }
@@ -184,7 +183,7 @@ final class DevClientSmokeM47 {
 
     private static List<MerchantOffer> allOffers(Villager v) {
         List<MerchantOffer> out = new ArrayList<>();
-        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
+        var trades = org.overengineer.bettacraft.gametest.framework.DevTrades.aquarist((net.minecraft.server.level.ServerLevel) v.level());
         var r = v.getRandom();
         for (int level = 1; level <= 5; level++) {
             for (var l : trades.get(level)) {

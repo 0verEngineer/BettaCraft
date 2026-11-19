@@ -138,9 +138,9 @@ public final class DevSmokeM7 {
         if (live != expected) throw new IllegalStateException("compat tank: expected " + expected + " animals, found " + live);
         // tags
         List<String> predators = new ArrayList<>();
-        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) if (type.is(ModTags.PREDATORS)) predators.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) if (type.builtInRegistryHolder().is(ModTags.PREDATORS)) predators.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
         List<String> blacklist = new ArrayList<>();
-        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) if (type.is(ModTags.TANK_BLACKLIST)) blacklist.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
+        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) if (type.builtInRegistryHolder().is(ModTags.TANK_BLACKLIST)) blacklist.add(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString());
         int pelletFish = 0;
         for (Item i : BuiltInRegistries.ITEM) if (new ItemStack(i).is(ModTags.PELLET_FISH)) pelletFish++;
         LOGGER.info("[smoketest] M7 predators {}, blacklist {} entries, {} raw fish for pellets", predators, blacklist.size(), pelletFish);

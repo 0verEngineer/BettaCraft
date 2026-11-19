@@ -233,7 +233,7 @@ public final class AquaticGameTests {
             Entity squid = EntityType.SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             h.assertTrue(TankInhabitants.accepts(EntityType.SQUID, squid) == TankInhabitants.Acceptance.OK, "squids fit (0.8)");
             squid.discard();
-            h.assertTrue(EntityType.AXOLOTL.is(ModTags.PREDATORS), "axolotls are predators");
+            h.assertTrue(EntityType.AXOLOTL.builtInRegistryHolder().is(ModTags.PREDATORS), "axolotls are predators");
             ServerConfig.INHABITANTS_DENY.set(List.of("minecraft:cod"));
             ServerConfig.INHABITANTS_ALLOW.set(List.of("minecraft:*"));
             h.assertTrue(TankInhabitants.accepts(EntityType.COD, null) == TankInhabitants.Acceptance.BLACKLISTED, "deny wins");
@@ -352,8 +352,8 @@ public final class AquaticGameTests {
         BlockPos floor = r.toWorld(5, 0, 5).below();
         BlockPos target = floor.above();
         // entities (the drop) are only seen in loaded entity sections: keep the chunk loaded for the test
-        net.minecraft.world.level.ChunkPos chunk = new net.minecraft.world.level.ChunkPos(target);
-        interior.setChunkForced(chunk.x, chunk.z, true);
+        net.minecraft.world.level.ChunkPos chunk = net.minecraft.world.level.ChunkPos.containing(target);
+        interior.setChunkForced(chunk.x(), chunk.z(), true);
         h.assertTrue(interior.getBlockState(target).isAir(), "free spot in the interior");
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
@@ -382,7 +382,7 @@ public final class AquaticGameTests {
             h.assertTrue(drops.stream().anyMatch(i -> i.getItem().is(ModItems.TANK.get())), "and dropped as an item: "
                     + interior.getEntities((Entity) null, new AABB(target).inflate(8), x -> true));
             drops.forEach(Entity::discard);
-            interior.setChunkForced(chunk.x, chunk.z, false);
+            interior.setChunkForced(chunk.x(), chunk.z(), false);
             h.succeed();
         });
     }

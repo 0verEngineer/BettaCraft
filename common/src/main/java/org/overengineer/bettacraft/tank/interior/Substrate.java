@@ -55,7 +55,7 @@ public final class Substrate {
         BlockState floor = level.getBlockState(pos);
         if (!isFloor(floor) || InteriorManager.regionAt(level.getServer(), pos) == null) return false;
         if (!InteriorManager.canBuild(player, pos)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return true;
         }
         ItemStack stack = player.getItemInHand(hand);
@@ -68,8 +68,8 @@ public final class Substrate {
         if (!(stack.getItem() instanceof BlockItem bi)) return false;
         Block block = bi.getBlock();
         if (!isValid(block)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.substrate.invalid", stack.getHoverName())
-                    .withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.substrate.invalid", stack.getHoverName())
+                    .withStyle(ChatFormatting.RED));
             return true;
         }
         BlockState substrate = block.defaultBlockState();

@@ -49,7 +49,7 @@ public final class InteriorWorldOps {
                     }
                 }
                 chunk.markUnsaved();
-                touchedChunks.add(ChunkPos.asLong(cx, cz));
+                touchedChunks.add(ChunkPos.pack(cx, cz));
             }
         }
     }
@@ -110,7 +110,7 @@ public final class InteriorWorldOps {
                 if (be != null) chunk.addAndRegisterBlockEntity(be); // M17: registers the ticker too (furnaces, hoppers, machines kept still)
             }
             chunk.markUnsaved();
-            touchedChunks.add(ChunkPos.asLong(p.getX() >> 4, p.getZ() >> 4));
+            touchedChunks.add(ChunkPos.pack(p.getX() >> 4, p.getZ() >> 4));
             if (org.overengineer.bettacraft.platform.Platform.get().lightEmission(c.state(), level, p) > 0) {
                 level.getChunkSource().getLightEngine().checkBlock(p);
             }
@@ -128,7 +128,7 @@ public final class InteriorWorldOps {
             if (s.getLightEmission() > 0) lit.add(p);
             LevelChunk chunk = level.getChunk(x >> 4, z >> 4);
             chunk.getSection(chunk.getSectionIndex(y)).setBlockState(x & 15, y & 15, z & 15, Blocks.AIR.defaultBlockState(), false);
-            chunks.add(ChunkPos.asLong(x >> 4, z >> 4));
+            chunks.add(ChunkPos.pack(x >> 4, z >> 4));
         });
         for (BlockPos p : withBe) level.getChunkAt(p).removeBlockEntity(p);
         for (BlockPos p : lit) level.getChunkSource().getLightEngine().checkBlock(p);
@@ -139,10 +139,10 @@ public final class InteriorWorldOps {
     /** Resends full chunk data to players that already have one of the touched chunks loaded. */
     public static void resendChunks(ServerLevel level, LongSet touchedChunks) {
         for (long c : touchedChunks) {
-            ChunkPos cp = new ChunkPos(c);
+            ChunkPos cp = ChunkPos.unpack(c);
             List<ServerPlayer> players = level.getChunkSource().chunkMap.getPlayers(cp, false);
             if (players.isEmpty()) continue;
-            LevelChunk chunk = level.getChunk(cp.x, cp.z);
+            LevelChunk chunk = level.getChunk(cp.x(), cp.z());
             ClientboundLevelChunkWithLightPacket packet =
                     new ClientboundLevelChunkWithLightPacket(chunk, level.getLightEngine(), null, null);
             for (ServerPlayer p : players) p.connection.send(packet);

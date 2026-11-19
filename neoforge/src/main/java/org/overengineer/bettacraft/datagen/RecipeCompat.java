@@ -28,8 +28,27 @@ public final class RecipeCompat {
         return items;
     }
 
+    /** M52c (26.1): the dye item of a colour ({@code DyeItem.byColor} is gone). */
+    public static Item dye(net.minecraft.world.item.DyeColor c) {
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM.getValue(net.minecraft.resources.Identifier.withDefaultNamespace(c.getName() + "_dye"));
+    }
+
     public static Ingredient tag(TagKey<Item> tag) {
         return Ingredient.of(items().getOrThrow(tag));
+    }
+
+    /**
+     * M52c (26.1): the item of the fixed result of a recipe, or null; without making a stack (the item components are not
+     * bound while the data generator runs).
+     */
+    public static @org.jetbrains.annotations.Nullable Item resultItem(Recipe<?> recipe) {
+        if (recipe instanceof org.overengineer.bettacraft.crucible.CrucibleRecipe c) return c.output().item().value();
+        if (recipe instanceof org.overengineer.bettacraft.food.FoodMakerRecipe f) return f.output().item().value();
+        for (var d : recipe.display()) {
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay i) return i.stack().item().value();
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay i) return i.item().value();
+        }
+        return null;
     }
 
     /** The fixed result of a recipe (1.21.1 {@code getResultItem}; empty when it has none). */
@@ -37,7 +56,7 @@ public final class RecipeCompat {
         if (recipe instanceof org.overengineer.bettacraft.crucible.CrucibleRecipe c) return c.getResultItem(null);
         if (recipe instanceof org.overengineer.bettacraft.food.FoodMakerRecipe f) return f.getResultItem(null);
         for (var d : recipe.display()) {
-            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay i) return i.stack();
+            if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay i) return i.stack().create();
             if (d.result() instanceof net.minecraft.world.item.crafting.display.SlotDisplay.ItemSlotDisplay i) return new net.minecraft.world.item.ItemStack(i.item());
         }
         return net.minecraft.world.item.ItemStack.EMPTY;

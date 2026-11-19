@@ -210,7 +210,7 @@ public final class EquipmentGameTests {
         var crimson = rm.getRecipeFor(RecipeType.CRAFTING, grid(Items.CRIMSON_SLAB, Items.CRIMSON_PLANKS, Items.CHEST), level)
                 .orElseThrow(() -> new GameTestFailure("crimson cabinet recipe"));
         h.assertTrue(crimson.value() instanceof CabinetRecipe, "our recipe");
-        ItemStack r = crimson.value().assemble(grid(Items.CRIMSON_SLAB, Items.CRIMSON_PLANKS, Items.CHEST), level.registryAccess());
+        ItemStack r = crimson.value().assemble(grid(Items.CRIMSON_SLAB, Items.CRIMSON_PLANKS, Items.CHEST));
         h.assertTrue(r.is(ModItems.CABINET.get()) && CabinetBlockItem.getWood(r).toString().equals("minecraft:crimson_planks"), "crimson wood: " + r);
         // slabs of another wood are fine, mixed planks are not
         h.assertTrue(rm.getRecipeFor(RecipeType.CRAFTING, grid(Items.OAK_SLAB, Items.BAMBOO_PLANKS, Items.CHEST), level).isPresent(), "any slabs");
@@ -223,7 +223,7 @@ public final class EquipmentGameTests {
         withExtraPlanks(Items.MUSHROOM_STEM, () -> {
             CraftingInput in = grid(Items.SPRUCE_SLAB, Items.MUSHROOM_STEM, Items.CHEST);
             var modded = rm.getRecipeFor(RecipeType.CRAFTING, in, level).orElseThrow(() -> new GameTestFailure("tag planks recipe"));
-            ItemStack out = modded.value().assemble(in, level.registryAccess());
+            ItemStack out = modded.value().assemble(in);
             h.assertTrue(CabinetBlockItem.getWood(out).toString().equals("minecraft:mushroom_stem"), "wood from the tag entry: " + out);
         });
         h.assertTrue(CabinetRecipe.findWood(grid(Items.OAK_SLAB, Items.MUSHROOM_STEM, Items.CHEST)) == null, "tag restored");

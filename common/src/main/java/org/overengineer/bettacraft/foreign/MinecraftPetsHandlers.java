@@ -79,7 +79,7 @@ public final class MinecraftPetsHandlers {
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
         if (!event.getLevel().isClientSide()) {
-            event.getEntity().displayClientMessage(Component.translatable("message.bettacraft.pet.no_farm", target.getDisplayName()), true);
+            event.getEntity().sendOverlayMessage(Component.translatable("message.bettacraft.pet.no_farm", target.getDisplayName()));
         }
     }
 }

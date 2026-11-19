@@ -25,7 +25,7 @@ public class PipeTeeItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         // a filter pipe takes it in its own use handler; anywhere else it only says where it goes
         if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null && !FilterPipes.isPipe(ctx.getLevel().getBlockState(ctx.getClickedPos())))
-            ctx.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.where").withStyle(ChatFormatting.GOLD), true);
+            ctx.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.pipe_tee.where").withStyle(ChatFormatting.GOLD));
         return InteractionResult.PASS;
     }
 

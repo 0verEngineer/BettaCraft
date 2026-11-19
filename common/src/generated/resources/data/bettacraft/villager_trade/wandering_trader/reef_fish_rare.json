@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/reef_fish_rare"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:fish_bag"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

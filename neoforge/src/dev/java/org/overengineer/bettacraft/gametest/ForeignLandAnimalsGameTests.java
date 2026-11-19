@@ -180,14 +180,14 @@ public final class ForeignLandAnimalsGameTests {
     public static void fireflyGlowsAtNightAndStaysByDay(GameTestHelper h) {
         if (skip(h, "naturalist")) return;
         ServerLevel level = h.getLevel();
-        long time = level.getDayTime();
+        long time = level.getOverworldClockTime();
         EntityType<?> firefly = type("naturalist:firefly");
         try {
             TankBlockEntity c = paludarium(h, 2, 2, 8, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
             lid(h, c);
             LivingEntity f = put(h, c, container(h, firefly, false, false));
             h.assertTrue(ForeignHabits.glows(firefly), "a glowing profile");
-            level.setDayTime(18000); // midnight
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 18000); // midnight
             boolean[] glowed = {false};
             h.onEachTick(() -> {
                 if (ForeignHabits.glowing(f)) glowed[0] = true;
@@ -195,10 +195,10 @@ public final class ForeignLandAnimalsGameTests {
             h.runAfterDelay(ForeignHabits.FLASH_EVERY + 20, () -> {
                 try {
                     h.assertTrue(glowed[0], "it glowed in the dark tank");
-                    level.setDayTime(6000); // noon: the sun would drive it away after 600 ticks
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000); // noon: the sun would drive it away after 600 ticks
                     ForeignHabits.setSunTicks(f, 590);
                 } catch (RuntimeException ex) {
-                    level.setDayTime(time);
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
                     throw ex;
                 }
             });
@@ -209,11 +209,11 @@ public final class ForeignLandAnimalsGameTests {
                     h.assertTrue(TankInhabitants.tankBox(c.getTank()).contains(f.position()), "in its tank");
                     h.succeed();
                 } finally {
-                    level.setDayTime(time);
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
                 }
             });
         } catch (RuntimeException ex) {
-            level.setDayTime(time);
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
             throw ex;
         }
     }
@@ -326,7 +326,7 @@ public final class ForeignLandAnimalsGameTests {
         player.getInventory().add(new ItemStack(ModItems.TRANSPORT_TUB.get()));
         LivingEntity k = wild(h, komodo, new Vec3(16, 2, 26));
         player.snapTo(k.getX() + 1.5, k.getY(), k.getZ());
-        player.interactOn(k, InteractionHand.MAIN_HAND);
+        player.interactOn(k, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         h.assertFalse(k.isAlive(), "the net caught it");
         ItemStack tub = ItemStack.EMPTY;
         for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TransportTubItem.isFilled(s)) tub = s;
@@ -402,7 +402,7 @@ public final class ForeignLandAnimalsGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.TERRARIUM_BOX.get(), 2));
         LivingEntity f = wild(h, type("crittersandcompanions:ferret"), new Vec3(6, 2, 26));
         player.snapTo(f.getX() + 1, f.getY(), f.getZ());
-        player.interactOn(f, InteractionHand.MAIN_HAND);
+        player.interactOn(f, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         h.assertFalse(f.isAlive(), "the ferret went into the box");
         boolean boxed = false;
         for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.containedType(s) == f.getType()) boxed = true;
@@ -480,7 +480,7 @@ public final class ForeignLandAnimalsGameTests {
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.LARGE_NET.get()));
             player.getInventory().add(new ItemStack(ModItems.TRANSPORT_TUB.get()));
             player.snapTo(a.getX(), t.max().getY() + 1.5, a.getZ());
-            player.interactOn(a, InteractionHand.MAIN_HAND);
+            player.interactOn(a, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertFalse(a.isAlive(), "caught");
             h.assertFalse(t.inhabitants().contains(a.getUUID()), "no inhabitant any more");
             ItemStack back = ItemStack.EMPTY;

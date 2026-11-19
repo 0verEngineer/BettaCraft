@@ -71,7 +71,7 @@ public final class ForeignTerrariumHandlers {
         if (event.getLevel().isClientSide()) return;
         Component no = boxRefusal(player, target);
         if (no != null) {
-            player.displayClientMessage(no, true);
+            player.sendOverlayMessage(no);
             return;
         }
         if (TankInhabitants.hasTankRef(target) && event.getLevel() instanceof ServerLevel sl) {

@@ -65,26 +65,26 @@ public final class InteriorManager {
     public static void enter(ServerPlayer player, BlockPos clicked) {
         // M33 part b: interior off: nobody goes in (who is inside can still leave)
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INTERIOR)) {
-            player.displayClientMessage(org.overengineer.bettacraft.config.FeatureGate.offMessage(org.overengineer.bettacraft.config.Feature.INTERIOR), true);
+            player.sendOverlayMessage(org.overengineer.bettacraft.config.FeatureGate.offMessage(org.overengineer.bettacraft.config.Feature.INTERIOR));
             return;
         }
         if (isInterior(player.level())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.interior.nested"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.interior.nested"));
             return;
         }
         if (org.overengineer.bettacraft.tank.TankMoves.travelling(player.level(), clicked)) { // M32 part b
-            player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.travel.travelling"));
             return;
         }
         TankBlockEntity controller = TankMultiblock.getController(player.level(), clicked);
         ServerLevel interior = interiorLevel(player.level().getServer());
         if (controller == null || interior == null) {
-            player.displayClientMessage(Component.translatable(interior == null
-                    ? "message.bettacraft.interior.missing_dimension" : "message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable(interior == null
+                    ? "message.bettacraft.interior.missing_dimension" : "message.bettacraft.tank.not_formed"));
             return;
         }
         if (!TankInhabitants.canModify(player, controller.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
             return;
         }
         InteriorRegion region = regionFor((ServerLevel) player.level(), controller);
@@ -104,8 +104,8 @@ public final class InteriorManager {
         BlockPos target = entryPoint(region);
         while (target.getY() < InteriorRegion.BASE_Y + region.sizeY() - 2 && !interior.getBlockState(target).isAir()) target = target.above();
         player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
-        player.displayClientMessage(Component.translatable("message.bettacraft.interior.entered",
-                region.sizeX(), region.sizeY(), region.sizeZ()), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.interior.entered",
+                region.sizeX(), region.sizeY(), region.sizeZ()));
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.ENTER_INTERIOR);
     }
 
@@ -217,7 +217,7 @@ public final class InteriorManager {
         ServerLevel in = interiorLevel(server);
         if (in == null) return false;
         net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(r.originX() >> 4, r.originZ() >> 4);
-        net.minecraft.world.level.chunk.LevelChunk now = in.getChunkSource().getChunkNow(cp.x, cp.z);
+        net.minecraft.world.level.chunk.LevelChunk now = in.getChunkSource().getChunkNow(cp.x(), cp.z());
         if (now != null) return !now.getBlockState(new BlockPos(r.originX(), InteriorRegion.FLOOR_Y, r.originZ())).isAir();
         try {
             return in.getChunkSource().chunkMap.read(cp).join().isPresent();
@@ -616,7 +616,7 @@ public final class InteriorManager {
         for (ServerPlayer p : new ArrayList<>(level.players())) {
             if (r.containsShell(p.blockPosition())) {
                 leave(p);
-                p.displayClientMessage(Component.translatable("message.bettacraft.interior.invalid"), true);
+                p.sendOverlayMessage(Component.translatable("message.bettacraft.interior.invalid"));
             }
         }
     }
@@ -655,7 +655,7 @@ public final class InteriorManager {
             // M17: keep the tank's chunk loaded (not ticking) while someone is inside: the lock and trust checks read
             // the tank itself; with its chunk unloaded only the owner could build and the occupant count went stale
             if (tankLevel != null && n > 0) {
-                net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(r.tankMin());
+                net.minecraft.world.level.ChunkPos cp = net.minecraft.world.level.ChunkPos.containing(r.tankMin());
                 tankLevel.getChunkSource().addTicketWithRadius(org.overengineer.bettacraft.registry.ModTickets.OCCUPIED_TANK.get(), cp, 0);
             }
             if (tankLevel != null && tankLevel.isLoaded(r.tankMin())) {

@@ -28,7 +28,7 @@ public final class FlowRenderer {
     private FlowRenderer() {}
 
     public static RenderType hoseType() {
-        return RenderTypes.entityCutoutNoCull(HOSE);
+        return RenderTypes.entityCutout(HOSE);
     }
 
     public static RenderType jetType() {

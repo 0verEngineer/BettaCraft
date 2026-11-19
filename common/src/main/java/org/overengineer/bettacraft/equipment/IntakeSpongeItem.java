@@ -38,7 +38,7 @@ public class IntakeSpongeItem extends Item {
         Regulator.Device d = Regulator.find(level, pos);
         if (d == null || !d.takesSponge()) return InteractionResult.PASS;
         if (d.hasSponge()) {
-            if (!level.isClientSide() && player != null) player.displayClientMessage(Component.translatable("message.bettacraft.intake_sponge.already"), true);
+            if (!level.isClientSide() && player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.intake_sponge.already"));
             return InteractionResult.SUCCESS;
         }
         if (level.isClientSide()) return InteractionResult.SUCCESS;
@@ -46,7 +46,7 @@ public class IntakeSpongeItem extends Item {
         d.setSponge(true);
         if (player == null || !player.getAbilities().instabuild) ctx.getItemInHand().shrink(1);
         level.playSound(null, pos, SoundEvents.WOOL_PLACE, SoundSource.BLOCKS, 1.0F, 1.2F);
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.intake_sponge.fitted"), true);
+        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.intake_sponge.fitted"));
         return InteractionResult.CONSUME;
     }
 

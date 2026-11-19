@@ -145,7 +145,7 @@ public final class AquaristMenu {
                 return;
             }
         }
-        if (err != null) p.displayClientMessage(err.copy().withStyle(ChatFormatting.RED), true);
+        if (err != null) p.sendOverlayMessage(err.copy().withStyle(ChatFormatting.RED));
         if (npc.isAlive() && npc.phase() != AquaristEntity.Phase.LEAVING) open(p, npc);
     }
 }

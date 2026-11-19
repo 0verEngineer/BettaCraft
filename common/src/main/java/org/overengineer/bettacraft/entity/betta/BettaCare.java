@@ -232,7 +232,7 @@ public final class BettaCare {
         } else if (attacker instanceof BettaEntity b) {
             causeKey = "fight";
             cause = Component.translatable("cause.bettacraft.fight", b.getName());
-        } else if (attacker != null && attacker.getType().is(ModTags.PREDATORS)) {
+        } else if (attacker != null && attacker.is(ModTags.PREDATORS)) {
             causeKey = "predator";
             cause = Component.translatable("cause.bettacraft.predator", attacker.getName());
         } else {

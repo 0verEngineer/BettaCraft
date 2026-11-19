@@ -24,7 +24,7 @@ public final class SmokeFreeze {
             if (e.getLevel().isClientSide() || !(e.getEntity() instanceof Mob m)) return;
             // untagged: tank animals frozen by smoke runs before the tag existed (tank animals never use NoAI otherwise)
             boolean legacy = m.isNoAi() && org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(m);
-            if (!m.getTags().contains(TAG) && !legacy) return;
+            if (!m.entityTags().contains(TAG) && !legacy) return;
             m.setNoAi(false);
             m.setNoGravity(false);
             m.removeTag(TAG);

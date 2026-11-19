@@ -1,9 +1,10 @@
-// M52: the Fabric mod (Fabric Loom, Mojang names with Parchment). Compiles the common sources (common/src/main) together with
-// the Fabric platform layer and glue of this module (fabric/src/main) into one jar, remapped to intermediary. The handbook is
+// M52: the Fabric mod (Fabric Loom). Compiles the common sources (common/src/main) together with
+// the Fabric platform layer and glue of this module (fabric/src/main) into one jar. M52c: Minecraft 26.1 is not obfuscated,
+// Loom runs without remapping (plugin net.fabricmc.fabric-loom, no mappings, no intermediary). The handbook is
 // a Modonomicon book converted from the GuideME pages at build time (tools/guide; M52b: Patchouli has no 1.21.11 build). Run tasks have names of their own
 // (runFabricClient, runFabricServer, runFabricGameTest) so that the plain run tasks stay the NeoForge ones.
 plugins {
-    id 'fabric-loom'
+    id 'net.fabricmc.fabric-loom'
     id 'java-library'
 }
 
@@ -13,11 +14,11 @@ group = mod_group_id
 def commonProject = project(':common')
 
 base {
-    // bettacraft-fabric-1.21.11-<mod_version>.jar
+    // bettacraft-fabric-26.1.2-<mod_version>.jar
     archivesName = "${mod_id}-fabric-${minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 // M52: the plugins of the overlay and recipe viewer mods use only their (loader-independent) APIs: one source, both jars
 def integrationSrc = layout.buildDirectory.dir('generated/integrations')
@@ -86,16 +87,14 @@ ext.devExcluded = { File f ->
             && !l.contains('net.neoforged.neoforge.common.ModConfigSpec') && !l.contains('net.neoforged.fml.config') }
 }
 
-// M52b: every Fabric run of this branch (Minecraft 1.21.11) has its game directories under fabricRunRoot (default
-// run/1.21.11/fabric, -PfabricRunDir=...; the optional mod groups too); run-fabric/ holds the 1.21.1 runs of master
-def fabricRunRoot = (project.findProperty('fabricRunDir') ?: 'run/1.21.11/fabric').toString()
+// M52b/M52c: every Fabric run of this branch (Minecraft 26.1.2) has its game directories under fabricRunRoot (default
+// run/26.1.2/fabric, -PfabricRunDir=...; the optional mod groups too); run-fabric/ holds the 1.21.1 runs of master,
+// run/1.21.11/fabric the ones of the 1.21.11 branch
+def fabricRunRoot = (project.findProperty('fabricRunDir') ?: 'run/26.1.2/fabric').toString()
 ext.fabricRunRoot = fabricRunRoot
 
 loom {
     accessWidenerPath = file('src/main/resources/bettacraft.accesswidener')
-    mixin {
-        defaultRefmapName = 'bettacraft.refmap.json'
-    }
     runs {
         // runFabricClient [-Pbackground]: the background window like on NeoForge (BackgroundWindowMixin)
         fabricClient {
@@ -145,7 +144,6 @@ configurations {
     devCompileClasspath.extendsFrom compileClasspath
     devRuntimeClasspath.extendsFrom runtimeClasspath
 }
-loom.createRemapConfigurations(sourceSets.dev)
 
 repositories {
     exclusiveContent {
@@ -172,33 +170,32 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    // M52b: no Parchment for 1.21.11 (plain Mojang names)
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    // M52c: Minecraft 26.1 is not obfuscated (no mappings)
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
     // NeoForge's config API on Fabric (the same TOML files and keys); the settings screen through Mod Menu
-    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"
-    modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}"
-    modLocalRuntime "com.terraformersmc:modmenu:${modmenu_version}"
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"
+    compileOnly "com.terraformersmc:modmenu:${modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${modmenu_version}"
     // Team Reborn Energy: the power of the devices on Fabric (1 E = 1 FE), bundled (jar in jar) like other Fabric mods do
-    modImplementation include("teamreborn:energy:${teamreborn_energy_version}") { transitive = false }
+    implementation include("teamreborn:energy:${teamreborn_energy_version}") { transitive = false }
     // the handbook on Fabric (optional at runtime)
-    modCompileOnly "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
+    compileOnly "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
     if (!project.hasProperty('noPatchouli') && !project.hasProperty('noModonomicon')) {
-        modLocalRuntime "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
+        localRuntime "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
         // its nested config library (Fiber; the dev runtime does not load the jars inside a mod jar): extracted, read only
         localRuntime files({ fileTree(layout.buildDirectory.dir('patchouli-libraries')).include('*.jar').files }) { builtBy 'extractPatchouliLibraries' }
     }
 
     // M52: the info overlays and the recipe viewer, the same plugin classes as on NeoForge (neoforge/compat/{jade,jei,wthit},
     // copied into the Fabric sources by integrationSources); -PfabricOverlays puts Jade and JEI into the dev runtime
-    modCompileOnly "maven.modrinth:jade:${jade_fabric_version}"
-    modCompileOnly "maven.modrinth:jei:${jei_fabric_version}"
-    modCompileOnly("maven.modrinth:wthit:${wthit_fabric_version}") { transitive = false }
+    compileOnly "maven.modrinth:jade:${jade_fabric_version}"
+    compileOnly "maven.modrinth:jei:${jei_fabric_version}"
+    compileOnly("maven.modrinth:wthit:${wthit_fabric_version}") { transitive = false }
     // M52: REI (its plugin lives in fabric/compat). M52b: The One Probe and EMI have no Fabric 1.21.11 build (their plugins
     // are left out of this branch)
-    modCompileOnly("maven.modrinth:rei:${rei_fabric_version}") { transitive = false }
-    modCompileOnly("maven.modrinth:architectury-api:${architectury_fabric_version}") { transitive = false }
+    compileOnly("maven.modrinth:rei:${rei_fabric_version}") { transitive = false }
+    compileOnly("maven.modrinth:architectury-api:${architectury_fabric_version}") { transitive = false }
     compileOnly 'me.shedaniel.cloth:basic-math:0.6.1'
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
     if (project.hasProperty('rei')) localRuntime 'me.shedaniel.cloth:basic-math:0.6.1'
@@ -214,7 +211,7 @@ dependencies {
         }
     }
     if (!groupJars.isEmpty()) {
-        modLocalRuntime files(groupJars.values())
+        localRuntime files(groupJars.values())
         // their jar-in-jar libraries (the dev runtime does not load nested jars), extracted read only; not the ones we or
         // the groups bring ourselves
         def nested = layout.buildDirectory.dir('nested-mods')
@@ -234,7 +231,7 @@ dependencies {
             eachFile { f -> if (own.any { o -> o && f.name.startsWith(o) }) f.exclude() }
             into nested
         }
-        modLocalRuntime files({ fileTree(nested).include('*.jar').files }) { builtBy t }
+        localRuntime files({ fileTree(nested).include('*.jar').files }) { builtBy t }
     }
 
     guideToolImplementation 'com.google.code.gson:gson:2.11.0'
@@ -455,23 +452,19 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-Xmaxerrs', '100000']
 }
 
-tasks.named('jar', Jar).configure {
-    archiveClassifier = 'dev'
-}
 tasks.named('compileJava') { dependsOn 'integrationSources' }
 def licenseModId = mod_id
-tasks.named('remapJar').configure {
-    archiveClassifier = null
+tasks.named('jar', Jar).configure {
     // the workflows pick the release jars up from the root build/libs
     destinationDirectory = rootProject.layout.buildDirectory.dir('libs')
     from(rootProject.file('LICENSE')) { rename { "LICENSE_${licenseModId}" } }
 }
 
 // the released Fabric jar: our classes only (no dev, smoke or GameTest code, no NeoForge stubs), the right version, the
-// mixin configs with their refmap, the converted data and the Modonomicon book, no foreign assets
+// mixin configs, the converted data and the Modonomicon book, no foreign assets
 tasks.register('verifyFabricJar') {
     group = 'verification'
-    def jarTask = tasks.named('remapJar')
+    def jarTask = tasks.named('jar')
     dependsOn jarTask
     def report = layout.buildDirectory.file('verifyFabricJar.txt')
     def expected = project.findProperty('expectedVersion')
@@ -521,8 +514,8 @@ tasks.named('check').configure { dependsOn 'verifyFabricJar' }
 // Fabric runs are runFabricClient / runFabricServer / runFabricGameTest
 ['runClient', 'runServer'].each { n -> tasks.matching { it.name == n }.configureEach { enabled = false } }
 
-// ---- M52: production runs (intermediary, like a player's Fabric profile): the released jar, the dev smoke remapped to
-// intermediary and the official jars of the other mods; gradlew prodFabricServer -Psmoketest / prodFabricClient
+// ---- M52: production runs (like a player's Fabric profile; M52c: 26.1 has no intermediary any more): the released jar,
+// the dev smoke jar and the official jars of the other mods; gradlew prodFabricServer -Psmoketest / prodFabricClient
 // -Psmoketestfabric (background window), run dirs <fabricRunRoot>/prod-server and <fabricRunRoot>/prod-client
 configurations {
     prodMods { transitive = false }
@@ -534,19 +527,10 @@ dependencies {
     prodMods "maven.modrinth:jade:${jade_fabric_version}"
     prodMods "com.terraformersmc:modmenu:${modmenu_version}"
 }
-def devJarTask = tasks.register('devJar', Jar) {
+def remapDevJar = tasks.register('devJar', Jar) {
     from sourceSets.dev.output
-    archiveClassifier = 'devsmoke-named'
-    destinationDirectory = layout.buildDirectory.dir('devlibs')
-}
-def remapDevJar = tasks.register('remapDevJar', net.fabricmc.loom.task.RemapJarTask) {
-    dependsOn devJarTask
-    inputFile = devJarTask.flatMap { it.archiveFile }
     archiveClassifier = 'devsmoke'
     destinationDirectory = layout.buildDirectory.dir('devlibs')
-    classpath.from(sourceSets.main.compileClasspath)
-    classpath.from(sourceSets.main.output)
-    addNestedDependencies = false
 }
 def prodProps = { boolean client ->
     def l = []
@@ -560,7 +544,7 @@ def prodProps = { boolean client ->
 }
 tasks.register('prodFabricServer', net.fabricmc.loom.task.prod.ServerProductionRunTask) {
     group = 'bettacraft'
-    mods.from(tasks.named('remapJar'))
+    mods.from(tasks.named('jar'))
     mods.from(remapDevJar)
     mods.from(configurations.prodMods)
     installerVersion = '1.0.1'
@@ -575,7 +559,7 @@ tasks.register('prodFabricServer', net.fabricmc.loom.task.prod.ServerProductionR
 }
 tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionRunTask) {
     group = 'bettacraft'
-    mods.from(tasks.named('remapJar'))
+    mods.from(tasks.named('jar'))
     mods.from(remapDevJar)
     mods.from(configurations.prodMods)
     runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-client")

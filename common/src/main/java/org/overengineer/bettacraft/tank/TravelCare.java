@@ -204,7 +204,7 @@ public final class TravelCare {
     public static float ambientAt(ServerLevel level, Vec3 at) {
         BlockPos p = BlockPos.containing(at);
         float t = level.isLoaded(p) ? TankTemperature.ambientFromBiome(level.getBiome(p).value().getBaseTemperature()) : TankTemperature.ambientFromBiome(0.8F);
-        if (level.dimensionType().hasSkyLight() && !level.dimensionType().hasFixedTime()) t += TankTemperature.dayNightOffset(level.getDayTime());
+        if (level.dimensionType().hasSkyLight() && !level.dimensionType().hasFixedTime()) t += TankTemperature.dayNightOffset(level.getOverworldClockTime());
         return t;
     }
 

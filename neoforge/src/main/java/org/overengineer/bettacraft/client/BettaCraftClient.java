@@ -23,7 +23,6 @@ import org.overengineer.bettacraft.client.render.BettaTints;
 import org.overengineer.bettacraft.client.render.TankSignRenderer;
 import org.overengineer.bettacraft.client.screen.FeederScreen;
 import org.overengineer.bettacraft.client.screen.TankScreen;
-import org.overengineer.bettacraft.client.tank.TankAwareWaterExtensions;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.BettaData;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
@@ -68,17 +67,17 @@ public final class BettaCraftClient {
         modBus.addListener(BettaCraftClient::onLayers);
         modBus.addListener(BettaCraftClient::onRenderers);
         modBus.addListener(BettaCraftClient::onScreens);
-        // M25: reverse osmosis and sea water look like water in other mods' tanks (lighter / deeper blue)
-        modBus.addListener((net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent e) -> {
-            e.registerFluidType(waterLook(0xFFB0DCF4), org.overengineer.bettacraft.registry.NeoForgeFluids.RO_WATER_TYPE.get());
-            e.registerFluidType(waterLook(0xFF2A64B0), org.overengineer.bettacraft.registry.NeoForgeFluids.SEA_WATER_TYPE.get());
-            e.registerFluidType(waterLook(0xFF8A9A4A), org.overengineer.bettacraft.registry.NeoForgeFluids.LIVE_FOOD_TYPE.get()); // M26: murky green-brown
-            e.registerFluidType(waterLook(0xFF6E8A1E), org.overengineer.bettacraft.registry.NeoForgeFluids.FERTILIZER_TYPE.get()); // M37: olive green
+        // M25: reverse osmosis and sea water look like water in other mods' tanks (lighter / deeper blue). M52c (26.1): fluid models
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterFluidModelsEvent e) -> {
+            e.register(waterLook(0xFFB0DCF4), org.overengineer.bettacraft.registry.ModFluids.RO_WATER.get(), org.overengineer.bettacraft.registry.ModFluids.FLOWING_RO_WATER.get());
+            e.register(waterLook(0xFF2A64B0), org.overengineer.bettacraft.registry.ModFluids.SEA_WATER.get(), org.overengineer.bettacraft.registry.ModFluids.FLOWING_SEA_WATER.get());
+            e.register(waterLook(0xFF8A9A4A), org.overengineer.bettacraft.registry.ModFluids.LIVE_FOOD.get(), org.overengineer.bettacraft.registry.ModFluids.FLOWING_LIVE_FOOD.get()); // M26: murky green-brown
+            e.register(waterLook(0xFF6E8A1E), org.overengineer.bettacraft.registry.ModFluids.FERTILIZER.get(), org.overengineer.bettacraft.registry.ModFluids.FLOWING_FERTILIZER.get()); // M37: olive green
         });
         // M15: how to leave a tank interior, bottom left
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) -> e.registerBelow(
                 net.neoforged.neoforge.client.gui.VanillaGuiLayers.CHAT, org.overengineer.bettacraft.BettaCraft.id("interior_leave_hint"),
-                org.overengineer.bettacraft.client.interior.InteriorLeaveHud::render));
+                org.overengineer.bettacraft.client.interior.InteriorLeaveHud::extractRenderState));
         modBus.addListener((net.neoforged.neoforge.client.event.AddClientReloadListenersEvent e) -> e.addListener(BettaCraft.id("client_resources"),
                 (net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> ClientSetup.onResourcesReloaded()));
         // our dynamic models (cabinets, filter pipes and bundles M40, interior floor, plant meshes M21): client.model.ModelSwaps
@@ -98,18 +97,18 @@ public final class BettaCraftClient {
         // (M52b: NeoForge 21.9+ has one event per stage; several of our 1.21.1 stages share one)
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterSky e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_SKY));
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterOpaqueBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS));
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterEntities e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_ENTITIES, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES));
+        // M52c (26.1): entities and block entities are drawn as features (solid, then translucent); no tripwire layer any more
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterOpaqueFeatures e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_ENTITIES, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES));
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterTranslucentBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS));
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterTripwireBlocks e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS));
-        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterParticles e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_PARTICLES));
+        NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterTranslucentParticles e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_PARTICLES));
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterWeather e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_WEATHER));
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderLevelStageEvent.AfterLevel e) -> NeoForgeClientPlatform.fire(e, org.overengineer.bettacraft.platform.client.RenderLevelStageEvent.Stage.AFTER_LEVEL));
         // M21 follow-up: plant meshes follow their chunks (rebuilt when one arrives again, forgotten when it leaves)
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Load e) -> {
-            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(e.getChunk().getPos().x, e.getChunk().getPos().z);
+            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(e.getChunk().getPos().x(), e.getChunk().getPos().z());
         });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.level.ChunkEvent.Unload e) -> {
-            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(e.getChunk().getPos().x, e.getChunk().getPos().z);
+            if (e.getLevel().isClientSide()) org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(e.getChunk().getPos().x(), e.getChunk().getPos().z());
         });
         // M11: tank look settings (connected glass, edge width) are baked into the chunk meshes: rebuild them on change
         modBus.addListener((net.neoforged.fml.event.config.ModConfigEvent.Reloading e) -> {
@@ -163,8 +162,7 @@ public final class BettaCraftClient {
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
-        // Client extensions were registered during Minecraft construction (before this event); wrap vanilla water now.
-        event.enqueueWork(TankAwareWaterExtensions::install);
+        // M52c (26.1): the water of tank blocks comes from the common FluidRendererMixin
         event.enqueueWork(() -> ClientSetup.itemProperties(org.overengineer.bettacraft.client.item.ItemPredicates::register));
         event.enqueueWork(() -> ClientSetup.itemColors(org.overengineer.bettacraft.client.item.ItemTints::register));
     }
@@ -194,8 +192,9 @@ public final class BettaCraftClient {
 
     /** M9: water in the larva tub (murky green) and the artemia hatchery (salt water blue). */
     /** M26: the stale brown water of the tubifex dish and the green water of the daphnia barrel. */
-    private static void onBlockColors(RegisterColorHandlersEvent.Block event) {
-        ClientSetup.blockColors(event::register);
+    private static void onBlockColors(RegisterColorHandlersEvent.BlockTintSources event) {
+        // M52c (26.1): one tint source per tint index
+        ClientSetup.blockColors((color, blocks) -> event.register(ClientSetup.tintSources(color), blocks));
     }
 
     private static void onLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -230,23 +229,12 @@ public final class BettaCraftClient {
     }
 
     /** M25: the look of our water fluids: Minecraft's water textures in a tint. */
-    private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions waterLook(int tint) {
-        return new net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions() {
-            @Override
-            public net.minecraft.resources.Identifier getStillTexture() {
-                return net.minecraft.resources.Identifier.withDefaultNamespace("block/water_still");
-            }
-
-            @Override
-            public net.minecraft.resources.Identifier getFlowingTexture() {
-                return net.minecraft.resources.Identifier.withDefaultNamespace("block/water_flow");
-            }
-
-            @Override
-            public int getTintColor() {
-                return tint;
-            }
-        };
+    private static net.minecraft.client.renderer.block.FluidModel.Unbaked waterLook(int tint) {
+        return new net.minecraft.client.renderer.block.FluidModel.Unbaked(
+                new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_still")),
+                new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_flow")),
+                new net.minecraft.client.resources.model.sprite.Material(net.minecraft.resources.Identifier.withDefaultNamespace("block/water_overlay")),
+                net.neoforged.neoforge.client.fluid.FluidTintSources.constant(tint));
     }
 
 }

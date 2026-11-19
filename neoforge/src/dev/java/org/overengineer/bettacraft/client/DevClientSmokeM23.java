@@ -86,7 +86,7 @@ final class DevClientSmokeM23 {
         then(60, () -> shot("air_pump"));
         // 3. night: the timer switched the panel tank off, the others shine
         then(1, () -> server(p -> {
-            p.level().setDayTime(18000);
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 18000);
             for (int i = 0; i < 3; i++) {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(i * SPACING, 1, 0));
                 if (c != null) TankLighting.step(p.level(), c);
@@ -95,7 +95,7 @@ final class DevClientSmokeM23 {
         then(1, () -> look(base.getX() + SPACING + 2.0, base.getY() + 4.0, base.getZ() - 9.0, 0F, 14F));
         then(80, this::checkNight);
         then(1, () -> shot("night_timer"));
-        then(1, () -> server(p -> p.level().setDayTime(6000)));
+        then(1, () -> server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 6000)));
         // 4. inside the aerated tank
         then(1, () -> server(p -> {
             InteriorRegion r = airRegion;
@@ -166,8 +166,8 @@ final class DevClientSmokeM23 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(24000, 0, false, false);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         for (int x = -8; x < 3 * SPACING + 6; x++)
             for (int z = -12; z < 9; z++) {
@@ -320,7 +320,7 @@ final class DevClientSmokeM23 {
         then(1, () -> {
             gui = mc.options.guiScale().get();
             mc.options.guiScale().set(2);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         for (String page : new String[]{"equipment/air_pump.md", "equipment/air_stone.md", "equipment/intake_sponge.md", "equipment/led_panel.md",
                 "equipment/high_power_led.md", "equipment/light.md", "equipment/regulator.md", "aquarium/oxygen.md"}) {
@@ -331,7 +331,7 @@ final class DevClientSmokeM23 {
         then(1, () -> {
             mc.setScreen(null);
             mc.options.guiScale().set(gui);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 

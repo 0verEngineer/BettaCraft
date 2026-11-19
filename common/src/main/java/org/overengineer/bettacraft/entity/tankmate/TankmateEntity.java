@@ -678,7 +678,7 @@ public class TankmateEntity extends AbstractFish {
     @Override
     protected net.minecraft.world.InteractionResult mobInteract(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
         if (species.isLarge() && player.getItemInHand(hand).is(net.minecraft.world.item.Items.WATER_BUCKET)) {
-            if (!level().isClientSide()) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.big.no_bucket", getDisplayName()), true);
+            if (!level().isClientSide()) player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.big.no_bucket", getDisplayName()));
             return net.minecraft.world.InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);

@@ -91,18 +91,18 @@ public final class TankMultiblock {
             install(level, newTank(List.of(pos), ServerConfig.defaultScale(), player));
             if (player != null) {
                 if (!candidates.isEmpty()) {
-                    player.displayClientMessage(notJoinedMessage(), true);
+                    player.sendOverlayMessage(notJoinedMessage());
                 } else if (unloadedNeighbour) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.tank.unloaded"), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.unloaded"));
                 } else if (otherGlass) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.tank.other_glass"), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.other_glass"));
                 }
             }
             return;
         }
         merge(level, chosen, pos);
         if (player != null && chosen.size() < candidates.size()) {
-            player.displayClientMessage(notJoinedMessage(), true);
+            player.sendOverlayMessage(notJoinedMessage());
         }
     }
 
@@ -427,7 +427,7 @@ public final class TankMultiblock {
         if (newTanks.size() > 1) {
             for (ServerPlayer p : level.players()) {
                 if (p.blockPosition().distSqr(pos) < 32 * 32) {
-                    p.displayClientMessage(Component.translatable("message.bettacraft.tank.split", newTanks.size()), true);
+                    p.sendOverlayMessage(Component.translatable("message.bettacraft.tank.split", newTanks.size()));
                 }
             }
         }

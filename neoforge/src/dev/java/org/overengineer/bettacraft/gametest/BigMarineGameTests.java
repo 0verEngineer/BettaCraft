@@ -287,7 +287,7 @@ public final class BigMarineGameTests {
             h.assertTrue(warm.containsKey(s) && !river.containsKey(s), s.id() + " in warm oceans, not in rivers");
             h.assertTrue(s.marine(), s.id() + " is a sea animal");
             h.assertTrue(Wildlife.spawnsWild(s), s.id() + " spawns wild");
-            h.assertTrue(ModEntities.TANKMATES.get(s).get().is(ModTags.WILD_ANIMALS), s.id() + " is a wild animal");
+            h.assertTrue(ModEntities.TANKMATES.get(s).get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS), s.id() + " is a wild animal");
             h.assertTrue(BigCatching.caught(h.getLevel(), s, NetCatching.random(h.getLevel())) != null, s.id() + " goes into a transport tub");
             int[] g = Wildlife.group(s);
             if (s == TankmateSpecies.COWNOSE_RAY) h.assertTrue(g[0] == 2 && g[1] == 3, "cownose rays in small schools: " + g[0] + "-" + g[1]);

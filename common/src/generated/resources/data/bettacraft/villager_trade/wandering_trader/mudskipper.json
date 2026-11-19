@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/mudskipper"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:mudskipper_box"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

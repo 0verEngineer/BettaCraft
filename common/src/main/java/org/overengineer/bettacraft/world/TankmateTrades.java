@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.world;
 
+import org.overengineer.bettacraft.villager.TradeListing;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public final class TankmateTrades {
     // M22.2: the offers themselves are in org.overengineer.bettacraft.sources.TraderOffers (two among the usual ones, one
     // among the rare ones; each picks a species of its kind)
 
-    public static net.minecraft.world.entity.npc.villager.VillagerTrades.ItemListing listing(TankmateSpecies.Trade kind) {
+    public static org.overengineer.bettacraft.villager.TradeListing listing(TankmateSpecies.Trade kind) {
         return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             java.util.List<TankmateSpecies> pool = new java.util.ArrayList<>();

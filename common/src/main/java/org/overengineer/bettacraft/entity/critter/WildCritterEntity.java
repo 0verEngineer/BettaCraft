@@ -222,7 +222,7 @@ public class WildCritterEntity extends WaterAnimal {
      */
     public static int release(ServerLevel level, List<CompoundTag> animals, BlockPos pos, @Nullable Player player) {
         if (!Features.enabled(Feature.INVERTEBRATES_WILD)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.critters.released"));
             return 0;
         }
         int n = 0;
@@ -231,12 +231,12 @@ public class WildCritterEntity extends WaterAnimal {
             if (k == null || !k.alive()) continue;
             WildCritterEntity e = of(level, a);
             if (e == null) continue;
-            e.snapTo(pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6, pos.getY() + 0.3, pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.6,
-                    level.random.nextFloat() * 360F, 0);
+            e.snapTo(pos.getX() + 0.5 + (level.getRandom().nextDouble() - 0.5) * 0.6, pos.getY() + 0.3, pos.getZ() + 0.5 + (level.getRandom().nextDouble() - 0.5) * 0.6,
+                    level.getRandom().nextFloat() * 360F, 0);
             e.setPersistenceRequired();
             if (level.addFreshEntity(e)) n++;
         }
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.critters.released_world", n), true);
+        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.critters.released_world", n));
         return n;
     }
 
@@ -308,7 +308,7 @@ public class WildCritterEntity extends WaterAnimal {
         if (!net && !bag && !bucket) return super.mobInteract(player, hand);
         if (level().isClientSide()) return InteractionResult.SUCCESS;
         Component err = catchBy(player, hand, held, bucket);
-        if (err != null) player.displayClientMessage(err, true);
+        if (err != null) player.sendOverlayMessage(err);
         return InteractionResult.CONSUME;
     }
 
@@ -342,7 +342,7 @@ public class WildCritterEntity extends WaterAnimal {
         }
         AnimalContainers.putCritter(player, found, saveAnimal(), bucket);
         level().playSound(null, blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.NEUTRAL, 0.7F, 1.4F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.critters.caught", TankCritters.name(animal)).withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.critters.caught", TankCritters.name(animal)).withStyle(ChatFormatting.GREEN));
         discard();
         return null;
     }

@@ -93,7 +93,7 @@ public final class DecorPreview {
             ps.translate(-0.5, -0.5, -0.5);
             // M52b: tesselated without face culling like 1.21.1's renderSingleBlock; Tinted makes it full bright
             var cp = org.overengineer.bettacraft.platform.client.ClientPlatform.get();
-            var model = mc.getBlockRenderer().getBlockModel(b.state());
+            var model = mc.getModelManager().getBlockStateModelSet().get(b.state());
             cp.tesselate(b.state(), b.pos(), mc.level, ps, x -> vc, false, net.minecraft.util.RandomSource.create(42L),
                     cp.modelData(model, mc.level, b.pos(), b.state()), null);
             ps.popPose();

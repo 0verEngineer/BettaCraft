@@ -70,7 +70,7 @@ public final class BetterFishTanksCompat {
         if (!isOurFilledContainer(stack) || !isTankBlock(level, pos)) return null;
         if (level instanceof ServerLevel server) {
             Component error = release(server, pos, player, hand, stack);
-            if (error != null) player.displayClientMessage(error, true);
+            if (error != null) player.sendOverlayMessage(error);
         }
         return InteractionResult.SUCCESS;
     }

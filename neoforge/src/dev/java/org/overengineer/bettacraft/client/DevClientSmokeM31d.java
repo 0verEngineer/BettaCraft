@@ -117,7 +117,7 @@ final class DevClientSmokeM31d {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         // --- drowned: an aquarium with a sand bottom and a ruined stone wall at the back
         drowned = p.blockPosition().offset(-12, 2, 200);
         TankBlockEntity dc = tank(level, p, drowned, 4, 3, 3);

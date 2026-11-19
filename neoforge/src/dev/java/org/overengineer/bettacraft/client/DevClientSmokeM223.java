@@ -121,8 +121,8 @@ final class DevClientSmokeM223 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(24000, 0, false, false);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         BlockPos base = p.blockPosition().offset(-30, 2, 420);
         pool = base;
@@ -163,7 +163,7 @@ final class DevClientSmokeM223 {
                     level.setBlock(top, (z % 2 == 0 ? Blocks.TUBE_CORAL : Blocks.FIRE_CORAL_FAN).defaultBlockState(), 2);
                 }
             }
-        for (int k = 0; k < 6; k++) org.overengineer.bettacraft.reef.WildCoralFeature.place(level, reef.offset(6, 2, 6), level.random);
+        for (int k = 0; k < 6; k++) org.overengineer.bettacraft.reef.WildCoralFeature.place(level, reef.offset(6, 2, 6), level.getRandom());
         // a tank: shrimp of two colours and both sexes, a betta and a neon shoal, nothing analysed yet
         TankBlockEntity c = tank(level, p, tank, 3, 2, 2);
         for (int k = 0; k < 6; k++) TankCritters.add(level, c, CritterSpecies.NEOCARIDINA, CritterGenes.cross(CritterGenes.pure(0, 0.45F),
@@ -171,7 +171,7 @@ final class DevClientSmokeM223 {
         for (int k = 0; k < 4; k++) TankCritters.add(level, c, CritterSpecies.RAMSHORN, CritterGenes.WILD, false, 12);
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         BettaEntity b = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
-        b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.random), false, 0));
+        b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.getRandom()), false, 0));
         ItemStack bb = b.getBucketItemStack();
         b.saveToBucketTag(bb);
         b.discard();

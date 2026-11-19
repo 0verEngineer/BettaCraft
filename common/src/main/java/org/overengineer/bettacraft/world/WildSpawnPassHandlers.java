@@ -48,10 +48,10 @@ public final class WildSpawnPassHandlers {
         long t = level.getGameTime();
         for (ServerPlayer p : level.players()) {
             if (p.isSpectator() || (t + p.getId()) % every != 0) continue;
-            tryFor(level, p.blockPosition(), level.random);
-            tryCrittersFor(level, p.blockPosition(), level.random); // M46: the small animals' own try
+            tryFor(level, p.blockPosition(), level.getRandom());
+            tryCrittersFor(level, p.blockPosition(), level.getRandom()); // M46: the small animals' own try
             // M31 part b: now and then a turtle on the shore or a tortoise on dry grassland
-            org.overengineer.bettacraft.terrarium.HerpSpawns.tryFor(level, p.blockPosition(), level.random, room(level, p.blockPosition()));
+            org.overengineer.bettacraft.terrarium.HerpSpawns.tryFor(level, p.blockPosition(), level.getRandom(), room(level, p.blockPosition()));
         }
     }
 }

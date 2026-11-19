@@ -47,8 +47,8 @@ public final class DriveRender {
         Direction face = cab.driveFace();
         if (face == null || cab.getLevel() == null) return;
         // the light in front of the face (the cabinet's own block is dark inside)
-        light = net.minecraft.client.renderer.LevelRenderer.getLightColor(cab.getLevel(), cab.getBlockPos().relative(face));
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
+        light = net.minecraft.client.renderer.LevelRenderer.getLightCoords(cab.getLevel(), cab.getBlockPos().relative(face));
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutCull(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
         TextureAtlasSprite s = sprite("drive_coupling");
         ps.pushPose();
         face(ps, face);

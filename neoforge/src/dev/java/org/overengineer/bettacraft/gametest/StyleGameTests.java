@@ -85,7 +85,7 @@ public final class StyleGameTests {
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
         return level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level)
-                .map(r -> r.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
+                .map(r -> r.value().assemble(in)).orElse(ItemStack.EMPTY);
     }
 
     private static CraftingInput single(ItemStack s) {

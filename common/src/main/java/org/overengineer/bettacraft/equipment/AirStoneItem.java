@@ -25,13 +25,11 @@ public class AirStoneItem extends BlockItem {
     @Override
     public InteractionResult place(BlockPlaceContext ctx) {
         if (!InteriorManager.isInterior(ctx.getLevel())) {
-            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
-                    Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD), true);
+            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD));
             return InteractionResult.FAIL;
         }
         if (!Features.enabled(Feature.AERATION)) {
-            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
-                    Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
+            if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD));
             return InteractionResult.FAIL;
         }
         if (!ctx.getLevel().isClientSide() && ctx.getPlayer() != null && !InteriorManager.canBuild(ctx.getPlayer(), ctx.getClickedPos())) return InteractionResult.FAIL;

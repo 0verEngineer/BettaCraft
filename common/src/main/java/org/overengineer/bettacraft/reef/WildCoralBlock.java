@@ -150,7 +150,7 @@ public class WildCoralBlock extends Block implements SimpleWaterloggedBlock {
         if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (state.getValue(TRIMMED)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.wild_coral.trimmed").withStyle(ChatFormatting.GRAY), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.wild_coral.trimmed").withStyle(ChatFormatting.GRAY));
             return InteractionResult.CONSUME;
         }
         ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(species, 0);

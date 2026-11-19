@@ -95,7 +95,7 @@ final class DevClientSmokeM46 {
         then(10, () -> {
             guiScale = mc.options.guiScale().get();
             mc.options.guiScale().set(4);
-            mc.resizeDisplay();
+            mc.resizeGui();
             if (mc.player != null) mc.setScreen(new InventoryScreen(mc.player));
         });
         then(20, () -> jeiFilter("heat mat"));
@@ -106,7 +106,7 @@ final class DevClientSmokeM46 {
             jeiFilter("");
             mc.setScreen(null);
             mc.options.guiScale().set(guiScale);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         then(1, () -> server(p -> {
             p.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
@@ -168,10 +168,10 @@ final class DevClientSmokeM46 {
 
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
         level.getGameRules().set(GameRules.ADVANCE_WEATHER, false, level.getServer());
-        level.setWeatherParameters(12000, 0, false, false);
+        level.getServer().setWeatherParameters(12000, 0, false, false);
         level.getGameRules().set(GameRules.SPAWN_MOBS, false, level.getServer());
         home = p.blockPosition().offset(0, 40, 0);
         p.getAbilities().flying = true;

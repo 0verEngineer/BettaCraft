@@ -340,7 +340,7 @@ public final class InhabitantGameTests {
             int logs = c.getTank().log().size();
             sp.teleportTo(h.getLevel(), fish.getX(), fish.getY() - 1.0, fish.getZ() - 1.5, java.util.Set.of(), 0F, 0F, false);
             sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-            var r = sp.interactOn(fish, net.minecraft.world.InteractionHand.MAIN_HAND);
+            var r = sp.interactOn(fish, net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertTrue(r.consumesAction() && fish.isRemoved(), "the bucket caught the fish: " + r);
             h.assertTrue(!c.getTank().inhabitants().contains(fish.getUUID()), "no longer an inhabitant");
             h.assertTrue(c.getTank().log().size() == logs + 1

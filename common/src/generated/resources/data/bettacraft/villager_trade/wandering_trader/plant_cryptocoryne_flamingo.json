@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/plant_cryptocoryne_flamingo"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:cryptocoryne_flamingo"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

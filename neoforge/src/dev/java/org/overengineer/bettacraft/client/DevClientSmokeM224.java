@@ -91,8 +91,8 @@ final class DevClientSmokeM224 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(24000, 0, false, false);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         base = p.blockPosition().offset(-10, 0, 480);
         // a light floor and a white wall behind the row
@@ -229,7 +229,7 @@ final class DevClientSmokeM224 {
         then(1, () -> {
             gui = mc.options.guiScale().get();
             mc.options.guiScale().set(2);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         for (String page : new String[]{"plants/amazon_sword.md", "plants/cryptocoryne_flamingo.md", "plants/red_tiger_lotus.md", "equipment/cabinet.md",
                 "getting_started/sources.md"}) {
@@ -242,7 +242,7 @@ final class DevClientSmokeM224 {
         then(1, () -> {
             mc.setScreen(null);
             mc.options.guiScale().set(gui);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 

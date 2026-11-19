@@ -151,6 +151,7 @@ public final class ModDataGen {
                 Set.of(BettaCraft.MOD_ID)));
         gen.addProvider(true, new LootModifiers(out, lookup));
         gen.addProvider(true, new GeneticsFiles(out));
+        gen.addProvider(true, new TradeData(out)); // M52c: the data-driven trades of 26.1
         gen.addProvider(true, new net.minecraft.data.advancements.AdvancementProvider(out, lookup, List.of(new ModAdvancements())));
     }
 
@@ -817,7 +818,7 @@ public final class ModDataGen {
                     .save(asTankRecipe(output), RecipeCompat.key(BettaCraft.id("tank")));
 
             // M11: the clean tank (clear vanilla glass without texture): iron nugget in the middle instead of the ingot
-            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+            ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.template(ModItems.TANK.get(),
                             org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, org.overengineer.bettacraft.tank.TankStyle.CLEAN, 4))
                     .pattern("GGG")
                     .pattern("GNG")
@@ -833,12 +834,12 @@ public final class ModDataGen {
             for (var from : org.overengineer.bettacraft.tank.TankStyle.values()) {
                 var to = from == org.overengineer.bettacraft.tank.TankStyle.CLEAN ? org.overengineer.bettacraft.tank.TankStyle.TEXTURED
                         : org.overengineer.bettacraft.tank.TankStyle.CLEAN;
-                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.of(ModItems.TANK.get(),
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.tank.TankBlockItem.template(ModItems.TANK.get(),
                                 org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS, to, 1))
                         .requires(net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
-                                net.minecraft.core.component.DataComponentExactPredicate.builder()
-                                        .expect(ModDataComponents.GLASS.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS)
-                                        .expect(ModDataComponents.TANK_STYLE.get(), from).build(), ModItems.TANK.get()))
+                                net.minecraft.core.component.DataComponentPatch.builder()
+                                        .set(ModDataComponents.GLASS.get(), org.overengineer.bettacraft.tank.TankBlockEntity.DEFAULT_GLASS)
+                                        .set(ModDataComponents.TANK_STYLE.get(), from).build(), ModItems.TANK.get().builtInRegistryHolder()))
                         .group("bettacraft:tank_style")
                         .unlockedBy("has_tank", has(ModItems.TANK.get()))
                         .save(asStyleRecipe(output, from), RecipeCompat.key(BettaCraft.id("tank_" + from.getSerializedName() + "_to_" + to.getSerializedName())));
@@ -905,7 +906,7 @@ public final class ModDataGen {
                     .save(output, RecipeCompat.key(BettaCraft.id("betta_pellets")));
 
             Ingredient swamp = Ingredient.of(ModItems.SWAMP_WATER_BOTTLE.get());
-            SimpleCookingRecipeBuilder.smelting(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 200)
+            SimpleCookingRecipeBuilder.smelting(swamp, RecipeCategory.FOOD, net.minecraft.world.item.crafting.CookingBookCategory.MISC, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 200)
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, RecipeCompat.key(BettaCraft.id("mosquito_larvae_smelting")));
             SimpleCookingRecipeBuilder.smoking(swamp, RecipeCategory.FOOD, ModItems.MOSQUITO_LARVAE.get(), 0.1F, 100)
                     .unlockedBy("has_swamp_water", has(ModItems.SWAMP_WATER_BOTTLE.get())).save(output, RecipeCompat.key(BettaCraft.id("mosquito_larvae_smoking")));
@@ -962,13 +963,13 @@ public final class ModDataGen {
                     .save(output, RecipeCompat.key(BettaCraft.id("tank_light")));
             // M18: coloured lights: one light (any colour) + dye, or eight lights around a dye (like stained glass)
             for (net.minecraft.world.item.DyeColor c : net.minecraft.world.item.DyeColor.values()) {
-                net.minecraft.world.item.Item dye = net.minecraft.world.item.DyeItem.byColor(c);
-                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 1))
+                net.minecraft.world.item.Item dye = RecipeCompat.dye(c);
+                ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.template(ModItems.TANK_LIGHT.get(), c, 1))
                         .requires(ModItems.TANK_LIGHT.get()).requires(dye)
                         .group("bettacraft:tank_light_dye")
                         .unlockedBy("has_light", has(ModItems.TANK_LIGHT.get()))
                         .save(output, RecipeCompat.key(BettaCraft.id("tank_light_" + c.getName())));
-                ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.of(ModItems.TANK_LIGHT.get(), c, 8))
+                ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, org.overengineer.bettacraft.equipment.TankLightItem.template(ModItems.TANK_LIGHT.get(), c, 8))
                         .pattern("LLL").pattern("LDL").pattern("LLL")
                         .define('L', ModItems.TANK_LIGHT.get()).define('D', dye)
                         .group("bettacraft:tank_light_dye8")
@@ -1046,9 +1047,10 @@ public final class ModDataGen {
                 public void accept(net.minecraft.resources.ResourceKey<Recipe<?>> id, Recipe<?> recipe, @Nullable AdvancementHolder advancement, ICondition... conditions) {
                     String result = null;
                     try {
-                        var stack = RecipeCompat.result(recipe);
-                        var key = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
-                        if (!stack.isEmpty() && key.getNamespace().equals(BettaCraft.MOD_ID)) result = key.getPath();
+                        // M52c (26.1): the item only (no stacks while the data generator runs)
+                        var item = RecipeCompat.resultItem(recipe);
+                        var key = item == null ? null : net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
+                        if (key != null && key.getNamespace().equals(BettaCraft.MOD_ID)) result = key.getPath();
                     } catch (RuntimeException ignored) {
                         // a recipe without a fixed result
                     }
@@ -1437,17 +1439,17 @@ public final class ModDataGen {
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
-            }, new ItemStack(ModItems.MOSQUITO_LARVAE.get())));
+            }, new net.minecraft.world.item.ItemStackTemplate(ModItems.MOSQUITO_LARVAE.get())));
             // M26: and tubifex worms (the start of a tubifex dish)
             add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
-            }, new ItemStack(ModItems.TUBIFEX.get())));
+            }, new net.minecraft.world.item.ItemStackTemplate(ModItems.TUBIFEX.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
             add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[]{new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD)},
-                    new ItemStack(ModItems.ARTEMIA_CYSTS.get())));
+                    new net.minecraft.world.item.ItemStackTemplate(ModItems.ARTEMIA_CYSTS.get())));
             // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
             add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS),

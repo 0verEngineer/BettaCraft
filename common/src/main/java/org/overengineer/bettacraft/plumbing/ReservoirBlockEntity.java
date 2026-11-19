@@ -42,7 +42,7 @@ public class ReservoirBlockEntity extends BlockEntity {
         WaterValues v = water.values();
         Component kind = Component.translatable(v == null ? "message.bettacraft.reservoir.tap" : v.fresh() ? "message.bettacraft.reservoir.fresh"
                 : "message.bettacraft.reservoir.salty", v == null ? "" : String.format(java.util.Locale.ROOT, "%.1f", v.salinity()));
-        player.displayClientMessage(Component.translatable("message.bettacraft.reservoir.fill", water.amount(), CAPACITY, kind).withStyle(ChatFormatting.AQUA), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.reservoir.fill", water.amount(), CAPACITY, kind).withStyle(ChatFormatting.AQUA));
     }
 
     @Override

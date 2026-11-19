@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.villager;
 import java.util.Optional;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
@@ -11,7 +10,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import org.jetbrains.annotations.Nullable;
 
 /** M52: a plain trade (a price, perhaps a second price, the goods), like NeoForge's listing of the same name. */
-public class BasicItemListing implements VillagerTrades.ItemListing {
+public class BasicItemListing implements TradeListing {
     protected final ItemStack price;
     protected final ItemStack price2;
     protected final ItemStack forSale;
@@ -42,9 +41,9 @@ public class BasicItemListing implements VillagerTrades.ItemListing {
 
     @Override
     public @Nullable MerchantOffer getOffer(net.minecraft.server.level.ServerLevel level, Entity trader, RandomSource random) {
-        ItemCost cost = new ItemCost(price.getItemHolder(), price.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price);
+        ItemCost cost = new ItemCost(price.typeHolder(), price.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price);
         Optional<ItemCost> second = price2.isEmpty() ? Optional.empty()
-                : Optional.of(new ItemCost(price2.getItemHolder(), price2.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price2));
+                : Optional.of(new ItemCost(price2.typeHolder(), price2.getCount(), net.minecraft.core.component.DataComponentExactPredicate.EMPTY, price2));
         return new MerchantOffer(cost, second, forSale, maxTrades, xp, priceMult);
     }
 }

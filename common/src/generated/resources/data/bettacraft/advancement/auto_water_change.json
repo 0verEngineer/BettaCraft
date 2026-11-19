@@ -14,7 +14,6 @@
       "translate": "advancements.bettacraft.auto_water_change.description"
     },
     "icon": {
-      "count": 1,
       "id": "bettacraft:water_change_controller"
     },
     "title": {

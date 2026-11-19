@@ -200,7 +200,7 @@ final class DevClientSmokeM31b {
         for (int cx = pr.originX() >> 4; cx <= (pr.originX() + pr.sizeX()) >> 4; cx++)
             for (int cz = pr.originZ() >> 4; cz <= (pr.originZ() + pr.sizeZ()) >> 4; cz++) in.getChunk(cx, cz); // the interior is there
         HerpBreeding.Nest n = HerpBreeding.nestAt(level, t, new Vec3(palu.getX() + 3.3, palu.getY() + 1.6, palu.getZ() + 0.9), HerpSpecies.SLIDER);
-        if (n == null) n = HerpBreeding.findNest(level, t, level.random, HerpSpecies.SLIDER);
+        if (n == null) n = HerpBreeding.findNest(level, t, level.getRandom(), HerpSpecies.SLIDER);
         if (n == null) {
             LOGGER.error("[smoketest] M31b no nest in the sand");
         } else {

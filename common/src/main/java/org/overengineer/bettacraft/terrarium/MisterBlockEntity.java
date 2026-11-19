@@ -137,8 +137,8 @@ public class MisterBlockEntity extends BlockEntity {
         TankBlockEntity c = tank();
         Component rh = c == null || !c.getTank().hasClimate() ? Component.translatable("message.bettacraft.mister.no_tank")
                 : Component.translatable("message.bettacraft.mister.now", Math.round(c.getTank().humidity()));
-        player.displayClientMessage(Component.translatable("message.bettacraft.mister.state", setting, water.amount(), CAPACITY, rh)
-                .withStyle(water.amount() <= 0 ? ChatFormatting.GOLD : ChatFormatting.AQUA), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.mister.state", setting, water.amount(), CAPACITY, rh)
+                .withStyle(water.amount() <= 0 ? ChatFormatting.GOLD : ChatFormatting.AQUA));
     }
 
     public int comparator() {

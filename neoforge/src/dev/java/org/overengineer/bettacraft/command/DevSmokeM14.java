@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.critters.Critter;
@@ -134,8 +133,8 @@ final class DevSmokeM14 {
         if (ModItems.ALGAE_SCRAPER.get() == null || ModItems.FROG_BUCKET.get() == null) throw new IllegalStateException("M14: items");
         var trader = EntityType.WANDERING_TRADER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         List<CritterSpecies> offered = new ArrayList<>();
-        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
-            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
+        for (var tradePool : org.overengineer.bettacraft.gametest.framework.DevTrades.wandererPools(level)) {
+            for (org.overengineer.bettacraft.villager.TradeListing l : tradePool.getLeft()) {
                 var offer = l.getOffer(level, trader, level.getRandom());
                 if (offer == null) continue;
                 var animals = TankCritters.bagged(offer.getResult());

@@ -41,7 +41,7 @@ public final class ClutchRenderer {
         BlockPos origin = be.getBlockPos();
         VertexConsumer eggs = null;
         for (Clutch k : t.clutches()) {
-            int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(k.x, k.y, k.z));
+            int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(k.x, k.y, k.z));
             if (k.kind == Clutch.Kind.FOAM) {
                 foam(be, k, partialTick, pose, buffers);
                 continue;
@@ -51,7 +51,7 @@ public final class ClutchRenderer {
                 eggCase(be, k, pose, buffers, light);
                 continue;
             }
-            if (eggs == null) eggs = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
+            if (eggs == null) eggs = buffers.getBuffer(RenderTypes.entityCutout(EGGS));
             pose.pushPose();
             pose.translate(k.x - origin.getX(), k.y - origin.getY(), k.z - origin.getZ());
             clutch(pose, eggs, k, light);
@@ -128,8 +128,8 @@ public final class ClutchRenderer {
         pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees((k.id * 73) % 360));
         pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(((k.id * 31) % 15) - 7));
         PoseStack.Pose last = pose.last();
-        textured(last, buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
+        textured(last, buffers.getBuffer(RenderTypes.entityCutout(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
+        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(EGGS));
         for (int sx = -1; sx <= 1; sx += 2) {
             for (int sz = -1; sz <= 1; sz += 2) {
                 // a tendril: out from the corner along the case, then bending sideways and up
@@ -163,7 +163,7 @@ public final class ClutchRenderer {
     private static void box(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         BlockPos origin = be.getBlockPos();
         Vec3 p = TankmateBreeding.boxPos(t);
-        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(p));
+        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(p));
         pose.pushPose();
         pose.translate(p.x - origin.getX(), p.y - origin.getY(), p.z - origin.getZ());
         PoseStack.Pose last = pose.last();
@@ -173,7 +173,7 @@ public final class ClutchRenderer {
         textured(last, vc, x ? hd : hw, hh, x ? hw : hd, light);
         int n = Math.min(MAX_DRAWN, TankmateBreeding.boxFry(t));
         if (n > 0) {
-            VertexConsumer eggs = buffers.getBuffer(RenderTypes.entityCutoutNoCull(EGGS));
+            VertexConsumer eggs = buffers.getBuffer(RenderTypes.entityCutout(EGGS));
             for (int i = 0; i < n; i++) {
                 long h = i * 0x9E3779B97F4A7C15L + 77;
                 h ^= h >>> 29;

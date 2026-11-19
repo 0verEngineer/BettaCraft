@@ -92,7 +92,7 @@ public class FertilizerMakerBlock extends BaseEntityBlock implements BlockRemova
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof FertilizerMakerBlockEntity be)) return InteractionResult.PASS;
         if (player.isSecondaryUseActive()) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.crank.use_crank"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.use_crank"));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide() && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));

@@ -39,13 +39,13 @@ public class PipeCoverItem extends Item {
         Player player = ctx.getPlayer();
         if (player == null) return InteractionResult.PASS;
         if (!FilterPipes.isPipe(level.getBlockState(pos))) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.where").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_cover.where").withStyle(ChatFormatting.GOLD));
             return InteractionResult.PASS;
         }
         if (player.isSecondaryUseActive()) return takeOff(level, pos, player);
         ItemStack block = player.getItemInHand(ctx.getHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
         if (!(block.getItem() instanceof BlockItem bi)) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.need_block").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_cover.need_block").withStyle(ChatFormatting.GOLD));
             return InteractionResult.SUCCESS;
         }
         BlockState cover = coverFor(bi, block, player, ctx);
@@ -72,7 +72,7 @@ public class PipeCoverItem extends Item {
 
     private static InteractionResult takeOff(Level level, BlockPos pos, Player player) {
         if (PipeCovers.coverAt(level, pos) == null) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.none").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_cover.none").withStyle(ChatFormatting.GOLD));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide()) PipeCovers.give(level, pos, player, PipeCovers.remove(level, pos));

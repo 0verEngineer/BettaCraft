@@ -91,7 +91,7 @@ public class Co2CylinderBlockEntity extends BlockEntity implements Co2Source, Re
     static void clientTick(Level level, BlockPos pos, BlockState state, Co2CylinderBlockEntity be) {
         // the bubble counter: one bubble per bubble per second
         if (!state.getValue(Co2CylinderBlock.ACTIVE) || be.power <= 0) return;
-        if (level.random.nextInt(20) >= be.power) return;
+        if (level.getRandom().nextInt(20) >= be.power) return;
         level.addParticle(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP, pos.getX() + 0.5, pos.getY() + 1.02, pos.getZ() + 0.5, 0, 0.03, 0);
     }
 

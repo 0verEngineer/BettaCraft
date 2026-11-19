@@ -102,14 +102,14 @@ public class TerrariumBoxItem extends Item {
             CompoundTag t = storedEntity(stack);
             Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
             if (e == null) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;
             }
             e.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot() + 180F, 0F);
             if (e instanceof Mob m) m.setPersistenceRequired();
             TankInhabitants.release(e);
             if (!server.tryAddFreshEntityWithPassengers(e)) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;
             }
             level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);

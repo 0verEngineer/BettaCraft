@@ -184,7 +184,11 @@ public final class NbtCompat {
     public static <T extends SavedData> SavedDataType<T> savedData(String id, Supplier<T> constructor,
             BiFunction<CompoundTag, HolderLookup.Provider, T> load, SaveFn<T> save) {
         Codec<T> codec = CompoundTag.CODEC.xmap(t -> load.apply(t, fallback()), d -> save.save(d, new CompoundTag(), fallback()));
-        return new SavedDataType<>(id, constructor, codec, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
+        // M52c (26.1): saved data is identified by an id below the data folder: "bettacraft_x" -> data/bettacraft/x.dat
+        net.minecraft.resources.Identifier key = id.startsWith("bettacraft_")
+                ? net.minecraft.resources.Identifier.fromNamespaceAndPath("bettacraft", id.substring("bettacraft_".length()))
+                : net.minecraft.resources.Identifier.fromNamespaceAndPath("bettacraft", id);
+        return new SavedDataType<>(key, constructor, codec, DataFixTypes.SAVED_DATA_COMMAND_STORAGE);
     }
 
     /** A value input reading {@code tag} (for {@code BlockEntity#loadWithComponents} and friends). */

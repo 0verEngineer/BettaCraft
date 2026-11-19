@@ -92,7 +92,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
         Player player = ctx.getPlayer();
         if (!Features.enabled(Feature.CLIP_FEEDER)) {
             if (player != null && !ctx.getLevel().isClientSide()) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.clip_feeder.off").withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.clip_feeder.off").withStyle(ChatFormatting.RED));
             }
             return null;
         }
@@ -100,7 +100,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
             return defaultBlockState().setValue(FACING, face);
         }
         if (player != null && !ctx.getLevel().isClientSide()) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.clip_feeder.where").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.clip_feeder.where").withStyle(ChatFormatting.RED));
         }
         return null;
     }
@@ -140,7 +140,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
             ItemStack rest = be.items().insertItem(0, stack.copy(), false);
             int moved = stack.getCount() - rest.getCount();
             if (moved > 0 && !player.getAbilities().instabuild) stack.shrink(moved);
-            player.displayClientMessage(moved > 0 ? status(be) : Component.translatable("message.bettacraft.clip_feeder.full").withStyle(ChatFormatting.RED), true);
+            player.sendOverlayMessage(moved > 0 ? status(be) : Component.translatable("message.bettacraft.clip_feeder.full").withStyle(ChatFormatting.RED));
         }
         return InteractionResult.SUCCESS;
     }
@@ -154,7 +154,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
             } else {
                 be.cycleFeedings();
             }
-            player.displayClientMessage(status(be), true);
+            player.sendOverlayMessage(status(be));
         }
         return InteractionResult.SUCCESS;
     }

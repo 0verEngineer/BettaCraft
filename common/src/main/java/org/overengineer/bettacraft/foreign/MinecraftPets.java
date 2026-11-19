@@ -259,13 +259,13 @@ public final class MinecraftPets {
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!org.overengineer.bettacraft.mobs.GlassMobs.openTop(server, c.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.glass.bait_lid"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.glass.bait_lid"));
             return InteractionResult.CONSUME;
         }
         BAITS.put(c, new Bait(stack.copyWithCount(1), server.getGameTime() + BAIT_TICKS));
         if (!player.getAbilities().instabuild) stack.shrink(1);
         TankCare.log(server, c, "log.bettacraft.pet.bait", "@" + stack.getItem().getDescriptionId());
-        player.displayClientMessage(Component.translatable("message.bettacraft.pet.bait", stack.getHoverName()), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.pet.bait", stack.getHoverName()));
         return InteractionResult.CONSUME;
     }
 

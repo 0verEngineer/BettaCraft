@@ -234,7 +234,7 @@ public final class CompatGameTests {
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "arapaima"), null) == TankInhabitants.Acceptance.BIG, "arapaima a big animal (M39)");
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "coelacanth"), null) != TankInhabitants.Acceptance.OK, "coelacanth refused");
         h.assertTrue(TankInhabitants.accepts(entity("fintastic", "pleco"), null) == TankInhabitants.Acceptance.OK, "pleco via tank_inhabitants");
-        h.assertTrue(entity("fintastic", "freshwater_shark").is(ModTags.PREDATORS), "sharkminnow is a predator");
+        h.assertTrue(entity("fintastic", "freshwater_shark").builtInRegistryHolder().is(ModTags.PREDATORS), "sharkminnow is a predator");
         h.assertTrue(BettaFood.kind(new ItemStack(item("fintastic", "regular_feed"))) == BettaFood.Kind.NORMAL, "fish feed feeds bettas");
         h.assertTrue(Blocks.LILY_PAD.defaultBlockState().is(ModTags.FLOATING_PLANTS)
                 && BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("fintastic", "duckweed")).defaultBlockState().is(ModTags.FLOATING_PLANTS),
@@ -254,7 +254,7 @@ public final class CompatGameTests {
         ok(insert(h, c, new ItemStack(item("fintastic", "artemia_bucket")), p));
         BettaEntity b = (BettaEntity) TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).stream()
                 .filter(e -> e instanceof BettaEntity).findFirst().orElseThrow();
-        h.assertTrue(entity("fintastic", "artemia").is(ModTags.BETTA_PREY), "artemia is prey");
+        h.assertTrue(entity("fintastic", "artemia").builtInRegistryHolder().is(ModTags.BETTA_PREY), "artemia is prey");
         BettaHealth.Params params = BettaCare.params();
         b.health().step(2.0, BettaHealth.Conditions.GOOD, params);
         h.assertTrue(b.health().isHungry(params), "betta is hungry after two days");
@@ -276,7 +276,7 @@ public final class CompatGameTests {
         h.assertTrue(TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst().getType() == entity("fishofthieves", "splashtail"),
                 "splashtail inside");
         for (String pred : List.of("battlegill", "wrecker", "devilfish")) {
-            h.assertTrue(entity("fishofthieves", pred).is(ModTags.PREDATORS), pred + " is a predator");
+            h.assertTrue(entity("fishofthieves", pred).builtInRegistryHolder().is(ModTags.PREDATORS), pred + " is a predator");
         }
         h.assertTrue(BettaFood.kind(new ItemStack(item("fishofthieves", "earthworms"))) == BettaFood.Kind.LIVE, "earthworms are live food");
         // fish plaque on a wall
@@ -307,7 +307,7 @@ public final class CompatGameTests {
         h.assertTrue(insert(h, c, new ItemStack(item("aquaculture", "tuna_bucket")), p) != null, "tuna refused");
         h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "tuna"), null) == TankInhabitants.Acceptance.BIG, "tuna a big animal (M39)");
         h.assertTrue(TankInhabitants.accepts(entity("aquaculture", "arapaima"), null) == TankInhabitants.Acceptance.BIG, "arapaima a big animal (M39)");
-        h.assertTrue(entity("aquaculture", "piranha").is(ModTags.PREDATORS), "piranha is a predator");
+        h.assertTrue(entity("aquaculture", "piranha").builtInRegistryHolder().is(ModTags.PREDATORS), "piranha is a predator");
         h.assertTrue(BettaFood.kind(new ItemStack(item("aquaculture", "worm"))) == BettaFood.Kind.LIVE, "worms are live food");
         h.assertTrue(new ItemStack(item("aquaculture", "fish_fillet_raw")).is(ModTags.PELLET_FISH), "fillets make pellets");
         h.assertTrue(new ItemStack(item("aquaculture", "perch")).is(ModTags.PELLET_FISH), "raw fish (c:foods/raw_fish) make pellets");
@@ -325,7 +325,7 @@ public final class CompatGameTests {
         ok(insert(h, c, new ItemStack(item("naturalist", "bass_bucket")), p));
         Entity bass = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
         h.assertTrue(bass instanceof Bucketable && bass.getType() == entity("naturalist", "bass"), "bass inside");
-        h.assertTrue(entity("naturalist", "piranha").is(ModTags.PREDATORS) && entity("naturalist", "anglerfish").is(ModTags.PREDATORS),
+        h.assertTrue(entity("naturalist", "piranha").builtInRegistryHolder().is(ModTags.PREDATORS) && entity("naturalist", "anglerfish").builtInRegistryHolder().is(ModTags.PREDATORS),
                 "piranha and anglerfish are predators");
         h.succeed();
     }

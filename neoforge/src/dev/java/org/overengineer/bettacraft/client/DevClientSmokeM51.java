@@ -136,11 +136,11 @@ final class DevClientSmokeM51 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(1500);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 1500);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_WEATHER, false, level.getServer());
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, level.getServer());
-        level.setWeatherParameters(12000, 0, false, false);
+        level.getServer().setWeatherParameters(12000, 0, false, false);
         reach(p, false);
         base = p.blockPosition().offset(0, -2, 0);
         for (int x = -10; x <= 18; x++)
@@ -256,7 +256,7 @@ final class DevClientSmokeM51 {
     }
 
     private void night(ServerPlayer p) {
-        p.level().setDayTime(13800);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 13800);
         if (npc != null) npc.alwaysDay = false;
     }
 

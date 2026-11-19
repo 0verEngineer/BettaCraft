@@ -104,7 +104,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity
 
     @Override
     public void submit(MobState<BettaEntity> state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
-                       net.minecraft.client.renderer.state.CameraRenderState camera) {
+                       net.minecraft.client.renderer.state.level.CameraRenderState camera) {
         if (state.model instanceof BettaModel m) this.model = m;
         super.submit(state, pose, collector, camera);
     }
@@ -150,7 +150,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity
         if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(currentSkin) : null;
         // fry are see-through (PLAN 5.3). With back-face culling: the fins are flat boxes whose front and back faces lie
         // in one plane; drawn both, shader packs let them z-fight (flickering fins). Culled, each side shows one face.
-        return currentAlpha < 255 ? RenderTypes.itemEntityTranslucentCull(currentSkin) : RenderTypes.entityCutout(currentSkin);
+        return currentAlpha < 255 ? RenderTypes.entityTranslucentCullItemTarget(currentSkin) : RenderTypes.entityCutoutCull(currentSkin);
     }
 
     @Override

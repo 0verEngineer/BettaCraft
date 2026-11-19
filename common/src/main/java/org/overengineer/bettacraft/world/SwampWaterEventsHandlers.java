@@ -56,7 +56,7 @@ public final class SwampWaterEventsHandlers {
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.PLANTS_BOTTLE_CHANCE, 0.15)) {
             ItemStack duckweed = org.overengineer.bettacraft.tank.plants.TankPlants.item(org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED);
             if (!player.getInventory().add(duckweed)) player.drop(duckweed, false);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.plants.duckweed_in_bottle"), true);
+            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.plants.duckweed_in_bottle"));
         } else if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS) && level.getRandom().nextDouble()
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.AQUATIC_BOTTLE_CHANCE, 0.05)) {
             // M13: or a cutting of a swamp plant (Cryptocoryne, Ludwigia, Rotala)
@@ -64,15 +64,15 @@ public final class SwampWaterEventsHandlers {
             var species = org.overengineer.bettacraft.sources.WildTables.BOTTLE_CUTTINGS.pick(r::nextLong); // M22.4: its own table
             ItemStack cutting = org.overengineer.bettacraft.plants.InteriorPlants.item(species, 0);
             if (!player.getInventory().add(cutting)) player.drop(cutting, false);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.aquatic.cutting_in_bottle",
-                    cutting.getHoverName()), true);
+            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.aquatic.cutting_in_bottle",
+                    cutting.getHoverName()));
         }
         // M26: and now and then a few daphnia (the start of a daphnia barrel)
         if (result.is(ModItems.SWAMP_WATER_BOTTLE.get()) && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES) && level.getRandom().nextDouble()
                 < org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.LIVE_FOOD_BOTTLE_DAPHNIA_CHANCE, 0.08)) {
             ItemStack daphnia = new ItemStack(ModItems.DAPHNIA.get());
             if (!player.getInventory().add(daphnia)) player.drop(daphnia, false);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.live_food.daphnia_in_bottle"), true);
+            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.live_food.daphnia_in_bottle"));
         }
     }
 }

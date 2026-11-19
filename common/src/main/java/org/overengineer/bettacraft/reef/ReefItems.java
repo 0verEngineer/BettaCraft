@@ -36,17 +36,17 @@ public final class ReefItems {
         if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         if (t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.no_water").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         ServerLevel server = (ServerLevel) level;
         if (salt) {
             if (t.salinity() >= Salinity.SEA - 0.5F) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.reef.salty_enough", fmt(t.salinity())).withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.salty_enough", fmt(t.salinity())).withStyle(ChatFormatting.GOLD));
                 return InteractionResult.CONSUME;
             }
             int n = 1;
@@ -57,7 +57,7 @@ public final class ReefItems {
             t.setCalcium(t.calcium() + Salinity.calciumOf(t.salinity() - before));
             if (!player.getAbilities().instabuild) stack.shrink(n);
             level.playSound(null, pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 0.7F, 1.4F);
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.salted", n, fmt(t.salinity())), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.salted", n, fmt(t.salinity())));
             if (Salinity.kind(before) != Salinity.kind(t.salinity())) {
                 TankCare.log(server, c, "log.bettacraft.salinity_" + Salinity.kind(t.salinity()).name().toLowerCase(Locale.ROOT), fmt(t.salinity()));
             }
@@ -66,7 +66,7 @@ public final class ReefItems {
             t.setCalcium(Salinity.addCalcium(t.calcium(), t.waterMb(), 1, dose));
             if (!player.getAbilities().instabuild) stack.shrink(1);
             level.playSound(null, pos, SoundEvents.BUBBLE_COLUMN_UPWARDS_INSIDE, SoundSource.BLOCKS, 0.7F, 1.2F);
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.calcium", Math.round(t.calcium())), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.calcium", Math.round(t.calcium())));
         }
         c.markTankChanged();
         return InteractionResult.CONSUME;

@@ -142,8 +142,8 @@ public class MonitorBlock extends BaseEntityBlock implements BlockRemoval {
                 case MonitorBlockEntity.OFF -> "off";
                 default -> "on";
             });
-            player.displayClientMessage(Component.translatable("message.bettacraft.monitor.info", c.width(), c.height(),
-                    c.tanks().size(), MonitorSync.range(), status).withStyle(ChatFormatting.AQUA), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.monitor.info", c.width(), c.height(),
+                    c.tanks().size(), MonitorSync.range(), status).withStyle(ChatFormatting.AQUA));
         }
         return InteractionResult.SUCCESS;
     }

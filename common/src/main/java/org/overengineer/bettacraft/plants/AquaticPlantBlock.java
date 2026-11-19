@@ -84,7 +84,7 @@ public class AquaticPlantBlock extends Block {
     }
 
     @Override
-    protected int getLightBlock(BlockState s) {
+    protected int getLightDampening(BlockState s) {
         return 0;
     }
 

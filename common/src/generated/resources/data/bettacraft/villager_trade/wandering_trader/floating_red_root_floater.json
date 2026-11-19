@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/floating_red_root_floater"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:red_root_floater"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

@@ -15,8 +15,13 @@ public class AquaticPlantFishingModifier extends LootModifier {
     public static final MapCodec<AquaticPlantFishingModifier> CODEC = RecordCodecBuilder.mapCodec(i -> codecStart(i)
             .apply(i, AquaticPlantFishingModifier::new));
 
+    /** M52c (26.1): NeoForge's loot modifiers carry a priority. */
     public AquaticPlantFishingModifier(LootItemCondition[] conditions) {
-        super(conditions);
+        this(conditions, net.neoforged.neoforge.common.loot.IGlobalLootModifier.DEFAULT_PRIORITY);
+    }
+
+    public AquaticPlantFishingModifier(LootItemCondition[] conditions, int priority) {
+        super(conditions, priority);
     }
 
     @Override

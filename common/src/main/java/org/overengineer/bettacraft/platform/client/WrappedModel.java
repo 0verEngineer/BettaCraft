@@ -2,8 +2,8 @@ package org.overengineer.bettacraft.platform.client;
 
 import java.util.Collection;
 import java.util.List;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -38,6 +38,6 @@ public abstract class WrappedModel implements DynamicModel {
     @Override
     @SuppressWarnings("deprecation")
     public TextureAtlasSprite particle(ModelValues data) {
-        return originalModel.particleIcon();
+        return originalModel.particleMaterial().sprite();
     }
 }

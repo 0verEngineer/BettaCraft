@@ -103,7 +103,7 @@ final class DevClientSmokeM12 {
                 int sc = scale;
                 then(1, () -> {
                     mc.options.guiScale().set(sc);
-                    mc.resizeDisplay();
+                    mc.resizeGui();
                 });
                 then(10, () -> {
                     if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
@@ -141,7 +141,7 @@ final class DevClientSmokeM12 {
         then(1, () -> {
             language(lang);
             mc.options.guiScale().set(0);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));

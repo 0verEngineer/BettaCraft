@@ -141,7 +141,7 @@ public final class AquaristWork {
         int lvl = npc.taskLevel(AquaristTask.FEED);
         if (lvl <= 0 || TankCare.findFeeder(level, c.getTank()) != null) return false;
         if (TankInhabitants.liveInhabitants(level, c.getTank()).isEmpty() && c.getTank().critters().isEmpty()) return false;
-        return c.getTank().aquaristDone(AquaristTask.FEED.id()) < feedKey(level.getDayTime(), lvl);
+        return c.getTank().aquaristDone(AquaristTask.FEED.id()) < feedKey(level.getOverworldClockTime(), lvl);
     }
 
     public static boolean algaeDue(AquaristEntity npc, TankBlockEntity c) {
@@ -401,7 +401,7 @@ public final class AquaristWork {
                     ItemStack shown = s.copyWithCount(1);
                     items.extractItem(i, n, false);
                     used += n;
-                    level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, shown), c.getTank().anchor().getX() + 0.5,
+                    level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(shown)), c.getTank().anchor().getX() + 0.5,
                             c.getTank().max().getY() + 0.9, c.getTank().anchor().getZ() + 0.5, 6, 0.3, 0.05, 0.3, 0.02);
                 }
             }
@@ -409,14 +409,14 @@ public final class AquaristWork {
         used += org.overengineer.bettacraft.terrarium.TerrariumFood.feedFromFeeder(level, c, items);
         used += org.overengineer.bettacraft.foreign.ForeignFood.feedFromFeeder(level, c, items);
         if (used > 0) {
-            c.getTank().setAquaristDone(AquaristTask.FEED.id(), feedKey(level.getDayTime(), npc.taskLevel(AquaristTask.FEED)));
+            c.getTank().setAquaristDone(AquaristTask.FEED.id(), feedKey(level.getOverworldClockTime(), npc.taskLevel(AquaristTask.FEED)));
             TankCare.log(level, c, "log.bettacraft.aquarist.fed", npc.logName(), String.valueOf(used));
             level.playSound(null, c.getBlockPos(), SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.3F, 1.6F);
         } else if (!npc.hasFood()) {
             npc.complain(level, "no_food", c);
         } else {
             // nobody eats what he has: counts as done for this feeding (he does not walk back and forth)
-            c.getTank().setAquaristDone(AquaristTask.FEED.id(), feedKey(level.getDayTime(), npc.taskLevel(AquaristTask.FEED)));
+            c.getTank().setAquaristDone(AquaristTask.FEED.id(), feedKey(level.getOverworldClockTime(), npc.taskLevel(AquaristTask.FEED)));
         }
     }
 

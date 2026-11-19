@@ -79,16 +79,16 @@ public class Co2CylinderBlock extends BaseEntityBlock implements BlockRemoval, C
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(ModItems.CO2_SOLENOID.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (state.getValue(SOLENOID)) {
-            if (!level.isClientSide()) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.co2.has_solenoid")
-                    .withStyle(net.minecraft.ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.co2.has_solenoid")
+                    .withStyle(net.minecraft.ChatFormatting.GOLD));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide()) {
             level.setBlock(pos, state.setValue(SOLENOID, true), Block.UPDATE_ALL);
             if (!player.getAbilities().instabuild) stack.shrink(1);
             level.playSound(null, pos, net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_CLOSE, net.minecraft.sounds.SoundSource.BLOCKS, 0.6F, 1.6F);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.co2.solenoid_on")
-                    .withStyle(net.minecraft.ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.co2.solenoid_on")
+                    .withStyle(net.minecraft.ChatFormatting.GREEN));
         }
         return InteractionResult.SUCCESS;
     }

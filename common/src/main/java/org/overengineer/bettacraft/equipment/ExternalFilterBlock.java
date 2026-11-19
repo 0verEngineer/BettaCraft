@@ -127,7 +127,7 @@ public class ExternalFilterBlock extends BaseEntityBlock implements BlockRemoval
                 if (!player.getAbilities().instabuild) stack.shrink(1);
                 level.playSound(null, pos, net.minecraft.sounds.SoundEvents.METAL_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 0.8F, 1.3F);
             } else {
-                player.displayClientMessage(Component.translatable("message.bettacraft.filter.full"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.filter.full"));
             }
         }
         return InteractionResult.CONSUME;

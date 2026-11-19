@@ -152,16 +152,16 @@ public final class ClownLarvae {
         if (c == null) return InteractionResult.CONSUME;
         TankData t = c.getTank();
         if (!TankInhabitants.canModify(player, t)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         if (!active()) return InteractionResult.CONSUME;
         if (!t.marine() || t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.phytoplankton_salt").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.phytoplankton_salt").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         if (!dosePhytoplankton(t)) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.reef.phytoplankton_full").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.reef.phytoplankton_full").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         if (!player.getAbilities().instabuild) {

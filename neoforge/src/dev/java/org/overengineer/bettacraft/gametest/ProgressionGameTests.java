@@ -153,7 +153,7 @@ public final class ProgressionGameTests {
             h.getLevel().addFreshEntity(betta);
             p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
             h.assertTrue(!done(p, "catch_betta"), "not caught yet");
-            p.interactOn(betta, InteractionHand.MAIN_HAND);
+            p.interactOn(betta, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
             h.assertTrue(betta.isRemoved(), "betta in the bucket");
             h.assertTrue(done(p, "catch_betta"), "advancement catch_betta");
             h.assertTrue(done(p, "root"), "root advancement (caught)");

@@ -134,7 +134,7 @@ final class DevClientSmokeM48 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         reach(p, false);
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         forms = base;
         TankBlockEntity f = tank(level, p, forms, 6, 2, 2, 25F, 0F);

@@ -65,7 +65,7 @@ final class CrucibleJei implements IRecipeCategory<CrucibleRecipe> {
     }
 
     @Override
-    public void draw(CrucibleRecipe recipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView slots, net.minecraft.client.gui.GuiGraphics g, double mouseX, double mouseY) {
+    public void draw(CrucibleRecipe recipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView slots, net.minecraft.client.gui.GuiGraphicsExtractor g, double mouseX, double mouseY) {
         arrow.draw(g, 66, 12);
     }
 }

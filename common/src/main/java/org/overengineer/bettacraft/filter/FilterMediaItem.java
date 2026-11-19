@@ -60,8 +60,7 @@ public class FilterMediaItem extends Item {
         ItemStack stack = ctx.getItemInHand();
         if (!s.is(Blocks.WATER_CAULDRON)) return InteractionResult.PASS;
         if (!medium.cleanable()) {
-            if (!level.isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(
-                    Component.translatable("message.bettacraft.media.not_cleanable").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide() && ctx.getPlayer() != null) ctx.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.media.not_cleanable").withStyle(ChatFormatting.GOLD));
             return InteractionResult.FAIL;
         }
         if (stack.getDamageValue() <= 0) return InteractionResult.PASS;
@@ -75,8 +74,8 @@ public class FilterMediaItem extends Item {
             }
             LayeredCauldronBlock.lowerFillLevel(s, level, pos);
             level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.6F, 1.2F);
-            if (ctx.getPlayer() != null) ctx.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.media.cleaned", stack.getHoverName())
-                    .withStyle(ChatFormatting.AQUA), true);
+            if (ctx.getPlayer() != null) ctx.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.media.cleaned", stack.getHoverName())
+                    .withStyle(ChatFormatting.AQUA));
         }
         return InteractionResult.SUCCESS;
     }

@@ -154,7 +154,7 @@ public final class DolphinCare {
         if (!player.getAbilities().instabuild) stack.shrink(1);
         server.sendParticles(ParticleTypes.HEART, pick.getX(), pick.getY() + 0.6, pick.getZ(), 2, 0.3, 0.2, 0.3, 0.01);
         level.playSound(null, pick.blockPosition(), SoundEvents.DOLPHIN_EAT, SoundSource.NEUTRAL, 1.0F, 1.0F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.big.dolphin_fed", pick.getDisplayName()), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.big.dolphin_fed", pick.getDisplayName()));
         return InteractionResult.CONSUME;
     }
 }

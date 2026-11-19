@@ -181,7 +181,7 @@ final class DevClientSmokeM29 {
 
     private void buildC(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
         TankBlockEntity a = tank(level, p, dwarfs, 6, 2, 2, 26F);
@@ -289,7 +289,7 @@ final class DevClientSmokeM29 {
 
     private void buildB(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
         TankBlockEntity a = tank(level, p, dwarfs, 6, 2, 2, 26F);
@@ -321,7 +321,7 @@ final class DevClientSmokeM29 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(0, 0, -10);
         dwarfs = base;
         TankBlockEntity d = tank(level, p, dwarfs, 6, 2, 2, 27F);

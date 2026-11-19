@@ -131,7 +131,7 @@ final class DevClientSmokeReadme {
             server(this::build);
         });
         then(1, () -> server(p -> {
-            p.level().setDayTime(media ? 6000 : 5000);
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), media ? 6000 : 5000);
             reach(p, false);
         }));
         // the room: let the chunks, miniatures and plant meshes build
@@ -325,8 +325,8 @@ final class DevClientSmokeReadme {
         rules.set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, p.level().getServer());
         rules.set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_WEATHER, false, p.level().getServer());
         rules.set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, p.level().getServer());
-        level.setWeatherParameters(1_000_000, 0, false, false);
-        level.setDayTime(6000);
+        level.getServer().setWeatherParameters(1_000_000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos spawn = level.getRespawnData().pos();
         showcaseGround = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, spawn.getX() - 40, spawn.getZ() - 40);
         showcaseOrigin = new BlockPos(spawn.getX() + 3, showcaseGround, spawn.getZ() + 6);

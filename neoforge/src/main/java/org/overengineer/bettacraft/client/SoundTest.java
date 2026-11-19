@@ -88,9 +88,9 @@ public final class SoundTest {
         if (ticks == 0) {
             Component kind = Component.translatable("sound_test.bettacraft." + (e.vanilla() ? "vanilla" : "own"));
             if (e.offByDefault()) kind = kind.copy().append(" ").append(Component.translatable("command.bettacraft.sounds.off_by_default"));
-            mc.player.displayClientMessage(Component.translatable("command.bettacraft.sounds.playing", index + 1, ENTRIES.size(),
+            mc.player.sendSystemMessage(Component.translatable("command.bettacraft.sounds.playing", index + 1, ENTRIES.size(),
                     Component.translatable("sound_test.bettacraft." + e.device()), Component.literal(e.event().get().location().getPath())
-                            .append(" (").append(kind).append(")")), false);
+                            .append(" (").append(kind).append(")")));
             PLAYED.add(e.event().get().location().toString());
         }
         if (ticks % loopTicks == 0 && ticks / loopTicks < e.repeats()) {
@@ -101,7 +101,7 @@ public final class SoundTest {
             ticks = 0;
             if (++index >= ENTRIES.size()) {
                 index = -1;
-                mc.player.displayClientMessage(Component.translatable("command.bettacraft.sounds.done"), false);
+                mc.player.sendSystemMessage(Component.translatable("command.bettacraft.sounds.done"));
             }
         }
     }

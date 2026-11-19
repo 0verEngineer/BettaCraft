@@ -331,14 +331,14 @@ public final class HerpGameTests {
         BlockPos p = new BlockPos(20, 2, 20);
         for (var ground : List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.TERRACOTTA, Blocks.GRASS_BLOCK)) {
             h.setBlock(p.below(), ground);
-            h.assertTrue(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.random), "on " + ground);
+            h.assertTrue(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.getRandom()), "on " + ground);
         }
         h.setBlock(p.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.random), "not on stone");
+        h.assertFalse(HerpSpawns.check(gecko, level, EntitySpawnReason.NATURAL, h.absolutePos(p), level.getRandom()), "not on stone");
         BlockPos wet = new BlockPos(8, 2, 8);
         h.setBlock(wet.below(), Blocks.SAND);
         h.setBlock(wet, Blocks.WATER);
-        h.assertFalse(HerpSpawns.check(ModEntities.herp(HerpSpecies.DART_FROG), level, EntitySpawnReason.NATURAL, h.absolutePos(wet), level.random), "not in water");
+        h.assertFalse(HerpSpawns.check(ModEntities.herp(HerpSpecies.DART_FROG), level, EntitySpawnReason.NATURAL, h.absolutePos(wet), level.getRandom()), "not in water");
         // the wild variety: never a morph
         var random = net.minecraft.util.RandomSource.create(5);
         for (int i = 0; i < 50; i++) {

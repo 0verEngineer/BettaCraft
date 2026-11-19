@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/floating_salvinia"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:salvinia"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

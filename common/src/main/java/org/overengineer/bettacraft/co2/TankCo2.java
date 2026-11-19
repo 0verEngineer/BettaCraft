@@ -145,9 +145,9 @@ public final class TankCo2 {
 
     /** Whether the lights of the tank are on now (its daylight timer, or the daylight without one): the solenoid valve opens. */
     public static boolean lightsOn(ServerLevel level, TankData t) {
-        if (Features.enabled(Feature.LIGHT_TIMER) && t.lightTimer()) return org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getDayTime()) > 0;
+        if (Features.enabled(Feature.LIGHT_TIMER) && t.lightTimer()) return org.overengineer.bettacraft.tank.TankLighting.factor(t, level.getOverworldClockTime()) > 0;
         if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasFixedTime()) return true;
-        int m = org.overengineer.bettacraft.tank.TankLighting.minuteOfDay(level.getDayTime());
+        int m = org.overengineer.bettacraft.tank.TankLighting.minuteOfDay(level.getOverworldClockTime());
         return m >= 6 * 60 && m < 19 * 60; // 6:00 - 19:00 (sunrise to sunset)
     }
 }

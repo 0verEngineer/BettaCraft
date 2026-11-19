@@ -138,9 +138,9 @@ public final class TankInhabitants {
         float w = instance != null ? instance.getBbWidth() : d.width(), h = instance != null ? instance.getBbHeight() : d.height();
         String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         // M39 part c (#25): the vanilla frog (on the blacklist since M16) is a paludarium pet while the Minecraft pets are on
-        boolean black = type.is(ModTags.TANK_BLACKLIST) && !org.overengineer.bettacraft.foreign.ForeignProfiles.pet(type);
-        var facts = new InhabitantRules.Facts(id, w, h, black, type.is(ModTags.TANK_INHABITANTS),
-                type.is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
+        boolean black = type.builtInRegistryHolder().is(ModTags.TANK_BLACKLIST) && !org.overengineer.bettacraft.foreign.ForeignProfiles.pet(type);
+        var facts = new InhabitantRules.Facts(id, w, h, black, type.builtInRegistryHolder().is(ModTags.TANK_INHABITANTS),
+                type.builtInRegistryHolder().is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES), type.getCategory() == net.minecraft.world.entity.MobCategory.MONSTER,
                 // M31: a terrarium animal (turtle, frog, gecko ...) needs no water to live in
                 instance == null || org.overengineer.bettacraft.terrarium.TerrariumAnimals.isTerrariumAnimal(type) ? null : isWaterAnimal(instance),
                 org.overengineer.bettacraft.big.BigAnimals.length(type, instance), org.overengineer.bettacraft.foreign.ForeignProfiles.refusal(type));
@@ -192,16 +192,16 @@ public final class TankInhabitants {
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity controller = TankMultiblock.getController(level, pos);
         if (controller == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_formed"));
             return InteractionResult.CONSUME;
         }
         if (TankMoves.travelling(level, pos) && !TankMoves.swimsOn(type)) { // M32 part b: on an airship the animals travel packed (M50: ours swim on)
-            player.displayClientMessage(Component.translatable("message.bettacraft.travel.travelling"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.travel.travelling"));
             return InteractionResult.CONSUME;
         }
         Component error = insert(server, controller, stack, type, player, carriedWater(stack));
         if (error != null) {
-            player.displayClientMessage(error, true);
+            player.sendOverlayMessage(error);
             return InteractionResult.CONSUME;
         }
         ItemStack empty = stack.getItem() instanceof org.overengineer.bettacraft.big.TransportTubItem ? new ItemStack(ModItems.TRANSPORT_TUB.get()) // M30

@@ -43,21 +43,9 @@ final class GameTestCompat {
         for (var p : org.overengineer.bettacraft.platform.event.EventPriority.values()) org.overengineer.bettacraft.platform.event.GameEvents.post(e, p);
     }
 
-    /** No crafting remainder (NeoForge asks the item with the stack, vanilla / Fabric by the item). */
+    /** No crafting remainder (M52c: through the platform, which asks the loader's stack-aware remainder). */
     static boolean noRemainder(net.minecraft.world.item.ItemStack stack) {
-        try {
-            var m = net.minecraft.world.item.Item.class.getMethod("getCraftingRemainder", net.minecraft.world.item.ItemStack.class);
-            return ((net.minecraft.world.item.ItemStack) m.invoke(stack.getItem(), stack)).isEmpty();
-        } catch (NoSuchMethodException e) {
-            try {
-                var m = stack.getItem().getClass().getMethod("getRecipeRemainder", net.minecraft.world.item.ItemStack.class); // FabricItem
-                return ((net.minecraft.world.item.ItemStack) m.invoke(stack.getItem(), stack)).isEmpty();
-            } catch (ReflectiveOperationException ex) {
-                return stack.getItem().getCraftingRemainder().isEmpty();
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException(e);
-        }
+        return org.overengineer.bettacraft.platform.Platform.get().craftingRemainder(stack).isEmpty();
     }
 
     /**

@@ -120,7 +120,7 @@ public final class TankCritters {
     }
 
     public static TankTerrain terrain(ServerLevel level, TankData t) {
-        long dt = level.getDayTime() % 24000L;
+        long dt = level.getOverworldClockTime() % 24000L;
         boolean day = !level.dimensionType().hasFixedTime() ? dt < 12500L || dt > 23500L : true;
         return new TankTerrain(t, level.getServer(), region(level, t), day);
     }
@@ -354,7 +354,7 @@ public final class TankCritters {
         byte[] data = CritterSync.encode(t.critters(), t.critterObjects(), t.min().getX(), t.min().getY(), t.min().getZ(), level.getGameTime());
         // M17: nothing moved or changed (resting snails, buried crayfish): no packet; at least every 10 s anyway
         if (!c.critterSync.changed(data, level.getGameTime())) return;
-        PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(c.getBlockPos()), new TankCrittersPayload(c.getBlockPos(), data));
+        PacketDistributor.sendToPlayersTrackingChunk(level, ChunkPos.containing(c.getBlockPos()), new TankCrittersPayload(c.getBlockPos(), data));
     }
 
     // ------------------------------------------------------------------ adding
@@ -418,12 +418,12 @@ public final class TankCritters {
         ServerLevel server = (ServerLevel) level;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_formed"));
             return InteractionResult.CONSUME;
         }
         Component error = insert(server, c, animals, player, bucket ? TankInhabitants.BUCKET_MB : TankInhabitants.BAG_MB);
         if (error != null) {
-            player.displayClientMessage(error, true);
+            player.sendOverlayMessage(error);
             return InteractionResult.CONSUME;
         }
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, bucket ? new ItemStack(net.minecraft.world.item.Items.BUCKET)

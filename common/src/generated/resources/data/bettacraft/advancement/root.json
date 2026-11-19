@@ -33,7 +33,6 @@
       "translate": "advancements.bettacraft.root.description"
     },
     "icon": {
-      "count": 1,
       "id": "bettacraft:betta_bucket"
     },
     "show_toast": false,

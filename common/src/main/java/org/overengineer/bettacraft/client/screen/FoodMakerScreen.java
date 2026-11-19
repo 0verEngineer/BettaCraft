@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
 import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -22,9 +22,7 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
     private static final int BG = 0xFFC6C6C6, DARK = 0xFF555555, LIGHT = 0xFFFFFFFF, SLOT = 0xFF8B8B8B, TEXT = 0x404040;
 
     public FoodMakerScreen(FoodMakerMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 166;
+        super(menu, inv, title, 176, 166);
         inventoryLabelY = imageHeight - 94;
     }
 
@@ -52,7 +50,8 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -80,7 +79,7 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
         if (w > 0) g.blitSprite(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, BURN, 24, 16, 0, 0, ax, ay, Math.min(24, w), 16);
     }
 
-    private static void slot(GuiGraphics g, int x, int y, int size) {
+    private static void slot(GuiGraphicsExtractor g, int x, int y, int size) {
         g.fill(x, y, x + size, y + size, SLOT);
         g.fill(x, y, x + size - 1, y + 1, 0xFF373737);
         g.fill(x, y, x + 1, y + size - 1, 0xFF373737);
@@ -89,8 +88,8 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, 5, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, 5, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
 
         ItemStack p = product();
         Component name = p.isEmpty() ? Component.translatable("gui.bettacraft.food_maker.auto") : p.getHoverName();
@@ -100,25 +99,24 @@ public class FoodMakerScreen extends AbstractContainerScreen<FoodMakerMenu> {
             g.pose().pushMatrix();
             g.pose().translate(cx, 16);
             g.pose().scale(0.75F, 0.75F);
-            g.renderItem(p, 0, 0);
+            g.item(p, 0, 0);
             g.pose().popMatrix();
             cx += 14;
         }
-        g.drawString(font, font.plainSubstrByWidth(name.getString(), 96), cx, 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0x1E4A80), false);
+        g.text(font, font.plainSubstrByWidth(name.getString(), 96), cx, 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0x1E4A80), false);
         Component st = FoodMakerBlockEntity.statusText(menu.status());
         float s = Math.min(0.75F, (imageWidth - 16) / (float) Math.max(1, font.width(st)));
         g.pose().pushMatrix();
         g.pose().translate(8, 72);
         g.pose().scale(s, s);
         int col = menu.status() == FoodMakerBlockEntity.WORKING ? 0x206020 : menu.status() == FoodMakerBlockEntity.IDLE ? TEXT : 0x9A5A10;
-        g.drawString(font, st, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(col), false);
+        g.text(font, st, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(col), false);
         g.pose().popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         int bx = leftPos + 8, by = topPos + 31;
         if (mouseX >= bx && mouseX < bx + 8 && mouseY >= by && mouseY < by + 38) {
             int pct = (int) Math.round(100.0 * menu.drive() / menu.driveMax());

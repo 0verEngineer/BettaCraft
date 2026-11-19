@@ -113,7 +113,7 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
         AdvancementHolder strain = simple(inserted, "guppy_strain", guppy, AdvancementType.GOAL,
                 "strain", BettaEventTrigger.Instance.of(Progress.LB_STRAIN));
         Advancement.Builder all = Advancement.Builder.advancement().parent(strain)
-                .display(new ItemStack(ModItems.TANKMATE_BUCKETS.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY).get()),
+                .display(new net.minecraft.world.item.ItemStackTemplate(ModItems.TANKMATE_BUCKETS.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY).get()),
                         title("guppy_collection"), desc("guppy_collection"), null, AdvancementType.CHALLENGE, true, true, false);
         for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.values()) {
             all.addCriterion(st.id(), BettaEventTrigger.Instance.of(Progress.LB_STRAIN + "_" + st.id()));
@@ -223,7 +223,7 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
 
     private AdvancementHolder build(AdvancementHolder parent, String name, ItemLike icon, AdvancementType type, boolean hidden, Object... criteria) {
         Advancement.Builder b = Advancement.Builder.advancement().parent(parent)
-                .display(new ItemStack(icon), title(name), desc(name), null, type, true, type != AdvancementType.TASK, hidden);
+                .display(new net.minecraft.world.item.ItemStackTemplate(icon.asItem()), title(name), desc(name), null, type, true, type != AdvancementType.TASK, hidden);
         for (int i = 0; i < criteria.length; i += 2) b.addCriterion((String) criteria[i], (Criterion<?>) criteria[i + 1]);
         return b.requirements(AdvancementRequirements.Strategy.OR).save(out, id(name));
     }

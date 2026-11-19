@@ -40,7 +40,7 @@ public final class FloatingPlantEvents {
         TankData t = c.getTank();
         if (sneak) {
             List<ItemStack> items = TankPlants.thin(server, c);
-            if (items.isEmpty()) player.displayClientMessage(Component.translatable("message.bettacraft.plants.none"), true);
+            if (items.isEmpty()) player.sendOverlayMessage(Component.translatable("message.bettacraft.plants.none"));
             else TankPlants.taken(server, c, player, items, true);
             return;
         }
@@ -51,18 +51,18 @@ public final class FloatingPlantEvents {
         var clutch = org.overengineer.bettacraft.tankmates.TankmateItems.aimed(t, player.getEyePosition(), player.getViewVector(1.0F));
         if (clutch != null && (aimed == null || clutch.distance() <= aimed.distance()) && (at == null || clutch.distance() <= player.getEyePosition().distanceTo(at) + 0.05)) {
             Component msg = org.overengineer.bettacraft.tankmates.TankmateItems.net(server, c, player, clutch.clutch());
-            if (msg != null) player.displayClientMessage(msg, true);
+            if (msg != null) player.sendOverlayMessage(msg);
             return;
         }
         if (aimed != null && (at == null || aimed.distance() <= player.getEyePosition().distanceTo(at) + 0.05)) {
             Component msg = org.overengineer.bettacraft.critters.TankCritters.net(server, c, player, aimed);
-            if (msg != null) player.displayClientMessage(msg, true);
+            if (msg != null) player.sendOverlayMessage(msg);
             return;
         }
         List<ItemStack> items = at == null ? List.of() : TankPlants.removeAt(server, c, at.x, at.z, TankPlants.NET_REACH);
-        if (items.isEmpty()) player.displayClientMessage(Component.translatable(!t.critters().isEmpty() && t.plants().isEmpty()
+        if (items.isEmpty()) player.sendOverlayMessage(Component.translatable(!t.critters().isEmpty() && t.plants().isEmpty()
                 ? "message.bettacraft.critters.none_here" : t.plants().isEmpty()
-                ? "message.bettacraft.plants.none" : "message.bettacraft.plants.none_here"), true);
+                ? "message.bettacraft.plants.none" : "message.bettacraft.plants.none_here"));
         else TankPlants.taken(server, c, player, items, false);
     }
 
@@ -75,7 +75,7 @@ public final class FloatingPlantEvents {
 
     static boolean allowed(Player player, TankData t) {
         if (TankInhabitants.canModify(player, t)) return true;
-        player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
         return false;
     }
 

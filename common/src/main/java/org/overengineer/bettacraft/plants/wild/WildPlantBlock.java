@@ -190,7 +190,7 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
         if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!cut(level, pos, state, hit.getDirection())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.wild_plant.trimmed").withStyle(ChatFormatting.GRAY), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.wild_plant.trimmed").withStyle(ChatFormatting.GRAY));
             return InteractionResult.CONSUME;
         }
         if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
@@ -203,8 +203,9 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
      */
     @Override
     protected List<ItemStack> getDrops(BlockState s, LootParams.Builder params) {
-        ItemStack tool = params.getOptionalParameter(LootContextParams.TOOL);
-        if (tool == null || tool.isEmpty()) return List.of();
+        // M52c (26.1): the tool is an item instance (stack or template)
+        net.minecraft.world.item.ItemInstance tool = params.getOptionalParameter(LootContextParams.TOOL);
+        if (tool == null || tool.count() <= 0 || tool.is(net.minecraft.world.item.Items.AIR)) return List.of();
         PlantSpecies sp = species(s);
         var silk = params.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH);
         if (EnchantmentHelper.getItemEnchantmentLevel(silk, tool) > 0) return List.of(InteriorPlants.item(sp, Math.max(1, sp.stages() / 2)));

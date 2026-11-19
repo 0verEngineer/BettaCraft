@@ -73,15 +73,15 @@ final class DevClientSmokeM39b {
         then(100, () -> shot("birds_water"));
         // night: the fireflies glow
         then(1, () -> server(p -> {
-            dayTime = p.level().getDayTime();
-            p.level().setDayTime(18000);
+            dayTime = p.level().getOverworldClockTime();
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 18000);
         }));
         then(1, () -> look(insects.getX() + 5, insects.getY() + 3.0, insects.getZ() - 5.2, 0F, 22F));
         then(80, () -> server(p -> fireflies.forEach(f -> {
             if (f instanceof Mob m) ForeignHabits.flashNow(m);
         })));
         then(3, () -> shot("fireflies"));
-        then(1, () -> server(p -> p.level().setDayTime(dayTime)));
+        then(1, () -> server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), dayTime)));
         then(1, () -> mc.options.hideGui = false);
     }
 

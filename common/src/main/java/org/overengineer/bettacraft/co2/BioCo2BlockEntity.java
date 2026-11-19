@@ -116,9 +116,9 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
     }
 
     static void clientTick(Level level, BlockPos pos, BlockState state, BioCo2BlockEntity be) {
-        if (state.getValue(BioCo2Block.STAGE) != BioCo2Block.FERMENTING || level.random.nextInt(25) != 0) return;
-        level.addParticle(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP, pos.getX() + 0.4 + level.random.nextDouble() * 0.2,
-                pos.getY() + 0.75, pos.getZ() + 0.4 + level.random.nextDouble() * 0.2, 0, 0.02, 0);
+        if (state.getValue(BioCo2Block.STAGE) != BioCo2Block.FERMENTING || level.getRandom().nextInt(25) != 0) return;
+        level.addParticle(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP, pos.getX() + 0.4 + level.getRandom().nextDouble() * 0.2,
+                pos.getY() + 0.75, pos.getZ() + 0.4 + level.getRandom().nextDouble() * 0.2, 0, 0.02, 0);
     }
 
     // ------------------------------------------------------------------ interaction
@@ -152,7 +152,7 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
             }
             sugar++;
             if (!player.getAbilities().instabuild) stack.shrink(1);
-            player.displayClientMessage(Component.translatable("message.bettacraft.bio_co2.sugar", sugar, MAX_SUGAR).withStyle(ChatFormatting.AQUA), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.bio_co2.sugar", sugar, MAX_SUGAR).withStyle(ChatFormatting.AQUA));
         } else if (stack.is(ModItems.YEAST.get())) {
             if (!water || sugar <= 0 || start != NONE) {
                 msg(player, start != NONE ? "message.bettacraft.bio_co2.fermenting_already" : !water ? "message.bettacraft.bio_co2.needs_water"
@@ -161,8 +161,8 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
             }
             start(level.getGameTime());
             if (!player.getAbilities().instabuild) stack.shrink(1);
-            player.displayClientMessage(Component.translatable("message.bettacraft.bio_co2.started",
-                    String.format(java.util.Locale.ROOT, "%.1f", days)).withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.bio_co2.started",
+                    String.format(java.util.Locale.ROOT, "%.1f", days)).withStyle(ChatFormatting.GREEN));
         }
         setChanged();
     }
@@ -207,11 +207,11 @@ public class BioCo2BlockEntity extends BlockEntity implements Co2Source {
         } else if (water) c = Component.translatable("message.bettacraft.bio_co2.mixed", sugar, MAX_SUGAR).withStyle(ChatFormatting.AQUA);
         else if (stage() == BioCo2Block.SPENT) c = Component.translatable("message.bettacraft.bio_co2.spent").withStyle(ChatFormatting.GOLD);
         else c = Component.translatable("message.bettacraft.bio_co2.empty").withStyle(ChatFormatting.GRAY);
-        player.displayClientMessage(c, true);
+        player.sendOverlayMessage(c);
     }
 
     private static void msg(Player p, String key, ChatFormatting f) {
-        p.displayClientMessage(Component.translatable(key).withStyle(f), true);
+        p.sendOverlayMessage(Component.translatable(key).withStyle(f));
     }
 
     public int sugar() {

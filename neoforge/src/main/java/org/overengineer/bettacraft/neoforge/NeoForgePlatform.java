@@ -187,7 +187,9 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public ItemStack craftingRemainder(ItemStack stack) {
-        return stack.getCraftingRemainder();
+        // M52c (26.1): the remainder is a stack template, null without one
+        var r = stack.getCraftingRemainder();
+        return r == null ? ItemStack.EMPTY : r.create();
     }
 
     @Override

@@ -160,7 +160,7 @@ final class DevClientSmokeM25 {
         then(1, () -> {
             gui = mc.options.guiScale().get();
             mc.options.guiScale().set(2);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         for (String page : new String[]{"equipment/co2.md", "equipment/reverse_osmosis.md", "aquarium/water_fluids.md"}) {
             String name = page.substring(page.indexOf('/') + 1, page.length() - 3);
@@ -170,7 +170,7 @@ final class DevClientSmokeM25 {
         then(1, () -> {
             mc.setScreen(null);
             mc.options.guiScale().set(gui);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 

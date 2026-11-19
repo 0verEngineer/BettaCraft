@@ -323,15 +323,15 @@ public final class TurtleGameTests {
         BlockPos shore = new BlockPos(8, 2, 8), water = new BlockPos(9, 1, 8);
         h.setBlock(shore.below(), Blocks.STONE);
         h.setBlock(water, Blocks.WATER);
-        h.assertTrue(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(shore), level.random), "a slider on the shore");
+        h.assertTrue(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(shore), level.getRandom()), "a slider on the shore");
         BlockPos field = new BlockPos(20, 2, 20);
         h.setBlock(field.below(), Blocks.GRASS_BLOCK);
-        h.assertTrue(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.random), "a tortoise on grass");
+        h.assertTrue(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.getRandom()), "a tortoise on grass");
         h.setBlock(field.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.random), "not on stone");
+        h.assertFalse(HerpSpawns.check(ModEntities.HERMANN_TORTOISE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(field), level.getRandom()), "not on stone");
         BlockPos dryLand = new BlockPos(26, 2, 26);
         h.setBlock(dryLand.below(), Blocks.STONE);
-        h.assertFalse(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(dryLand), level.random), "a slider far from water: no");
+        h.assertFalse(HerpSpawns.check(ModEntities.SLIDER_TURTLE.get(), level, EntitySpawnReason.NATURAL, h.absolutePos(dryLand), level.getRandom()), "a slider far from water: no");
         // a wild source for each turtle: its bucket or box
         for (HerpSpecies s : HerpSpecies.ALL) {
             List<Source> src = Sources.of(Target.item(s.containerId()));

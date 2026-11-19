@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "aquarist/plants"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:java_fern"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

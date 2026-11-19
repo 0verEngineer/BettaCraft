@@ -11,7 +11,7 @@ plugins {
 version = mod_version
 group = mod_group_id
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     neoFormVersion = project.neo_form_version

@@ -185,9 +185,9 @@ public final class WildlifeGameTests {
         level.setBlock(base.below(), Blocks.STONE.defaultBlockState(), 2);
         BlockPos spot = base.above(1);
         try {
-            check(Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.random), "no wild fish in open water");
-            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, base.above(10), level.random), "a wild fish in the air");
-            check(Wildlife.checkFish(type, level, EntitySpawnReason.SPAWN_ITEM_USE, base.above(10), level.random), "spawn eggs are not limited");
+            check(Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "no wild fish in open water");
+            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, base.above(10), level.getRandom()), "a wild fish in the air");
+            check(Wildlife.checkFish(type, level, EntitySpawnReason.SPAWN_ITEM_USE, base.above(10), level.getRandom()), "spawn eggs are not limited");
             // the cap: as many wild fish as allowed nearby, then no more
             int cap = org.overengineer.bettacraft.config.ServerConfig.getOr(org.overengineer.bettacraft.config.ServerConfig.WILD_FISH_NEARBY, 6);
             List<TankmateEntity> made = new java.util.ArrayList<>();
@@ -196,7 +196,7 @@ public final class WildlifeGameTests {
                 check(e != null && e.isWild(), "a natural spawn is not wild");
                 made.add(e);
             }
-            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.random), "more wild fish than the cap nearby");
+            check(!Wildlife.checkFish(type, level, EntitySpawnReason.NATURAL, spot, level.getRandom()), "more wild fish than the cap nearby");
             made.forEach(e -> e.discard());
             // a wild one despawns far away, a caught one never; its genes are not analysed
             TankmateEntity wild = type.spawn(level, spot, EntitySpawnReason.NATURAL);
@@ -215,7 +215,7 @@ public final class WildlifeGameTests {
         TankBlockEntity c = tank(h, 10, 2, 10, 18000, 0F);
         BlockPos inTank = h.absolutePos(new BlockPos(11, 2, 11));
         check(Wildlife.inTank(level, inTank), "the tank is not seen");
-        check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.NATURAL, inTank, level.random), "a wild critter in a tank");
+        check(!Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.NATURAL, inTank, level.getRandom()), "a wild critter in a tank");
         check(c.getTank().waterMb() > 0, "tank");
         h.succeed();
     }
@@ -226,7 +226,7 @@ public final class WildlifeGameTests {
         var level = h.getLevel();
         pool(h, 4, 4, 4, 3);
         BlockPos bottom = h.absolutePos(new BlockPos(5, 2, 5));
-        check(Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.SPAWN_ITEM_USE, bottom, level.random), "not natural: allowed");
+        check(Wildlife.checkCritter(ModEntities.WILD_CRITTER.get(), level, EntitySpawnReason.SPAWN_ITEM_USE, bottom, level.getRandom()), "not natural: allowed");
         WildCritterEntity e = ModEntities.WILD_CRITTER.get().spawn(level, bottom, EntitySpawnReason.NATURAL);
         check(e != null && e.isWild() && e.animal().adult() && !e.animal().analysed, "a wild critter is no full animal: " + (e == null ? null : e.saveAnimal()));
         check(e.removeWhenFarAway(100), "a wild critter does not despawn");
@@ -263,7 +263,7 @@ public final class WildlifeGameTests {
         loaded.snapTo(h.absolutePos(new BlockPos(5, 2, 5)), 0, 0);
         level.addFreshEntity(loaded);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-        sp.interactOn(loaded, InteractionHand.MAIN_HAND);
+        sp.interactOn(loaded, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         ItemStack bucket = sp.getItemInHand(InteractionHand.MAIN_HAND);
         check(bucket.getItem() instanceof CritterBucketItem && CritterBucketItem.animals(bucket).getFirst().equals(original) && loaded.isRemoved(),
                 "the bucket did not take the animal: " + bucket);
@@ -271,7 +271,7 @@ public final class WildlifeGameTests {
         WildCritterEntity second = WildCritterEntity.of(level, critter(CritterSpecies.NEOCARIDINA, false, CritterGenes.WILD, 9).saveAnimal());
         second.snapTo(h.absolutePos(new BlockPos(6, 2, 6)), 0, 0);
         level.addFreshEntity(second);
-        sp.interactOn(second, InteractionHand.MAIN_HAND);
+        sp.interactOn(second, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(CritterBucketItem.animals(sp.getItemInHand(InteractionHand.MAIN_HAND)).size() == 2, "the second shrimp is not in the same bucket");
         // into a tank: the animal keeps everything
         TankBlockEntity c = tank(h, 14, 2, 14, 18000, 0F);
@@ -352,7 +352,7 @@ public final class WildlifeGameTests {
         TankBlockEntity c = tank(h, 2, 1, 2, 18000, 0F);
         TankBlockEntity other = tank(h, 12, 1, 12, 18000, 0F);
         BettaEntity b = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
-        b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.random), false, 0));
+        b.setBettaData(BettaData.create(BettaGenotype.randomWild(level.getRandom()), false, 0));
         ItemStack bb = b.getBucketItemStack();
         b.saveToBucketTag(bb);
         b.discard();
@@ -522,24 +522,24 @@ public final class WildlifeGameTests {
         BlockPos at = h.absolutePos(new BlockPos(6, 3, 6));
         var cod = EntityType.COD.spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
-        sp.interactOn(cod, InteractionHand.MAIN_HAND);
+        sp.interactOn(cod, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(Items.COD_BUCKET), "the sea water bucket did not catch a cod: " + sp.getItemInHand(InteractionHand.MAIN_HAND));
         var clown = ModEntities.TANKMATES.get(TankmateSpecies.OCELLARIS_CLOWNFISH).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-        sp.interactOn(clown, InteractionHand.MAIN_HAND);
+        sp.interactOn(clown, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(Items.WATER_BUCKET) && clown.isAlive(), "a reef fish went into plain water");
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
-        sp.interactOn(clown, InteractionHand.MAIN_HAND);
+        sp.interactOn(clown, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.TANKMATE_BUCKETS.get(TankmateSpecies.OCELLARIS_CLOWNFISH).get()), "the clownfish did not go into sea water");
         var neon = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
-        sp.interactOn(neon, InteractionHand.MAIN_HAND);
+        sp.interactOn(neon, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(ModItems.SEA_WATER_BUCKET.get()) && neon.isAlive(), "a freshwater fish went into sea water");
         // a bucket of neons takes the next one of its species
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
-        sp.interactOn(neon, InteractionHand.MAIN_HAND);
+        sp.interactOn(neon, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         var neon2 = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get().spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
-        sp.interactOn(neon2, InteractionHand.MAIN_HAND);
+        sp.interactOn(neon2, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(AnimalContainers.fish(sp.getItemInHand(InteractionHand.MAIN_HAND)).size() == 2 && neon2.isRemoved(), "the second neon did not join the bucket");
         h.succeed();
     }

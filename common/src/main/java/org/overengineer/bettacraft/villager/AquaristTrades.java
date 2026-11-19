@@ -10,7 +10,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -61,16 +60,16 @@ public final class AquaristTrades {
      * One offer of a level: {@code buys} = the villager buys a fish and pays by its genes (no products). The listing is
      * made on first use.
      */
-    public record Offer(String id, int level, boolean buys, Supplier<List<Product>> products, Supplier<VillagerTrades.ItemListing> factory) {
-        public VillagerTrades.ItemListing listing() {
+    public record Offer(String id, int level, boolean buys, Supplier<List<Product>> products, Supplier<TradeListing> factory) {
+        public TradeListing listing() {
             return LISTINGS.computeIfAbsent(id, k -> {
-                VillagerTrades.ItemListing l = factory.get();
+                TradeListing l = factory.get();
                 return (traderLevel, trader, random) -> Features.enabled(Feature.AQUARIST_VILLAGER) ? l.getOffer(traderLevel, trader, random) : null;
             });
         }
     }
 
-    private static final java.util.Map<String, VillagerTrades.ItemListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final java.util.Map<String, TradeListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
     private static List<Offer> offers;
 
     /** The custom data key that marks the result of a buying offer (an emerald that stands for "by the genes"). */
@@ -147,7 +146,7 @@ public final class AquaristTrades {
         return out;
     }
 
-    private static VillagerTrades.ItemListing rareVarietyListing() {
+    private static TradeListing rareVarietyListing() {
         return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
@@ -235,7 +234,7 @@ public final class AquaristTrades {
         return d != null && d.copyTag().contains(APPRAISE);
     }
 
-    private static VillagerTrades.ItemListing buy(net.minecraft.world.item.Item pays, int shown, int xp) {
+    private static TradeListing buy(net.minecraft.world.item.Item pays, int shown, int xp) {
         return (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(pays), Optional.empty(), appraisalResult(shown), 6, xp, 0F);
     }
 

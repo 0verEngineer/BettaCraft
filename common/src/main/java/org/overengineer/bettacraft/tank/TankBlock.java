@@ -248,7 +248,7 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
     }
 
     @Override
-    protected int getLightBlock(BlockState state) {
+    protected int getLightDampening(BlockState state) {
         return 0;
     }
 
@@ -267,8 +267,8 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
         // M16: no tank inside a tank (players, deployers and other block placers that use the item)
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(context.getLevel())) {
             if (!context.getLevel().isClientSide() && context.getPlayer() != null) {
-                context.getPlayer().displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank")
-                        .withStyle(net.minecraft.ChatFormatting.GOLD), true);
+                context.getPlayer().sendOverlayMessage(Component.translatable("message.bettacraft.interior.no_tank")
+                        .withStyle(net.minecraft.ChatFormatting.GOLD));
             }
             return null;
         }
@@ -350,7 +350,7 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         Optional<Component> blocked = TankInhabitants.breakBlockedReason(level, pos);
         if (blocked.isPresent()) {
-            if (!level.isClientSide()) player.displayClientMessage(blocked.get(), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(blocked.get());
             return false;
         }
         playerWillDestroy(level, pos, state, player);

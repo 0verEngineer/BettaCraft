@@ -14,7 +14,6 @@
       "translate": "advancements.bettacraft.create_drive.description"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:piston"
     },
     "title": {

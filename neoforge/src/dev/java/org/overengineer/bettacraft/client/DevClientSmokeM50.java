@@ -177,7 +177,7 @@ final class DevClientSmokeM50 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         bearingPos = p.blockPosition().offset(0, 6, 160);
         var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));

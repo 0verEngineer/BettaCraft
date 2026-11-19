@@ -101,7 +101,7 @@ public final class Archerfish {
         TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, pos);
         if (c == null || release(server, c, stack, 1) <= 0) return net.minecraft.world.InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!player.getAbilities().instabuild) stack.shrink(1);
-        player.displayClientMessage(Component.translatable("message.bettacraft.archerfish.flies").withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.archerfish.flies").withStyle(ChatFormatting.GREEN));
         return net.minecraft.world.InteractionResult.CONSUME;
     }
 
@@ -163,7 +163,7 @@ public final class Archerfish {
         level.sendParticles(ParticleTypes.SPLASH, face.x, face.y, face.z, 18, 0.2, 0.15, 0.2, 0.1);
         level.playSound(null, face.x, face.y, face.z, SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.35F, 1.5F);
         if (p.isOnFire()) p.clearFire();
-        p.displayClientMessage(Component.translatable("message.bettacraft.archerfish.splash").withStyle(ChatFormatting.AQUA), true);
+        p.sendOverlayMessage(Component.translatable("message.bettacraft.archerfish.splash").withStyle(ChatFormatting.AQUA));
         org.overengineer.bettacraft.progression.Progress.award(p, org.overengineer.bettacraft.progression.Progress.ARCHER_SPLASH);
     }
 

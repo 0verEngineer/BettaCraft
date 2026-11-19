@@ -96,7 +96,7 @@ public final class MiniatureJets {
             // M23: a regulated device blows a shorter jet
             double share = i < outlets.size() ? outlets.get(i).share() : 1.0;
             double scale = jetScale(region, t, p) * (0.4 + 0.6 * share);
-            int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(p.nozzle()));
+            int light = LevelRenderer.getLightCoords(mc.level, BlockPos.containing(p.nozzle()));
             FlowRenderer.jet(ps, buffers.getBuffer(rt), p.jet(8, scale), p.inward(), cam, light, time,
                     (float) (0.05 * scale + 0.018), p.submerged() ? 0.9F : 1.0F);
         }

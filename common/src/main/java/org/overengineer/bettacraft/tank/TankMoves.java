@@ -66,7 +66,7 @@ public final class TankMoves {
 
     /** M50: whether an animal of this type swims on in a tank on a moving structure (Sable) instead of travelling packed. */
     public static boolean swimsOn(EntityType<?> type) {
-        return TravelCare.enabled() && type.is(RETAIN);
+        return TravelCare.enabled() && type.builtInRegistryHolder().is(RETAIN);
     }
 
     private static boolean swimsOn(CompoundTag tag) {

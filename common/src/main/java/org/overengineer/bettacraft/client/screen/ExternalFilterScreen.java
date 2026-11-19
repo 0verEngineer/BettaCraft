@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.client.screen;
 import net.minecraft.client.Minecraft;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -43,7 +43,8 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
 
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         for (int i = 0; i < FilterHeaters.SLOTS; i++) {
@@ -54,17 +55,16 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        super.renderLabels(g, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractLabels(g, mouseX, mouseY);
         Component hint = Component.translatable("gui.bettacraft.filter.heaters_hint");
-        g.drawString(font, hint, (imageWidth - font.width(hint)) / 2, 58, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
+        g.text(font, hint, (imageWidth - font.width(hint)) / 2, 58, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         if (powerBtn != null) powerBtn.setMessage(Component.translatable("gui.bettacraft.regulator.button", menu.power() * 10));
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
     }
 

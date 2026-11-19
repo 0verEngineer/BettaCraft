@@ -292,11 +292,11 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
             if (slot == MEMBRANE) wearMembrane = 0;
             else wearPrefilter = 0;
             level.playSound(null, worldPosition, SoundEvents.ARMOR_EQUIP_GENERIC.value(), SoundSource.BLOCKS, 0.6F, 1.3F);
-            player.displayClientMessage(Component.translatable(slot == MEMBRANE ? "message.bettacraft.ro.membrane_in" : "message.bettacraft.ro.prefilter_in")
-                    .withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable(slot == MEMBRANE ? "message.bettacraft.ro.membrane_in" : "message.bettacraft.ro.prefilter_in")
+                    .withStyle(ChatFormatting.GREEN));
         } else if (stack.is(Items.BUCKET)) {
             if (pure < 1000) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.ro.not_enough", pure).withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.ro.not_enough", pure).withStyle(ChatFormatting.GOLD));
                 return;
             }
             pure -= 1000;
@@ -304,7 +304,7 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
             level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
         } else {
             if (feed + 1000 > FEED_CAPACITY) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.ro.feed_full").withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.ro.feed_full").withStyle(ChatFormatting.GOLD));
                 return;
             }
             feed += 1000;
@@ -335,8 +335,8 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
         if (!stop.isEmpty()) state = Component.translatable("message.bettacraft.ro.stop." + stop).withStyle(ChatFormatting.GOLD);
         else state = Component.translatable(boosted ? "message.bettacraft.ro.running_pump" : "message.bettacraft.ro.running",
                 String.format(java.util.Locale.ROOT, "%.1f", lastRate)).withStyle(ChatFormatting.GREEN);
-        player.displayClientMessage(Component.translatable("message.bettacraft.ro.status", state, pure, feed,
-                left(parts.getStackInSlot(MEMBRANE)), left(parts.getStackInSlot(PREFILTER))), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.ro.status", state, pure, feed,
+                left(parts.getStackInSlot(MEMBRANE)), left(parts.getStackInSlot(PREFILTER))));
     }
 
     // ------------------------------------------------------------------ save

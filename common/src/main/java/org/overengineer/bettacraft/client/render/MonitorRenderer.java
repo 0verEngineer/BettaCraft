@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -76,7 +75,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         Direction facing = be.facing();
         int w = be.width(), h = be.height();
         boolean on = be.status() == MonitorBlockEntity.ON;
-        int packed = on ? LightTexture.FULL_BRIGHT : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().relative(facing));
+        int packed = on ? net.minecraft.util.LightCoordsUtil.FULL_BRIGHT : LevelRenderer.getLightCoords(be.getLevel(), be.getBlockPos().relative(facing));
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // local +Z = out of the screen, +X = right as the viewer sees it, +Y = up; this block is the top left one

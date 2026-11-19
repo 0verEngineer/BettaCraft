@@ -360,7 +360,7 @@ public final class PlantMeshRenderer {
      * textures/block), drawn with the entity cut-out shader like the meshes inside (so shader packs treat both the same).
      */
     static final RenderType MINI = RenderType.create("bettacraft_plant_mesh_mini",
-            net.minecraft.client.renderer.rendertype.RenderSetup.builder(net.minecraft.client.renderer.RenderPipelines.ENTITY_CUTOUT_NO_CULL)
+            net.minecraft.client.renderer.rendertype.RenderSetup.builder(net.minecraft.client.renderer.RenderPipelines.ENTITY_CUTOUT)
                     .withTexture("Sampler0", net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS) // the atlas sampler: mipmapped
                     .useLightmap()
                     .useOverlay()
@@ -425,7 +425,7 @@ public final class PlantMeshRenderer {
             if (m == null) continue;
             if (INDEX.takeRelight(key) || m.lights.length != m.lightPos.size()) {
                 int[] l = new int[m.lightPos.size()];
-                for (int i = 0; i < l.length; i++) l[i] = LevelRenderer.getLightColor(level, BlockPos.of(m.lightPos.getLong(i)));
+                for (int i = 0; i < l.length; i++) l[i] = LevelRenderer.getLightCoords(level, BlockPos.of(m.lightPos.getLong(i)));
                 m.lights = l;
             }
             if (!event.getFrustum().isVisible(m.box)) continue;
@@ -433,7 +433,7 @@ public final class PlantMeshRenderer {
             draw(m, pos, cam, ps, buffers, time);
             lastDrawn++;
         }
-        for (PlantTex t : PlantTex.ALL) buffers.endBatch(RenderTypes.entityCutoutNoCull(t.texture));
+        for (PlantTex t : PlantTex.ALL) buffers.endBatch(RenderTypes.entityCutout(t.texture));
     }
 
     /** M22.1: everything alive near the polyps of a mesh (inside: the player, other players) closes them for a moment. */
@@ -508,12 +508,12 @@ public final class PlantMeshRenderer {
         for (int t = 0; t < PlantTex.ALL.length; t++) {
             Layer l = m.layers[t];
             if (l.light.isEmpty()) continue;
-            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderTypes.entityCutoutNoCull(PlantTex.ALL[t].texture));
+            VertexConsumer vc = buffers.getBuffer(all != null ? all : RenderTypes.entityCutout(PlantTex.ALL[t].texture));
             float[] v = l.v.elements();
             int[] col = l.color.elements();
             int quads = l.light.size();
             for (int q = 0; q < quads; q++) {
-                int light = m.lights.length > l.light.getInt(q) ? m.lights[l.light.getInt(q)] : net.minecraft.client.renderer.LightTexture.FULL_BRIGHT;
+                int light = m.lights.length > l.light.getInt(q) ? m.lights[l.light.getInt(q)] : net.minecraft.util.LightCoordsUtil.FULL_BRIGHT;
                 int mode = l.mode.getInt(q);
                 for (int k = 0; k < 4; k++) {
                     int o = (q * 4 + k) * STRIDE;

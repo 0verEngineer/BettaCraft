@@ -22,8 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Renders tank interiors as miniatures (PLAN 7.4).
  * <ul>
  *     <li>Meshes are built per cell (2x2x2 sections = 32^3 interior blocks) on worker threads with the
- *     {@link BlockRenderDispatcher} (face culling), like vanilla's section compiler. Only the upload to the GPU happens
+ *     block renderer (face culling), like vanilla's section compiler. Only the upload to the GPU happens
  *     on the render thread, within a time budget per frame (M3; M0 built the whole region on the render thread).</li>
  *     <li>A delta from the server rebuilds only the touched cells (and neighbours for culling).</li>
  *     <li>At most {@code interior.maxRenderedBlocks} blocks per tank are meshed (cells in y/z/x order).</li>
@@ -297,7 +296,8 @@ public final class MiniatureRenderer {
     /** Worker thread: meshes all blocks of one cell. */
     private static Result build(int regionId, long cell, int gen, Long2ObjectOpenHashMap<InteriorSnapshot.Section> map, RegionBlockGetter getter) {
         long t0 = System.nanoTime();
-        BlockRenderDispatcher brd = Minecraft.getInstance().getBlockRenderer();
+        // M52c (26.1): the block render dispatcher is gone; the models come from the model manager
+        var models = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
         RandomSource rand = RandomSource.create();
         PoseStack ps = new PoseStack();
         Map<ChunkSectionLayer, ByteBufferBuilder> memory = new java.util.EnumMap<>(ChunkSectionLayer.class);
@@ -337,7 +337,7 @@ public final class MiniatureRenderer {
                 int lz = (s.sz() << 4) + ((i >> 4) & 15);
                 pos.set(lx, ly, lz);
                 try {
-                    BlockStateModel model = brd.getBlockModel(state);
+                    BlockStateModel model = models.get(state);
                     Object md = org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelData(model, getter, pos, state);
                     boolean plant = !floor && MiniaturePlants.meshBlock(state);
                     boolean sway = !floor && !plant && MiniatureSway.candidate(state);
@@ -531,7 +531,7 @@ public final class MiniatureRenderer {
                 () -> "Bettacraft miniature", target.getColorTextureView(), java.util.OptionalInt.empty(),
                 target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
             RenderSystem.bindDefaultUniforms(pass);
-            pass.bindTexture("Sampler2", mc.gameRenderer.lightTexture().getTextureView(),
+            pass.bindTexture("Sampler2", mc.gameRenderer.lightmap(),
                     RenderSystem.getSamplerCache().getClampToEdge(com.mojang.blaze3d.textures.FilterMode.LINEAR));
             pass.setUniform("ChunkSection", section);
             for (var e : byLayer.entrySet()) {

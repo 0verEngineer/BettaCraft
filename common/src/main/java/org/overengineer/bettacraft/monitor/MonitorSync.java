@@ -153,7 +153,7 @@ public final class MonitorSync {
     public static List<ServerPlayer> viewers(ServerLevel level, MonitorBlockEntity c) {
         Vec3 center = c.screenCenter();
         List<ServerPlayer> out = new ArrayList<>();
-        for (ServerPlayer p : level.getChunkSource().chunkMap.getPlayers(new ChunkPos(c.getBlockPos()), false)) {
+        for (ServerPlayer p : level.getChunkSource().chunkMap.getPlayers(ChunkPos.containing(c.getBlockPos()), false)) {
             if (p.distanceToSqr(center) <= (double) VIEW_DISTANCE * VIEW_DISTANCE) out.add(p);
         }
         return out;
@@ -192,7 +192,7 @@ public final class MonitorSync {
             for (int cz = cz0; cz <= cz1; cz++) {
                 LevelChunk ch = level.getChunkSource().getChunkNow(cx, cz);
                 if (ch == null) continue;
-                scanned.add(ChunkPos.asLong(cx, cz));
+                scanned.add(ChunkPos.pack(cx, cz));
                 for (BlockEntity be : ch.getBlockEntities().values()) {
                     if (be instanceof TankBlockEntity t && t.isController() && !t.isRemoved()) found.put(t.getTank().id(), t);
                 }
@@ -208,7 +208,7 @@ public final class MonitorSync {
             } else {
                 k.live = false;
                 // its place was looked at and it is not there: broken up or gone
-                if (scanned.contains(ChunkPos.asLong(k.pos.getX() >> 4, k.pos.getZ() >> 4))) it.remove();
+                if (scanned.contains(ChunkPos.pack(k.pos.getX() >> 4, k.pos.getZ() >> 4))) it.remove();
             }
         }
         List<TankBlockEntity> fresh = new ArrayList<>();

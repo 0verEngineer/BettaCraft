@@ -18,8 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
  */
 @Mixin(GameTestServer.class)
 public abstract class GameTestServerMixin {
-    // NeoForge: the lambda by its Mojang name; Fabric: by its intermediary name (also in the dev runtime) - M52
-    @WrapOperation(method = {"lambda$create$1", "method_40377"}, require = 0,
+    // M52c (26.1): no intermediary any more, both loaders see the lambda by its Mojang name
+    @WrapOperation(method = "lambda$create$1",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/WorldDimensions;bake(Lnet/minecraft/core/Registry;)Lnet/minecraft/world/level/levelgen/WorldDimensions$Complete;"))
     private static WorldDimensions.Complete bettacraft$withDatapackDimensions(WorldDimensions dims, Registry<LevelStem> empty,
                                                                              Operation<WorldDimensions.Complete> original,

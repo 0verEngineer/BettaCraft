@@ -1,14 +1,15 @@
 package org.overengineer.bettacraft.tank;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -23,12 +24,13 @@ import org.overengineer.bettacraft.registry.ModTags;
  * shown by the recipe book and JEI like a normal shaped recipe.
  */
 public class TankRecipe extends ShapedRecipe {
-    public TankRecipe(String group, CraftingBookCategory category, ShapedRecipePattern pattern, ItemStack result, boolean showNotification) {
-        super(group, category, pattern, result, showNotification);
+    public TankRecipe(Recipe.CommonInfo common, CraftingRecipe.CraftingBookInfo book, ShapedRecipePattern pattern, ItemStackTemplate result) {
+        super(common, book, pattern, result);
     }
 
     public static TankRecipe of(ShapedRecipe base) {
-        return new TankRecipe(base.group(), base.category(), base.pattern, base.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, null), base.showNotification());
+        return new TankRecipe(new Recipe.CommonInfo(base.showNotification()), new CraftingRecipe.CraftingBookInfo(base.category(), base.group()), base.pattern,
+                org.overengineer.bettacraft.crafting.RecipeCompat.resultTemplate(base));
     }
 
     @Override
@@ -37,8 +39,8 @@ public class TankRecipe extends ShapedRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = super.assemble(input, registries);
+    public ItemStack assemble(CraftingInput input) {
+        ItemStack result = super.assemble(input);
         Item glass = findGlass(input);
         if (glass instanceof BlockItem bi) {
             TankBlockItem.setGlass(result, BuiltInRegistries.BLOCK.getKey(bi.getBlock()));
@@ -59,23 +61,17 @@ public class TankRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<TankRecipe> getSerializer() {
-        return ModRecipes.TANK.get();
+    @SuppressWarnings("unchecked")
+    public RecipeSerializer<ShapedRecipe> getSerializer() {
+        // M52c (26.1): ShapedRecipe narrows the serializer type; ours serializes a subclass
+        return (RecipeSerializer<ShapedRecipe>) (RecipeSerializer<?>) ModRecipes.TANK.get();
     }
 
-    public static class Serializer implements RecipeSerializer<TankRecipe> {
-        private static final MapCodec<TankRecipe> CODEC = ShapedRecipe.Serializer.CODEC.xmap(TankRecipe::of, r -> r);
-        private static final StreamCodec<RegistryFriendlyByteBuf, TankRecipe> STREAM_CODEC =
-                ShapedRecipe.Serializer.STREAM_CODEC.map(TankRecipe::of, r -> r);
+    private static final MapCodec<TankRecipe> CODEC = ShapedRecipe.MAP_CODEC.xmap(TankRecipe::of, r -> r);
+    private static final StreamCodec<RegistryFriendlyByteBuf, TankRecipe> STREAM_CODEC = ShapedRecipe.STREAM_CODEC.map(TankRecipe::of, r -> r);
 
-        @Override
-        public MapCodec<TankRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, TankRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    /** M52c (26.1): a recipe serializer is a record of the two codecs. */
+    public static RecipeSerializer<TankRecipe> serializer() {
+        return new RecipeSerializer<>(CODEC, STREAM_CODEC);
     }
 }

@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "aquarist/cultures"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:infusoria_culture"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

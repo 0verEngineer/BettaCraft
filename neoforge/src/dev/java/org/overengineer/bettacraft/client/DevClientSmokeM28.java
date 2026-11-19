@@ -213,7 +213,7 @@ final class DevClientSmokeM28 {
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos base = p.blockPosition().offset(-12, 2, 380);
         int x0 = 0;
         for (int t = 0; t < 4; t++) {

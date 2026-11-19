@@ -233,7 +233,7 @@ public final class WildSpawnPass {
     public static List<Weighted<MobSpawnSettings.SpawnerData>> ours(Holder<Biome> biome) {
         List<Weighted<MobSpawnSettings.SpawnerData>> out = new ArrayList<>();
         for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) {
-            if (d.value().type().is(ModTags.ALL_ANIMALS)) out.add(d);
+            if (d.value().type().builtInRegistryHolder().is(ModTags.ALL_ANIMALS)) out.add(d);
         }
         return out;
     }

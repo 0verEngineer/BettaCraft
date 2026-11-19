@@ -362,9 +362,9 @@ public class CultureTubBlockEntity extends BlockEntity {
     public boolean use(ServerLevel level, Player player, InteractionHand hand, ItemStack stack) {
         if (stack.is(Items.WATER_BUCKET)) {
             if (artemia()) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.culture.needs_salt_water").withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.culture.needs_salt_water").withStyle(ChatFormatting.GOLD));
             } else if (water + 1000 > WATER_CAPACITY) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.culture.full_water"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.culture.full_water"));
             } else {
                 setWater(water + 1000);
                 if (!player.getAbilities().instabuild) player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
@@ -375,7 +375,7 @@ public class CultureTubBlockEntity extends BlockEntity {
         if (stack.is(ModItems.SALT_WATER_BOTTLE.get())) {
             if (!artemia()) return false;
             if (water + SALT_WATER_BOTTLE_MB > WATER_CAPACITY) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.culture.full_water"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.culture.full_water"));
                 return true;
             }
             water = Math.min(WATER_CAPACITY, water + SALT_WATER_BOTTLE_MB);
@@ -430,7 +430,7 @@ public class CultureTubBlockEntity extends BlockEntity {
     }
 
     public void showStatus(Level level, Player player) {
-        player.displayClientMessage(status(level), true);
+        player.sendOverlayMessage(status(level));
     }
 
     public MutableComponent status(Level level) {

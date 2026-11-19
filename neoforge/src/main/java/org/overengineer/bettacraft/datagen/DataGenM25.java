@@ -33,7 +33,7 @@ final class DataGenM25 {
                 .requires(Items.CALCITE).requires(Items.BONE_MEAL).requires(Items.BONE_MEAL)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("remineralising_salt")));
         // dried almond (catappa) leaves: jungle leaves dried in a smoker, on a campfire or in a furnace
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, net.minecraft.world.item.crafting.CookingBookCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 200)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("almond_leaf")));
         SimpleCookingRecipeBuilder.smoking(Ingredient.of(Items.JUNGLE_LEAVES), RecipeCategory.MISC, ModItems.ALMOND_LEAF.get(), 0.05F, 100)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("almond_leaf_smoking")));

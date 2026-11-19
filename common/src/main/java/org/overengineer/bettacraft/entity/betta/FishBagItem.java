@@ -101,7 +101,7 @@ public class FishBagItem extends Item {
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(target.getType())) return InteractionResult.PASS; // M31 part d: a drowned goes into a mob jar
         if (!TankInhabitants.bagTakes(target)) { // M35: a sea turtle hatchling too
             if (!player.level().isClientSide() && TankInhabitants.isWaterAnimal(target)) {
-                player.displayClientMessage(TankInhabitants.rejection(TankInhabitants.accepts(target.getType(), target), target.getType()), true);
+                player.sendOverlayMessage(TankInhabitants.rejection(TankInhabitants.accepts(target.getType(), target), target.getType()));
             }
             return InteractionResult.PASS;
         }
@@ -128,7 +128,7 @@ public class FishBagItem extends Item {
             return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
         }
         if (stack.has(ModDataComponents.CRITTER_LARVAE.get())) { // M49: larvae only go into a tank
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.amano.larvae_need_tank"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.amano.larvae_need_tank"));
             return InteractionResult.FAIL;
         }
         if (stack.has(ModDataComponents.CRITTERS.get()) || stack.has(ModDataComponents.TANKMATE_CLUTCH.get())) return releaseCritters(level, player, hand, stack);
@@ -138,7 +138,7 @@ public class FishBagItem extends Item {
         if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         BlockPos pos = hit.getBlockPos();
         if (!level.getFluidState(pos).is(FluidTags.WATER)) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"));
             return InteractionResult.FAIL;
         }
         // M22.1: animals only go into the world once the player confirmed it
@@ -163,7 +163,7 @@ public class FishBagItem extends Item {
             }
             if (e == null) {
                 // M17: the animal could not be created (removed mod, another mod cancelled the spawn): keep the bag filled
-                player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;
             }
             if (e instanceof Bucketable b) {
@@ -182,7 +182,7 @@ public class FishBagItem extends Item {
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (hit.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         if (!level.getFluidState(hit.getBlockPos()).is(FluidTags.WATER)) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"));
             return InteractionResult.FAIL;
         }
         if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) {
@@ -195,7 +195,7 @@ public class FishBagItem extends Item {
                 // M22.3: they live in the world now (crawl off as wild animals)
                 org.overengineer.bettacraft.entity.critter.WildCritterEntity.release(server, critters, hit.getBlockPos(), player);
             } else {
-                player.displayClientMessage(Component.translatable("message.bettacraft.critters.released"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.critters.released"));
             }
         }
         return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.FISH_BAG.get())));

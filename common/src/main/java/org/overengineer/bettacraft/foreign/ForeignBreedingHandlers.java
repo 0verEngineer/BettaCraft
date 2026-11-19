@@ -55,7 +55,7 @@ public final class ForeignBreedingHandlers {
         Entity e = event.getTarget();
         if (!TankInhabitants.hasTankRef(e) || !foreign(e) || !isBreedingFood(e, event.getItemStack())) return;
         Player p = event.getEntity();
-        p.displayClientMessage(Component.translatable("message.bettacraft.foreign.no_love", e.getDisplayName()), true);
+        p.sendOverlayMessage(Component.translatable("message.bettacraft.foreign.no_love", e.getDisplayName()));
         event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
         event.setCanceled(true);
     }

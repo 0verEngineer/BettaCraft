@@ -39,7 +39,7 @@ public final class EquipmentPlacement {
         Player player = ctx.getPlayer();
         if (!InteriorManager.isInterior(level)) {
             if (!level.isClientSide() && player != null) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.equipment.interior_only").withStyle(ChatFormatting.GOLD));
             }
             return InteractionResult.FAIL;
         }
@@ -69,7 +69,7 @@ public final class EquipmentPlacement {
         };
         // M23: the sponge filter and the corner filter are switched off with features.equipment.moreInternalFilters
         if ((kind == SegmentBlock.Kind.SPONGE_FILTER || kind == SegmentBlock.Kind.CORNER_FILTER) && !Features.enabled(Feature.MORE_INTERNAL_FILTERS)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD));
             return InteractionResult.FAIL;
         }
         // the filter outlet points at the player (into the room of the tank)
@@ -80,8 +80,8 @@ public final class EquipmentPlacement {
                 for (int x = 0; x < foot; x++) {
                     BlockPos p = base.offset(x, y, z);
                     if (!r.containsInterior(p) || !(server.getBlockState(p).canBeReplaced(place) || server.getBlockState(p).isAir())) {
-                        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.equipment.no_room", foot, foot, height)
-                                .withStyle(ChatFormatting.RED), true);
+                        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.equipment.no_room", foot, foot, height)
+                                .withStyle(ChatFormatting.RED));
                         return InteractionResult.FAIL;
                     }
                     cells.add(p);

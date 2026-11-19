@@ -77,7 +77,7 @@ public final class CystGameTests {
         CraftingInput input = CraftingInput.of(2, 1, List.of(new ItemStack(ModItems.SALT_WATER_BOTTLE.get()), jars(5)));
         var recipe = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, level);
         h.assertTrue(recipe.isPresent(), "artemia culture recipe");
-        ItemStack out = recipe.get().value().assemble(input, level.registryAccess());
+        ItemStack out = recipe.get().value().assemble(input);
         h.assertTrue(out.is(ModItems.ARTEMIA_CULTURE.get()) && out.getCount() == 1, "one culture: " + out);
         ItemStack back = recipe.get().value().getRemainingItems(input).get(1);
         h.assertTrue(back.isEmpty(), "the used jar is gone (nothing comes back): " + back);

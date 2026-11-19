@@ -226,7 +226,7 @@ final class DataGenM24 {
         out.accept(RecipeCompat.key(BettaCraft.id("stainless_steel_ingot_from_crucible")), new CrucibleRecipe(List.of(
                 new SizedIngredient(RecipeCompat.tag(Tags.Items.INGOTS_IRON), 4),
                 new SizedIngredient(RecipeCompat.tag(net.minecraft.tags.ItemTags.COALS), 1),
-                new SizedIngredient(RecipeCompat.tag(Tags.Items.GEMS_QUARTZ), 1)), new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
+                new SizedIngredient(RecipeCompat.tag(Tags.Items.GEMS_QUARTZ), 1)), new net.minecraft.world.item.ItemStackTemplate(ModItems.STAINLESS_STEEL_INGOT.get(), 3)), null);
         var steel = ModTags.STAINLESS_STEEL_INGOTS;
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.CRUCIBLE.get())
                 .pattern("N N").pattern("NCN").pattern("NNN")
@@ -281,7 +281,7 @@ final class DataGenM24 {
                 .pattern(" C ").pattern("CBC").pattern(" C ")
                 .define('C', Items.CLAY_BALL).define('B', Items.BONE_MEAL)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("ceramic_rings")));
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.CHARCOAL), RecipeCategory.MISC, ModItems.ACTIVATED_CARBON.get(), 0.1F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.CHARCOAL), RecipeCategory.MISC, net.minecraft.world.item.crafting.CookingBookCategory.MISC, ModItems.ACTIVATED_CARBON.get(), 0.1F, 200)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("activated_carbon")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_PEAT.get(), 1)
                 .requires(Items.MUD).requires(Items.MOSS_CARPET)

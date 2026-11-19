@@ -173,7 +173,7 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
 
     public void step(ServerLevel level) {
         if (doses > 0) {
-            long key = eventKey(level.getDayTime(), doses);
+            long key = eventKey(level.getOverworldClockTime(), doses);
             if (lastEvent == Long.MIN_VALUE || key < lastEvent) {
                 lastEvent = key; // fresh pump or time set back: wait for the next dose
                 setChanged();

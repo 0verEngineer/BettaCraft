@@ -187,7 +187,7 @@ public final class CreateCompat {
         if (last != null && now - last < 60 && now >= last) return;
         MESSAGED.put(c.getTank().id(), now);
         Component msg = Component.translatable("message.bettacraft.travel.blocked", why).withStyle(net.minecraft.ChatFormatting.GOLD);
-        for (ServerPlayer p : sl.players()) if (p.blockPosition().distSqr(pos) < 24 * 24) p.displayClientMessage(msg, true);
+        for (ServerPlayer p : sl.players()) if (p.blockPosition().distSqr(pos) < 24 * 24) p.sendOverlayMessage(msg);
     }
 
     private static Object attachedTowards(BlockState state, Level level, BlockPos pos, Direction direction) {

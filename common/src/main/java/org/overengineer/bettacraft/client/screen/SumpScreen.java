@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,14 +17,13 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
     private static final String[] TIPS = {"heater", "heater", "skimmer", "media", "media", "algae", "light"};
 
     public SumpScreen(SumpMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 178;
+        super(menu, inv, title, 176, 178);
         inventoryLabelY = SumpMenu.INV_Y - 11;
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -45,9 +44,9 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY - 1, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, titleLabelY - 1, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+        g.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         small(g, Component.translatable("gui.bettacraft.sump.heaters"), 34, 41, 50);
         small(g, Component.translatable("gui.bettacraft.sump.skimmer"), 80, 41, 34);
         small(g, Component.translatable("gui.bettacraft.sump.refugium"), 133, 22, 66);
@@ -55,21 +54,20 @@ public class SumpScreen extends AbstractContainerScreen<SumpMenu> {
         small(g, Component.translatable("gui.bettacraft.sump.media"), 34, 72, 50);
     }
 
-    private void small(GuiGraphics g, Component c, int cx, int y, int max) {
+    private void small(GuiGraphicsExtractor g, Component c, int cx, int y, int max) {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
         g.pose().pushMatrix();
         g.pose().translate(cx, y);
         g.pose().scale(s, s);
-        g.drawString(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x30404A), false);
+        g.text(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x30404A), false);
         g.pose().popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (hoveredSlot != null && !hoveredSlot.hasItem() && hoveredSlot.index < Sump.CHAMBERS && menu.getCarried().isEmpty()) {
             g.setTooltipForNextFrame(font, font.split(Component.translatable("gui.bettacraft.sump.slot." + TIPS[hoveredSlot.index]), 180), mouseX, mouseY);
         }

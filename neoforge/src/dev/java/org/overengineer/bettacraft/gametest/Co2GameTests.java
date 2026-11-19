@@ -123,7 +123,7 @@ public final class Co2GameTests {
         TankData t = c.getTank();
         Co2CylinderBlockEntity cyl = cylinder(h, c, new BlockPos(3, 2, 1), true);
         cyl.setPower(4);
-        int now = TankLighting.minuteOfDay(level.getDayTime());
+        int now = TankLighting.minuteOfDay(level.getOverworldClockTime());
         t.setLightTimer(true);
         // lights on two to four hours from now: off right now
         t.setLightOn((now + 120) % 1440);

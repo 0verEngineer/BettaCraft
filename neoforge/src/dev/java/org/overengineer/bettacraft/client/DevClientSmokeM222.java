@@ -132,8 +132,8 @@ final class DevClientSmokeM222 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(6000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(6000, 0, false, false);
         base = p.blockPosition().offset(-COLUMNS * SPACING / 2, 0, 6);
         ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         RandomSource r = RandomSource.create(2222);
@@ -291,7 +291,7 @@ final class DevClientSmokeM222 {
         then(1, () -> {
             gui = mc.options.guiScale().get();
             mc.options.guiScale().set(2);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         // the start page with the whole tree folded open
         open("index.md");
@@ -325,7 +325,7 @@ final class DevClientSmokeM222 {
         then(1, () -> {
             mc.setScreen(null);
             mc.options.guiScale().set(gui);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 

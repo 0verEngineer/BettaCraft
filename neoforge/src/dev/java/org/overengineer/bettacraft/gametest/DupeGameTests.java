@@ -196,7 +196,7 @@ public final class DupeGameTests {
             ItemStack s = ie.getItem();
             if (s.is(Items.DIAMOND)) diamonds += s.getCount();
             var cont = s.get(net.minecraft.core.component.DataComponents.CONTAINER);
-            if (cont != null) for (ItemStack x : cont.nonEmptyItems()) if (x.is(Items.DIAMOND)) diamonds += x.getCount();
+            if (cont != null) for (var x : cont.nonEmptyItems()) if (x.is(Items.DIAMOND)) diamonds += x.count();
         }
         if (diamonds != 5) throw new GameTestFailure("the chest's 5 diamonds came out as " + diamonds);
         h.succeed();

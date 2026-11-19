@@ -60,7 +60,7 @@ public final class FrogBroodRenderer {
     }
 
     private static int light(TankBlockEntity be, double x, double y, double z) {
-        return be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(x, y, z));
+        return be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(x, y, z));
     }
 
     /** A raft of eggs: about 9 cm across (a little bigger than in nature, so the eggs are visible). */

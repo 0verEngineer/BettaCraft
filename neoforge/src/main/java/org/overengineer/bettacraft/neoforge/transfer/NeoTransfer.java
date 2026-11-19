@@ -26,7 +26,7 @@ public final class NeoTransfer {
 
     public static FluidStack fromNeo(net.neoforged.neoforge.fluids.FluidStack s) {
         if (s.isEmpty()) return FluidStack.EMPTY;
-        return new FluidStack(s.getFluidHolder(), s.getAmount(), s.getComponentsPatch());
+        return new FluidStack(s.typeHolder(), s.getAmount(), s.getComponentsPatch());
     }
 
     static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction toNeo(IFluidHandler.FluidAction a) {

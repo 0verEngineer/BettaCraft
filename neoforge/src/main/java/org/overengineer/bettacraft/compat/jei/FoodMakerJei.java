@@ -62,7 +62,7 @@ final class FoodMakerJei implements IRecipeCategory<FoodMakerRecipe> {
     }
 
     @Override
-    public void draw(FoodMakerRecipe recipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView slots, net.minecraft.client.gui.GuiGraphics g, double mouseX, double mouseY) {
+    public void draw(FoodMakerRecipe recipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView slots, net.minecraft.client.gui.GuiGraphicsExtractor g, double mouseX, double mouseY) {
         arrow.draw(g, 66, 12);
     }
 }

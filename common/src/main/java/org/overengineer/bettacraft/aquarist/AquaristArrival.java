@@ -63,7 +63,7 @@ public final class AquaristArrival {
         }
         if (org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(p.level())) return "place";
         if (!ignoreTime) {
-            long t = Math.floorMod(p.level().getDayTime(), 24000L);
+            long t = Math.floorMod(p.level().getOverworldClockTime(), 24000L);
             if (t > 10000L) return "time";
         }
         return null;

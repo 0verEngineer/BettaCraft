@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -19,9 +19,7 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
     private static final int BAR_X = 9, BAR_Y = 24, BAR_H = 38, WATER_X = 88, FERT_X = 108, TANK_Y = 18, TANK_H = 50, TANK_W = 12;
 
     public FertilizerMakerScreen(FertilizerMakerMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 166;
+        super(menu, inv, title, 176, 166);
         inventoryLabelY = imageHeight - 94;
     }
 
@@ -32,7 +30,8 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -57,7 +56,7 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
         tank(g, x + FERT_X, y + TANK_Y, menu.fertilizer(), 0xFF7A9A2A);
     }
 
-    private static void tank(GuiGraphics g, int x, int y, int mb, int colour) {
+    private static void tank(GuiGraphicsExtractor g, int x, int y, int mb, int colour) {
         g.fill(x - 1, y - 1, x + TANK_W + 1, y + TANK_H + 1, DARK);
         g.fill(x, y, x + TANK_W, y + TANK_H, 0xFF2A2A2A);
         int h = (int) Math.round((double) TANK_H * Math.min(mb, FertilizerMakerBlockEntity.TANK_MB) / FertilizerMakerBlockEntity.TANK_MB);
@@ -65,7 +64,7 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
         for (int i = 1; i < 4; i++) g.fill(x, y + i * TANK_H / 4, x + 3, y + i * TANK_H / 4 + 1, 0xFF8B8B8B);
     }
 
-    private static void slot(GuiGraphics g, int x, int y, int size) {
+    private static void slot(GuiGraphicsExtractor g, int x, int y, int size) {
         g.fill(x, y, x + size, y + size, SLOT);
         g.fill(x, y, x + size - 1, y + 1, 0xFF373737);
         g.fill(x, y, x + 1, y + size - 1, 0xFF373737);
@@ -74,22 +73,21 @@ public class FertilizerMakerScreen extends AbstractContainerScreen<FertilizerMak
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, 5, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, 5, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         Component st = FertilizerMakerBlockEntity.statusText(menu.status());
         float s = Math.min(0.75F, (imageWidth - 16) / (float) Math.max(1, font.width(st)));
         g.pose().pushMatrix();
         g.pose().translate(8, 72);
         g.pose().scale(s, s);
         int col = menu.status() == FertilizerMakerBlockEntity.WORKING ? 0x206020 : menu.status() == FertilizerMakerBlockEntity.IDLE ? TEXT : 0x9A5A10;
-        g.drawString(font, st, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(col), false);
+        g.text(font, st, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(col), false);
         g.pose().popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         int bx = leftPos + BAR_X, by = topPos + BAR_Y;
         if (mouseX >= bx - 1 && mouseX < bx + 7 && mouseY >= by - 1 && mouseY < by + BAR_H + 1) {
             int pct = (int) Math.round(100.0 * menu.drive() / menu.driveMax());

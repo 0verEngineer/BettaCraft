@@ -70,7 +70,6 @@ public final class BettaCraft {
                 org.overengineer.bettacraft.plants.foreign.ForeignPlantsHandlers.class,
                 org.overengineer.bettacraft.progression.GuideBookHandlers.class,
                 org.overengineer.bettacraft.reef.ReefEventsHandlers.class,
-                org.overengineer.bettacraft.sources.TraderOffersHandlers.class,
                 org.overengineer.bettacraft.tank.ForeignAnimalsHandlers.class,
                 org.overengineer.bettacraft.tank.TankDamageGuardHandlers.class,
                 org.overengineer.bettacraft.tank.TankEventsHandlers.class,
@@ -79,7 +78,6 @@ public final class BettaCraft {
                 org.overengineer.bettacraft.tank.interior.InteriorEventsHandlers.class,
                 org.overengineer.bettacraft.tank.plants.FloatingPlantEventsHandlers.class,
                 org.overengineer.bettacraft.villager.AquaristPricesHandlers.class,
-                org.overengineer.bettacraft.villager.AquaristTradesHandlers.class,
                 org.overengineer.bettacraft.villager.AquaristsHandlers.class,
                 org.overengineer.bettacraft.world.SwampWaterEventsHandlers.class,
                 org.overengineer.bettacraft.world.WildSpawnPassHandlers.class);
@@ -131,10 +129,11 @@ public final class BettaCraft {
     }
 
     private static void containerSetup(net.minecraft.world.item.Item sea) {
-        for (var map : new net.minecraft.core.cauldron.CauldronInteraction.InteractionMap[] {net.minecraft.core.cauldron.CauldronInteraction.EMPTY,
-                net.minecraft.core.cauldron.CauldronInteraction.WATER, net.minecraft.core.cauldron.CauldronInteraction.LAVA,
-                net.minecraft.core.cauldron.CauldronInteraction.POWDER_SNOW}) {
-            map.map().put(sea, (state, level, pos, player, hand, stack) -> net.minecraft.core.cauldron.CauldronInteraction.emptyBucket(level, pos, player, hand, stack,
+        // M52c (26.1): the cauldron interaction maps are dispatchers in CauldronInteractions
+        for (var map : new net.minecraft.core.cauldron.CauldronInteraction.Dispatcher[] {net.minecraft.core.cauldron.CauldronInteractions.EMPTY,
+                net.minecraft.core.cauldron.CauldronInteractions.WATER, net.minecraft.core.cauldron.CauldronInteractions.LAVA,
+                net.minecraft.core.cauldron.CauldronInteractions.POWDER_SNOW}) {
+            map.put(sea, (state, level, pos, player, hand, stack) -> net.minecraft.core.cauldron.CauldronInteractions.emptyBucket(level, pos, player, hand, stack,
                     net.minecraft.world.level.block.Blocks.WATER_CAULDRON.defaultBlockState().setValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL, 3),
                     net.minecraft.sounds.SoundEvents.BUCKET_EMPTY)); // M52b: vanilla's FILL_WATER is private since 1.21.2
         }

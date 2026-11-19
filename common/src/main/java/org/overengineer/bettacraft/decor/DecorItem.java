@@ -76,7 +76,7 @@ public class DecorItem extends Item {
         Rotation rot = DecorTemplate.rotationFor(ctx.getHorizontalDirection());
         Component error = place(server, type, base, rot, player);
         if (error != null) {
-            if (player != null) player.displayClientMessage(error.copy().withStyle(ChatFormatting.RED), true);
+            if (player != null) player.sendOverlayMessage(error.copy().withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
         if (player == null || !player.getAbilities().instabuild) ctx.getItemInHand().shrink(1);

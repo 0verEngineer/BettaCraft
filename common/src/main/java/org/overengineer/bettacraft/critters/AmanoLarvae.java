@@ -172,23 +172,23 @@ public final class AmanoLarvae {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.not_formed"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.not_formed"));
             return InteractionResult.CONSUME;
         }
         if (!TankInhabitants.canModify(player, c.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
             return InteractionResult.CONSUME;
         }
         TankData t = c.getTank();
         if (t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.breeding_box.no_water").withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.breeding_box.no_water").withStyle(ChatFormatting.GOLD));
             return InteractionResult.CONSUME;
         }
         CritterObject o = CritterObject.load(stack.get(ModDataComponents.CRITTER_LARVAE.get()));
         if (o == null || o.kind != CritterObject.Kind.LARVAE) return InteractionResult.CONSUME;
         Component msg = insert((ServerLevel) level, c, o, player);
         if (!player.getAbilities().instabuild) player.setItemInHand(hand, new ItemStack(ModItems.FISH_BAG.get()));
-        player.displayClientMessage(msg, true);
+        player.sendOverlayMessage(msg);
         return InteractionResult.CONSUME;
     }
 

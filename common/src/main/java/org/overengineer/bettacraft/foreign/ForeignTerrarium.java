@@ -117,7 +117,7 @@ public final class ForeignTerrarium {
         if (allow.isEmpty()) return false;
         var id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (BettaCraft.MOD_ID.equals(id.getNamespace()) || TerrariumAnimals.isRegistered(type) || ForeignProfiles.of(type) != null) return false;
-        if (type == EntityType.PLAYER || type.is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) return false;
+        if (type == EntityType.PLAYER || type.builtInRegistryHolder().is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) return false;
         return InhabitantRules.matches(allow, id.toString());
     }
 

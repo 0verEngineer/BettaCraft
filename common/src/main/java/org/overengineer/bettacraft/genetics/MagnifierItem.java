@@ -57,8 +57,8 @@ public class MagnifierItem extends Item {
         TankBlockEntity c = TankMultiblock.getController(level, pos);
         if (c == null) return InteractionResult.CONSUME;
         int n = analyseAll((ServerLevel) level, c, player, stack, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-        player.displayClientMessage(n > 0 ? Component.translatable("message.bettacraft.magnifier.analysed", n).withStyle(ChatFormatting.GREEN)
-                : Component.translatable(GeneVisibility.free() ? "message.bettacraft.magnifier.free" : "message.bettacraft.magnifier.none"), true);
+        player.sendOverlayMessage(n > 0 ? Component.translatable("message.bettacraft.magnifier.analysed", n).withStyle(ChatFormatting.GREEN)
+                : Component.translatable(GeneVisibility.free() ? "message.bettacraft.magnifier.free" : "message.bettacraft.magnifier.none"));
         return InteractionResult.CONSUME;
     }
 

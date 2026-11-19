@@ -2,7 +2,7 @@ package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -61,14 +61,14 @@ public class RegulatorScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         Regulator.Device d = device();
         if (d == null) return;
-        g.drawCenteredString(font, d.name(), left + W / 2, top + 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        g.centeredText(font, d.name(), left + W / 2, top + 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         int p = d.power();
         Component label = d.valueLabel(); // M25: the CO2 cylinder shows bubbles per second
-        g.drawCenteredString(font, label != null ? label : Component.translatable("gui.bettacraft.regulator.power", p * 10), left + W / 2, top + 22, 0xFFE0E0E0);
+        g.centeredText(font, label != null ? label : Component.translatable("gui.bettacraft.regulator.power", p * 10), left + W / 2, top + 22, 0xFFE0E0E0);
         int bx = left + 36, bw = W - 72, by = top + 52;
         g.fill(bx, by, bx + bw, by + 8, 0xFF202020);
         g.fill(bx, by, bx + Math.round(bw * p / 10F), by + 8, 0xFF50A0E0);
@@ -82,16 +82,16 @@ public class RegulatorScreen extends Screen {
             note = d.hasSponge() ? Component.translatable("gui.bettacraft.regulator.sponge_on").withStyle(ChatFormatting.GREEN)
                     : Component.translatable("gui.bettacraft.regulator.sponge_off").withStyle(ChatFormatting.GOLD);
         }
-        if (note != null) g.drawCenteredString(font, note, left + W / 2, top + 34, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+        if (note != null) g.centeredText(font, note, left + W / 2, top + 34, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         Component hint = d.hint() != null ? d.hint() : Component.translatable("gui.bettacraft.regulator.hint");
-        g.drawCenteredString(font, hint.copy().withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0));
+        g.centeredText(font, hint.copy().withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0));
     }
 
     @Override
-    public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(g, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.fill(left, top, left + W, top + H, 0xE0101418);
-        g.renderOutline(left, top, W, H, 0xFF6080A0);
+        g.outline(left, top, W, H, 0xFF6080A0);
     }
 
     @Override

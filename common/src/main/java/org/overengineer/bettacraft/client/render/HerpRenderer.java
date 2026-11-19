@@ -78,7 +78,7 @@ public class HerpRenderer extends MobRenderer<TerrariumAnimalEntity, MobState<Te
     @Override
     @SuppressWarnings("unchecked")
     public void submit(MobState<TerrariumAnimalEntity> state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
-                       net.minecraft.client.renderer.state.CameraRenderState camera) {
+                       net.minecraft.client.renderer.state.level.CameraRenderState camera) {
         model = state.model instanceof EntityModel<?> m ? (EntityModel<MobState<TerrariumAnimalEntity>>) m : main;
         super.submit(state, pose, collector, camera);
     }

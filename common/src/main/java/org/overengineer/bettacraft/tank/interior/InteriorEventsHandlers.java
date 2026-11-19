@@ -53,7 +53,7 @@ public final class InteriorEventsHandlers {
         if (player.tickCount % 40 == 0 && InteriorManager.regionAt(player.level().getServer(), player.blockPosition()) == null
                 && !Perms.has(player, 2)) {
             InteriorManager.leave(player);
-            player.displayClientMessage(Component.translatable("message.bettacraft.interior.invalid"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.interior.invalid"));
             return;
         }
         leaveTick(player);
@@ -104,7 +104,7 @@ public final class InteriorEventsHandlers {
                 && event.getPlacedBlock().is(org.overengineer.bettacraft.registry.ModTags.NOT_IN_TANK_INTERIOR)) {
             event.setCanceled(true);
             if (event.getEntity() instanceof Player p && !level.isClientSide()) {
-                p.displayClientMessage(Component.translatable("message.bettacraft.interior.no_tank").withStyle(ChatFormatting.GOLD), true);
+                p.sendOverlayMessage(Component.translatable("message.bettacraft.interior.no_tank").withStyle(ChatFormatting.GOLD));
             }
             return;
         }
@@ -129,7 +129,7 @@ public final class InteriorEventsHandlers {
         if (state.getBlock() instanceof BedBlock || state.getBlock() instanceof RespawnAnchorBlock) {
             event.setUseBlock(TriState.FALSE);
             if (!level.isClientSide()) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.interior.no_sleep").withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.interior.no_sleep").withStyle(ChatFormatting.GOLD));
             }
             return;
         }

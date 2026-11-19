@@ -71,7 +71,7 @@ public final class StoneCabinetGameTests {
 
     private static ItemStack craft(ServerLevel level, CraftingInput in) {
         var r = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, in, level);
-        return r.map(h -> h.value().assemble(in, level.registryAccess())).orElse(ItemStack.EMPTY);
+        return r.map(h -> h.value().assemble(in)).orElse(ItemStack.EMPTY);
     }
 
     private static Identifier blockId(Item item) {
@@ -95,7 +95,7 @@ public final class StoneCabinetGameTests {
             CraftingInput in = grid(slab, stone);
             RecipeHolder<CraftingRecipe> r = rm.getRecipeFor(RecipeType.CRAFTING, in, level).orElse(null);
             h.assertTrue(r != null && r.value() instanceof StoneCabinetRecipe, "stone cabinet recipe for " + blockId(stone));
-            ItemStack out = r.value().assemble(in, level.registryAccess());
+            ItemStack out = r.value().assemble(in);
             h.assertTrue(out.is(ModItems.CABINET.get()) && CabinetBlockItem.getWood(out).equals(blockId(stone)), "cabinet of " + blockId(stone) + ": " + out);
         }
         // the stone of the cabinet carries the name of the stone

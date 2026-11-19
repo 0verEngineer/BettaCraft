@@ -158,7 +158,7 @@ final class DevClientSmokeM32b {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         bearingPos = p.blockPosition().offset(0, 6, 160);
         var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));
         if (bearingBlock == Blocks.AIR) {

@@ -282,11 +282,9 @@ final class DevClientSmokeTest {
             if (!created && screen instanceof TitleScreen) {
                 created = true;
                 Minecraft mc = Minecraft.getInstance();
-                GameRules rules = new GameRules(WorldDataConfiguration.DEFAULT.enabledFeatures());
-                rules.set(GameRules.ADVANCE_TIME, false, null);
-                rules.set(GameRules.SPAWN_MOBS, false, null);
-                LevelSettings settings = new LevelSettings("bettacraft_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
-                        Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
+                // M52c (26.1): the game rules are saved data of the world; set in tick() once the server is up
+                LevelSettings settings = new LevelSettings("bettacraft_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE,
+                        new LevelSettings.DifficultySettings(Difficulty.PEACEFUL, false, false), true, WorldDataConfiguration.DEFAULT);
                 // M46: -Psmoketestm46 needs real biomes (rivers, swamps, jungles): a normal world of the same seed
                 var preset = Boolean.getBoolean("bettacraft.smoketest.normalworld") ? WorldPresets.NORMAL : WorldPresets.FLAT;
                 mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, Boolean.getBoolean("bettacraft.smoketest.structures"), false),
@@ -301,6 +299,13 @@ final class DevClientSmokeTest {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.getSingleplayerServer() == null) return;
         ticks++;
+        if (ticks == 1) {
+            var server = mc.getSingleplayerServer();
+            server.execute(() -> {
+                server.getGameRules().set(GameRules.ADVANCE_TIME, false, server);
+                server.getGameRules().set(GameRules.SPAWN_MOBS, false, server);
+            });
+        }
         mc.options.pauseOnLostFocus = false;
         if (ticks == 2) mc.getWindow().setWindowed(1280, 960); // larger screenshots (handbook images, menus at GUI scale 4)
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
@@ -1321,7 +1326,7 @@ final class DevClientSmokeTest {
         Minecraft mc = Minecraft.getInstance();
         ServerPlayer p = player(mc);
         ServerLevel level = p.level();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         p.getAbilities().flying = true; // keep camera positions (creative, no falling)
         p.onUpdateAbilities();
         BlockPos feet = p.blockPosition();

@@ -11,10 +11,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.cuboid.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
@@ -100,7 +100,7 @@ public class TankBakedModel implements DynamicModel {
     }
 
     private static BlockStateModel glassModel(BlockState glass) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(glass);
+        return Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(glass);
     }
 
     private BlockState glassOf(ModelValues data) {
@@ -199,7 +199,7 @@ public class TankBakedModel implements DynamicModel {
     }
 
     @Override
-    public ModelValues modelData(net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelValues modelData) {
+    public ModelValues modelData(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelValues modelData) {
         if (!(state.getBlock() instanceof TankBlock)) return modelData;
         long concave = TankBlock.concaveMask(level, pos, state);
         int corners = TankBlock.innerCornerMask(level, pos, state, concave);
@@ -241,7 +241,7 @@ public class TankBakedModel implements DynamicModel {
     }
 
     private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
-        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1);
+        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1).layer(ChunkSectionLayer.TRANSLUCENT);
         float nx = d.getStepX(), ny = d.getStepY(), nz = d.getStepZ();
         if (reversed) {
             nx = -nx; ny = -ny; nz = -nz;
@@ -265,7 +265,7 @@ public class TankBakedModel implements DynamicModel {
         int key = hidden | water << 4;
         BakedQuad[] r = variants.get(key);
         if (r == null) {
-            float frame = hidden == 0 ? 0 : frameOf(q.sprite());
+            float frame = hidden == 0 ? 0 : frameOf(q.materialInfo().sprite());
             float[] cuts = water == 0 ? new float[]{Float.NaN}
                     : TankWaterGeometry.glassCuts((water >> 5) & 63, water & 31, (water & (1 << 11)) != 0, side);
             List<Float> sc = new ArrayList<>(), tc = new ArrayList<>();
@@ -329,7 +329,7 @@ public class TankBakedModel implements DynamicModel {
             copy[i * stride + 4] = Float.floatToRawIntBits(u[i]);
             copy[i * stride + 5] = Float.floatToRawIntBits(v[i]);
         }
-        return ClientPlatform.get().quad(copy, q.tintIndex(), q.direction(), q.sprite(), q.shade(), ClientPlatform.get().quadAo(q));
+        return ClientPlatform.get().quad(copy, q.materialInfo().tintIndex(), q.direction(), q.materialInfo().sprite(), q.materialInfo().shade(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
     }
 
     /** Inverse of {@link BoxFaces#u} / {@link BoxFaces#v}: sets the in-plane coordinates of {@code p} on face {@code side}. */
@@ -392,7 +392,7 @@ public class TankBakedModel implements DynamicModel {
             float[] c = new float[12];
             float in = 0.0005F;
             BoxFaces.corners(d, in, in, in, 1 - in, 1 - in, 1 - in, c);
-            QuadBaker q = new QuadBaker().sprite(clearIcon).direction(d).shade(true).tint(-1);
+            QuadBaker q = new QuadBaker().sprite(clearIcon).direction(d).shade(true).tint(-1).layer(ChunkSectionLayer.TRANSLUCENT);
             for (int k = 0; k < 4; k++) {
                 float x = c[k * 3], y = c[k * 3 + 1], z = c[k * 3 + 2];
                 q.vertex(x, y, z, 0xFFFFFFFF, clearIcon.getU(BoxFaces.u(d, clamp(x), clamp(y), clamp(z))), clearIcon.getV(BoxFaces.v(d, clamp(x), clamp(y), clamp(z))),
@@ -509,8 +509,8 @@ public class TankBakedModel implements DynamicModel {
     @Override
     @SuppressWarnings("deprecation")
     public TextureAtlasSprite particle(ModelValues data) {
-        if (fixedGlass != null) return glassModel(fixedGlass).particleIcon();
+        if (fixedGlass != null) return glassModel(fixedGlass).particleMaterial().sprite();
         BlockState g = data.get(TankBlockEntity.GLASS_STATE);
-        return g != null ? glassModel(g).particleIcon() : fallbackParticle;
+        return g != null ? glassModel(g).particleMaterial().sprite() : fallbackParticle;
     }
 }

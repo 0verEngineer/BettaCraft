@@ -68,7 +68,7 @@ public final class TankLighting {
             if (!level.isLoaded(below)) continue;
             TankBlockEntity c = TankMultiblock.getController(level, below);
             if (c == null || c.getTank() == null) continue;
-            double f = factor(c.getTank(), level.getDayTime());
+            double f = factor(c.getTank(), level.getOverworldClockTime());
             return new int[]{f > 0.001 ? 1 : 0, dimStep(f)};
         }
         return new int[]{1, 0};
@@ -94,7 +94,7 @@ public final class TankLighting {
             }
         }
         if (lit == 0 || n == 0) return 0;
-        return factor(t, level.getDayTime()) * (15 + boost / n);
+        return factor(t, level.getOverworldClockTime()) * (15 + boost / n);
     }
 
     /** Pure: light with the lit share of a tier's boost (tests). */
@@ -104,7 +104,7 @@ public final class TankLighting {
 
     /** One care step: when the factor changed noticeably, the lights recompute LIT and DIM. */
     public static void step(ServerLevel level, TankBlockEntity c) {
-        double f = factor(c.getTank(), level.getDayTime());
+        double f = factor(c.getTank(), level.getOverworldClockTime());
         int step = f > 0.001 ? dimStep(f) : -1;
         int was = c.appliedLightFactor < 0 ? -2 : c.appliedLightFactor > 0.001 ? dimStep(c.appliedLightFactor) : -1;
         if (step != was) {

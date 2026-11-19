@@ -182,26 +182,26 @@ public final class Winding {
     public static Result wind(Level level, BlockPos pos, @Nullable Player player) {
         Windable w = find(level, pos);
         if (w == null) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.nothing"), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.nothing"));
             return Result.NOTHING;
         }
         BlockPos at = ((BlockEntity) w).getBlockPos();
         Component name = level.getBlockState(at).getBlock().getName();
         Device d = w.windDevice();
         if (!d.windable()) {
-            if (player != null) player.displayClientMessage(Component.translatable(d.refusal(), name), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable(d.refusal(), name));
             return Result.REFUSED;
         }
         WindSpring s = w.windSpring();
         if (!s.windStep()) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.full", name), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.full", name));
             return Result.FULL;
         }
         w.onWound();
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WOUND); // M45
         float pitch = 0.7F + 0.5F * (float) s.fill(); // the spring gets tighter
         if (ModSounds.devices()) level.playSound(null, at, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.wound", name, s.percent(), hours(s)), true);
+        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.wound", name, s.percent(), hours(s)));
         return Result.WOUND;
     }
 

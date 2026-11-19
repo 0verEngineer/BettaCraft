@@ -123,7 +123,7 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
     public static void serverTick(Level level, BlockPos pos, BlockState state, FeederBlockEntity be) {
         if (!(level instanceof ServerLevel server) || (level.getGameTime() + pos.asLong()) % 20 != 0) return;
         if (!be.active()) return;
-        long key = eventKey(level.getDayTime(), be.feedingsPerDay);
+        long key = eventKey(level.getOverworldClockTime(), be.feedingsPerDay);
         if (be.lastEvent == Long.MIN_VALUE || key < be.lastEvent) {
             be.lastEvent = key; // fresh feeder or time set backwards: wait for the next feeding time
             be.setChanged();

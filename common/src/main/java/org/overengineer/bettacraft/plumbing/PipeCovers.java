@@ -185,12 +185,12 @@ public final class PipeCovers {
      */
     public static boolean apply(Level level, BlockPos pos, BlockState cover, ItemStack from, @Nullable Player player) {
         if (!Features.enabled(Feature.PIPE_COVERS)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD));
             return false;
         }
         if (!(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be) || !FilterPipes.isPipe(level.getBlockState(pos))) return false;
         if (!fits(cover)) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.not_full", cover.getBlock().getName()).withStyle(ChatFormatting.GOLD), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_cover.not_full", cover.getBlock().getName()).withStyle(ChatFormatting.GOLD));
             return false;
         }
         if (level.isClientSide()) return true;

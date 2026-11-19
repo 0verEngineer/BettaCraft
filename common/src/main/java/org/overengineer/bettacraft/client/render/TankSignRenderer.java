@@ -101,7 +101,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         double x = fx + front.getStepX() * out + right.getStepX() * along;
         double z = fz + front.getStepZ() * out + right.getStepZ() * along;
         BlockPos lightPos = BlockPos.containing(x + front.getStepX() * 0.5, y, z + front.getStepZ() * 0.5);
-        int packed = be.getLevel() == null ? light : LevelRenderer.getLightColor(be.getLevel(), lightPos);
+        int packed = be.getLevel() == null ? light : LevelRenderer.getLightCoords(be.getLevel(), lightPos);
 
         pose.pushPose();
         pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());

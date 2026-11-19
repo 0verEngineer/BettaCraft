@@ -274,14 +274,14 @@ public final class NetCatching {
         // M20: on a reef the net sometimes brings up a coral frag or an anemone (soft corals that break off)
         if (o.frag() != null) {
             ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(o.frag(), 0);
-            player.displayClientMessage(Component.translatable("message.bettacraft.net.frag", frag.getHoverName()), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.net.frag", frag.getHoverName()));
             if (!player.getInventory().add(frag)) player.drop(frag, false);
             return true;
         }
         // M22.4: in rivers, jungle water and swamps now and then an aquarium plant from the bottom
         if (o.plant() != null) {
             ItemStack plant = org.overengineer.bettacraft.plants.InteriorPlants.item(o.plant(), 0);
-            player.displayClientMessage(Component.translatable("message.bettacraft.net.plant", plant.getHoverName()).withStyle(ChatFormatting.GREEN), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.net.plant", plant.getHoverName()).withStyle(ChatFormatting.GREEN));
             if (!player.getInventory().add(plant)) player.drop(plant, false);
             level.playSound(null, water, SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.5F, 1.2F);
             return true;
@@ -304,7 +304,7 @@ public final class NetCatching {
         }
         Catch c = o.critter();
         if (c == null) {
-            player.displayClientMessage(Component.translatable(o.nothingHere() ? "message.bettacraft.net.nothing_here" : "message.bettacraft.net.empty"), true);
+            player.sendOverlayMessage(Component.translatable(o.nothingHere() ? "message.bettacraft.net.nothing_here" : "message.bettacraft.net.empty"));
             return true;
         }
         ItemStack bag = catchItem(level, c, rnd);
@@ -417,12 +417,12 @@ public final class NetCatching {
             }
         }
         if (slot < 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.net.no_bag", name).withStyle(ChatFormatting.GOLD), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.net.no_bag", name).withStyle(ChatFormatting.GOLD));
             return;
         }
         if (!player.getAbilities().instabuild) inv.getItem(slot).shrink(1);
         if (!inv.add(filled)) player.drop(filled, false);
         player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.PLAYERS, 0.8F, 1.3F);
-        player.displayClientMessage(Component.translatable("message.bettacraft.net.caught", filled.getHoverName()).withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.net.caught", filled.getHoverName()).withStyle(ChatFormatting.GREEN));
     }
 }

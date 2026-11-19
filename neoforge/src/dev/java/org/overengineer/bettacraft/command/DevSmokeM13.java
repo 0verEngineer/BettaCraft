@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.command;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.plants.InteriorPlant;
@@ -82,8 +81,8 @@ final class DevSmokeM13 {
         if (saved.getIntOr("schema", 0) != 4) throw new IllegalStateException("M13: regions saved as schema " + saved.getIntOr("schema", 0));
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) if (e.getValue().get() == null) throw new IllegalStateException("M13: item " + e.getKey());
         boolean sword = false, lotus = false;
-        for (var tradePool : VillagerTrades.WANDERING_TRADER_TRADES) {
-            for (VillagerTrades.ItemListing l : tradePool.getLeft()) {
+        for (var tradePool : org.overengineer.bettacraft.gametest.framework.DevTrades.wandererPools(level)) {
+            for (org.overengineer.bettacraft.villager.TradeListing l : tradePool.getLeft()) {
                 {
                     // M33: the listings are wrapped by their feature switches; the plant ones need no trader
                     net.minecraft.world.item.trading.MerchantOffer offer;

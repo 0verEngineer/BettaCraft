@@ -179,8 +179,8 @@ public class LevelSensorBlockEntity extends BlockEntity {
         while (i < TARGETS.length && TARGETS[i] != target) i++;
         target = TARGETS[(i + 1) % TARGETS.length];
         setChanged();
-        player.displayClientMessage(Component.translatable("message.bettacraft.level_sensor.target", target,
-                Component.translatable("gui.bettacraft.level_sensor.status." + status.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.AQUA), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.level_sensor.target", target,
+                Component.translatable("gui.bettacraft.level_sensor.status." + status.name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.AQUA));
     }
 
     public void setTarget(int pct) {

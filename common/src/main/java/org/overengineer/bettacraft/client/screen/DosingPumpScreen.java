@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,9 +22,7 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
     private static final int BG = 0xFFC6C6C6, DARK = 0xFF555555, LIGHT = 0xFFFFFFFF, SLOT = 0xFF8B8B8B, TEXT = 0x404040;
 
     public DosingPumpScreen(DosingPumpMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 186;
+        super(menu, inv, title, 176, 186);
         inventoryLabelY = DosingPumpMenu.INV_Y - 11;
     }
 
@@ -46,7 +44,8 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -63,9 +62,9 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+        g.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         for (int ch = 0; ch < DosingPumpBlockEntity.CHANNELS; ch++) {
             int cx = 3 + ch * 43 + 21;
             ItemStack s = menu.slots.get(ch).getItem();
@@ -88,20 +87,19 @@ public class DosingPumpScreen extends AbstractContainerScreen<DosingPumpMenu> {
     }
 
     /** Centred text at 0.75 scale (shrunk further to fit the width). */
-    private void small(GuiGraphics g, Component c, int cx, int y, int color, int max) {
+    private void small(GuiGraphicsExtractor g, Component c, int cx, int y, int color, int max) {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
         g.pose().pushMatrix();
         g.pose().translate(cx, y);
         g.pose().scale(s, s);
-        g.drawString(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+        g.text(font, c, -w / 2, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
         g.pose().popMatrix();
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 }

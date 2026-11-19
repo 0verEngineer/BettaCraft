@@ -4,7 +4,7 @@ import java.util.List;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.overengineer.bettacraft.config.ClientConfig;
@@ -58,7 +58,7 @@ public final class InteriorLeaveHud {
         return Component.translatable(deg > 0 ? "hud.bettacraft.interior.leave_hint" : "hud.bettacraft.interior.leave_hint_sneak");
     }
 
-    public static void render(GuiGraphics g, DeltaTracker delta) {
+    public static void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
         if (!visible()) return;
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
@@ -82,7 +82,7 @@ public final class InteriorLeaveHud {
         g.pose().scale(SCALE, SCALE);
         int ty = 0;
         for (FormattedCharSequence l : lines) {
-            g.drawString(font, l, 0, ty, org.overengineer.bettacraft.client.ClientCompat.textColor(p > 0 ? 0xFFFFFFFF : 0xFFD8D8D8), true);
+            g.text(font, l, 0, ty, org.overengineer.bettacraft.client.ClientCompat.textColor(p > 0 ? 0xFFFFFFFF : 0xFFD8D8D8), true);
             ty += font.lineHeight;
         }
         g.pose().popMatrix();

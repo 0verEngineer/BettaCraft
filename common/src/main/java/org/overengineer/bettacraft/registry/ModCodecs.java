@@ -17,15 +17,22 @@ public final class ModCodecs {
             () -> new org.overengineer.bettacraft.plants.wild.WildPlantFeature(false));
     public static final Supplier<org.overengineer.bettacraft.plants.wild.WildPlantFeature> WILD_CAVE_PLANTS = FEATURES.register("wild_cave_plants",
             () -> new org.overengineer.bettacraft.plants.wild.WildPlantFeature(true));
-    public static final DeferredRegister<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> LOOT_CONDITIONS =
+    // M52c (26.1): the loot condition registry holds the map codecs themselves
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.storage.loot.predicates.LootItemCondition>> LOOT_CONDITIONS =
             DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_CONDITION_TYPE, BettaCraft.MOD_ID);
-    public static final Supplier<net.minecraft.world.level.storage.loot.predicates.LootItemConditionType> FEATURE_LOOT_CONDITION =
-            LOOT_CONDITIONS.register("feature", () -> new net.minecraft.world.level.storage.loot.predicates.LootItemConditionType(
-                    org.overengineer.bettacraft.config.FeatureLootCondition.CODEC));
+    public static final Supplier<com.mojang.serialization.MapCodec<org.overengineer.bettacraft.config.FeatureLootCondition>> FEATURE_LOOT_CONDITION =
+            LOOT_CONDITIONS.register("feature", () -> org.overengineer.bettacraft.config.FeatureLootCondition.CODEC);
+
+    /** M52c (26.1): item modifier {@code bettacraft:trade} of our villager trade entries ({@link org.overengineer.bettacraft.villager.TradeFunction}). */
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.storage.loot.functions.LootItemFunction>> LOOT_FUNCTIONS =
+            DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_FUNCTION_TYPE, BettaCraft.MOD_ID);
+    public static final Supplier<com.mojang.serialization.MapCodec<org.overengineer.bettacraft.villager.TradeFunction>> TRADE_FUNCTION =
+            LOOT_FUNCTIONS.register("trade", () -> org.overengineer.bettacraft.villager.TradeFunction.CODEC);
 
     public static void register() {
         FEATURES.register();
         LOOT_CONDITIONS.register();
+        LOOT_FUNCTIONS.register();
     }
 
     private ModCodecs() {}

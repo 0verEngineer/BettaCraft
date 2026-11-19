@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.client;
 
+import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.interior.ClientInteriorCache;
 import org.overengineer.bettacraft.client.interior.MiniatureRenderer;
@@ -35,7 +36,48 @@ public final class ClientSetup {
     }
 
     public interface BlockColors {
-        void register(net.minecraft.client.color.block.BlockColor color, net.minecraft.world.level.block.Block... blocks);
+        void register(BlockColor color, net.minecraft.world.level.block.Block... blocks);
+    }
+
+    /**
+     * M52c: a block colour of 1.21.x ({@code BlockColor}: state, level and position (null outside the world), tint index);
+     * 26.1 tints through one {@link net.minecraft.client.color.block.BlockTintSource} per tint index ({@link #tintSources}).
+     */
+    @FunctionalInterface
+    public interface BlockColor {
+        int getColor(BlockState state, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.block.BlockAndTintGetter level,
+                @org.jetbrains.annotations.Nullable net.minecraft.core.BlockPos pos, int tint);
+    }
+
+    /** M52c: the highest tint index of our block models (+1): the tint sources a {@link BlockColor} gets. */
+    private static final int TINT_LAYERS = 3;
+
+    /** M52c: the tint sources of a {@link BlockColor} (index 0, 1, 2 of the models), for {@code BlockColors#register}. */
+    public static java.util.List<net.minecraft.client.color.block.BlockTintSource> tintSources(BlockColor color) {
+        java.util.List<net.minecraft.client.color.block.BlockTintSource> out = new java.util.ArrayList<>();
+        for (int i = 0; i < TINT_LAYERS; i++) {
+            int tint = i;
+            out.add(new net.minecraft.client.color.block.BlockTintSource() {
+                @Override
+                public int color(BlockState state) {
+                    return color.getColor(state, null, null, tint);
+                }
+
+                @Override
+                public int colorInWorld(BlockState state, net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos) {
+                    return color.getColor(state, level, pos, tint);
+                }
+            });
+        }
+        return java.util.List.copyOf(out);
+    }
+
+    /** M52c: the tint of a (foreign) block state as the 1.21.x {@code BlockColors#getColor} gave it, -1 without one. */
+    public static int tint(BlockState state, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.block.BlockAndTintGetter level,
+            @org.jetbrains.annotations.Nullable net.minecraft.core.BlockPos pos, int tint) {
+        var src = net.minecraft.client.Minecraft.getInstance().getBlockColors().getTintSource(state, tint);
+        if (src == null) return -1;
+        return level != null && pos != null ? src.colorInWorld(state, level, pos) : src.color(state);
     }
 
     public interface Layers {
@@ -126,7 +168,7 @@ public final class ClientSetup {
         event.register((state, level, pos, tint) -> {
             if (level == null || pos == null) return -1;
             var c = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(level, pos);
-            return c == null ? -1 : net.minecraft.client.Minecraft.getInstance().getBlockColors().getColor(c, level, pos, tint);
+            return c == null ? -1 : tint(c, level, pos, tint);
         }, org.overengineer.bettacraft.registry.ModBlocks.FILTER_INLET_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_OUTLET_PIPE.get(),
                 org.overengineer.bettacraft.registry.ModBlocks.FILTER_FRESH_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_WASTE_PIPE.get(),
                 org.overengineer.bettacraft.registry.ModBlocks.FILTER_PIPE_BUNDLE.get());
@@ -290,8 +332,8 @@ public final class ClientSetup {
     }
 
     /** M15: how to leave a tank interior, bottom left (NeoForge: a GUI layer below the chat). */
-    public static void renderHud(net.minecraft.client.gui.GuiGraphics graphics, net.minecraft.client.DeltaTracker delta) {
-        org.overengineer.bettacraft.client.interior.InteriorLeaveHud.render(graphics, delta);
+    public static void renderHud(net.minecraft.client.gui.GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker delta) {
+        org.overengineer.bettacraft.client.interior.InteriorLeaveHud.extractRenderState(graphics, delta);
     }
 
     /** M31 part c: the renderer of an amphibian or reptile species. */

@@ -45,7 +45,7 @@ public final class BucketCatchingHandlers {
             event.setCancellationResult(InteractionResult.SUCCESS);
             if (player.level().isClientSide()) return;
             if (fish.size() >= cap) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.container.full", cap).withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.container.full", cap).withStyle(ChatFormatting.GOLD));
                 return;
             }
             ItemStack tmp = m.getBucketItemStack();
@@ -66,8 +66,8 @@ public final class BucketCatchingHandlers {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.FAIL);
             if (!player.level().isClientSide()) {
-                player.displayClientMessage(Component.translatable(sea ? "message.bettacraft.container.needs_fresh_water"
-                        : "message.bettacraft.container.needs_sea_water").withStyle(ChatFormatting.GOLD), true);
+                player.sendOverlayMessage(Component.translatable(sea ? "message.bettacraft.container.needs_fresh_water"
+                        : "message.bettacraft.container.needs_sea_water").withStyle(ChatFormatting.GOLD));
             }
             return;
         }
@@ -75,7 +75,7 @@ public final class BucketCatchingHandlers {
         // a bucket of sea water is a bucket of water for the animal (vanilla checks for the water bucket item)
         ItemStack before = held;
         player.setItemInHand(event.getHand(), new ItemStack(Items.WATER_BUCKET));
-        InteractionResult r = mob.interact(player, event.getHand());
+        InteractionResult r = mob.interact(player, event.getHand(), new net.minecraft.world.phys.Vec3(0, mob.getBbHeight() * 0.5, 0)); // M52c: 26.1 passes the hit point (relative)
         if (player.getItemInHand(event.getHand()).is(Items.WATER_BUCKET)) player.setItemInHand(event.getHand(), before);
         if (r.consumesAction()) {
             event.setCanceled(true);

@@ -177,7 +177,7 @@ public final class CabinetStones {
             if (!(h.value() instanceof ShapedRecipe r) || r instanceof CabinetRecipe || r instanceof StoneCabinetRecipe) continue;
             if (r.getWidth() != 3 || r.getHeight() != 1) continue;
             // a shaped recipe's assemble is its result (M52b: getResultItem is gone)
-            Item slab = slabItem(r.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY, registries));
+            Item slab = slabItem(r.assemble(net.minecraft.world.item.crafting.CraftingInput.EMPTY));
             if (slab == null) continue;
             var ing = r.getIngredients();
             if (ing.size() != 3 || ing.get(0).isEmpty() || ing.get(1).isEmpty() || ing.get(2).isEmpty()) continue;
@@ -186,7 +186,7 @@ public final class CabinetStones {
             }
         }
         for (RecipeHolder<StonecutterRecipe> h : org.overengineer.bettacraft.crafting.RecipeCompat.byType(rm, RecipeType.STONECUTTING)) {
-            Item slab = slabItem(h.value().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(ItemStack.EMPTY), registries));
+            Item slab = slabItem(h.value().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(ItemStack.EMPTY)));
             if (slab == null) continue;
             Ingredient in = h.value().input();
             for (ItemStack s : org.overengineer.bettacraft.crafting.RecipeCompat.stacks(in)) add(cands, s.getItem(), slab, false);

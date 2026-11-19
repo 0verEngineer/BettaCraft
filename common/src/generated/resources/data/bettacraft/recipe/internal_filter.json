@@ -9,7 +9,6 @@
     "minecraft:iron_bars"
   ],
   "result": {
-    "count": 1,
     "id": "bettacraft:internal_filter"
   }
 }

@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -629,9 +628,9 @@ public final class PlantGameTests {
         var rnd = h.getLevel().getRandom();
         java.util.Set<Item> generic = new java.util.HashSet<>(), rare = new java.util.HashSet<>();
         for (int level = 1; level <= 2; level++) {
-            VillagerTrades.ItemListing[] listings = org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(level);
+            org.overengineer.bettacraft.villager.TradeListing[] listings = org.overengineer.bettacraft.gametest.framework.DevTrades.wanderer(h.getLevel(), level);
             h.assertTrue(listings != null, "trade level " + level);
-            for (VillagerTrades.ItemListing l : listings) {
+            for (org.overengineer.bettacraft.villager.TradeListing l : listings) {
                 var offer = l.getOffer((net.minecraft.server.level.ServerLevel) trader.level(), trader, rnd);
                 if (offer != null) (level == 1 ? generic : rare).add(offer.getResult().getItem());
             }

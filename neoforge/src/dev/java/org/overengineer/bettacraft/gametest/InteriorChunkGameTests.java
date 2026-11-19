@@ -39,7 +39,7 @@ public final class InteriorChunkGameTests {
         int holders = 0, withChunk = 0, full = 0;
         for (ChunkHolder h : holders(interior.getChunkSource().chunkMap)) {
             var p = h.getPos();
-            if (p.x < x0 || p.x > x1 || p.z < z0 || p.z > z1) continue;
+            if (p.x() < x0 || p.x() > x1 || p.z() < z0 || p.z() > z1) continue;
             holders++;
             ChunkAccess c = h.getLatestChunk();
             if (c != null) withChunk++;

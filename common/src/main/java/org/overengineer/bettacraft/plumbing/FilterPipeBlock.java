@@ -216,7 +216,7 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
         if (facade != null) return facade;
         if (!(stack.getItem() instanceof PipeTeeItem)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (state.getValue(JUNCTION)) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide()) {
@@ -287,7 +287,7 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
         return s != null ? s : state.getSoundType();
     }
 
-    public BlockState getAppearance(BlockState state, net.minecraft.world.level.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
+    public BlockState getAppearance(BlockState state, net.minecraft.client.renderer.block.BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
         BlockState c = PipeCovers.coverAt(level, pos);
         return c != null ? c : state;
     }

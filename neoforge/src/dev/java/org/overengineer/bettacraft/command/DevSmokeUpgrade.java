@@ -113,12 +113,12 @@ public final class DevSmokeUpgrade {
                 Set<Long> chunks = new HashSet<>();
                 for (JsonElement e : expected.getAsJsonArray("tanks")) {
                     BlockPos p = BlockPos.of(e.getAsJsonObject().get("pos").getAsLong());
-                    for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) chunks.add(ChunkPos.asLong((p.getX() >> 4) + dx, (p.getZ() >> 4) + dz));
+                    for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) chunks.add(ChunkPos.pack((p.getX() >> 4) + dx, (p.getZ() >> 4) + dz));
                 }
-                for (JsonElement e : expected.getAsJsonArray("chests")) chunks.add(new ChunkPos(BlockPos.of(e.getAsJsonObject().get("pos").getAsLong())).toLong());
+                for (JsonElement e : expected.getAsJsonArray("chests")) chunks.add(ChunkPos.containing(BlockPos.of(e.getAsJsonObject().get("pos").getAsLong())).pack());
                 for (long c : chunks) {
-                    ChunkPos cp = new ChunkPos(c);
-                    level.setChunkForced(cp.x, cp.z, true);
+                    ChunkPos cp = ChunkPos.unpack(c);
+                    level.setChunkForced(cp.x(), cp.z(), true);
                     forced.add(cp);
                 }
                 LOGGER.info("[smoketest] upgrade stage {}: {} from {}, {} tanks, {} chests, {} chunks", STAGE, file.getFileName(),
@@ -127,8 +127,8 @@ public final class DevSmokeUpgrade {
             } else if (ticks > 5 && readyAt < 0) {
                 boolean ready = true;
                 for (ChunkPos cp : forced) {
-                    level.getChunk(cp.x, cp.z);
-                    ready &= level.areEntitiesLoaded(cp.toLong());
+                    level.getChunk(cp.x(), cp.z());
+                    ready &= level.areEntitiesLoaded(cp.pack());
                 }
                 if (!ready && ticks < 1200) return;
                 readyAt = ticks;
@@ -166,7 +166,7 @@ public final class DevSmokeUpgrade {
                     }
                     server.saveEverything(false, true, true);
                 }
-                for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
+                for (ChunkPos cp : forced) level.setChunkForced(cp.x(), cp.z(), false);
                 LOGGER.info("[smoketest] upgrade: {} cabinets keep the back wall (M22.4)", cabinetsChecked);
                 LOGGER.info("[smoketest] upgrade: cabinets are auto with joints and show the fronts of their rows (M44): {}", cabinetFronts);
                 LOGGER.info("[smoketest] upgrade: {} filters and lights run at full power, undimmed (M23)", m23Checked);
@@ -207,7 +207,7 @@ public final class DevSmokeUpgrade {
      */
     private static void m40Check(ServerLevel level) {
         for (ChunkPos cp : forced) {
-            for (var be : new ArrayList<>(level.getChunk(cp.x, cp.z).getBlockEntities().values())) {
+            for (var be : new ArrayList<>(level.getChunk(cp.x(), cp.z()).getBlockEntities().values())) {
                 if (!(be instanceof org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity h)) continue;
                 h.run(level, true);
                 int media = 0;

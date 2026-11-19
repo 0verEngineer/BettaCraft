@@ -41,7 +41,7 @@ public final class DriveAdapterRenderer extends org.overengineer.bettacraft.clie
         ps.mulPose(rot.rotation(angle));
         ps.translate(-0.5, -0.5, -0.5);
         DriveRender.face(ps, facing);
-        var vc = buffers.getBuffer(RenderTypes.entityCutout(InventoryMenu.BLOCK_ATLAS));
+        var vc = buffers.getBuffer(RenderTypes.entityCutoutCull(InventoryMenu.BLOCK_ATLAS));
         // the stub from the front face into the bearing ring (model north: z 0 .. 4)
         DriveRender.box(ps, vc, DriveRender.sprite("drive_adapter_shaft"), 6, 6, 0, 10, 10, 4, light);
         ps.popPose();

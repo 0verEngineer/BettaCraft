@@ -149,7 +149,7 @@ public final class WildlifeCommand {
         ServerLevel level = src.getLevel();
         var at = src.getPosition();
         List<Entity> out = new ArrayList<>(level.getEntities((Entity) null, new AABB(BlockPos.containing(at)).inflate(radius),
-                e -> e.getType().is(ModTags.ALL_ANIMALS) && !TankInhabitants.hasTankRef(e) && e.distanceToSqr(at) <= (double) radius * radius));
+                e -> e.is(ModTags.ALL_ANIMALS) && !TankInhabitants.hasTankRef(e) && e.distanceToSqr(at) <= (double) radius * radius));
         out.sort(Comparator.comparingDouble(e -> e.distanceToSqr(at)));
         return out;
     }

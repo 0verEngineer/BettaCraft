@@ -71,7 +71,7 @@ final class DevClientSmokeM18 {
         // 1. the row by day and by night
         then(40, () -> look(base.getX() + 11.0, base.getY() + 3.6, base.getZ() - 13.0, 0F, 12F));
         then(80, () -> shot("row_day"));
-        then(1, () -> server(p -> p.level().setDayTime(18000)));
+        then(1, () -> server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 18000)));
         then(60, () -> {
             shot("row_night");
             check();
@@ -103,7 +103,7 @@ final class DevClientSmokeM18 {
             if (c == 0) LOGGER.error("[smoketest] M18 the dyed bar does not tint its tank on the client");
             shot("row_night_orange");
         });
-        then(1, () -> server(p -> p.level().setDayTime(6000)));
+        then(1, () -> server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 6000)));
         // 5. the light items (GUI)
         then(1, () -> mc.options.hideGui = false);
         then(1, () -> server(p -> {

@@ -227,7 +227,7 @@ public final class BigFreshwaterGameTests {
                 "the wels is rarer than the pangasius");
         for (TankmateSpecies s : new TankmateSpecies[]{TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH, TankmateSpecies.ARAPAIMA, TankmateSpecies.MOTORO_STINGRAY}) {
             h.assertTrue(Wildlife.spawnsWild(s), s.id() + " spawns wild");
-            h.assertTrue(ModEntities.TANKMATES.get(s).get().is(ModTags.WILD_ANIMALS), s.id() + " is a wild animal");
+            h.assertTrue(ModEntities.TANKMATES.get(s).get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS), s.id() + " is a wild animal");
             h.assertTrue(BigCatching.caught(h.getLevel(), s, NetCatching.random(h.getLevel())) != null, s.id() + " goes into a transport tub");
         }
         h.succeed();

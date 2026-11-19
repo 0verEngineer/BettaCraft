@@ -52,7 +52,7 @@ final class NestRenderer {
         BlockPos origin = be.getBlockPos();
         Vec3 p = nest.pos();
         float size = size(nest);
-        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), BlockPos.containing(p));
+        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(p));
         long time = be.getLevel() == null ? 0 : be.getLevel().getGameTime();
         // a stable lumpy shape per nest
         long seed = Mth.getSeed(Mth.floor(p.x * 16), Mth.floor(p.y * 16), Mth.floor(p.z * 16));
@@ -81,7 +81,7 @@ final class NestRenderer {
             float ly = -down * 0.93F;
             flat(pose, ev, layer, ly, light, false);
             flat(pose, ev, layer, ly + 0.002F, light, true);
-            beads(pose, buffers.getBuffer(RenderTypes.entityCutoutNoCull(BEADS)), size, down, n, larvae, seed, light);
+            beads(pose, buffers.getBuffer(RenderTypes.entityCutout(BEADS)), size, down, n, larvae, seed, light);
         }
         pose.popPose();
     }

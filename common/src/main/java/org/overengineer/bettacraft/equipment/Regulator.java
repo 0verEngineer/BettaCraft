@@ -125,8 +125,8 @@ public final class Regulator {
         d.setPower(next);
         if (next < 10 && !d.alwaysAdjustable()) org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.REGULATOR); // M45
         Component label = d.valueLabel();
-        if (label != null) player.displayClientMessage(Component.translatable("message.bettacraft.regulator.set_value", d.name(), label), true); // M25
-        else player.displayClientMessage(Component.translatable("message.bettacraft.regulator.set", d.name(), next * 10), true);
+        if (label != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.regulator.set_value", d.name(), label)); // M25
+        else player.sendOverlayMessage(Component.translatable("message.bettacraft.regulator.set", d.name(), next * 10));
     }
 
     // ------------------------------------------------------------------ devices

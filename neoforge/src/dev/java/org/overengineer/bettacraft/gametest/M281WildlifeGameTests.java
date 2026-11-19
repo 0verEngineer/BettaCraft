@@ -75,7 +75,7 @@ public final class M281WildlifeGameTests {
 
     private static void clear(GameTestHelper h, BlockPos min, int size) {
         ServerLevel level = h.getLevel();
-        for (Entity e : level.getEntities((Entity) null, new AABB(min).inflate(size + 8), e -> e.getType().is(ModTags.ALL_ANIMALS))) e.discard();
+        for (Entity e : level.getEntities((Entity) null, new AABB(min).inflate(size + 8), e -> e.is(ModTags.ALL_ANIMALS))) e.discard();
         for (int x = -1; x <= size; x++)
             for (int z = -1; z <= size; z++)
                 for (int y = -1; y < 8; y++) level.setBlock(min.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
@@ -90,14 +90,14 @@ public final class M281WildlifeGameTests {
     /** #bettacraft:all_animals holds every animal of the mod, #bettacraft:wild_animals the ones that spawn. */
     @GameTest(template = EMPTY, timeoutTicks = 40)
     public static void animalTagsHoldEveryAnimal(GameTestHelper h) {
-        check(ModEntities.BETTA.get().is(ModTags.ALL_ANIMALS) && ModEntities.DWARF_FROG.get().is(ModTags.ALL_ANIMALS)
-                && ModEntities.WILD_CRITTER.get().is(ModTags.ALL_ANIMALS), "betta, frog or small animals missing in all_animals");
+        check(ModEntities.BETTA.get().builtInRegistryHolder().is(ModTags.ALL_ANIMALS) && ModEntities.DWARF_FROG.get().builtInRegistryHolder().is(ModTags.ALL_ANIMALS)
+                && ModEntities.WILD_CRITTER.get().builtInRegistryHolder().is(ModTags.ALL_ANIMALS), "betta, frog or small animals missing in all_animals");
         for (var e : ModEntities.TANKMATES.entrySet()) {
-            check(e.getValue().get().is(ModTags.ALL_ANIMALS), e.getKey().id() + " missing in all_animals");
-            check(e.getValue().get().is(ModTags.WILD_ANIMALS) == Wildlife.spawnsWild(e.getKey()), e.getKey().id() + ": wild_animals wrong");
+            check(e.getValue().get().builtInRegistryHolder().is(ModTags.ALL_ANIMALS), e.getKey().id() + " missing in all_animals");
+            check(e.getValue().get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS) == Wildlife.spawnsWild(e.getKey()), e.getKey().id() + ": wild_animals wrong");
         }
-        check(ModEntities.TANKMATES.get(TankmateSpecies.LINED_SEAHORSE).get().is(ModTags.WILD_ANIMALS), "seahorses spawn wild");
-        check(!net.minecraft.world.entity.EntityType.COD.is(ModTags.ALL_ANIMALS), "cod is no animal of the mod");
+        check(ModEntities.TANKMATES.get(TankmateSpecies.LINED_SEAHORSE).get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS), "seahorses spawn wild");
+        check(!net.minecraft.world.entity.EntityType.COD.builtInRegistryHolder().is(ModTags.ALL_ANIMALS), "cod is no animal of the mod");
         h.succeed();
     }
 
@@ -123,7 +123,7 @@ public final class M281WildlifeGameTests {
                 total += w;
                 String ns = BuiltInRegistries.ENTITY_TYPE.getKey(d.value().type()).getNamespace();
                 byMod.merge(ns, w, Integer::sum);
-                if (d.value().type().is(ModTags.ALL_ANIMALS)) ours += w;
+                if (d.value().type().builtInRegistryHolder().is(ModTags.ALL_ANIMALS)) ours += w;
                 if (!ns.equals("minecraft") && !ns.equals(BettaCraft.MOD_ID)) foreign = true;
             }
             lines.add(String.format(java.util.Locale.ROOT, "%-28s ours %4d of %4d = %5.1f %%  %s", key.identifier(), ours, total,

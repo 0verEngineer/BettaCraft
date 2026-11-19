@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/coral_frags"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:zoanthus"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

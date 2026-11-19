@@ -61,10 +61,10 @@ public final class ForeignFood {
         ItemStack one = stack.copyWithCount(1);
         String id = stack.getItem().getDescriptionId();
         if (!player.getAbilities().instabuild) stack.shrink(1);
-        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, one), pick.getX(), pick.getY() + pick.getBbHeight() * 0.5, pick.getZ(), 6, 0.1, 0.05, 0.1, 0.02);
+        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(one)), pick.getX(), pick.getY() + pick.getBbHeight() * 0.5, pick.getZ(), 6, 0.1, 0.05, 0.1, 0.02);
         level.playSound(null, pick.blockPosition(), SoundEvents.GENERIC_EAT.value(), SoundSource.NEUTRAL, 0.5F, 1.2F);
         TankCare.log(server, c, "log.bettacraft.turtle.greens", TankCare.nameArg(pick), "@" + id);
-        player.displayClientMessage(Component.translatable("message.bettacraft.terrarium.ate", pick.getDisplayName(), one.getHoverName()), true);
+        player.sendOverlayMessage(Component.translatable("message.bettacraft.terrarium.ate", pick.getDisplayName(), one.getHoverName()));
         return InteractionResult.CONSUME;
     }
 

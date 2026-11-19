@@ -265,7 +265,7 @@ public final class TankPlants {
         TankData t = c.getTank();
         byte[] data = FloatingPlantSim.encode(t.plants(), t.min().getX(), t.min().getZ());
         if (!c.plantSync.changed(data, level.getGameTime())) return; // M17: plants at rest send nothing
-        PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(c.getBlockPos()), new TankPlantsPayload(c.getBlockPos(), data));
+        PacketDistributor.sendToPlayersTrackingChunk(level, ChunkPos.containing(c.getBlockPos()), new TankPlantsPayload(c.getBlockPos(), data));
     }
 
     // ------------------------------------------------------------------ adding / removing
@@ -298,7 +298,7 @@ public final class TankPlants {
         if (type == null) return false;
         TankData t = c.getTank();
         if (t.waterMb() <= 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.plants.no_water"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.plants.no_water"));
             return false;
         }
         Vec3 at = surfaceHit(t, player.getEyePosition(), player.getViewVector(1.0F));
@@ -307,7 +307,7 @@ public final class TankPlants {
         double[] xz = type == FloatingPlantType.LILY_PAD ? FloatingPlantSim.awayFromPads(t.plants(), at.x, at.z, type.radius(1.0)) : new double[] {at.x, at.z};
         FloatingPlant p = add(c, type, xz[0], xz[1], type.grows() ? ITEM_SIZE : 1.0F, rot);
         if (p == null) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.plants.full"), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.plants.full"));
             return false;
         }
         if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -372,8 +372,8 @@ public final class TankPlants {
         for (ItemStack s : stacks) n += s.getCount();
         give(player, stacks);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 0.7F, 1.4F);
-        player.displayClientMessage(Component.translatable(thinned ? "message.bettacraft.plants.thinned" : "message.bettacraft.plants.taken", n,
-                c.getTank().plants().size()).withStyle(ChatFormatting.GREEN), true);
+        player.sendOverlayMessage(Component.translatable(thinned ? "message.bettacraft.plants.thinned" : "message.bettacraft.plants.taken", n,
+                c.getTank().plants().size()).withStyle(ChatFormatting.GREEN));
         if (thinned) TankCare.log(level, c, "log.bettacraft.plants_thinned", TankCare.nameArg(player), String.valueOf(n));
     }
 

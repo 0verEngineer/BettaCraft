@@ -43,18 +43,18 @@ public final class CritterEventsHandlers {
                 handled(e);
                 if (!(level instanceof ServerLevel server)) return;
                 if (!TankInhabitants.canModify(player, c.getTank())) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
                     return;
                 }
                 boolean side = player.isSecondaryUseActive();
                 int n = TankAlgae.scrape(server, c, pos, e.getFace() == null ? player.getDirection().getOpposite() : e.getFace(), side);
                 if (n <= 0) {
-                    player.displayClientMessage(Component.translatable("message.bettacraft.algae.clean"), true);
+                    player.sendOverlayMessage(Component.translatable("message.bettacraft.algae.clean"));
                     return;
                 }
                 if (!player.getAbilities().instabuild) stack.hurtAndBreak(n, player, e.getHand().asEquipmentSlot());
                 level.playSound(null, pos, SoundEvents.BRUSH_GENERIC, SoundSource.BLOCKS, 0.8F, 1.2F);
-                player.displayClientMessage(Component.translatable("message.bettacraft.algae.scraped", n).withStyle(ChatFormatting.GREEN), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.algae.scraped", n).withStyle(ChatFormatting.GREEN));
                 org.overengineer.bettacraft.tank.TankCare.log(server, c, "log.bettacraft.algae_scraped", org.overengineer.bettacraft.tank.TankCare.nameArg(player),
                         String.valueOf(n));
                 return;
@@ -65,7 +65,7 @@ public final class CritterEventsHandlers {
                     if (TankFrogs.frogs(server, c.getTank()).isEmpty() || !TankFrogs.eats(org.overengineer.bettacraft.food.BettaFood.kind(stack))) return;
                     handled(e);
                     if (TankFrogs.feedTargeted(server, c, player, stack)) {
-                        player.displayClientMessage(Component.translatable("message.bettacraft.frogs.fed").withStyle(ChatFormatting.GREEN), true);
+                        player.sendOverlayMessage(Component.translatable("message.bettacraft.frogs.fed").withStyle(ChatFormatting.GREEN));
                         level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.3F, 1.6F);
                     }
                 } else if (c.getTank().inhabitantCount() > 0) {

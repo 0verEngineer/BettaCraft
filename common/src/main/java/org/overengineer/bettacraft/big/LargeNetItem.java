@@ -38,21 +38,21 @@ public class LargeNetItem extends Item {
         if (!target.isAlive() || target instanceof Player) return InteractionResult.PASS;
         if (!BigAnimals.isBig(target)) {
             if (!player.level().isClientSide() && TankInhabitants.isWaterAnimal(target)) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.big.net_small", target.getDisplayName()), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.big.net_small", target.getDisplayName()));
             }
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         int slot = BigCatching.emptyTub(player);
         if (slot < 0) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.big.need_tub", target.getDisplayName()), true);
+            player.sendOverlayMessage(Component.translatable("message.bettacraft.big.need_tub", target.getDisplayName()));
             return InteractionResult.CONSUME;
         }
         org.overengineer.bettacraft.tank.TankBlockEntity from = null;
         if (TankInhabitants.hasTankRef(target) && player.level() instanceof ServerLevel sl) {
             var c = TankInhabitants.resolveController(sl, target);
             if (c != null && !TankInhabitants.canModify(player, c.getTank())) {
-                player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked"), true);
+                player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.locked"));
                 return InteractionResult.CONSUME;
             }
             from = c;

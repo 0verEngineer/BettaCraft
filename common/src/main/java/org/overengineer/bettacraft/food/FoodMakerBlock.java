@@ -81,7 +81,7 @@ public class FoodMakerBlock extends BaseEntityBlock implements BlockRemoval {
         if (!(level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be)) return InteractionResult.PASS;
         if (player.isSecondaryUseActive()) {
             // M37: the spring is wound with the crank now (sneak + empty hand only says so)
-            if (!level.isClientSide()) player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.crank.use_crank"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.crank.use_crank"));
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide() && player instanceof ServerPlayer sp) org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
@@ -111,7 +111,7 @@ public class FoodMakerBlock extends BaseEntityBlock implements BlockRemoval {
         double x = pos.getX() + 0.5, y = pos.getY() + 0.95, z = pos.getZ() + 0.5;
         ItemStack s = level.getBlockEntity(pos) instanceof FoodMakerBlockEntity be ? be.items().getStackInSlot(0) : ItemStack.EMPTY;
         if (!s.isEmpty()) {
-            level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, s), x + (r.nextDouble() - 0.5) * 0.3, y, z + (r.nextDouble() - 0.5) * 0.3, 0, 0.02, 0);
+            level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(s)), x + (r.nextDouble() - 0.5) * 0.3, y, z + (r.nextDouble() - 0.5) * 0.3, 0, 0.02, 0);
         } else {
             level.addParticle(ParticleTypes.WHITE_ASH, x, y, z, 0, 0.02, 0);
         }

@@ -255,13 +255,13 @@ public final class MinecraftPetsGameTests {
         MinecraftPets.mark(sheep);
         player.snapTo(sheep.getX() + 1, sheep.getY(), sheep.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-        player.interactOn(sheep, InteractionHand.MAIN_HAND);
+        player.interactOn(sheep, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         h.assertFalse(sheep.isSheared(), "a pet keeps its wool");
         LivingEntity cow = wild(h, EntityType.COW, new Vec3(26, 2, 26));
         MinecraftPets.mark(cow);
         player.snapTo(cow.getX() + 1, cow.getY(), cow.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
-        player.interactOn(cow, InteractionHand.MAIN_HAND);
+        player.interactOn(cow, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         h.assertTrue(player.getMainHandItem().is(Items.BUCKET) && !player.getInventory().contains(new ItemStack(Items.MILK_BUCKET)), "no milk");
         sheep.discard();
         cow.discard();

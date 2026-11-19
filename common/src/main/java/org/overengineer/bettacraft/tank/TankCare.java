@@ -142,7 +142,7 @@ public final class TankCare {
         float biome = level.getBiome(c).value().getBaseTemperature();
         float t = TankTemperature.ambientFromBiome(biome);
         if (level.dimensionType().hasSkyLight() && !level.dimensionType().hasFixedTime()) {
-            t += TankTemperature.dayNightOffset(level.getDayTime());
+            t += TankTemperature.dayNightOffset(level.getOverworldClockTime());
         }
         return t;
     }
@@ -444,19 +444,21 @@ public final class TankCare {
                 || !wafer && !org.overengineer.bettacraft.terrarium.TerrariumFeeding.eaters(server, tank, BettaFood.kind(stack)).isEmpty() // M31
                 || !wafer && !org.overengineer.bettacraft.foreign.ForeignCare.eaters(server, tank, stack, BettaFood.kind(stack)).isEmpty(); // M32 part a
         if (fish.isEmpty() && !others) {
-            player.displayClientMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
-                    : "message.bettacraft.tank.nobody_eats", stack.getHoverName()), true);
+            player.sendOverlayMessage(Component.translatable(bettas(server, tank).isEmpty() ? "message.bettacraft.tank.no_bettas"
+                    : "message.bettacraft.tank.nobody_eats", stack.getHoverName()));
             return InteractionResult.CONSUME;
         }
         if (feed(server, controller, stack, 1) <= 0) return InteractionResult.CONSUME;
         ItemStack remainder = org.overengineer.bettacraft.platform.Platform.get().craftingRemainder(stack);
+        // M52c: the particle item before the stack shrinks (a particle of an empty stack throws since 26.1)
+        var shown = net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack.copyWithCount(1));
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
             if (!remainder.isEmpty() && !player.getInventory().add(remainder)) player.drop(remainder, false);
         }
         // M10: the food lands in the water of the block that was clicked (never in the notch of a free shape)
         Vec3 spot = new TankWaterVolume(tank).surfacePoint(hit, 1.0 / 16, 0.05);
-        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack.copyWithCount(1)), spot.x, spot.y, spot.z, 10, 0.15, 0.02, 0.15, 0.02);
+        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, shown), spot.x, spot.y, spot.z, 10, 0.15, 0.02, 0.15, 0.02);
         server.sendParticles(ParticleTypes.BUBBLE, spot.x, spot.y - 0.3, spot.z, 6, 0.2, 0.2, 0.2, 0.01);
         level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.3F, 1.6F);
         long until = level.getGameTime() + 120;

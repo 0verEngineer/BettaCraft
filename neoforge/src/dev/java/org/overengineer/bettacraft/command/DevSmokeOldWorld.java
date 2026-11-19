@@ -74,8 +74,8 @@ public final class DevSmokeOldWorld {
                 // keep every chunk of every tank loaded: the animals are entities of their own, loaded a little later
                 for (Old o : tanks) {
                     for (long m : o.members) {
-                        ChunkPos cp = new ChunkPos(BlockPos.of(m));
-                        if (forced.add(cp)) level.setChunkForced(cp.x, cp.z, true);
+                        ChunkPos cp = ChunkPos.containing(BlockPos.of(m));
+                        if (forced.add(cp)) level.setChunkForced(cp.x(), cp.z(), true);
                     }
                 }
                 for (Old o : tanks) checkLoaded(level, o);
@@ -93,7 +93,7 @@ public final class DevSmokeOldWorld {
                             + " saved animals loaded");
                 }
                 LOGGER.info("[smoketest] old world animals: {} listed by the tanks, {} of them saved as entities, {} loaded in their tanks", listed, expected, found);
-                for (ChunkPos cp : forced) level.setChunkForced(cp.x, cp.z, false);
+                for (ChunkPos cp : forced) level.setChunkForced(cp.x(), cp.z(), false);
                 LOGGER.info("[smoketest] OLD WORLD PASSED");
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {

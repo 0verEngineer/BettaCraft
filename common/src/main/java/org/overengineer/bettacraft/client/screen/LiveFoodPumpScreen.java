@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -16,9 +16,8 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
     private static final int BG = 0xFFC6C6C6, DARK = 0xFF555555, LIGHT = 0xFFFFFFFF, TEXT = 0x404040;
 
     public LiveFoodPumpScreen(LiveFoodPumpMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = 176;
-        imageHeight = 112;
+        super(menu, inv, title, 176, 112);
+        inventoryLabelY = 72; // M52c: the 26.1 constructor derives it from imageHeight; keep the old place
     }
 
     @Override
@@ -38,7 +37,8 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
     }
 
     @Override
-    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         int x = leftPos, y = topPos;
         g.fill(x, y, x + imageWidth, y + imageHeight, BG);
         g.fill(x, y, x + imageWidth, y + 1, LIGHT);
@@ -48,8 +48,8 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
     }
 
     @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        g.drawString(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        g.text(font, title, titleLabelX, titleLabelY, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT), false);
         left(g, Component.translatable("gui.bettacraft.live_food_pump.doses"), 8, 22, TEXT, 100);
         left(g, Component.translatable("gui.bettacraft.live_food_pump.portions"), 8, 40, TEXT, 100);
         centre(g, menu.doses() <= 0 ? Component.translatable("gui.bettacraft.live_food_pump.doses_off") : Component.literal(String.valueOf(menu.doses())),
@@ -75,24 +75,23 @@ public class LiveFoodPumpScreen extends AbstractContainerScreen<LiveFoodPumpMenu
         return Component.literal(b.toString());
     }
 
-    private void left(GuiGraphics g, Component c, int x, int y, int color, int max) {
+    private void left(GuiGraphicsExtractor g, Component c, int x, int y, int color, int max) {
         float s = 0.75F;
         int w = font.width(c);
         if (w * s > max) s = max / (float) w;
         g.pose().pushMatrix();
         g.pose().translate(x, y);
         g.pose().scale(s, s);
-        g.drawString(font, c, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+        g.text(font, c, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
         g.pose().popMatrix();
     }
 
-    private void centre(GuiGraphics g, Component c, int cx, int y, int color) {
-        g.drawString(font, c, cx - font.width(c) / 2, y, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
+    private void centre(GuiGraphicsExtractor g, Component c, int cx, int y, int color) {
+        g.text(font, c, cx - font.width(c) / 2, y, org.overengineer.bettacraft.client.ClientCompat.textColor(color), false);
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 }

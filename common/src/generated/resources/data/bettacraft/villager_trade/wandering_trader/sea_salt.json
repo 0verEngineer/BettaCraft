@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/sea_salt"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:sea_salt"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

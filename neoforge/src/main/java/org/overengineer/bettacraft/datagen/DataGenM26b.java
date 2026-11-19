@@ -83,7 +83,7 @@ final class DataGenM26b {
     }
 
     private static void make(RecipeOutput out, String id, ItemLike result, int n, SizedIngredient... ingredients) {
-        out.accept(RecipeCompat.key(BettaCraft.id("food_maker/" + id)), new FoodMakerRecipe(List.of(ingredients), new ItemStack(result, n)), null);
+        out.accept(RecipeCompat.key(BettaCraft.id("food_maker/" + id)), new FoodMakerRecipe(List.of(ingredients), new net.minecraft.world.item.ItemStackTemplate(result.asItem(), n)), null);
     }
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {

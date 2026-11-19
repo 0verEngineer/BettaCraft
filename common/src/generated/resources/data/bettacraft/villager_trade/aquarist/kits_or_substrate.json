@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "aquarist/kits_or_substrate"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:ph_test_kit"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

@@ -70,7 +70,7 @@ public final class CritterSpawnPassGameTests {
 
     private static void clear(GameTestHelper h, BlockPos top, int sx, int sz, int deep) {
         ServerLevel level = h.getLevel();
-        for (Entity e : level.getEntities((Entity) null, new AABB(top).inflate(sx + sz + 8), e -> e.getType().is(ModTags.ALL_ANIMALS))) e.discard();
+        for (Entity e : level.getEntities((Entity) null, new AABB(top).inflate(sx + sz + 8), e -> e.is(ModTags.ALL_ANIMALS))) e.discard();
         for (int x = -1; x <= sx; x++)
             for (int z = -1; z <= sz; z++)
                 for (int y = -deep - 1; y < 6; y++) level.setBlock(top.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);

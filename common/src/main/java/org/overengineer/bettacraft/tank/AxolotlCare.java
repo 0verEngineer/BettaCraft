@@ -178,9 +178,9 @@ public final class AxolotlCare {
                 org.overengineer.bettacraft.genetics.MagnifierItem.wear(player, magnifier, slot);
                 n++;
             }
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.magnifier.axolotl", a.getDisplayName(),
+            player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.bettacraft.magnifier.axolotl", a.getDisplayName(),
                     net.minecraft.network.chat.Component.translatable("variety.bettacraft.axolotl." + a.getVariant().getSerializedName()),
-                    genotypeText(genes(a))), false);
+                    genotypeText(genes(a))));
         }
         return n;
     }

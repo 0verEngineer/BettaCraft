@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.sources;
 
+import org.overengineer.bettacraft.villager.TradeListing;
 import org.overengineer.bettacraft.config.FeatureContent;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
@@ -9,7 +10,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 import javax.annotation.Nullable;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
@@ -57,12 +57,12 @@ public final class TraderOffers {
      * One offer. The listing is made on first use ({@link #listing()}, the same object afterwards): the table itself can be
      * read without the item registry (handbook generator, unit tests).
      */
-    public record Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, Supplier<VillagerTrades.ItemListing> factory) {
-        Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, VillagerTrades.ItemListing listing) {
+    public record Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, Supplier<TradeListing> factory) {
+        Offer(String id, Slot slot, int uses, Supplier<List<Product>> products, TradeListing listing) {
             this(id, slot, uses, products, () -> listing);
         }
 
-        public VillagerTrades.ItemListing listing() {
+        public TradeListing listing() {
             return LISTINGS.computeIfAbsent(id, k -> factory.get());
         }
 
@@ -73,13 +73,13 @@ public final class TraderOffers {
         }
 
         /** M33: the listing the trader gets: nothing while the offer is not {@link #allowed}, asked at every new trader. */
-        public VillagerTrades.ItemListing gatedListing() {
+        public TradeListing gatedListing() {
             return GATED.computeIfAbsent(id, k -> (traderLevel, trader, random) -> allowed() ? listing().getOffer(traderLevel, trader, random) : null);
         }
     }
 
-    private static final java.util.Map<String, VillagerTrades.ItemListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
-    private static final java.util.Map<String, VillagerTrades.ItemListing> GATED = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final java.util.Map<String, TradeListing> LISTINGS = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final java.util.Map<String, TradeListing> GATED = new java.util.concurrent.ConcurrentHashMap<>();
 
     /** Colour lines of the Neocaridina the trader brings (loci of {@link CritterSpecies#NEOCARIDINA}). */
     private static final int[] SHRIMP_LINES = {0, 1, 2, 3, 4, 5};
@@ -278,7 +278,7 @@ public final class TraderOffers {
     }
 
     /** A reef fish of this kind of offer (a pair, or a shoal for the chromis). */
-    private static VillagerTrades.ItemListing reefFish(TankmateSpecies.Trade kind) {
+    private static TradeListing reefFish(TankmateSpecies.Trade kind) {
         return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             List<TankmateSpecies> pool = new ArrayList<>();
@@ -292,14 +292,14 @@ public final class TraderOffers {
         ItemStack make(net.minecraft.util.RandomSource random, RandomGenerator rnd);
     }
 
-    private static VillagerTrades.ItemListing offer(int emeralds, int uses, Maker maker) {
+    private static TradeListing offer(int emeralds, int uses, Maker maker) {
         return (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             return new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), maker.make(random, rnd), uses, 1, 0.05F);
         };
     }
 
-    private static VillagerTrades.ItemListing fixed(int emeralds, int uses, Supplier<ItemStack> item) {
+    private static TradeListing fixed(int emeralds, int uses, Supplier<ItemStack> item) {
         return (traderLevel, trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), item.get(), uses, 1, 0.05F);
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.tank.TankBlock;
@@ -18,7 +18,7 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * (no biome tint), only outer faces of the water body, 0.5 px inside the glass to avoid z-fighting (M11: inset only
  * along the normal, so the faces sort behind translucent glass, see {@link TankWaterGeometry}). Works per
  * block from the block states, so any tank shape (M10) renders: each layer has one fill height.
- * Called from the chunk mesher via {@link TankAwareWaterExtensions#renderFluid}; also used by Sodium 0.8.
+ * Called from the chunk mesher via {@code FluidRendererMixin} (M52c; 1.21.x: the loaders' fluid hooks); also used by Sodium 0.8.
  */
 public final class TankWaterRenderer {
     public static final Identifier STILL = BettaCraft.id("block/tank_water_still");
@@ -58,7 +58,7 @@ public final class TankWaterRenderer {
         if (Boolean.TRUE.equals(org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelValue(level, pos, org.overengineer.bettacraft.tank.TankBlockEntity.WATER_DYNAMIC))) return;
         var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
         TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
-        int light = LevelRenderer.getLightColor(level, pos);
+        int light = LevelRenderer.getLightCoords(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
         faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), (d, c, col, rev) -> {

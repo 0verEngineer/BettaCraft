@@ -1,0 +1,14 @@
+{
+  "given_item_modifiers": [
+    {
+      "function": "bettacraft:trade",
+      "offer": "wandering_trader/plant_vallisneria"
+    }
+  ],
+  "gives": {
+    "id": "bettacraft:vallisneria"
+  },
+  "wants": {
+    "id": "minecraft:emerald"
+  }
+}

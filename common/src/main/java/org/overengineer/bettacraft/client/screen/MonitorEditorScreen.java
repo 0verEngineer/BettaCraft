@@ -7,7 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -409,12 +409,12 @@ public class MonitorEditorScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         MonitorBlockEntity c = controller();
         if (c == null || layout == null) return;
-        g.drawString(font, title, 12, 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
-        g.drawString(font, Component.translatable("gui.bettacraft.monitor.info", bw, bh, c.clientTanks.size()).withStyle(ChatFormatting.GRAY), 12, 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
+        g.text(font, title, 12, 8, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
+        g.text(font, Component.translatable("gui.bettacraft.monitor.info", bw, bh, c.clientTanks.size()).withStyle(ChatFormatting.GRAY), 12, 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
         // the grid
         g.fill(gx - 2, gy - 2, gx + gw * cell + 2, gy + gh * cell + 2, 0xFF05090B);
         for (int x = 0; x <= gw; x++) g.fill(gx + x * cell, gy, gx + x * cell + 1, gy + gh * cell, x % DashboardLayout.CELLS == 0 ? 0x60FFFFFF : 0x20FFFFFF);
@@ -423,7 +423,7 @@ public class MonitorEditorScreen extends Screen {
             int x0 = gx + t.x * cell + 1, y0 = gy + t.y * cell + 1, x1 = gx + (t.x + t.w) * cell, y1 = gy + (t.y + t.h) * cell;
             g.fill(x0, y0, x1, y1, t.background != 0 ? t.background : TILE);
             boolean sel = t.id == selected;
-            g.renderOutline(x0, y0, x1 - x0, y1 - y0, sel ? 0xFFFFD040 : 0xFF6080A0);
+            g.outline(x0, y0, x1 - x0, y1 - y0, sel ? 0xFFFFD040 : 0xFF6080A0);
             g.fill(x1 - 3, y1 - 3, x1, y1, sel ? 0xFFFFD040 : 0xFF6080A0); // resize handle
             label(g, t, x0 + 2, y0 + 2, x1 - x0 - 4, y1 - y0 - 4);
         }
@@ -432,19 +432,19 @@ public class MonitorEditorScreen extends Screen {
         if (tile() == null) {
             int y = 30;
             for (var line : font.split(Component.translatable("gui.bettacraft.monitor.help").withStyle(ChatFormatting.GRAY), PANEL_W)) {
-                g.drawString(font, line, px, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
+                g.text(font, line, px, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0A0A0), false);
                 y += 10;
             }
         } else if (DashboardTile.GRAPH.equals(tile().kind())) {
             // the days between the -/+ buttons
             int y = 30 + ROW * 4;
-            g.drawCenteredString(font, Component.translatable("monitor.bettacraft.days", tile().days()), px + PANEL_W / 2, y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            g.centeredText(font, Component.translatable("monitor.bettacraft.days", tile().days()), px + PANEL_W / 2, y + 4, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
-        g.drawString(font, note, 12 + 2 * (Math.min(90, (width - 24) / 4 - 4) + 4), height - 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
+        g.text(font, note, 12 + 2 * (Math.min(90, (width - 24) / 4 - 4) + 4), height - 18, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF), false);
     }
 
     /** The type, tank and value of a tile in the grid, small. */
-    private void label(GuiGraphics g, DashboardTile t, int x, int y, int w, int h) {
+    private void label(GuiGraphicsExtractor g, DashboardTile t, int x, int y, int w, int h) {
         if (w < 4 || h < 3) return;
         List<String> lines = new ArrayList<>();
         lines.add(typeName(t.kind()));
@@ -465,17 +465,17 @@ public class MonitorEditorScreen extends Screen {
         for (String s : lines) {
             if ((ly + 8) * scale > h) break;
             String cut = font.width(s) > maxW ? font.plainSubstrByWidth(s, Math.max(0, maxW - font.width("..."))) + "..." : s;
-            g.drawString(font, cut, 0, ly, org.overengineer.bettacraft.client.ClientCompat.textColor(ly == 0 ? 0xFFFFFF : 0xB0C8D0), false);
+            g.text(font, cut, 0, ly, org.overengineer.bettacraft.client.ClientCompat.textColor(ly == 0 ? 0xFFFFFF : 0xB0C8D0), false);
             ly += 9;
         }
         g.pose().popMatrix();
     }
 
     @Override
-    public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(g, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.fill(4, 4, width - 4, height - 4, 0xE0101418);
-        g.renderOutline(4, 4, width - 8, height - 8, 0xFF6080A0);
+        g.outline(4, 4, width - 8, height - 8, 0xFF6080A0);
     }
 
     @Override
