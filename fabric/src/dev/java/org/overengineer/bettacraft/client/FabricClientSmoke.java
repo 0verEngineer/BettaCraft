@@ -113,6 +113,27 @@ public final class FabricClientSmoke implements ClientModInitializer {
         }
     }
 
+    private static int crackTicks;
+    private static final java.util.List<net.minecraft.core.BlockPos> cracked = new java.util.ArrayList<>();
+
+    /** Cracks on the tank blocks near the player for a second (rendered every frame), then a screenshot; true when done. */
+    private static boolean crack(Minecraft mc) {
+        if (crackTicks++ == 0) {
+            net.minecraft.core.BlockPos at = mc.player.blockPosition();
+            for (net.minecraft.core.BlockPos p : net.minecraft.core.BlockPos.betweenClosed(at.offset(-12, -8, -12), at.offset(12, 8, 12))) {
+                if (cracked.size() >= 12) break;
+                if (mc.level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock) cracked.add(p.immutable());
+            }
+            LOGGER.info("[smoketest] crack overlay on {} tank blocks", cracked.size());
+            if (cracked.isEmpty()) throw new IllegalStateException("no tank block near the player for the crack overlay");
+            for (int i = 0; i < cracked.size(); i++) mc.levelRenderer.destroyBlockProgress(-100 - i, cracked.get(i), 3 + i % 6);
+        }
+        if (crackTicks == 30) BookTour.shot("m52c_crack");
+        if (crackTicks < 40) return false;
+        for (int i = 0; i < cracked.size(); i++) mc.levelRenderer.destroyBlockProgress(-100 - i, cracked.get(i), -1);
+        return true;
+    }
+
     private static void onScreen(net.minecraft.client.gui.screens.Screen screen) {
         // a fresh run directory opens the accessibility onboarding first: skip it to the title screen
         if (screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) {
@@ -173,6 +194,11 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 stage = 2;
             }
             if (stage == 2 && m13.tick()) {
+                stage = 4;
+                crackTicks = 0;
+            }
+            // M52c (26.1): the crack overlay of mined blocks asks the models with AIR and no level (it crashed the tank model)
+            if (stage == 4 && crack(mc)) {
                 stage = 3;
                 LOGGER.info("[smoketest] fabric client world test finished");
                 LOGGER.info("[smoketest] PASSED");

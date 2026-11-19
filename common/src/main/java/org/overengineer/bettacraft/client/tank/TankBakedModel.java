@@ -149,7 +149,7 @@ public class TankBakedModel implements DynamicModel {
                 // translucent glass in front of water is cut where the water face behind it ends (the water height and
                 // INSET from the outer edges), so every water face sorts behind its glass piece (see TankWaterGeometry)
                 int water = 0; // 0 = no cut, else fill | mask << 5 | above << 11
-                if (state != null && !TankWaterRenderer.m10Look && (renderType == null || renderType == ChunkSectionLayer.TRANSLUCENT)) {
+                if (state != null && state.getBlock() instanceof TankBlock && !TankWaterRenderer.m10Look && (renderType == null || renderType == ChunkSectionLayer.TRANSLUCENT)) {
                     int fill = state.getValue(TankBlock.FILL);
                     if (fill > 0) {
                         Integer cd = data.get(CORNERS);
@@ -183,10 +183,11 @@ public class TankBakedModel implements DynamicModel {
     }
 
     @Override
-    public java.util.Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data) {
+    public java.util.Collection<ChunkSectionLayer> layers(@Nullable BlockState state, RandomSource rand, ModelValues data) {
         java.util.Set<ChunkSectionLayer> own = new java.util.LinkedHashSet<>();
         own.add(ChunkSectionLayer.CUTOUT);
-        if (state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0 && !waterDynamic(data)
+        // no state: the crack overlay of a block being mined (M52c, 26.1) or an item
+        if (state != null && state.getBlock() instanceof TankBlock && state.getValue(TankBlock.FILL) > 0 && !waterDynamic(data)
                 && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) own.add(ChunkSectionLayer.TRANSLUCENT);
         if (styleOf(data) == TankStyle.CLEAN) return own;
         BlockState glass = glassOf(data);

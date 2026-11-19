@@ -29,7 +29,7 @@ public interface DynamicModel {
     List<BakedQuad> quads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelValues data, @Nullable ChunkSectionLayer layer);
 
     /** The chunk render layers the block is drawn in. */
-    Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data);
+    Collection<ChunkSectionLayer> layers(@org.jetbrains.annotations.Nullable BlockState state, RandomSource rand, ModelValues data);
 
     /** The particle sprite (breaking particles). */
     TextureAtlasSprite particle(ModelValues data);

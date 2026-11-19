@@ -42,7 +42,10 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
 
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
-        collect(state, random, values(level, pos, state), parts);
+        // M52c (26.1): the crack overlay of a block being mined asks every model with an empty level, BlockPos.ZERO and AIR
+        // (no block context): then the model without a state, as for an item
+        if (state.isAir()) collect(null, random, ModelValues.EMPTY, parts);
+        else collect(state, random, values(level, pos, state), parts);
     }
 
     void collect(@Nullable BlockState state, RandomSource random, ModelValues data, List<BlockStateModelPart> parts) {

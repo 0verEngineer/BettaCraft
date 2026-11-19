@@ -44,7 +44,11 @@ public final class FabricDynamicModel implements BlockStateModel {
     @Override
     public void emitQuads(QuadEmitter emitter, BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random,
             Predicate<@Nullable Direction> cullTest) {
-        ModelValues data = values(level, pos, state);
+        // M52c (26.1): the crack overlay of a block being mined asks every model with an empty level, BlockPos.ZERO and AIR
+        // (no block context): then the model without a state, as for an item
+        boolean noBlock = state.isAir();
+        ModelValues data = noBlock ? ModelValues.EMPTY : values(level, pos, state);
+        if (noBlock) state = null;
         TriState partAo = dynamic.ambientOcclusion() ? TriState.DEFAULT : TriState.FALSE;
         for (ChunkSectionLayer layer : dynamic.layers(state, random, data)) {
             for (Direction side : SIDES) {

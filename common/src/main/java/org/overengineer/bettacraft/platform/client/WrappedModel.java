@@ -31,8 +31,8 @@ public abstract class WrappedModel implements DynamicModel {
     }
 
     @Override
-    public Collection<ChunkSectionLayer> layers(BlockState state, RandomSource rand, ModelValues data) {
-        return ClientPlatform.get().layers(originalModel, state, rand);
+    public Collection<ChunkSectionLayer> layers(@Nullable BlockState state, RandomSource rand, ModelValues data) {
+        return ClientPlatform.get().layers(originalModel, state != null ? state : net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), rand);
     }
 
     @Override
