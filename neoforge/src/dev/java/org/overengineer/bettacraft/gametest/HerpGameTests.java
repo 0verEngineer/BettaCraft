@@ -354,7 +354,7 @@ public final class HerpGameTests {
 
     private static List<EntityType<?>> mobs(net.minecraft.world.level.biome.Biome b) {
         List<EntityType<?>> out = new ArrayList<>();
-        for (var d : b.getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) out.add(d.value().type());
+        for (var d : org.overengineer.bettacraft.world.WildSpawns.mobs(b, MobCategory.CREATURE).unwrap()) out.add(d.value().type());
         return out;
     }
 }

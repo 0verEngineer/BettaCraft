@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.food;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,7 +38,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * M37: the crank item winds the spring (the crank turns a quarter, the ratchet clicks; {@link FoodMakerBlockEntity}).
  */
 public class FoodMakerBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<FoodMakerBlock> CODEC = simpleCodec(FoodMakerBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Position of the crank handle (quarter turns). */
     public static final IntegerProperty CRANK = IntegerProperty.create("crank", 0, 3);
@@ -49,11 +47,6 @@ public class FoodMakerBlock extends BaseEntityBlock implements BlockRemoval {
     public FoodMakerBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(CRANK, 0).setValue(WORKING, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

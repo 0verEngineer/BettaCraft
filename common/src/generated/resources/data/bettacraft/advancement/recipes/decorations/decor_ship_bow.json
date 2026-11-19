@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_ship_bow"
+        "recipes": "bettacraft:decor_ship_bow"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

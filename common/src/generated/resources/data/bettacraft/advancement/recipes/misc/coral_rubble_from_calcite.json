@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:coral_rubble_from_calcite"
+        "recipes": "bettacraft:coral_rubble_from_calcite"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

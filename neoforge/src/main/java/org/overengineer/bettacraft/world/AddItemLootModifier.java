@@ -21,11 +21,11 @@ public class AddItemLootModifier extends LootModifier {
     private final net.minecraft.world.item.ItemStackTemplate item;
 
     /** M52c (26.1): NeoForge's loot modifiers carry a priority. */
-    public AddItemLootModifier(LootItemCondition[] conditions, net.minecraft.world.item.ItemStackTemplate item) {
+    public AddItemLootModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, net.minecraft.world.item.ItemStackTemplate item) {
         this(conditions, net.neoforged.neoforge.common.loot.IGlobalLootModifier.DEFAULT_PRIORITY, item);
     }
 
-    public AddItemLootModifier(LootItemCondition[] conditions, int priority, net.minecraft.world.item.ItemStackTemplate item) {
+    public AddItemLootModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, int priority, net.minecraft.world.item.ItemStackTemplate item) {
         super(conditions, priority);
         this.item = item;
     }

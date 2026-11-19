@@ -167,7 +167,7 @@ public final class ClownLarvae {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
             ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
-            if (!player.getInventory().add(bottle)) player.drop(bottle, false);
+            if (!player.getInventory().add(bottle)) player.drop(bottle, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.8F, 1.0F);
         TankCare.log((ServerLevel) level, c, "log.bettacraft.reef.phytoplankton");

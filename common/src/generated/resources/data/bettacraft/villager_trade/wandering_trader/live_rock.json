@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/live_rock"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "wandering_trader/live_rock"
+  },
   "gives": {
     "id": "bettacraft:live_rock"
   },

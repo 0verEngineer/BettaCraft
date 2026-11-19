@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModification;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.fabricmc.fabric.api.registry.CompostableRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.core.registries.Registries;
@@ -45,8 +44,7 @@ public final class FabricWorld {
     static void register() {
         biomes();
         loot();
-        // M49: the Chaetomorpha goes into the composter (NeoForge: data/neoforge/data_maps/item/compostables.json)
-        CompostableRegistry.INSTANCE.add(org.overengineer.bettacraft.registry.ModItems.CHAETOMORPHA.get(), 0.65F);
+        // M49: the Chaetomorpha goes into the composter (M52e: its compostable item component, see ModItems)
     }
 
     // ------------------------------------------------------------------ biomes
@@ -87,6 +85,9 @@ public final class FabricWorld {
     record Modifier(String type, Identifier table, List<LootItemCondition> conditions, net.minecraft.world.item.@org.jetbrains.annotations.Nullable ItemStackTemplate item) {}
 
     static volatile List<Modifier> modifiers = List.of();
+    /** M52e: the files of the last reload, parsed with the registries of the level that rolls loot (biome tags). */
+    static volatile List<JsonObject> files = List.of();
+    static volatile @org.jetbrains.annotations.Nullable net.minecraft.core.HolderLookup.Provider parsedFor;
 
     private static void loot() {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
@@ -97,13 +98,20 @@ public final class FabricWorld {
 
             @Override
             public void onResourceManagerReload(ResourceManager rm) {
-                modifiers = read(rm);
+                files = read(rm);
+                parsedFor = null;
+                modifiers = parse(files, null);
             }
         });
     }
 
     /** The loot of a table was rolled (LootTableMixin; the table's id is its random sequence, as vanilla's tables have it). */
     public static void modify(Identifier id, LootContext context, ObjectArrayList<ItemStack> loot) {
+        var registries = context.getLevel().registryAccess();
+        if (parsedFor != registries) {
+            modifiers = parse(files, registries);
+            parsedFor = registries;
+        }
         List<Modifier> ms = modifiers;
         if (ms.isEmpty()) return;
         for (Modifier m : ms) {
@@ -128,23 +136,54 @@ public final class FabricWorld {
      * M52c (26.1): every modifier file of ours ({@code data/bettacraft/loot_modifiers/*.json}; NeoForge 26.1 has no list any
      * more), in the order of their priority (higher first, as NeoForge applies them).
      */
-    private static List<Modifier> read(ResourceManager rm) {
+    private static List<JsonObject> read(ResourceManager rm) {
+        List<JsonObject> out = new ArrayList<>();
+        var found = new java.util.TreeMap<>(rm.listResources("loot_modifiers", id -> id.getNamespace().equals(BettaCraft.MOD_ID) && id.getPath().endsWith(".json")));
+        for (var res : found.values()) {
+            try (Reader mr = res.openAsReader()) {
+                out.add(JsonParser.parseReader(mr).getAsJsonObject());
+            } catch (Exception ex) {
+                com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifier {} failed", res.sourcePackId(), ex);
+            }
+        }
+        return List.copyOf(out);
+    }
+
+    /**
+     * The modifiers of the files. M52e (26.3): one {@code condition} (several joined with {@code minecraft:all_of}); parsed
+     * with the level's registries, so conditions with biome tags (LocationCheck) work (without registries they would not
+     * parse and were left out).
+     */
+    private static List<Modifier> parse(List<JsonObject> files, @org.jetbrains.annotations.Nullable net.minecraft.core.HolderLookup.Provider registries) {
         List<Modifier> out = new ArrayList<>();
         List<Integer> priorities = new ArrayList<>();
-        var ops = RegistryOps.create(JsonOps.INSTANCE, net.minecraft.core.RegistryAccess.EMPTY);
-        var files = new java.util.TreeMap<>(rm.listResources("loot_modifiers", id -> id.getNamespace().equals(BettaCraft.MOD_ID) && id.getPath().endsWith(".json")));
-        for (var res : files.values()) {
-            try (Reader mr = res.openAsReader()) {
-                JsonObject o = JsonParser.parseReader(mr).getAsJsonObject();
+        var ops = RegistryOps.create(JsonOps.INSTANCE, registries != null ? registries : net.minecraft.core.RegistryAccess.EMPTY);
+        for (JsonObject o : files) {
+            try {
                 Identifier table = null;
                 List<LootItemCondition> conds = new ArrayList<>();
-                for (JsonElement c : o.getAsJsonArray("conditions")) {
-                    JsonObject co = c.getAsJsonObject();
-                    if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
+                List<JsonObject> terms = new ArrayList<>();
+                if (o.has("condition")) {
+                    JsonObject c = o.getAsJsonObject("condition");
+                    if ("minecraft:all_of".equals(c.get("type").getAsString())) {
+                        for (JsonElement t : c.getAsJsonArray("terms")) terms.add(t.getAsJsonObject());
+                    } else {
+                        terms.add(c);
+                    }
+                }
+                boolean complete = true;
+                for (JsonObject co : terms) {
+                    if ("neoforge:loot_table_id".equals(co.get("type").getAsString())) {
                         table = Identifier.parse(co.get("loot_table_id").getAsString());
                         continue;
                     }
-                    LootItemCondition.DIRECT_CODEC.parse(ops, co).result().ifPresent(conds::add);
+                    var parsed = LootItemCondition.DIRECT_CODEC.parse(ops, co).result();
+                    if (parsed.isPresent()) conds.add(parsed.get());
+                    else complete = false;
+                }
+                if (!complete && registries != null) {
+                    com.mojang.logging.LogUtils.getLogger().error("Bettacraft: a condition of the loot modifier {} does not parse", o.get("type"));
+                    continue; // never apply a modifier without all its conditions
                 }
                 // a template: the item components are bound after the data is read
                 var item = o.has("item") ? net.minecraft.world.item.ItemStackTemplate.CODEC.parse(ops, o.get("item")).result().orElse(null) : null;
@@ -154,7 +193,7 @@ public final class FabricWorld {
                 priorities.add(at, prio);
                 out.add(at, new Modifier(o.get("type").getAsString(), table, conds, item));
             } catch (Exception ex) {
-                com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifier {} failed", res.sourcePackId(), ex);
+                com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifier {} failed", o.get("type"), ex);
             }
         }
         return List.copyOf(out);

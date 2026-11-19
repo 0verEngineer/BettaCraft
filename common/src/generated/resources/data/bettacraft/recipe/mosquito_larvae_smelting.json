@@ -6,6 +6,7 @@
     }
   ],
   "type": "minecraft:smelting",
+  "cookingtime": 200,
   "experience": 0.1,
   "ingredient": "bettacraft:swamp_water_bottle",
   "result": {

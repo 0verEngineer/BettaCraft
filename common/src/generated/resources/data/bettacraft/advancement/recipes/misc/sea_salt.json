@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:sea_salt"
+        "recipes": "bettacraft:sea_salt"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

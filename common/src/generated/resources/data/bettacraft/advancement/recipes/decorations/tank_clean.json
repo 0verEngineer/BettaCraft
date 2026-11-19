@@ -33,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_clean"
+        "recipes": "bettacraft:tank_clean"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:spawning_mop"
+        "recipes": "bettacraft:spawning_mop"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

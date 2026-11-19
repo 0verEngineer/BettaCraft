@@ -462,7 +462,7 @@ public class AquaristEntity extends PathfinderMob {
 
     /** Swings his arm at a place (the work shows). */
     void swingWork(ServerLevel level, @Nullable BlockPos at) {
-        swing(InteractionHand.MAIN_HAND);
+        swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
         if (at != null) getLookControl().setLookAt(Vec3.atCenterOf(at));
     }
 
@@ -741,7 +741,7 @@ public class AquaristEntity extends PathfinderMob {
         getNavigation().stop();
         getLookControl().setLookAt(Vec3.atCenterOf(target));
         jobTicks++;
-        if (jobTicks % 10 == 1) swing(InteractionHand.MAIN_HAND);
+        if (jobTicks % 10 == 1) swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
         if (jobTicks < 40 / speed) return;
         List<AquaristWork.Job> follow = AquaristWork.perform(level, this, current);
         for (int i = follow.size() - 1; i >= 0; i--) jobs.addFirst(follow.get(i));

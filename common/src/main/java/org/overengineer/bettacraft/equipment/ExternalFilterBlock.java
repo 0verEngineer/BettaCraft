@@ -4,7 +4,6 @@ import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,18 +39,12 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * Two heater slots; right-click with a heater puts it in, right-click with an empty hand opens the slots.
  */
 public class ExternalFilterBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<ExternalFilterBlock> CODEC = simpleCodec(ExternalFilterBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE = Shapes.or(box(3, 0, 3, 13, 12, 13), box(4, 12, 4, 12, 14, 12));
 
     public ExternalFilterBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

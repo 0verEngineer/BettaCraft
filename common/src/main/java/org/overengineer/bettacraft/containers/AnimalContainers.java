@@ -174,14 +174,14 @@ public final class AnimalContainers {
         var inv = player.getInventory();
         ItemStack st = inv.getItem(slot);
         if (player.getAbilities().instabuild && !waterBucket(st)) {
-            if (!inv.add(filled)) player.drop(filled, false);
+            if (!inv.add(filled)) player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
             return;
         }
         if (st.getCount() <= 1) {
             inv.setItem(slot, filled);
         } else {
             st.shrink(1);
-            if (!inv.add(filled)) player.drop(filled, false);
+            if (!inv.add(filled)) player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
     }
 

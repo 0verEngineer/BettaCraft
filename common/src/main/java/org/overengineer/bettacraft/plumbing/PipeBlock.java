@@ -6,7 +6,6 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -32,7 +31,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * tanks, the reservoir, cauldrons, other mods' tanks and pipes) and our pumps and filter connectors.
  */
 public class PipeBlock extends Block implements BlockRemoval {
-    public static final MapCodec<PipeBlock> CODEC = simpleCodec(p -> new PipeBlock(false, p));
     public static final Map<Direction, BooleanProperty> SIDES = new EnumMap<>(Map.of(
             Direction.NORTH, BlockStateProperties.NORTH, Direction.SOUTH, BlockStateProperties.SOUTH, Direction.EAST, BlockStateProperties.EAST,
             Direction.WEST, BlockStateProperties.WEST, Direction.UP, BlockStateProperties.UP, Direction.DOWN, BlockStateProperties.DOWN));
@@ -49,11 +47,6 @@ public class PipeBlock extends Block implements BlockRemoval {
         BlockState s = stateDefinition.any();
         for (BooleanProperty p : SIDES.values()) s = s.setValue(p, false);
         registerDefaultState(s);
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     public boolean steel() {

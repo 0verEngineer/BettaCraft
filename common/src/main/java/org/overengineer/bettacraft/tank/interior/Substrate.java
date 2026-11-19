@@ -62,7 +62,7 @@ public final class Substrate {
         if (stack.isEmpty()) {
             if (!floor.getValue(InteriorFloorBlock.SUBSTRATE)) return false;
             ItemStack back = clear(level, pos);
-            if (!back.isEmpty() && !player.getInventory().add(back)) player.drop(back, false);
+            if (!back.isEmpty() && !player.getInventory().add(back)) player.drop(back, false, net.minecraft.util.Prediction.SERVER_ONLY);
             return true;
         }
         if (!(stack.getItem() instanceof BlockItem bi)) return false;
@@ -81,7 +81,7 @@ public final class Substrate {
         ItemStack back = set(level, pos, substrate, paid);
         if (paid) stack.shrink(1);
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.SUBSTRATE);
-        if (!back.isEmpty() && !player.getInventory().add(back)) player.drop(back, false);
+        if (!back.isEmpty() && !player.getInventory().add(back)) player.drop(back, false, net.minecraft.util.Prediction.SERVER_ONLY);
         SoundType sound = org.overengineer.bettacraft.platform.Platform.get().soundType(substrate, level, pos, player);
         level.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1) / 2, sound.getPitch() * 0.8F);
         return true;

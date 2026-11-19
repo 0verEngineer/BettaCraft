@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:active_soil"
+        "recipes": "bettacraft:active_soil"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

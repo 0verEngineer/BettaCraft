@@ -232,7 +232,7 @@ public final class WildSpawnPass {
     /** The spawn entries of the mod in a biome (water ambient group, with their biome weights). */
     public static List<Weighted<MobSpawnSettings.SpawnerData>> ours(Holder<Biome> biome) {
         List<Weighted<MobSpawnSettings.SpawnerData>> out = new ArrayList<>();
-        for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) {
+        for (var d : org.overengineer.bettacraft.world.WildSpawns.mobs(biome.value(), MobCategory.WATER_AMBIENT).unwrap()) {
             if (d.value().type().builtInRegistryHolder().is(ModTags.ALL_ANIMALS)) out.add(d);
         }
         return out;
@@ -250,7 +250,7 @@ public final class WildSpawnPass {
         int floor = level.getHeight(Heightmap.Types.OCEAN_FLOOR, surface.getX(), surface.getZ());
         int y = bottom ? floor : Math.max(floor, surface.getY() - r.nextInt(3));
         BlockPos start = new BlockPos(surface.getX(), y, surface.getZ());
-        int count = Math.min(room, d.minCount() + r.nextInt(Math.max(1, d.maxCount() - d.minCount() + 1)));
+        int count = Math.min(room, d.count().sample(r));
         return spawnGroup(level, d.type(), start, bottom, count, r, null);
     }
 

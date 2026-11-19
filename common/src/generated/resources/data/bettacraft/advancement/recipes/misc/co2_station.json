@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:co2_station"
+        "recipes": "bettacraft:co2_station"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -29,7 +29,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:larva_tub"
+        "recipes": "bettacraft:larva_tub"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

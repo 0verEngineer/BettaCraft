@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.tank.interior;
 
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -17,17 +16,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  * plain floor blocks have no block entity.
  */
 public class InteriorFloorBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockRemoval {
-    public static final MapCodec<InteriorFloorBlock> CODEC = simpleCodec(InteriorFloorBlock::new);
     public static final BooleanProperty SUBSTRATE = BooleanProperty.create("substrate");
 
     public InteriorFloorBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(SUBSTRATE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

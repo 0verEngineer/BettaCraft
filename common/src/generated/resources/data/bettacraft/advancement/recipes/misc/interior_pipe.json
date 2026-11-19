@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:interior_pipe"
+        "recipes": "bettacraft:interior_pipe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

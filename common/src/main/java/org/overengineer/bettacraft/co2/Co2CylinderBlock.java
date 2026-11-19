@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.co2;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +36,6 @@ import org.overengineer.bettacraft.registry.ModItems;
  * the cylinder keeps its gas and its valve.
  */
 public class Co2CylinderBlock extends BaseEntityBlock implements BlockRemoval, Co2SourceBlock {
-    public static final MapCodec<Co2CylinderBlock> CODEC = simpleCodec(Co2CylinderBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty SOLENOID = BooleanProperty.create("solenoid");
     /** Gas flows right now (bubble counter). */
@@ -47,11 +45,6 @@ public class Co2CylinderBlock extends BaseEntityBlock implements BlockRemoval, C
     public Co2CylinderBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SOLENOID, false).setValue(ACTIVE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

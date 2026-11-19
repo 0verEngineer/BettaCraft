@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:sump"
+        "recipes": "bettacraft:sump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

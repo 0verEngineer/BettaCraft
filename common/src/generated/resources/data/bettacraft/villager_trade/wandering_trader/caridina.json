@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/caridina"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "wandering_trader/caridina"
+  },
   "gives": {
     "id": "bettacraft:fish_bag"
   },

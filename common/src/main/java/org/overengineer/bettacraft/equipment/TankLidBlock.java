@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.equipment;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -13,16 +12,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * light or any full block) does not lose water by evaporation. Purely a cover, no block entity.
  */
 public class TankLidBlock extends Block {
-    public static final MapCodec<TankLidBlock> CODEC = simpleCodec(TankLidBlock::new);
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 1, 16);
 
     public TankLidBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

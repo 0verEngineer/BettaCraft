@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:dosing_pump"
+        "recipes": "bettacraft:dosing_pump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

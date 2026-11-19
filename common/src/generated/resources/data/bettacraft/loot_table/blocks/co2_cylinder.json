@@ -2,28 +2,24 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:copy_components",
-              "include": [
-                "bettacraft:co2_gas",
-                "bettacraft:co2_solenoid"
-              ],
-              "source": "block_entity"
-            }
-          ],
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "bettacraft:co2_gas",
+              "bettacraft:co2_solenoid"
+            ],
+            "source": "block_entity"
+          },
           "name": "bettacraft:co2_cylinder"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/co2_cylinder"

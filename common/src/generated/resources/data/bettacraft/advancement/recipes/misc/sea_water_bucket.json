@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:sea_water_bucket"
+        "recipes": "bettacraft:sea_water_bucket"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

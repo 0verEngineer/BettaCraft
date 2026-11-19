@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_pump_head"
+        "recipes": "bettacraft:filter_pump_head"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

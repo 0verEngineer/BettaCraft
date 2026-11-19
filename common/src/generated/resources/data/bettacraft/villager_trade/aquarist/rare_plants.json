@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "aquarist/rare_plants"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "aquarist/rare_plants"
+  },
   "gives": {
     "id": "bettacraft:red_tiger_lotus"
   },

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:lily_pipe"
+        "recipes": "bettacraft:lily_pipe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

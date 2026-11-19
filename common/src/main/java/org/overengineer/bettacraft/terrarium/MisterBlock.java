@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.terrarium;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +36,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * bucket, from pipes and other mods' fluid handlers, from a reservoir or water source next to it.
  */
 public class MisterBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<MisterBlock> CODEC = simpleCodec(MisterBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty MISTING = BooleanProperty.create("misting");
     private static final VoxelShape SHAPE = box(4, 0, 4, 12, 9, 12);
@@ -45,11 +43,6 @@ public class MisterBlock extends BaseEntityBlock implements BlockRemoval {
     public MisterBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MISTING, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

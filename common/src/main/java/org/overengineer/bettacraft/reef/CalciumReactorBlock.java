@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.reef;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +34,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * in coral rubble. Lit (bubbles in the column) while it runs.
  */
 public class CalciumReactorBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
-    public static final MapCodec<CalciumReactorBlock> CODEC = simpleCodec(CalciumReactorBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 15, 13);
@@ -43,11 +41,6 @@ public class CalciumReactorBlock extends BaseEntityBlock implements BlockRemoval
     public CalciumReactorBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

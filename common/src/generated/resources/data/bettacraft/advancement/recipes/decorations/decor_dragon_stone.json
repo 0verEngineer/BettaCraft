@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_dragon_stone"
+        "recipes": "bettacraft:decor_dragon_stone"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

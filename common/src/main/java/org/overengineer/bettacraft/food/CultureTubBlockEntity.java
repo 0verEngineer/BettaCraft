@@ -423,7 +423,7 @@ public class CultureTubBlockEntity extends BlockEntity {
         ItemStack out = items.extractItem(OUTPUT, OUTPUT_MAX, false);
         if (out.isEmpty()) return false;
         int n = out.getCount();
-        if (!player.getInventory().add(out)) player.drop(out, false);
+        if (!player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
         level.playSound(null, worldPosition, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.8F, 1.0F);
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.FOOD_BRED, n);
         return true;

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_castle"
+        "recipes": "bettacraft:decor_castle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

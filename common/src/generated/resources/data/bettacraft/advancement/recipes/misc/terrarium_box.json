@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:terrarium_box"
+        "recipes": "bettacraft:terrarium_box"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

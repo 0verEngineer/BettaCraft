@@ -80,7 +80,7 @@ public final class ContainerRules {
         CONFIRMED.add(player.getUUID());
         try {
             player.gameMode.useItem(player, player.level(), stack, hand);
-            player.swing(hand, true);
+            player.swing(hand, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
         } finally {
             CONFIRMED.remove(player.getUUID());
         }

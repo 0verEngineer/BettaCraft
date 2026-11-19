@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:ph_test_kit"
+        "recipes": "bettacraft:ph_test_kit"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,14 +1,17 @@
 {
   "type": "bettacraft:fishing_aquatic_plants",
-  "conditions": [
-    {
-      "condition": "bettacraft:feature",
-      "feature": "aquaticPlants.enabled"
-    },
-    {
-      "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:gameplay/fishing"
-    }
-  ],
+  "condition": {
+    "type": "minecraft:all_of",
+    "terms": [
+      {
+        "type": "bettacraft:feature",
+        "feature": "aquaticPlants.enabled"
+      },
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:gameplay/fishing"
+      }
+    ]
+  },
   "priority": 1010
 }

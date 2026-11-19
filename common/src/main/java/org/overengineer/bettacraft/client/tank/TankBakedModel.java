@@ -330,7 +330,7 @@ public class TankBakedModel implements DynamicModel {
             copy[i * stride + 4] = Float.floatToRawIntBits(u[i]);
             copy[i * stride + 5] = Float.floatToRawIntBits(v[i]);
         }
-        return ClientPlatform.get().quad(copy, q.materialInfo().tintIndex(), q.direction(), q.materialInfo().sprite(), q.materialInfo().shade(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
+        return ClientPlatform.get().quad(copy, q.materialInfo().tintIndex(), q.direction(), q.materialInfo().sprite(), q.materialInfo().shadeDirectionOverride(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
     }
 
     /** Inverse of {@link BoxFaces#u} / {@link BoxFaces#v}: sets the in-plane coordinates of {@code p} on face {@code side}. */

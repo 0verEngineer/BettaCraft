@@ -23,7 +23,7 @@ import org.overengineer.bettacraft.platform.item.IItemHandler;
 public final class FromResources {
     private FromResources() {}
 
-    private static Transaction open() {
+    static Transaction open() {
         return Transaction.open(Transaction.getCurrentOpenedTransaction());
     }
 
@@ -202,6 +202,78 @@ public final class FromResources {
             try (Transaction tx = open()) {
                 return h.insert(1, tx) > 0; // aborted: only a test
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ fluid container items (M52e: 26.3)
+
+    /** The fluid of an item (a bucket, another mod's tank item), working on a copy of one item of the stack. */
+    public static java.util.Optional<org.overengineer.bettacraft.platform.fluid.IFluidHandlerItem> fluidItem(ItemStack stack) {
+        if (stack.isEmpty()) return java.util.Optional.empty();
+        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack.copyWithCount(1));
+        ResourceHandler<FluidResource> h = access.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM);
+        if (h == null) return java.util.Optional.empty();
+        IFluidHandler f = fluids(h);
+        return java.util.Optional.of(new org.overengineer.bettacraft.platform.fluid.IFluidHandlerItem() {
+            @Override
+            public ItemStack getContainer() {
+                return access.getResource().toStack(access.getAmount());
+            }
+
+            @Override
+            public int getTanks() {
+                return f.getTanks();
+            }
+
+            @Override
+            public FluidStack getFluidInTank(int tank) {
+                return f.getFluidInTank(tank);
+            }
+
+            @Override
+            public int getTankCapacity(int tank) {
+                return f.getTankCapacity(tank);
+            }
+
+            @Override
+            public boolean isFluidValid(int tank, FluidStack s) {
+                return f.isFluidValid(tank, s);
+            }
+
+            @Override
+            public int fill(FluidStack resource, FluidAction action) {
+                return f.fill(resource, action);
+            }
+
+            @Override
+            public FluidStack drain(FluidStack resource, FluidAction action) {
+                return f.drain(resource, action);
+            }
+
+            @Override
+            public FluidStack drain(int maxDrain, FluidAction action) {
+                return f.drain(maxDrain, action);
+            }
+        });
+    }
+
+    /**
+     * Moves up to {@code maxAmount} mB between a container item (one of the stack) and our handler: into the handler
+     * ({@code fromItem}) or out of it. The result is the container after the move, or null if nothing moved.
+     */
+    public static @Nullable ItemStack moveWithContainer(ItemStack container, IFluidHandler other, int maxAmount, boolean execute, boolean fromItem) {
+        if (container.isEmpty() || other == null) return null;
+        var access = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(container.copyWithCount(1));
+        ResourceHandler<FluidResource> item = access.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Fluid.ITEM);
+        ResourceHandler<FluidResource> tank = NeoResources.fluids(other);
+        if (item == null || tank == null) return null;
+        try (Transaction tx = open()) {
+            int moved = fromItem ? net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(item, tank, r -> true, maxAmount, tx)
+                    : net.neoforged.neoforge.transfer.ResourceHandlerUtil.move(tank, item, r -> true, maxAmount, tx);
+            if (moved <= 0) return null;
+            ItemStack result = access.getResource().toStack(access.getAmount());
+            if (execute) tx.commit();
+            return result;
         }
     }
 }

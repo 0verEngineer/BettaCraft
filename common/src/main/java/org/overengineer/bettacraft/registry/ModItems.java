@@ -177,7 +177,9 @@ public final class ModItems {
     // M49 part a: the sump, the Chaetomorpha of its refugium, the calcium reactor and its coral rubble
     public static final DeferredItem<org.overengineer.bettacraft.equipment.SumpItem> SUMP = ITEMS.register("sump",
             () -> new org.overengineer.bettacraft.equipment.SumpItem(new Item.Properties().stacksTo(1)));
-    public static final DeferredItem<Item> CHAETOMORPHA = ITEMS.register("chaetomorpha", () -> new Item(new Item.Properties()));
+    // M52e (26.3): compostable through its item component (65 %; replaces the NeoForge data map and the Fabric registry)
+    public static final DeferredItem<Item> CHAETOMORPHA = ITEMS.register("chaetomorpha", () -> new Item(new Item.Properties()
+            .compostable(net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders.COMPOSTABLE_MEDIUM)));
     public static final DeferredItem<Item> CORAL_RUBBLE = ITEMS.register("coral_rubble", () -> new Item(new Item.Properties()));
     public static final DeferredItem<BlockItem> CALCIUM_REACTOR = ITEMS.registerSimpleBlockItem(ModBlocks.CALCIUM_REACTOR);
     public static final DeferredItem<CultureItem> PHYTOPLANKTON_CULTURE = ITEMS.register("phytoplankton_culture",

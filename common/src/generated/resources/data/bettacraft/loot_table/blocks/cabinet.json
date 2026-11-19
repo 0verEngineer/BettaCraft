@@ -2,30 +2,26 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:copy_components",
-              "include": [
-                "bettacraft:wood",
-                "bettacraft:outlet_side",
-                "bettacraft:cabinet_front",
-                "bettacraft:cabinet_joints"
-              ],
-              "source": "block_entity"
-            }
-          ],
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "bettacraft:wood",
+              "bettacraft:outlet_side",
+              "bettacraft:cabinet_front",
+              "bettacraft:cabinet_joints"
+            ],
+            "source": "block_entity"
+          },
           "name": "bettacraft:cabinet"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/cabinet"

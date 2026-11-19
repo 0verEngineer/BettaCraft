@@ -433,7 +433,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
             if (!player.getAbilities().instabuild) {
                 ItemStack rest = org.overengineer.bettacraft.platform.Platform.get().craftingRemainder(stack);
                 stack.shrink(1);
-                if (!rest.isEmpty() && !player.getInventory().add(rest)) player.drop(rest, false);
+                if (!rest.isEmpty() && !player.getInventory().add(rest)) player.drop(rest, false, net.minecraft.util.Prediction.SERVER_ONLY);
             }
             level.playSound(null, worldPosition, isMud ? SoundEvents.MUD_PLACE : SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.6F, 1.2F);
             return true;
@@ -448,7 +448,7 @@ public class LiveCultureBlockEntity extends BlockEntity {
         if (n <= 0) return false;
         ItemStack out = animal().copyWithCount(n);
         if (poor) out.set(ModDataComponents.POOR_CULTURE.get(), true);
-        if (!player.getInventory().add(out)) player.drop(out, false);
+        if (!player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
         setChanged();
         updateState();
         level.playSound(null, worldPosition, SoundEvents.BUCKET_FILL_FISH, SoundSource.BLOCKS, 0.6F, 1.3F);

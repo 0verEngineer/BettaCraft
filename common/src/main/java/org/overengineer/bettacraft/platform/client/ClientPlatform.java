@@ -63,7 +63,7 @@ public interface ClientPlatform {
      * A baked quad from the 1.21.1 vertex layout (NeoForge's carries its colours, normals and ambient occlusion flag).
      * M52c (26.1): every quad carries the chunk layer it is drawn in.
      */
-    BakedQuad quad(int[] vertices, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion, ChunkSectionLayer layer);
+    BakedQuad quad(int[] vertices, int tint, Direction direction, TextureAtlasSprite sprite, @org.jspecify.annotations.Nullable Direction shadeOverride, boolean ambientOcclusion, ChunkSectionLayer layer);
 
     /** The 1.21.1 vertex layout of a quad (positions, colours, UVs and normals as far as the loader keeps them). */
     int[] vertices(BakedQuad quad);

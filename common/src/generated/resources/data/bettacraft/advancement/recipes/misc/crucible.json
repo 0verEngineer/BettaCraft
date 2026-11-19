@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:crucible"
+        "recipes": "bettacraft:crucible"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

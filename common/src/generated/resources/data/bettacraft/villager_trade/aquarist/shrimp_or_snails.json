@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "aquarist/shrimp_or_snails"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "aquarist/shrimp_or_snails"
+  },
   "gives": {
     "id": "bettacraft:fish_bag"
   },

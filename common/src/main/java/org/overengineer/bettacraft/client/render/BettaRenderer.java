@@ -149,7 +149,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity
         if (!bodyVisible && !translucent) return glowing ? RenderTypes.outline(currentSkin) : null;
         // fry are see-through (PLAN 5.3). With back-face culling: the fins are flat boxes whose front and back faces lie
         // in one plane; drawn both, shader packs let them z-fight (flickering fins). Culled, each side shows one face.
-        return currentAlpha < 255 ? RenderTypes.entityTranslucentCullItemTarget(currentSkin) : RenderTypes.entityCutoutCull(currentSkin);
+        return currentAlpha < 255 ? RenderTypes.entityTranslucentCull(currentSkin) : RenderTypes.entityCutoutCull(currentSkin);
     }
 
     @Override
@@ -171,10 +171,10 @@ public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity
         float swim = Features.enabled(Feature.SMOOTH_SWIMMING) ? Math.min(1F, fish.swimPose.swim(partialTick) * 0.75F)
                 : (float) Math.min(1.0, v / 0.04);
         float f = (fish.isSick() ? 2.0F : 1.2F + 3.1F * swim) * Mth.sin(0.6F * bob);
-        pose.mulPose(Axis.YP.rotationDegrees(f));
+        pose.rotate(Axis.YP.rotationDegrees(f));
         if (!fish.isInWater()) {
             pose.translate(0.1F, 0.1F, -0.1F);
-            pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            pose.rotate(Axis.ZP.rotationDegrees(90.0F));
         }
     }
 }

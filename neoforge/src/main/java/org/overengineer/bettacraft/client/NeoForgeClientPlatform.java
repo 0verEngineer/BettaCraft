@@ -128,7 +128,7 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
     private static final int STRIDE = 8;
 
     @Override
-    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion, ChunkSectionLayer layer) {
+    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, @org.jspecify.annotations.Nullable Direction shadeOverride, boolean ambientOcclusion, ChunkSectionLayer layer) {
         org.joml.Vector3f[] pos = new org.joml.Vector3f[4];
         long[] uv = new long[4];
         int[] colors = new int[4], normals = new int[4];
@@ -140,8 +140,13 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
             normals[i] = v[o + 7] & 0xFFFFFF;
         }
         // M52c (26.1): the material info carries the chunk layer and the item render type
-        var info = new BakedQuad.MaterialInfo(sprite, layer, layer.translucent() ? net.minecraft.client.renderer.Sheets.translucentBlockItemSheet()
-                : net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet(), tint, shade, 0, ambientOcclusion);
+        // M52e (26.3): the glint render types of the item, and a shade direction (null: the face's own) instead of a flag
+        boolean tr = layer.translucent();
+        var info = new BakedQuad.MaterialInfo(sprite, layer,
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet(),
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemGlintSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemGlintSheet(),
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemGlintSpecialSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemGlintSpecialSheet(),
+                tint, shadeOverride, 0, ambientOcclusion);
         return new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], direction, info,
                 net.neoforged.neoforge.client.model.quad.BakedNormals.of(normals[0], normals[1], normals[2], normals[3]),
                 net.neoforged.neoforge.client.model.quad.BakedColors.of(colors[0], colors[1], colors[2], colors[3]));

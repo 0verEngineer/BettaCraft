@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:ro_membrane"
+        "recipes": "bettacraft:ro_membrane"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

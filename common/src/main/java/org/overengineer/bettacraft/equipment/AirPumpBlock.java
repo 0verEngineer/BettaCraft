@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.equipment;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,18 +31,12 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * power regulator; sneak + mouse wheel too.
  */
 public class AirPumpBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<AirPumpBlock> CODEC = simpleCodec(AirPumpBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE_X = box(4, 0, 2.5, 12, 5, 13.5), SHAPE_Z = box(2.5, 0, 4, 13.5, 5, 12);
 
     public AirPumpBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

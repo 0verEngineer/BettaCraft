@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.terrarium;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -20,18 +19,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * grown musk turtle).
  */
 public class TurtleEggsBlock extends Block {
-    public static final MapCodec<TurtleEggsBlock> CODEC = simpleCodec(TurtleEggsBlock::new);
     public static final IntegerProperty EGGS = IntegerProperty.create("eggs", 1, 4);
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 8, 15);
 
     public TurtleEggsBlock(BlockBehaviour.Properties props) {
         super(props);
         registerDefaultState(stateDefinition.any().setValue(EGGS, 1));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

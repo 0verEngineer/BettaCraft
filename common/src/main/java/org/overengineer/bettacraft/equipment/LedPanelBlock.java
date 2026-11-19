@@ -5,7 +5,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import com.mojang.serialization.MapCodec;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,18 +34,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * like the light bar.
  */
 public class LedPanelBlock extends TankLightBlock {
-    public static final MapCodec<LedPanelBlock> CODEC = simpleCodec(LedPanelBlock::new);
     /** The other half of the panel lies in the positive direction across the length axis. */
     public static final BooleanProperty PARTNER_POS = BooleanProperty.create("partner_pos");
 
     public LedPanelBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(PARTNER_POS, true));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

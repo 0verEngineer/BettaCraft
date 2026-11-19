@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.tank;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +54,6 @@ import org.overengineer.bettacraft.tank.interior.InteriorManager;
  * Water never spreads out: we never schedule fluid ticks and the outer walls have a full collision face.
  */
 public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PlayerDestroyable, org.overengineer.bettacraft.platform.PickableBlock {
-    public static final MapCodec<TankBlock> CODEC = simpleCodec(TankBlock::new);
 
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
     public static final BooleanProperty EAST = BooleanProperty.create("east");
@@ -104,11 +102,6 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
             def = def.setValue(p, false);
         }
         registerDefaultState(def);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

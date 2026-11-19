@@ -50,7 +50,7 @@ public class WildCritterRenderer extends EntityRenderer<WildCritterEntity, WildC
             float body = Mth.rotLerp(partialTick, e.yBodyRotO, e.yBodyRot);
             RecordingBuffers buffers = new RecordingBuffers();
             pose.pushPose();
-            pose.mulPose(Axis.YP.rotationDegrees(180F - body));
+            pose.rotate(Axis.YP.rotationDegrees(180F - body));
             CritterRenderer.drawOne(pose, buffers, k, e.level().getGameTime() + partialTick, state.lightCoords, e.hurtTime > 0);
             pose.popPose();
             buffers.submitTo(collector);

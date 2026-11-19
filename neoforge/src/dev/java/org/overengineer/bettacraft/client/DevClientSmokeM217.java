@@ -158,8 +158,8 @@ final class DevClientSmokeM217 {
         double scale = mc.getWindow().getGuiScale();
         var slot = scr.getMenu().slots.stream().filter(sl -> sl.getItem().is(ModItems.CABINET.get())).skip(4).findFirst().orElse(null);
         if (slot == null) return;
-        int x = scr.getGuiLeft() + slot.x + 8, y = scr.getGuiTop() + slot.y + 8;
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
+        int x = org.overengineer.bettacraft.client.DevGui.left(scr) + slot.x + 8, y = org.overengineer.bettacraft.client.DevGui.top(scr) + slot.y + 8;
+        mc.mouseHandler.onMove(mc.getWindow().handle(), x * scale, y * scale, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus)
         try {
             for (String f : new String[] {"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);

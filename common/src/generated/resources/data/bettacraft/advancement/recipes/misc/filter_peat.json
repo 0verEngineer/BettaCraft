@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_peat"
+        "recipes": "bettacraft:filter_peat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

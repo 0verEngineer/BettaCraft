@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:protein_skimmer"
+        "recipes": "bettacraft:protein_skimmer"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

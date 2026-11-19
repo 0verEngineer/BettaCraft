@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:daphnia_barrel"
+        "recipes": "bettacraft:daphnia_barrel"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

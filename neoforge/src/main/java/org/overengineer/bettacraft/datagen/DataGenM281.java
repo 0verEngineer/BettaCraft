@@ -12,8 +12,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
@@ -47,20 +46,21 @@ import org.overengineer.bettacraft.tank.plants.FloatingPlantType;
 final class DataGenM281 {
     private DataGenM281() {}
 
-    static final ResourceKey<ConfiguredFeature<?, ?>> WILD_PLANTS_CONFIGURED = ResourceKey.create(Registries.CONFIGURED_FEATURE, BettaCraft.id("wild_plants"));
-    static final ResourceKey<ConfiguredFeature<?, ?>> WILD_CAVE_PLANTS_CONFIGURED = ResourceKey.create(Registries.CONFIGURED_FEATURE, BettaCraft.id("wild_cave_plants"));
+    // M52e (26.3): the configured features are the features themselves (worldgen/feature)
+    static final ResourceKey<Feature> WILD_PLANTS_CONFIGURED = ResourceKey.create(Registries.FEATURE, BettaCraft.id("wild_plants"));
+    static final ResourceKey<Feature> WILD_CAVE_PLANTS_CONFIGURED = ResourceKey.create(Registries.FEATURE, BettaCraft.id("wild_cave_plants"));
     static final ResourceKey<PlacedFeature> WILD_PLANTS_PLACED = ResourceKey.create(Registries.PLACED_FEATURE, BettaCraft.id("wild_plants"));
     static final ResourceKey<PlacedFeature> WILD_CAVE_PLANTS_PLACED = ResourceKey.create(Registries.PLACED_FEATURE, BettaCraft.id("wild_cave_plants"));
     static final ResourceKey<BiomeModifier> WILD_PLANTS_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("wild_plants"));
 
-    static void configuredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> ctx) {
-        ctx.register(WILD_PLANTS_CONFIGURED, new ConfiguredFeature<>(ModCodecs.WILD_PLANTS.get(), FeatureConfiguration.NONE));
-        ctx.register(WILD_CAVE_PLANTS_CONFIGURED, new ConfiguredFeature<>(ModCodecs.WILD_CAVE_PLANTS.get(), FeatureConfiguration.NONE));
+    static void configuredFeatures(BootstrapContext<Feature> ctx) {
+        ctx.register(WILD_PLANTS_CONFIGURED, org.overengineer.bettacraft.plants.wild.WildPlantFeature.OPEN_WATER);
+        ctx.register(WILD_CAVE_PLANTS_CONFIGURED, org.overengineer.bettacraft.plants.wild.WildPlantFeature.CAVES);
     }
 
     /** One try per chunk on the floor (the feature rolls its chance per water), three tries per chunk in the caves. */
     static void placedFeatures(BootstrapContext<PlacedFeature> ctx) {
-        var cf = ctx.lookup(Registries.CONFIGURED_FEATURE);
+        var cf = ctx.lookup(Registries.FEATURE);
         ctx.register(WILD_PLANTS_PLACED, new PlacedFeature(cf.getOrThrow(WILD_PLANTS_CONFIGURED), List.of(
                 InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.OCEAN_FLOOR_WG), BiomeFilter.biome())));
         ctx.register(WILD_CAVE_PLANTS_PLACED, new PlacedFeature(cf.getOrThrow(WILD_CAVE_PLANTS_CONFIGURED), List.of(

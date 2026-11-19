@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.renderpearl.api.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -353,7 +353,7 @@ public final class MiniatureRenderer {
                         return bbs.computeIfAbsent(layer, k -> {
                             ByteBufferBuilder mem = new ByteBufferBuilder(plant || sway ? 1 << 12 : 1 << 16);
                             mems.put(k, mem);
-                            return new BufferBuilder(mem, com.mojang.blaze3d.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
+                            return new BufferBuilder(mem, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
                         });
                     };
                     if (sway) {
@@ -516,29 +516,37 @@ public final class MiniatureRenderer {
         drawWithModelView(mv, bx, by, bz, byLayer);
     }
 
-    /** The draw itself: one render pass on the main target, a terrain pipeline per layer. */
+    /**
+     * The draw itself: one render pass on the main target, a terrain pipeline per layer. M52e (26.3): the terrain shader
+     * reads the model-view and atlas size from {@code TerrainUniform} and the section position from {@code ChunkSection};
+     * textures are uniforms of the pass and pipelines are compiled ones, as in {@code ChunkSectionsToRender$DrawSeparate}.
+     */
     static void drawWithModelView(Matrix4f mv, int chunkX, int chunkY, int chunkZ, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
         Minecraft mc = Minecraft.getInstance();
         var atlas = mc.getTextureManager().getTexture(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).getTextureView();
-        var section = RenderSystem.getDynamicUniforms().writeChunkSections(new net.minecraft.client.renderer.DynamicUniforms.ChunkSectionInfo(
-                mv, chunkX, chunkY, chunkZ, 1.0F, atlas.getWidth(0), atlas.getHeight(0)))[0];
+        var gpuData = RenderSystem.getDynamicUniforms();
+        var terrain = gpuData.writeTerrainTransform(mv, atlas.getWidth(0), atlas.getHeight(0));
+        var section = gpuData.writeChunkSections(new net.minecraft.client.renderer.DynamicGpuData.ChunkSectionInfo(chunkX, chunkY, chunkZ, 1.0F))[0];
         int maxIndices = 0;
         for (List<MiniatureMesh.Buffer> l : byLayer.values()) for (MiniatureMesh.Buffer b : l) maxIndices = Math.max(maxIndices, b.indexCount());
-        RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(com.mojang.blaze3d.PrimitiveTopology.QUADS);
-        com.mojang.blaze3d.buffers.GpuBuffer indices = quads.getBuffer(maxIndices);
+        RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS);
+        com.mojang.renderpearl.api.buffers.GpuBuffer indices = quads.getBuffer(maxIndices);
+        var sampler = RenderSystem.getSamplerCache().getSampler(com.mojang.renderpearl.api.textures.AddressMode.CLAMP_TO_EDGE,
+                com.mojang.renderpearl.api.textures.AddressMode.CLAMP_TO_EDGE, com.mojang.renderpearl.api.textures.FilterMode.LINEAR,
+                com.mojang.renderpearl.api.textures.FilterMode.LINEAR, true);
         var target = mc.gameRenderer.mainRenderTarget();
-        try (com.mojang.blaze3d.systems.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+        try (com.mojang.renderpearl.api.commands.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 () -> "Bettacraft miniature", target.getColorTextureView(), java.util.Optional.empty(),
                 target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
             RenderSystem.bindDefaultUniforms(pass);
-            pass.bindTexture("Sampler2", mc.gameRenderer.lightmap(),
-                    RenderSystem.getSamplerCache().getClampToEdge(com.mojang.blaze3d.textures.FilterMode.LINEAR));
+            pass.setUniform("TerrainUniform", terrain);
             pass.setUniform("ChunkSection", section);
+            pass.setUniform("Sampler0", atlas, sampler);
+            pass.setUniform("Sampler2", mc.gameRenderer.lightmap(),
+                    RenderSystem.getSamplerCache().getClampToEdge(com.mojang.renderpearl.api.textures.FilterMode.LINEAR));
+            pass.setIndexBuffer(indices, quads.type());
             for (var e : byLayer.entrySet()) {
-                pass.setPipeline(e.getKey().pipeline());
-                pass.bindTexture("Sampler0", atlas, RenderSystem.getSamplerCache().getSampler(com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE,
-                        com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE, com.mojang.blaze3d.textures.FilterMode.LINEAR, com.mojang.blaze3d.textures.FilterMode.LINEAR, true));
-                pass.setIndexBuffer(indices, quads.type());
+                pass.setPipeline(RenderSystem.getCompiledPipeline(e.getKey().pipeline(false)));
                 for (MiniatureMesh.Buffer b : e.getValue()) {
                     pass.setVertexBuffer(0, b.vertices().slice());
                     pass.drawIndexed(b.indexCount(), 1, 0, 0, 0);

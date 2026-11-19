@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:phytoplankton_culture_kelp"
+        "recipes": "bettacraft:phytoplankton_culture_kelp"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

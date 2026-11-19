@@ -454,7 +454,7 @@ public final class TankCare {
         var shown = net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack.copyWithCount(1));
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
-            if (!remainder.isEmpty() && !player.getInventory().add(remainder)) player.drop(remainder, false);
+            if (!remainder.isEmpty() && !player.getInventory().add(remainder)) player.drop(remainder, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         // M10: the food lands in the water of the block that was clicked (never in the notch of a free shape)
         Vec3 spot = new TankWaterVolume(tank).surfacePoint(hit, 1.0 / 16, 0.05);

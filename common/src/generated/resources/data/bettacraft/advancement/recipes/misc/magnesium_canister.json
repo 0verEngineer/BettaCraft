@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:magnesium_canister"
+        "recipes": "bettacraft:magnesium_canister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

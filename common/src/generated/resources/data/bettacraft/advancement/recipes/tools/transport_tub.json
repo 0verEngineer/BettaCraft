@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:transport_tub"
+        "recipes": "bettacraft:transport_tub"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

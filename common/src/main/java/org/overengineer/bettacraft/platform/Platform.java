@@ -92,6 +92,14 @@ public interface Platform {
     void openMenu(ServerPlayer player, MenuProvider provider, Consumer<RegistryFriendlyByteBuf> extra);
 
     /** Opens a menu whose client side reads a block position (NeoForge's openMenu with a position). */
+    /**
+     * M52e: the folder of a world that holds its own copy of the server config ({@code serverconfig}; NeoForge 26.3 /
+     * FML 12: {@code syncedconfig}, the global {@code config/bettacraft-server.toml} is the default there).
+     */
+    default String worldConfigFolder() {
+        return "serverconfig";
+    }
+
     default void openMenu(ServerPlayer player, MenuProvider provider, net.minecraft.core.BlockPos pos) {
         openMenu(player, provider, buf -> buf.writeBlockPos(pos));
     }

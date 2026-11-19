@@ -112,7 +112,7 @@ public class CabinetBakedModel extends WrappedModel {
             v[o] = Float.floatToRawIntBits(target.getU0() + fu * (target.getU1() - target.getU0()));
             v[o + 1] = Float.floatToRawIntBits(target.getV0() + fv * (target.getV1() - target.getV0()));
         }
-        return ClientPlatform.get().quad(v, q.materialInfo().tintIndex(), q.direction(), target, q.materialInfo().shade(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
+        return ClientPlatform.get().quad(v, q.materialInfo().tintIndex(), q.direction(), target, q.materialInfo().shadeDirectionOverride(), ClientPlatform.get().quadAo(q), q.materialInfo().layer());
     }
 
     /** M21.7: a quarter texel inside the sprite (a UV exactly on its edge can pick a texel of the neighbouring atlas texture). */

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:frag_from_brain_coral"
+        "recipes": "bettacraft:frag_from_brain_coral"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

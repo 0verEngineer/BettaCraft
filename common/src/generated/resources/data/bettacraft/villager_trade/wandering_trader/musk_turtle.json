@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/musk_turtle"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "wandering_trader/musk_turtle"
+  },
   "gives": {
     "id": "bettacraft:musk_turtle_bucket"
   },

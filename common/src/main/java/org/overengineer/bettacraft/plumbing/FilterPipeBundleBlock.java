@@ -4,7 +4,6 @@ import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,6 @@ import org.overengineer.bettacraft.registry.ModItems;
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
 public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
-    public static final MapCodec<FilterPipeBundleBlock> CODEC = simpleCodec(FilterPipeBundleBlock::new);
     /** The manifold in the middle (in pixels). */
     public static final float HUB_MIN = 3.5F, HUB_MAX = 12.5F;
     /** Half the width of an arm and of a T-piece collar, the distance of an arm from the middle of its face. */
@@ -71,11 +69,6 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
 
     public FilterPipeBundleBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -380,7 +373,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
             if (l == null) return InteractionResult.FAIL;
             for (ItemStack it : removeLine(level, pos, l)) {
                 if (player.getAbilities().instabuild) continue;
-                if (!player.addItem(it)) player.drop(it, false);
+                if (!player.addItem(it)) player.drop(it, false, net.minecraft.util.Prediction.SERVER_ONLY);
             }
         }
         return InteractionResult.SUCCESS;

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_shipwreck"
+        "recipes": "bettacraft:decor_shipwreck"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -24,7 +24,7 @@ public final class LootChanges {
 
     /** M9: artemia cysts from sand of the right kind, with the server config's chance. */
     public static ObjectArrayList<ItemStack> artemiaSand(ObjectArrayList<ItemStack> loot, LootContext context, ItemStack item) {
-        BlockState state = context.getOptionalParameter(LootContextParams.BLOCK_STATE);
+        BlockState state = context.getOptional(LootContextParams.BLOCK_STATE);
         if (state == null || !state.is(ModTags.ARTEMIA_SAND)) return loot;
         double chance = ServerConfig.getOr(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE, ServerConfig.ARTEMIA_SAND_CHANCE);
         if (context.getRandom().nextDouble() < chance) loot.add(item.copy());
@@ -33,7 +33,7 @@ public final class LootChanges {
 
     /** M12: floating plants from fishing in swamps and mangrove swamps. */
     public static ObjectArrayList<ItemStack> floatingPlants(ObjectArrayList<ItemStack> loot, LootContext context) {
-        Vec3 origin = context.getOptionalParameter(LootContextParams.ORIGIN);
+        Vec3 origin = context.getOptional(LootContextParams.ORIGIN);
         if (origin == null) return loot;
         Holder<Biome> biome = context.getLevel().getBiome(BlockPos.containing(origin));
         boolean mangrove = BiomeWaters.mangrove(biome); // M25.1: biome tags, also biome mods

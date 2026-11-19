@@ -543,8 +543,8 @@ final class DevClientSmokeMP {
                         send("outletmenu side:" + side);
                         return;
                     }
-                    double x = s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
-                    double y = s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
+                    double x = org.overengineer.bettacraft.client.DevGui.left(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
+                    double y = org.overengineer.bettacraft.client.DevGui.top(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
                     s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)), false); // left -> right
                     s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)));
                     send("outletmenu ok");
@@ -810,7 +810,7 @@ final class DevClientSmokeMP {
             then(1, () -> {
                 if (mc.level.getBlockState(at).getBlock() instanceof TankBlock) {
                     mc.gameMode.continueDestroyBlock(at, net.minecraft.core.Direction.NORTH);
-                    mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                    mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
                 }
             });
         }

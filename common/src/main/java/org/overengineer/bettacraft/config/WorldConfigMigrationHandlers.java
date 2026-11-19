@@ -25,7 +25,8 @@ public final class WorldConfigMigrationHandlers {
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         MinecraftServer server = event.getServer();
-        Path file = server.getWorldPath(SERVERCONFIG).resolve(BettaCraft.MOD_ID + "-server.toml");
+        Path file = server.getWorldPath(new LevelResource(org.overengineer.bettacraft.platform.Platform.get().worldConfigFolder()))
+                .resolve(BettaCraft.MOD_ID + "-server.toml");
         run(server, Files.isRegularFile(file) ? file : null);
     }
 }

@@ -229,7 +229,7 @@ final class NeoForgeGameEvents {
         }
         for (EventPriority p : types.getOrDefault(TagsUpdatedEvent.class, Set.of())) {
             NeoForge.EVENT_BUS.addListener(prio(p), true, net.neoforged.neoforge.event.TagsUpdatedEvent.class, e -> {
-                var s = new TagsUpdatedEvent(e.getUpdateCause() == net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED ? TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED : TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+                var s = new TagsUpdatedEvent(e instanceof net.neoforged.neoforge.event.TagsUpdatedEvent.ClientPacketReceived ? TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED : TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
                 fire(e, s, p);
             });
         }

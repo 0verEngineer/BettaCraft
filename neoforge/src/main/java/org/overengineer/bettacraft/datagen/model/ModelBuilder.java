@@ -208,7 +208,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             o.add("from", vec(fx, fy, fz));
             o.add("to", vec(tx, ty, tz));
             if (rotation != null) o.add("rotation", rotation.toJson());
-            if (!shade) o.addProperty("shade", false);
+            if (!shade) o.addProperty("shade_direction_override", "up"); // M52e: 26.3 shades by a direction (up = unshaded)
             JsonObject f = new JsonObject();
             faces.forEach((d, face) -> f.add(d.getSerializedName(), face.toJson()));
             o.add("faces", f);

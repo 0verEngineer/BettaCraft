@@ -1218,7 +1218,7 @@ final class DevClientSmokeTest {
         double scale = mc.getWindow().getGuiScale();
         int left = (scr.width - 176) / 2, top = (scr.height - 166) / 2;
         int x = left + 8 + col * 18 + 8, y = top + (row < 3 ? 84 + row * 18 : 142) + 8;
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
+        mc.mouseHandler.onMove(mc.getWindow().handle(), x * scale, y * scale, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus)
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);

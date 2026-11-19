@@ -78,7 +78,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // local +Z = out of the screen, +X = right as the viewer sees it, +Y = up; this block is the top left one
-        pose.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
+        pose.rotate(Axis.YP.rotationDegrees(-facing.toYRot()));
         pose.translate(-0.5F + BEZEL, 0.5F - BEZEL, 0.5F - RECESS + LIFT);
         pose.scale(1F / PX, -1F / PX, 1F / PX);
         float sw = w * PX - 2 * BEZEL * PX, sh = h * PX - 2 * BEZEL * PX;
@@ -239,7 +239,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         Matrix4f m = pose.last().pose();
         quad(buffers, m, gx0, gy0, gx1, gy1, 0.4F, GRAPH_BG, light);
         int hours = t.days() * 24;
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
+        VertexConsumer vc = PlateQuads.buffer(buffers);
         // a line at every day
         for (int d = 1; d < t.days(); d++) {
             float x = gx1 - (gx1 - gx0) * d * 24F / (hours - 1);
@@ -392,7 +392,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
 
     /** A round lamp of {@code size} (a cross of three rectangles), top left at x, y. */
     private static void lamp(MultiBufferSource buffers, Matrix4f m, float x, float y, float size, int argb, int light) {
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
+        VertexConsumer vc = PlateQuads.buffer(buffers);
         float a = size * 0.3F, b = size * 0.12F;
         quad(vc, m, x + a, y, x + size - a, y + size, 0.5F, argb, light);
         quad(vc, m, x, y + a, x + size, y + size - a, 0.5F, argb, light);
@@ -464,7 +464,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
             hi += 0.5F;
         }
         float bw = (x1 - x0) / n;
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.textBackground());
+        VertexConsumer vc = PlateQuads.buffer(buffers);
         for (int i = 0; i < n; i++) {
             float p = points[points.length - n + i];
             if (!Float.isFinite(p)) continue;
@@ -503,7 +503,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
 
     /** A rectangle in screen pixels (takes the buffer itself: text in between ends the batch of an older one). */
     static void quad(MultiBufferSource buffers, Matrix4f m, float x0, float y0, float x1, float y1, float z, int argb, int light) {
-        quad(buffers.getBuffer(RenderTypes.textBackground()), m, x0, y0, x1, y1, z, argb, light);
+        quad(PlateQuads.buffer(buffers), m, x0, y0, x1, y1, z, argb, light);
     }
 
     /** A rectangle in screen pixels, both windings (seen from the front whatever the transform does). */

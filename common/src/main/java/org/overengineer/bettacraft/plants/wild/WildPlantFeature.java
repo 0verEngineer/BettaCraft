@@ -12,8 +12,6 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.material.Fluids;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.plants.PlantSpecies;
@@ -31,16 +29,25 @@ import org.overengineer.bettacraft.world.BiomeWaters;
  * {@code features.aquaticPlants.wildPlants}, {@code features.floatingPlants.wildPlants} off. Strong-light plants only in shallow water. Epiphytes and mosses sit on stone or wood:
  * on a soft bottom a stone (or in the jungle and mangroves a sunken root) is laid under them.
  */
-public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
+public class WildPlantFeature implements Feature {
+    /** M52e (26.3): features are datapack objects; the two kinds are registered as unit codecs of their instance. */
+    public static final WildPlantFeature OPEN_WATER = new WildPlantFeature(false), CAVES = new WildPlantFeature(true);
+    public static final com.mojang.serialization.MapCodec<WildPlantFeature> CODEC = com.mojang.serialization.MapCodec.unit(OPEN_WATER);
+    public static final com.mojang.serialization.MapCodec<WildPlantFeature> CAVE_CODEC = com.mojang.serialization.MapCodec.unit(CAVES);
+
     /** Deepest water (blocks above the floor) for the strong-light plants and for the others. */
     public static final int SHALLOW = 4, DEEP = 12;
 
     /** Cave mode: the origin lies anywhere in the cave (height range), the floor is searched below it. */
     private final boolean cave;
 
-    public WildPlantFeature(boolean cave) {
-        super(NoneFeatureConfiguration.CODEC);
+    private WildPlantFeature(boolean cave) {
         this.cave = cave;
+    }
+
+    @Override
+    public com.mojang.serialization.MapCodec<WildPlantFeature> codec() {
+        return cave ? CAVE_CODEC : CODEC;
     }
 
     /** Chance of a try (one per chunk; in the lush caves per try of the cave feature) before {@code spawn.wildPlantFrequency}. */
@@ -66,16 +73,14 @@ public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+    public boolean place(WorldGenLevel level, net.minecraft.world.level.chunk.ChunkGenerator generator, RandomSource r, BlockPos origin) {
         // M33: the aquarium plants and the floating plants have their own switches (each with its group)
         if (!Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_WILD)
                 && !Features.enabled(org.overengineer.bettacraft.config.Feature.FLOATING_WILD)) return false;
-        WorldGenLevel level = ctx.level();
-        PlantWater w = BiomeWaters.plantWater(level.getBiome(ctx.origin()));
+        PlantWater w = BiomeWaters.plantWater(level.getBiome(origin));
         if (w == null || (w == PlantWater.LUSH_CAVES) != cave) return false;
-        RandomSource r = ctx.random();
         if (r.nextDouble() >= chance(w) * CommonConfig.wildPlantFrequency()) return false;
-        return place(level, ctx.origin(), r, w, cave);
+        return place(level, origin, r, w, cave);
     }
 
     /** One group in the water {@code w} near {@code origin} (no chance roll, no biome check: the GameTests call it). */

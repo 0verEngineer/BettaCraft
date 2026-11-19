@@ -9,7 +9,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:frag_from_tube_coral"
+        "recipes": "bettacraft:frag_from_tube_coral"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

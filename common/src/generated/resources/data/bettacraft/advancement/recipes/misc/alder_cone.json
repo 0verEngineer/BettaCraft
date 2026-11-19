@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:alder_cone"
+        "recipes": "bettacraft:alder_cone"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

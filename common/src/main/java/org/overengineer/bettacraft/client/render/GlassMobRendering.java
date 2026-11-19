@@ -46,7 +46,7 @@ public final class GlassMobRendering {
         Direction wall = g.bettacraft$glassWall();
         pose.pushPose();
         // turn about the horizontal axis along the glass: its front goes up, its belly onto the glass
-        pose.mulPose(Axis.of(new Vector3f(-wall.getStepZ(), 0, wall.getStepX())).rotationDegrees(90F));
+        pose.rotate(Axis.of(new Vector3f(-wall.getStepZ(), 0, wall.getStepX())).rotationDegrees(90F));
     }
 
     /** After it was submitted. */

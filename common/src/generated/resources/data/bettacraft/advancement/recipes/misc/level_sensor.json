@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:level_sensor"
+        "recipes": "bettacraft:level_sensor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:cricket_culture"
+        "recipes": "bettacraft:cricket_culture"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

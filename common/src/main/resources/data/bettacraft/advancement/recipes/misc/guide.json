@@ -33,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:guide"
+        "recipes": "bettacraft:guide"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

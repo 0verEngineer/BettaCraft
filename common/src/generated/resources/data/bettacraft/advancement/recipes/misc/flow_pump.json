@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:flow_pump"
+        "recipes": "bettacraft:flow_pump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

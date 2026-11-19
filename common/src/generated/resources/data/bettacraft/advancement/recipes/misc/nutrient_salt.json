@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:nutrient_salt"
+        "recipes": "bettacraft:nutrient_salt"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

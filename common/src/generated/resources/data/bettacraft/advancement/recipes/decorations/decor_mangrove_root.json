@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_mangrove_root"
+        "recipes": "bettacraft:decor_mangrove_root"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

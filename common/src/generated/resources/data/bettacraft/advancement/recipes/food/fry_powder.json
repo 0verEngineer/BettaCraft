@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fry_powder"
+        "recipes": "bettacraft:fry_powder"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

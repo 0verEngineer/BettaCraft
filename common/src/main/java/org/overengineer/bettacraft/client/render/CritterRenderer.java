@@ -229,11 +229,11 @@ public final class CritterRenderer {
                 case 2 -> 180F;
                 default -> 90F;
             };
-            pose.mulPose(Axis.YP.rotationDegrees(a));
-            pose.mulPose(Axis.XP.rotationDegrees(-90F));
-            pose.mulPose(Axis.YP.rotationDegrees(yaw));
+            pose.rotate(Axis.YP.rotationDegrees(a));
+            pose.rotate(Axis.XP.rotationDegrees(-90F));
+            pose.rotate(Axis.YP.rotationDegrees(yaw));
         } else {
-            pose.mulPose(Axis.YP.rotationDegrees(-yaw));
+            pose.rotate(Axis.YP.rotationDegrees(-yaw));
         }
     }
 
@@ -268,7 +268,7 @@ public final class CritterRenderer {
         if (!alive && !k.species.isSnail()) {
             // on its side
             pose.translate(0, s * 0.12F, 0);
-            pose.mulPose(Axis.ZP.rotationDegrees(80F));
+            pose.rotate(Axis.ZP.rotationDegrees(80F));
         }
         pose.scale(s, -s, -s);
         float phase = (float) (time * 0.25 + k.id * 1.37);
@@ -378,7 +378,7 @@ public final class CritterRenderer {
             for (int i = 0; i < 5; i++) {
                 pose.pushPose();
                 pose.translate((i - 2) * 0.045F, (i % 2) * 0.05F - 0.04F + (i == 2 ? 0.07F : 0), (i % 3 - 1) * 0.03F);
-                pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(i * 70F));
+                pose.rotate(com.mojang.math.Axis.YP.rotationDegrees(i * 70F));
                 pose.scale(0.8F, -0.85F, -0.7F);
                 eggs.render(pose, vc, light, OverlayTexture.NO_OVERLAY, argb(i % 2 == 1 ? 0xF6F2E2 : 0xE4DEC4));
                 pose.popPose();

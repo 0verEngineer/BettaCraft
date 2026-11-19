@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:mirror_stick"
+        "recipes": "bettacraft:mirror_stick"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

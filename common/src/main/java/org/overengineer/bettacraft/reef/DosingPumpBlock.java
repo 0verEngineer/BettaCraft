@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.reef;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,18 +33,12 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * network joined to it (the dose is shared). Right-click: its window.
  */
 public class DosingPumpBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
-    public static final MapCodec<DosingPumpBlock> CODEC = simpleCodec(DosingPumpBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE = box(1, 0, 3, 15, 10, 13), SHAPE_X = box(3, 0, 1, 13, 10, 15);
 
     public DosingPumpBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

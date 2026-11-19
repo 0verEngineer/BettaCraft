@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_rowing_boat"
+        "recipes": "bettacraft:decor_rowing_boat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.client.render;
 
-import com.mojang.blaze3d.IndexType;
-import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.renderpearl.api.pipeline.IndexType;
+import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
@@ -76,7 +76,15 @@ public final class ImmediateBuffers implements MultiBufferSource {
             ib = seq.getBuffer(state.indexCount());
             indexType = seq.type();
         }
-        type.prepare().drawFromBuffer(vb, ib, indexType, 0, 0, state.indexCount());
+        // M52e (26.3): render types no longer open their own pass (no output targets): one pass on the main target
+        var info = new net.minecraft.client.renderer.StagedVertexBuffer.ExecuteInfo(vb, ib, indexType, 0, 0, state.indexCount(),
+                state.primitiveTopology());
+        var target = net.minecraft.client.Minecraft.getInstance().gameRenderer.mainRenderTarget();
+        try (com.mojang.renderpearl.api.commands.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                () -> label, target.getColorTextureView(), java.util.Optional.empty(), target.getDepthTextureView(),
+                java.util.OptionalDouble.empty())) {
+            type.prepare().drawFromBuffer(info, pass);
+        }
     }
 
     private GpuBuffer upload(GpuBuffer buffer, ByteBuffer data, int usage, String suffix) {
@@ -109,6 +117,7 @@ public final class ImmediateBuffers implements MultiBufferSource {
         @Override public VertexConsumer setUv(float u, float v) { return this; }
         @Override public VertexConsumer setUv1(int u, int v) { return this; }
         @Override public VertexConsumer setUv2(int u, int v) { return this; }
+        @Override public VertexConsumer setUv3(float u, float v) { return this; }
         @Override public VertexConsumer setNormal(float x, float y, float z) { return this; }
         @Override public VertexConsumer setLineWidth(float width) { return this; }
     };

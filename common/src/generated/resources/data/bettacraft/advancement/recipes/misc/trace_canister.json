@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:trace_canister"
+        "recipes": "bettacraft:trace_canister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

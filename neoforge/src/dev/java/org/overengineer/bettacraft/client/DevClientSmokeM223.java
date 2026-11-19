@@ -320,7 +320,7 @@ final class DevClientSmokeM223 {
         if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (which.test(s.getItem())) {
-                mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
+                mouseTo(org.overengineer.bettacraft.client.DevGui.left(scr) + s.x + 8, org.overengineer.bettacraft.client.DevGui.top(scr) + s.y + 8);
                 return;
             }
         }
@@ -329,7 +329,7 @@ final class DevClientSmokeM223 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
+        mc.mouseHandler.onMove(mc.getWindow().handle(), x * scale, y * scale, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus)
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);

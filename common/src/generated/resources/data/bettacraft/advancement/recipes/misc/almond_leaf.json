@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:almond_leaf"
+        "recipes": "bettacraft:almond_leaf"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

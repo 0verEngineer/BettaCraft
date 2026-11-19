@@ -164,12 +164,12 @@ public final class WildlifeGameTests {
                 new Want(Biomes.RIVER, ModEntities.WILD_CRITTER.get()),
                 new Want(Biomes.MANGROVE_SWAMP, ModEntities.WILD_CRITTER.get()),
                 new Want(Biomes.WARM_OCEAN, ModEntities.WILD_CRITTER.get()))) {
-            var spawns = biomes.getOrThrow(w.biome()).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+            var spawns = org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(w.biome()).value(), MobCategory.WATER_AMBIENT).unwrap();
             check(spawns.stream().anyMatch(d -> d.value().type() == w.type()), w.type() + " does not spawn in " + w.biome().identifier());
         }
-        var plains = biomes.getOrThrow(Biomes.PLAINS).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+        var plains = org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(Biomes.PLAINS).value(), MobCategory.WATER_AMBIENT).unwrap();
         check(plains.stream().noneMatch(d -> d.value().type() == ModEntities.WILD_CRITTER.get()), "small animals in the plains");
-        var desert = biomes.getOrThrow(Biomes.JUNGLE).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+        var desert = org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(Biomes.JUNGLE).value(), MobCategory.WATER_AMBIENT).unwrap();
         check(desert.stream().noneMatch(d -> d.value().type() == ModEntities.TANKMATES.get(TankmateSpecies.GUPPY).get() && d.weight() > 99), "weights too high");
         h.succeed();
     }

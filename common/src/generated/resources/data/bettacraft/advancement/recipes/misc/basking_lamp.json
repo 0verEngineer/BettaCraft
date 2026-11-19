@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:basking_lamp"
+        "recipes": "bettacraft:basking_lamp"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

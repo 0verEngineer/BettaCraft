@@ -70,7 +70,7 @@ public class FilterMediaItem extends Item {
             stack.setDamageValue(0);
             if (mulm > 0 && ctx.getPlayer() != null) {
                 ItemStack m = new ItemStack(org.overengineer.bettacraft.registry.ModItems.MULM.get(), mulm);
-                if (!ctx.getPlayer().getInventory().add(m)) ctx.getPlayer().drop(m, false);
+                if (!ctx.getPlayer().getInventory().add(m)) ctx.getPlayer().drop(m, false, net.minecraft.util.Prediction.SERVER_ONLY);
             }
             LayeredCauldronBlock.lowerFillLevel(s, level, pos);
             level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.6F, 1.2F);

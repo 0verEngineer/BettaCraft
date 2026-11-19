@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fruit_fly_culture"
+        "recipes": "bettacraft:fruit_fly_culture"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

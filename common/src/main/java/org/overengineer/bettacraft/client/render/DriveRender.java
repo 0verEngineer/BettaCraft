@@ -30,11 +30,11 @@ public final class DriveRender {
     public static void face(PoseStack ps, Direction facing) {
         ps.translate(0.5, 0.5, 0.5);
         switch (facing) {
-            case SOUTH -> ps.mulPose(Axis.YP.rotationDegrees(180));
-            case EAST -> ps.mulPose(Axis.YP.rotationDegrees(-90));
-            case WEST -> ps.mulPose(Axis.YP.rotationDegrees(90));
-            case UP -> ps.mulPose(Axis.XP.rotationDegrees(90));
-            case DOWN -> ps.mulPose(Axis.XP.rotationDegrees(-90));
+            case SOUTH -> ps.rotate(Axis.YP.rotationDegrees(180));
+            case EAST -> ps.rotate(Axis.YP.rotationDegrees(-90));
+            case WEST -> ps.rotate(Axis.YP.rotationDegrees(90));
+            case UP -> ps.rotate(Axis.XP.rotationDegrees(90));
+            case DOWN -> ps.rotate(Axis.XP.rotationDegrees(-90));
             default -> {
             }
         }

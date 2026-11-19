@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/plant_monte_carlo"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "wandering_trader/plant_monte_carlo"
+  },
   "gives": {
     "id": "bettacraft:monte_carlo"
   },

@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/plant_alternanthera_reineckii"
-    }
-  ],
+  "given_item_modifier": {
+    "function": "bettacraft:trade",
+    "offer": "wandering_trader/plant_alternanthera_reineckii"
+  },
   "gives": {
     "id": "bettacraft:alternanthera_reineckii"
   },

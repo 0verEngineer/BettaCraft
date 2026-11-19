@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.critters;
 
+import net.minecraft.util.Prediction;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
 import java.util.ArrayList;
@@ -275,14 +276,14 @@ public final class NetCatching {
         if (o.frag() != null) {
             ItemStack frag = org.overengineer.bettacraft.plants.InteriorPlants.item(o.frag(), 0);
             player.sendOverlayMessage(Component.translatable("message.bettacraft.net.frag", frag.getHoverName()));
-            if (!player.getInventory().add(frag)) player.drop(frag, false);
+            if (!player.getInventory().add(frag)) player.drop(frag, false, Prediction.SERVER_ONLY);
             return true;
         }
         // M22.4: in rivers, jungle water and swamps now and then an aquarium plant from the bottom
         if (o.plant() != null) {
             ItemStack plant = org.overengineer.bettacraft.plants.InteriorPlants.item(o.plant(), 0);
             player.sendOverlayMessage(Component.translatable("message.bettacraft.net.plant", plant.getHoverName()).withStyle(ChatFormatting.GREEN));
-            if (!player.getInventory().add(plant)) player.drop(plant, false);
+            if (!player.getInventory().add(plant)) player.drop(plant, false, Prediction.SERVER_ONLY);
             level.playSound(null, water, SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.5F, 1.2F);
             return true;
         }
@@ -421,7 +422,7 @@ public final class NetCatching {
             return;
         }
         if (!player.getAbilities().instabuild) inv.getItem(slot).shrink(1);
-        if (!inv.add(filled)) player.drop(filled, false);
+        if (!inv.add(filled)) player.drop(filled, false, Prediction.SERVER_ONLY);
         player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.PLAYERS, 0.8F, 1.3F);
         player.sendOverlayMessage(Component.translatable("message.bettacraft.net.caught", filled.getHoverName()).withStyle(ChatFormatting.GREEN));
     }

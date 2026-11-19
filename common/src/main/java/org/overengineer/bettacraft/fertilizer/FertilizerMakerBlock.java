@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.fertilizer;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,7 +41,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * ({@link FertilizerMakerBlockEntity}).
  */
 public class FertilizerMakerBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<FertilizerMakerBlock> CODEC = simpleCodec(FertilizerMakerBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Position of the crank handle (quarter turns). */
     public static final IntegerProperty CRANK = IntegerProperty.create("crank", 0, 3);
@@ -52,11 +50,6 @@ public class FertilizerMakerBlock extends BaseEntityBlock implements BlockRemova
     public FertilizerMakerBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(CRANK, 0).setValue(WORKING, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

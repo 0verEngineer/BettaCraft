@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.food;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.core.Direction;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -52,11 +51,6 @@ public class CultureTubBlock extends BaseEntityBlock implements BlockRemoval {
 
     public Kind kind() {
         return kind;
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(p -> new CultureTubBlock(kind, p));
     }
 
     @Override

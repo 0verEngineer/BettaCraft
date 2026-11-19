@@ -46,7 +46,7 @@ public class ThermoHygrometerRenderer extends org.overengineer.bettacraft.client
         Direction f = s.getValue(ThermoHygrometerBlock.FACING);
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
-        pose.mulPose(Axis.YP.rotationDegrees(-f.toYRot()));
+        pose.rotate(Axis.YP.rotationDegrees(-f.toYRot()));
         // the front of the case lies 1/16 in front of the wall it hangs on
         pose.translate(0, 0.07, -0.5 + 1.0 / 16 + 0.002);
         float scale = 0.0085F;

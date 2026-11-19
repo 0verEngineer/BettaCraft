@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.equipment;
 
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -32,17 +31,11 @@ import org.overengineer.bettacraft.registry.ModItems;
  * regulator (0..100 %).
  */
 public class AirStoneBlock extends BaseEntityBlock {
-    public static final MapCodec<AirStoneBlock> CODEC = simpleCodec(AirStoneBlock::new);
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 6, 13);
 
     public AirStoneBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(DeviceSegmentBlock.POWER, 10).setValue(DeviceSegmentBlock.ACTIVE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

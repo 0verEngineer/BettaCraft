@@ -665,7 +665,7 @@ public final class DevSmokeMP {
         p.setGameMode(GameType.SURVIVAL);
         p.getAbilities().invulnerable = true;
         p.onUpdateAbilities();
-        p.setInvulnerable(true);
+        p.setPermanentlyInvulnerable(true);
         p.setHealth(p.getMaxHealth());
         p.getInventory().clearContent();
         if (P1.equals(p.getGameProfile().name())) placeDev1(p);

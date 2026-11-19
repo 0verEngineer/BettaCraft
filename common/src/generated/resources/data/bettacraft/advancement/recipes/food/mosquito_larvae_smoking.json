@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:mosquito_larvae_smoking"
+        "recipes": "bettacraft:mosquito_larvae_smoking"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

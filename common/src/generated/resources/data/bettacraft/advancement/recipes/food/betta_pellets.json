@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:betta_pellets"
+        "recipes": "bettacraft:betta_pellets"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

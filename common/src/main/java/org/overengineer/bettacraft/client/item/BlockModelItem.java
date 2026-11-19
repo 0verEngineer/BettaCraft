@@ -60,6 +60,9 @@ public final class BlockModelItem implements ItemModel {
     private final ModelRenderProperties properties;
     /** Per variant (glass + style, planks): its quads; the list is also the GUI cache identity of the variant. */
     private final Map<Object, List<BakedQuad>> variants = new ConcurrentHashMap<>();
+    /** M52e: 26.3 submits item quads split into solid and translucent ones; split once per quad list. */
+    private final Map<List<BakedQuad>, net.minecraft.client.resources.model.geometry.ItemQuads> split =
+            java.util.Collections.synchronizedMap(new java.util.IdentityHashMap<>());
 
     private final org.joml.Matrix4fc transformation;
 
@@ -88,7 +91,7 @@ public final class BlockModelItem implements ItemModel {
         layer.setLocalTransform(transformation);
         layer.setExtents(() -> net.minecraft.client.renderer.item.CuboidItemModelWrapper.computeExtents(quads));
         properties.applyToLayer(layer, context);
-        layer.prepareQuadList().addAll(quads);
+        layer.setQuads(split.computeIfAbsent(quads, net.minecraft.client.resources.model.geometry.ItemQuads::split));
     }
 
     private List<BakedQuad> tankQuads(ItemStack stack) {

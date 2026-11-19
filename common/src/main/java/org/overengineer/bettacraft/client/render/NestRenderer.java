@@ -58,7 +58,7 @@ final class NestRenderer {
         pose.pushPose();
         // the nest position lies SURFACE_GAP under the water surface: the dome is built on the surface itself
         pose.translate(p.x - origin.getX(), p.y + SURFACE_GAP - origin.getY(), p.z - origin.getZ());
-        pose.mulPose(Axis.YP.rotationDegrees(((time + partialTick) * 0.15F) % 360F));
+        pose.rotate(Axis.YP.rotationDegrees(((time + partialTick) * 0.15F) % 360F));
         VertexConsumer foam = buffers.getBuffer(RenderTypes.entityTranslucent(NEST));
         float up = size * UP, down = size * DOWN;
         // main dome, an inner layer, and three smaller lobes around it (layers of bubbles of different heights)

@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.equipment;
 import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +43,6 @@ import net.minecraft.world.phys.HitResult;
  * still drop). Wooden cabinets keep the properties of this block.
  */
 public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound, org.overengineer.bettacraft.platform.PositionalBlock.Blast, org.overengineer.bettacraft.platform.PositionalBlock.Harvest {
-    public static final MapCodec<CabinetBlock> CODEC = simpleCodec(CabinetBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LEFT = BooleanProperty.create("left");
     public static final BooleanProperty RIGHT = BooleanProperty.create("right");
@@ -60,11 +58,6 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LEFT, false).setValue(RIGHT, false)
                 .setValue(FRONT, CabinetFront.TWO).setValue(JOINTS, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

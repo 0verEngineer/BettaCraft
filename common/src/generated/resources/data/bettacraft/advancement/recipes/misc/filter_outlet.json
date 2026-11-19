@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_outlet"
+        "recipes": "bettacraft:filter_outlet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

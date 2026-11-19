@@ -30,11 +30,11 @@ public class FloatingPlantFishingModifier extends LootModifier {
             .apply(i, FloatingPlantFishingModifier::new));
 
     /** M52c (26.1): NeoForge's loot modifiers carry a priority. */
-    public FloatingPlantFishingModifier(LootItemCondition[] conditions) {
+    public FloatingPlantFishingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions) {
         this(conditions, net.neoforged.neoforge.common.loot.IGlobalLootModifier.DEFAULT_PRIORITY);
     }
 
-    public FloatingPlantFishingModifier(LootItemCondition[] conditions, int priority) {
+    public FloatingPlantFishingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, int priority) {
         super(conditions, priority);
     }
 

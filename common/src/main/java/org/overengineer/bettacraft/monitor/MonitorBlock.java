@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.monitor;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -35,7 +34,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * sides (as the viewer sees it) the block continues into the same screen, so the frame is only drawn around the screen.
  */
 public class MonitorBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<MonitorBlock> CODEC = simpleCodec(MonitorBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
@@ -46,11 +44,6 @@ public class MonitorBlock extends BaseEntityBlock implements BlockRemoval {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH)
                 .setValue(UP, false).setValue(DOWN, false).setValue(LEFT, false).setValue(RIGHT, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

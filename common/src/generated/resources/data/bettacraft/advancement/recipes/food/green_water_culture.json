@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:green_water_culture"
+        "recipes": "bettacraft:green_water_culture"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

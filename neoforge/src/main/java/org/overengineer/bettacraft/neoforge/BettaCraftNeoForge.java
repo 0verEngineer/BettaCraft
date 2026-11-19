@@ -107,10 +107,11 @@ public final class BettaCraftNeoForge {
         });
         // M35.1: a server config from before M35.1 loses food.artemiaCystStackSize (and gets the 4x sand chance if it had the old default)
         org.overengineer.bettacraft.config.FeatureMigration.migrateServerFile(FMLPaths.CONFIGDIR.get().resolve(BettaCraft.MOD_ID + "-server.toml"));
-        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        // M52e: FML 12 (NeoForge 26.3) renamed the types (server -> synced, common -> local); the file names stay
+        container.registerConfig(ModConfig.Type.SYNCED, ServerConfig.SPEC, BettaCraft.MOD_ID + "-server.toml");
         // M33: a common config from before M33 gets its flat feature switches moved into the feature tree first
         org.overengineer.bettacraft.config.FeatureMigration.migrateFile(FMLPaths.CONFIGDIR.get().resolve(BettaCraft.MOD_ID + "-common.toml"));
-        container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
-        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
+        container.registerConfig(ModConfig.Type.LOCAL, CommonConfig.SPEC, BettaCraft.MOD_ID + "-common.toml");
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, BettaCraft.MOD_ID + "-client.toml");
     }
 }

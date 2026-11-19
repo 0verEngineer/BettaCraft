@@ -111,7 +111,7 @@ public class TransportTubItem extends Item {
             player.setItemInHand(hand, filled);
         } else {
             held.shrink(1);
-            if (!player.getInventory().add(filled)) player.drop(filled, false);
+            if (!player.getInventory().add(filled)) player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         if (target instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) {
             org.overengineer.bettacraft.tank.TankBlockEntity c = player.level() instanceof ServerLevel sl ? TankInhabitants.resolveController(sl, m) : null;

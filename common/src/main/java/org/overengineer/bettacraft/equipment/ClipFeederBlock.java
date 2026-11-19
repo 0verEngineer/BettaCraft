@@ -5,7 +5,6 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -44,7 +43,6 @@ import org.overengineer.bettacraft.registry.ModTags;
  * food: fills its one slot; with an empty hand: 1 -> 2 -> 3 feedings a day; sneaking with an empty hand: takes the food out.
  */
 public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<ClipFeederBlock> CODEC = simpleCodec(ClipFeederBlock::new);
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     /** A small box at the top edge, against the glass behind it. */
     private static final VoxelShape NORTH = box(5, 7, 11, 11, 16, 16), SOUTH = box(5, 7, 0, 11, 16, 5),
@@ -53,11 +51,6 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     public ClipFeederBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -150,7 +143,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             if (player.isShiftKeyDown()) {
                 ItemStack out = be.items().extractItem(0, 64, false);
-                if (!out.isEmpty() && !player.getInventory().add(out)) player.drop(out, false);
+                if (!out.isEmpty() && !player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
             } else {
                 be.cycleFeedings();
             }

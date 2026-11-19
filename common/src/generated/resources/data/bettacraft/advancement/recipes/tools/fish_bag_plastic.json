@@ -50,7 +50,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fish_bag_plastic"
+        "recipes": "bettacraft:fish_bag_plastic"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

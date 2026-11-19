@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:mob_jar"
+        "recipes": "bettacraft:mob_jar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -107,7 +107,7 @@ public final class BettaGameTests {
 
     public static GameTestInstance instance(Entry e, Holder<TestEnvironmentDefinition<?>> env) {
         TestFunction f = e.function();
-        TestData<Holder<TestEnvironmentDefinition<?>>> data = new TestData<>(env, Identifier.parse(f.structureName()), f.maxTicks(),
+        TestData<Holder<TestEnvironmentDefinition<?>>> data = new TestData<>(env, net.minecraft.world.level.Level.OVERWORLD, Identifier.parse(f.structureName()), f.maxTicks(),
                 (int) f.setupTicks(), f.required(), f.rotation(), f.manualOnly(), Math.max(1, f.maxAttempts()),
                 Math.max(1, f.requiredSuccesses()), f.skyAccess(), 0); // M52c: padding (26.1)
         return new FunctionGameTestInstance(ResourceKey.create(Registries.TEST_FUNCTION, e.id()), data);

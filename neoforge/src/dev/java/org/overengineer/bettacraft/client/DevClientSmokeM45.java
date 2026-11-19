@@ -138,7 +138,7 @@ final class DevClientSmokeM45 {
             }
             call(screen, "selectChapter", chapter);
             for (int i = 0; i < 2; i++) call(screen, "addZoom", -1.0);
-            org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), 2, 2); // no tooltip over the chapter
+            mc.mouseHandler.onMove(mc.getWindow().handle(), 2, 2, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus) // no tooltip over the chapter
             LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.gui.screen() == null ? "NONE (FAIL)" : mc.gui.screen().getClass().getSimpleName(), call(screen, "getZoom"));
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M45 quest book (FAIL)", e);

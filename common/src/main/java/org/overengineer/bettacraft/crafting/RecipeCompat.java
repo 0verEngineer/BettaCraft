@@ -58,20 +58,13 @@ public final class RecipeCompat {
     /** M52c: the template with a component set in its patch unless the patch already has it. */
     public static <T> net.minecraft.world.item.ItemStackTemplate withDefault(net.minecraft.world.item.ItemStackTemplate t,
             net.minecraft.core.component.DataComponentType<T> type, T value) {
+        // M52e: 26.3 has no entry view of a patch any more, only its split into added components and removed types
+        var split = t.components().split();
+        if (split.added().has(type) || split.removed().contains(type)) return t;
         var b = net.minecraft.core.component.DataComponentPatch.builder();
-        boolean has = false;
-        for (var e : t.components().entrySet()) {
-            if (e.getKey() == type) has = true;
-            copy(b, e.getKey(), e.getValue());
-        }
-        if (has) return t;
+        b.set(split.added());
+        for (var removed : split.removed()) b.remove(removed);
         b.set(type, value);
         return new net.minecraft.world.item.ItemStackTemplate(t.item(), t.count(), b.build());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> void copy(net.minecraft.core.component.DataComponentPatch.Builder b, net.minecraft.core.component.DataComponentType<T> type, Optional<?> value) {
-        if (value.isPresent()) b.set(type, (T) value.get());
-        else b.remove(type);
     }
 }

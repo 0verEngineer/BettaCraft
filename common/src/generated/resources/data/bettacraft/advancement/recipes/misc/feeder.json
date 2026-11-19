@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:feeder"
+        "recipes": "bettacraft:feeder"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

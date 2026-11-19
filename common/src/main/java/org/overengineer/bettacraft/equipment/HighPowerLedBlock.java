@@ -5,7 +5,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.util.RandomSource;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.config.Feature;
-import com.mojang.serialization.MapCodec;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,18 +30,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * on the part of the tank it covers.
  */
 public class HighPowerLedBlock extends TankLightBlock {
-    public static final MapCodec<HighPowerLedBlock> CODEC = simpleCodec(HighPowerLedBlock::new);
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
     public static final BooleanProperty SOUTH = BooleanProperty.create("south");
 
     public HighPowerLedBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(NORTH, false).setValue(SOUTH, false));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

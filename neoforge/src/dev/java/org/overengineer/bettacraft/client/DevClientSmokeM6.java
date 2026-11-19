@@ -197,7 +197,7 @@ final class DevClientSmokeM6 {
     }
 
     private void mouseTo(double x, double y) {
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x, y);
+        mc.mouseHandler.onMove(mc.getWindow().handle(), x, y, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus)
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);

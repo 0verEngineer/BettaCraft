@@ -29,14 +29,14 @@ public final class FabricLoaderHooks implements LoaderHooks {
         var parsed = ResourceCondition.LIST_CODEC.parse(JsonOps.INSTANCE, json.getAsJsonObject().get(ResourceConditions_KEY));
         var list = parsed.getOrThrow(msg -> new IllegalStateException("bad load conditions: " + msg));
         var registries = server.registryAccess();
-        // M52b: the conditions read the registries through a RegistryInfoLookup (vanilla's adapter is package-private)
+        // M52b: the conditions read the registries through a RegistryInfoLookup (vanilla's adapter is package-private);
+        // M52e (26.3): it hands out holder getters
         net.minecraft.resources.RegistryOps.RegistryInfoLookup info = new net.minecraft.resources.RegistryOps.RegistryInfoLookup() {
             @Override
             @SuppressWarnings({"unchecked", "rawtypes"})
-            public <T> java.util.Optional<net.minecraft.resources.RegistryOps.RegistryInfo<T>> lookup(
+            public <T> java.util.Optional<net.minecraft.core.HolderGetter<T>> lookup(
                     net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<? extends T>> key) {
-                return (java.util.Optional) registries.lookup((net.minecraft.resources.ResourceKey) key)
-                        .map(r -> net.minecraft.resources.RegistryOps.RegistryInfo.fromRegistryLookup((net.minecraft.core.HolderLookup.RegistryLookup) r));
+                return (java.util.Optional) registries.lookup((net.minecraft.resources.ResourceKey) key);
             }
         };
         for (ResourceCondition c : list) if (!c.test(info)) return false;

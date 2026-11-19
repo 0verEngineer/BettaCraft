@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:bio_co2"
+        "recipes": "bettacraft:bio_co2"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

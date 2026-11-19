@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.food;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,16 +30,10 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * ({@link LiveFoodPumpBlockEntity}). Pipes join it on every side; a tank right next to it is fed directly.
  */
 public class LiveFoodPumpBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
-    public static final MapCodec<LiveFoodPumpBlock> CODEC = simpleCodec(LiveFoodPumpBlock::new);
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 9, 13);
 
     public LiveFoodPumpBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:high_power_led_magenta"
+        "recipes": "bettacraft:high_power_led_magenta"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

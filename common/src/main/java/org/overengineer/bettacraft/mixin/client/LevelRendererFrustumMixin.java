@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.mixin.client;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.overengineer.bettacraft.platform.client.RenderFrame;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,10 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererFrustumMixin {
-    @Inject(method = "render", at = @At("HEAD")) // M52d: 26.2 renamed renderLevel to render (without the sections)
-    private void bettacraft$frustum(com.mojang.blaze3d.resource.GraphicsResourceAllocator allocator, net.minecraft.client.DeltaTracker deltaTracker,
-            boolean renderOutline, CameraRenderState cameraState, Matrix4fc modelView, com.mojang.blaze3d.buffers.GpuBufferSlice terrainFog,
-            org.joml.Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
-        RenderFrame.capture(cameraState.cullFrustum, new Matrix4f(modelView), cameraState.projectionMatrix);
+    // M52d: 26.2 renamed renderLevel to render (without the sections). M52e: 26.3 passes no model-view; it is the
+    // camera's view rotation (LevelRenderer#render multiplies the model-view stack by it)
+    @Inject(method = "render", at = @At("HEAD"))
+    private void bettacraft$frustum(com.mojang.blaze3d.resource.GraphicsResourceAllocator allocator, boolean renderOutline,
+            CameraRenderState cameraState, com.mojang.renderpearl.api.buffers.GpuBufferSlice terrainFog, org.joml.Vector4f fogColor,
+            boolean shouldRenderSky, boolean consistentDepthRequired, CallbackInfo ci) {
+        RenderFrame.capture(cameraState.cullFrustum, new Matrix4f(cameraState.viewRotationMatrix), cameraState.projectionMatrix);
     }
 }

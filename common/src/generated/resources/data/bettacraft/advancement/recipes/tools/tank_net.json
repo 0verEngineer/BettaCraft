@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_net"
+        "recipes": "bettacraft:tank_net"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

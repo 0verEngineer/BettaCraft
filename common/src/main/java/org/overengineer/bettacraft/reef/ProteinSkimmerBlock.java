@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.reef;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +27,6 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * filter for salt water, {@link TankReef#skimmerBlocks}); in fresh water there is no foam and it does nothing.
  */
 public class ProteinSkimmerBlock extends Block {
-    public static final MapCodec<ProteinSkimmerBlock> CODEC = simpleCodec(ProteinSkimmerBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape[] SHAPES = new VoxelShape[4];
 
@@ -42,11 +40,6 @@ public class ProteinSkimmerBlock extends Block {
     public ProteinSkimmerBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

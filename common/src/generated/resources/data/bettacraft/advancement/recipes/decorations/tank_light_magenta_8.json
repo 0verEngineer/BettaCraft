@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_light_magenta_8"
+        "recipes": "bettacraft:tank_light_magenta_8"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

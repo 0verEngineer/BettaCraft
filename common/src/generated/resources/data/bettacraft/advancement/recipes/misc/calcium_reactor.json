@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:calcium_reactor"
+        "recipes": "bettacraft:calcium_reactor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

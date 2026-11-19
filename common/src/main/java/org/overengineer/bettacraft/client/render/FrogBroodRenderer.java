@@ -52,7 +52,7 @@ public final class FrogBroodRenderer {
             int light = light(be, x, y, z);
             pose.pushPose();
             pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
-            pose.mulPose(Axis.YP.rotationDegrees(yaw));
+            pose.rotate(Axis.YP.rotationDegrees(yaw));
             tadpole(pose, vc, k, time, light);
             pose.popPose();
         }
@@ -101,7 +101,7 @@ public final class FrogBroodRenderer {
         float tail = 0.03F * s * (1 - 0.6F * Math.max(0, g - 0.8F) / 0.2F);
         pose.pushPose();
         pose.translate(0, 0, -0.001F * s);
-        pose.mulPose(Axis.YP.rotation(Mth.sin(time * 0.6F + k.id) * 0.45F));
+        pose.rotate(Axis.YP.rotation(Mth.sin(time * 0.6F + k.id) * 0.45F));
         PoseStack.Pose p = pose.last();
         cube(p, vc, 0, 0, -tail, 0.0012F * s, 0.006F * s, tail, TAIL, 200, light);
         pose.popPose();

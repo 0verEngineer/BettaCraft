@@ -16,11 +16,11 @@ public class AquaticPlantFishingModifier extends LootModifier {
             .apply(i, AquaticPlantFishingModifier::new));
 
     /** M52c (26.1): NeoForge's loot modifiers carry a priority. */
-    public AquaticPlantFishingModifier(LootItemCondition[] conditions) {
+    public AquaticPlantFishingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions) {
         this(conditions, net.neoforged.neoforge.common.loot.IGlobalLootModifier.DEFAULT_PRIORITY);
     }
 
-    public AquaticPlantFishingModifier(LootItemCondition[] conditions, int priority) {
+    public AquaticPlantFishingModifier(java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> conditions, int priority) {
         super(conditions, priority);
     }
 

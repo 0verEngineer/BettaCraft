@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:calcium_additive_from_bone_meal"
+        "recipes": "bettacraft:calcium_additive_from_bone_meal"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -45,7 +45,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
@@ -90,8 +90,9 @@ public final class ModDataGen {
     // M22.3
     public static final ResourceKey<BiomeModifier> WILDLIFE_SPAWNS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("wildlife_spawns"));
     public static final ResourceKey<BiomeModifier> WILD_CORALS = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, BettaCraft.id("wild_corals"));
-    public static final ResourceKey<net.minecraft.world.level.levelgen.feature.ConfiguredFeature<?, ?>> WILD_CORAL_CONFIGURED =
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, BettaCraft.id("wild_coral"));
+    // M52e (26.3): the configured features are the features themselves (worldgen/feature)
+    public static final ResourceKey<net.minecraft.world.level.levelgen.feature.Feature> WILD_CORAL_CONFIGURED =
+            ResourceKey.create(Registries.FEATURE, BettaCraft.id("wild_coral"));
     public static final ResourceKey<net.minecraft.world.level.levelgen.placement.PlacedFeature> WILD_CORAL_PLACED =
             ResourceKey.create(Registries.PLACED_FEATURE, BettaCraft.id("wild_coral"));
 
@@ -101,7 +102,9 @@ public final class ModDataGen {
         DataGenerator gen = event.getGenerator();
         PackOutput out = gen.getPackOutput();
         ExistingFileHelper efh = ExistingFileHelper.INSTANCE;
-        CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
+        // M52e (26.3): world registries (biomes, worldgen) for tags and loot modifiers; recipes, loot tables, advancements
+        // and the worldgen entries are registry bootstraps now ({@link #registryEntries})
+        CompletableFuture<HolderLookup.Provider> lookup = event.getWorldLookupProvider();
 
         gen.addProvider(true, new EnglishLang(out));
         gen.addProvider(true, new BlockStates(out, efh));
@@ -113,47 +116,52 @@ public final class ModDataGen {
         });
         gen.addProvider(true, new org.overengineer.bettacraft.datagen.model.ItemDefinitionProvider(out, BettaCraft.MOD_ID, tinted,
                 java.util.Map.of("tank", "tank", "cabinet", "cabinet")));
-        gen.addProvider(true, new Recipes.Runner(out, lookup));
-        gen.addProvider(true, new LootTableProvider(out, Set.of(),
-                List.of(new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)), lookup));
         BlockTagsGen blockTags = gen.addProvider(true, new BlockTagsGen(out, lookup, efh));
         gen.addProvider(true, new ItemTagsGen(out, lookup, blockTags.contentsGetter(), efh));
         gen.addProvider(true, new EntityTagsGen(out, lookup, efh));
         gen.addProvider(true, new DataGenM25b.FluidTagsGen(out, lookup, efh)); // M25
         gen.addProvider(true, new BiomeTagsGen(out, lookup, efh));
-        gen.addProvider(true, new DatapackBuiltinEntriesProvider(out, lookup, new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, ctx -> {
-                    ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
-                            org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE));
-                    DataGenM281.configuredFeatures(ctx); // M28.1
-                })
-                .add(Registries.PLACED_FEATURE, ctx -> {
-                    DataGenM281.placedFeatures(ctx); // M28.1
-                    ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
-                        ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(WILD_CORAL_CONFIGURED), List.of(
-                        net.minecraft.world.level.levelgen.placement.RarityFilter.onAverageOnceEvery(2),
-                        net.minecraft.world.level.levelgen.placement.InSquarePlacement.spread(),
-                        net.minecraft.world.level.levelgen.placement.HeightmapPlacement.onHeightmap(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG),
-                        net.minecraft.world.level.levelgen.placement.BiomeFilter.biome())));
-                })
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> {
-                    DataGenM281.biomeModifiers(ctx); // M28.1: wild aquarium and floating plants
-                    ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
-                    // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
-                    ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
-                    // M25.1: #bettacraft:coral_reef_biomes or both #c:is_ocean and #c:is_hot (like BiomeWaters.coralReef)
-                    var biomes = ctx.lookup(Registries.BIOME);
-                    ctx.register(WILD_CORALS, new net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier(
-                            new net.neoforged.neoforge.registries.holdersets.OrHolderSet<>(biomes.getOrThrow(ModTags.CORAL_REEF_BIOMES),
-                                    new net.neoforged.neoforge.registries.holdersets.AndHolderSet<>(biomes.getOrThrow(Tags.Biomes.IS_OCEAN), biomes.getOrThrow(Tags.Biomes.IS_HOT))),
-                            net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.PLACED_FEATURE).getOrThrow(WILD_CORAL_PLACED)),
-                            net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION));
-                }),
-                Set.of(BettaCraft.MOD_ID)));
         gen.addProvider(true, new LootModifiers(out, lookup));
         gen.addProvider(true, new GeneticsFiles(out));
         gen.addProvider(true, new TradeData(out)); // M52c: the data-driven trades of 26.1
-        gen.addProvider(true, new net.minecraft.data.advancements.AdvancementProvider(out, lookup, List.of(new ModAdvancements())));
+    }
+
+    /**
+     * M52e (26.3): the entries of the datapack registries (world layer: features, placed features, biome modifiers;
+     * reloadable layer: recipes and their advancements, block loot tables, the advancement tree) come from bootstraps,
+     * written by NeoForge's data run for our mod.
+     */
+    @SubscribeEvent
+    public static void registryEntries(net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent event) {
+        event.add(Registries.FEATURE, ctx -> {
+            ctx.register(WILD_CORAL_CONFIGURED, org.overengineer.bettacraft.reef.WildCoralFeature.INSTANCE);
+            DataGenM281.configuredFeatures(ctx); // M28.1
+        });
+        event.add(Registries.PLACED_FEATURE, ctx -> {
+            DataGenM281.placedFeatures(ctx); // M28.1
+            ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
+                ctx.lookup(Registries.FEATURE).getOrThrow(WILD_CORAL_CONFIGURED), List.of(
+                net.minecraft.world.level.levelgen.placement.RarityFilter.onAverageOnceEvery(2),
+                net.minecraft.world.level.levelgen.placement.InSquarePlacement.spread(),
+                net.minecraft.world.level.levelgen.placement.HeightmapPlacement.onHeightmap(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG),
+                net.minecraft.world.level.levelgen.placement.BiomeFilter.biome())));
+        });
+        event.add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> {
+            DataGenM281.biomeModifiers(ctx); // M28.1: wild aquarium and floating plants
+            ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
+            // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
+            ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
+            // M25.1: #bettacraft:coral_reef_biomes or both #c:is_ocean and #c:is_hot (like BiomeWaters.coralReef)
+            var biomes = ctx.lookup(Registries.BIOME);
+            ctx.register(WILD_CORALS, new net.neoforged.neoforge.common.world.BiomeModifiers.AddFeaturesBiomeModifier(
+                    new net.neoforged.neoforge.registries.holdersets.OrHolderSet<>(biomes.getOrThrow(ModTags.CORAL_REEF_BIOMES),
+                            new net.neoforged.neoforge.registries.holdersets.AndHolderSet<>(biomes.getOrThrow(Tags.Biomes.IS_OCEAN), biomes.getOrThrow(Tags.Biomes.IS_HOT))),
+                    net.minecraft.core.HolderSet.direct(ctx.lookup(Registries.PLACED_FEATURE).getOrThrow(WILD_CORAL_PLACED)),
+                    net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION));
+        });
+        event.recipe(Recipes::new);
+        event.lootTable(new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK));
+        event.advancement(ModAdvancements::new);
     }
 
     // ------------------------------------------------------------------ genetics (M5): built-in colours, genes, varieties
@@ -782,25 +790,10 @@ public final class ModDataGen {
     // ------------------------------------------------------------------ recipes
 
     static final class Recipes extends RecipeProvider {
-        Recipes(HolderLookup.Provider registries, RecipeOutput out) {
-            super(registries, out);
-        }
-
-        /** M52b: the 1.21.2 recipe data provider (it makes a recipe provider per run). */
-        static final class Runner extends RecipeProvider.Runner {
-            Runner(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
-                super(out, lookup);
-            }
-
-            @Override
-            protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput out) {
-                return new Recipes(registries, out);
-            }
-
-            @Override
-            public String getName() {
-                return "Recipes: " + BettaCraft.MOD_ID;
-            }
+        /** M52e (26.3): recipes and their unlock advancements are registry entries made through bootstrap contexts. */
+        Recipes(net.minecraft.data.worldgen.BootstrapContext<Recipe<?>> recipes,
+                net.minecraft.data.worldgen.BootstrapContext<Advancement> advancements) {
+            super(recipes, advancements);
         }
 
         @Override
@@ -1069,8 +1062,15 @@ public final class ModDataGen {
                 }
 
                 @Override
-                public void includeRootAdvancement() {
-                    parent.includeRootAdvancement();
+                public <S> net.minecraft.core.HolderGetter<S> lookup(ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.lookup(key);
+                }
+
+                @Deprecated
+                @Override
+                public <S> java.util.stream.Stream<net.minecraft.core.Holder.Reference<S>> listContextElements(
+                        ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.listContextElements(key);
                 }
             };
         }
@@ -1089,8 +1089,15 @@ public final class ModDataGen {
                 }
 
                 @Override
-                public void includeRootAdvancement() {
-                    parent.includeRootAdvancement();
+                public <S> net.minecraft.core.HolderGetter<S> lookup(ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.lookup(key);
+                }
+
+                @Deprecated
+                @Override
+                public <S> java.util.stream.Stream<net.minecraft.core.Holder.Reference<S>> listContextElements(
+                        ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.listContextElements(key);
                 }
             };
         }
@@ -1207,8 +1214,15 @@ public final class ModDataGen {
                 }
 
                 @Override
-                public void includeRootAdvancement() {
-                    parent.includeRootAdvancement();
+                public <S> net.minecraft.core.HolderGetter<S> lookup(ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.lookup(key);
+                }
+
+                @Deprecated
+                @Override
+                public <S> java.util.stream.Stream<net.minecraft.core.Holder.Reference<S>> listContextElements(
+                        ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.listContextElements(key);
                 }
             };
         }
@@ -1226,8 +1240,15 @@ public final class ModDataGen {
                 }
 
                 @Override
-                public void includeRootAdvancement() {
-                    parent.includeRootAdvancement();
+                public <S> net.minecraft.core.HolderGetter<S> lookup(ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.lookup(key);
+                }
+
+                @Deprecated
+                @Override
+                public <S> java.util.stream.Stream<net.minecraft.core.Holder.Reference<S>> listContextElements(
+                        ResourceKey<? extends net.minecraft.core.Registry<? extends S>> key) {
+                    return parent.listContextElements(key);
                 }
             };
         }
@@ -1297,15 +1318,15 @@ public final class ModDataGen {
     }
 
     static final class BlockLoot extends BlockLootSubProvider {
-        BlockLoot(HolderLookup.Provider registries) {
-            super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
+        BlockLoot(net.minecraft.data.loot.LootTableSubProvider.Context output) {
+            super(Set.of(), FeatureFlags.REGISTRY.allFlags(), output);
         }
 
         @Override
         protected void generate() {
             // Tank keeps its glass (component copied from the block entity). Silk touch not required.
             add(ModBlocks.TANK.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.TANK.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
+                    .setRolls(ContextIntProviders.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.TANK.get())
                             .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.GLASS.get()).include(ModDataComponents.TANK_STYLE.get()))))));
@@ -1313,11 +1334,10 @@ public final class ModDataGen {
             dropSelf(ModBlocks.CLIP_FEEDER.get());
             // M18: coloured lights drop in their colour (white ones as the plain item, so they stack with old ones)
             add(ModBlocks.TANK_LIGHT.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.TANK_LIGHT.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
+                    .setRolls(ContextIntProviders.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.TANK_LIGHT.get())
                             .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(ModBlocks.TANK_LIGHT.get()).copy(TankLightBlock.COLOR)
-                                    .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.TANK_LIGHT.get())
-                                            .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
+                                    .when(net.minecraft.world.level.storage.loot.predicates.MatchBlock.blockMatches(this.blocks, ModBlocks.TANK_LIGHT.get(), net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                     .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
@@ -1328,11 +1348,10 @@ public final class ModDataGen {
             dropSelf(ModBlocks.AIR_STONE.get());
             for (Block led : List.of(ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get())) {
                 add(led, LootTable.lootTable().withPool(applyExplosionCondition(led, LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
+                        .setRolls(ContextIntProviders.exactly(1))
                         .add(LootItem.lootTableItem(led)
                                 .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(led).copy(TankLightBlock.COLOR)
-                                        .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(led)
-                                                .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
+                                        .when(net.minecraft.world.level.storage.loot.predicates.MatchBlock.blockMatches(this.blocks, led, net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                         .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             }
             dropSelf(ModBlocks.REEF_ROCK.get());
@@ -1354,10 +1373,9 @@ public final class ModDataGen {
             for (Block b : DataGenM49.blocks()) dropSelf(b); // M49
             for (Block b : java.util.stream.Stream.concat(DataGenM40.pipes().stream(), DataGenM40b.pipes().stream()).toList()) { // M40: a filter pipe, and its T-piece back from a branch
                 add(b, LootTable.lootTable()
-                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
-                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
-                                .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(b)
-                                        .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
+                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ContextIntProviders.exactly(1)).add(LootItem.lootTableItem(b))))
+                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ContextIntProviders.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
+                                .when(net.minecraft.world.level.storage.loot.predicates.MatchBlock.blockMatches(this.blocks, b, net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                 .hasProperty(org.overengineer.bettacraft.plumbing.FilterPipeBlock.JUNCTION, true))))));
             }
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
@@ -1365,7 +1383,7 @@ public final class ModDataGen {
             dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
             dropSelf(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
             add(ModBlocks.CO2_CYLINDER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CO2_CYLINDER.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
+                    .setRolls(ContextIntProviders.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CO2_CYLINDER.get())
                             .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.CO2_GAS.get()).include(ModDataComponents.CO2_SOLENOID.get()))))));
@@ -1375,12 +1393,12 @@ public final class ModDataGen {
             for (var b : ModBlocks.WILD_CORALS.values()) dropWhenSilkTouch(b.get());
             // M4: the filter keeps its heaters, the cabinet its planks (its contents drop separately)
             add(ModBlocks.EXTERNAL_FILTER.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.EXTERNAL_FILTER.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
+                    .setRolls(ContextIntProviders.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.EXTERNAL_FILTER.get())
                             .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(net.minecraft.core.component.DataComponents.CONTAINER))))));
             add(ModBlocks.CABINET.get(), LootTable.lootTable().withPool(applyExplosionCondition(ModBlocks.CABINET.get(), LootPool.lootPool()
-                    .setRolls(ConstantValue.exactly(1))
+                    .setRolls(ContextIntProviders.exactly(1))
                     .add(LootItem.lootTableItem(ModBlocks.CABINET.get())
                             .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
                                     .include(ModDataComponents.WOOD.get()).include(ModDataComponents.OUTLET_SIDE.get())
@@ -1425,6 +1443,14 @@ public final class ModDataGen {
                 ModBlocks.FILTER_CHAMBER.get(), ModBlocks.FILTER_PUMP_HEAD.get(), ModBlocks.FILTER_INLET.get(), ModBlocks.FILTER_OUTLET.get());
     }
 
+    /** M52e (26.3): loot modifiers take one (composed) condition; several are joined with all_of. */
+    static java.util.Optional<net.minecraft.core.Holder<LootItemCondition>> when(LootItemCondition... conditions) {
+        if (conditions.length == 0) return java.util.Optional.empty();
+        if (conditions.length == 1) return java.util.Optional.of(net.minecraft.core.Holder.direct(conditions[0]));
+        return java.util.Optional.of(net.minecraft.core.Holder.direct(net.minecraft.world.level.storage.loot.predicates.AllOfCondition.allOf(
+                net.minecraft.core.HolderSet.direct(net.minecraft.core.Holder::direct, java.util.List.of(conditions)))));
+    }
+
     /** Mud mined in a betta biome sometimes drops mosquito larvae (PLAN 6.3). */
     static final class LootModifiers extends GlobalLootModifierProvider {
         LootModifiers(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
@@ -1436,32 +1462,32 @@ public final class ModDataGen {
             var biomes = registries.lookupOrThrow(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES);
             // M33: every modifier only while its feature is on (bettacraft:feature)
             // M52c (26.1): NeoForge loads every modifier file (no list); the priorities keep the order of 1.21.x on both loaders
-            add("mud_mosquito_larvae", new AddItemLootModifier(new LootItemCondition[]{
+            add("mud_mosquito_larvae", new AddItemLootModifier(when(
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
-            }, 1050, new net.minecraft.world.item.ItemStackTemplate(ModItems.MOSQUITO_LARVAE.get())));
+            ), 1050, new net.minecraft.world.item.ItemStackTemplate(ModItems.MOSQUITO_LARVAE.get())));
             // M26: and tubifex worms (the start of a tubifex dish)
-            add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
+            add("mud_tubifex", new AddItemLootModifier(when(
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
-            }, 1040, new net.minecraft.world.item.ItemStackTemplate(ModItems.TUBIFEX.get())));
+            ), 1040, new net.minecraft.world.item.ItemStackTemplate(ModItems.TUBIFEX.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
-            add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[]{new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD)},
+            add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(when(new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD)),
                     1030, new net.minecraft.world.item.ItemStackTemplate(ModItems.ARTEMIA_CYSTS.get())));
             // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
-            add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
+            add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(when(
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
-            }, 1020));
+            ), 1020));
             // M13: fishing in jungles, rivers and swamps sometimes brings up an aquarium plant
-            add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(new LootItemCondition[]{
+            add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(when(
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
-            }, 1010));
+            ), 1010));
         }
     }
 

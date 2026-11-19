@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.co2;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +34,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * again (a water bucket replaces the old brew). Needs no power. Empty hand: what it does; sneaking: pour it out.
  */
 public class BioCo2Block extends BaseEntityBlock implements BlockRemoval, Co2SourceBlock {
-    public static final MapCodec<BioCo2Block> CODEC = simpleCodec(BioCo2Block::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** 0 empty, 1 water (and sugar), 2 fermenting, 3 spent. */
     public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, 3);
@@ -45,11 +43,6 @@ public class BioCo2Block extends BaseEntityBlock implements BlockRemoval, Co2Sou
     public BioCo2Block(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(STAGE, EMPTY));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

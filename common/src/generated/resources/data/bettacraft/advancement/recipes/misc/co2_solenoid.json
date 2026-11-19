@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:co2_solenoid"
+        "recipes": "bettacraft:co2_solenoid"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

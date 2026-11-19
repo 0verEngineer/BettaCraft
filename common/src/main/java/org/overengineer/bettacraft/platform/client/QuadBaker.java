@@ -64,7 +64,7 @@ public final class QuadBaker {
 
     public BakedQuad bake() {
         if (vertex != 4) throw new IllegalStateException("a quad needs four vertices, has " + vertex);
-        BakedQuad q = ClientPlatform.get().quad(data.clone(), tint, direction, sprite, shade, false, layer);
+        BakedQuad q = ClientPlatform.get().quad(data.clone(), tint, direction, sprite, shade ? null : Direction.UP, false, layer); // M52e: 26.3 shades by a direction (up = unshaded)
         vertex = 0;
         java.util.Arrays.fill(data, 0);
         return q;

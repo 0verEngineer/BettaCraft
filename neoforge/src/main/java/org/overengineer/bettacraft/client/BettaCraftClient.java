@@ -84,7 +84,12 @@ public final class BettaCraftClient {
         modBus.addListener(NeoForgeClientPlatform::registerStandalone);
         modBus.addListener((ModelEvent.ModifyBakingResult e) -> {
             org.overengineer.bettacraft.client.model.ModelSwaps.beforeBake();
-            var sprites = e.getTextureGetter();
+            // M52e: NeoForge 26.3 hands over the stitched block atlas instead of a texture getter
+            var atlas = e.getBlockAtlasPreparations();
+            java.util.function.Function<net.minecraft.resources.Identifier, net.minecraft.client.renderer.texture.TextureAtlasSprite> sprites = id -> {
+                var sprite = atlas.getSprite(id);
+                return sprite != null ? sprite : atlas.missing();
+            };
             e.getBakingResult().blockStateModels().replaceAll((state, model) -> {
                 var swapped = org.overengineer.bettacraft.client.model.ModelSwaps.swap(state, model, sprites);
                 return swapped != null ? swapped : model;
@@ -124,7 +129,7 @@ public final class BettaCraftClient {
         });
         // M22.1: the tag of the swaying water plants may change with a data pack
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.TagsUpdatedEvent e) -> {
-            if (e.getUpdateCause() == net.neoforged.neoforge.event.TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
+            if (e instanceof net.neoforged.neoforge.event.TagsUpdatedEvent.ClientPacketReceived) {
                 org.overengineer.bettacraft.client.interior.MiniatureSway.rebuildAll();
             }
         });

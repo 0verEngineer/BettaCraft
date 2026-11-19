@@ -197,6 +197,11 @@ public final class MiniatureSway {
         }
 
         @Override
+        public VertexConsumer setUv3(float u, float v) {
+            return this; // M52e: the decal UV of 26.3 (glint / crumbling only), not captured
+        }
+
+        @Override
         public VertexConsumer setNormal(float x, float y, float z) {
             d.v.set(n * STRIDE + 5, x);
             d.v.set(n * STRIDE + 6, y);

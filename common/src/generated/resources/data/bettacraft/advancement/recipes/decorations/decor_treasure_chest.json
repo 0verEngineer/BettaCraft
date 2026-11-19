@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_treasure_chest"
+        "recipes": "bettacraft:decor_treasure_chest"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

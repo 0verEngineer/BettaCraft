@@ -149,7 +149,7 @@ public final class FabricClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion, ChunkSectionLayer layer) {
+    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, @org.jspecify.annotations.Nullable Direction shadeOverride, boolean ambientOcclusion, ChunkSectionLayer layer) {
         Vector3f[] pos = new Vector3f[4];
         long[] uv = new long[4];
         int[] argb = new int[4], normals = new int[4];
@@ -161,8 +161,13 @@ public final class FabricClientPlatform implements ClientPlatform {
             normals[i] = v[o + 7] & 0xFFFFFF;
         }
         // M52c (26.1): the material info carries the chunk layer and the item render type
-        var info = new BakedQuad.MaterialInfo(sprite, layer, layer.translucent() ? net.minecraft.client.renderer.Sheets.translucentBlockItemSheet()
-                : net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet(), tint, shade, 0);
+        // M52e (26.3): the glint render types of the item, and a shade direction (null: the face's own) instead of a flag
+        boolean tr = layer.translucent();
+        var info = new BakedQuad.MaterialInfo(sprite, layer,
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet(),
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemGlintSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemGlintSheet(),
+                tr ? net.minecraft.client.renderer.Sheets.translucentBlockItemGlintSpecialSheet() : net.minecraft.client.renderer.Sheets.cutoutBlockItemGlintSpecialSheet(),
+                tint, shadeOverride, 0);
         BakedQuad q = new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], direction, info);
         EXTRAS.put(q, new Extras(argb, normals, ambientOcclusion));
         return q;
@@ -235,6 +240,11 @@ public final class FabricClientPlatform implements ClientPlatform {
 
         @Override
         public VertexConsumer setUv2(int u, int v) {
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv3(float u, float v) {
             return this;
         }
 

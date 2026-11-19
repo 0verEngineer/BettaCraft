@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:cooler_medium"
+        "recipes": "bettacraft:cooler_medium"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

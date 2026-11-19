@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.plants.wild;
 
 import net.minecraft.world.entity.InsideBlockEffectApplier;
-import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -35,18 +34,12 @@ import org.overengineer.bettacraft.tank.plants.TankPlants;
  * pad. Placed by {@link WildPlantFeature}; no item of the block.
  */
 public class WildFloatingPlantBlock extends VegetationBlock {
-    public static final MapCodec<WildFloatingPlantBlock> CODEC = simpleCodec(WildFloatingPlantBlock::new);
     public static final EnumProperty<FloatingPlantType> TYPE = EnumProperty.create("type", FloatingPlantType.class, t -> t != FloatingPlantType.LILY_PAD);
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 1.5, 15);
 
     public WildFloatingPlantBlock(Properties props) {
         super(props);
         registerDefaultState(stateDefinition.any().setValue(TYPE, FloatingPlantType.DUCKWEED));
-    }
-
-    @Override
-    protected MapCodec<? extends VegetationBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -97,7 +90,7 @@ public class WildFloatingPlantBlock extends VegetationBlock {
         ItemStack st = TankPlants.item(type(s));
         level.removeBlock(pos, false);
         level.playSound(null, pos, SoundEvents.BUCKET_FILL_FISH, SoundSource.PLAYERS, 0.6F, 1.4F);
-        if (!st.isEmpty() && !player.getInventory().add(st)) player.drop(st, false);
+        if (!st.isEmpty() && !player.getInventory().add(st)) player.drop(st, false, net.minecraft.util.Prediction.SERVER_ONLY);
         return true;
     }
 

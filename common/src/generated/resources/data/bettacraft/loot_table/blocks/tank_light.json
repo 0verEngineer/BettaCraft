@@ -2,39 +2,33 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "block": "bettacraft:tank_light",
-              "conditions": [
-                {
-                  "condition": "minecraft:inverted",
-                  "term": {
-                    "block": "bettacraft:tank_light",
-                    "condition": "minecraft:block_state_property",
-                    "properties": {
-                      "color": "white"
-                    }
-                  }
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "bettacraft:tank_light",
+            "condition": {
+              "type": "minecraft:inverted",
+              "term": {
+                "type": "minecraft:match_block",
+                "blocks": "bettacraft:tank_light",
+                "state": {
+                  "color": "white"
                 }
-              ],
-              "function": "minecraft:copy_state",
-              "properties": [
-                "color"
-              ]
-            }
-          ],
+              }
+            },
+            "properties": [
+              "color"
+            ]
+          },
           "name": "bettacraft:tank_light"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/tank_light"

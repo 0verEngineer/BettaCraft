@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:nozzle"
+        "recipes": "bettacraft:nozzle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

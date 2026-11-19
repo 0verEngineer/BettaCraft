@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:kelp_meal"
+        "recipes": "bettacraft:kelp_meal"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

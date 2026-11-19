@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:reservoir"
+        "recipes": "bettacraft:reservoir"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

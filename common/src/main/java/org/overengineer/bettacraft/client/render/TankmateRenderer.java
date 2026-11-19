@@ -141,7 +141,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
         if (!fish.isInWater()) {
             if (ray) return;
             pose.translate(0.05F, 0.05F, -0.05F);
-            pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            pose.rotate(Axis.ZP.rotationDegrees(90.0F));
             return;
         }
         var sp = fish.swimPose;
@@ -152,16 +152,16 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
         // M21.5: the whole body sways with the beat (an eel hardly: its body wave does that), less when upright on the glass
         float sway = (eel ? 0.4F : rest ? 0.6F : 1.0F + 2.8F * swim) * Mth.sin(sp.phase(partialTick) * (eel ? 1.0F : 1.2F)) * (1 - g);
         if (ray) sway = 0;
-        pose.mulPose(Axis.YP.rotationDegrees(sway));
+        pose.rotate(Axis.YP.rotationDegrees(sway));
         if (g > 0) {
             // M21.5: turned upright onto the glass smoothly (nose up, belly against the wall in front of it)
             float len = (float) fish.species().length() * fish.lifeStage().scale();
             float toGlass = (float) Math.max(0, fish.sideMargin() - 1.0 / 16 - 0.012);
             pose.translate(0, len * 0.5F * g, -toGlass * g);
-            pose.mulPose(Axis.XP.rotationDegrees(90F * g));
+            pose.rotate(Axis.XP.rotationDegrees(90F * g));
         }
         float pitch = sp.pitch(partialTick) * (1 - g);
-        if (pitch != 0) pose.mulPose(Axis.XP.rotationDegrees(pitch));
+        if (pitch != 0) pose.rotate(Axis.XP.rotationDegrees(pitch));
     }
 
     /** Up to M21: raw last-tick movement, thresholds (features.visuals.smoothSwimming off). */
@@ -170,7 +170,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
             float len = (float) fish.species().length() * fish.lifeStage().scale();
             float toGlass = (float) Math.max(0, fish.sideMargin() - 1.0 / 16 - 0.012);
             pose.translate(0, len * 0.5F, -toGlass);
-            pose.mulPose(Axis.XP.rotationDegrees(90F));
+            pose.rotate(Axis.XP.rotationDegrees(90F));
             return;
         }
         double vx = fish.getX() - fish.xo, vz = fish.getZ() - fish.zo, vy = fish.getY() - fish.yo;
@@ -178,14 +178,14 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
         float swim = (float) Math.min(1.0, h / 0.03);
         boolean rest = fish.flag(TankmateEntity.FLAG_REST);
         float sway = (rest ? 0.6F : 1.0F + 2.8F * swim) * Mth.sin(0.55F * bob + fish.getId());
-        pose.mulPose(Axis.YP.rotationDegrees(sway));
+        pose.rotate(Axis.YP.rotationDegrees(sway));
         if (fish.isInWater() && Math.abs(vy) > 0.004 && h + Math.abs(vy) > 0.006) {
             float pitch = (float) Mth.clamp(Math.toDegrees(Math.atan2(vy, Math.max(h, 0.01))), -35, 35);
-            pose.mulPose(Axis.XP.rotationDegrees(pitch));
+            pose.rotate(Axis.XP.rotationDegrees(pitch));
         }
         if (!fish.isInWater()) {
             pose.translate(0.05F, 0.05F, -0.05F);
-            pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
+            pose.rotate(Axis.ZP.rotationDegrees(90.0F));
         }
     }
 }

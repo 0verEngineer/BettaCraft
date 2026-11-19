@@ -362,7 +362,7 @@ public final class TankPlants {
     public static void give(Player player, List<ItemStack> stacks) {
         for (ItemStack s : stacks) {
             ItemStack copy = s.copy();
-            if (!player.getInventory().add(copy) && !copy.isEmpty()) player.drop(copy, false);
+            if (!player.getInventory().add(copy) && !copy.isEmpty()) player.drop(copy, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
     }
 

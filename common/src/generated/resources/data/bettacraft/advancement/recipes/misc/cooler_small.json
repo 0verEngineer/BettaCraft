@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:cooler_small"
+        "recipes": "bettacraft:cooler_small"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

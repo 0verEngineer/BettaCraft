@@ -57,7 +57,7 @@
         "angle": 45,
         "rescale": true
       },
-      "shade": false,
+      "shade_direction_override": "up",
       "faces": {
         "north": {
           "uv": [
@@ -100,7 +100,7 @@
         "angle": 45,
         "rescale": true
       },
-      "shade": false,
+      "shade_direction_override": "up",
       "faces": {
         "east": {
           "uv": [

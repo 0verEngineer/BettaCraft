@@ -392,7 +392,7 @@ public class BettaEntity extends AbstractFish {
             pendingDamage -= dmg;
             DamageSource src = pendingAttacker instanceof net.minecraft.world.entity.LivingEntity le
                     ? damageSources().mobAttack(le) : damageSources().generic();
-            invulnerableTime = 0;
+            setInvulnerableTime(0);
             hurt(src, dmg);
         }
     }

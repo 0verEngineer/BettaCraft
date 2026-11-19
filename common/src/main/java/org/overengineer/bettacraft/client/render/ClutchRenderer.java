@@ -124,8 +124,8 @@ public final class ClutchRenderer {
         BlockPos origin = be.getBlockPos();
         pose.pushPose();
         pose.translate(k.x - origin.getX(), k.y - origin.getY() + 0.02, k.z - origin.getZ());
-        pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees((k.id * 73) % 360));
-        pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(((k.id * 31) % 15) - 7));
+        pose.rotate(com.mojang.math.Axis.YP.rotationDegrees((k.id * 73) % 360));
+        pose.rotate(com.mojang.math.Axis.ZP.rotationDegrees(((k.id * 31) % 15) - 7));
         PoseStack.Pose last = pose.last();
         textured(last, buffers.getBuffer(RenderTypes.entityCutout(EGG_CASE)), 0.11F, 0.018F, 0.045F, light);
         VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(EGGS));

@@ -25,7 +25,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.overengineer.bettacraft.platform.network.PacketDistributor;
-import org.lwjgl.glfw.GLFW;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.entity.betta.BettaTooltip;
 import org.overengineer.bettacraft.genetics.BettaLoci;
@@ -681,11 +680,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     @Override
     public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
-        int key = event.key(), scan = event.scancode(), mods = event.modifiers();
-        if (key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(event);
+        int key = event.key();
+        if (key == com.mojang.blaze3d.platform.InputConstants.KEY_ESCAPE) return super.keyPressed(event);
         for (EditBox box : List.of(nameBox, fishNameBox)) {
             if (box.isVisible() && box.isFocused()) {
-                if (box == fishNameBox && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && renameButton.active) {
+                if (box == fishNameBox && (key == com.mojang.blaze3d.platform.InputConstants.KEY_RETURN || key == com.mojang.blaze3d.platform.InputConstants.KEY_NUMPADENTER) && renameButton.active) {
                     renameButton.onPress(new net.minecraft.client.input.KeyEvent(0, 0, 0));
                     return true;
                 }

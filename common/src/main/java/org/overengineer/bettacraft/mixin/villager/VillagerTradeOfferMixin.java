@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.mixin.villager;
 
-import java.util.List;
+import java.util.Optional;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.VillagerTrade;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -20,23 +21,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(VillagerTrade.class)
 public abstract class VillagerTradeOfferMixin implements org.overengineer.bettacraft.villager.TradeEntry {
+    // M52e (26.3): one (optional, composable) item modifier instead of a list
     @Shadow
     @Final
-    private List<LootItemFunction> givenItemModifiers;
+    private Optional<Holder<LootItemFunction>> givenItemModifier;
+
+    private @org.jetbrains.annotations.Nullable TradeFunction bettacraft$function() {
+        return givenItemModifier.map(Holder::value).orElse(null) instanceof TradeFunction t ? t : null;
+    }
 
     @Override
     public @org.jetbrains.annotations.Nullable String bettacraft$offerId() {
-        for (LootItemFunction f : givenItemModifiers) if (f instanceof TradeFunction t) return t.offer();
-        return null;
+        TradeFunction t = bettacraft$function();
+        return t == null ? null : t.offer();
     }
 
     @Inject(method = "getOffer", at = @At("HEAD"), cancellable = true)
     private void bettacraft$offer(LootContext context, CallbackInfoReturnable<MerchantOffer> cir) {
-        for (LootItemFunction f : givenItemModifiers) {
-            if (f instanceof TradeFunction t) {
-                cir.setReturnValue(t.offer(context));
-                return;
-            }
-        }
+        TradeFunction t = bettacraft$function();
+        if (t != null) cir.setReturnValue(t.offer(context));
     }
 }

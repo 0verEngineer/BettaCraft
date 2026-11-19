@@ -6,7 +6,7 @@ Run from the repo root:  py tools/assetgen/monitor.py
 """
 from __future__ import annotations
 
-from common import BLOCK_TEX, save_png
+from common import BLOCK_TEX, TEX, save_png
 from plumbing import _img, _rgb, _rng
 
 S = 16
@@ -100,8 +100,14 @@ def bezel():
     return _img(px)
 
 
+def plate():
+    """M52e: plain white, tinted by the vertex colour: the backgrounds of the monitor and the tank signs (26.3 has no
+    untextured text background render type any more, they are drawn as text with this texture)."""
+    return _img(lambda x, y: _rgb("#ffffff"))
+
+
 def write_all():
-    out = []
+    out = [save_png(plate(), TEX / "misc" / "plate.png")]
     for name, img in {"monitor_screen": screen(), "monitor_screen_item": screen_item(), "monitor_side": side(), "monitor_back": back(),
                       "monitor_bezel": bezel()}.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))

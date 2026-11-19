@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_textured_to_clean"
+        "recipes": "bettacraft:tank_textured_to_clean"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -18,6 +18,7 @@ import org.overengineer.bettacraft.BettaCraft;
 
 /**
  * M46: migrations of the server config of a world that keeps its own file {@code <world>/serverconfig/bettacraft-server.toml}
+ * (M52e: {@code <world>/syncedconfig/} on NeoForge 26.3, {@link org.overengineer.bettacraft.platform.Platform#worldConfigFolder})
  * (NeoForge loads that file before any hook of the mod, so {@link FeatureMigration} cannot reach it). When the server has
  * started, every migration not yet done in this world runs once and is recorded in the world's saved data
  * ({@code bettacraft_migrations}), so a value the player sets later is never touched again.
@@ -27,7 +28,6 @@ import org.overengineer.bettacraft.BettaCraft;
 public final class WorldConfigMigration {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/config");
     public static final String ARTEMIA_M46 = "artemia_sand_chance_m46";
-    static final LevelResource SERVERCONFIG = new LevelResource("serverconfig");
 
     private WorldConfigMigration() {}
 

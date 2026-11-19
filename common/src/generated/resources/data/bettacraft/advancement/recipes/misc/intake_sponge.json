@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:intake_sponge"
+        "recipes": "bettacraft:intake_sponge"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

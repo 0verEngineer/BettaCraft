@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:water_change_controller"
+        "recipes": "bettacraft:water_change_controller"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

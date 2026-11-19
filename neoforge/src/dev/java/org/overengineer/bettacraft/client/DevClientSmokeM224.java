@@ -181,8 +181,8 @@ final class DevClientSmokeM224 {
         // the button: the next side (front), the setting arrives at the cabinet
         then(1, () -> {
             if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) {
-                double x = s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
-                double y = s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
+                double x = org.overengineer.bettacraft.client.DevGui.left(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
+                double y = org.overengineer.bettacraft.client.DevGui.top(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
                 s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)), false);
                 s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)));
             }
@@ -200,8 +200,8 @@ final class DevClientSmokeM224 {
         });
         then(10, () -> {
             if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) {
-                mouseTo(s.getGuiLeft() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 20,
-                        s.getGuiTop() + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5);
+                mouseTo(org.overengineer.bettacraft.client.DevGui.left(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 20,
+                        org.overengineer.bettacraft.client.DevGui.top(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5);
             }
         });
         then(10, () -> shot(name + "_front_tooltip"));
@@ -262,7 +262,7 @@ final class DevClientSmokeM224 {
         if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (which.test(s.getItem())) {
-                mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
+                mouseTo(org.overengineer.bettacraft.client.DevGui.left(scr) + s.x + 8, org.overengineer.bettacraft.client.DevGui.top(scr) + s.y + 8);
                 return;
             }
         }
@@ -271,7 +271,7 @@ final class DevClientSmokeM224 {
 
     private void mouseTo(int x, int y) {
         double scale = mc.getWindow().getGuiScale();
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x * scale, y * scale);
+        mc.mouseHandler.onMove(mc.getWindow().handle(), x * scale, y * scale, 0, 0); // M52e: never the OS cursor (SDL warps it even without focus)
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);

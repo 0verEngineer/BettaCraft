@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_lid"
+        "recipes": "bettacraft:tank_lid"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:ro_prefilter"
+        "recipes": "bettacraft:ro_prefilter"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

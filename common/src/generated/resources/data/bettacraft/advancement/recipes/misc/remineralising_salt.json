@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:remineralising_salt"
+        "recipes": "bettacraft:remineralising_salt"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

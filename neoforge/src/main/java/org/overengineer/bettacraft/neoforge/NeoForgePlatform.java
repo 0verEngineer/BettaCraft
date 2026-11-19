@@ -29,7 +29,6 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
-import org.overengineer.bettacraft.neoforge.transfer.NeoTransfer;
 import org.overengineer.bettacraft.platform.Platform;
 import org.overengineer.bettacraft.platform.energy.IEnergyStorage;
 import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
@@ -146,23 +145,23 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public Optional<IFluidHandlerItem> fluidHandler(ItemStack stack) {
-        return net.neoforged.neoforge.fluids.FluidUtil.getFluidHandler(stack).map(NeoTransfer::fromNeoItem);
+        return org.overengineer.bettacraft.neoforge.transfer.FromResources.fluidItem(stack); // M52e: the 26.3 transfer API
     }
 
     @Override
     public boolean interactWithFluidHandler(Player player, InteractionHand hand, Level level, BlockPos pos, @Nullable Direction side) {
-        return net.neoforged.neoforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, level, pos, side);
+        return net.neoforged.neoforge.transfer.fluid.FluidUtil.interactWithFluidHandler(player, hand, level, pos, side, null);
     }
 
     @Override
     public boolean interactWithFluidHandler(Player player, InteractionHand hand, IFluidHandler handler) {
-        return net.neoforged.neoforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, NeoTransfer.toNeo(handler));
+        var h = org.overengineer.bettacraft.neoforge.transfer.NeoResources.fluids(handler);
+        return h != null && net.neoforged.neoforge.transfer.fluid.FluidUtil.interactWithFluidHandler(player, hand, null, h, null);
     }
 
     @Override
     public FluidActionResult tryEmptyContainer(ItemStack container, IFluidHandler dest, int maxAmount, @Nullable Player player, boolean doDrain) {
-        var r = net.neoforged.neoforge.fluids.FluidUtil.tryEmptyContainer(container, NeoTransfer.toNeo(dest), maxAmount, player, doDrain);
-        return new FluidActionResult(r.isSuccess(), r.getResult());
+        return containerMove(container, dest, maxAmount, player, doDrain, true);
     }
 
     @Override
@@ -285,8 +284,30 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public FluidActionResult tryFillContainer(ItemStack container, IFluidHandler source, int maxAmount, @Nullable Player player, boolean doFill) {
-        var r = net.neoforged.neoforge.fluids.FluidUtil.tryFillContainer(container, NeoTransfer.toNeo(source), maxAmount, player, doFill);
-        return new FluidActionResult(r.isSuccess(), r.getResult());
+        return containerMove(container, source, maxAmount, player, doFill, false);
+    }
+
+    /** M52e: NeoForge 26.3 has no legacy {@code tryEmptyContainer} / {@code tryFillContainer}; the same with the transfer API. */
+    private static FluidActionResult containerMove(ItemStack container, IFluidHandler other, int maxAmount, @Nullable Player player,
+                                                   boolean execute, boolean fromItem) {
+        var none = org.overengineer.bettacraft.platform.fluid.FluidStack.EMPTY;
+        var before = fromItem ? org.overengineer.bettacraft.neoforge.transfer.FromResources.fluidItem(container)
+                .map(f -> f.getFluidInTank(0)).orElse(none) : none;
+        ItemStack result = org.overengineer.bettacraft.neoforge.transfer.FromResources.moveWithContainer(container, other, maxAmount, execute, fromItem);
+        if (result == null) return FluidActionResult.FAILURE;
+        if (execute && player != null) {
+            var fluid = fromItem ? before : org.overengineer.bettacraft.neoforge.transfer.FromResources.fluidItem(result)
+                    .map(f -> f.getFluidInTank(0)).orElse(none);
+            if (!fluid.isEmpty()) net.neoforged.neoforge.transfer.fluid.FluidUtil.triggerSoundAndGameEvent(
+                    net.neoforged.neoforge.transfer.fluid.FluidResource.of(org.overengineer.bettacraft.neoforge.transfer.NeoTransfer.toNeo(fluid)),
+                    player.level(), player.position().add(0, 0.5, 0), player, !fromItem);
+        }
+        return new FluidActionResult(true, result);
+    }
+
+    @Override
+    public String worldConfigFolder() {
+        return "syncedconfig"; // M52e: FML 12 loads a world's own synced (server) config from there
     }
 
     @Override

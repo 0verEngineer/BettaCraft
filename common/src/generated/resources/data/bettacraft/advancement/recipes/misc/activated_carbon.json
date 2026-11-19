@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:activated_carbon"
+        "recipes": "bettacraft:activated_carbon"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

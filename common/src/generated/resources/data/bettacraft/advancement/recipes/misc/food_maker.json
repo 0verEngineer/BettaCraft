@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:food_maker"
+        "recipes": "bettacraft:food_maker"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

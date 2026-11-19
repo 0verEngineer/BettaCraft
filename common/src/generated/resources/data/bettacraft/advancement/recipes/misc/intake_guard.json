@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:intake_guard"
+        "recipes": "bettacraft:intake_guard"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

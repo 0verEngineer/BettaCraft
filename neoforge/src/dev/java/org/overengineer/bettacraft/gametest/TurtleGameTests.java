@@ -316,8 +316,8 @@ public final class TurtleGameTests {
         h.assertTrue(HerpSpawns.entries(HerpSpawns.home(biomes.getOrThrow(Biomes.PLAINS))).stream().noneMatch(e -> e.species().turtle()),
                 "no turtles in plains (part c: the corn snake lives there)");
         List<EntityType<?>> swamp = new ArrayList<>(), savanna = new ArrayList<>();
-        for (var d : biomes.getOrThrow(Biomes.SWAMP).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) swamp.add(d.value().type());
-        for (var d : biomes.getOrThrow(Biomes.SAVANNA).value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap()) savanna.add(d.value().type());
+        for (var d : org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(Biomes.SWAMP).value(), MobCategory.CREATURE).unwrap()) swamp.add(d.value().type());
+        for (var d : org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(Biomes.SAVANNA).value(), MobCategory.CREATURE).unwrap()) savanna.add(d.value().type());
         h.assertTrue(swamp.contains(ModEntities.SLIDER_TURTLE.get()) && swamp.contains(ModEntities.MUSK_TURTLE.get()), "sliders and musk turtles in swamps");
         h.assertTrue(savanna.contains(ModEntities.HERMANN_TORTOISE.get()) && !savanna.contains(ModEntities.SLIDER_TURTLE.get()), "the tortoise in savannas");
         // the rules: a slider on stone next to water, a tortoise on grass under the open sky, not on stone

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tubifex_dish"
+        "recipes": "bettacraft:tubifex_dish"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

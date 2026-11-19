@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:glass_pipe"
+        "recipes": "bettacraft:glass_pipe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

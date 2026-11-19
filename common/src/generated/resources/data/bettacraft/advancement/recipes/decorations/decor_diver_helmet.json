@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_diver_helmet"
+        "recipes": "bettacraft:decor_diver_helmet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

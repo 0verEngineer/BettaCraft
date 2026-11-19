@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:frag_from_bubble_coral"
+        "recipes": "bettacraft:frag_from_bubble_coral"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

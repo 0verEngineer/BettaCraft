@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:intake_strainer"
+        "recipes": "bettacraft:intake_strainer"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

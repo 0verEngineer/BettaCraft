@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_clay_tubes"
+        "recipes": "bettacraft:decor_clay_tubes"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

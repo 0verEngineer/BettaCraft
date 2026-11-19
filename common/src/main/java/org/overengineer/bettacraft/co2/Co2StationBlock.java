@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.co2;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +32,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * sneaking: what it does. Hoppers take full cylinders out and put empty ones in.
  */
 public class Co2StationBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<Co2StationBlock> CODEC = simpleCodec(Co2StationBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** It is filling right now. */
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
@@ -43,11 +41,6 @@ public class Co2StationBlock extends BaseEntityBlock implements BlockRemoval {
     public Co2StationBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(LOADED, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

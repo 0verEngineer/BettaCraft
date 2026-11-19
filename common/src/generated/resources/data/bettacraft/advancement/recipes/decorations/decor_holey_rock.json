@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_holey_rock"
+        "recipes": "bettacraft:decor_holey_rock"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

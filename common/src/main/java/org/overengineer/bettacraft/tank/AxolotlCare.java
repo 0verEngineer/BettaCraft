@@ -213,7 +213,7 @@ public final class AxolotlCare {
                 if (pending >= 1) {
                     float hit = (float) Math.floor(pending);
                     pending -= hit;
-                    a.invulnerableTime = 0;
+                    a.setInvulnerableTime(0);
                     a.hurt(level.damageSources().generic(), hit);
                 }
                 d.putDouble(HEAT, pending);

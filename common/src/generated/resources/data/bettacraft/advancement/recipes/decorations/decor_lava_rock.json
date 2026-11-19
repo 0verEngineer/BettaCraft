@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_lava_rock"
+        "recipes": "bettacraft:decor_lava_rock"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

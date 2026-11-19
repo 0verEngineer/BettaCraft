@@ -128,6 +128,7 @@ public final class DecorPreview {
             return setColor(argb >> 16 & 255, argb >> 8 & 255, argb & 255, argb >>> 24);
         }
         @Override public VertexConsumer setUv2(int u, int v) { d.setUv2(240, 240); return this; } // full bright
+        @Override public VertexConsumer setUv3(float u, float v) { d.setUv3(u, v); return this; }
         @Override public VertexConsumer setNormal(float x, float y, float z) { d.setNormal(x, y, z); return this; }
         @Override public VertexConsumer setLineWidth(float width) { d.setLineWidth(width); return this; }
     }

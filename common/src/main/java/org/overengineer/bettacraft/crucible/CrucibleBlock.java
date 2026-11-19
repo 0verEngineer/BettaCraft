@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.crucible;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +32,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** M24: the crucible (stainless steel). Glows while it melts. */
 public class CrucibleBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<CrucibleBlock> CODEC = simpleCodec(CrucibleBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     private static final VoxelShape SHAPE = Shapes.or(box(1, 0, 1, 15, 3, 15), box(2, 3, 2, 14, 13, 14));
@@ -41,11 +39,6 @@ public class CrucibleBlock extends BaseEntityBlock implements BlockRemoval {
     public CrucibleBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

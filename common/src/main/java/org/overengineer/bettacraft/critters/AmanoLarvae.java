@@ -158,7 +158,7 @@ public final class AmanoLarvae {
         bag.set(ModDataComponents.CRITTER_LARVAE.get(), o.save());
         bag.set(DataComponents.MAX_STACK_SIZE, 1);
         if (!player.getAbilities().instabuild) inv.getItem(slot).shrink(1);
-        if (!inv.add(bag)) player.drop(bag, false);
+        if (!inv.add(bag)) player.drop(bag, false, net.minecraft.util.Prediction.SERVER_ONLY);
         level.playSound(null, c.getBlockPos(), SoundEvents.BUCKET_FILL_FISH, SoundSource.BLOCKS, 0.8F, 1.5F);
         TankCare.log(level, c, "log.bettacraft.amano.larvae_out", TankCare.nameArg(player), String.valueOf(o.count));
         c.markTankChanged();

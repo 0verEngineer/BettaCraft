@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:phytoplankton_culture_seagrass"
+        "recipes": "bettacraft:phytoplankton_culture_seagrass"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:alder_cone_campfire"
+        "recipes": "bettacraft:alder_cone_campfire"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

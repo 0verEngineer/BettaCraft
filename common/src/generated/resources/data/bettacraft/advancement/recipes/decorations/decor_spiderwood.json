@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_spiderwood"
+        "recipes": "bettacraft:decor_spiderwood"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:pipe_tee"
+        "recipes": "bettacraft:pipe_tee"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

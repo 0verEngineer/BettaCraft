@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_shrimp_tubes"
+        "recipes": "bettacraft:decor_shrimp_tubes"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

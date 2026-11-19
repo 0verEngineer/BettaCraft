@@ -81,7 +81,7 @@ public final class PlantEventsHandlers {
             }
             if (level.getRandom().nextDouble() < ServerConfig.getOr(ServerConfig.AQUATIC_MOSS_CHANCE, 0.5)) {
                 ItemStack moss = InteriorPlants.item(PlantSpecies.JAVA_MOSS, 0);
-                if (!player.getInventory().add(moss)) player.drop(moss, false);
+                if (!player.getInventory().add(moss)) player.drop(moss, false, net.minecraft.util.Prediction.SERVER_ONLY);
                 player.sendOverlayMessage(Component.translatable("message.bettacraft.aquatic.moss_found").withStyle(ChatFormatting.GREEN));
             }
         }

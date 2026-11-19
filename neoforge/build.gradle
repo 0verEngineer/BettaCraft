@@ -738,7 +738,10 @@ dependencies {
     // Aquarium mods (M7, all optional): no compile dependency at all, the compat code works with item/entity ids, NBT
     // and reflection. In dev they are on the run classpath (client, server and GameTests) unless -PnoCompat is given;
     // the versions are the ones of ATM10.
-    if (!project.hasProperty('noCompat')) {
+    // M52e: not for runData (26.3 builds the reloadable registries for the data run; Aquaculture's code then asks for its
+    // own loot tables, which only exist in its data, and the registry creation fails)
+    boolean dataRun = gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('rundata') }
+    if (!project.hasProperty('noCompat') && !dataRun) {
         // M52b: Better Fish Tanks, Fintastic and Naturalist have no 1.21.11 build
         localRuntime "maven.modrinth:fish-of-thieves:${fish_of_thieves_version}"
         localRuntime "maven.modrinth:yacl:${yacl_version}"

@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.terrarium;
 
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -37,7 +36,6 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * aquarium); right-click tells all values; a comparator reads the humidity (0-15).
  */
 public class ThermoHygrometerBlock extends BaseEntityBlock {
-    public static final MapCodec<ThermoHygrometerBlock> CODEC = simpleCodec(ThermoHygrometerBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape NORTH = box(4, 4, 15, 12, 12, 16), SOUTH = box(4, 4, 0, 12, 12, 1), WEST = box(15, 4, 4, 16, 12, 12),
             EAST = box(0, 4, 4, 1, 12, 12);
@@ -45,11 +43,6 @@ public class ThermoHygrometerBlock extends BaseEntityBlock {
     public ThermoHygrometerBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

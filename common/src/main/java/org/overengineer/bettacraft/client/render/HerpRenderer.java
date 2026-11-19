@@ -102,7 +102,7 @@ public class HerpRenderer extends MobRenderer<TerrariumAnimalEntity, MobState<Te
         if (wall != null) {
             // clinging: head towards the wall, then turned nose up, so the belly lies on the glass
             super.setupRotations(state, pose, wall.toYRot(), scale);
-            pose.mulPose(Axis.XP.rotationDegrees(90F));
+            pose.rotate(Axis.XP.rotationDegrees(90F));
             return;
         }
         super.setupRotations(state, pose, bodyRot, scale);

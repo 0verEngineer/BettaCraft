@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:air_hose_from_slime"
+        "recipes": "bettacraft:air_hose_from_slime"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

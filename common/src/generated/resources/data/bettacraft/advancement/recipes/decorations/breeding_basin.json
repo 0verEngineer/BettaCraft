@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:breeding_basin"
+        "recipes": "bettacraft:breeding_basin"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

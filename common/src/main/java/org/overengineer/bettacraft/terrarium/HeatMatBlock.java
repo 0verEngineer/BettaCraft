@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.terrarium;
 import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,7 +29,6 @@ import org.overengineer.bettacraft.tank.TankBlock;
  * With {@code power.heaterRequiresEnergy} it uses the tank's FE like a heater.
  */
 public class HeatMatBlock extends Block implements BlockRemoval {
-    public static final MapCodec<HeatMatBlock> CODEC = simpleCodec(HeatMatBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty HEATING = BooleanProperty.create("heating");
     private static final VoxelShape UP = box(1, 15, 1, 15, 16, 15), NORTH = box(1, 1, 0, 15, 15, 1), SOUTH = box(1, 1, 15, 15, 15, 16),
@@ -39,11 +37,6 @@ public class HeatMatBlock extends Block implements BlockRemoval {
     public HeatMatBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.UP).setValue(HEATING, false));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

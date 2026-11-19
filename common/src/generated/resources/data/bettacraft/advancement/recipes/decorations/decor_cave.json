@@ -9,7 +9,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_cave"
+        "recipes": "bettacraft:decor_cave"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

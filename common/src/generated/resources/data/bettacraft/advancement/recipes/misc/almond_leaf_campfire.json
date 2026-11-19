@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:almond_leaf_campfire"
+        "recipes": "bettacraft:almond_leaf_campfire"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

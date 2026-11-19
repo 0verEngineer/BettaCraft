@@ -2,39 +2,33 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "block": "bettacraft:led_panel",
-              "conditions": [
-                {
-                  "condition": "minecraft:inverted",
-                  "term": {
-                    "block": "bettacraft:led_panel",
-                    "condition": "minecraft:block_state_property",
-                    "properties": {
-                      "color": "white"
-                    }
-                  }
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "bettacraft:led_panel",
+            "condition": {
+              "type": "minecraft:inverted",
+              "term": {
+                "type": "minecraft:match_block",
+                "blocks": "bettacraft:led_panel",
+                "state": {
+                  "color": "white"
                 }
-              ],
-              "function": "minecraft:copy_state",
-              "properties": [
-                "color"
-              ]
-            }
-          ],
+              }
+            },
+            "properties": [
+              "color"
+            ]
+          },
           "name": "bettacraft:led_panel"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/led_panel"

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:thermo_hygrometer"
+        "recipes": "bettacraft:thermo_hygrometer"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

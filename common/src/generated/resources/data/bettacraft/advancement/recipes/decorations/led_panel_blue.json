@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:led_panel_blue"
+        "recipes": "bettacraft:led_panel_blue"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

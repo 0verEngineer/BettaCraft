@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_spawning_cave"
+        "recipes": "bettacraft:decor_spawning_cave"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

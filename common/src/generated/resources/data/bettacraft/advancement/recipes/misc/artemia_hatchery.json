@@ -29,7 +29,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:artemia_hatchery"
+        "recipes": "bettacraft:artemia_hatchery"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:rotifer_culture_start"
+        "recipes": "bettacraft:rotifer_culture_start"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

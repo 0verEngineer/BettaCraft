@@ -4,7 +4,6 @@ import org.overengineer.bettacraft.util.BlockRemoval;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.ScheduledTickAccess;
-import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -41,7 +40,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * load as white because the property is new): right-click with a dye colours the whole bar; the colour is optics only.
  */
 public class TankLightBlock extends Block implements BlockRemoval {
-    public static final MapCodec<TankLightBlock> CODEC = simpleCodec(TankLightBlock::new);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     /** Connected to a segment in the negative / positive axis direction. */
     public static final BooleanProperty NEG = BooleanProperty.create("neg");
@@ -70,11 +68,6 @@ public class TankLightBlock extends Block implements BlockRemoval {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(AXIS, Direction.Axis.X).setValue(NEG, false).setValue(POS, false)
                 .setValue(HANGING, false).setValue(LIT, true).setValue(POWERED, false).setValue(COLOR, DyeColor.WHITE).setValue(DIM, 0));
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

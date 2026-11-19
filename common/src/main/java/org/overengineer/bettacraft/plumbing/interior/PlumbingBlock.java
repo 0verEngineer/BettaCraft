@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.plumbing.interior;
 
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.LevelReader;
-import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -30,7 +29,6 @@ import org.overengineer.bettacraft.plumbing.PipeBlock;
  * {@link InteriorPlumbing#syncStates}); then they show their stream.
  */
 public class PlumbingBlock extends Block {
-    public static final MapCodec<PlumbingBlock> CODEC = simpleCodec(p -> new PlumbingBlock(Plumb.PIPE, p));
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape CORE = box(6, 6, 6, 10, 10, 10);
@@ -47,11 +45,6 @@ public class PlumbingBlock extends Block {
         BlockState s = stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
         for (BooleanProperty p : PipeBlock.SIDES.values()) s = s.setValue(p, false);
         registerDefaultState(s);
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     public Plumb kind() {

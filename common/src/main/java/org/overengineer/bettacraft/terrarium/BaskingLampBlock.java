@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.terrarium;
 
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,16 +29,10 @@ import org.overengineer.bettacraft.equipment.TankLightBlock;
  * than the air by {@code terrarium.baskingSpotLift}) with UV ({@code terrarium.baskingLampUv}) and warms the air a little.
  */
 public class BaskingLampBlock extends TankLightBlock {
-    public static final MapCodec<BaskingLampBlock> CODEC = simpleCodec(BaskingLampBlock::new);
     private static final VoxelShape STANDING = box(3, 0, 3, 13, 8, 13), HANGING_SHAPE = box(3, 8, 3, 13, 16, 13);
 
     public BaskingLampBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override

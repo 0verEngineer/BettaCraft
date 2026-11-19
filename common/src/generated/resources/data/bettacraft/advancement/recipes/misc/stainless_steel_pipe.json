@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:stainless_steel_pipe"
+        "recipes": "bettacraft:stainless_steel_pipe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

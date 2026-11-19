@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:cabinet"
+        "recipes": "bettacraft:cabinet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

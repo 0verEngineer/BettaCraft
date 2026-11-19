@@ -888,7 +888,7 @@ public final class InteriorPlants {
         int n = p.species.cuttingsPerTrim(cut);
         if (player != null) {
             ItemStack items = item(p.species, 0).copyWithCount(n);
-            if (!player.getInventory().add(items) && !items.isEmpty()) player.drop(items, false);
+            if (!player.getInventory().add(items) && !items.isEmpty()) player.drop(items, false, net.minecraft.util.Prediction.SERVER_ONLY);
             if (shears != null && hand != null && !player.getAbilities().instabuild) {
                 shears.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }

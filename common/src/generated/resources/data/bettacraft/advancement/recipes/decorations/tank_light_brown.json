@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:tank_light_brown"
+        "recipes": "bettacraft:tank_light_brown"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:intake_sponge_from_wool"
+        "recipes": "bettacraft:intake_sponge_from_wool"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

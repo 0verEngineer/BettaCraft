@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_foam"
+        "recipes": "bettacraft:filter_foam"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

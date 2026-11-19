@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fertilizer_maker"
+        "recipes": "bettacraft:fertilizer_maker"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

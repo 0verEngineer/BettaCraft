@@ -147,7 +147,7 @@ public final class TankmateItems {
             }
         }
         ItemStack item = new ItemStack(ModItems.BREEDING_BOX.get());
-        if (!player.getInventory().add(item)) player.drop(item, false);
+        if (!player.getInventory().add(item)) player.drop(item, false, net.minecraft.util.Prediction.SERVER_ONLY);
         level.playSound(null, c.getBlockPos(), SoundEvents.GLASS_HIT, SoundSource.BLOCKS, 0.8F, 1.2F);
         TankCare.log(level, c, "log.bettacraft.tm.box_out", TankCare.nameArg(player), String.valueOf(freed));
         c.markTankChanged();
@@ -250,7 +250,7 @@ public final class TankmateItems {
         bag.set(ModDataComponents.TANKMATE_CLUTCH.get(), k.save());
         bag.set(DataComponents.MAX_STACK_SIZE, 1);
         if (!player.getAbilities().instabuild) inv.getItem(slot).shrink(1);
-        if (!inv.add(bag)) player.drop(bag, false);
+        if (!inv.add(bag)) player.drop(bag, false, net.minecraft.util.Prediction.SERVER_ONLY);
         level.playSound(null, c.getBlockPos(), SoundEvents.BUCKET_FILL_FISH, SoundSource.BLOCKS, 0.8F, 1.4F);
         TankCare.log(level, c, "log.bettacraft.tm.clutch_out", TankCare.nameArg(player), "@" + k.species.translationKey(), String.valueOf(k.count));
         c.markTankChanged();

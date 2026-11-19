@@ -26,7 +26,7 @@ import org.overengineer.bettacraft.registry.ModItems;
  * Advancement tree "Bettacraft" (M6). Titles/descriptions: {@code advancements.bettacraft.<id>.title/.description}
  * (en in {@link LangEn}, de by hand). Most criteria are {@code bettacraft:event} fired by {@link Progress}.
  */
-final class ModAdvancements implements net.minecraft.data.advancements.AdvancementSubProvider {
+final class ModAdvancements extends net.minecraft.data.advancements.AdvancementSubProvider {
     /** All ids in tree order (also used by the language files and tests). */
     static final String[] IDS = {"root", "catch_betta", "build_tank", "fill_tank", "insert_betta", "ideal_temperature", "feeder", "recovered",
             "fight", "nest_built", "spawned", "fry_free", "grown_up", "variety_bred", "dynasty", "big_tank", "enter_interior", "decor", "substrate",
@@ -52,20 +52,22 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
     /** Tank blocks for "Public Aquarium" (a 4x4x4 cube). */
     static final int BIG_TANK_BLOCKS = 64;
 
-    private Consumer<AdvancementHolder> out;
+    /** M52e (26.3): advancements are entries of a reloadable registry, generated through its bootstrap context. */
+    ModAdvancements(net.minecraft.data.worldgen.BootstrapContext<Advancement> output) {
+        super(output);
+    }
 
     @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver) {
-        out = saver;
+    public void generate() {
         AdvancementHolder root = Advancement.Builder.advancement()
-                .display(ModItems.BETTA_BUCKET.get(), title("root"), desc("root"),
+                .rootDisplay(ModItems.BETTA_BUCKET.get(), title("root"), desc("root"),
                         Identifier.withDefaultNamespace("textures/block/mud.png"), AdvancementType.TASK, false, false, false)
                 .addCriterion("has_item", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(net.minecraft.core.registries.BuiltInRegistries.ITEM, 
                         ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get(), ModItems.TANK.get(), ModItems.SWAMP_WATER_BOTTLE.get(),
                         ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.HEATER_SMALL.get(), ModItems.SALT_WATER_BOTTLE.get())))
                 .addCriterion("caught", BettaEventTrigger.Instance.of(Progress.CATCH_BETTA))
                 .requirements(AdvancementRequirements.Strategy.OR)
-                .save(saver, id("root"));
+                .save(this.output, id("root"));
 
         // catching and keeping
         simple(root, "catch_betta", ModItems.BETTA_BUCKET.get(), AdvancementType.TASK,
@@ -114,11 +116,11 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
                 "strain", BettaEventTrigger.Instance.of(Progress.LB_STRAIN));
         Advancement.Builder all = Advancement.Builder.advancement().parent(strain)
                 .display(new net.minecraft.world.item.ItemStackTemplate(ModItems.TANKMATE_BUCKETS.get(org.overengineer.bettacraft.tankmates.TankmateSpecies.ENDLER_GUPPY).get()),
-                        title("guppy_collection"), desc("guppy_collection"), null, AdvancementType.CHALLENGE, true, true, false);
+                        title("guppy_collection"), desc("guppy_collection"), AdvancementType.CHALLENGE, true, true, false);
         for (var st : org.overengineer.bettacraft.genetics.livebearer.LivebearerStrain.values()) {
             all.addCriterion(st.id(), BettaEventTrigger.Instance.of(Progress.LB_STRAIN + "_" + st.id()));
         }
-        all.requirements(AdvancementRequirements.Strategy.AND).save(out, id("guppy_collection"));
+        all.requirements(AdvancementRequirements.Strategy.AND).save(this.output, id("guppy_collection"));
         simple(strain, "guppy_hybrid", Items.SEA_PICKLE, AdvancementType.GOAL,
                 "hybrid", BettaEventTrigger.Instance.of(Progress.LB_HYBRID));
 
@@ -223,9 +225,9 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
 
     private AdvancementHolder build(AdvancementHolder parent, String name, ItemLike icon, AdvancementType type, boolean hidden, Object... criteria) {
         Advancement.Builder b = Advancement.Builder.advancement().parent(parent)
-                .display(new net.minecraft.world.item.ItemStackTemplate(icon.asItem()), title(name), desc(name), null, type, true, type != AdvancementType.TASK, hidden);
+                .display(new net.minecraft.world.item.ItemStackTemplate(icon.asItem()), title(name), desc(name), type, true, type != AdvancementType.TASK, hidden);
         for (int i = 0; i < criteria.length; i += 2) b.addCriterion((String) criteria[i], (Criterion<?>) criteria[i + 1]);
-        return b.requirements(AdvancementRequirements.Strategy.OR).save(out, id(name));
+        return b.requirements(AdvancementRequirements.Strategy.OR).save(this.output, id(name));
     }
 
     static String id(String name) {

@@ -8,7 +8,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.util.RandomSource;
 import java.util.function.Consumer;
-import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,6 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
 public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockTooltip, BlockRemoval, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
-    public static final MapCodec<FilterPipeBlock> CODEC = simpleCodec(p -> new FilterPipeBlock(PipeLine.INTAKE, p));
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.SIDES;
     /** A T-piece (joins up to all six sides). */
     public static final BooleanProperty JUNCTION = BooleanProperty.create("junction");
@@ -80,11 +78,6 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
         BlockState s = stateDefinition.any().setValue(JUNCTION, false);
         for (BooleanProperty p : SIDES.values()) s = s.setValue(p, false);
         registerDefaultState(s);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     public PipeLine line() {

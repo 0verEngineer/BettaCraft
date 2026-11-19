@@ -392,9 +392,12 @@ def _cross_layers(lo, hi, h, y0=0.0, shade=False):
     for angle in (45, -45):
         for tex, tint in (("#leaf", 0), ("#accent", 1), ("#top", 2)):
             face = {"uv": [0, 0, 16, 16], "texture": tex, "tintindex": tint}
-            els.append({"from": [lo, y0, 8], "to": [hi, y0 + h, 8],
-                        "rotation": {"origin": [8, 8, 8], "axis": "y", "angle": angle, "rescale": True},
-                        "shade": shade, "faces": {"north": dict(face), "south": dict(face)}})
+            el = {"from": [lo, y0, 8], "to": [hi, y0 + h, 8],
+                  "rotation": {"origin": [8, 8, 8], "axis": "y", "angle": angle, "rescale": True}}
+            if not shade:
+                el["shade_direction_override"] = "up"  # M52e: 26.3 shades by a direction (up = unshaded), no "shade" flag
+            el["faces"] = {"north": dict(face), "south": dict(face)}
+            els.append(el)
     return els
 
 
@@ -560,7 +563,7 @@ def _tuft(x, z, w, h, y0, angle):
             faces = {"north": dict(face), "south": dict(face)} if along_x else {"east": dict(face), "west": dict(face)}
             els.append({"from": [round(c, 3) for c in fr], "to": [round(c, 3) for c in to],
                         "rotation": {"origin": [x, y0, z], "axis": "y", "angle": angle, "rescale": False},
-                        "shade": False, "faces": faces})
+                        "shade_direction_override": "up", "faces": faces})  # M52e: 26.3, up = unshaded
     return els
 
 

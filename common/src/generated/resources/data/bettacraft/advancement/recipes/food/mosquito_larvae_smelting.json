@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:mosquito_larvae_smelting"
+        "recipes": "bettacraft:mosquito_larvae_smelting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -115,7 +115,7 @@ public final class M281WildlifeGameTests {
         boolean foreign = false;
         List<String> lines = new ArrayList<>();
         for (var key : keys) {
-            var list = biomes.getOrThrow(key).value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
+            var list = org.overengineer.bettacraft.world.WildSpawns.mobs(biomes.getOrThrow(key).value(), MobCategory.WATER_AMBIENT).unwrap();
             int total = 0, ours = 0;
             Map<String, Integer> byMod = new LinkedHashMap<>();
             for (var d : list) {

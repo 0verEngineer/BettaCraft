@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.plumbing;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,18 +28,12 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * right-click or sneak + mouse wheel); with {@code pipes.pumpsRequireEnergy} it needs FE. Redstone stops it.
  */
 public class WaterPumpBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable {
-    public static final MapCodec<WaterPumpBlock> CODEC = simpleCodec(WaterPumpBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
     public WaterPumpBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

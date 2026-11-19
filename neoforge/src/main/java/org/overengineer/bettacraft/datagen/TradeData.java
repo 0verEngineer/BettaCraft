@@ -41,12 +41,11 @@ final class TradeData implements DataProvider {
             JsonObject gives = new JsonObject();
             gives.addProperty("id", e.gives());
             t.add("gives", gives);
-            JsonArray mods = new JsonArray();
+            // M52e (26.3): one item modifier (given_item_modifier) instead of a list
             JsonObject f = new JsonObject();
             f.addProperty("function", BettaCraft.id("trade").toString());
             f.addProperty("offer", e.id());
-            mods.add(f);
-            t.add("given_item_modifiers", mods);
+            t.add("given_item_modifier", f);
             all.add(DataProvider.saveStable(cache, t, trades.json(BettaCraft.id(e.id()))));
             tags.computeIfAbsent(e.tag(), k -> new JsonArray()).add(BettaCraft.id(e.id()).toString());
         }
@@ -57,7 +56,7 @@ final class TradeData implements DataProvider {
         });
         for (int lvl = 1; lvl <= 5; lvl++) {
             JsonObject s = new JsonObject();
-            s.addProperty("amount", (float) BettaTrades.AQUARIST_OFFERS_PER_LEVEL);
+            s.addProperty("amount", BettaTrades.AQUARIST_OFFERS_PER_LEVEL); // M52e: an int provider (26.3)
             s.addProperty("random_sequence", BettaCraft.id("trade_set/" + BettaTrades.aquaristTradeSet(lvl)).toString());
             s.addProperty("trades", "#" + BettaCraft.id(BettaTrades.aquaristTradeSet(lvl)));
             all.add(DataProvider.saveStable(cache, s, tradeSets.json(BettaCraft.id(BettaTrades.aquaristTradeSet(lvl)))));

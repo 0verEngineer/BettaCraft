@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_dino_skull"
+        "recipes": "bettacraft:decor_dino_skull"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

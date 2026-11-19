@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:decor_moss_ball"
+        "recipes": "bettacraft:decor_moss_ball"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

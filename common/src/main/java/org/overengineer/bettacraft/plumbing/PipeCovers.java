@@ -217,7 +217,7 @@ public final class PipeCovers {
         if (it.isEmpty()) return;
         if (player != null) {
             if (player.getAbilities().instabuild) return;
-            if (!player.addItem(it)) player.drop(it, false);
+            if (!player.addItem(it)) player.drop(it, false, net.minecraft.util.Prediction.SERVER_ONLY);
         } else {
             Block.popResource(level, pos, it);
         }

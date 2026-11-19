@@ -25,9 +25,9 @@ public record WildlifeSpawnsBiomeModifier() implements BiomeModifier {
     public static final MapCodec<WildlifeSpawnsBiomeModifier> CODEC = MapCodec.unit(WildlifeSpawnsBiomeModifier::new);
 
     @Override
-    public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+    public void modify(net.minecraft.core.RegistryAccess registries, Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase != Phase.ADD) return;
-        for (var s : org.overengineer.bettacraft.world.WildSpawns.wildlife(biome)) builder.getMobSpawnSettings().addSpawn(s.category(), s.weight(), s.data());
+        for (var s : org.overengineer.bettacraft.world.WildSpawns.wildlife(biome)) builder.getMobSpawnSettings().addSpawn(s.data().type(), s.category(), s.weight(), s.data().count());
     }
 
     @Override

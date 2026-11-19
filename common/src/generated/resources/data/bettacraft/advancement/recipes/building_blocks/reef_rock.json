@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:reef_rock"
+        "recipes": "bettacraft:reef_rock"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

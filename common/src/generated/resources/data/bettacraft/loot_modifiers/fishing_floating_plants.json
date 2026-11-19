@@ -1,14 +1,17 @@
 {
   "type": "bettacraft:fishing_floating_plants",
-  "conditions": [
-    {
-      "condition": "bettacraft:feature",
-      "feature": "floatingPlants.enabled"
-    },
-    {
-      "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:gameplay/fishing"
-    }
-  ],
+  "condition": {
+    "type": "minecraft:all_of",
+    "terms": [
+      {
+        "type": "bettacraft:feature",
+        "feature": "floatingPlants.enabled"
+      },
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:gameplay/fishing"
+      }
+    ]
+  },
   "priority": 1020
 }

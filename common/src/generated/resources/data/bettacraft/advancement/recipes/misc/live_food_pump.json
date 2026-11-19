@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:live_food_pump"
+        "recipes": "bettacraft:live_food_pump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

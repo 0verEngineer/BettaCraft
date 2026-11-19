@@ -2,39 +2,33 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
       "entries": [
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "block": "bettacraft:high_power_led",
-              "conditions": [
-                {
-                  "condition": "minecraft:inverted",
-                  "term": {
-                    "block": "bettacraft:high_power_led",
-                    "condition": "minecraft:block_state_property",
-                    "properties": {
-                      "color": "white"
-                    }
-                  }
+          "modifier": {
+            "type": "minecraft:copy_state",
+            "block": "bettacraft:high_power_led",
+            "condition": {
+              "type": "minecraft:inverted",
+              "term": {
+                "type": "minecraft:match_block",
+                "blocks": "bettacraft:high_power_led",
+                "state": {
+                  "color": "white"
                 }
-              ],
-              "function": "minecraft:copy_state",
-              "properties": [
-                "color"
-              ]
-            }
-          ],
+              }
+            },
+            "properties": [
+              "color"
+            ]
+          },
           "name": "bettacraft:high_power_led"
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/high_power_led"

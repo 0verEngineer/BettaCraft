@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fertilizer_canister"
+        "recipes": "bettacraft:fertilizer_canister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

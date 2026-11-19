@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:air_hose"
+        "recipes": "bettacraft:air_hose"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:monitor"
+        "recipes": "bettacraft:monitor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

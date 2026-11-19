@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:air_stone"
+        "recipes": "bettacraft:air_stone"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

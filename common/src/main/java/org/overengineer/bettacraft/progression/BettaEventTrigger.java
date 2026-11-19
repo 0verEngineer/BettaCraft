@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 import net.minecraft.advancements.triggers.Criterion;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
-import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,9 +25,9 @@ public final class BettaEventTrigger extends SimpleCriterionTrigger<BettaEventTr
         trigger(player, i -> i.matches(event, value));
     }
 
-    public record Instance(Optional<ContextAwarePredicate> player, String event, MinMaxBounds.Ints value) implements SimpleInstance {
+    public record Instance(Optional<Holder<LootItemCondition>> player, String event, MinMaxBounds.Ints value) implements SimpleInstance {
         public static final Codec<Instance> CODEC = RecordCodecBuilder.create(i -> i.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Instance::player),
+                LootItemCondition.CODEC.optionalFieldOf("player").forGetter(Instance::player),
                 Codec.STRING.fieldOf("event").forGetter(Instance::event),
                 MinMaxBounds.Ints.CODEC.optionalFieldOf("value", MinMaxBounds.Ints.ANY).forGetter(Instance::value)
         ).apply(i, Instance::new));

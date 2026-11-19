@@ -9,7 +9,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.platform.event.EventPriority;
@@ -75,7 +74,7 @@ public final class CritterEventsHandlers {
             return;
         }
         // shovel on mud in a swamp: a trumpet snail now and then
-        if (stack.getItem() instanceof ShovelItem && level.getBlockState(pos).is(Blocks.MUD) && level instanceof ServerLevel server) {
+        if (stack.is(net.minecraft.tags.ItemTags.SHOVELS) && level.getBlockState(pos).is(Blocks.MUD) && level instanceof ServerLevel server) {
             var biome = level.getBiome(pos);
             if (!org.overengineer.bettacraft.world.BiomeWaters.swamp(biome) && !org.overengineer.bettacraft.world.BiomeWaters.mangrove(biome)) return;
             if (player.getCooldowns().isOnCooldown(stack)) return;

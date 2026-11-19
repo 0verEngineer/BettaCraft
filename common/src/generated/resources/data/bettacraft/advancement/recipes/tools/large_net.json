@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:large_net"
+        "recipes": "bettacraft:large_net"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

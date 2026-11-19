@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:heater_small"
+        "recipes": "bettacraft:heater_small"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

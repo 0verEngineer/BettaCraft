@@ -1,25 +1,28 @@
 {
   "type": "bettacraft:add_item",
-  "conditions": [
-    {
-      "condition": "bettacraft:feature",
-      "feature": "liveFood.cultures"
-    },
-    {
-      "condition": "neoforge:loot_table_id",
-      "loot_table_id": "minecraft:blocks/mud"
-    },
-    {
-      "condition": "minecraft:location_check",
-      "predicate": {
-        "biomes": "#bettacraft:betta_spawn_biomes"
+  "condition": {
+    "type": "minecraft:all_of",
+    "terms": [
+      {
+        "type": "bettacraft:feature",
+        "feature": "liveFood.cultures"
+      },
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:blocks/mud"
+      },
+      {
+        "type": "minecraft:location_check",
+        "predicate": {
+          "biomes": "#bettacraft:betta_spawn_biomes"
+        }
+      },
+      {
+        "type": "minecraft:random_chance",
+        "chance": 0.05
       }
-    },
-    {
-      "chance": 0.05,
-      "condition": "minecraft:random_chance"
-    }
-  ],
+    ]
+  },
   "item": {
     "id": "bettacraft:tubifex"
   },

@@ -5,7 +5,6 @@ import org.overengineer.bettacraft.util.SinkList;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import java.util.List;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -44,7 +43,6 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
     /** M40 part b: FRESH and WASTE are the fresh and waste water ports (F1, {@link FilterPortBlockEntity}). */
     public enum Part { CHAMBER, PUMP_HEAD, INLET, OUTLET, FRESH, WASTE }
 
-    public static final MapCodec<FilterPartBlock> CODEC = simpleCodec(p -> new FilterPartBlock(Part.CHAMBER, p));
     /** Inlet / outlet: the side the pipe joins (pointing away from the filter). */
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final EnumProperty<FilterMedium> MEDIUM = EnumProperty.create("medium", FilterMedium.class);
@@ -55,11 +53,6 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
         super(properties);
         this.part = part;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(MEDIUM, FilterMedium.NONE).setValue(ACTIVE, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     public Part part() {
@@ -113,7 +106,7 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
             if (!level.isClientSide()) {
                 ItemStack out = ch.medium().copy();
                 ch.setMedium(ItemStack.EMPTY);
-                if (!player.addItem(out)) player.drop(out, false);
+                if (!player.addItem(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
                 level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ITEM_FRAME_REMOVE_ITEM, net.minecraft.sounds.SoundSource.BLOCKS, 0.8F, 1.0F);
             }
             return InteractionResult.SUCCESS;

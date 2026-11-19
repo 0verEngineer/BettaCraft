@@ -28,7 +28,7 @@ public record TradeFunction(String offer) implements LootItemFunction {
     /** The offer of the listing for the trader of the loot context, or null (no trader, unknown id, no offer). */
     public @Nullable MerchantOffer offer(LootContext context) {
         TradeListing listing = BettaTrades.listing(offer);
-        Entity trader = context.getOptionalParameter(LootContextParams.THIS_ENTITY);
+        Entity trader = context.getOptional(LootContextParams.THIS_ENTITY);
         if (listing == null || trader == null || !(context.getLevel() instanceof ServerLevel level)) return null;
         return listing.getOffer(level, trader, context.getRandom());
     }

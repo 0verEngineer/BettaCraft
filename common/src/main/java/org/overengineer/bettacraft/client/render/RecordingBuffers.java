@@ -99,6 +99,11 @@ public final class RecordingBuffers implements MultiBufferSource {
         }
 
         @Override
+        public VertexConsumer setUv3(float u, float v) {
+            return this; // M52e: the decal UV of 26.3 (glint / crumbling only), not recorded
+        }
+
+        @Override
         public VertexConsumer setNormal(float x, float y, float z) {
             floats.set(f() + 5, x);
             floats.set(f() + 6, y);

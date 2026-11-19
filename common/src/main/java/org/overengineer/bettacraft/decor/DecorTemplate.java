@@ -33,7 +33,7 @@ public record DecorTemplate(int sizeX, int sizeY, int sizeZ, List<Entry> blocks)
 
     /** Reads the template from the server's structure manager (datapacks may replace it). */
     public static Optional<DecorTemplate> load(ServerLevel level, Identifier id) {
-        Optional<StructureTemplate> t = level.getStructureManager().get(id);
+        Optional<StructureTemplate> t = level.getStructureTemplateManager().get(id);
         if (t.isEmpty()) return Optional.empty();
         CompoundTag nbt = t.get().save(new CompoundTag());
         HolderGetter<Block> blocks = level.holderLookup(net.minecraft.core.registries.Registries.BLOCK);

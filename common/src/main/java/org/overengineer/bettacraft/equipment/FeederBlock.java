@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.equipment;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
 import net.minecraft.core.Direction;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,16 +24,10 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
 
 /** Automatic feeder; placed on top of a tank. */
 public class FeederBlock extends BaseEntityBlock implements BlockRemoval {
-    public static final MapCodec<FeederBlock> CODEC = simpleCodec(FeederBlock::new);
     private static final VoxelShape SHAPE = box(3, 0, 3, 13, 8, 13);
 
     public FeederBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:alkalinity_canister"
+        "recipes": "bettacraft:alkalinity_canister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

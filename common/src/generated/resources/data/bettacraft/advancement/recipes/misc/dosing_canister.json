@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:dosing_canister"
+        "recipes": "bettacraft:dosing_canister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:magnifier_from_gold"
+        "recipes": "bettacraft:magnifier_from_gold"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

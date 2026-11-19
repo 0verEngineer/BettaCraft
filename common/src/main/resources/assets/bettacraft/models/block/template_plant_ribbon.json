@@ -15,7 +15,7 @@
         16,
         8
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "origin": [
           8,
@@ -48,7 +48,7 @@
         16,
         15.2
       ],
-      "shade": false,
+      "shade_direction_override": "up",
       "rotation": {
         "origin": [
           8,

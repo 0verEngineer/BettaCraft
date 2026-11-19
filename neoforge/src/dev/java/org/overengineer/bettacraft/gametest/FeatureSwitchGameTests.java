@@ -57,37 +57,50 @@ public final class FeatureSwitchGameTests {
 
     // ------------------------------------------------------------------ helpers
 
-    /** A RecipeManager that loads a given set of recipe files (the protected reload step of the real one). */
-    private static final class Loader extends RecipeManager {
-        Loader(HolderLookup.Provider registries) {
-            super(registries);
-        }
-
-        /** M52b: 1.21.2 reads the recipe files in prepare (the loader's conditions decide there) and applies the map. */
-        void load(ResourceManager resources) {
-            apply(prepare(resources, InactiveProfiler.INSTANCE), resources, InactiveProfiler.INSTANCE);
-        }
-    }
-
-    /** Our recipe files read with the config as it is now (conditions decide like on a datapack reload). */
+    /**
+     * Our recipes as a datapack reload would load them with the config as it is now. M52e (26.3): recipes are entries of
+     * a reloadable registry (no reload step of the recipe manager any more): the loaded recipes whose file's load
+     * conditions still hold (decided by the loader, {@link LoaderHooks#recipeAllowed}) make a fresh recipe manager.
+     */
+    @SuppressWarnings("unchecked")
     static RecipeManager recipes(ServerLevel level) {
         var server = level.getServer();
+        HolderLookup.Provider full = server.reloadableRegistries().lookup();
         ResourceManager rm = server.getResourceManager();
-        Loader l = new Loader(server.registryAccess());
-        LoaderHooks.get().prepareRecipeLoader(l, server);
-        // M42: KubeJS mixes into RecipeManager.apply and reads the reload resources it keeps in the real manager (a field of
-        // its mixin); a fresh manager lacks them (NullPointerException), so it gets those of the server's
-        try {
-            java.lang.reflect.Field kjs = RecipeManager.class.getDeclaredField("kjs$resources");
-            kjs.setAccessible(true);
-            kjs.set(l, kjs.get(server.getRecipeManager()));
-        } catch (NoSuchFieldException ignored) {
-            // no KubeJS
-        } catch (IllegalAccessException e) {
-            throw new GameTestFailure("cannot prepare the recipe loader for KubeJS: " + e);
-        }
-        l.load(rm);
-        return l;
+        var all = full.lookupOrThrow(net.minecraft.core.registries.Registries.RECIPE);
+        java.util.Set<net.minecraft.world.item.crafting.Recipe<?>> keep = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        all.listElements().forEach(r -> {
+            var id = r.key().identifier();
+            boolean ok = true;
+            if (id.getNamespace().equals(BettaCraft.MOD_ID)) {
+                var file = rm.getResource(net.minecraft.resources.Identifier.fromNamespaceAndPath(id.getNamespace(), "recipe/" + id.getPath() + ".json"));
+                if (file.isPresent()) {
+                    try (var reader = file.get().openAsReader()) {
+                        ok = LoaderHooks.get().recipeAllowed(com.google.gson.JsonParser.parseReader(reader), server);
+                    } catch (java.io.IOException e) {
+                        throw new GameTestFailure("cannot read recipe " + id + ": " + e);
+                    }
+                }
+            }
+            if (ok) keep.add(r.value());
+        });
+        var filtered = all.filterElements(keep::contains);
+        HolderLookup.Provider lookup = new HolderLookup.Provider() {
+            @Override
+            public java.util.stream.Stream<net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> listRegistryKeys() {
+                return full.listRegistryKeys();
+            }
+
+            @Override
+            public <T> java.util.Optional<? extends HolderLookup.RegistryLookup<T>> lookup(
+                    net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<? extends T>> key) {
+                if (key.equals(net.minecraft.core.registries.Registries.RECIPE)) return java.util.Optional.of((HolderLookup.RegistryLookup<T>) (Object) filtered);
+                return full.lookup(key);
+            }
+        };
+        RecipeManager m = new RecipeManager(lookup);
+        m.finalizeRecipeLoading(server.getWorldData().enabledFeatures());
+        return m;
     }
 
     private static boolean has(RecipeManager rm, String id) {

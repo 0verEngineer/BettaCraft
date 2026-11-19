@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:algae_scraper"
+        "recipes": "bettacraft:algae_scraper"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

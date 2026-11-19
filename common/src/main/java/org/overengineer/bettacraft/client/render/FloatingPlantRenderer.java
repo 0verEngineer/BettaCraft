@@ -96,7 +96,7 @@ public final class FloatingPlantRenderer {
             pose.pushPose();
             float above = layered ? layerOffset(rank.getOrDefault(p, 0)) : 0;
             pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob + above, z - origin.getZ());
-            pose.mulPose(Axis.YP.rotation(p.rot));
+            pose.rotate(Axis.YP.rotation(p.rot));
             drawPlant(pose, buffers, p, light, dry);
             pose.popPose();
         }

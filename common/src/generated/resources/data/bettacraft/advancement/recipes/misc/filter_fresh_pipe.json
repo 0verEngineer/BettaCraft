@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_fresh_pipe"
+        "recipes": "bettacraft:filter_fresh_pipe"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

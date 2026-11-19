@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:ro_unit"
+        "recipes": "bettacraft:ro_unit"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

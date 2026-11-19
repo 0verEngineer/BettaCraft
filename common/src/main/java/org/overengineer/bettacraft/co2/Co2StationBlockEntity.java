@@ -211,7 +211,7 @@ public class Co2StationBlockEntity extends BlockEntity {
         ItemStack s = items.getStackInSlot(0);
         if (s.isEmpty()) return;
         items.setStackInSlot(0, ItemStack.EMPTY);
-        if (!player.getInventory().add(s)) player.drop(s, false);
+        if (!player.getInventory().add(s)) player.drop(s, false, net.minecraft.util.Prediction.SERVER_ONLY);
     }
 
     public void tell(Player player) {

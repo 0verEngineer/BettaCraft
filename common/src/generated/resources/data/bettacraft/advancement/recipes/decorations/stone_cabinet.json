@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:stone_cabinet"
+        "recipes": "bettacraft:stone_cabinet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -8,8 +8,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.plants.PlantSpecies;
 import org.overengineer.bettacraft.registry.ModBlocks;
@@ -20,12 +18,19 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * spot and settles a few colonies of one species there. Nothing happens away from a reef or with
  * {@code features.corals.wildCorals} off.
  */
-public class WildCoralFeature extends Feature<NoneFeatureConfiguration> {
+public class WildCoralFeature implements Feature {
+    /** M52e (26.3): features are datapack objects; this one has no settings (a unit codec). */
+    public static final WildCoralFeature INSTANCE = new WildCoralFeature();
+    public static final com.mojang.serialization.MapCodec<WildCoralFeature> CODEC = com.mojang.serialization.MapCodec.unit(INSTANCE);
+
     /** Search radius around the spot. */
     public static final int RADIUS = 6;
 
-    public WildCoralFeature() {
-        super(NoneFeatureConfiguration.CODEC);
+    private WildCoralFeature() {}
+
+    @Override
+    public com.mojang.serialization.MapCodec<WildCoralFeature> codec() {
+        return CODEC;
     }
 
     /** The species of a colony ({@link org.overengineer.bettacraft.sources.WildTables#WILD_CORALS}). */
@@ -34,9 +39,9 @@ public class WildCoralFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+    public boolean place(WorldGenLevel level, net.minecraft.world.level.chunk.ChunkGenerator generator, RandomSource r, BlockPos origin) {
         if (!Features.enabled(org.overengineer.bettacraft.config.Feature.WILD_CORALS)) return false;
-        return place(ctx.level(), ctx.origin(), ctx.random());
+        return place(level, origin, r);
     }
 
     /** Settles 2-5 colonies of one species on the coral tops near {@code origin}; true if at least one grew. */

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:spray_bar"
+        "recipes": "bettacraft:spray_bar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

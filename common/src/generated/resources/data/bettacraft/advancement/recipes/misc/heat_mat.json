@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:heat_mat"
+        "recipes": "bettacraft:heat_mat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

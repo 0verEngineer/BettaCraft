@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:filter_waste_port"
+        "recipes": "bettacraft:filter_waste_port"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

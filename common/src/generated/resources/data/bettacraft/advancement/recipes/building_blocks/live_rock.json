@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:live_rock"
+        "recipes": "bettacraft:live_rock"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

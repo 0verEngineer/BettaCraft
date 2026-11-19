@@ -289,12 +289,12 @@ public final class ForeignTerrarium {
         player.level().playSound(null, target.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
         ItemStack held = player.getItemInHand(hand);
         if (player.hasInfiniteMaterials()) {
-            if (!player.getInventory().add(filled)) player.drop(filled, false);
+            if (!player.getInventory().add(filled)) player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
         } else if (held.getCount() <= 1) {
             player.setItemInHand(hand, filled);
         } else {
             held.shrink(1);
-            if (!player.getInventory().add(filled)) player.drop(filled, false);
+            if (!player.getInventory().add(filled)) player.drop(filled, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         target.discard();
     }

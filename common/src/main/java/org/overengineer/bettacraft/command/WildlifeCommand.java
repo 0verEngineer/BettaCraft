@@ -99,7 +99,7 @@ public final class WildlifeCommand {
                 Features.enabled(Feature.AQUATIC_WILD) ? "" : " (" + Feature.AQUATIC_WILD.key() + ": off)"));
         // the animals of the mod in the spawn list and their share of the group
         int total = 0, oursTotal = 0;
-        for (var d : biome.value().getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap()) total += d.weight();
+        for (var d : org.overengineer.bettacraft.world.WildSpawns.mobs(biome.value(), MobCategory.WATER_AMBIENT).unwrap()) total += d.weight();
         List<net.minecraft.util.random.Weighted<MobSpawnSettings.SpawnerData>> ours = WildSpawnPass.ours(biome);
         if (ours.isEmpty()) {
             say(src, Component.translatable("command.bettacraft.wildlife.none"));
@@ -109,7 +109,7 @@ public final class WildlifeCommand {
                 var d = ours.get(i);
                 oursTotal += d.weight();
                 if (i > 0) names.append(", ");
-                names.append(d.value().type().getDescription()).append(" " + d.weight() + " (" + d.value().minCount() + "-" + d.value().maxCount() + ")");
+                names.append(d.value().type().getDescription()).append(" " + d.weight() + " (" + d.value().count().minInclusive() + "-" + d.value().count().maxInclusive() + ")");
             }
             int share = total <= 0 ? 0 : Math.round(100F * oursTotal / total);
             say(src, Component.translatable("command.bettacraft.wildlife.species", oursTotal, total, share, names));

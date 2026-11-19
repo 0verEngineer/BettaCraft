@@ -47,7 +47,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:fish_bag_kelp"
+        "recipes": "bettacraft:fish_bag_kelp"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.decor;
 
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
-import com.mojang.serialization.MapCodec;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,7 +23,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * lie on any block, drop their item and have no collision (the fish swim over them).
  */
 public class LitterBlock extends Block {
-    public static final MapCodec<LitterBlock> CODEC = simpleCodec(p -> new LitterBlock(p, () -> net.minecraft.world.item.Items.AIR, Block.box(0, 0, 0, 16, 1, 16)));
 
     private final Supplier<? extends Item> item;
     private final VoxelShape shape;
@@ -33,11 +31,6 @@ public class LitterBlock extends Block {
         super(properties);
         this.item = item;
         this.shape = shape;
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     public Item item() {

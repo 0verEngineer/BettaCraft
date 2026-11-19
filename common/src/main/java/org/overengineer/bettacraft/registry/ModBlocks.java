@@ -22,11 +22,11 @@ public final class ModBlocks {
             .strength(0.3F) // like glass (hardness and blast resistance)
             .sound(SoundType.GLASS)
             .noOcclusion()
-            .pushReaction(PushReaction.BLOCK)
+            .pushReaction(PushReaction.IMMOVEABLE)
             .isValidSpawn((s, l, p, e) -> false)
             .isRedstoneConductor((s, l, p) -> false)
             .isSuffocating((s, l, p) -> false)
-            .isViewBlocking((s, l, p) -> false)));
+            .isViewBlocking((s, l, p, box) -> false)));
 
     /** Automatic feeder on top of a tank. */
     public static final DeferredBlock<FeederBlock> FEEDER = BLOCKS.register("feeder", () -> new FeederBlock(BlockBehaviour.Properties.of()
@@ -38,7 +38,7 @@ public final class ModBlocks {
     /** M21.5: clip-on feeder on the side of the glass (top edge). */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.ClipFeederBlock> CLIP_FEEDER = BLOCKS.register("clip_feeder",
             () -> new org.overengineer.bettacraft.equipment.ClipFeederBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     /** Light bar for tanks: light level 15, switched off by redstone. */
     public static final DeferredBlock<TankLightBlock> TANK_LIGHT = BLOCKS.register("tank_light", () -> new TankLightBlock(BlockBehaviour.Properties.of()
@@ -53,18 +53,18 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> HEATER_SEGMENT = BLOCKS.register("heater_segment",
             () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.HEATER, () -> ModItems.HEATER_SMALL.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE).strength(0.3F).sound(SoundType.GLASS).noLootTable().lightLevel(s -> 3)
-                    .pushReaction(PushReaction.BLOCK)));
+                    .pushReaction(PushReaction.IMMOVEABLE)));
 
     /** Cooler rod in a tank interior (M9), one block per segment. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> COOLER_SEGMENT = BLOCKS.register("cooler_segment",
             () -> new org.overengineer.bettacraft.equipment.SegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.COOLER, () -> ModItems.COOLER_SMALL.get(), BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_LIGHT_BLUE).strength(0.3F).sound(SoundType.GLASS).noLootTable().lightLevel(s -> 2)
-                    .pushReaction(PushReaction.BLOCK)));
+                    .pushReaction(PushReaction.IMMOVEABLE)));
 
     /** Internal filter box in a tank interior (PLAN 7.3). */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> FILTER_SEGMENT = BLOCKS.register("filter_segment",
             () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.FILTER, () -> ModItems.INTERNAL_FILTER.get(), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.IMMOVEABLE)));
 
     /** External filter next to a tank (PLAN 6.2), two heater slots. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.ExternalFilterBlock> EXTERNAL_FILTER = BLOCKS.register("external_filter",
@@ -81,7 +81,7 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.TankLidBlock> TANK_LID = BLOCKS.register("tank_lid",
             () -> new org.overengineer.bettacraft.equipment.TankLidBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion()
-                    .isRedstoneConductor((s, l, p) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)));
+                    .isRedstoneConductor((s, l, p) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p, box) -> false)));
 
     /** Larva tub (M9): breeds mosquito larvae under the open sky. */
     public static final DeferredBlock<org.overengineer.bettacraft.food.CultureTubBlock> LARVA_TUB = BLOCKS.register("larva_tub",
@@ -101,7 +101,7 @@ public final class ModBlocks {
                     .strength(-1.0F, 3600000.0F)
                     .noLootTable()
                     .isValidSpawn((s, l, p, e) -> false)
-                    .pushReaction(PushReaction.BLOCK)));
+                    .pushReaction(PushReaction.IMMOVEABLE)));
 
     /** Invisible, unbreakable wall bounding a tank interior. */
     public static final DeferredBlock<InteriorWallBlock> INTERIOR_WALL = BLOCKS.register("interior_wall", () -> new InteriorWallBlock(
@@ -113,8 +113,8 @@ public final class ModBlocks {
                     .isValidSpawn((s, l, p, e) -> false)
                     .isRedstoneConductor((s, l, p) -> false)
                     .isSuffocating((s, l, p) -> false)
-                    .isViewBlocking((s, l, p) -> false)
-                    .pushReaction(PushReaction.BLOCK)));
+                    .isViewBlocking((s, l, p, box) -> false)
+                    .pushReaction(PushReaction.IMMOVEABLE)));
 
     /** M13: aquarium plants of the tank interior, one block per species (parts and redness as states). */
     public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies,
@@ -126,8 +126,8 @@ public final class ModBlocks {
         for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
             m.put(sp, BLOCKS.register(sp.id(), () -> new org.overengineer.bettacraft.plants.AquaticPlantBlock(sp, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT).strength(0.2F).sound(SoundType.WET_GRASS).noCollision().noOcclusion().noLootTable()
-                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
-                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY))));
+                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p, box) -> false)
+                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.POPPED))));
         }
         return java.util.Collections.unmodifiableMap(m);
     }
@@ -141,15 +141,15 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.tankmates.SpawningMopBlock> SPAWNING_MOP = BLOCKS.register("spawning_mop",
             () -> new org.overengineer.bettacraft.tankmates.SpawningMopBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GREEN)
                     .strength(0.2F).sound(SoundType.WOOL).noCollision().noOcclusion()
-                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p) -> false)
-                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.DESTROY)));
+                    .isValidSpawn((s, l, p, e) -> false).isSuffocating((s, l, p) -> false).isViewBlocking((s, l, p, box) -> false)
+                    .isRedstoneConductor((s, l, p) -> false).pushReaction(PushReaction.POPPED)));
 
     // ------------------------------------------------------------------ M20 reef tanks
 
     /** M20: flow pump in a tank interior (a small box with a jet like the internal filter): water movement for the corals. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.SegmentBlock> PUMP_SEGMENT = BLOCKS.register("flow_pump_segment",
             () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.PUMP, () -> ModItems.FLOW_PUMP.get(), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+                    .mapColor(MapColor.COLOR_BLACK).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.IMMOVEABLE)));
 
     /** M20: protein skimmer hanging on a tank like the external filter: cleans salt water (no effect in fresh water). */
     public static final DeferredBlock<org.overengineer.bettacraft.reef.ProteinSkimmerBlock> PROTEIN_SKIMMER = BLOCKS.register("protein_skimmer",
@@ -178,7 +178,7 @@ public final class ModBlocks {
             if (!sp.form().coral()) continue;
             m.put(sp, BLOCKS.register("wild_" + sp.id(), () -> new org.overengineer.bettacraft.reef.WildCoralBlock(sp, BlockBehaviour.Properties.of()
                     .mapColor(net.minecraft.world.level.material.MapColor.COLOR_PINK).noCollision().instabreak().randomTicks()
-                    .sound(net.minecraft.world.level.block.SoundType.WET_GRASS).pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY))));
+                    .sound(net.minecraft.world.level.block.SoundType.WET_GRASS).pushReaction(net.minecraft.world.level.material.PushReaction.POPPED))));
         }
         return java.util.Collections.unmodifiableMap(m);
     }
@@ -196,7 +196,7 @@ public final class ModBlocks {
         for (var k : org.overengineer.bettacraft.plants.wild.WildPlantKind.values()) {
             m.put(k, BLOCKS.register(k.id(), () -> {
                 var p = BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollision().instabreak().randomTicks()
-                        .sound(SoundType.WET_GRASS).pushReaction(PushReaction.DESTROY).noLootTable();
+                        .sound(SoundType.WET_GRASS).pushReaction(PushReaction.POPPED).noLootTable();
                 if (k != org.overengineer.bettacraft.plants.wild.WildPlantKind.MOSS && k != org.overengineer.bettacraft.plants.wild.WildPlantKind.CARPET) {
                     p = p.offsetType(BlockBehaviour.OffsetType.XZ);
                 }
@@ -215,29 +215,29 @@ public final class ModBlocks {
     /** M28.1: a patch of a floating plant on calm water (like a lily pad; the type as state, no item). */
     public static final DeferredBlock<org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock> WILD_FLOATING_PLANT = BLOCKS.register(
             "wild_floating_plant", () -> new org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PLANT).instabreak().sound(SoundType.LILY_PAD).noOcclusion().noLootTable().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.PLANT).instabreak().sound(SoundType.LILY_PAD).noOcclusion().noLootTable().pushReaction(PushReaction.POPPED)));
 
     // ------------------------------------------------------------------ M23 aeration, internal filters, LED tiers
 
     /** M23: air-driven sponge filter in a tank interior (needs an air pump). */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.DeviceSegmentBlock> SPONGE_FILTER_SEGMENT = BLOCKS.register("sponge_filter_segment",
             () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.SPONGE_FILTER, () -> ModItems.SPONGE_FILTER.get(), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK).strength(0.4F).sound(SoundType.WOOL).noLootTable().pushReaction(PushReaction.BLOCK)));
+                    .mapColor(MapColor.COLOR_BLACK).strength(0.4F).sound(SoundType.WOOL).noLootTable().pushReaction(PushReaction.IMMOVEABLE)));
 
     /** M23: motor corner filter in a tank interior. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.DeviceSegmentBlock> CORNER_FILTER_SEGMENT = BLOCKS.register("corner_filter_segment",
             () -> new org.overengineer.bettacraft.equipment.DeviceSegmentBlock(org.overengineer.bettacraft.equipment.SegmentBlock.Kind.CORNER_FILTER, () -> ModItems.CORNER_FILTER.get(), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.BLOCK)));
+                    .mapColor(MapColor.COLOR_GRAY).strength(0.5F).sound(SoundType.METAL).noLootTable().pushReaction(PushReaction.IMMOVEABLE)));
 
     /** M23: air stone in a tank interior. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.AirStoneBlock> AIR_STONE = BLOCKS.register("air_stone",
             () -> new org.overengineer.bettacraft.equipment.AirStoneBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     /** M23: air pump next to a tank. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.AirPumpBlock> AIR_PUMP = BLOCKS.register("air_pump",
             () -> new org.overengineer.bettacraft.equipment.AirPumpBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.METAL).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     /** M23: LED panel (2 blocks wide), the middle light tier. */
     public static final DeferredBlock<org.overengineer.bettacraft.equipment.LedPanelBlock> LED_PANEL = BLOCKS.register("led_panel",
@@ -302,7 +302,7 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock> PIPE_ANCHOR = BLOCKS.register("pipe_anchor",
             () -> new org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noLootTable().sound(SoundType.METAL).noOcclusion()
-                    .pushReaction(PushReaction.BLOCK).isRedstoneConductor((s, l, p) -> false)));
+                    .pushReaction(PushReaction.IMMOVEABLE).isRedstoneConductor((s, l, p) -> false)));
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTAKE_GUARD = plumbing("intake_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> OUTLET_GUARD = plumbing("outlet_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
 
@@ -310,7 +310,7 @@ public final class ModBlocks {
 
     public static final DeferredBlock<org.overengineer.bettacraft.co2.BioCo2Block> BIO_CO2 = BLOCKS.register("bio_co2",
             () -> new org.overengineer.bettacraft.co2.BioCo2Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED)));
     public static final DeferredBlock<org.overengineer.bettacraft.co2.Co2CylinderBlock> CO2_CYLINDER = BLOCKS.register("co2_cylinder",
             () -> new org.overengineer.bettacraft.co2.Co2CylinderBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
@@ -327,14 +327,14 @@ public final class ModBlocks {
     /** M31 part b: a turtle clutch half buried in the land of a tank's interior (no item; the tank incubates it). */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> TURTLE_EGGS = BLOCKS.register("turtle_eggs",
             () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND)
-                    .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
+                    .strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.POPPED)));
     /** M31 part c: a dart frog clutch: clear jelly with dark embryos on the land of a tank's interior (no item). */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.TurtleEggsBlock> FROG_EGGS = BLOCKS.register("frog_eggs",
             () -> new org.overengineer.bettacraft.terrarium.TurtleEggsBlock(BlockBehaviour.Properties.of().mapColor(MapColor.NONE)
-                    .strength(0.1F).sound(SoundType.FROGSPAWN).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
+                    .strength(0.1F).sound(SoundType.FROGSPAWN).noOcclusion().noCollision().pushReaction(PushReaction.POPPED)));
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.HeatMatBlock> HEAT_MAT = BLOCKS.register("heat_mat",
             () -> new org.overengineer.bettacraft.terrarium.HeatMatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
-                    .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)
+                    .strength(0.3F).sound(SoundType.WOOL).noOcclusion().noCollision().pushReaction(PushReaction.POPPED)
                     .lightLevel(s -> s.getValue(org.overengineer.bettacraft.terrarium.HeatMatBlock.HEATING) ? 3 : 0)));
     /** M31: basking lamp (heat and UV) on a tank. */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.BaskingLampBlock> BASKING_LAMP = BLOCKS.register("basking_lamp",
@@ -344,11 +344,11 @@ public final class ModBlocks {
     /** M31: mister (fogger) on or beside a tank. */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.MisterBlock> MISTER = BLOCKS.register("mister",
             () -> new org.overengineer.bettacraft.terrarium.MisterBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.QUARTZ).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.QUARTZ).strength(0.8F).sound(SoundType.METAL).noOcclusion().pushReaction(PushReaction.POPPED)));
     /** M31: thermo-hygrometer on a tank wall. */
     public static final DeferredBlock<org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock> THERMO_HYGROMETER = BLOCKS.register("thermo_hygrometer",
             () -> new org.overengineer.bettacraft.terrarium.ThermoHygrometerBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY)));
+                    .mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.3F).sound(SoundType.METAL).noOcclusion().noCollision().pushReaction(PushReaction.POPPED)));
 
     /** M25 part c: the dosing pump of a reef tank. */
     /** M49 part a: the calcium reactor. */
@@ -372,12 +372,12 @@ public final class ModBlocks {
     /** M28: Indian almond leaves lying on the floor (placed with the almond leaf item; tannins, food for the shrimp). */
     public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALMOND_LEAF_LITTER = BLOCKS.register("almond_leaf_litter",
             () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
-                    .instabreak().noCollision().noOcclusion().sound(SoundType.AZALEA_LEAVES).pushReaction(PushReaction.DESTROY),
+                    .instabreak().noCollision().noOcclusion().sound(SoundType.AZALEA_LEAVES).pushReaction(PushReaction.POPPED),
                     ModItems.ALMOND_LEAF, Block.box(0, 0, 0, 16, 1, 16)));
     /** M28: alder cones lying on the floor (placed with the alder cone item; a few tannins, food for the shrimp). */
     public static final DeferredBlock<org.overengineer.bettacraft.decor.LitterBlock> ALDER_CONES = BLOCKS.register("alder_cones",
             () -> new org.overengineer.bettacraft.decor.LitterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.TERRACOTTA_BROWN)
-                    .instabreak().noCollision().noOcclusion().sound(SoundType.WOOD).pushReaction(PushReaction.DESTROY),
+                    .instabreak().noCollision().noOcclusion().sound(SoundType.WOOD).pushReaction(PushReaction.POPPED),
                     ModItems.ALDER_CONE, Block.box(3, 0, 3, 13, 9, 13)));
 
     /** M26 part a: tubifex worms in mud and stale water. */
@@ -406,11 +406,11 @@ public final class ModBlocks {
     /** M27: a monitor block; next to each other they join into screens that show the tanks in range. */
     public static final DeferredBlock<org.overengineer.bettacraft.monitor.MonitorBlock> MONITOR = BLOCKS.register("monitor",
             () -> new org.overengineer.bettacraft.monitor.MonitorBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BLACK).strength(1.5F, 6.0F).sound(SoundType.METAL).pushReaction(PushReaction.BLOCK)));
+                    .mapColor(MapColor.COLOR_BLACK).strength(1.5F, 6.0F).sound(SoundType.METAL).pushReaction(PushReaction.IMMOVEABLE)));
 
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)
+                .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED)
                 .isRedstoneConductor((s, l, p) -> false)));
     }
 

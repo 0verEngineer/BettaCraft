@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:bulkhead"
+        "recipes": "bettacraft:bulkhead"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

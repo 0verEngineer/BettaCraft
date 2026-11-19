@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:water_pump"
+        "recipes": "bettacraft:water_pump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

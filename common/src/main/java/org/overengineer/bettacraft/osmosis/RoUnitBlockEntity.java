@@ -288,7 +288,7 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
             ItemStack old = parts.getStackInSlot(slot);
             parts.setStackInSlot(slot, stack.copyWithCount(1));
             if (!player.getAbilities().instabuild) stack.shrink(1);
-            if (!old.isEmpty() && !player.getInventory().add(old)) player.drop(old, false);
+            if (!old.isEmpty() && !player.getInventory().add(old)) player.drop(old, false, net.minecraft.util.Prediction.SERVER_ONLY);
             if (slot == MEMBRANE) wearMembrane = 0;
             else wearPrefilter = 0;
             level.playSound(null, worldPosition, SoundEvents.ARMOR_EQUIP_GENERIC.value(), SoundSource.BLOCKS, 0.6F, 1.3F);
@@ -320,7 +320,7 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
             ItemStack s = parts.getStackInSlot(slot);
             if (s.isEmpty()) continue;
             parts.setStackInSlot(slot, ItemStack.EMPTY);
-            if (!player.getInventory().add(s)) player.drop(s, false);
+            if (!player.getInventory().add(s)) player.drop(s, false, net.minecraft.util.Prediction.SERVER_ONLY);
             return;
         }
         tell(player);

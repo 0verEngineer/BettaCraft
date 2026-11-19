@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:mister"
+        "recipes": "bettacraft:mister"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

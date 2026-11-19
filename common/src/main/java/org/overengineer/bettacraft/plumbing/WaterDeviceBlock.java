@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.plumbing;
 
 import org.overengineer.bettacraft.util.BlockRemoval;
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +36,6 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
 public class WaterDeviceBlock extends BaseEntityBlock implements BlockRemoval {
     public enum Kind { RESERVOIR, LEVEL_SENSOR, WATER_CHANGER }
 
-    public static final MapCodec<WaterDeviceBlock> CODEC = simpleCodec(p -> new WaterDeviceBlock(Kind.RESERVOIR, p));
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     /** Reservoir: how full it is (0..8). */
     public static final IntegerProperty FILL = IntegerProperty.create("fill", 0, 8);
@@ -48,11 +46,6 @@ public class WaterDeviceBlock extends BaseEntityBlock implements BlockRemoval {
         super(properties);
         this.kind = kind;
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(FILL, 0));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     public Kind kind() {

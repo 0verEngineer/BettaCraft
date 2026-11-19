@@ -43,7 +43,7 @@ public final class DevTrades {
         var sets = level.registryAccess().lookupOrThrow(Registries.TRADE_SET);
         for (int lvl = 1; lvl <= 5; lvl++) {
             var set = sets.getValue(ResourceKey.create(Registries.TRADE_SET, BettaCraft.id(BettaTrades.aquaristTradeSet(lvl))));
-            if (set != null) out.put(lvl, listings(set.getTrades()));
+            if (set != null) out.put(lvl, listings(set.trades()));
         }
         return out;
     }
