@@ -187,7 +187,7 @@
   ],
   "render_type": "minecraft:translucent",
   "textures": {
-    "cone": "bettacraft:item/light_cone",
+    "cone": "bettacraft:block/light_cone",
     "housing": "bettacraft:block/led_panel",
     "panel": "bettacraft:block/led_panel_panel_on",
     "particle": "bettacraft:block/led_panel",

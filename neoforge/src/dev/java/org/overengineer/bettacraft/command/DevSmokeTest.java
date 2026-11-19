@@ -189,6 +189,9 @@ public final class DevSmokeTest {
         try {
             if (ticks == 20) {
                 base = level.getRespawnData().pos().above(40);
+                // M52b: since 1.21.9 no spawn chunks stay loaded; the smoke area is kept ticking like they were
+                net.minecraft.world.level.ChunkPos bc = new net.minecraft.world.level.ChunkPos(base);
+                for (int cx = -3; cx <= 3; cx++) for (int cz = -3; cz <= 3; cz++) level.setChunkForced(bc.x + cx, bc.z + cz, true);
                 for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++)
                     level.setBlockAndUpdate(base.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
             } else if (ticks == 30) {

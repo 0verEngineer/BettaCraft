@@ -28,7 +28,9 @@ final class NeoForgeNetwork {
 
             @Override
             public <T extends CustomPacketPayload> void playBidirectional(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, Handler<T> handler) {
-                neo.playBidirectional(type, codec, (p, ctx) -> handler.handle(p, context(ctx)));
+                // NeoForge 21.11: the three-argument form registers no client handler (the client then refuses to load)
+                net.neoforged.neoforge.network.handling.IPayloadHandler<T> h = (p, ctx) -> handler.handle(p, context(ctx));
+                neo.playBidirectional(type, codec, h, h);
             }
         });
     }

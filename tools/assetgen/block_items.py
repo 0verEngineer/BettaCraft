@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from common import ITEM_TEX, save_png
+from common import BLOCK_TEX, save_png
 
 S = 16
 
@@ -27,7 +27,7 @@ def light_cone():
 
 
 def write_all():
-    return [save_png(light_cone(), ITEM_TEX / "light_cone.png")]
+    return [save_png(light_cone(), BLOCK_TEX / "light_cone.png")]  # M52b: block atlas (1.21.11 item models use one atlas)
 
 
 if __name__ == "__main__":

@@ -165,7 +165,7 @@ final class DataGenM291 {
     static void lamp(ItemModelProvider p, String item, String housing, String top, float x0, float x1, float z0, float z1, float h) {
         ItemModelBuilder b = p.getBuilder(item).parent(new org.overengineer.bettacraft.datagen.model.ModelFile.UncheckedModelFile("minecraft:block/block"))
                 .texture("housing", p.modLoc("block/" + housing)).texture("top", p.modLoc("block/" + top))
-                .texture("panel", p.modLoc("block/" + item + "_panel_on")).texture("cone", p.modLoc("item/light_cone"))
+                .texture("panel", p.modLoc("block/" + item + "_panel_on")).texture("cone", p.modLoc("block/light_cone"))
                 .texture("particle", p.modLoc("block/" + housing)).renderType("minecraft:translucent");
         float y0 = 4;
         b.element().from(x0, y0, z0).to(x1, y0 + h, z1).allFaces((d, f) -> {

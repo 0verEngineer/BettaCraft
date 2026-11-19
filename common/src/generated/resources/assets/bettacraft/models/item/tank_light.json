@@ -182,7 +182,7 @@
   ],
   "render_type": "minecraft:translucent",
   "textures": {
-    "cone": "bettacraft:item/light_cone",
+    "cone": "bettacraft:block/light_cone",
     "housing": "bettacraft:block/tank_light",
     "panel": "bettacraft:block/tank_light_panel_on",
     "particle": "bettacraft:block/tank_light",
