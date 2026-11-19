@@ -184,6 +184,9 @@ public final class DevShowcase {
             v.save();
         }
         BlockPos spawn = level.getRespawnData().pos();
+        // M52c (26.1): the spawn chunks are no longer kept loaded; the heightmap of a chunk that is not there is the world's
+        // bottom (the showcase was built 4 blocks under the grass): load the chunk first
+        level.getChunk(spawn.getX() >> 4, spawn.getZ() >> 4);
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, spawn.getX(), spawn.getZ());
         origin = new BlockPos(spawn.getX() + 3, ground, spawn.getZ() + 6);
         level.setRespawnData(net.minecraft.world.level.storage.LevelData.RespawnData.of(level.dimension(), new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F, 0F));
