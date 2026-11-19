@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.fabric.dev;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
@@ -31,18 +30,23 @@ public final class FabricDevSmoke implements ModInitializer {
             net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(org.overengineer.bettacraft.command.DevSmokeUpgrade::onTick);
         }
         if (!Boolean.getBoolean("bettacraft.smoketest")) return;
-        ServerLifecycleEvents.SERVER_STARTED.register(FabricDevSmoke::build);
+        // M52b: built once the server ticks (like the NeoForge smoke), checked 40 ticks later
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(s -> {
+            if (++ticks == 20) build(s);
             if (built >= 0 && ++built == 40) run(s);
         });
     }
 
-    private static int built = -1;
+    private static int built = -1, ticks;
     private static BlockPos BASE;
 
     private static void build(MinecraftServer server) {
         ServerLevel level = server.overworld();
         BASE = level.getRespawnData().pos().above(60);
+        // M52b: 1.21.9+ keeps no spawn chunks loaded: the smoke area is forced (as in the NeoForge smoke)
+        for (int cx = (BASE.getX() - 2) >> 4; cx <= (BASE.getX() + 5) >> 4; cx++) for (int cz = (BASE.getZ() - 2) >> 4; cz <= (BASE.getZ() + 4) >> 4; cz++) {
+            level.setChunkForced(cx, cz, true);
+        }
         for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
             level.setBlockAndUpdate(BASE.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
         }

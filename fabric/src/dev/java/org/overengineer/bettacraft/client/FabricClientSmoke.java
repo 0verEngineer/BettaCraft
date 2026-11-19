@@ -32,10 +32,12 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
     /** The pages of the handbook (Modonomicon since M52b) and the recipe viewer pages, screenshots in English and German. */
     private static final class BookTour {
+        // M52b: Modonomicon entries (the GuideME paths) and page numbers of the spread: a species with its picture, a device
+        // text and its recipe, a scene as a multiblock, an animal as an entity page, a former table
         private static final String[][] PAGES = {
-                {"landing", null, "0"}, {"species", "bettacraft:tankmates/neon_tetra", "0"}, {"device", "bettacraft:equipment/air_pump", "0"},
-                {"device_recipe", "bettacraft:equipment/air_pump", "2"}, {"multiblock", "bettacraft:aquarium/shapes", "2"},
-                {"entity", "bettacraft:bettas", "2"}, {"table", "bettacraft:aquarium/temperature", "2"}};
+                {"landing", null, "0"}, {"species", "tankmates/neon_tetra", "0"}, {"device", "equipment/air_pump", "2"},
+                {"device_recipe", "equipment/air_pump", "8"}, {"multiblock", "aquarium/shapes", "2"},
+                {"entity", "bettas", "0"}, {"table", "aquarium/temperature", "2"}};
         private final java.util.Deque<Runnable> steps = new java.util.ArrayDeque<>();
         private int wait;
 
@@ -43,6 +45,9 @@ public final class FabricClientSmoke implements ClientModInitializer {
             for (String lang : new String[]{"en_us", "de_de"}) {
                 steps.add(() -> language(lang));
                 for (int i = 0; i < 30; i++) steps.add(() -> {});
+                // Modonomicon renders a book's Markdown once when the world is joined: again in the new language (a player
+                // rejoins the world after changing the language)
+                steps.add(() -> com.klikli_dev.modonomicon.data.BookDataManager.get().prerenderMarkdown(Minecraft.getInstance().level.registryAccess()));
                 for (String[] page : PAGES) {
                     steps.add(() -> open(page[1], Integer.parseInt(page[2])));
                     for (int i = 0; i < 25; i++) steps.add(() -> {});
@@ -82,7 +87,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
             // M52b: the handbook is a Modonomicon book on Fabric 1.21.11 (entries bettacraft:<category>/<page>)
             var gui = com.klikli_dev.modonomicon.client.gui.BookGuiManager.get();
             if (entry == null) gui.openBook(com.klikli_dev.modonomicon.client.gui.book.BookAddress.defaultFor(bookId));
-            else gui.openEntry(bookId, net.minecraft.resources.Identifier.parse(entry), page);
+            else gui.openEntry(bookId, org.overengineer.bettacraft.BettaCraft.id(entry), page);
         }
 
         private static void shot(String name) {

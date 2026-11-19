@@ -1,6 +1,6 @@
 // M52: the Fabric mod (Fabric Loom, Mojang names with Parchment). Compiles the common sources (common/src/main) together with
 // the Fabric platform layer and glue of this module (fabric/src/main) into one jar, remapped to intermediary. The handbook is
-// a Patchouli book converted from the GuideME pages at build time (tools/guide). Run tasks have names of their own
+// a Modonomicon book converted from the GuideME pages at build time (tools/guide; M52b: Patchouli has no 1.21.11 build). Run tasks have names of their own
 // (runFabricClient, runFabricServer, runFabricGameTest) so that the plain run tasks stay the NeoForge ones.
 plugins {
     id 'fabric-loom'
@@ -39,8 +39,6 @@ sourceSets {
         resources {
             srcDir(commonProject.file('src/main/resources'))
             srcDir(commonProject.file('src/generated/resources'))
-            // the Patchouli book made from the GuideME pages (convertGuide)
-            srcDir(layout.buildDirectory.dir('generated/patchouli'))
             exclude('**/*.bbmodel')
             exclude('.cache')
         }
@@ -186,7 +184,7 @@ dependencies {
     modImplementation include("teamreborn:energy:${teamreborn_energy_version}") { transitive = false }
     // the handbook on Fabric (optional at runtime)
     modCompileOnly "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
-    if (!project.hasProperty('noPatchouli')) {
+    if (!project.hasProperty('noPatchouli') && !project.hasProperty('noModonomicon')) {
         modLocalRuntime "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
         // its nested config library (Fiber; the dev runtime does not load the jars inside a mod jar): extracted, read only
         localRuntime files({ fileTree(layout.buildDirectory.dir('patchouli-libraries')).include('*.jar').files }) { builtBy 'extractPatchouliLibraries' }
@@ -260,18 +258,20 @@ tasks.register('extractPatchouliLibraries', Copy) {
     into layout.buildDirectory.dir('patchouli-libraries')
 }
 
-// ---- the handbook: the GuideME pages -> a Patchouli book (build/generated/patchouli)
+// ---- the handbook: the GuideME pages -> a Modonomicon book (build/generated/modonomicon: the book data, its textures and
+// multiblocks, and our two language files with the book's texts added; first in the resources, so these lang files win)
 def guideDir = commonProject.file('src/main/resources/assets/bettacraft/guides/bettacraft/guide')
-def patchouliOut = layout.buildDirectory.dir('generated/patchouli')
+def bookOut = layout.buildDirectory.dir('generated/modonomicon')
 tasks.register('convertGuide', JavaExec) {
     group = 'bettacraft'
-    description = 'Converts the GuideME handbook into the Patchouli book of the Fabric jar (tools/guide)'
+    description = 'Converts the GuideME handbook into the Modonomicon book of the Fabric jar (tools/guide)'
     classpath = sourceSets.guideTool.runtimeClasspath
-    mainClass = 'org.overengineer.bettacraft.guidetool.PatchouliConverter'
+    mainClass = 'org.overengineer.bettacraft.guidetool.ModonomiconConverter'
     inputs.dir(guideDir)
     inputs.files(commonProject.fileTree('src/generated/resources/data/bettacraft/recipe'), commonProject.fileTree('src/main/resources/data/bettacraft/recipe'))
-    outputs.dir(patchouliOut)
-    def out = patchouliOut.get().asFile
+    inputs.files(commonProject.file('src/generated/resources/assets/bettacraft/lang/en_us.json'), commonProject.file('src/main/resources/assets/bettacraft/lang/de_de.json'))
+    outputs.dir(bookOut)
+    def out = bookOut.get().asFile
     doFirst { out.deleteDir() }
     args guideDir.absolutePath,
             commonProject.file('src/generated/resources/assets/bettacraft/lang/en_us.json').absolutePath,
@@ -357,7 +357,7 @@ tasks.register('fabricData') {
         logger.lifecycle("fabricData: ${n} files converted")
     }
 }
-sourceSets.main.resources.srcDirs = [fabricDataOut] + sourceSets.main.resources.srcDirs
+sourceSets.main.resources.srcDirs = [fabricDataOut, bookOut] + sourceSets.main.resources.srcDirs
 tasks.named('processResources', ProcessResources).configure {
     dependsOn 'fabricData'
     // the converted copies come first and win
@@ -443,7 +443,7 @@ def replaceProperties = [
 tasks.named('processResources', ProcessResources).configure {
     inputs.properties replaceProperties
     filesMatching('fabric.mod.json') { expand replaceProperties }
-    // the GuideME pages are NeoForge's handbook; on Fabric the converted Patchouli book replaces them
+    // the GuideME pages are NeoForge's handbook; on Fabric the converted Modonomicon book replaces them
     exclude('assets/bettacraft/guides/**', 'assets/bettacraft/guideme_guides/**')
 }
 
@@ -465,7 +465,7 @@ tasks.named('remapJar').configure {
 }
 
 // the released Fabric jar: our classes only (no dev, smoke or GameTest code, no NeoForge stubs), the right version, the
-// mixin configs with their refmap, the converted data and the Patchouli book, no foreign assets
+// mixin configs with their refmap, the converted data and the Modonomicon book, no foreign assets
 tasks.register('verifyFabricJar') {
     group = 'verification'
     def jarTask = tasks.named('remapJar')
@@ -485,11 +485,11 @@ tasks.register('verifyFabricJar') {
         }
         names.findAll { it.startsWith('assets/') || it.startsWith('data/') }.each { n ->
             def ns = n.split('/')
-            if (ns.length > 2 && !(ns[1] in ['bettacraft', 'minecraft', 'c', 'fabric', 'neoforge', 'patchouli'])
+            if (ns.length > 2 && !(ns[1] in ['bettacraft', 'minecraft', 'c', 'fabric', 'neoforge'])
                     && !n.startsWith('data/') ) problems << "foreign asset ${n}"
         }
         ['fabric.mod.json', 'bettacraft.mixins.json', 'bettacraft.fabric.mixins.json', 'bettacraft.accesswidener',
-         'data/bettacraft/patchouli_books/handbook/book.json', 'bettacraft_render_layers.json',
+         'data/bettacraft/modonomicon/books/handbook/book.json', 'bettacraft_render_layers.json',
          'META-INF/services/org.overengineer.bettacraft.platform.Platform',
          'META-INF/services/org.overengineer.bettacraft.platform.client.ClientPlatform'].each { need ->
             if (!names.contains(need)) problems << "missing ${need}"
