@@ -154,7 +154,7 @@ public final class HerpSpawns {
             // daylight from the sky (also through the leaves of a jungle), no cave; soil, sand or terracotta
             if (!level.getFluidState(pos).isEmpty() || level.getBrightness(net.minecraft.world.level.LightLayer.SKY, pos) < 8) return false;
             var ground = level.getBlockState(below);
-            if (!ground.is(BlockTags.DIRT) && !ground.is(BlockTags.SAND) && !ground.is(BlockTags.TERRACOTTA)) return false;
+            if (!ground.is(BlockTags.SUBSTRATE_OVERWORLD) && !ground.is(BlockTags.SAND) && !ground.is(BlockTags.TERRACOTTA)) return false;
         } else {
             boolean wet = level.getFluidState(pos).is(FluidTags.WATER);
             if (wet && level.getFluidState(pos.above(2)).is(FluidTags.WATER)) return false; // shallow water only

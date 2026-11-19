@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
-import net.fabricmc.fabric.api.renderer.v1.render.FabricBlockModelRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.builders.UVPair;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -27,7 +25,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -38,8 +36,8 @@ import org.overengineer.bettacraft.platform.model.ModelKey;
 import org.overengineer.bettacraft.platform.model.ModelValues;
 
 /**
- * M52: the client platform on Fabric. A foreign block has one chunk layer here ({@link ItemBlockRenderTypes}); our dynamic
- * models ({@link FabricDynamicModel}) give each quad its own layer through Fabric's renderer API.
+ * M52: the client platform on Fabric. Our dynamic models ({@link FabricDynamicModel}) give each quad its own layer through
+ * Fabric's renderer API. M52c (26.1): every quad carries its chunk layer (vanilla too).
  * M52b (1.21.11): vanilla's {@link BakedQuad} no longer carries vertex colours, normals or an ambient occlusion flag; the
  * quads we bake keep theirs in {@link #EXTRAS} (weak, by identity), and {@link FabricDynamicModel} emits them again.
  */
@@ -73,10 +71,28 @@ public final class FabricClientPlatform implements ClientPlatform {
     @Override
     public void tesselate(BlockState state, BlockPos pos, BlockAndTintGetter level, PoseStack ps, Function<ChunkSectionLayer, VertexConsumer> buffers,
             boolean checkSides, RandomSource rand, Object modelData, @Nullable ChunkSectionLayer only) {
-        var brd = Minecraft.getInstance().getBlockRenderer();
-        BlockStateModel model = brd.getBlockModel(state);
-        ((FabricBlockModelRenderer) brd.getModelRenderer()).render(level, model, state, pos, ps,
-                layer -> only == null || layer == only ? buffers.apply(layer) : Discard.INSTANCE, checkSides, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
+        // M52c (26.1): Fabric's alternative model renderer emits every quad (with its chunk layer) into a quad emitter
+        Minecraft mc = Minecraft.getInstance();
+        BlockStateModel model = mc.getModelManager().getBlockStateModelSet().get(state);
+        PoseStack.Pose pose = ps.last();
+        var emitter = net.fabricmc.fabric.api.client.renderer.v1.Renderer.get().quadEmitter(quad -> {
+            ChunkSectionLayer l = quad.chunkLayer();
+            if (only == null || l == only) quad.buffer(OverlayTexture.NO_OVERLAY, pose, buffers.apply(l));
+        });
+        renderer(checkSides).tesselateBlock(emitter, 0, 0, 0, level, pos, state, model, state.getSeed(pos));
+    }
+
+    /** M52c: one alternative model renderer per thread (the miniature meshes on workers), culling mode and AO option. */
+    private static final ThreadLocal<net.fabricmc.fabric.api.client.renderer.v1.render.AltModelBlockRenderer[]> RENDERERS =
+            ThreadLocal.withInitial(() -> new net.fabricmc.fabric.api.client.renderer.v1.render.AltModelBlockRenderer[4]);
+
+    private static net.fabricmc.fabric.api.client.renderer.v1.render.AltModelBlockRenderer renderer(boolean cull) {
+        Minecraft mc = Minecraft.getInstance();
+        boolean ao = mc.options.ambientOcclusion().get();
+        int i = (cull ? 1 : 0) | (ao ? 2 : 0);
+        var arr = RENDERERS.get();
+        if (arr[i] == null) arr[i] = net.fabricmc.fabric.api.client.renderer.v1.Renderer.get().altModelBlockRenderer(ao, cull, mc.getBlockColors());
+        return arr[i];
     }
 
     @Override
@@ -99,18 +115,29 @@ public final class FabricClientPlatform implements ClientPlatform {
             @Nullable ChunkSectionLayer layer) {
         DynamicModel d = dynamic(model);
         if (d != null) return d.quads(state, side, rand, ModelValues.EMPTY, layer);
-        if (layer != null && state != null && layer != ItemBlockRenderTypes.getChunkRenderType(state)) return List.of();
-        List<BlockModelPart> parts = model.collectParts(rand);
-        if (parts.size() == 1) return parts.getFirst().getQuads(side);
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        model.collectParts(rand, parts);
+        if (parts.size() == 1 && layer == null) return parts.getFirst().getQuads(side);
         List<BakedQuad> out = new ArrayList<>();
-        for (BlockModelPart p : parts) out.addAll(p.getQuads(side));
+        for (BlockStateModelPart p : parts) {
+            for (BakedQuad q : p.getQuads(side)) if (layer == null || q.materialInfo().layer() == layer) out.add(q);
+        }
         return out;
     }
 
     @Override
     public Collection<ChunkSectionLayer> layers(BlockStateModel model, BlockState state, RandomSource rand) {
         DynamicModel d = dynamic(model);
-        return d != null ? d.layers(state, rand, ModelValues.EMPTY) : List.of(ItemBlockRenderTypes.getChunkRenderType(state));
+        if (d != null) return d.layers(state, rand, ModelValues.EMPTY);
+        // M52c (26.1): the layers of the quads, in the order of the chunk layers
+        java.util.EnumSet<ChunkSectionLayer> set = java.util.EnumSet.noneOf(ChunkSectionLayer.class);
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        model.collectParts(rand, parts);
+        for (BlockStateModelPart p : parts) {
+            for (Direction dir : Direction.values()) for (BakedQuad q : p.getQuads(dir)) set.add(q.materialInfo().layer());
+            for (BakedQuad q : p.getQuads(null)) set.add(q.materialInfo().layer());
+        }
+        return new ArrayList<>(set);
     }
 
     @Override
@@ -118,11 +145,11 @@ public final class FabricClientPlatform implements ClientPlatform {
         var mm = Minecraft.getInstance().getModelManager();
         ExtraModelKey<BlockStateModel> key = STANDALONE.get(id);
         BlockStateModel m = key == null ? null : mm.getModel(key);
-        return m != null ? m : mm.getMissingBlockStateModel();
+        return m != null ? m : mm.getBlockStateModelSet().missingModel();
     }
 
     @Override
-    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
+    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion, ChunkSectionLayer layer) {
         Vector3f[] pos = new Vector3f[4];
         long[] uv = new long[4];
         int[] argb = new int[4], normals = new int[4];
@@ -133,7 +160,10 @@ public final class FabricClientPlatform implements ClientPlatform {
             uv[i] = UVPair.pack(Float.intBitsToFloat(v[o + 4]), Float.intBitsToFloat(v[o + 5]));
             normals[i] = v[o + 7] & 0xFFFFFF;
         }
-        BakedQuad q = new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], tint, direction, sprite, shade, 0);
+        // M52c (26.1): the material info carries the chunk layer and the item render type
+        var info = new BakedQuad.MaterialInfo(sprite, layer, layer.translucent() ? net.minecraft.client.renderer.Sheets.translucentBlockItemSheet()
+                : net.minecraft.client.renderer.Sheets.cutoutBlockItemSheet(), tint, shade, 0);
+        BakedQuad q = new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], direction, info);
         EXTRAS.put(q, new Extras(argb, normals, ambientOcclusion));
         return q;
     }

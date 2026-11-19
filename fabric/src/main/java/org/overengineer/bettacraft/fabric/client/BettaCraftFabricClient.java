@@ -5,15 +5,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
-import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
@@ -47,7 +41,7 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei")) {
             org.overengineer.bettacraft.client.ClientFeatures.jeiRefresh = () -> org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.applyFeatures();
         }
-        ClientSetup.layers((loc, def) -> EntityModelLayerRegistry.registerModelLayer(loc, def::get));
+        ClientSetup.layers((loc, def) -> net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(loc, def::get));
         ClientSetup.renderers(new ClientSetup.Renderers() {
             @Override
             public <T extends net.minecraft.world.entity.Entity> void registerEntityRenderer(net.minecraft.world.entity.EntityType<? extends T> type,
@@ -81,7 +75,8 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
             }
         });
         ClientSetup.itemColors(org.overengineer.bettacraft.client.item.ItemTints::register);
-        ClientSetup.blockColors((color, blocks) -> ColorProviderRegistry.BLOCK.register(color, blocks));
+        // M52c (26.1): one tint source per tint index
+        ClientSetup.blockColors((color, blocks) -> net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry.register(ClientSetup.tintSources(color), blocks));
         ClientSetup.screens(new ClientSetup.Screens() {
             @Override
             public <M extends net.minecraft.world.inventory.AbstractContainerMenu, U extends net.minecraft.client.gui.screens.Screen & net.minecraft.client.gui.screens.inventory.MenuAccess<M>> void register(
@@ -90,13 +85,13 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
             }
         });
         ClientSetup.itemProperties(org.overengineer.bettacraft.client.item.ItemPredicates::register);
-        FabricRenderLayers.register();
+        // (M52c: no render layer map any more; 26.1 takes each quad's layer from its texture)
         FabricModels.register();
         ClientSetup.particles(new ClientSetup.Particles() {
             @Override
             public <T extends net.minecraft.core.particles.ParticleOptions> void registerSpriteSet(net.minecraft.core.particles.ParticleType<T> type,
                     java.util.function.Function<net.minecraft.client.particle.SpriteSet, net.minecraft.client.particle.ParticleProvider<T>> factory) {
-                ParticleFactoryRegistry.getInstance().register(type, factory::apply);
+                net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry.getInstance().register(type, factory::apply);
             }
         });
         // M25: our water fluids look like water, tinted (NeoForge: their fluid types' client extensions)
@@ -120,13 +115,12 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(mc -> ClientEvents.fireTickPost());
         // a screen is about to open (NeoForge: ScreenEvent.Opening; here: before it is initialised, also on a resize)
         net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.BEFORE_INIT.register((mc, screen, w, h) -> ClientEvents.fireScreenOpening(screen));
-        // water in tank blocks: TankWaterRenderer (NeoForge: TankAwareWaterExtensions)
-        TankAwareWater.register();
+        // (M52c: the water in tank blocks comes from the common FluidRendererMixin on both loaders)
         // M21 follow-up: plant meshes follow their chunks
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents.CHUNK_LOAD.register((level, chunk) ->
-                org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(chunk.getPos().x, chunk.getPos().z));
+                org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkLoad(chunk.getPos().x(), chunk.getPos().z()));
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents.CHUNK_UNLOAD.register((level, chunk) ->
-                org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(chunk.getPos().x, chunk.getPos().z));
+                org.overengineer.bettacraft.client.interior.PlantMeshRenderer.onChunkUnload(chunk.getPos().x(), chunk.getPos().z()));
         // M11 / M21: the tank look and the plant meshes are baked into the chunk meshes: rebuild them on a config change
         fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
             if (config.getSpec() == org.overengineer.bettacraft.config.ClientConfig.SPEC) rebuildChunks();
@@ -145,7 +139,7 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
             org.overengineer.bettacraft.equipment.CabinetStones.clear();
         });
         // M17: block entities of a dropped client level leave the static sets
-        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((mc, level) -> lastLevel = purge(lastLevel, level));
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((mc, level) -> lastLevel = purge(lastLevel, level));
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {
             if (be instanceof org.overengineer.bettacraft.platform.BlockEntityLifecycle l) l.onLoad();
         });
@@ -160,14 +154,15 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
             ClientSetup.onLogout();
             lastLevel = purge(lastLevel, null);
         });
-        // M52b: the stages of NeoForge 21.11 (the opaque terrain, then entities and block entities, translucent terrain)
-        WorldRenderEvents.BEFORE_ENTITIES.register(ctx -> fire(ctx.matrices(), RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS,
-                RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS, RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS));
-        // vanilla draws the block entities with the entities: the stage after both
-        WorldRenderEvents.AFTER_ENTITIES.register(ctx -> fire(ctx.matrices(), RenderLevelStageEvent.Stage.AFTER_ENTITIES,
-                RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES));
-        // AFTER_TRANSLUCENT_BLOCKS: LevelRendererTranslucentMixin (Fabric has no event after the translucent terrain)
-        WorldRenderEvents.END_MAIN.register(ctx -> fire(ctx.matrices(), RenderLevelStageEvent.Stage.AFTER_LEVEL));
+        // M52b/M52c: the stages of NeoForge (the opaque terrain, then entities and block entities as solid features, translucent
+        // terrain); 26.1 Fabric API has an event after the translucent terrain too
+        net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents.AFTER_OPAQUE_TERRAIN.register(ctx -> fire(null,
+                RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS, RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS, RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS));
+        net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents.AFTER_SOLID_FEATURES.register(ctx -> fire(ctx.poseStack(),
+                RenderLevelStageEvent.Stage.AFTER_ENTITIES, RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES));
+        net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(ctx -> fire(ctx.poseStack(),
+                RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS));
+        net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents.END_MAIN.register(ctx -> fire(ctx.poseStack(), RenderLevelStageEvent.Stage.AFTER_LEVEL));
     }
 
     private static net.minecraft.client.multiplayer.ClientLevel lastLevel;
@@ -196,7 +191,12 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
     }
 
     private static void water(net.minecraft.world.level.material.Fluid still, net.minecraft.world.level.material.Fluid flowing, int tint) {
-        FluidRenderHandlerRegistry.INSTANCE.register(still, flowing, SimpleFluidRenderHandler.coloredWater(tint));
+        // M52c (26.1): a fluid model with the water textures in a fixed tint
+        net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderingRegistry.register(still, flowing, new net.minecraft.client.renderer.block.FluidModel.Unbaked(
+                new net.minecraft.client.resources.model.sprite.Material(Identifier.withDefaultNamespace("block/water_still")),
+                new net.minecraft.client.resources.model.sprite.Material(Identifier.withDefaultNamespace("block/water_flow")),
+                new net.minecraft.client.resources.model.sprite.Material(Identifier.withDefaultNamespace("block/water_overlay")),
+                state -> tint));
     }
 
     /** Our render stages at one of Fabric's world render events (or the translucent mixin: no pose stack). */

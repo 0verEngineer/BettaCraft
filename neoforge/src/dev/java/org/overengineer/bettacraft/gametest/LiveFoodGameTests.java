@@ -196,12 +196,14 @@ public final class LiveFoodGameTests {
         h.assertTrue(logged(c.getTank(), "log.bettacraft.live_food_pumped") || logged(c.getTank(), "log.bettacraft.live_food_pumped_one"), "logged");
         // the schedule: two doses a day, the first one at 7:00
         p.setDoses(2);
+        long savedTime = level.getOverworldClockTime(); // M52c: given back below (the clock is shared by all later batches)
         org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 500);
         p.step(level);
         h.assertTrue(p.pending() == 0, "waits for 7:00");
         org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 1000);
         p.step(level);
         h.assertTrue(p.status() == LiveFoodPumpBlockEntity.PUMPED && p.pending() == 0, "dosed at 7:00: " + p.status());
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, savedTime);
         // a glass pipe carries 500 mB per 10 ticks: a big dose goes out in parts
         PlumbingGameTests.pipe(h, false, new BlockPos(4, 2, 1));
         b.model().population = 0.9;

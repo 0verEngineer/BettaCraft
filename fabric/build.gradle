@@ -27,6 +27,7 @@ tasks.register('integrationSources', Sync) {
         include 'org/overengineer/bettacraft/compat/jade/**'
         include 'org/overengineer/bettacraft/compat/jei/**'
         include 'org/overengineer/bettacraft/compat/wthit/**'
+        include 'org/overengineer/bettacraft/compat/top/**' // M52c: The One Probe for Fabric 26.1.2
     }
     into integrationSrc
 }
@@ -35,8 +36,8 @@ sourceSets {
     main {
         java.srcDir(commonProject.file('src/main/java'))
         java.srcDir(integrationSrc)
-        // M52b: no TOP and no EMI for Fabric 1.21.11
-        java.exclude('org/overengineer/bettacraft/fabric/compat/TopFabricPlugin.java', 'org/overengineer/bettacraft/fabric/compat/BettaCraftEmiPlugin.java')
+        // M52b: no TOP and no EMI for Fabric 1.21.11; M52c: The One Probe is back for Fabric 26.1.2, EMI still has no build
+        java.exclude('org/overengineer/bettacraft/fabric/compat/BettaCraftEmiPlugin.java')
         resources {
             srcDir(commonProject.file('src/main/resources'))
             srcDir(commonProject.file('src/generated/resources'))
@@ -195,6 +196,8 @@ dependencies {
     // M52: REI (its plugin lives in fabric/compat). M52b: The One Probe and EMI have no Fabric 1.21.11 build (their plugins
     // are left out of this branch)
     compileOnly("maven.modrinth:rei:${rei_fabric_version}") { transitive = false }
+    // M52c: The One Probe for Fabric 26.1.2 (its plugin lives in fabric/compat)
+    compileOnly("maven.modrinth:the-one-probe:${top_fabric_version}") { transitive = false }
     compileOnly("maven.modrinth:architectury-api:${architectury_fabric_version}") { transitive = false }
     compileOnly 'me.shedaniel.cloth:basic-math:0.6.1'
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
@@ -280,7 +283,7 @@ tasks.register('convertGuide', JavaExec) {
             commonProject.file('src/generated/resources/data/bettacraft/recipe').absolutePath,
             commonProject.file('src/main/resources/data/bettacraft/recipe').absolutePath
 }
-tasks.named('processResources').configure { dependsOn 'convertGuide', 'renderLayers' }
+tasks.named('processResources').configure { dependsOn 'convertGuide' }
 
 // ---- our data with NeoForge's conditions and ingredient types, converted for Fabric (build/generated/fabricdata, which wins
 // over the common copies): neoforge:conditions -> fabric:load_conditions, neoforge:components / compound ingredients ->
@@ -390,45 +393,7 @@ tasks.register('fabricGameTestList') {
 }
 tasks.named('processDevResources').configure { dependsOn 'fabricGameTestList' }
 
-// ---- the render layer of each block (NeoForge reads "render_type" from the models; Fabric needs it in code):
-// blockstates -> first model -> render_type (along the parents in our namespace) -> bettacraft_render_layers.json
-def layersOut = layout.buildDirectory.dir('generated/renderlayers')
-sourceSets.main.resources.srcDir(layersOut)
-tasks.register('renderLayers') {
-    group = 'bettacraft'
-    def roots = [commonProject.file('src/main/resources/assets/bettacraft'), commonProject.file('src/generated/resources/assets/bettacraft')]
-    roots.each { inputs.dir(it) }
-    outputs.dir(layersOut)
-    doLast {
-        def slurper = new groovy.json.JsonSlurper()
-        def find = { String kind, String path -> roots.collect { new File(it, "${kind}/${path}.json") }.find { it.exists() } }
-        def renderType
-        renderType = { String model, int depth ->
-            if (depth > 8 || model == null) return null
-            def id = model.contains(':') ? model : "minecraft:${model}"
-            if (!id.startsWith('bettacraft:')) return null
-            def f = find('models', id.substring('bettacraft:'.length()))
-            if (f == null) return null
-            def json = slurper.parse(f, 'UTF-8')
-            return json.render_type ?: renderType(json.parent as String, depth + 1)
-        }
-        def out = new TreeMap()
-        roots.each { root ->
-            (new File(root, 'blockstates').listFiles() ?: []).findAll { it.name.endsWith('.json') }.each { bs ->
-                def json = slurper.parse(bs, 'UTF-8')
-                def models = []
-                if (json.variants) json.variants.values().each { v -> (v instanceof List ? v : [v]).each { models << it.model } }
-                if (json.multipart) json.multipart.each { p -> (p.apply instanceof List ? p.apply : [p.apply]).each { models << it.model } }
-                def type = models.collect { renderType(it as String, 0) }.find { it != null }
-                if (type != null && type != 'minecraft:solid') out["bettacraft:${bs.name - '.json'}".toString()] = type
-            }
-        }
-        def f = new File(layersOut.get().asFile, 'bettacraft_render_layers.json')
-        f.parentFile.mkdirs()
-        f.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(out)), 'UTF-8')
-        logger.lifecycle("renderLayers: ${out.size()} blocks")
-    }
-}
+// (M52c: no render layer list any more: 26.1 takes the chunk layer of each quad from its texture, on both loaders)
 
 def replaceProperties = [
         mod_id         : mod_id,
@@ -439,6 +404,7 @@ def replaceProperties = [
         mod_description: mod_description,
         minecraft_version: minecraft_version,
         fabric_loader_version: fabric_loader_version,
+        fabric_minecraft_dependency: fabric_minecraft_dependency,
 ]
 tasks.named('processResources', ProcessResources).configure {
     inputs.properties replaceProperties
@@ -485,7 +451,7 @@ tasks.register('verifyFabricJar') {
                     && !n.startsWith('data/') ) problems << "foreign asset ${n}"
         }
         ['fabric.mod.json', 'bettacraft.mixins.json', 'bettacraft.fabric.mixins.json', 'bettacraft.accesswidener',
-         'data/bettacraft/modonomicon/books/handbook/book.json', 'bettacraft_render_layers.json',
+         'data/bettacraft/modonomicon/books/handbook/book.json',
          'META-INF/services/org.overengineer.bettacraft.platform.Platform',
          'META-INF/services/org.overengineer.bettacraft.platform.client.ClientPlatform'].each { need ->
             if (!names.contains(need)) problems << "missing ${need}"

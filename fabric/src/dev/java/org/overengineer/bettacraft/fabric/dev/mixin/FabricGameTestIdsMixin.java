@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.fabric.dev.mixin;
 
-import java.lang.reflect.RecordComponent;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,21 +35,25 @@ public abstract class FabricGameTestIdsMixin {
             WritableRegistry<?> r = registry(loader);
             registries.put(r.key(), r);
         }
-        WritableRegistry<TestEnvironmentDefinition> envs = (WritableRegistry<TestEnvironmentDefinition>) registries.get(Registries.TEST_ENVIRONMENT);
+        WritableRegistry<TestEnvironmentDefinition<?>> envs = (WritableRegistry<TestEnvironmentDefinition<?>>) registries.get(Registries.TEST_ENVIRONMENT);
         WritableRegistry<GameTestInstance> instances = (WritableRegistry<GameTestInstance>) registries.get(Registries.TEST_INSTANCE);
         BettaGameTests.registerInstances(
-                (id, env) -> (Holder<TestEnvironmentDefinition>) envs.register(ResourceKey.create(Registries.TEST_ENVIRONMENT, id), env, RegistrationInfo.BUILT_IN),
+                (id, env) -> (Holder<TestEnvironmentDefinition<?>>) envs.register(ResourceKey.create(Registries.TEST_ENVIRONMENT, id), env, RegistrationInfo.BUILT_IN),
                 (id, test) -> Registry.register(instances, ResourceKey.create(Registries.TEST_INSTANCE, id), test));
     }
 
-    /** The registry of one of the loader records of {@code RegistryDataLoader} (package-private, by its component type). */
+    /**
+     * The registry of one of the load tasks of {@code RegistryDataLoader} (M52c, 26.1: {@code RegistryLoadTask}, its field
+     * {@code registry}; 1.21.x: a record with a registry component).
+     */
     private static WritableRegistry<?> registry(Object loader) {
         try {
-            for (RecordComponent c : loader.getClass().getRecordComponents()) {
-                if (WritableRegistry.class.isAssignableFrom(c.getType())) {
-                    var m = c.getAccessor();
-                    m.setAccessible(true);
-                    return (WritableRegistry<?>) m.invoke(loader);
+            for (Class<?> c = loader.getClass(); c != null; c = c.getSuperclass()) {
+                for (var f : c.getDeclaredFields()) {
+                    if (WritableRegistry.class.isAssignableFrom(f.getType())) {
+                        f.setAccessible(true);
+                        return (WritableRegistry<?>) f.get(loader);
+                    }
                 }
             }
         } catch (ReflectiveOperationException e) {

@@ -2,7 +2,7 @@
   "values": [
     "bettacraft:active_soil",
     "#minecraft:sand",
-    "#minecraft:dirt",
+    "#minecraft:substrate_overworld",
     "#c:gravels",
     "minecraft:gravel",
     "minecraft:clay",

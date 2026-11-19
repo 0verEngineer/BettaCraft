@@ -28,20 +28,20 @@ public final class FabricNetwork {
         ModNetwork.register(new PayloadRegistrar() {
             @Override
             public <T extends CustomPacketPayload> void playToClient(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, Handler<T> handler) {
-                PayloadTypeRegistry.playS2C().register(type, codec);
+                PayloadTypeRegistry.clientboundPlay().register(type, codec);
                 CLIENT_BOUND.add(new ClientHandler<>(type, handler));
             }
 
             @Override
             public <T extends CustomPacketPayload> void playToServer(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, Handler<T> handler) {
-                PayloadTypeRegistry.playC2S().register(type, codec);
+                PayloadTypeRegistry.serverboundPlay().register(type, codec);
                 ServerPlayNetworking.registerGlobalReceiver(type, (p, ctx) -> handler.handle(p, context(ctx.player(), ctx.server()::execute)));
             }
 
             @Override
             public <T extends CustomPacketPayload> void playBidirectional(CustomPacketPayload.Type<T> type, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, Handler<T> handler) {
                 playToServer(type, codec, handler);
-                PayloadTypeRegistry.playS2C().register(type, codec);
+                PayloadTypeRegistry.clientboundPlay().register(type, codec);
                 CLIENT_BOUND.add(new ClientHandler<>(type, handler));
             }
         });

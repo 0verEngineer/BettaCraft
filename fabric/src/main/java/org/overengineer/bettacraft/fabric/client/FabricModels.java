@@ -3,9 +3,7 @@ package org.overengineer.bettacraft.fabric.client;
 import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.model.loading.v1.SimpleUnbakedExtraModel;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import org.overengineer.bettacraft.client.model.ModelSwaps;
 
 /**
@@ -24,9 +22,10 @@ final class FabricModels {
             }
             ctx.modifyBlockModelAfterBake().register((model, c) -> {
                 if (model == null) return model;
-                var sprites = c.baker().sprites();
+                // M52c (26.1): the sprites through the baker's materials (block atlas)
+                var materials = c.baker().materials();
                 BlockStateModel swapped = ModelSwaps.swap(c.state(), model,
-                        id -> sprites.get(new Material(TextureAtlas.LOCATION_BLOCKS, id), () -> "bettacraft:" + id));
+                        id -> materials.get(new net.minecraft.client.resources.model.sprite.Material(id), () -> "bettacraft:" + id).sprite());
                 return swapped != null ? swapped : model;
             });
         });

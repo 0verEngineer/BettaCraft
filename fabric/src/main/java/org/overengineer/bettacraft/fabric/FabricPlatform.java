@@ -7,11 +7,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.api.FabricLoader;
@@ -184,7 +181,7 @@ public final class FabricPlatform implements Platform {
         byte[] data = new byte[buf.readableBytes()];
         buf.readBytes(data);
         buf.release();
-        player.openMenu(new ExtendedScreenHandlerFactory<byte[]>() {
+        player.openMenu(new net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<byte[]>() {
             @Override
             public byte[] getScreenOpeningData(ServerPlayer p) {
                 return data;
@@ -204,7 +201,7 @@ public final class FabricPlatform implements Platform {
 
     @Override
     public <T extends AbstractContainerMenu> MenuType<T> menuType(MenuFactory<T> factory) {
-        return new ExtendedScreenHandlerType<>((id, inv, data) -> {
+        return new net.fabricmc.fabric.api.menu.v1.ExtendedMenuType<>((id, inv, data) -> {
             RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.wrappedBuffer(data), inv.player.registryAccess());
             return factory.create(id, inv, buf);
         }, ByteBufCodecs.BYTE_ARRAY.cast());
@@ -283,7 +280,9 @@ public final class FabricPlatform implements Platform {
 
     @Override
     public ItemStack craftingRemainder(ItemStack stack) {
-        return stack.getRecipeRemainder();
+        // M52c (26.1): the stack-aware remainder is a template, null without one
+        var r = stack.getCraftingRemainder();
+        return r == null ? ItemStack.EMPTY : r.create();
     }
 
     @Override
@@ -361,7 +360,7 @@ public final class FabricPlatform implements Platform {
 
     @Override
     public CreativeModeTab.Builder creativeTabBuilder() {
-        return FabricItemGroup.builder();
+        return net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab.builder();
     }
 
     @Override

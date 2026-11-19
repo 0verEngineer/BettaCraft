@@ -123,14 +123,16 @@ public final class MonitorGameTests {
         h.assertTrue(Math.abs(k.value(MonitorValue.TEMPERATURE) - 24F) < 0.01F, "refreshed: " + k.value(MonitorValue.TEMPERATURE));
         // the automatic layout: two tiles for the tank
         MonitorSync.work(level, c);
-        h.assertTrue(c.layout().auto && c.layout().tiles.size() == 2 && t.getTank().id().equals(c.layout().tiles.get(0).tank),
-                "auto layout: " + c.layout().tiles.size());
+        // M52c: two tiles per tank in range (the tests of the batch stand side by side; another test's tank may be in range)
+        h.assertTrue(c.layout().auto && c.layout().tiles.size() == 2 * c.tanks().size()
+                        && c.layout().tiles.stream().filter(tile -> t.getTank().id().equals(tile.tank)).count() == 2,
+                "auto layout: " + c.layout().tiles.size() + " tiles for " + c.tanks().size() + " tanks");
         // the tank is broken: not live, then forgotten
         for (int x = 2; x < 5; x++) for (int y = 1; y < 3; y++) for (int z = 2; z < 4; z++) h.setBlock(new BlockPos(x, y, z), Blocks.AIR.defaultBlockState());
         MonitorSync.refresh(level, c);
         h.assertTrue(!k.live, "gone: not live");
         MonitorSync.discover(level, c);
-        h.assertTrue(c.tanks().isEmpty(), "forgotten: " + c.tanks().size());
+        h.assertTrue(c.tanks().stream().noneMatch(m -> m.id.equals(t.getTank().id())), "forgotten: " + c.tanks().size());
         h.succeed();
     }
 

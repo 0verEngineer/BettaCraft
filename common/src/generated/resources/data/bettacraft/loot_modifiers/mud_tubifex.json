@@ -22,5 +22,6 @@
   ],
   "item": {
     "id": "bettacraft:tubifex"
-  }
+  },
+  "priority": 1040
 }

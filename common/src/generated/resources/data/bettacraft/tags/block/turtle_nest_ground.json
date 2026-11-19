@@ -1,7 +1,7 @@
 {
   "values": [
     "#minecraft:sand",
-    "#minecraft:dirt",
+    "#minecraft:substrate_overworld",
     "#c:sands",
     "minecraft:farmland",
     "minecraft:dirt_path"

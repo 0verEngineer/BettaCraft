@@ -22,6 +22,7 @@ if [ -f "$WT/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" 
 if [ -f "$WT/neoforge/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/neoforge/src/dev/java/org/overengineer/bettacraft/command"; fi
 SAVES_REL="run/saves"
 if grep -q "run/1.21.11" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL="run/1.21.11/saves"; fi
+if grep -q "run/26.1.2" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL="run/26.1.2/saves"; fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
 SHOW="$CMD/DevShowcase.java"
 # extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.

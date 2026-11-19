@@ -2,17 +2,17 @@ package org.overengineer.bettacraft.fabric.client;
 
 import java.util.List;
 import java.util.function.Predicate;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModelPart;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.platform.client.DynamicModel;
@@ -57,7 +57,7 @@ public final class FabricDynamicModel implements BlockStateModel {
     static void emit(QuadEmitter emitter, BakedQuad q, @Nullable Direction side, ChunkSectionLayer layer, TriState partAo) {
         emitter.fromBakedQuad(q);
         emitter.cullFace(side);
-        emitter.renderLayer(layer);
+        emitter.chunkLayer(layer);
         FabricClientPlatform.Extras x = FabricClientPlatform.extras(q);
         TriState ao = partAo;
         if (x != null) {
@@ -78,28 +78,41 @@ public final class FabricDynamicModel implements BlockStateModel {
     }
 
     @Override
-    public TextureAtlasSprite particleSprite(BlockAndTintGetter level, BlockPos pos, BlockState state) {
-        return dynamic.particle(values(level, pos, state));
+    public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return new net.minecraft.client.resources.model.sprite.Material.Baked(dynamic.particle(values(level, pos, state)), false);
+    }
+
+    /** M52c (26.1): without the level the model may draw translucent quads (glass, water) and animated ones (water). */
+    @Override
+    public int materialFlags() {
+        return BakedQuad.FLAG_TRANSLUCENT | BakedQuad.FLAG_ANIMATED;
     }
 
     @Override
-    public void collectParts(RandomSource random, List<BlockModelPart> parts) {
+    public int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+        int flags = BakedQuad.FLAG_ANIMATED;
+        for (ChunkSectionLayer l : dynamic.layers(state, random, values(level, pos, state))) if (l.translucent()) flags |= BakedQuad.FLAG_TRANSLUCENT;
+        return flags;
+    }
+
+    @Override
+    public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
         for (ChunkSectionLayer layer : dynamic.layers(null, random, ModelValues.EMPTY)) {
             @SuppressWarnings("unchecked")
             List<BakedQuad>[] sides = new List[7];
             for (Direction d : Direction.values()) sides[d.ordinal()] = dynamic.quads(null, d, random, ModelValues.EMPTY, layer);
             sides[6] = dynamic.quads(null, null, random, ModelValues.EMPTY, layer);
-            parts.add(new Part(sides, dynamic.ambientOcclusion(), dynamic.particle(ModelValues.EMPTY)));
+            parts.add(new Part(sides, dynamic.ambientOcclusion(), dynamic.particle(ModelValues.EMPTY), layer));
         }
     }
 
     @Override
-    public TextureAtlasSprite particleIcon() {
-        return dynamic.particle(ModelValues.EMPTY);
+    public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial() {
+        return new net.minecraft.client.resources.model.sprite.Material.Baked(dynamic.particle(ModelValues.EMPTY), false);
     }
 
     /** The quads of one chunk layer for the vanilla paths. */
-    record Part(List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle) implements BlockModelPart {
+    record Part(List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle, ChunkSectionLayer layer) implements BlockStateModelPart {
         @Override
         public List<BakedQuad> getQuads(@Nullable Direction side) {
             return sides[side == null ? 6 : side.ordinal()];
@@ -111,8 +124,13 @@ public final class FabricDynamicModel implements BlockStateModel {
         }
 
         @Override
-        public TextureAtlasSprite particleIcon() {
-            return particle;
+        public net.minecraft.client.resources.model.sprite.Material.Baked particleMaterial() {
+            return new net.minecraft.client.resources.model.sprite.Material.Baked(particle, false);
+        }
+
+        @Override
+        public int materialFlags() {
+            return layer.translucent() ? BakedQuad.FLAG_TRANSLUCENT : 0;
         }
     }
 }

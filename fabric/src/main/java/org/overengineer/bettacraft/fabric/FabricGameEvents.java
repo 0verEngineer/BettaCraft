@@ -16,7 +16,6 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +26,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
-import net.minecraft.world.entity.npc.villager.VillagerTrades;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.platform.event.*;
 
@@ -50,7 +48,7 @@ public final class FabricGameEvents {
 
     static void register() {
         ServerTickEvents.END_SERVER_TICK.register(s -> post(new ServerTickEvent.Post(s)));
-        ServerTickEvents.END_WORLD_TICK.register(l -> post(new LevelTickEvent.Post(l)));
+        ServerTickEvents.END_LEVEL_TICK.register(l -> post(new LevelTickEvent.Post(l)));
         ServerLifecycleEvents.SERVER_STARTING.register(s -> post(new ServerAboutToStartEvent(s)));
         ServerLifecycleEvents.SERVER_STARTED.register(s -> post(new ServerStartedEvent(s)));
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> post(new ServerStoppedEvent(s)));
@@ -105,7 +103,7 @@ public final class FabricGameEvents {
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> !post(new LivingDeathEvent(entity, source)).isCanceled());
         ServerLivingEntityEvents.MOB_CONVERSION.register((from, to, keep) -> post(new LivingConversionEvent.Post(from, to)));
         reloadListeners();
-        trades();
+        // M52c (26.1): the trades are data (villager/BettaTrades), no trade callbacks any more
     }
 
     /** A cancelled interaction answers with the handler's result; PASS would let vanilla go on, so it fails instead. */
@@ -135,31 +133,6 @@ public final class FabricGameEvents {
                         java.util.concurrent.Executor game) {
                     return l.reload(state, bg, barrier, game);
                 }
-            });
-        }
-    }
-
-    /** The trades the handlers add, per profession and level (Fabric adds, it cannot remove). */
-    private static void trades() {
-        if (GameEvents.has(VillagerTradesEvent.class)) {
-            for (VillagerProfession prof : BuiltInRegistries.VILLAGER_PROFESSION) {
-                var map = new Int2ObjectOpenHashMap<List<VillagerTrades.ItemListing>>();
-                for (int lvl = 1; lvl <= 5; lvl++) map.put(lvl, new ArrayList<>());
-                post(new VillagerTradesEvent(prof, map));
-                for (int lvl = 1; lvl <= 5; lvl++) {
-                    List<VillagerTrades.ItemListing> added = map.get(lvl);
-                    var key = BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(prof).orElseThrow();
-                    if (!added.isEmpty()) TradeOfferHelper.registerVillagerOffers(key, lvl, list -> list.addAll(added));
-                }
-            }
-        }
-        if (GameEvents.has(WandererTradesEvent.class)) {
-            List<VillagerTrades.ItemListing> generic = new ArrayList<>(), rare = new ArrayList<>();
-            post(new WandererTradesEvent(generic, rare));
-            // 1.21.5: the trader's pools by id (1.21.1's levels 1 and 2 are the common and the special pool)
-            TradeOfferHelper.registerWanderingTraderOffers(b -> {
-                if (!generic.isEmpty()) b.addOffersToPool(TradeOfferHelper.WanderingTraderOffersBuilder.SELL_COMMON_ITEMS_POOL, generic.toArray(VillagerTrades.ItemListing[]::new));
-                if (!rare.isEmpty()) b.addOffersToPool(TradeOfferHelper.WanderingTraderOffersBuilder.SELL_SPECIAL_ITEMS_POOL, rare.toArray(VillagerTrades.ItemListing[]::new));
             });
         }
     }

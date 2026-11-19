@@ -1434,32 +1434,33 @@ public final class ModDataGen {
         protected void start() {
             var biomes = registries.lookupOrThrow(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES);
             // M33: every modifier only while its feature is on (bettacraft:feature)
+            // M52c (26.1): NeoForge loads every modifier file (no list); the priorities keep the order of 1.21.x on both loaders
             add("mud_mosquito_larvae", new AddItemLootModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_LARVAE_CHANCE).build()
-            }, new net.minecraft.world.item.ItemStackTemplate(ModItems.MOSQUITO_LARVAE.get())));
+            }, 1050, new net.minecraft.world.item.ItemStackTemplate(ModItems.MOSQUITO_LARVAE.get())));
             // M26: and tubifex worms (the start of a tubifex dish)
             add("mud_tubifex", new AddItemLootModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD_CULTURES),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("blocks/mud")).build(),
                     LocationCheck.checkLocation(LocationPredicate.Builder.location().setBiomes(biomes)).build(),
                     LootItemRandomChanceCondition.randomChance(org.overengineer.bettacraft.sources.WildTables.MUD_TUBIFEX_CHANCE).build()
-            }, new net.minecraft.world.item.ItemStackTemplate(ModItems.TUBIFEX.get())));
+            }, 1040, new net.minecraft.world.item.ItemStackTemplate(ModItems.TUBIFEX.get())));
             // sand -> artemia cysts, chance from the server config (drops.artemiaFromSandChance)
             add("sand_artemia_cysts", new org.overengineer.bettacraft.world.ArtemiaSandLootModifier(new LootItemCondition[]{new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.LIVE_FOOD)},
-                    new net.minecraft.world.item.ItemStackTemplate(ModItems.ARTEMIA_CYSTS.get())));
+                    1030, new net.minecraft.world.item.ItemStackTemplate(ModItems.ARTEMIA_CYSTS.get())));
             // M12: fishing in swamps / mangrove swamps sometimes brings up a floating plant (chance from the server config)
             add("fishing_floating_plants", new org.overengineer.bettacraft.world.FloatingPlantFishingModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.FLOATING_PLANTS),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
-            }));
+            }, 1020));
             // M13: fishing in jungles, rivers and swamps sometimes brings up an aquarium plant
             add("fishing_aquatic_plants", new org.overengineer.bettacraft.world.AquaticPlantFishingModifier(new LootItemCondition[]{
                     new org.overengineer.bettacraft.config.FeatureLootCondition(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS),
                     LootTableIdCondition.builder(Identifier.withDefaultNamespace("gameplay/fishing")).build()
-            }));
+            }, 1010));
         }
     }
 
@@ -1528,7 +1529,7 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.MOSS_BLOCK, net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS,
                             net.minecraft.world.level.block.Blocks.MUDDY_MANGROVE_ROOTS, net.minecraft.world.level.block.Blocks.BAMBOO_BLOCK)
                     .addTag(BlockTags.TERRACOTTA);
-            tag(ModTags.PLANT_SUBSTRATE).add(ModBlocks.ACTIVE_SOIL.get()).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(Tags.Blocks.GRAVELS)
+            tag(ModTags.PLANT_SUBSTRATE).add(ModBlocks.ACTIVE_SOIL.get()).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(Tags.Blocks.GRAVELS)
                     .add(net.minecraft.world.level.block.Blocks.GRAVEL, net.minecraft.world.level.block.Blocks.CLAY,
                             net.minecraft.world.level.block.Blocks.MUD, net.minecraft.world.level.block.Blocks.SOUL_SAND,
                             net.minecraft.world.level.block.Blocks.SOUL_SOIL, net.minecraft.world.level.block.Blocks.SUSPICIOUS_SAND,
@@ -1544,7 +1545,7 @@ public final class ModDataGen {
             var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
             for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
             // M25: water chemistry
-            tag(ModTags.ACID_SUBSTRATE).addTag(BlockTags.DIRT).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
+            tag(ModTags.ACID_SUBSTRATE).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
             tag(ModTags.LIMESTONE).add(net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,

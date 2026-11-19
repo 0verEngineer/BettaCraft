@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public abstract class PlayerInteractMixin {
     @Inject(method = "interactOn", at = @At("HEAD"), cancellable = true)
-    private void bettacraft$entityInteract(Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void bettacraft$entityInteract(Entity entity, InteractionHand hand, net.minecraft.world.phys.Vec3 location, CallbackInfoReturnable<InteractionResult> cir) {
         if (((Player) (Object) this).isSpectator()) return;
         var e = FabricGameEvents.post(new PlayerInteractEvent.EntityInteract((Player) (Object) this, hand, entity));
         if (e.isCanceled()) cir.setReturnValue(e.getCancellationResult());

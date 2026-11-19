@@ -22,5 +22,6 @@
   ],
   "item": {
     "id": "bettacraft:mosquito_larvae"
-  }
+  },
+  "priority": 1050
 }

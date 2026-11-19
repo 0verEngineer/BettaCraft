@@ -390,6 +390,9 @@ public final class CrankGameTests {
     public static void keepingFishWithoutAGenerator(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         Power saved = Power.current();
+        // M52c: at noon (the room temperature follows the day; other batches may leave the shared clock elsewhere)
+        long savedTime = level.getOverworldClockTime();
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         try {
             Power.all(true, true);
             TankBlockEntity a = tank(h, 2, 1, 2, 3, 2, 2), b = tank(h, 2, 1, 10, 3, 2, 2), p = tank(h, 2, 1, 18, 3, 2, 2);
@@ -447,6 +450,7 @@ public final class CrankGameTests {
             h.assertTrue(aliveA, "A: water changes alone keep them alive (ambient " + ambient + " °C)");
             h.assertTrue(aliveP && fp.stream().noneMatch(x -> x.health().isSick()) && minQp > 0.4, "P: dense floating plants alone keep the water: " + minQp);
         } finally {
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, savedTime);
             saved.apply();
         }
         h.succeed();

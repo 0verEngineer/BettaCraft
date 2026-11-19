@@ -163,7 +163,7 @@ public class WildPlantFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean soft(BlockState s) {
-        return s.is(BlockTags.DIRT) || s.is(BlockTags.SAND) || s.is(Blocks.GRAVEL) || s.is(Blocks.CLAY) || s.is(Blocks.MUD);
+        return s.is(BlockTags.SUBSTRATE_OVERWORLD) || s.is(BlockTags.SAND) || s.is(Blocks.GRAVEL) || s.is(Blocks.CLAY) || s.is(Blocks.MUD);
     }
 
     private static boolean hard(BlockState s) {

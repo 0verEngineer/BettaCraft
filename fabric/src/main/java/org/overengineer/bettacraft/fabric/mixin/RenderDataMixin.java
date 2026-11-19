@@ -1,6 +1,6 @@
 package org.overengineer.bettacraft.fabric.mixin;
 
-import net.fabricmc.fabric.api.blockview.v2.RenderDataBlockEntity;
+import net.fabricmc.fabric.api.blockgetter.v2.RenderDataBlockEntity;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
 import org.overengineer.bettacraft.platform.model.ModelDataSource;
 import org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity;

@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModification;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
+import net.fabricmc.fabric.api.registry.CompostableRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.core.registries.Registries;
@@ -46,7 +46,7 @@ public final class FabricWorld {
         biomes();
         loot();
         // M49: the Chaetomorpha goes into the composter (NeoForge: data/neoforge/data_maps/item/compostables.json)
-        CompostingChanceRegistry.INSTANCE.add(org.overengineer.bettacraft.registry.ModItems.CHAETOMORPHA.get(), 0.65F);
+        CompostableRegistry.INSTANCE.add(org.overengineer.bettacraft.registry.ModItems.CHAETOMORPHA.get(), 0.65F);
     }
 
     // ------------------------------------------------------------------ biomes
@@ -58,10 +58,10 @@ public final class FabricWorld {
     private static void biomes() {
         BiomeModification m = BiomeModifications.create(BettaCraft.id("spawns"));
         m.add(ModificationPhase.ADDITIONS, BiomeSelectors.tag(tag("bettacraft:betta_spawn_biomes")), (sel, ctx) -> {
-            for (WildSpawns.Spawn s : WildSpawns.bettas()) ctx.getSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
+            for (WildSpawns.Spawn s : WildSpawns.bettas()) ctx.getMobSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
         });
         m.add(ModificationPhase.ADDITIONS, BiomeSelectors.all(), (sel, ctx) -> {
-            for (WildSpawns.Spawn s : WildSpawns.wildlife(sel.getBiomeRegistryEntry())) ctx.getSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
+            for (WildSpawns.Spawn s : WildSpawns.wildlife(sel.getBiomeHolder())) ctx.getMobSpawnSettings().addSpawn(s.category(), s.data(), s.weight());
         });
         // the wild corals: #bettacraft:coral_reef_biomes or (#c:is_ocean and #c:is_hot)
         BiomeModifications.addFeature(BiomeSelectors.tag(tag("bettacraft:coral_reef_biomes"))
@@ -84,7 +84,7 @@ public final class FabricWorld {
     // ------------------------------------------------------------------ loot
 
     /** One global loot modifier of our data: the loot table it is limited to (or null), its conditions, what it does. */
-    record Modifier(String type, Identifier table, List<LootItemCondition> conditions, ItemStack item) {}
+    record Modifier(String type, Identifier table, List<LootItemCondition> conditions, net.minecraft.world.item.@org.jetbrains.annotations.Nullable ItemStackTemplate item) {}
 
     static volatile List<Modifier> modifiers = List.of();
 
@@ -115,8 +115,8 @@ public final class FabricWorld {
 
     private static void apply(Modifier m, ObjectArrayList<ItemStack> loot, LootContext context) {
         switch (m.type()) {
-            case "bettacraft:add_item" -> loot.add(m.item().copy());
-            case "bettacraft:artemia_sand" -> org.overengineer.bettacraft.world.LootChanges.artemiaSand(loot, context, m.item());
+            case "bettacraft:add_item" -> { if (m.item() != null) loot.add(m.item().create()); }
+            case "bettacraft:artemia_sand" -> { if (m.item() != null) org.overengineer.bettacraft.world.LootChanges.artemiaSand(loot, context, m.item().create()); }
             case "bettacraft:fishing_floating_plants" -> org.overengineer.bettacraft.world.LootChanges.floatingPlants(loot, context);
             case "bettacraft:fishing_aquatic_plants" -> org.overengineer.bettacraft.world.AquaticPlantFishing.apply(loot, context);
             default -> {
@@ -124,36 +124,38 @@ public final class FabricWorld {
         }
     }
 
+    /**
+     * M52c (26.1): every modifier file of ours ({@code data/bettacraft/loot_modifiers/*.json}; NeoForge 26.1 has no list any
+     * more), in the order of their priority (higher first, as NeoForge applies them).
+     */
     private static List<Modifier> read(ResourceManager rm) {
         List<Modifier> out = new ArrayList<>();
+        List<Integer> priorities = new ArrayList<>();
         var ops = RegistryOps.create(JsonOps.INSTANCE, net.minecraft.core.RegistryAccess.EMPTY);
-        var list = rm.getResource(Identifier.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json"));
-        if (list.isEmpty()) return out;
-        try (Reader r = list.get().openAsReader()) {
-            JsonArray entries = JsonParser.parseReader(r).getAsJsonObject().getAsJsonArray("entries");
-            for (JsonElement e : entries) {
-                Identifier id = Identifier.parse(e.getAsString());
-                if (!id.getNamespace().equals(BettaCraft.MOD_ID)) continue;
-                var res = rm.getResource(Identifier.fromNamespaceAndPath(id.getNamespace(), "loot_modifiers/" + id.getPath() + ".json"));
-                if (res.isEmpty()) continue;
-                try (Reader mr = res.get().openAsReader()) {
-                    JsonObject o = JsonParser.parseReader(mr).getAsJsonObject();
-                    Identifier table = null;
-                    List<LootItemCondition> conds = new ArrayList<>();
-                    for (JsonElement c : o.getAsJsonArray("conditions")) {
-                        JsonObject co = c.getAsJsonObject();
-                        if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
-                            table = Identifier.parse(co.get("loot_table_id").getAsString());
-                            continue;
-                        }
-                        LootItemCondition.DIRECT_CODEC.parse(ops, co).result().ifPresent(conds::add);
+        var files = new java.util.TreeMap<>(rm.listResources("loot_modifiers", id -> id.getNamespace().equals(BettaCraft.MOD_ID) && id.getPath().endsWith(".json")));
+        for (var res : files.values()) {
+            try (Reader mr = res.openAsReader()) {
+                JsonObject o = JsonParser.parseReader(mr).getAsJsonObject();
+                Identifier table = null;
+                List<LootItemCondition> conds = new ArrayList<>();
+                for (JsonElement c : o.getAsJsonArray("conditions")) {
+                    JsonObject co = c.getAsJsonObject();
+                    if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
+                        table = Identifier.parse(co.get("loot_table_id").getAsString());
+                        continue;
                     }
-                    ItemStack item = o.has("item") ? ItemStack.CODEC.parse(ops, o.get("item")).result().orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
-                    out.add(new Modifier(o.get("type").getAsString(), table, conds, item));
+                    LootItemCondition.DIRECT_CODEC.parse(ops, co).result().ifPresent(conds::add);
                 }
+                // a template: the item components are bound after the data is read
+                var item = o.has("item") ? net.minecraft.world.item.ItemStackTemplate.CODEC.parse(ops, o.get("item")).result().orElse(null) : null;
+                int prio = o.has("priority") ? o.get("priority").getAsInt() : 1000;
+                int at = 0;
+                while (at < priorities.size() && priorities.get(at) >= prio) at++;
+                priorities.add(at, prio);
+                out.add(at, new Modifier(o.get("type").getAsString(), table, conds, item));
+            } catch (Exception ex) {
+                com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifier {} failed", res.sourcePackId(), ex);
             }
-        } catch (Exception ex) {
-            com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifiers failed", ex);
         }
         return List.copyOf(out);
     }

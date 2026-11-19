@@ -127,11 +127,9 @@ public final class FabricClientSmoke implements ClientModInitializer {
         if (created || !(screen instanceof TitleScreen)) return;
         created = true;
         Minecraft mc = Minecraft.getInstance();
-        GameRules rules = new GameRules(WorldDataConfiguration.DEFAULT.enabledFeatures());
-        rules.set(GameRules.ADVANCE_TIME, false, null);
-        rules.set(GameRules.SPAWN_MOBS, false, null);
-        LevelSettings settings = new LevelSettings("bettacraft_fabric_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
-                Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
+        // M52c (26.1): the game rules are saved data of the world; set in tick() once the server is up
+        LevelSettings settings = new LevelSettings("bettacraft_fabric_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE,
+                new LevelSettings.DifficultySettings(Difficulty.PEACEFUL, false, false), true, WorldDataConfiguration.DEFAULT);
         mc.execute(() -> mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, false, false),
                 ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
                 screen));
@@ -141,6 +139,13 @@ public final class FabricClientSmoke implements ClientModInitializer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.getSingleplayerServer() == null) return;
         ticks++;
+        if (ticks == 1) {
+            var server = mc.getSingleplayerServer();
+            server.execute(() -> {
+                server.getGameRules().set(GameRules.ADVANCE_TIME, false, server);
+                server.getGameRules().set(GameRules.SPAWN_MOBS, false, server);
+            });
+        }
         mc.options.pauseOnLostFocus = false;
         if (ticks == 2) mc.getWindow().setWindowed(1280, 960);
         if (ticks > 60) mc.player.getAbilities().flying = true;

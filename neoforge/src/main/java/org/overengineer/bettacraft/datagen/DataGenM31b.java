@@ -83,7 +83,7 @@ final class DataGenM31b {
     }
 
     static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
-        tag.apply(ModTags.TURTLE_NEST_GROUND).addTag(BlockTags.SAND).addTag(BlockTags.DIRT).addTag(org.overengineer.bettacraft.platform.Tags.Blocks.SANDS)
+        tag.apply(ModTags.TURTLE_NEST_GROUND).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(org.overengineer.bettacraft.platform.Tags.Blocks.SANDS)
                 .add(Blocks.FARMLAND, Blocks.DIRT_PATH);
     }
 

@@ -75,7 +75,7 @@ final class DataGenM31c {
     }
 
     static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
-        tag.apply(ModTags.FROG_NEST_GROUND).addTag(BlockTags.LEAVES).addTag(BlockTags.DIRT)
+        tag.apply(ModTags.FROG_NEST_GROUND).addTag(BlockTags.LEAVES).addTag(BlockTags.SUBSTRATE_OVERWORLD)
                 .add(Blocks.MOSS_BLOCK, Blocks.MOSS_CARPET, Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS);
     }
 

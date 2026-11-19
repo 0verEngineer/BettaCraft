@@ -85,7 +85,7 @@ public final class FabricTransfer {
 
     public static FluidStack stack(FluidVariant v, long droplets) {
         int mb = (int) Math.min(Integer.MAX_VALUE, droplets / DROPLETS_PER_MB);
-        return v.isBlank() || mb <= 0 ? FluidStack.EMPTY : new FluidStack(v.getFluid().builtInRegistryHolder(), mb, v.getComponents());
+        return v.isBlank() || mb <= 0 ? FluidStack.EMPTY : new FluidStack(v.getFluid().builtInRegistryHolder(), mb, v.getComponentsPatch());
     }
 
     static TransactionContext.Result commit(Transaction t, boolean simulate) {
