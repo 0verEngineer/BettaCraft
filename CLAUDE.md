@@ -151,8 +151,8 @@ Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), t
 | Branch | MC | Loaders | Java | Maintenance |
 |---|---|---|---|---|
 | `master` | 1.21.1 | NeoForge + Fabric | 21 | full (main target ATM10) |
-| `1.21.11` (M52b, planned) | 1.21.11 | NeoForge + Fabric | 21 | one release, then only severe fixes |
-| `26.1.2` (M52c, planned) | 26.1.2 | NeoForge + Fabric | 25 | full |
+| `1.21.11` (M52b) | 1.21.11 | NeoForge + Fabric | 21 | one release, then only severe fixes |
+| `26.1.2` (M52c) | 26.1.2 (Fabric: 26.1-26.1.2) | NeoForge + Fabric | 25 | full |
 | `26.2` (M52d, planned) | 26.2 | NeoForge + Fabric | 25 | one release, then only severe fixes |
 | `26.3` (M52e, planned) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
 

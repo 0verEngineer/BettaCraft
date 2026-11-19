@@ -172,6 +172,10 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   `bettacraft-neoforge-1.21.11-<version>.jar` and `bettacraft-fabric-1.21.11-<version>.jar`. The handbook is GuideME on
   NeoForge and a **Modonomicon** book on Fabric. Mods without a 1.21.11 version (Create, AE2, Refined Storage, KubeJS, the
   power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, EMI) have no integration there.
+- **Minecraft 26.1.2 (Java 25):** the same version for NeoForge 26.1.2 and Fabric (Fabric API 0.155+), files
+  `bettacraft-neoforge-26.1.2-<version>.jar` and `bettacraft-fabric-26.1.2-<version>.jar` (Fabric: also 26.1 and 26.1.1).
+  The handbook is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.1.2 version (Create, Mekanism, Industrial Foregoing,
+  Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, EMI) have no integration there.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
 - **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and

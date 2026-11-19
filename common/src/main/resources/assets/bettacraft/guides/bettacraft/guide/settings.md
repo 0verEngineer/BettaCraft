@@ -223,8 +223,14 @@ craft a book with betta pellets, or ask an operator for `/guideme give <player> 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift) and in JEI.
 
 On **Fabric** the handbook is a book of another mod with the same pages: **Patchouli** on Minecraft 1.21.1,
-**Modonomicon** on 1.21.11 (Patchouli has no 1.21.11 version). There the scenes of this handbook (tank shapes, animals)
-are shown as items, and after changing the language the book shows the new one once you join the world again.
+**Modonomicon** on 1.21.11 and 26.1.2 (Patchouli has no release for them). There the scenes of this handbook (tank shapes,
+animals) are shown as items, and after changing the language the book shows the new one once you join the world again.
+
+On **Minecraft 26.1.2** (Fabric also 26.1 and 26.1.1) everything works as on 1.21.1, with two differences of Minecraft itself: the offers of the
+wandering trader and the aquarist are data (`villager_trade`, in the trade tags `minecraft:wandering_trader/common` /
+`uncommon` and `bettacraft:aquarist/level_1` ... `level_5`), so data packs can remove or add single offers; and mods
+without a 26.1.2 version (Create, Mekanism, Industrial Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic,
+Naturalist, Critters and Companions, EMI) have no integration there.
 
 ## Other mods
 

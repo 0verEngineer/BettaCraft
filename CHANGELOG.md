@@ -4,6 +4,37 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.1.2)
+
+The same version for **Minecraft 26.1.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.1.2-<version>.jar` and
+`bettacraft-fabric-26.1.2-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.1.2 they load
+as usual.
+
+### Added
+- **Minecraft 26.1.2**: NeoForge 26.1.2 and Fabric (Fabric Loader 0.18.4+, Fabric API 0.155+, Forge Config API Port 26.1).
+  The same content, ids, configs and handbook as on 1.21.1. The Fabric jar also runs on **26.1 and 26.1.1**; NeoForge
+  needs 26.1.2 (NeoForge for 26.1 and 26.1.1 is beta only and lacks the 26.1.2 API).
+- **Handbook on Fabric 26.1.2** as a **Modonomicon** book (as on 1.21.11), English and German; NeoForge keeps GuideME.
+- The One Probe works on Fabric again (it has a Fabric 26.1.2 version).
+
+### Fixed
+- Mining an aquarium no longer crashes the client on 26.1 (the crack overlay asks block models without a block).
+
+### Changed (Minecraft 26.1 itself)
+- **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
+  (`data/bettacraft/villager_trade/...`) in the trade tags `minecraft:wandering_trader/common` / `uncommon` and
+  `bettacraft:aquarist/level_1` ... `level_5` (trade sets of the same names). The offers themselves are made as before (item
+  modifier `bettacraft:trade`); data packs can now leave single offers out or add others.
+- The global loot modifiers have priorities (1050 ... 1010): NeoForge 26.1 loads all of them without a list, the
+  priorities keep their order.
+- Blocks get their render layer from their textures (26.1 has no `render_type` any more); the look is unchanged.
+- Recipes and loot keep their results as item templates (26.1); data packs for our recipe types use the same JSON.
+
+### Known gaps on 26.1.2
+- Create (with Sable and Aeronautics), Mekanism, Industrial Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic,
+  Naturalist, Critters and Companions and EMI have no 26.1.2 version: their integrations stay out of this version.
+  Applied Energistics 2, KubeJS, Aquaculture and Cable Facades exist for NeoForge only.
+
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 1.21.11)
 
 The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-neoforge-1.21.11-<version>.jar` and

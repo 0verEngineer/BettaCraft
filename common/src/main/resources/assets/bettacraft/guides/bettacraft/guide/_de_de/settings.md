@@ -228,9 +228,15 @@ Exemplar: Stelle es aus einem Buch und Betta-Pellets her, oder bitte einen Opera
 Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) und in JEI.
 
 Auf **Fabric** ist das Handbuch ein Buch einer anderen Mod mit denselben Seiten: **Patchouli** auf Minecraft 1.21.1,
-**Modonomicon** auf 1.21.11 (Patchouli gibt es für 1.21.11 nicht). Dort erscheinen die Szenen dieses Handbuchs
-(Beckenformen, Tiere) als Items, und nach einem Sprachwechsel zeigt das Buch die neue Sprache, sobald du die Welt neu
-betrittst.
+**Modonomicon** auf 1.21.11 und 26.1.2 (Patchouli gibt es dafür nicht als Release). Dort erscheinen die Szenen dieses
+Handbuchs (Beckenformen, Tiere) als Items, und nach einem Sprachwechsel zeigt das Buch die neue Sprache, sobald du die
+Welt neu betrittst.
+
+Auf **Minecraft 26.1.2** (Fabric auch 26.1 und 26.1.1) funktioniert alles wie auf 1.21.1, mit zwei Unterschieden von Minecraft selbst: Die Angebote
+des fahrenden Händlers und des Aquarianers sind Daten (`villager_trade`, in den Handels-Tags
+`minecraft:wandering_trader/common` / `uncommon` und `bettacraft:aquarist/level_1` ... `level_5`), Datenpakete können also
+einzelne Angebote entfernen oder hinzufügen; und Mods ohne 26.1.2-Version (Create, Mekanism, Industrial Foregoing,
+Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, EMI) haben dort keine Anbindung.
 
 ## Andere Mods
 
