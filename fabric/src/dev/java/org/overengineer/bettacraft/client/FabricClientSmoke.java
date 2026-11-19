@@ -92,7 +92,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
         private static void shot(String name) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getToastManager().clear();
+            mc.gui.toastManager().clear();
             net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1,
                     c -> LOGGER.info("[smoketest] {}", c.getString()));
         }
@@ -126,11 +126,11 @@ public final class FabricClientSmoke implements ClientModInitializer {
             }
             LOGGER.info("[smoketest] crack overlay on {} tank blocks", cracked.size());
             if (cracked.isEmpty()) throw new IllegalStateException("no tank block near the player for the crack overlay");
-            for (int i = 0; i < cracked.size(); i++) mc.levelRenderer.destroyBlockProgress(-100 - i, cracked.get(i), 3 + i % 6);
+            for (int i = 0; i < cracked.size(); i++) mc.level.destroyBlockProgress(-100 - i, cracked.get(i), 3 + i % 6);
         }
         if (crackTicks == 30) BookTour.shot("m52c_crack");
         if (crackTicks < 40) return false;
-        for (int i = 0; i < cracked.size(); i++) mc.levelRenderer.destroyBlockProgress(-100 - i, cracked.get(i), -1);
+        for (int i = 0; i < cracked.size(); i++) mc.level.destroyBlockProgress(-100 - i, cracked.get(i), -1);
         return true;
     }
 

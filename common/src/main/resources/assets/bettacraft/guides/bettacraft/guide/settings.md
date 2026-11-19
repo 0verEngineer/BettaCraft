@@ -223,7 +223,7 @@ craft a book with betta pellets, or ask an operator for `/guideme give <player> 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift) and in JEI.
 
 On **Fabric** the handbook is a book of another mod with the same pages: **Patchouli** on Minecraft 1.21.1,
-**Modonomicon** on 1.21.11 and 26.1.2 (Patchouli has no release for them). There the scenes of this handbook (tank shapes,
+**Modonomicon** on 1.21.11, 26.1.2 and 26.2 (Patchouli has no release for them). There the scenes of this handbook (tank shapes,
 animals) are shown as items, and after changing the language the book shows the new one once you join the world again.
 
 On **Minecraft 26.1.2** (Fabric also 26.1 and 26.1.1) everything works as on 1.21.1, with two differences of Minecraft itself: the offers of the
@@ -232,6 +232,12 @@ wandering trader and the aquarist are data (`villager_trade`, in the trade tags 
 without a 26.1.2 version (Create, Mekanism, Flux Networks, Industrial Foregoing, Farmer's Delight, Better Fish Tanks,
 Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes We've Gone, EMI)
 have no integration there. The FTB Quests chapter is `bettacraft.json5` there (FTB Quests 26.1 reads JSON5).
+
+On **Minecraft 26.2** everything works as on 26.1.2 (the trades are data there too). Mods without a 26.2 version have no
+integration there: FTB Quests (so there is no quest chapter), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
+Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Better Fish Tanks, Fintastic, Critters and Companions, The
+Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes
+We've Gone and EMI. Naturalist is back on 26.2 (NeoForge and Fabric).
 
 ## Other mods
 

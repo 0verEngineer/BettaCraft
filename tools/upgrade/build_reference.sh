@@ -23,6 +23,10 @@ if [ -f "$WT/neoforge/src/dev/java/org/overengineer/bettacraft/command/DevShowca
 SAVES_REL="run/saves"
 if grep -q "run/1.21.11" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL="run/1.21.11/saves"; fi
 if grep -q "run/26.1.2" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL="run/26.1.2/saves"; fi
+# M52d: the run root follows minecraft_version (run/<minecraft>)
+if grep -q 'run/${minecraft_version}' "$WT/neoforge/build.gradle" 2>/dev/null; then
+  SAVES_REL="run/$(grep '^minecraft_version=' "$WT/gradle.properties" | cut -d= -f2 | tr -d "\r")/saves"
+fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
 SHOW="$CMD/DevShowcase.java"
 # extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.

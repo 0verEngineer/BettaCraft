@@ -89,6 +89,8 @@ public final class AquaristGameTests {
         // batch runs alone, so none of them belongs to a running test
         for (var other : h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.PathfinderMob.class,
                 new net.minecraft.world.phys.AABB(h.absolutePos(basin)).inflate(64), e -> e instanceof net.minecraft.world.entity.npc.villager.AbstractVillager || e instanceof org.overengineer.bettacraft.aquarist.AquaristEntity)) other.discard();
+        // M52d: in the morning (villagers look for a job site only while awake; the shared clock of earlier batches may be at night)
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(h.getLevel(), 1000);
         Villager v = h.spawn(EntityTypes.VILLAGER, new BlockPos(10, 1, 8));
         h.succeedWhen(() -> check(Aquarists.isAquarist(v), "still " + v.getVillagerData().profession()));
     }

@@ -228,7 +228,7 @@ Exemplar: Stelle es aus einem Buch und Betta-Pellets her, oder bitte einen Opera
 Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) und in JEI.
 
 Auf **Fabric** ist das Handbuch ein Buch einer anderen Mod mit denselben Seiten: **Patchouli** auf Minecraft 1.21.1,
-**Modonomicon** auf 1.21.11 und 26.1.2 (Patchouli gibt es dafür nicht als Release). Dort erscheinen die Szenen dieses
+**Modonomicon** auf 1.21.11, 26.1.2 und 26.2 (Patchouli gibt es dafür nicht als Release). Dort erscheinen die Szenen dieses
 Handbuchs (Beckenformen, Tiere) als Items, und nach einem Sprachwechsel zeigt das Buch die neue Sprache, sobald du die
 Welt neu betrittst.
 
@@ -239,6 +239,12 @@ einzelne Angebote entfernen oder hinzufügen; und Mods ohne 26.1.2-Version (Crea
 Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper
 and Darker, Oh The Biomes We've Gone, EMI) haben dort keine Anbindung. Das FTB-Quests-Kapitel heißt dort `bettacraft.json5`
 (FTB Quests 26.1 liest JSON5).
+
+Auf **Minecraft 26.2** funktioniert alles wie auf 26.1.2 (auch dort ist der Handel Daten). Mods ohne 26.2-Version haben dort
+keine Anbindung: FTB Quests (daher gibt es kein Quest-Kapitel), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
+Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Better Fish Tanks, Fintastic, Critters and Companions, The
+Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes
+We've Gone und EMI. Naturalist gibt es auf 26.2 wieder (NeoForge und Fabric).
 
 ## Andere Mods
 
