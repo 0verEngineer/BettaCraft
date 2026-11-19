@@ -58,14 +58,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Java 21
+      - name: Set up Java 25
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
-          java-version: |
-            25
-            21
+          # M52c: 26.1 runs on Java 25 (the Gradle daemon and the game)
+          java-version: 25
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
@@ -104,7 +102,7 @@ jobs:
           cat neoforge/build/verifyReleaseJar.txt
           cat fabric/build/verifyFabricJar.txt
           for loader in neoforge fabric; do
-            jar="build/libs/bettacraft-$loader-1.21.1-${{ steps.version.outputs.version }}.jar"
+            jar="build/libs/bettacraft-$loader-26.1.2-${{ steps.version.outputs.version }}.jar"
             test -f "$jar"
             (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
           done
@@ -119,10 +117,10 @@ jobs:
         with:
           name: bettacraft-${{ steps.version.outputs.version }}
           path: |
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-neoforge-26.1.2-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-neoforge-26.1.2-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-fabric-26.1.2-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-fabric-26.1.2-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
             build/release-notes.md
           if-no-files-found: error
@@ -142,10 +140,10 @@ jobs:
           name: Bettacraft ${{ steps.version.outputs.version }}
           body_path: build/release-notes.md
           files: |
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-neoforge-26.1.2-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-neoforge-26.1.2-${{ steps.version.outputs.version }}.jar.sha256
+            build/libs/bettacraft-fabric-26.1.2-${{ steps.version.outputs.version }}.jar
+            build/libs/bettacraft-fabric-26.1.2-${{ steps.version.outputs.version }}.jar.sha256
             build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
           prerelease: ${{ steps.version.outputs.type != 'release' }}
           make_latest: ${{ steps.version.outputs.type == 'release' }}
@@ -166,23 +164,20 @@ jobs:
             jei(optional)
             the-one-probe(optional)
             wthit-forge(optional)
-            better-fishtanks(optional)
             fish-of-thieves(optional)
-            fintastic(optional)
             aquaculture(optional)
-            naturalist(optional)
-          files: build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
+          files: build/libs/bettacraft-neoforge-26.1.2-${{ steps.version.outputs.version }}.jar
           name: Bettacraft ${{ steps.version.outputs.version }} (NeoForge)
           version: ${{ steps.version.outputs.version }}
           version-type: ${{ steps.version.outputs.type }}
           changelog-file: build/release-notes.md
           loaders: neoforge
-          game-versions: "1.21.1"
-          java: "21"
+          game-versions: "26.1.2"
+          java: "25"
 
       # M52: the Fabric jar, same project, loader tag fabric. Dependencies (CurseForge slugs, CHECK BEFORE THE FIRST
-      # RELEASE: a wrong slug fails the upload): Fabric API and Forge Config API Port (required), Patchouli (the
-      # handbook), Mod Menu (the config screen), Jade, WTHIT, The One Probe, JEI, REI and EMI (optional)
+      # RELEASE: a wrong slug fails the upload): Fabric API and Forge Config API Port (required), Modonomicon (the
+      # handbook on 26.1.2), Mod Menu (the config screen), Jade, WTHIT, The One Probe, JEI and REI (optional)
       - name: Publish to CurseForge (Fabric)
         if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
@@ -192,19 +187,22 @@ jobs:
           curseforge-dependencies: |
             fabric-api(required)
             forge-config-api-port-fabric(required)
-            patchouli-fabric(optional)
+            modonomicon(optional)
             modmenu(optional)
             jade(optional)
             wthit(optional)
             the-one-probe(optional)
             jei(optional)
             roughly-enough-items(optional)
-            emi(optional)
-          files: build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
+          files: build/libs/bettacraft-fabric-26.1.2-${{ steps.version.outputs.version }}.jar
           name: Bettacraft ${{ steps.version.outputs.version }} (Fabric)
           version: ${{ steps.version.outputs.version }}+fabric
           version-type: ${{ steps.version.outputs.type }}
           changelog-file: build/release-notes.md
           loaders: fabric
-          game-versions: "1.21.1"
-          java: "21"
+          # M52c: the Fabric jar also runs on 26.1 and 26.1.1 (tested); NeoForge 26.1.2 only
+          game-versions: |
+            26.1
+            26.1.1
+            26.1.2
+          java: "25"

@@ -37,6 +37,7 @@ sourceSets {
         java.srcDir(commonProject.file('src/main/java'))
         java.srcDir(integrationSrc)
         // M52b: no TOP and no EMI for Fabric 1.21.11; M52c: The One Probe is back for Fabric 26.1.2, EMI still has no build
+        // (its "emi" entrypoint is left out of fabric.mod.json too: EMI would fail on the missing class)
         java.exclude('org/overengineer/bettacraft/fabric/compat/BettaCraftEmiPlugin.java')
         resources {
             srcDir(commonProject.file('src/main/resources'))
@@ -432,12 +433,15 @@ tasks.register('verifyFabricJar') {
     group = 'verification'
     def jarTask = tasks.named('jar')
     dependsOn jarTask
+    // only the file (the configuration cache cannot keep a task)
+    def jarFile = jarTask.flatMap { it.archiveFile }
     def report = layout.buildDirectory.file('verifyFabricJar.txt')
     def expected = project.findProperty('expectedVersion')
     def version = project.mod_version
+    def mcDependency = project.fabric_minecraft_dependency
     outputs.file(report)
     doLast {
-        def f = jarTask.get().archiveFile.get().asFile
+        def f = jarFile.get().asFile
         def zip = new java.util.zip.ZipFile(f)
         def names = zip.entries().collect { it.name }
         def problems = []
@@ -459,6 +463,7 @@ tasks.register('verifyFabricJar') {
         if (names.any { it.startsWith('assets/bettacraft/guides/') }) problems << 'GuideME pages in the Fabric jar'
         def modJson = new groovy.json.JsonSlurper().parse(zip.getInputStream(zip.getEntry('fabric.mod.json')))
         if (modJson.version != version) problems << "fabric.mod.json version ${modJson.version}, expected ${version}"
+        if (modJson.depends?.minecraft != mcDependency) problems << "fabric.mod.json minecraft ${modJson.depends?.minecraft}, expected ${mcDependency}"
         if (expected != null && modJson.version != expected) problems << "fabric.mod.json version ${modJson.version}, tag ${expected}"
         def recipe = names.find { it.startsWith('data/bettacraft/recipe/') && it.endsWith('.json') }
         names.findAll { it.startsWith('data/bettacraft/') && it.endsWith('.json') }.each { n ->
@@ -482,7 +487,9 @@ tasks.named('check').configure { dependsOn 'verifyFabricJar' }
 
 // ---- M52: production runs (like a player's Fabric profile; M52c: 26.1 has no intermediary any more): the released jar,
 // the dev smoke jar and the official jars of the other mods; gradlew prodFabricServer -Psmoketest / prodFabricClient
-// -Psmoketestfabric (background window), run dirs <fabricRunRoot>/prod-server and <fabricRunRoot>/prod-client
+// -Psmoketestfabric (background window), run dirs <fabricRunRoot>/prod-server and <fabricRunRoot>/prod-client.
+// M52c: -PprodMinecraft=<version> runs them on another Minecraft of the declared range (26.1, 26.1.1)
+def prodMinecraft = project.findProperty('prodMinecraft') ?: project.minecraft_version
 configurations {
     prodMods { transitive = false }
 }
@@ -515,7 +522,7 @@ tasks.register('prodFabricServer', net.fabricmc.loom.task.prod.ServerProductionR
     mods.from(configurations.prodMods)
     installerVersion = '1.0.1'
     loaderVersion = project.fabric_loader_version
-    minecraftVersion = project.minecraft_version
+    minecraftVersion = prodMinecraft
     runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-server")
     jvmArgs.addAll(prodProps(false))
     programArgs.add('--nogui')
@@ -528,6 +535,7 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
     mods.from(tasks.named('jar'))
     mods.from(remapDevJar)
     mods.from(configurations.prodMods)
+    minecraftVersion = prodMinecraft
     runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-client")
     jvmArgs.addAll(prodProps(true))
     programArgs.addAll(['--width', '1280', '--height', '760'])
