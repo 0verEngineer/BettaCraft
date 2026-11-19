@@ -18,17 +18,7 @@ public abstract class BlockItemMixin extends Item {
         super(properties);
     }
 
-    @org.spongepowered.asm.mixin.Shadow
-    public abstract net.minecraft.world.level.block.Block getBlock();
-
-    /** M52b: the tooltip of a block of ours ({@link org.overengineer.bettacraft.util.BlockTooltip}; Block#appendHoverText is gone). */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void appendHoverText(net.minecraft.world.item.ItemStack stack, Item.TooltipContext ctx, net.minecraft.world.item.component.TooltipDisplay display,
-            java.util.function.Consumer<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
-        super.appendHoverText(stack, ctx, display, tooltip, flag);
-        if (getBlock() instanceof org.overengineer.bettacraft.util.BlockTooltip t) t.appendHoverText(stack, ctx, display, tooltip, flag);
-    }
+    // M52c: the block tooltip is in ItemTooltipMixin (an inject; an added method here clashed with other mods)
 
     @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
     private static Item.Properties bettacraft$blockName(Item.Properties properties) {

@@ -8,7 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 
 /**
- * M52b: the tooltip of a block's item. {@code Block#appendHoverText} is gone since 1.21.2; {@code BlockItemMixin} asks the
+ * M52b: the tooltip of a block's item. {@code Block#appendHoverText} is gone since 1.21.2; {@code ItemTooltipMixin} asks the
  * block of every block item for these lines.
  */
 public interface BlockTooltip {

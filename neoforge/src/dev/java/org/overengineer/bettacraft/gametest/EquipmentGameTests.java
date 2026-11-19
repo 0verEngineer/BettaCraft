@@ -58,6 +58,22 @@ public final class EquipmentGameTests {
 
     private EquipmentGameTests() {}
 
+    /**
+     * M52c: the item of a block with a tooltip ({@code BlockTooltip}) shows the block's lines exactly once (an inject into
+     * {@code Item#appendHoverText}; the method once added to {@code BlockItem} clashed with other mods in ATM11).
+     */
+    @GameTest(template = EMPTY)
+    public static void blockItemsShowTheirBlockTooltipOnce(GameTestHelper h) {
+        net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(ModBlocks.FILTER_INLET_PIPE.get().asItem());
+        List<net.minecraft.network.chat.Component> lines = new ArrayList<>();
+        stack.getItem().appendHoverText(stack, Item.TooltipContext.of(h.getLevel()), net.minecraft.world.item.component.TooltipDisplay.DEFAULT,
+                lines::add, net.minecraft.world.item.TooltipFlag.NORMAL);
+        long usage = lines.stream().filter(c -> c.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
+                && t.getKey().equals("tooltip.bettacraft.filter_pipe.usage")).count();
+        h.assertTrue(usage == 1, "the filter pipe usage line once, got " + lines);
+        h.succeed();
+    }
+
     private static TankBlockEntity tank(GameTestHelper h, int x, int y, int z, int sx, int sy, int sz, long water) {
         for (int a = 0; a < sx; a++)
             for (int b = 0; b < sy; b++)

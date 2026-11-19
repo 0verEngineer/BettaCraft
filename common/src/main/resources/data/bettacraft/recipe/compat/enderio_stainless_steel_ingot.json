@@ -19,15 +19,15 @@
   "inputs": [
     {
       "count": 3,
-      "tag": "c:ingots/iron"
+      "ingredient": "#c:ingots/iron"
     },
     {
       "count": 1,
-      "tag": "c:gems/quartz"
+      "ingredient": "#c:gems/quartz"
     },
     {
       "count": 1,
-      "tag": "minecraft:coals"
+      "ingredient": "#minecraft:coals"
     }
   ],
   "output": {
