@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -100,7 +99,7 @@ public final class TravellingTankRenderer {
                     if (mc.level.getBlockEntity(p) instanceof TankBlockEntity m) {
                         travellingBlock(m);
                         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(m);
-                        mc.levelRenderer.setBlocksDirty(p.getX(), p.getY(), p.getZ(), p.getX(), p.getY(), p.getZ());
+                        mc.levelExtractor.setBlocksDirty(p.getX(), p.getY(), p.getZ(), p.getX(), p.getY(), p.getZ());
                     }
                 }
             }
@@ -130,7 +129,7 @@ public final class TravellingTankRenderer {
             Entity e;
             try {
                 e = EntityType.create(org.overengineer.bettacraft.util.NbtCompat.input(mc.level.registryAccess(), tag), mc.level,
-                        net.minecraft.world.entity.EntitySpawnReason.LOAD).orElse(null);
+                        new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false)).orElse(null);
             } catch (RuntimeException ex) {
                 e = null;
             }
@@ -190,7 +189,7 @@ public final class TravellingTankRenderer {
                 var state = dispatcher.extractEntity(e, partialTick);
                 state.lightCoords = light;
                 state.shadowPieces.clear();
-                dispatcher.submit(state, mc.gameRenderer.getGameRenderState().levelRenderState.cameraRenderState, px, py, pz, pose, LegacyBlockEntityRenderer.collector());
+                dispatcher.submit(state, mc.gameRenderer.gameRenderState().levelRenderState.cameraRenderState, px, py, pz, pose, LegacyBlockEntityRenderer.collector());
             } catch (RuntimeException ex) {
                 if (!failedOnce) {
                     failedOnce = true;

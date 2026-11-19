@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -85,7 +86,7 @@ public final class BigTankGameTests {
     }
 
     static ItemStack dolphinTub(GameTestHelper h) {
-        Dolphin d = EntityType.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Dolphin d = EntityTypes.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (d == null) throw new GameTestFailure("no dolphin");
         ItemStack tub = TransportTubItem.fillWith(d);
         d.discard();
@@ -119,8 +120,8 @@ public final class BigTankGameTests {
     public static void sizeRuleOfTheBigAnimals(GameTestHelper h) {
         h.assertTrue(TankInhabitants.accepts(org.overengineer.bettacraft.registry.ModEntities.TANKMATES.get(TankmateSpecies.PANGASIUS).get(), null)
                 == TankInhabitants.Acceptance.BIG, "a pangasius depends on the tank");
-        h.assertTrue(BigAnimals.length(EntityType.DOLPHIN, null) > 2.5 && BigAnimals.length(EntityType.DOLPHIN, null) < 2.7, "a dolphin is 2.6 m");
-        h.assertTrue(BigAnimals.length(EntityType.SQUID, null) == 0 && BigAnimals.length(EntityType.COD, null) == 0, "small animals have no big length");
+        h.assertTrue(BigAnimals.length(EntityTypes.DOLPHIN, null) > 2.5 && BigAnimals.length(EntityTypes.DOLPHIN, null) < 2.7, "a dolphin is 2.6 m");
+        h.assertTrue(BigAnimals.length(EntityTypes.SQUID, null) == 0 && BigAnimals.length(EntityTypes.COD, null) == 0, "small animals have no big length");
         TankBlockEntity small = tank(h, 0, 1, 0, 11, 3, 6, 0F);
         Component e = insert(h, small, pangasiusTub(h));
         h.assertTrue(says(e, "message.bettacraft.big.too_small"), "11 x 6 is too short: " + (e == null ? "accepted" : e.getString()));

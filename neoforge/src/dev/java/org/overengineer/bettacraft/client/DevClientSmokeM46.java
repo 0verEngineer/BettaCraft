@@ -75,11 +75,11 @@ final class DevClientSmokeM46 {
     DevClientSmokeM46() {
         then(1, () -> server(this::setup));
         if (!CARPETS_ONLY.isEmpty()) {
-            then(1, () -> mc.options.hideGui = true);
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
             carpets("_" + CARPETS_ONLY, false);
             return;
         }
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // part 1: the heat mat
         then(120, () -> server(this::heatMat));
         then(60, () -> lookAt(wall.getX() + 0.5, wall.getY() + 1.0, wall.getZ() - 2.2, 0F, 12F));
@@ -87,16 +87,16 @@ final class DevClientSmokeM46 {
         then(1, () -> mc.options.setCameraType(CameraType.THIRD_PERSON_FRONT));
         then(30, () -> shot("icon_third_person"));
         then(1, () -> mc.options.setCameraType(CameraType.FIRST_PERSON));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> lookAt(wall.getX() + 1.5, wall.getY() + 1.4, wall.getZ() - 1.6, 0F, 28F));
         then(40, () -> shot("icon_frames"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL)));
         then(10, () -> {
             guiScale = mc.options.guiScale().get();
             mc.options.guiScale().set(4);
             mc.resizeGui();
-            if (mc.player != null) mc.setScreen(new InventoryScreen(mc.player));
+            if (mc.player != null) mc.gui.setScreen(new InventoryScreen(mc.player));
         });
         then(20, () -> jeiFilter("heat mat"));
         then(30, () -> shot("icon_inventory"));
@@ -104,7 +104,7 @@ final class DevClientSmokeM46 {
         then(30, () -> shot("icon_jei"));
         then(1, () -> {
             jeiFilter("");
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             mc.options.guiScale().set(guiScale);
             mc.resizeGui();
         });
@@ -113,7 +113,7 @@ final class DevClientSmokeM46 {
             p.getAbilities().flying = true;
             p.onUpdateAbilities();
         }));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // part 2: the wild carpets in three waters
         carpets("", true);
         // part 3: the herps
@@ -211,7 +211,7 @@ final class DevClientSmokeM46 {
         inv.setItem(0, mat.copy());
         inv.setItem(1, new ItemStack(ModItems.HEAT_MAT.get(), 16));
         inv.setItem(2, new ItemStack(Items.MOSS_CARPET));
-        inv.setItem(3, new ItemStack(Items.WHITE_CARPET));
+        inv.setItem(3, new ItemStack(Items.CARPET.pick(net.minecraft.world.item.DyeColor.WHITE)));
         inv.setItem(4, new ItemStack(ModBlocks.BASKING_LAMP.get()));
         inv.setItem(9, new ItemStack(ModItems.HEAT_MAT.get(), 4));
         inv.setSelectedSlot(0);
@@ -429,7 +429,7 @@ final class DevClientSmokeM46 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -448,7 +448,7 @@ final class DevClientSmokeM46 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m46_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m46_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

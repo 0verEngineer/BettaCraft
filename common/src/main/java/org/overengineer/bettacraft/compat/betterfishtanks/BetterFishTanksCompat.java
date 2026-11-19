@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -84,7 +84,7 @@ public final class BetterFishTanksCompat {
         if (type == null || be == null) return Component.translatable("message.bettacraft.compat.bft_failed");
         @SuppressWarnings("unchecked")
         EntityType<Entity> anyType = (EntityType<Entity>) type;
-        Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
+        net.minecraft.world.entity.PostSpawnProcessor<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
         // M17: an animal without a bucket (squid) is stored with its full data in our bag: keep name, health, age ...
         net.minecraft.nbt.CompoundTag stored = FishBagItem.storedEntity(stack);
         Entity e;

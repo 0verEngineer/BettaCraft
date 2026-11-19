@@ -33,16 +33,16 @@ final class DevClientSmokeM42 {
     DevClientSmokeM42() {
         LOGGER.info("[smoketest] M42 mods: jei {}, guideme {}, create {}, ae2 {}", org.overengineer.bettacraft.platform.Platform.get().isModLoaded("jei"), org.overengineer.bettacraft.platform.Platform.get().isModLoaded("guideme"),
                 org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create"), org.overengineer.bettacraft.platform.Platform.get().isModLoaded("ae2"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(40, () -> jei(new ItemStack(ModItems.BETTA_PELLETS.get()), true));
         then(40, () -> shot("jei_pellets"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(10, () -> jei(new ItemStack(ModItems.STAINLESS_STEEL_INGOT.get()), true));
         then(40, () -> shot("jei_steel"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(10, () -> jei(new ItemStack(ModItems.ACTIVATED_CARBON.get()), true));
         then(40, () -> shot("jei_media"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(10, () -> {
             if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded("guideme")) {
                 LOGGER.error("[smoketest] M42 GuideME missing");
@@ -51,10 +51,10 @@ final class DevClientSmokeM42 {
             org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("equipment/filter_media.md"));
         });
         then(60, () -> {
-            LOGGER.info("[smoketest] M42 handbook screen: {}", mc.screen == null ? "NONE (FAIL)" : mc.screen.getClass().getSimpleName());
+            LOGGER.info("[smoketest] M42 handbook screen: {}", mc.gui.screen() == null ? "NONE (FAIL)" : mc.gui.screen().getClass().getSimpleName());
             shot("guide_media");
         });
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     /** JEI's recipe screen of the stack (the recipes that make it, or with {@code output} false the ones that use it). */
@@ -70,7 +70,7 @@ final class DevClientSmokeM42 {
             var focus = rt.getJeiHelpers().getFocusFactory().createFocus(output ? mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT
                     : mezz.jei.api.recipe.RecipeIngredientRole.INPUT, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, stack);
             rt.getRecipesGui().show(focus);
-            LOGGER.info("[smoketest] M42 JEI recipes of {}: screen {}", stack, mc.screen == null ? "NONE" : mc.screen.getClass().getSimpleName());
+            LOGGER.info("[smoketest] M42 JEI recipes of {}: screen {}", stack, mc.gui.screen() == null ? "NONE" : mc.gui.screen().getClass().getSimpleName());
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M42 JEI (FAIL)", e);
         }
@@ -85,7 +85,7 @@ final class DevClientSmokeM42 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -105,7 +105,7 @@ final class DevClientSmokeM42 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m42_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m42_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

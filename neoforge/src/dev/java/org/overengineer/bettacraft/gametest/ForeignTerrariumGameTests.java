@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.turtle.Turtle;
@@ -120,11 +121,11 @@ public final class ForeignTerrariumGameTests {
     }
 
     private static Animal tortoise() {
-        return animal("naturalist_tortoise", "naturalist:tortoise", EntityType.ARMADILLO);
+        return animal("naturalist_tortoise", "naturalist:tortoise", EntityTypes.ARMADILLO);
     }
 
     private static Animal alligator() {
-        return animal("naturalist_alligator", "naturalist:alligator", EntityType.CAMEL);
+        return animal("naturalist_alligator", "naturalist:alligator", EntityTypes.CAMEL);
     }
 
     static ServerLevel interior(GameTestHelper h) {
@@ -413,10 +414,10 @@ public final class ForeignTerrariumGameTests {
             for (ItemStack s : player.getInventory().getNonEquipmentItems()) if (TerrariumBoxItem.isFilled(s)) filled = s;
             h.assertTrue(TerrariumBoxItem.containedType(filled) == tortoise.type(), "a box with the tortoise");
             h.assertTrue(filled.getMaxStackSize() == 1, "one animal per box");
-            LivingEntity cow = wild(h, EntityType.COW, new Vec3(8, 2, 28));
+            LivingEntity cow = wild(h, EntityTypes.COW, new Vec3(8, 2, 28));
             // M39 part c: the cow is a big Minecraft pet now (the large net and the tub); an allay has no profile
             h.assertTrue(says(ForeignTerrarium.boxRefusal(player, cow), "message.bettacraft.box.too_big"), "a cow is too big for the box");
-            LivingEntity allay = wild(h, EntityType.ALLAY, new Vec3(10, 2, 28));
+            LivingEntity allay = wild(h, EntityTypes.ALLAY, new Vec3(10, 2, 28));
             h.assertTrue(says(ForeignTerrarium.boxRefusal(player, allay), "message.bettacraft.box.refused"), "an allay has no profile");
             allay.discard();
             player.interactOn(cow, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
@@ -443,18 +444,18 @@ public final class ForeignTerrariumGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m35_foreign_terrarium", timeoutTicks = 200)
     public static void seaTurtlesOnlyInBigSeaWaterPaludaria(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        h.assertTrue(BigAnimals.length(EntityType.TURTLE, null) == 1.0, "1 m");
+        h.assertTrue(BigAnimals.length(EntityTypes.TURTLE, null) == 1.0, "1 m");
         TankBlockEntity fresh = paludarium(h, 2, 18, 12, 3, 8, 0, 0.25, Blocks.SAND.defaultBlockState());
-        h.assertTrue(says(insert(h, fresh, container(h, EntityType.TURTLE, true, false)), "message.bettacraft.big.dolphin_salt"), "fresh water refuses it");
+        h.assertTrue(says(insert(h, fresh, container(h, EntityTypes.TURTLE, true, false)), "message.bettacraft.big.dolphin_salt"), "fresh water refuses it");
         TankBlockEntity stone = paludarium(h, 16, 18, 12, 3, 8, 35, 0.25, Blocks.STONE.defaultBlockState());
-        h.assertTrue(says(insert(h, stone, container(h, EntityType.TURTLE, true, false)), "message.bettacraft.sea_turtle.no_beach"), "no beach: refused");
+        h.assertTrue(says(insert(h, stone, container(h, EntityTypes.TURTLE, true, false)), "message.bettacraft.sea_turtle.no_beach"), "no beach: refused");
         TankBlockEntity c = paludarium(h, 2, 2, 12, 3, 8, 35, 0.25, Blocks.SAND.defaultBlockState());
         var watcher = QuestAdv.watcher(h, c); // M45
-        put(h, c, container(h, EntityType.TURTLE, true, false));
+        put(h, c, container(h, EntityTypes.TURTLE, true, false));
         QuestAdv.check(h, watcher, "sea_turtle");
         h.assertTrue(!QuestAdv.done(watcher, "big_animal"), "a sea turtle has its own advancement");
         QuestAdv.gone(h, watcher);
-        Turtle baby = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Turtle baby = EntityTypes.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         baby.setAge(-24000);
         baby.snapTo(h.absoluteVec(new Vec3(20, 2, 2)));
         h.assertTrue(TankInhabitants.bagTakes(baby), "a hatchling goes into a bag");
@@ -465,11 +466,11 @@ public final class ForeignTerrariumGameTests {
         ((Turtle) young).setAge(0);
         TankInhabitants.reconcile(level, c);
         h.assertTrue(young.isAlive() && TankInhabitants.liveInhabitants(level, c.getTank()).contains(young), "grown up, it stays");
-        LivingEntity mother = layEggs(h, c, EntityType.TURTLE);
-        int before = ofType(h, c, EntityType.TURTLE).size();
+        LivingEntity mother = layEggs(h, c, EntityTypes.TURTLE);
+        int before = ofType(h, c, EntityTypes.TURTLE).size();
         ForeignBreeding.step(level, c, 5.0);
-        long babies = ofType(h, c, EntityType.TURTLE).stream().filter(LivingEntity::isBaby).count();
-        h.assertTrue(babies >= 2 && ofType(h, c, EntityType.TURTLE).size() == before + babies, "hatchlings from the beach: " + babies);
+        long babies = ofType(h, c, EntityTypes.TURTLE).stream().filter(LivingEntity::isBaby).count();
+        h.assertTrue(babies >= 2 && ofType(h, c, EntityTypes.TURTLE).size() == before + babies, "hatchlings from the beach: " + babies);
         h.assertTrue(ForeignNests.nestOf(mother) == null, "the nest is done");
         h.succeed();
     }

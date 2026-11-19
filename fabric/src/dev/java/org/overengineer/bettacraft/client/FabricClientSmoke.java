@@ -52,7 +52,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                     steps.add(() -> open(page[1], Integer.parseInt(page[2])));
                     for (int i = 0; i < 25; i++) steps.add(() -> {});
                     steps.add(() -> shot("book_" + page[0] + "_" + lang));
-                    steps.add(() -> Minecraft.getInstance().setScreen(null));
+                    steps.add(() -> Minecraft.getInstance().gui.setScreen(null));
                 }
                 // the recipe viewer (JEI / REI / EMI, whichever runs): the uses of the food maker
                 steps.add(() -> RecipeViewerShots.show(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.FOOD_MAKER.get())));
@@ -61,7 +61,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 steps.add(() -> RecipeViewerShots.show(new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.TANK.get())));
                 for (int i = 0; i < 30; i++) steps.add(() -> {});
                 steps.add(() -> shot("viewer_tank_" + lang));
-                steps.add(() -> Minecraft.getInstance().setScreen(null));
+                steps.add(() -> Minecraft.getInstance().gui.setScreen(null));
             }
             steps.add(() -> language("en_us"));
             for (int i = 0; i < 20; i++) steps.add(() -> {});
@@ -93,7 +93,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
         private static void shot(String name) {
             Minecraft mc = Minecraft.getInstance();
             mc.getToastManager().clear();
-            net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.getMainRenderTarget(), 1,
+            net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1,
                     c -> LOGGER.info("[smoketest] {}", c.getString()));
         }
     }
@@ -141,7 +141,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
             mc.execute(() -> {
                 mc.options.onboardAccessibility = false;
                 mc.options.save();
-                mc.setScreen(new TitleScreen());
+                mc.gui.setScreen(new TitleScreen());
             });
             return;
         }
@@ -170,7 +170,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
         mc.options.pauseOnLostFocus = false;
         if (ticks == 2) mc.getWindow().setWindowed(1280, 960);
         if (ticks > 60) mc.player.getAbilities().flying = true;
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         try {
             // -Psmoketestbook: only the handbook (Patchouli) and the recipe viewer, English and German
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.book")) {

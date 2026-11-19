@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.datagen;
 
 import java.util.List;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import org.overengineer.bettacraft.registry.ModTags;
@@ -28,7 +27,7 @@ final class DataGenM38 {
     static final List<String> FINTASTIC_ROCKS = List.of("live_rock", "porous_live_rock", "green_algae_live_rock", "red_algae_live_rock",
             "dead_live_rock", "dead_porous_live_rock");
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         var interior = tag.apply(ModTags.INTERIOR_WATER_PLANTS);
         var sway = tag.apply(ModTags.SWAYING_PLANTS);
         for (String[] p : WATER_PLANTS) {

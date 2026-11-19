@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +59,7 @@ final class DevClientSmokeM35b {
 
     DevClientSmokeM35b() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(terra.getX() + 6, terra.getY() + 3.4, terra.getZ() - 5.5, 0F, 24F));
         then(140, () -> shot("terrarium"));
@@ -66,7 +67,7 @@ final class DevClientSmokeM35b {
         then(100, () -> shot("paludarium"));
         then(1, () -> look(fly.getX() + 5, fly.getY() + 3.3, fly.getZ() - 6.0, 0F, 20F));
         then(100, () -> shot("dragonfly"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -211,7 +212,7 @@ final class DevClientSmokeM35b {
                 org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenome.randomDomestic(
                         net.minecraft.util.RandomSource.create(35)), true, 0)), org.overengineer.bettacraft.registry.ModEntities.BETTA.get());
         pose(level, pc, betta, 2.5, 3.0, surface - 0.55, 100F);
-        pose(level, pc, fish(level, pc, new ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH), 4.6, 4.6, surface - 0.7, 60F);
+        pose(level, pc, fish(level, pc, new ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH), 4.6, 4.6, surface - 0.7, 60F);
         EntityType<?> guppy = type("fintastic:guppy");
         if (guppy != null) pose(level, pc, insert(level, pc, guppy, 2, false), 3.4, 5.8, surface - 0.4, 120F);
         pose(level, pc, insert(level, pc, crab, 1, false), 8.0, 2.8, Double.NaN, 200F);
@@ -255,7 +256,7 @@ final class DevClientSmokeM35b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -274,7 +275,7 @@ final class DevClientSmokeM35b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m35b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m35b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -73,7 +73,7 @@ final class DevClientSmokeM19 {
         // stand near the scene first: its chunks must stay loaded until the fish are posed
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 440, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // let them swim into place, then freeze them in their poses
         then(160, () -> server(this::pose));
         // 1. the community tank
@@ -120,14 +120,14 @@ final class DevClientSmokeM19 {
         then(1, () -> look(breeding.getX() + 8.5, breeding.getY() + 2.4, breeding.getZ() - 6.5, 0F, 14F));
         then(40, () -> shot("breeding_row"));
         // 4. menus
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), community.getX() + 2.5, community.getY() + 0.5, community.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
         }));
         then(10, () -> openMenu(community));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts && !ts.showTankmateForTest("cardinal_tetra")) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts && !ts.showTankmateForTest("cardinal_tetra")) {
                 LOGGER.error("[smoketest] M19 no cardinal in the menu");
             }
         });
@@ -137,25 +137,25 @@ final class DevClientSmokeM19 {
         then(20, () -> shot("menu_animals_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(5, () -> server(p -> p.teleportTo(p.level(), breedTanks.getFirst().getX() + 1.5, breedTanks.getFirst().getY() + 0.5, breedTanks.getFirst().getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         then(10, () -> openMenu(breedTanks.get(2)));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
         });
         then(20, () -> shot("menu_breeding"));
         then(1, () -> language("de_de"));
         then(20, () -> shot("menu_breeding_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(10, () -> openMenu(breedTanks.getFirst()));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
         });
         then(20, () -> shot("menu_breeding_cory"));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // 5. items
         then(10, this::openCreativeTab);
         then(10, this::hoverBag);
@@ -164,8 +164,8 @@ final class DevClientSmokeM19 {
         then(5, this::hoverBag);
         then(20, () -> shot("items_de"));
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> mc.gui.setScreen(null));
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     // ------------------------------------------------------------------ scene
@@ -517,7 +517,7 @@ final class DevClientSmokeM19 {
     /** The creative inventory on the Bettacraft tab, scrolled to the tankmates. */
     private void openCreativeTab() {
         var scr = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), true);
-        mc.setScreen(scr);
+        mc.gui.setScreen(scr);
         try {
             var m = net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen.class.getDeclaredMethod("selectTab", net.minecraft.world.item.CreativeModeTab.class);
             m.setAccessible(true);
@@ -538,7 +538,7 @@ final class DevClientSmokeM19 {
 
     /** Over a fish bag with a shoal of neons. */
     private void hoverBag() {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             ItemStack st = s.getItem();
             if (org.overengineer.bettacraft.tankmates.TankmateItems.bagSpecies(st) == TankmateSpecies.CARDINAL_TETRA) {
@@ -559,7 +559,7 @@ final class DevClientSmokeM19 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -585,7 +585,7 @@ final class DevClientSmokeM19 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void mouseTo(int x, int y) {
@@ -603,8 +603,8 @@ final class DevClientSmokeM19 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M19 shot {} from {} (fov {})", name, mc.player.getEyePosition(), mc.options.fov().get());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m19_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m19_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
     }
 }

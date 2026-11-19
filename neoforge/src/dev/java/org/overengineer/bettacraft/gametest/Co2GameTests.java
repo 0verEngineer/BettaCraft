@@ -316,7 +316,7 @@ public final class Co2GameTests {
         float before = t.tds();
         ServerPlayer sp = player(h, new ItemStack(ModItems.RO_WATER_BUCKET.get()));
         TankInteractions.useItemOn(sp.getMainHandItem(), level, c.getBlockPos(), sp, InteractionHand.MAIN_HAND,
-                new net.minecraft.world.phys.BlockHitResult(c.getBlockPos().getCenter(), Direction.UP, c.getBlockPos(), false));
+                new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(c.getBlockPos()), Direction.UP, c.getBlockPos(), false));
         h.assertTrue(sp.getMainHandItem().is(Items.BUCKET) && t.tds() < before, "the RO bucket softens the water: " + t.tds());
         // the reservoir takes RO water with its values
         var store = new org.overengineer.bettacraft.plumbing.WaterStore(4000, () -> {});

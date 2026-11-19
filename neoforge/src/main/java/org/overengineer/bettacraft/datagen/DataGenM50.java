@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.datagen;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.tags.TagKey;
 import org.overengineer.bettacraft.BettaCraft;
@@ -15,7 +14,7 @@ import org.overengineer.bettacraft.tank.TankMoves;
 final class DataGenM50 {
     private DataGenM50() {}
 
-    static void entityTags(java.util.function.Function<TagKey<EntityType<?>>, net.minecraft.data.tags.TagAppender<EntityType<?>, EntityType<?>>> tag) {
+    static void entityTags(java.util.function.Function<TagKey<EntityType<?>>, ObjTags.Appender<EntityType<?>>> tag) {
         var retain = tag.apply(TankMoves.RETAIN);
         BuiltInRegistries.ENTITY_TYPE.stream().filter(t -> BettaCraft.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(t).getNamespace()))
                 .filter(t -> t != org.overengineer.bettacraft.registry.ModEntities.HIRED_AQUARIST.get()) // M51: a person, not an animal of a tank

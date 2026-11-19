@@ -12,9 +12,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,7 +62,7 @@ final class DevClientSmokeM31d {
 
     DevClientSmokeM31d() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(160, () -> server(pl -> place(pl.level())));
         then(1, () -> look(drowned.getX() + 2.0, drowned.getY() + 1.9, drowned.getZ() - 1.6, 0F, 22F));
         then(120, () -> {
@@ -77,7 +78,7 @@ final class DevClientSmokeM31d {
         then(80, () -> shot("slimes"));
         then(1, () -> look(frames.getX() + 1.0, frames.getY() + 1.5, frames.getZ() - 1.1, 0F, 0F));
         then(60, () -> shot("mob_jar"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -200,25 +201,25 @@ final class DevClientSmokeM31d {
     private void place(ServerLevel level) {
         TankBlockEntity dc = controller(level, drowned);
         TankTerrain dter = terrain(level, dc.getTank());
-        at(put(level, dc, EntityType.DROWNED, false), drowned, dter, 1.4, 1.2, Double.NaN, 200F);
-        at(put(level, dc, EntityType.DROWNED, false), drowned, dter, 2.7, 1.6, Double.NaN, 150F);
-        at(put(level, dc, EntityType.DROWNED, true), drowned, dter, 2.05, 0.9, Double.NaN, 180F);
+        at(put(level, dc, EntityTypes.DROWNED, false), drowned, dter, 1.4, 1.2, Double.NaN, 200F);
+        at(put(level, dc, EntityTypes.DROWNED, false), drowned, dter, 2.7, 1.6, Double.NaN, 150F);
+        at(put(level, dc, EntityTypes.DROWNED, true), drowned, dter, 2.05, 0.9, Double.NaN, 180F);
         TankBlockEntity sc = controller(level, spiders);
         TankTerrain ster = terrain(level, sc.getTank());
-        Mob spider = put(level, sc, EntityType.SPIDER, false);
+        Mob spider = put(level, sc, EntityTypes.SPIDER, false);
         at(spider, spiders, ster, 1.5, 3 - TankTerrain.MARGIN - 0.01, 1.2, 0F); // on the back glass, facing it
         climber = spider;
-        at(put(level, sc, EntityType.CAVE_SPIDER, false), spiders, ster, 0.8, 1.0, Double.NaN, 150F);
-        at(put(level, sc, EntityType.SKELETON, false), spiders, ster, 2.4, 1.0, Double.NaN, 190F);
-        at(put(level, sc, EntityType.ZOMBIE, false), spiders, ster, 3.3, 1.3, Double.NaN, 160F);
+        at(put(level, sc, EntityTypes.CAVE_SPIDER, false), spiders, ster, 0.8, 1.0, Double.NaN, 150F);
+        at(put(level, sc, EntityTypes.SKELETON, false), spiders, ster, 2.4, 1.0, Double.NaN, 190F);
+        at(put(level, sc, EntityTypes.ZOMBIE, false), spiders, ster, 3.3, 1.3, Double.NaN, 160F);
         TankBlockEntity lc = controller(level, slimes);
         TankTerrain lter = terrain(level, lc.getTank());
-        at(put(level, lc, EntityType.MAGMA_CUBE, false), slimes, lter, 1.0, 0.9, Double.NaN, 170F);
-        at(put(level, lc, EntityType.SLIME, false), slimes, lter, 2.1, 1.0, Double.NaN, 200F);
-        at(put(level, lc, EntityType.SILVERFISH, false), slimes, lter, 1.6, 0.7, Double.NaN, 120F);
-        at(put(level, lc, EntityType.ENDERMITE, false), slimes, lter, 2.5, 1.8, Double.NaN, 220F);
+        at(put(level, lc, EntityTypes.MAGMA_CUBE, false), slimes, lter, 1.0, 0.9, Double.NaN, 170F);
+        at(put(level, lc, EntityTypes.SLIME, false), slimes, lter, 2.1, 1.0, Double.NaN, 200F);
+        at(put(level, lc, EntityTypes.SILVERFISH, false), slimes, lter, 1.6, 0.7, Double.NaN, 120F);
+        at(put(level, lc, EntityTypes.ENDERMITE, false), slimes, lter, 2.5, 1.8, Double.NaN, 220F);
         // the jars
-        ItemStack full = MobJarItem.fillWith(EntityType.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED));
+        ItemStack full = MobJarItem.fillWith(EntityTypes.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED));
         for (int i = 0; i < 2; i++) {
             ItemFrame f = new ItemFrame(level, frames.offset(i, 1, 0), Direction.NORTH);
             f.setItem(i == 0 ? new ItemStack(ModItems.MOB_JAR.get()) : full, false);
@@ -244,7 +245,7 @@ final class DevClientSmokeM31d {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (climber instanceof net.minecraft.world.entity.monster.spider.Spider sp) server(p -> sp.setClimbing(true));
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
@@ -264,7 +265,7 @@ final class DevClientSmokeM31d {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m31d_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m31d_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

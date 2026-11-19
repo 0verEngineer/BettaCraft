@@ -76,15 +76,15 @@ final class DevClientSmokeM216 {
     DevClientSmokeM216() {
         plan();
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(120, () -> {});
         for (int i = 0; i < displays.size(); i++) {
             int n = i;
             then(1, () -> look(tanks.get(n).getX() + 1.0, tanks.get(n).getY() + 0.92, tanks.get(n).getZ() - 0.8, 0F, 0F));
             then(50, () -> shot(names.get(n)));
-            then(1, () -> mc.options.hideGui = false);
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
             then(10, () -> shot(names.get(n) + "_labels"));
-            then(1, () -> mc.options.hideGui = true);
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         }
         then(1, this::checkSkins);
         // old varieties converted, then the same fish with the genetics switched off (old textures)
@@ -100,14 +100,14 @@ final class DevClientSmokeM216 {
         then(1, () -> look(community.getX() + 1.0, community.getY() + 0.9, community.getZ() - 1.2, 0F, 8F));
         then(40, () -> shot("community_close"));
         // the menu with the gene tooltip
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), menuTank.getX() + 0.5, menuTank.getY(), menuTank.getZ() - 2.0, java.util.Set.of(), 0F, 0F, false);
         }));
         then(10, () -> openMenu(menuTank));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
                 if (!ts.showTankmateForTest("guppy")) LOGGER.error("[smoketest] M21.6 no guppy in the menu");
                 ts.showGeneTooltipForTest(true);
             }
@@ -117,13 +117,13 @@ final class DevClientSmokeM216 {
         then(20, () -> shot("menu_genes_de"));
         then(1, () -> language(lang));
         then(1, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showGeneTooltipForTest(false);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showGeneTooltipForTest(false);
         });
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> reach(p, false)));
         // the handbook page
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         guide("en");
         then(1, () -> language("de_de"));
         // M52b: GuideME picks the pages of a language (_de_de) when the resources are loaded: a full reload first
@@ -131,14 +131,14 @@ final class DevClientSmokeM216 {
         then(200, () -> {});
         guide("de");
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void guide(String l) {
         if (!GuideBook.available()) return;
         then(10, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("tankmates/guppy_genetics.md")));
         then(40, () -> shot("guide_genetics_" + l));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ what is shown
@@ -356,7 +356,7 @@ final class DevClientSmokeM216 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -375,7 +375,7 @@ final class DevClientSmokeM216 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -394,7 +394,7 @@ final class DevClientSmokeM216 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_6_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_6_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

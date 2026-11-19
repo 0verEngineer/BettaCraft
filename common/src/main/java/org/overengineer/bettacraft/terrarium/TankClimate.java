@@ -126,7 +126,7 @@ public final class TankClimate {
         if (s.isAir()) return false;
         Block b = s.getBlock();
         return b instanceof net.minecraft.world.level.block.VegetationBlock || b instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock
-                || s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.is(BlockTags.SAPLINGS) || s.is(net.minecraft.world.level.block.Blocks.MOSS_BLOCK)
+                || s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.is(net.minecraft.tags.BlockItemTags.SAPLINGS.block()) || s.is(net.minecraft.world.level.block.Blocks.MOSS_BLOCK)
                 || s.is(net.minecraft.world.level.block.Blocks.MOSS_CARPET) || s.is(BlockTags.CAVE_VINES) || b instanceof net.minecraft.world.level.block.VineBlock
                 || b instanceof net.minecraft.world.level.block.GrowingPlantBlock;
     }

@@ -4,7 +4,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
@@ -30,13 +29,13 @@ final class DataGenM40c {
         p.withExistingParent("pipe_cover", p.mcLoc("item/handheld")).texture("layer0", p.modLoc("item/pipe_cover"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasPipe) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasPipe) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.PIPE_COVER.get())
                 .pattern("SS ").pattern("SB ").pattern("  T").define('S', ModTags.STAINLESS_STEEL_INGOTS).define('B', Items.BRICK)
                 .define('T', Items.STICK).unlockedBy("has_filter_pipe", hasPipe).save(out, RecipeCompat.key(BettaCraft.id("pipe_cover")));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(CABLE_FACADES_SUPPORTS).add(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
                 ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get());
     }

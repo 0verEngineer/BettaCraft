@@ -92,7 +92,7 @@ ext.devExcluded = { File f ->
 // M52b/M52c: every Fabric run of this branch (Minecraft 26.1.2) has its game directories under fabricRunRoot (default
 // run/26.1.2/fabric, -PfabricRunDir=...; the optional mod groups too); run-fabric/ holds the 1.21.1 runs of master,
 // run/1.21.11/fabric the ones of the 1.21.11 branch
-def fabricRunRoot = (project.findProperty('fabricRunDir') ?: 'run/26.1.2/fabric').toString()
+def fabricRunRoot = (project.findProperty('fabricRunDir') ?: "run/${minecraft_version}/fabric").toString()
 ext.fabricRunRoot = fabricRunRoot
 
 loom {

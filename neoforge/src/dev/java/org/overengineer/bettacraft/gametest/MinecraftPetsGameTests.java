@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.chicken.Chicken;
@@ -128,18 +129,18 @@ public final class MinecraftPetsGameTests {
         mild(dry);
         TankBlockEntity palu = paludarium(h, 12, 2, 8, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         mild(palu);
-        h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.OK, "the frog is a pet, off the blacklist");
-        for (EntityType<?> t : List.of(EntityType.CHICKEN, EntityType.BEE, EntityType.PARROT, EntityType.BAT)) expect(h, dry, t, LID, t.toShortString() + " into an open terrarium");
-        for (EntityType<?> t : List.of(EntityType.RABBIT, EntityType.CAT, EntityType.FOX, EntityType.ARMADILLO, EntityType.OCELOT)) {
+        h.assertTrue(TankInhabitants.accepts(EntityTypes.FROG, null) == TankInhabitants.Acceptance.OK, "the frog is a pet, off the blacklist");
+        for (EntityType<?> t : List.of(EntityTypes.CHICKEN, EntityTypes.BEE, EntityTypes.PARROT, EntityTypes.BAT)) expect(h, dry, t, LID, t.toShortString() + " into an open terrarium");
+        for (EntityType<?> t : List.of(EntityTypes.RABBIT, EntityTypes.CAT, EntityTypes.FOX, EntityTypes.ARMADILLO, EntityTypes.OCELOT)) {
             expect(h, dry, t, null, t.toShortString() + " into a dry terrarium");
         }
-        expect(h, dry, EntityType.FROG, WRONG, "a frog into a dry terrarium");
-        expect(h, palu, EntityType.FROG, null, "a frog into a paludarium");
-        expect(h, dry, EntityType.WOLF, TOO_SMALL, "a wolf (1 m) into 8 x 3 x 6");
+        expect(h, dry, EntityTypes.FROG, WRONG, "a frog into a dry terrarium");
+        expect(h, palu, EntityTypes.FROG, null, "a frog into a paludarium");
+        expect(h, dry, EntityTypes.WOLF, TOO_SMALL, "a wolf (1 m) into 8 x 3 x 6");
         ForeignLandAnimalsGameTests.lid(h, dry);
-        for (EntityType<?> t : List.of(EntityType.BEE, EntityType.PARROT, EntityType.BAT)) expect(h, dry, t, null, t.toShortString() + " with a lid");
-        LivingEntity chicken = put(h, dry, container(h, EntityType.CHICKEN, false, false));
-        h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityType.CHICKEN), "a terrarium animal by its profile");
+        for (EntityType<?> t : List.of(EntityTypes.BEE, EntityTypes.PARROT, EntityTypes.BAT)) expect(h, dry, t, null, t.toShortString() + " with a lid");
+        LivingEntity chicken = put(h, dry, container(h, EntityTypes.CHICKEN, false, false));
+        h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityTypes.CHICKEN), "a terrarium animal by its profile");
         h.runAfterDelay(30, () -> {
             h.assertTrue(ForeignTerrarium.held(chicken), "our walker holds the chicken");
             h.assertTrue(TankInhabitants.tankBox(dry.getTank()).inflate(0.1).contains(chicken.position()), "in its tank");
@@ -162,10 +163,10 @@ public final class MinecraftPetsGameTests {
         TankBlockEntity c = terrarium(h, 2, 2, 8, 3, 6);
         mild(c);
         ForeignLandAnimalsGameTests.lid(h, c);
-        LivingEntity a = put(h, c, container(h, EntityType.RABBIT, false, false));
-        put(h, c, container(h, EntityType.RABBIT, false, false));
-        LivingEntity bee = put(h, c, container(h, EntityType.BEE, false, false));
-        ForeignProfile rabbit = profile(EntityType.RABBIT), bees = profile(EntityType.BEE);
+        LivingEntity a = put(h, c, container(h, EntityTypes.RABBIT, false, false));
+        put(h, c, container(h, EntityTypes.RABBIT, false, false));
+        LivingEntity bee = put(h, c, container(h, EntityTypes.BEE, false, false));
+        ForeignProfile rabbit = profile(EntityTypes.RABBIT), bees = profile(EntityTypes.BEE);
         h.assertTrue(MinecraftPets.missing(level, c, rabbit.land()).equals(List.of(ForeignProfile.Need.GRASS)), "rabbits miss grass on sand");
         h.assertTrue(MinecraftPets.missing(level, c, bees.land()).equals(List.of(ForeignProfile.Need.FLOWERS, ForeignProfile.Need.HIVE)), "bees miss flowers and a hive");
         h.assertTrue("no_grass".equals(ForeignBreeding.blocked(level, c, rabbit)), "no grass: no young");
@@ -201,33 +202,33 @@ public final class MinecraftPetsGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity coop = terrarium(h, 2, 2, 8, 3, 6); // 30 °C: a warm nest
         ForeignLandAnimalsGameTests.lid(h, coop);
-        LivingEntity hen = put(h, coop, container(h, EntityType.CHICKEN, false, false)), rooster = put(h, coop, container(h, EntityType.CHICKEN, false, false));
+        LivingEntity hen = put(h, coop, container(h, EntityTypes.CHICKEN, false, false)), rooster = put(h, coop, container(h, EntityTypes.CHICKEN, false, false));
         ForeignBreeding.setFemale(hen, true);
         ForeignBreeding.setFemale(rooster, false);
-        LivingEntity mother = ForeignTerrariumGameTests.layEggs(h, coop, EntityType.CHICKEN);
+        LivingEntity mother = ForeignTerrariumGameTests.layEggs(h, coop, EntityTypes.CHICKEN);
         h.assertTrue(mother == hen, "the hen lays");
         BlockPos egg = ForeignNests.eggBlockOf(mother);
         h.assertTrue(egg != null && interior(h).getBlockState(egg).is(ModBlocks.TURTLE_EGGS.get()), "the eggs in the sand of the interior");
-        int before = ofType(h, coop, EntityType.CHICKEN).size();
+        int before = ofType(h, coop, EntityTypes.CHICKEN).size();
         ForeignBreeding.step(level, coop, 6.0);
-        List<LivingEntity> chicks = ofType(h, coop, EntityType.CHICKEN).stream().filter(LivingEntity::isBaby).toList();
-        h.assertTrue(chicks.size() >= 2 && ofType(h, coop, EntityType.CHICKEN).size() == before + chicks.size(), "chicks hatched: " + chicks.size());
+        List<LivingEntity> chicks = ofType(h, coop, EntityTypes.CHICKEN).stream().filter(LivingEntity::isBaby).toList();
+        h.assertTrue(chicks.size() >= 2 && ofType(h, coop, EntityTypes.CHICKEN).size() == before + chicks.size(), "chicks hatched: " + chicks.size());
         MinecraftPets.step(level, coop, 0.01);
         for (LivingEntity k : chicks) h.assertTrue(MinecraftPets.marked(k), "a chick is a pet too (no drops)");
 
         TankBlockEntity hutch = terrarium(h, 2, 12, 8, 3, 6);
         mild(hutch);
         land(h, hutch, 1000, Blocks.GRASS_BLOCK.defaultBlockState(), null, 1);
-        LivingEntity doe = put(h, hutch, container(h, EntityType.RABBIT, false, false)), buck = put(h, hutch, container(h, EntityType.RABBIT, false, false));
+        LivingEntity doe = put(h, hutch, container(h, EntityTypes.RABBIT, false, false)), buck = put(h, hutch, container(h, EntityTypes.RABBIT, false, false));
         ForeignBreeding.setFemale(doe, true);
         ForeignBreeding.setFemale(buck, false);
-        int rabbits = ofType(h, hutch, EntityType.RABBIT).size();
-        for (int i = 0; i < 160 && ofType(h, hutch, EntityType.RABBIT).size() == rabbits; i++) {
-            ForeignCare.feed(ofType(h, hutch, EntityType.RABBIT), 9, null);
+        int rabbits = ofType(h, hutch, EntityTypes.RABBIT).size();
+        for (int i = 0; i < 160 && ofType(h, hutch, EntityTypes.RABBIT).size() == rabbits; i++) {
+            ForeignCare.feed(ofType(h, hutch, EntityTypes.RABBIT), 9, null);
             ForeignBreeding.step(level, hutch, 0.5);
         }
-        h.assertTrue(ofType(h, hutch, EntityType.RABBIT).size() > rabbits, "young rabbits are born");
-        h.assertTrue(ofType(h, hutch, EntityType.RABBIT).stream().anyMatch(LivingEntity::isBaby), "as babies");
+        h.assertTrue(ofType(h, hutch, EntityTypes.RABBIT).size() > rabbits, "young rabbits are born");
+        h.assertTrue(ofType(h, hutch, EntityTypes.RABBIT).stream().anyMatch(LivingEntity::isBaby), "as babies");
         h.succeed();
     }
 
@@ -243,7 +244,7 @@ public final class MinecraftPetsGameTests {
         TankBlockEntity c = terrarium(h, 2, 2, 8, 3, 6);
         mild(c);
         ForeignLandAnimalsGameTests.lid(h, c);
-        LivingEntity chicken = put(h, c, container(h, EntityType.CHICKEN, false, false));
+        LivingEntity chicken = put(h, c, container(h, EntityTypes.CHICKEN, false, false));
         MinecraftPets.step(level, c, 0.01);
         AABB around = TankInhabitants.tankBox(c.getTank()).inflate(3);
         chicken.hurt(level.damageSources().playerAttack(MockPlayers.serverPlayer(h)), 100F);
@@ -251,13 +252,13 @@ public final class MinecraftPetsGameTests {
         h.assertTrue(level.getEntitiesOfClass(ItemEntity.class, around).isEmpty(), "no feathers, no meat");
         h.assertTrue(level.getEntitiesOfClass(ExperienceOrb.class, around).isEmpty(), "no experience");
         ServerPlayer player = MockPlayers.serverPlayer(h);
-        Sheep sheep = (Sheep) wild(h, EntityType.SHEEP, new Vec3(20, 2, 26));
+        Sheep sheep = (Sheep) wild(h, EntityTypes.SHEEP, new Vec3(20, 2, 26));
         MinecraftPets.mark(sheep);
         player.snapTo(sheep.getX() + 1, sheep.getY(), sheep.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         player.interactOn(sheep, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         h.assertFalse(sheep.isSheared(), "a pet keeps its wool");
-        LivingEntity cow = wild(h, EntityType.COW, new Vec3(26, 2, 26));
+        LivingEntity cow = wild(h, EntityTypes.COW, new Vec3(26, 2, 26));
         MinecraftPets.mark(cow);
         player.snapTo(cow.getX() + 1, cow.getY(), cow.getZ());
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET));
@@ -278,27 +279,27 @@ public final class MinecraftPetsGameTests {
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m39c_pets", timeoutTicks = 200)
     public static void bigPetsByTheSizeRuleAndRefusals(GameTestHelper h) {
-        h.assertTrue(Math.abs(BigAnimals.length(EntityType.COW, null) - 2.0) < 1e-6, "a cow is 2 m long");
-        h.assertTrue(TankInhabitants.accepts(EntityType.COW, null) == TankInhabitants.Acceptance.BIG, "by the size rule");
-        h.assertFalse(profile(EntityType.PIG).land().box() || profile(EntityType.COW).land().box(), "the large net and the tub");
+        h.assertTrue(Math.abs(BigAnimals.length(EntityTypes.COW, null) - 2.0) < 1e-6, "a cow is 2 m long");
+        h.assertTrue(TankInhabitants.accepts(EntityTypes.COW, null) == TankInhabitants.Acceptance.BIG, "by the size rule");
+        h.assertFalse(profile(EntityTypes.PIG).land().box() || profile(EntityTypes.COW).land().box(), "the large net and the tub");
         TankBlockEntity small = terrarium(h, 2, 2, 8, 3, 6);
         mild(small);
-        expect(h, small, EntityType.COW, TOO_SMALL, "a cow into 8 x 3 x 6");
+        expect(h, small, EntityTypes.COW, TOO_SMALL, "a cow into 8 x 3 x 6");
         TankBlockEntity big = terrarium(h, 2, 12, 24, 6, 12);
         mild(big);
         land(h, big, 1000, Blocks.GRASS_BLOCK.defaultBlockState(), null, 1);
-        expect(h, big, EntityType.COW, null, "a cow into 24 x 6 x 12");
-        expect(h, big, EntityType.PIG, null, "a pig into 24 x 6 x 12");
+        expect(h, big, EntityTypes.COW, null, "a cow into 24 x 6 x 12");
+        expect(h, big, EntityTypes.PIG, null, "a pig into 24 x 6 x 12");
         ServerPlayer player = MockPlayers.serverPlayer(h);
-        LivingEntity cow = wild(h, EntityType.COW, new Vec3(28, 2, 4));
+        LivingEntity cow = wild(h, EntityTypes.COW, new Vec3(28, 2, 4));
         h.assertTrue(says(ForeignTerrarium.boxRefusal(player, cow), "message.bettacraft.box.too_big"), "the box does not take a cow");
         cow.discard();
         player.discard();
-        for (EntityType<?> t : List.of(EntityType.CAMEL, EntityType.SNIFFER)) h.assertTrue("too_big".equals(ForeignProfiles.refusal(t)), t.toShortString() + " too big");
-        for (EntityType<?> t : List.of(EntityType.STRIDER, EntityType.SKELETON_HORSE, EntityType.ZOMBIE_HORSE)) {
+        for (EntityType<?> t : List.of(EntityTypes.CAMEL, EntityTypes.SNIFFER)) h.assertTrue("too_big".equals(ForeignProfiles.refusal(t)), t.toShortString() + " too big");
+        for (EntityType<?> t : List.of(EntityTypes.STRIDER, EntityTypes.SKELETON_HORSE, EntityTypes.ZOMBIE_HORSE)) {
             h.assertTrue("unsuitable".equals(ForeignProfiles.refusal(t)), t.toShortString() + " unsuitable");
         }
-        Component camel = TankInhabitants.insert(h.getLevel(), big, container(h, EntityType.CAMEL, true, false), EntityType.CAMEL, null, 0);
+        Component camel = TankInhabitants.insert(h.getLevel(), big, container(h, EntityTypes.CAMEL, true, false), EntityTypes.CAMEL, null, 0);
         h.assertTrue(says(camel, "message.bettacraft.tank.refused.too_big"), "a camel is refused with its reason");
         h.succeed();
     }
@@ -315,7 +316,7 @@ public final class MinecraftPetsGameTests {
         h.assertTrue(MinecraftPets.lures(new ItemStack(Items.CARROT)), "carrots lure rabbits");
         h.assertFalse(MinecraftPets.lures(new ItemStack(Items.COBBLESTONE)), "stone lures nobody");
         BlockPos top = c.getTank().openTops().stream().min(java.util.Comparator.comparingInt((BlockPos b) -> b.getX()).thenComparingInt(b -> b.getZ())).orElseThrow();
-        LivingEntity rabbit = wild(h, EntityType.RABBIT, h.relativeVec(Vec3.atBottomCenterOf(top)).add(-1.0, -1.0, 0));
+        LivingEntity rabbit = wild(h, EntityTypes.RABBIT, h.relativeVec(Vec3.atBottomCenterOf(top)).add(-1.0, -1.0, 0));
         rabbit.setNoGravity(true);
         MinecraftPets.layBait(level, c, new ItemStack(Items.CARROT));
         var watcher = QuestAdv.watcher(h, c); // M45
@@ -323,7 +324,7 @@ public final class MinecraftPetsGameTests {
         h.assertFalse(rabbit.isAlive(), "the rabbit went in");
         QuestAdv.check(h, watcher, "pet_terrarium");
         QuestAdv.gone(h, watcher);
-        h.assertTrue(ofType(h, c, EntityType.RABBIT).size() == 1, "one rabbit in the terrarium");
+        h.assertTrue(ofType(h, c, EntityTypes.RABBIT).size() == 1, "one rabbit in the terrarium");
         h.assertTrue(MinecraftPets.bait(c) == null, "one bait, one animal");
         h.assertTrue(logged(c.getTank(), "log.bettacraft.pet.lured"), "the luring logged");
         ForeignLandAnimalsGameTests.lid(h, c);
@@ -350,20 +351,20 @@ public final class MinecraftPetsGameTests {
         mild(c);
         ForeignLandAnimalsGameTests.lid(h, c);
         ServerPlayer player = MockPlayers.serverPlayer(h);
-        LivingEntity chicken = wild(h, EntityType.CHICKEN, new Vec3(20, 2, 20));
+        LivingEntity chicken = wild(h, EntityTypes.CHICKEN, new Vec3(20, 2, 20));
         try {
             Features.set(Feature.VANILLA_PETS, false);
-            h.assertFalse(TerrariumAnimals.enabled(EntityType.CHICKEN), "its terrarium switch is off");
-            h.assertTrue(ForeignProfiles.of(EntityType.CHICKEN) == null && !ForeignProfiles.pet(EntityType.CHICKEN), "no profile");
-            h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.BLACKLISTED, "the frog on the blacklist again");
-            h.assertTrue(ForeignProfiles.refusal(EntityType.CAMEL) == null, "no refusal of ours");
+            h.assertFalse(TerrariumAnimals.enabled(EntityTypes.CHICKEN), "its terrarium switch is off");
+            h.assertTrue(ForeignProfiles.of(EntityTypes.CHICKEN) == null && !ForeignProfiles.pet(EntityTypes.CHICKEN), "no profile");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.FROG, null) == TankInhabitants.Acceptance.BLACKLISTED, "the frog on the blacklist again");
+            h.assertTrue(ForeignProfiles.refusal(EntityTypes.CAMEL) == null, "no refusal of ours");
             h.assertTrue(says(ForeignTerrarium.boxRefusal(player, chicken), "message.bettacraft.box.refused"), "the box refuses a chicken");
-            h.assertTrue(insert(h, c, container(h, EntityType.CHICKEN, false, false)) != null, "a chicken does not go in");
+            h.assertTrue(insert(h, c, container(h, EntityTypes.CHICKEN, false, false)) != null, "a chicken does not go in");
             h.assertFalse(MinecraftPets.lures(new ItemStack(Items.CARROT)), "no bait");
         } finally {
             Features.set(Feature.VANILLA_PETS, saved);
         }
-        h.assertTrue(TerrariumAnimals.enabled(EntityType.CHICKEN) && ForeignProfiles.pet(EntityType.CHICKEN), "on again");
+        h.assertTrue(TerrariumAnimals.enabled(EntityTypes.CHICKEN) && ForeignProfiles.pet(EntityTypes.CHICKEN), "on again");
         chicken.discard();
         player.discard();
         h.succeed();

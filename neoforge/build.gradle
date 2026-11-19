@@ -106,7 +106,7 @@ def requireGroup = { String name -> project.hasProperty(name) || (integration &&
 // M52b/M52c: every run of this branch (Minecraft 26.1.2) has its game directories under runRoot (default run/26.1.2, -PrunDir=...),
 // never in run/ itself: the worlds, configs and mods folders there are the 1.21.1 ones of master. The folders of the optional
 // mod groups are under runRoot too (run/26.1.2/shader-mods ...: jars for Minecraft 26.1.2; run/power-mods ... hold 1.21.1 ones).
-def runRoot = (project.findProperty('runDir') ?: 'run/26.1.2').toString()
+def runRoot = (project.findProperty('runDir') ?: "run/${minecraft_version}").toString()
 def gameTestDir = runRoot + (integration ? '/gametest-integration' : zoo ? '/gametest-zoo' : '/gametest')
 
 // Minecraft 26.1 ships Java 25. The foojay resolver (settings.gradle) downloads it if missing.

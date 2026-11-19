@@ -16,7 +16,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.Bucketable;
 import org.overengineer.bettacraft.entity.betta.BettaCare;
 import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.entity.betta.BettaHealth;

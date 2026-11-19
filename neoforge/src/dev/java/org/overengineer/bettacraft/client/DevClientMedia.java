@@ -50,7 +50,7 @@ final class DevClientMedia {
                 return;
             }
             LOGGER.info("[smoketest] media: opening {}", COPY);
-            mc.createWorldOpenFlows().openWorld(COPY, () -> mc.setScreen(new TitleScreen()));
+            mc.createWorldOpenFlows().openWorld(COPY, () -> mc.gui.setScreen(new TitleScreen()));
         });
         // a world made by a dedicated server: the client offers a backup before opening it; just load it
         NeoForge.EVENT_BUS.addListener((ScreenEvent.Init.Post e) -> {
@@ -71,7 +71,7 @@ final class DevClientMedia {
             Minecraft mc = Minecraft.getInstance();
             if (done || mc.player == null || mc.getSingleplayerServer() == null) return;
             mc.options.pauseOnLostFocus = false;
-            if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+            if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
             ticks++;
             if (ticks > 20) mc.player.getAbilities().flying = true;
             try {

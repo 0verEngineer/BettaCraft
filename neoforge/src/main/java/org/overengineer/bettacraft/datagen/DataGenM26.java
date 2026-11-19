@@ -7,7 +7,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -114,7 +113,7 @@ final class DataGenM26 {
         DataGenM26b.itemModels(p); // M26 part b
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.TUBIFEX_DISH.get())
                 .pattern("B B").pattern("BBB").define('B', Items.BRICK)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("tubifex_dish")));
@@ -127,17 +126,17 @@ final class DataGenM26 {
         // green water: swamp water fertilised with bone meal, ripens in the light (like the artemia culture)
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.GREEN_WATER_CULTURE.get())
                 .requires(ModItems.SWAMP_WATER_BOTTLE.get()).requires(Items.BONE_MEAL)
-                .unlockedBy("has_swamp_water", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
+                .unlockedBy("has_swamp_water", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SWAMP_WATER_BOTTLE.get()))
                 .save(out, RecipeCompat.key(BettaCraft.id("green_water_culture")));
         DataGenM26b.recipes(out, hasTank); // M26 part b
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.TUBIFEX_DISH.get(), ModBlocks.LIVE_FOOD_PUMP.get(), ModBlocks.FOOD_MAKER.get());
         tag.apply(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.DAPHNIA_BARREL.get());
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         tag.apply(ModTags.BETTA_FOOD).add(ModItems.TUBIFEX.get(), ModItems.DAPHNIA.get());
         tag.apply(ModTags.LIVE_FOOD).add(ModItems.TUBIFEX.get(), ModItems.DAPHNIA.get());
         tag.apply(ModTags.CONDITIONING_FOOD).add(ModItems.TUBIFEX.get());

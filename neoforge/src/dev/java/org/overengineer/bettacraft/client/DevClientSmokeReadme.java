@@ -119,9 +119,9 @@ final class DevClientSmokeReadme {
         then(1, () -> {
             shaders = IrisCompat.shaderPackInUse();
             mc.getWindow().setWindowed(1600, 900);
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             mc.options.enableVsync().set(false);
-            mc.getWindow().updateVsync(false);
+            mc.invalidateSurfaceConfiguration();
             mc.options.framerateLimit().set(120);
             mc.options.fov().set(70);
         });
@@ -169,31 +169,31 @@ final class DevClientSmokeReadme {
             then(1, () -> { if (!shaders) sequence("inside", 70); });
             then(20, () -> {});
             // the tank menu: the betta list with the genes of the first, the water tab; the handbook
-            then(1, () -> mc.options.hideGui = false);
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
             then(1, () -> look(gallery.getX() + 2.5, gallery.getY() + 0.55, gallery.getZ() - 2.0, 0F, 0F));
             then(20, () -> openMenu(gallery));
             then(20, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(1);
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(1);
                 else LOGGER.error("[smoketest] README no tank screen");
             });
             then(20, () -> shot("menu_bettas"));
             then(1, () -> server(ServerPlayer::closeContainer));
-            then(5, () -> mc.setScreen(null));
+            then(5, () -> mc.gui.setScreen(null));
             then(1, () -> look(base.getX() + 3.0, base.getY() + 2.0, base.getZ() - 3.0, 0F, 0F));
             then(20, () -> openMenu(base.offset(0, 1, 0)));
             then(20, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
             });
             then(20, () -> shot("menu_water"));
             then(1, () -> server(ServerPlayer::closeContainer));
-            then(5, () -> mc.setScreen(null));
+            then(5, () -> mc.gui.setScreen(null));
             then(1, () -> {
                 if (GuideBook.available()) org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID,
                         BettaCraft.id("bettas/genetics.md"));
             });
             then(60, () -> shot("guide"));
-            then(5, () -> mc.setScreen(null));
-            then(1, () -> mc.options.hideGui = true);
+            then(5, () -> mc.gui.setScreen(null));
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
             if (media) mediaScenes();
         }
         then(1, () -> mc.options.languageCode = lang);
@@ -215,8 +215,8 @@ final class DevClientSmokeReadme {
         for (int x = -10; x <= 18; x++)
             for (int y = 0; y < 14; y++) level.setBlockAndUpdate(base.offset(x, y, 4), (y == 0 ? Blocks.STRIPPED_DARK_OAK_WOOD : Blocks.SMOOTH_QUARTZ).defaultBlockState());
         // black background foil behind the planted and the reef tank
-        for (int x = 0; x < 6; x++) for (int y = 1; y < 4; y++) level.setBlockAndUpdate(base.offset(x, y, 3), Blocks.BLACK_CONCRETE.defaultBlockState());
-        for (int x = 9; x < 15; x++) for (int y = 1; y < 3; y++) level.setBlockAndUpdate(base.offset(x, y, 3), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 6; x++) for (int y = 1; y < 4; y++) level.setBlockAndUpdate(base.offset(x, y, 3), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
+        for (int x = 9; x < 15; x++) for (int y = 1; y < 3; y++) level.setBlockAndUpdate(base.offset(x, y, 3), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
         for (int x = -5; x <= 13; x++)
             for (int z = 0; z <= 2; z++) cabinet(level, base.offset(x, 0, z));
         // the planted show tank, 6 x 3 x 3
@@ -367,7 +367,7 @@ final class DevClientSmokeReadme {
                 level.setBlockAndUpdate(amazonAt.offset(x, 3, z), ModBlocks.LED_PANEL.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
                         .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 4).setValue(LedPanelBlock.PARTNER_POS, z == 0)
                         .setValue(TankLightBlock.LIT, true));
-        for (int x = 0; x < 5; x++) for (int y = 0; y < 3; y++) level.setBlockAndUpdate(amazonAt.offset(x, y, 2), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 5; x++) for (int y = 0; y < 3; y++) level.setBlockAndUpdate(amazonAt.offset(x, y, 2), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
         InteriorRegion ar = region(level, am, Blocks.SAND.defaultBlockState());
         rock(in, ar, 22, 22, 6, 9, Blocks.STRIPPED_OAK_LOG.defaultBlockState());
         rock(in, ar, 58, 24, 5, 12, Blocks.STRIPPED_OAK_LOG.defaultBlockState());
@@ -392,7 +392,7 @@ final class DevClientSmokeReadme {
         flareAt = line.offset(12, 0, 0);
         for (int x = 0; x < 2; x++) cabinet(level, flareAt.offset(x, -1, 0));
         TankBlockEntity fl = tank(level, flareAt, 2, 1, 1, 0F);
-        for (int x = 0; x < 2; x++) level.setBlockAndUpdate(flareAt.offset(x, 0, 1), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 2; x++) level.setBlockAndUpdate(flareAt.offset(x, 0, 1), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
         InteriorRegion flr = region(level, fl, Blocks.SAND.defaultBlockState());
         plant(in, flr, PlantSpecies.JAVA_FERN, 4, 0, 12, 4310);
         plant(in, flr, PlantSpecies.CRYPT_GREEN, 27, 0, 12, 4311);
@@ -402,7 +402,7 @@ final class DevClientSmokeReadme {
         growAt = line.offset(20, 0, 0);
         for (int x = 0; x < 3; x++) for (int z = 0; z < 2; z++) cabinet(level, growAt.offset(x, -1, z));
         growTank = tank(level, growAt, 3, 2, 2, 0F);
-        for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) level.setBlockAndUpdate(growAt.offset(x, y, 2), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) level.setBlockAndUpdate(growAt.offset(x, y, 2), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
         for (int x = 0; x < 3; x++)
             level.setBlockAndUpdate(growAt.offset(x, 2, 1), ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
                     .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 2).setValue(TankLightBlock.LIT, true));
@@ -429,7 +429,7 @@ final class DevClientSmokeReadme {
         shrimpAt = line.offset(28, 0, 0);
         for (int x = 0; x < 3; x++) cabinet(level, shrimpAt.offset(x, -1, 0));
         TankBlockEntity sh = tank(level, shrimpAt, 3, 1, 1, 0F);
-        for (int x = 0; x < 3; x++) level.setBlockAndUpdate(shrimpAt.offset(x, 0, 1), Blocks.BLACK_CONCRETE.defaultBlockState());
+        for (int x = 0; x < 3; x++) level.setBlockAndUpdate(shrimpAt.offset(x, 0, 1), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState());
         for (int x = 0; x < 3; x++)
             level.setBlockAndUpdate(shrimpAt.offset(x, 1, 0), ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.AXIS, Direction.Axis.X)
                     .setValue(TankLightBlock.NEG, x > 0).setValue(TankLightBlock.POS, x < 2).setValue(TankLightBlock.LIT, true));
@@ -821,7 +821,7 @@ final class DevClientSmokeReadme {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (seqLeft > 0) return false;
         if (building && !built) return false;
         if (steps.isEmpty()) {
@@ -845,9 +845,9 @@ final class DevClientSmokeReadme {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         String file = "readme_" + name + (shaders ? "_shaders" : "") + ".png";
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file, mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 
     /** Starts a frame sequence of {@code frames} pictures, one per game tick. */
@@ -868,14 +868,14 @@ final class DevClientSmokeReadme {
         if (t < seqNext) return;
         seqNext += 1;
         if (t > seqNext) seqNext = Math.floor(t) + 1; // dropped behind: keep the pace of the game
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (seqHook != null) {
             var hook = seqHook;
             int i = seqIndex;
             server(p -> hook.accept(p, i));
         }
         String file = String.format(java.util.Locale.ROOT, "readme_anim_%s_%03d.png", seqName, seqIndex++);
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> {});
+        Screenshot.grab(mc.gameDirectory, file, mc.gameRenderer.mainRenderTarget(), 1, c -> {});
         if (--seqLeft == 0) server(p -> p.level().getServer().tickRateManager().setTickRate(20F));
         if (seqLeft == 0) LOGGER.info("[smoketest] README sequence {} done ({} frames)", seqName, seqIndex);
     }

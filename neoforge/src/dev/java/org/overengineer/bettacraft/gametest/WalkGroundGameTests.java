@@ -5,6 +5,7 @@ import java.util.Map;
 import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
@@ -57,11 +58,11 @@ public final class WalkGroundGameTests {
         pets.getTank().setClimate(new Climate.State(22, 22, 28, 55, 2, 0));
         ForeignLandAnimalsGameTests.lid(h, pets);
         Map<String, Watch> w = new LinkedHashMap<>();
-        w.put("zombie", new Watch(MobsInGlassGameTests.put(h, glass, EntityType.ZOMBIE), glass));
-        w.put("slime", new Watch(MobsInGlassGameTests.put(h, slimes, EntityType.SLIME), slimes));
+        w.put("zombie", new Watch(MobsInGlassGameTests.put(h, glass, EntityTypes.ZOMBIE), glass));
+        w.put("slime", new Watch(MobsInGlassGameTests.put(h, slimes, EntityTypes.SLIME), slimes));
         w.put("gecko", new Watch(HerpGameTests.put(h, herps, HerpSpecies.LEOPARD_GECKO, false, 0), herps));
-        w.put("chicken", new Watch(ForeignTerrariumGameTests.put(h, pets, ForeignTerrariumGameTests.container(h, EntityType.CHICKEN, false, false)), pets));
-        w.put("parrot", new Watch(ForeignTerrariumGameTests.put(h, pets, ForeignTerrariumGameTests.container(h, EntityType.PARROT, false, false)), pets));
+        w.put("chicken", new Watch(ForeignTerrariumGameTests.put(h, pets, ForeignTerrariumGameTests.container(h, EntityTypes.CHICKEN, false, false)), pets));
+        w.put("parrot", new Watch(ForeignTerrariumGameTests.put(h, pets, ForeignTerrariumGameTests.container(h, EntityTypes.PARROT, false, false)), pets));
         for (Watch x : w.values()) x.e.setOnGround(false); // as inserted before M44
         String[] fault = {null};
         h.onEachTick(() -> {

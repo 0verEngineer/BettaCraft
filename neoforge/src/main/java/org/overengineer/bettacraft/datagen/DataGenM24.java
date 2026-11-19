@@ -220,7 +220,7 @@ final class DataGenM24 {
         return RecipeCompat.tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", c)));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasFilter) {
         // the crucible melt (M29.1: no blaze powder any more, one iron more instead): 4 iron + coal (carbon) + nether quartz
         // (stands in for chromium) -> 3 stainless steel; blaze rods and blaze powder stay fuel
         out.accept(RecipeCompat.key(BettaCraft.id("stainless_steel_ingot_from_crucible")), new CrucibleRecipe(List.of(

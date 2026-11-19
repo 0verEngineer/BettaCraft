@@ -58,7 +58,7 @@ final class DevClientSmokeM40c {
 
     DevClientSmokeM40c() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> look(base.getX() + 6.5, base.getY() + 5.0, base.getZ() + 13.5, 180F, 32F));
         then(200, () -> shot("covers"));
         then(1, () -> look(base.getX() + 5.5, base.getY() + 2.6, base.getZ() + 9.8, 180F, 25F));
@@ -211,10 +211,10 @@ final class DevClientSmokeM40c {
                 Object paint = Class.forName("com.enderio.enderio.content.paint.BlockPaintData").getMethod("of", Block.class).invoke(null, Blocks.POLISHED_DEEPSLATE);
                 eio = withData("enderio:conduit_facade", "enderio:block_paint", paint);
             }
-            if (loaded("mekanismcovers")) mek = withData("mekanismcovers:cover", "mekanismcovers:cover_block", net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(Blocks.CUT_COPPER));
+            if (loaded("mekanismcovers")) mek = withData("mekanismcovers:cover", "mekanismcovers:cover_block", net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(Blocks.CUT_COPPER.weathering().unaffected()));
             click(p, base.offset(2, 0, 5), ae2.isEmpty() ? tool.copy() : ae2, ae2.isEmpty() ? new ItemStack(Blocks.SMOOTH_QUARTZ) : ItemStack.EMPTY);
             click(p, base.offset(2, 1, 5), eio.isEmpty() ? tool.copy() : eio, eio.isEmpty() ? new ItemStack(Blocks.POLISHED_DEEPSLATE) : ItemStack.EMPTY);
-            click(p, base.offset(2, 0, 6), mek.isEmpty() ? tool.copy() : mek, mek.isEmpty() ? new ItemStack(Blocks.CUT_COPPER) : ItemStack.EMPTY);
+            click(p, base.offset(2, 0, 6), mek.isEmpty() ? tool.copy() : mek, mek.isEmpty() ? new ItemStack(Blocks.CUT_COPPER.weathering().unaffected()) : ItemStack.EMPTY);
             LOGGER.info("[smoketest] M40c facades: ae2 {}, enderio {}, mekanismcovers {}", !ae2.isEmpty(), !eio.isEmpty(), !mek.isEmpty());
         } catch (ReflectiveOperationException e) {
             LOGGER.error("[smoketest] M40c a facade of another mod failed: {}", e.toString());
@@ -255,7 +255,7 @@ final class DevClientSmokeM40c {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -274,7 +274,7 @@ final class DevClientSmokeM40c {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m40c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m40c_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

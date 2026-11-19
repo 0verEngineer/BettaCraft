@@ -57,7 +57,7 @@ final class DevClientSmokeM11 {
 
     DevClientSmokeM11() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> lookM10Style(true));
         // all styles side by side
         then(60, () -> look(base.getX() + 6.5, base.getY() + 3.6, base.getZ() - 7.0, 0F, 22F));
@@ -100,7 +100,7 @@ final class DevClientSmokeM11 {
             inv.setItem(4, new ItemStack(ModItems.MIRROR_STICK.get()));
             inv.setSelectedSlot(0);
         }));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> look(base.getX() + 6.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
         then(60, () -> shot("overlay_glass"));
         then(1, () -> look(base.getX() + 11.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
@@ -112,21 +112,21 @@ final class DevClientSmokeM11 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
         });
         then(30, () -> shot("menu_water"));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // the mirror stick: hold it up in front of the male
         then(1, () -> server(p -> p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.MIRROR_STICK.get()))));
         then(1, () -> lookAt(mirrorTank.getX() + 1.0 - 0.7, mirrorTank.getY() + 0.75, mirrorTank.getZ() - 0.9,
                 new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9)));
-        then(70, () -> mc.getToastManager().clear());
+        then(70, () -> mc.gui.toastManager().clear());
         then(10, () -> shot("mirror"));
         // the male shows the mirror its side (bettas see sideways): from the mirror's point of view, without GUI, with
         // the stick still held up (handbook image)
         then(1, () -> {
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             lookAt(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.62, mirrorTank.getZ() + 0.9 - 2.4,
                     new Vec3(mirrorTank.getX() + 1.0, mirrorTank.getY() + 0.5, mirrorTank.getZ() + 0.9));
         });
@@ -138,7 +138,7 @@ final class DevClientSmokeM11 {
                 if (e instanceof BettaEntity b) LOGGER.info("[smoketest] M11 mirror: male flaring {} trained {}", b.isFlaring(), b.breeding().isTrained());
             }
         }));
-        then(20, () -> mc.options.hideGui = false);
+        then(20, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     /** {@code connectedGlass} off and 1/16 edges = the look of M10 (the "before" pictures); on with the default width = M11. */
@@ -146,7 +146,7 @@ final class DevClientSmokeM11 {
         ClientConfig.CONNECTED_GLASS.set(m11);
         ClientConfig.TANK_EDGE_WIDTH.set(m11 ? 0.25 : 1.0);
         org.overengineer.bettacraft.client.tank.TankWaterRenderer.m10Look = !m11;
-        if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
+        if (mc.levelRenderer != null) mc.levelExtractor.allChanged();
         LOGGER.info("[smoketest] M11 tank look: {}", m11 ? "M11 (connected glass, 1/64 edges)" : "M10 (frame on every block, 1/16 edges)");
     }
 
@@ -266,7 +266,7 @@ final class DevClientSmokeM11 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -285,7 +285,7 @@ final class DevClientSmokeM11 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m11_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m11_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -7,7 +7,6 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -59,7 +58,7 @@ final class DataGenM28 {
         return ModItems.DECOR.get(t).get();
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         // alder cones: birch leaves dried like the almond leaves (alder and birch are one family)
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(Items.BIRCH_LEAVES), RecipeCategory.MISC, net.minecraft.world.item.crafting.CookingBookCategory.MISC, ModItems.ALDER_CONE.get(), 0.05F, 200)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("alder_cone")));
@@ -73,13 +72,13 @@ final class DataGenM28 {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_rowing_boat")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SHIP_BOW))
                 .pattern(" SW").pattern("PCP").pattern("LPL")
-                .define('S', Tags.Items.RODS_WOODEN).define('W', Items.WHITE_WOOL).define('P', ItemTags.PLANKS).define('L', ItemTags.LOGS)
+                .define('S', Tags.Items.RODS_WOODEN).define('W', Items.WOOL.pick(net.minecraft.world.item.DyeColor.WHITE)).define('P', ItemTags.PLANKS).define('L', ItemTags.LOGS)
                 .define('C', ModItems.SPAWNING_CAVE.get())
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_ship_bow")));
         // stones
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.HOLEY_ROCK))
                 .requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.CALCITE).requires(Items.DRIPSTONE_BLOCK)
-                .unlockedBy("has_calcite", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, RecipeCompat.key(BettaCraft.id("decor_holey_rock")));
+                .unlockedBy("has_calcite", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(Items.CALCITE)).save(out, RecipeCompat.key(BettaCraft.id("decor_holey_rock")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SLATE_CAVE))
                 .requires(Items.DEEPSLATE_TILES).requires(Items.DEEPSLATE_TILES).requires(Items.POLISHED_DEEPSLATE).requires(Items.COBBLED_DEEPSLATE)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_slate_cave")));
@@ -87,15 +86,15 @@ final class DataGenM28 {
                 .requires(Items.STONE).requires(Items.STONE).requires(Items.ANDESITE).requires(Items.TUFF).requires(Items.CALCITE)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_seiryu_stone")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DRAGON_STONE))
-                .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.BROWN_TERRACOTTA).requires(Items.PACKED_MUD)
+                .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.BROWN)).requires(Items.PACKED_MUD)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_dragon_stone")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.LAVA_ROCK))
-                .requires(Items.BLACKSTONE).requires(Items.BLACKSTONE).requires(Items.RED_TERRACOTTA).requires(Items.MAGMA_BLOCK)
+                .requires(Items.BLACKSTONE).requires(Items.BLACKSTONE).requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.RED)).requires(Items.MAGMA_BLOCK)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_lava_rock")));
         // roots
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.MANGROVE_ROOT))
                 .requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_LOG)
-                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, RecipeCompat.key(BettaCraft.id("decor_mangrove_root")));
+                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS)).save(out, RecipeCompat.key(BettaCraft.id("decor_mangrove_root")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SPIDERWOOD))
                 .requires(Items.STRIPPED_OAK_LOG).requires(Items.OAK_LOG).requires(Tags.Items.RODS_WOODEN).requires(Tags.Items.RODS_WOODEN)
                 .requires(Tags.Items.RODS_WOODEN)
@@ -105,14 +104,14 @@ final class DataGenM28 {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_bogwood_bridge")));
         // caves and tubes
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.COCONUT_CAVE))
-                .requires(Items.BROWN_TERRACOTTA).requires(Items.BROWN_TERRACOTTA).requires(Items.BROWN_WOOL).requires(Items.BOWL)
+                .requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.BROWN)).requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.BROWN)).requires(Items.WOOL.pick(net.minecraft.world.item.DyeColor.BROWN)).requires(Items.BOWL)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_coconut_cave")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.CLAY_TUBES))
                 .pattern("CCC").pattern("C C").pattern("CCC")
                 .define('C', ModItems.SPAWNING_CAVE.get())
-                .unlockedBy("has_spawning_cave", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_clay_tubes")));
+                .unlockedBy("has_spawning_cave", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.SPAWNING_CAVE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_clay_tubes")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SHRIMP_TUBES))
-                .requires(Items.TERRACOTTA).requires(Items.ORANGE_TERRACOTTA).requires(Items.WHITE_TERRACOTTA).requires(Items.CLAY_BALL)
+                .requires(Items.TERRACOTTA).requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.ORANGE)).requires(Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.WHITE)).requires(Items.CLAY_BALL)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_shrimp_tubes")));
         // kitsch
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.RUIN_COLUMN))
@@ -120,17 +119,17 @@ final class DataGenM28 {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_ruin_column")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.DIVER_HELMET))
                 .pattern("TTT").pattern("GCG").pattern("TTT")
-                .define('T', Items.ORANGE_TERRACOTTA).define('G', Tags.Items.GLASS_PANES).define('C', Tags.Items.INGOTS_COPPER)
+                .define('T', Items.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.ORANGE)).define('G', Tags.Items.GLASS_PANES).define('C', Tags.Items.INGOTS_COPPER)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("decor_diver_helmet")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.TREASURE_CHEST))
-                .requires(Items.CHEST).requires(ModItems.AIR_STONE.get()).requires(Tags.Items.NUGGETS_GOLD).requires(Items.YELLOW_CONCRETE)
-                .unlockedBy("has_air_stone", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_treasure_chest")));
+                .requires(Items.CHEST).requires(ModItems.AIR_STONE.get()).requires(Tags.Items.NUGGETS_GOLD).requires(Items.CONCRETE.pick(net.minecraft.world.item.DyeColor.YELLOW))
+                .unlockedBy("has_air_stone", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.AIR_STONE.get())).save(out, RecipeCompat.key(BettaCraft.id("decor_treasure_chest")));
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(ModTags.SHRIMP_SHELTER).addTag(BlockTags.TERRACOTTA).add(ModBlocks.SPAWNING_CAVE.get());
         // M29: the coconut shell and the slate cave are spawning caves of the Apistogramma
-        tag.apply(ModTags.SMALL_CAVES).add(net.minecraft.world.level.block.Blocks.BROWN_TERRACOTTA, net.minecraft.world.level.block.Blocks.BROWN_WOOL,
+        tag.apply(ModTags.SMALL_CAVES).add(net.minecraft.world.level.block.Blocks.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.BROWN), net.minecraft.world.level.block.Blocks.WOOL.pick(net.minecraft.world.item.DyeColor.BROWN),
                 net.minecraft.world.level.block.Blocks.DEEPSLATE_TILES, net.minecraft.world.level.block.Blocks.POLISHED_DEEPSLATE,
                 net.minecraft.world.level.block.Blocks.COBBLED_DEEPSLATE, net.minecraft.world.level.block.Blocks.DEEPSLATE_BRICKS,
                 net.minecraft.world.level.block.Blocks.DEEPSLATE_TILE_SLAB, net.minecraft.world.level.block.Blocks.POLISHED_DEEPSLATE_SLAB);

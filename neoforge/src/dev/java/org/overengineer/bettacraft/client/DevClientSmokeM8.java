@@ -61,7 +61,7 @@ final class DevClientSmokeM8 {
         tag = sb.isEmpty() ? "none" : sb.toString();
         LOGGER.info("[smoketest] M8 info overlays with: {}", tag);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // tank block: front left column, upper row (the bettas swim at the back right)
         then(30, () -> look(tankMin.getX() + 0.5, tankMin.getY() + 1.5, tankMin.getZ() - 2.2, 0F, 0F));
         then(60, () -> shot("tank"));
@@ -177,7 +177,7 @@ final class DevClientSmokeM8 {
             mc.player.getAbilities().flying = false;
             mc.player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -196,8 +196,8 @@ final class DevClientSmokeM8 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear(); // advancement toasts would cover the overlay
+        mc.gui.toastManager().clear(); // advancement toasts would cover the overlay
         String file = "bettacraft_m8_" + tag + "_" + name;
-        Screenshot.grab(mc.gameDirectory, file + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

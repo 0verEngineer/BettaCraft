@@ -72,7 +72,7 @@ final class DevClientSmokeM36 {
     DevClientSmokeM36() {
         then(1, () -> server(p -> ServerConfig.SIZE_BETTA.set(AnimalSize.NORMAL)));
         then(1, () -> server(this::build));
-        then(120, () -> mc.options.hideGui = true);
+        then(120, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // a long lens from far away: the fish are drawn nearly without perspective in front of the ruler
         then(1, () -> {
             savedFov = mc.options.fov().get();
@@ -104,7 +104,7 @@ final class DevClientSmokeM36 {
         then(1, () -> server(p -> ServerConfig.SIZE_BETTA.set(AnimalSize.NORMAL)));
         then(30, () -> shot("tank_normal"));
         then(1, () -> server(p -> log(p, "normal")));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(this::cleanup));
         then(5, () -> LOGGER.info("[smoketest] M36 done (DragN's Just Bettas loaded: {})", dragn));
     }
@@ -138,7 +138,7 @@ final class DevClientSmokeM36 {
         for (int x = -1; x <= 6; x++) {
             for (int y = -1; y <= 2; y++) {
                 // a plain light wall behind the fish (dark fish stand out), the stripes above the water
-                level.setBlock(row.offset(x, y, 2), y < 2 || (x & 1) == 0 ? Blocks.WHITE_CONCRETE.defaultBlockState() : Blocks.BLACK_CONCRETE.defaultBlockState(), 2);
+                level.setBlock(row.offset(x, y, 2), y < 2 || (x & 1) == 0 ? Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState() : Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.BLACK).defaultBlockState(), 2);
             }
             for (int z = -3; z <= 1; z++) level.setBlock(row.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState(), 2);
         }
@@ -313,7 +313,7 @@ final class DevClientSmokeM36 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (!pinned.isEmpty()) server(p -> pinned.forEach((m, at) -> freeze(m, at, 90F)));
         // the client turns the bodies of frozen fish on its own (head turn, eased swimming yaw): exactly side-on for measuring
         if (mc.level != null && row != null) {
@@ -342,7 +342,7 @@ final class DevClientSmokeM36 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (mc.level != null && name.startsWith("solo")) {
             for (Entity e : mc.level.entitiesForRendering()) {
                 if (e instanceof Mob m && !m.isInvisible() && e.blockPosition().closerThan(row, 10)) {
@@ -350,6 +350,6 @@ final class DevClientSmokeM36 {
                 }
             }
         }
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m36_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m36_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

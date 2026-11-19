@@ -58,7 +58,7 @@ final class DevClientSmokeM39a {
 
     DevClientSmokeM39a() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(big.getX() + 8, big.getY() + 4.2, big.getZ() - 9.0, 0F, 20F));
         then(140, () -> shot("big"));
@@ -66,7 +66,7 @@ final class DevClientSmokeM39a {
         then(100, () -> shot("sea"));
         then(1, () -> look(palu.getX() + 6, palu.getY() + 4.2, palu.getZ() - 6.5, 0F, 24F));
         then(100, () -> shot("turtles"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -240,7 +240,7 @@ final class DevClientSmokeM39a {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -259,7 +259,7 @@ final class DevClientSmokeM39a {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m39a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m39a_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

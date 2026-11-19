@@ -35,7 +35,7 @@ public final class FabricMpClient implements ClientModInitializer {
                 Minecraft mc = Minecraft.getInstance();
                 mc.execute(() -> {
                     mc.options.onboardAccessibility = false;
-                    mc.setScreen(new TitleScreen());
+                    mc.gui.setScreen(new TitleScreen());
                 });
             } else if (!joining && screen instanceof TitleScreen) {
                 joining = true;
@@ -81,12 +81,12 @@ public final class FabricMpClient implements ClientModInitializer {
             long bettas = mc.level.getEntitiesOfClass(BettaEntity.class, new net.minecraft.world.phys.AABB(tank).inflate(6)).size();
             if (bettas == 2) ok++;
             else bad.add(bettas + " bettas seen");
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen) ok++;
-            else bad.add("menu: " + (mc.screen == null ? null : mc.screen.getClass().getSimpleName()));
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen) ok++;
+            else bad.add("menu: " + (mc.gui.screen() == null ? null : mc.gui.screen().getClass().getSimpleName()));
         }
         String report = bad.isEmpty() ? "ok " + ok + " checks" : "bad " + bad;
         LOGGER.info("[smoketest] MP client {}: {}", me, report);
-        if (mc.screen != null) mc.setScreen(null);
+        if (mc.gui.screen() != null) mc.gui.setScreen(null);
         mc.player.connection.sendChat("mp-report " + report);
     }
 }

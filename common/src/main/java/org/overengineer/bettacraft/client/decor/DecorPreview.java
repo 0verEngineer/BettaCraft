@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import org.overengineer.bettacraft.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -71,7 +71,7 @@ public final class DecorPreview {
         List<DecorTemplate.Placed> blocks = t.layout(base, rot);
         Vec3 cam = event.getCamera().position();
         PoseStack ps = event.getPoseStack();
-        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        org.overengineer.bettacraft.client.render.ImmediateBuffers buffers = org.overengineer.bettacraft.client.render.ImmediateBuffers.shared();
         RenderType rt = Sheets.translucentBlockItemSheet();
         // M5: more visible - stronger alpha, a slight cyan glow and an outline of the whole footprint
         float pulse = 0.68F + 0.12F * (float) Math.sin((mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) * 0.2);
@@ -103,8 +103,8 @@ public final class DecorPreview {
             ps.pushPose();
             ps.translate(-cam.x, -cam.y, -cam.z);
             net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1).inflate(0.01);
-            net.minecraft.client.renderer.ShapeRenderer.renderShape(ps, buffers.getBuffer(RenderTypes.lines()), net.minecraft.world.phys.shapes.Shapes.create(box),
-                    0, 0, 0, net.minecraft.util.ARGB.colorFromFloat(0.9F, blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F),
+            outline(ps, buffers.getBuffer(RenderTypes.lines()), net.minecraft.world.phys.shapes.Shapes.create(box),
+                    net.minecraft.util.ARGB.colorFromFloat(0.9F, blocked ? 1F : 0.35F, blocked ? 0.25F : 0.95F, blocked ? 0.25F : 1F),
                     mc.getWindow().getAppropriateLineWidth());
             ps.popPose();
             buffers.endBatch(RenderTypes.lines());
@@ -130,5 +130,15 @@ public final class DecorPreview {
         @Override public VertexConsumer setUv2(int u, int v) { d.setUv2(240, 240); return this; } // full bright
         @Override public VertexConsumer setNormal(float x, float y, float z) { d.setNormal(x, y, z); return this; }
         @Override public VertexConsumer setLineWidth(float width) { d.setLineWidth(width); return this; }
+    }
+
+    /** M52d: the edges of a shape as lines (26.2 has no ShapeRenderer any more). */
+    private static void outline(PoseStack ps, com.mojang.blaze3d.vertex.VertexConsumer vc, net.minecraft.world.phys.shapes.VoxelShape shape, int color, float width) {
+        PoseStack.Pose pose = ps.last();
+        shape.forAllEdges((x1, y1, z1, x2, y2, z2) -> {
+            org.joml.Vector3f n = new org.joml.Vector3f((float) (x2 - x1), (float) (y2 - y1), (float) (z2 - z1)).normalize();
+            vc.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(color).setNormal(pose, n).setLineWidth(width);
+            vc.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(color).setNormal(pose, n).setLineWidth(width);
+        });
     }
 }

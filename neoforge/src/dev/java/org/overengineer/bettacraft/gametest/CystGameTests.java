@@ -14,6 +14,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -155,7 +156,7 @@ public final class CystGameTests {
         CompoundTag comps = item.getCompoundOrEmpty("components");
         comps.putInt("minecraft:damage", 12);
         item.put("components", comps);
-        ItemEntity back = new ItemEntity(EntityType.ITEM, level);
+        ItemEntity back = new ItemEntity(EntityTypes.ITEM, level);
         org.overengineer.bettacraft.util.NbtCompat.loadEntity(back, et);
         h.assertTrue(back.getItem().getCount() == 16 && plain(back.getItem()), "item entity: 16 plain jars: " + back.getItem());
         // they stack with new ones

@@ -162,9 +162,9 @@ final class DevClientSmokeMP {
                 then(40, () -> shot("aquarist_menu"));
                 then(1, () -> {
                     Minecraft mc = Minecraft.getInstance();
-                    boolean open = mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen;
-                    send("aquaristmenu " + (open ? "ok" : "no-window:" + mc.screen));
-                    if (open) mc.setScreen(null);
+                    boolean open = mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.AquaristScreen;
+                    send("aquaristmenu " + (open ? "ok" : "no-window:" + mc.gui.screen()));
+                    if (open) mc.gui.setScreen(null);
                 });
             }
             case "light" -> {
@@ -529,11 +529,11 @@ final class DevClientSmokeMP {
                 // M22.4: Dev1 opens the cabinet menu with a right-click on the cabinet's front and presses the outlet button
                 // like the tank menu step: a right-click (use key) on the cabinet the server turned the player to
                 then(30, () -> net.minecraft.client.KeyMapping.click(Minecraft.getInstance().options.keyUse.getKey()));
-                whenReady(40, 10, () -> Minecraft.getInstance().screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen cs
+                whenReady(40, 10, () -> Minecraft.getInstance().gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen cs
                         && cs.getMenu().outletSide() != null, () -> {
                     Minecraft mc = Minecraft.getInstance();
-                    if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) || mc.gameMode == null) {
-                        send("outletmenu none:" + mc.screen + "_hit:" + (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b ? b.getBlockPos().toShortString().replace(" ", "")
+                    if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) || mc.gameMode == null) {
+                        send("outletmenu none:" + mc.gui.screen() + "_hit:" + (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b ? b.getBlockPos().toShortString().replace(" ", "")
                                 + "_" + mc.level.getBlockState(b.getBlockPos()).getBlock() : String.valueOf(mc.hitResult)).replace(" ", "_") + "_mode:" + mc.gameMode.getPlayerMode()
                                 + "_at:" + mc.player.blockPosition().toShortString().replace(" ", ""));
                         return;
@@ -578,9 +578,9 @@ final class DevClientSmokeMP {
             }
             case "shot" -> {
                 Minecraft mc = Minecraft.getInstance();
-                then(40, () -> mc.options.hideGui = true);
+                then(40, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
                 then(30, () -> shot("tank"));
-                then(1, () -> mc.options.hideGui = false);
+                then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
                 then(80, () -> shot("overlay")); // Jade / The One Probe / WTHIT on the tank under the crosshair
                 then(5, () -> send("shot"));
             }
@@ -653,7 +653,7 @@ final class DevClientSmokeMP {
             cx /= n;
             cz /= n;
         }
-        var box = new net.minecraft.world.phys.AABB(t.min().getCenter(), t.max().getCenter()).inflate(0.6);
+        var box = new net.minecraft.world.phys.AABB(net.minecraft.world.phys.Vec3.atCenterOf(t.min()), net.minecraft.world.phys.Vec3.atCenterOf(t.max())).inflate(0.6);
         int fish = mc.level.getEntitiesOfClass(BettaEntity.class, box).size();
         send(String.format(Locale.ROOT, "state %s %d %d %d %.4f %.4f %d", phase, t.waterMb(), n, ids, cx, cz, fish));
         shot("state" + phase);
@@ -763,9 +763,9 @@ final class DevClientSmokeMP {
         then(15, () -> KeyMapping.click(mc.options.keyUse.getKey()));
         then(20, () -> {
             mc.options.keyShift.setDown(false);
-            screen[0] = mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen;
+            screen[0] = mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen;
             if (what.equals("ask") && screen[0]) shot("confirm_screen");
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) {
                 if (what.equals("release")) c.confirm();
                 else c.cancel();
             }
@@ -849,8 +849,8 @@ final class DevClientSmokeMP {
         StringBuilder result = new StringBuilder();
         then(30, () -> KeyMapping.click(mc.options.keyUse.getKey()));
         then(40, () -> {
-            if (!(mc.screen instanceof TankScreen ts)) {
-                result.append("no menu: ").append(mc.screen);
+            if (!(mc.gui.screen() instanceof TankScreen ts)) {
+                result.append("no menu: ").append(mc.gui.screen());
                 return;
             }
             result.append(tabsFit(mc, ts.tabButtonsForTest()));
@@ -858,15 +858,15 @@ final class DevClientSmokeMP {
         });
         then(20, () -> shot("menu_overview"));
         then(1, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.showPlantsPageForTest();
+            if (mc.gui.screen() instanceof TankScreen ts) ts.showPlantsPageForTest();
         });
         then(30, () -> shot("menu_plants"));
         then(1, () -> {
-            if (mc.screen instanceof TankScreen ts && !ts.pressThinForTest()) result.append(" thin button inactive");
+            if (mc.gui.screen() instanceof TankScreen ts && !ts.pressThinForTest()) result.append(" thin button inactive");
         });
         then(40, () -> shot("menu_plants_thinned"));
         then(1, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(5);
         });
         then(30, () -> shot("menu_water"));
         then(1, () -> {
@@ -990,16 +990,16 @@ final class DevClientSmokeMP {
         Minecraft mc = Minecraft.getInstance();
         ticks++;
         mc.options.pauseOnLostFocus = false;
-        if (retryAt == ticks && mc.screen instanceof DisconnectedScreen) connect(new TitleScreen());
+        if (retryAt == ticks && mc.gui.screen() instanceof DisconnectedScreen) connect(new TitleScreen());
         if (quitIn > 0 && --quitIn == 0) {
             mc.stop();
             return;
         }
         if (mc.player == null || mc.level == null) return;
         // M22.3: a player that died (here or in an earlier run) respawns at once instead of waiting on the death screen
-        if (mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen) {
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.DeathScreen) {
             mc.player.respawn();
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
         }
         if (!sizeSet) {
             sizeSet = true;
@@ -1033,8 +1033,8 @@ final class DevClientSmokeMP {
 
     private static void shot(String what) {
         Minecraft mc = Minecraft.getInstance();
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         String file = "mp_" + name().toLowerCase(Locale.ROOT) + "_" + what + ".png";
-        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), 1, c -> LOGGER.info("[mp] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, file, mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[mp] {}", c.getString()));
     }
 }

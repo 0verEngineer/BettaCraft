@@ -47,12 +47,12 @@ public class AquaristScreen extends Screen {
     /** A view from the server: opens the menu, or refreshes the open one of the same aquarist. */
     public static void accept(CompoundTag view) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen instanceof AquaristScreen s && s.view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
+        if (mc.gui.screen() instanceof AquaristScreen s && s.view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
             s.view = view;
             s.refresh();
             return;
         }
-        mc.setScreen(new AquaristScreen(view));
+        mc.gui.setScreen(new AquaristScreen(view));
     }
 
     private boolean offering() {

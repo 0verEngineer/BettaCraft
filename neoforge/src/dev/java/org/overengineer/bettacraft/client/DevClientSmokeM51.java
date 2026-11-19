@@ -73,23 +73,23 @@ final class DevClientSmokeM51 {
     DevClientSmokeM51() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX() + 1300, p.getY() + 2, p.getZ(), java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(60, () -> mc.options.hideGui = false);
+        then(60, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // the arrival and his offer
         then(1, () -> server(this::arrive));
         for (int i = 0; i < 12; i++) then(20, () -> server(this::faceHim));
-        then(1, () -> mc.setScreen(new net.minecraft.client.gui.screens.ChatScreen("", false)));
+        then(1, () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.ChatScreen("", false)));
         then(20, () -> shot("offer_chat"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         String lang = mc.options.languageCode;
         then(1, () -> server(p -> AquaristMenu.open(p, npc)));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen)) LOGGER.error("[smoketest] M51 no offer window");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.AquaristScreen)) LOGGER.error("[smoketest] M51 no offer window");
         });
         then(5, () -> shot("offer_menu"));
         then(1, () -> language("de_de"));
         then(20, () -> shot("offer_menu_de"));
         then(1, () -> language(lang));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // hired: his menu
         then(5, () -> server(this::hire));
         then(10, () -> server(p -> AquaristMenu.open(p, npc)));
@@ -97,7 +97,7 @@ final class DevClientSmokeM51 {
         then(1, () -> language("de_de"));
         then(20, () -> shot("menu_de"));
         then(1, () -> language(lang));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // the tank menu with the aquarist button
         then(5, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), own1);
@@ -109,9 +109,9 @@ final class DevClientSmokeM51 {
         then(20, () -> shot("tank_menu_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // at work
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 4.5, base.getY() + 5.5, base.getZ() - 9.5, -15F, 28F));
         then(60, () -> shot("working_1"));
         for (int i = 0; i < 40; i++) then(20, () -> server(this::followJob));
@@ -160,7 +160,7 @@ final class DevClientSmokeM51 {
         }
         IFluidHandler res = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, base.west(), null);
         if (res != null) res.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000), IFluidHandler.FluidAction.EXECUTE);
-        BlockState foot = Blocks.CYAN_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
+        BlockState foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.CYAN).defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
         level.setBlockAndUpdate(base.offset(0, 0, 3), foot);
         level.setBlockAndUpdate(base.offset(0, 0, 4), foot.setValue(BedBlock.PART, BedPart.HEAD));
         level.setBlockAndUpdate(base.offset(-1, 0, 3), Blocks.LANTERN.defaultBlockState());
@@ -316,7 +316,7 @@ final class DevClientSmokeM51 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -332,7 +332,7 @@ final class DevClientSmokeM51 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -351,7 +351,7 @@ final class DevClientSmokeM51 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m51_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m51_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

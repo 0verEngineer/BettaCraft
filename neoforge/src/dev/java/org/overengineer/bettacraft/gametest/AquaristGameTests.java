@@ -13,6 +13,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
@@ -63,7 +64,7 @@ public final class AquaristGameTests {
     }
 
     private static Villager aquarist(GameTestHelper h, BlockPos at, int level) {
-        Villager v = h.spawn(EntityType.VILLAGER, at);
+        Villager v = h.spawn(EntityTypes.VILLAGER, at);
         v.setVillagerData(v.getVillagerData().withProfession(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.wrapAsHolder(ModVillagers.AQUARIST.get())).withLevel(level));
         v.setNoAi(true);
         return v;
@@ -88,7 +89,7 @@ public final class AquaristGameTests {
         // batch runs alone, so none of them belongs to a running test
         for (var other : h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.PathfinderMob.class,
                 new net.minecraft.world.phys.AABB(h.absolutePos(basin)).inflate(64), e -> e instanceof net.minecraft.world.entity.npc.villager.AbstractVillager || e instanceof org.overengineer.bettacraft.aquarist.AquaristEntity)) other.discard();
-        Villager v = h.spawn(EntityType.VILLAGER, new BlockPos(10, 1, 8));
+        Villager v = h.spawn(EntityTypes.VILLAGER, new BlockPos(10, 1, 8));
         h.succeedWhen(() -> check(Aquarists.isAquarist(v), "still " + v.getVillagerData().profession()));
     }
 

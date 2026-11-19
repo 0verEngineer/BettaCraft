@@ -7,7 +7,6 @@ import com.mojang.math.Axis;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -93,7 +92,7 @@ public final class FloatingPlantRenderer {
             col.set(Mth.floor(x), layer, Mth.floor(z));
             double y = surfaceY(level, col, dry, t);
             float bob = p.type.movable() ? (float) Math.sin(time * 0.07 + p.id * 1.7) * BOB : 0;
-            int light = LevelRenderer.getLightCoords(level, col);
+            int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, col);
             pose.pushPose();
             float above = layered ? layerOffset(rank.getOrDefault(p, 0)) : 0;
             pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob + above, z - origin.getZ());

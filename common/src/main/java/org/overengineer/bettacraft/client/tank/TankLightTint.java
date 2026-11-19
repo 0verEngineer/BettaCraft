@@ -62,7 +62,7 @@ public final class TankLightTint {
             else COLORS.put(key, c);
             if (changed || all && c != 0) {
                 BlockPos mn = t.min(), mx = t.max();
-                mc.levelRenderer.setBlocksDirty(mn.getX(), mn.getY(), mn.getZ(), mx.getX(), mx.getY(), mx.getZ());
+                mc.levelExtractor.setBlocksDirty(mn.getX(), mn.getY(), mn.getZ(), mx.getX(), mx.getY(), mx.getZ());
             }
         }
         COLORS.keySet().retainAll(seen);

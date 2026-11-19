@@ -182,7 +182,7 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         if (look.equals(lastTankLook)) return;
         lastTankLook = look;
         mc.execute(() -> {
-            if (mc.levelRenderer != null && mc.level != null) mc.levelRenderer.allChanged();
+            if (mc.levelRenderer != null && mc.level != null) mc.levelExtractor.allChanged();
         });
     }
 
@@ -205,8 +205,8 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         var ps = matrices != null ? matrices : new com.mojang.blaze3d.vertex.PoseStack();
         for (RenderLevelStageEvent.Stage s : stages) {
             ClientEvents.fireRenderLevel(new RenderLevelStageEvent(s, mc.levelRenderer, ps, org.overengineer.bettacraft.platform.client.RenderFrame.modelView(),
-                    org.overengineer.bettacraft.platform.client.RenderFrame.projection(), mc.levelRenderer.ticks, mc.getDeltaTracker(),
-                    mc.gameRenderer.getMainCamera(), org.overengineer.bettacraft.platform.client.RenderFrame.frustum()));
+                    org.overengineer.bettacraft.platform.client.RenderFrame.projection(), (int) mc.level.getGameTime(), mc.getDeltaTracker(),
+                    mc.gameRenderer.mainCamera(), org.overengineer.bettacraft.platform.client.RenderFrame.frustum()));
         }
     }
 }

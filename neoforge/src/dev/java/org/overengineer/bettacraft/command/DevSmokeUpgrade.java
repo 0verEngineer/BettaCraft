@@ -282,7 +282,7 @@ public final class DevSmokeUpgrade {
         net.minecraft.nbt.CompoundTag et = new net.minecraft.nbt.CompoundTag();
         et.merge(NbtCompat.saveEntityWithoutId(drop));
         et.put("Item", oldJars(16, 9, -1));
-        net.minecraft.world.entity.item.ItemEntity loaded = new net.minecraft.world.entity.item.ItemEntity(net.minecraft.world.entity.EntityType.ITEM, level);
+        net.minecraft.world.entity.item.ItemEntity loaded = new net.minecraft.world.entity.item.ItemEntity(net.minecraft.world.entity.EntityTypes.ITEM, level);
         org.overengineer.bettacraft.util.NbtCompat.loadEntity(loaded, et);
         loaded.setUUID(UUID.randomUUID());
         loaded.setNoGravity(true);

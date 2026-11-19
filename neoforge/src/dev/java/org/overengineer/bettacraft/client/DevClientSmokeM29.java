@@ -83,7 +83,7 @@ final class DevClientSmokeM29 {
         }
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 700, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(80, () -> server(this::pose));
         then(1, () -> look(dwarfs.getX() + 3.0, dwarfs.getY() + 1.0, dwarfs.getZ() - 4.6, 0F, 6F));
         then(60, () -> {
@@ -116,7 +116,7 @@ final class DevClientSmokeM29 {
             });
             then(40, () -> shot("sp_" + s.id()));
         }
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
 
@@ -133,7 +133,7 @@ final class DevClientSmokeM29 {
     private void partC() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 820, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::buildC));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(80, () -> server(this::poseC));
         then(1, () -> look(dwarfs.getX() + 3.0, dwarfs.getY() + 1.0, dwarfs.getZ() - 4.6, 0F, 6F));
         then(60, () -> {
@@ -176,7 +176,7 @@ final class DevClientSmokeM29 {
             });
             then(40, () -> shot("betta_" + k));
         }
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private void buildC(ServerPlayer p) {
@@ -258,7 +258,7 @@ final class DevClientSmokeM29 {
     private void partB() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 760, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::buildB));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(80, () -> server(this::poseB));
         then(1, () -> look(dwarfs.getX() + 3.0, dwarfs.getY() + 1.0, dwarfs.getZ() - 4.6, 0F, 6F));
         then(60, () -> {
@@ -284,7 +284,7 @@ final class DevClientSmokeM29 {
             });
             then(40, () -> shot("sp_" + s.id()));
         }
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private void buildB(ServerPlayer p) {
@@ -470,7 +470,7 @@ final class DevClientSmokeM29 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -489,7 +489,7 @@ final class DevClientSmokeM29 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, prefix + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, prefix + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

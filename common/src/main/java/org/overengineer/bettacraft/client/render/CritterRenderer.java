@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -202,7 +201,7 @@ public final class CritterRenderer {
         for (Critter k : t.critters()) {
             double x = k.renderX(time, TankPlants.SYNC_TICKS), y = k.renderY(time, TankPlants.SYNC_TICKS), z = k.renderZ(time, TankPlants.SYNC_TICKS);
             at.set(Mth.floor(x), Mth.floor(y + 0.05), Mth.floor(z));
-            int light = LevelRenderer.getLightCoords(level, at);
+            int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, at);
             pose.pushPose();
             pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
             orient(pose, k.face, k.renderYaw(time, TankPlants.SYNC_TICKS));
@@ -211,7 +210,7 @@ public final class CritterRenderer {
         }
         for (CritterObject o : t.critterObjects()) {
             at.set(Mth.floor(o.x), Mth.floor(o.y), Mth.floor(o.z));
-            int light = LevelRenderer.getLightCoords(level, at);
+            int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, at);
             pose.pushPose();
             pose.translate(o.x - origin.getX(), o.y - origin.getY(), o.z - origin.getZ());
             orient(pose, o.face, o.yaw);

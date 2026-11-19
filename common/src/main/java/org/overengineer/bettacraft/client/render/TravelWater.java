@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -144,7 +143,7 @@ public final class TravelWater {
     private static void update(Slosh s, Matrix4f m, Vector3f centre, Minecraft mc) {
         long now = System.nanoTime();
         Vector3f c = m.transformPosition(new Vector3f(centre));
-        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+        Vec3 cam = mc.gameRenderer.mainCamera().position();
         Vec3 w = new Vec3(c.x() + cam.x, c.y() + cam.y, c.z() + cam.z);
         double dt = s.last == 0 ? 0 : (now - s.last) / 1e9;
         s.last = now;

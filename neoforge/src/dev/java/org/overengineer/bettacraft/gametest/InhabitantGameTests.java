@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -141,7 +142,7 @@ public final class InhabitantGameTests {
         h.assertTrue(c.getTank().waterMb() == 14000, "two buckets add 2000 mB");
         // a fish bag: catch the tropical fish into a bag and insert it again (+100 mB)
         Entity fish = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).stream()
-                .filter(e -> e.getType() == EntityType.TROPICAL_FISH).findFirst().orElseThrow();
+                .filter(e -> e.getType() == EntityTypes.TROPICAL_FISH).findFirst().orElseThrow();
         ItemStack bag = FishBagItem.fillWith(fish);
         fish.discard();
         h.assertTrue(FishBagItem.isFilled(bag) && bag.getMaxStackSize() == 1, "filled bag does not stack");
@@ -158,8 +159,8 @@ public final class InhabitantGameTests {
         h.assertTrue(insert(h, c, bettaBucket(1), p) != null, "25% fill is below the 50% minimum");
         TankInteractions.changeWater(h.getLevel(), c, 3000);
         ok(insert(h, c, bettaBucket(1), p));
-        h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphins only by the size rule of big tanks (M30)");
-        h.assertTrue(TankInhabitants.accepts(EntityType.AXOLOTL, null) == TankInhabitants.Acceptance.OK, "axolotl ok");
+        h.assertTrue(TankInhabitants.accepts(EntityTypes.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphins only by the size rule of big tanks (M30)");
+        h.assertTrue(TankInhabitants.accepts(EntityTypes.AXOLOTL, null) == TankInhabitants.Acceptance.OK, "axolotl ok");
         h.succeed();
     }
 
@@ -216,7 +217,7 @@ public final class InhabitantGameTests {
         VoxelShape probe = Shapes.box(0.4, 0.95, 0.4, 0.6, 0.99, 0.6);
         VoxelShape forFish = s.getCollisionShape(h.getLevel(), top, CollisionContext.of(fish));
         VoxelShape forPlayer = s.getCollisionShape(h.getLevel(), top, CollisionContext.of(h.makeMockPlayer(GameType.SURVIVAL)));
-        VoxelShape forWild = s.getCollisionShape(h.getLevel(), top, CollisionContext.of(h.spawn(EntityType.COD, new BlockPos(10, 2, 10))));
+        VoxelShape forWild = s.getCollisionShape(h.getLevel(), top, CollisionContext.of(h.spawn(EntityTypes.COD, new BlockPos(10, 2, 10))));
         h.assertTrue(Shapes.joinIsNotEmpty(forFish, probe, BooleanOp.AND), "closed top for inhabitants");
         h.assertTrue(!Shapes.joinIsNotEmpty(forPlayer, probe, BooleanOp.AND), "open top for players");
         h.assertTrue(!Shapes.joinIsNotEmpty(forWild, probe, BooleanOp.AND), "open top for other entities");

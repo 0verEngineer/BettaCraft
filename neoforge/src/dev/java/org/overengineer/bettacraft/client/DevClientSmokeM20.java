@@ -71,7 +71,7 @@ final class DevClientSmokeM20 {
     DevClientSmokeM20() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 520, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(160, () -> server(this::pose));
         // 1. the reef tank
         then(40, () -> look(reef.getX() + 2.5, reef.getY() + 1.7, reef.getZ() - 4.3, 0F, 10F));
@@ -108,7 +108,7 @@ final class DevClientSmokeM20 {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, true);
         }));
         // 4. menus
-        then(10, () -> mc.options.hideGui = false);
+        then(10, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
@@ -126,14 +126,14 @@ final class DevClientSmokeM20 {
         then(5, this::hoverSalt);
         then(20, () -> shot("items_de"));
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> mc.gui.setScreen(null));
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     private void menu(int tab, String name, String lang, java.util.function.Consumer<org.overengineer.bettacraft.client.screen.TankScreen> page) {
         then(10, () -> openMenu(reef));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
                 ts.selectTabForTest(tab);
                 if (page != null) page.accept(ts);
             } else {
@@ -145,7 +145,7 @@ final class DevClientSmokeM20 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ scene
@@ -214,7 +214,7 @@ final class DevClientSmokeM20 {
             light(level, colors.offset(i * 4, 0, 0), 2, 2, 0, DyeColor.WHITE);
         }
         for (int x = -2; x < 12; x++) for (int y = -1; y < 4; y++) {
-            level.setBlockAndUpdate(colors.offset(x, y, 3), Blocks.WHITE_CONCRETE.defaultBlockState());
+            level.setBlockAndUpdate(colors.offset(x, y, 3), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState());
         }
         for (int x = -2; x < 12; x++) for (int z = 0; z < 3; z++) level.setBlockAndUpdate(colors.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState());
         // Acropora: bleached (fresh water), pale, healthy (white light), glowing (actinic)
@@ -429,7 +429,7 @@ final class DevClientSmokeM20 {
     /** The creative inventory on the Bettacraft tab, scrolled to the reef items. */
     private void openCreativeTab() {
         var scr = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), true);
-        mc.setScreen(scr);
+        mc.gui.setScreen(scr);
         try {
             var m = net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen.class.getDeclaredMethod("selectTab", net.minecraft.world.item.CreativeModeTab.class);
             m.setAccessible(true);
@@ -449,7 +449,7 @@ final class DevClientSmokeM20 {
     }
 
     private void hoverSalt() {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             ItemStack st = s.getItem();
             if (st.is(ModItems.SEA_SALT.get())) {
@@ -470,7 +470,7 @@ final class DevClientSmokeM20 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -496,7 +496,7 @@ final class DevClientSmokeM20 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void mouseTo(int x, int y) {
@@ -514,8 +514,8 @@ final class DevClientSmokeM20 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M20 shot {} from {}", name, mc.player.getEyePosition());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m20_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m20_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
     }
 }

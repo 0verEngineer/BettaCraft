@@ -350,7 +350,7 @@ public final class MinecraftPets {
         m.discard(); // the same animal (UUID) comes in from the box
         Component err = TankInhabitants.insert(level, c, boxed, m.getType(), null, 0);
         if (err != null && saved != null) { // back where it stood
-            Entity back = EntityType.loadEntityRecursive(saved, level, net.minecraft.world.entity.EntitySpawnReason.LOAD, e -> {
+            Entity back = EntityType.loadEntityRecursive(saved, level, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false), e -> {
                 e.snapTo(x, y, z, e.getYRot(), e.getXRot());
                 return e;
             });

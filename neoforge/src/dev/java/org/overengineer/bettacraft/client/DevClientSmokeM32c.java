@@ -47,11 +47,11 @@ final class DevClientSmokeM32c {
 
     DevClientSmokeM32c() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 2.3, base.getY() + 1.5, base.getZ() - 2.6, 0F, 8F));
         then(40, () -> server(p -> refresh()));
         then(120, () -> shot("display_link"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -124,7 +124,7 @@ final class DevClientSmokeM32c {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -144,6 +144,6 @@ final class DevClientSmokeM32c {
 
     private void shot(String name) {
         mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m32c_" + name + ".png", mc.getMainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m32c_" + name + ".png", mc.gameRenderer.mainRenderTarget(), c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
@@ -105,7 +106,7 @@ public final class ForeignTerrarium {
     public static BigTankRules.Volume volume(EntityType<?> type) {
         ForeignProfile.Land l = land(type);
         if (l != null) return l.volume();
-        return type == EntityType.TURTLE ? BigTankRules.Volume.WATER : null;
+        return type == EntityTypes.TURTLE ? BigTankRules.Volume.WATER : null;
     }
 
     /**
@@ -117,7 +118,7 @@ public final class ForeignTerrarium {
         if (allow.isEmpty()) return false;
         var id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (BettaCraft.MOD_ID.equals(id.getNamespace()) || TerrariumAnimals.isRegistered(type) || ForeignProfiles.of(type) != null) return false;
-        if (type == EntityType.PLAYER || type.builtInRegistryHolder().is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) return false;
+        if (type == EntityTypes.PLAYER || type.builtInRegistryHolder().is(org.overengineer.bettacraft.platform.Tags.EntityTypes.BOSSES)) return false;
         return InhabitantRules.matches(allow, id.toString());
     }
 

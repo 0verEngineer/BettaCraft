@@ -42,10 +42,10 @@ final class DevClientSmokeM26 {
     DevClientSmokeM26() {
         base = mc.player.blockPosition().offset(-10, 0, 760);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 3.0, base.getY() + 2.4, base.getZ() - 2.6, 0F, 38F));
         then(100, () -> shot("cultures"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             if (p.level().getBlockEntity(base.offset(4, 0, 0)) instanceof LiveFoodPumpBlockEntity pump) {
                 pump.doseNow();
@@ -55,18 +55,18 @@ final class DevClientSmokeM26 {
             } else LOGGER.error("[smoketest] M26 no live food pump");
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen)) LOGGER.error("[smoketest] M26 no pump screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.LiveFoodPumpScreen)) LOGGER.error("[smoketest] M26 no pump screen");
             shot("pump");
         });
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("pump_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         // part b: the food maker
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 12.3, base.getY() + 1.5, base.getZ() - 1.3, 45F, 28F));
         then(60, () -> shot("maker"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             BlockPos at = base.offset(10, 0, 0);
             if (p.level().getBlockEntity(at) instanceof org.overengineer.bettacraft.food.FoodMakerBlockEntity m) {
@@ -77,7 +77,7 @@ final class DevClientSmokeM26 {
             } else LOGGER.error("[smoketest] M26 no food maker");
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.FoodMakerScreen s)) LOGGER.error("[smoketest] M26 no food maker screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.FoodMakerScreen s)) LOGGER.error("[smoketest] M26 no food maker screen");
             else LOGGER.info("[smoketest] M26 food maker window: progress {} of {}, drive {} of {}, status {}", s.getMenu().progress(), s.getMenu().batchTicks(),
                     s.getMenu().drive(), s.getMenu().driveMax(), s.getMenu().status());
             shot("maker_menu");
@@ -85,7 +85,7 @@ final class DevClientSmokeM26 {
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("maker_menu_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void build(ServerPlayer p) {
@@ -163,7 +163,7 @@ final class DevClientSmokeM26 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -179,7 +179,7 @@ final class DevClientSmokeM26 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -198,7 +198,7 @@ final class DevClientSmokeM26 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m26_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m26_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

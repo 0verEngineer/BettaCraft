@@ -142,7 +142,7 @@ public final class MonitorAlarms {
         Set<UUID> out = new LinkedHashSet<>();
         if (owner != null && level.getServer().getPlayerList().getPlayer(owner) != null) out.add(owner);
         double r2 = (double) WAYPOINT_RANGE * WAYPOINT_RANGE;
-        for (ServerPlayer p : level.players()) if (p.distanceToSqr(pos.getCenter()) <= r2) out.add(p.getUUID());
+        for (ServerPlayer p : level.players()) if (p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= r2) out.add(p.getUUID());
         return out;
     }
 

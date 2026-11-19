@@ -62,7 +62,7 @@ final class DevClientSmokeM291b {
         for (int i = 0; i < rooted.length; i++) spots.add(new Spot(rooted[i], 1, rp[i][0], rp[i][1]));
 
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         plants();
         if (!Boolean.getBoolean("bettacraft.smoketest.m291b.plantsonly")) {
             devices();
@@ -95,12 +95,12 @@ final class DevClientSmokeM291b {
             if (p.level().getBlockEntity(cabTank.below()) instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity cab) p.openMenu(cab);
         }));
         then(20, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             shot("cabinet_menu");
         });
         then(1, () -> {
             if (mc.player != null) mc.player.closeContainer();
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
         });
         // the multiblock filter under its tank
         then(1, () -> look(filterTank.getX() + 1.0, filterTank.getY() + 0.6, filterTank.getZ() - 3.2, 0F, 12F));
@@ -194,7 +194,7 @@ final class DevClientSmokeM291b {
 
     private void soundTest() {
         then(1, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             mc.player.connection.sendCommand("bettacraft sounds");
         });
         then(30, () -> {
@@ -207,7 +207,7 @@ final class DevClientSmokeM291b {
             List<String> played = org.overengineer.bettacraft.client.SoundTest.playedForTest();
             LOGGER.info("[smoketest] M29.1 sound test played {} sounds: {}", played.size(), played);
             if (played.size() != SoundTestSteps.COUNT) LOGGER.error("[smoketest] M29.1 sound test played {} of {} sounds", played.size(), SoundTestSteps.COUNT);
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
         });
     }
 
@@ -320,7 +320,7 @@ final class DevClientSmokeM291b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -339,7 +339,7 @@ final class DevClientSmokeM291b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m291b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m291b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

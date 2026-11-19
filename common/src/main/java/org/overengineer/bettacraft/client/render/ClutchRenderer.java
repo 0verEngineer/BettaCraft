@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -41,7 +40,7 @@ public final class ClutchRenderer {
         BlockPos origin = be.getBlockPos();
         VertexConsumer eggs = null;
         for (Clutch k : t.clutches()) {
-            int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(k.x, k.y, k.z));
+            int light = be.getLevel() == null ? 0xF000F0 : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), BlockPos.containing(k.x, k.y, k.z));
             if (k.kind == Clutch.Kind.FOAM) {
                 foam(be, k, partialTick, pose, buffers);
                 continue;
@@ -163,7 +162,7 @@ public final class ClutchRenderer {
     private static void box(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         BlockPos origin = be.getBlockPos();
         Vec3 p = TankmateBreeding.boxPos(t);
-        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(p));
+        int light = be.getLevel() == null ? 0xF000F0 : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), BlockPos.containing(p));
         pose.pushPose();
         pose.translate(p.x - origin.getX(), p.y - origin.getY(), p.z - origin.getZ());
         PoseStack.Pose last = pose.last();

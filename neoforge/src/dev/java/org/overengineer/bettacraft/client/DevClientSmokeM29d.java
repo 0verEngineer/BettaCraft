@@ -55,7 +55,7 @@ final class DevClientSmokeM29d {
     DevClientSmokeM29d() {
         base = mc.player.blockPosition().offset(-10, 0, 760);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(20, () -> look(base.getX() + 2.0, base.getY() + 2.2, base.getZ() - 3.0, 0F, 18F));
         then(100, () -> server(this::arrange));
         // the crayfish tank (camera looks south: +x is on the left of the picture)
@@ -80,7 +80,7 @@ final class DevClientSmokeM29d {
             look(e.x + 0.15, e.y + dy, base.getZ() - 0.3, 8F, (float) Math.toDegrees(Math.atan2(dy, dz)));
         });
         then(60, () -> shot("axolotl_close"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private void build(ServerPlayer p) {
@@ -215,7 +215,7 @@ final class DevClientSmokeM29d {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -234,7 +234,7 @@ final class DevClientSmokeM29d {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m29d_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m29d_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

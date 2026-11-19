@@ -91,7 +91,7 @@ final class DevClientSmokeM215 {
 
     DevClientSmokeM215() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // ---- smooth swimming: samples and a frame sequence
         then(160, () -> look(swim.getX() + 2.0, swim.getY() + 1.1, swim.getZ() - 2.4, 0F, 8F));
         then(40, () -> sampling = true);
@@ -140,7 +140,7 @@ final class DevClientSmokeM215 {
         then(1, () -> look(clip.getX() - 0.9, clip.getY() + 1.4, clip.getZ() - 1.6, -35F, 25F));
         then(60, () -> shot("clip_feeder"));
         // ---- menu with the break protection, the message when breaking
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), swim.getX() + 2.0, swim.getY(), swim.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
@@ -148,7 +148,7 @@ final class DevClientSmokeM215 {
         then(10, () -> openMenu(swim));
         then(30, () -> shot("menu_protection_off"));
         then(1, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen) {
                 org.overengineer.bettacraft.platform.network.PacketDistributor.sendToServer(new org.overengineer.bettacraft.network.TankActionPayload(
                         mc.player.containerMenu.containerId, org.overengineer.bettacraft.tank.menu.TankActions.TOGGLE_PROTECT, 0, "", java.util.Optional.empty()));
             }
@@ -158,7 +158,7 @@ final class DevClientSmokeM215 {
         then(20, () -> shot("menu_protection_on_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> {
             p.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
             boolean broke = p.gameMode.destroyBlock(swim);
@@ -170,19 +170,19 @@ final class DevClientSmokeM215 {
         then(10, () -> shot("protected_message"));
         then(1, () -> server(p -> reach(p, false)));
         // ---- the handbook start page (en, de)
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         guide("en");
         then(1, () -> language("de_de"));
         guide("de");
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void guide(String l) {
         if (!GuideBook.available()) return;
         then(10, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("index.md")));
         then(40, () -> shot("guide_start_" + l));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ sampling
@@ -354,7 +354,7 @@ final class DevClientSmokeM215 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -374,7 +374,7 @@ final class DevClientSmokeM215 {
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
         sample();
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -393,7 +393,7 @@ final class DevClientSmokeM215 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_5_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_5_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

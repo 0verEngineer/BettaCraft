@@ -4,7 +4,6 @@ import java.util.function.Function;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -28,14 +27,14 @@ final class DataGenM31d {
                 .override().predicate(BettaCraft.id("filled"), 1.0F).model(filled).end();
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.MOB_JAR.get())
                 .pattern(" I ").pattern("GSG").pattern("GGG")
                 .define('I', Items.IRON_BARS).define('G', org.overengineer.bettacraft.platform.Tags.Items.GLASS_BLOCKS_COLORLESS).define('S', Items.SLIME_BALL)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("mob_jar")));
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         tag.apply(ModTags.MOB_CAPTURE_ITEMS);
     }
 }

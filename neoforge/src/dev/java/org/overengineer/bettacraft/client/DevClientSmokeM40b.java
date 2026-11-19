@@ -57,7 +57,7 @@ final class DevClientSmokeM40b {
 
     DevClientSmokeM40b() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> look(base.getX() + 6.5, base.getY() + 5.0, base.getZ() + 13.5, 180F, 32F));
         then(200, () -> shot("bundles"));
         then(1, () -> look(base.getX() + 10.0, base.getY() + 3.4, base.getZ() + 9.8, 150F, 42F));
@@ -68,11 +68,11 @@ final class DevClientSmokeM40b {
         then(150, () -> shot("bundle_start"));
         then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), head.getX() + 3.5, head.getY() - 1.0, head.getZ() + 0.5, java.util.Set.of(), 90F, 10F, true)));
         then(80, () -> {
-            mc.options.hideGui = false;
-            mc.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head));
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
+            mc.gui.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head));
         });
         then(30, () -> shot("screen"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -184,7 +184,7 @@ final class DevClientSmokeM40b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -203,7 +203,7 @@ final class DevClientSmokeM40b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m40b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m40b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

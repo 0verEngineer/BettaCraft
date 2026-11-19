@@ -19,12 +19,23 @@ import net.minecraft.tags.TagKey;
  * has registered it (NeoForge: in its RegisterEvent; Fabric: at mod initialisation in the order of the vanilla registries).
  * The loader-independent counterpart of NeoForge's class of the same name: same methods, so the common code reads the same.
  */
-public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
+public class DeferredHolder<R, T extends R> extends Holder.Reference<R> implements Supplier<T> {
+    /** M52d: 26.2 seals {@link Holder} to Direct and Reference, so this is a (stand-alone) Reference that delegates everything. */
+    private static final HolderOwner<Object> OWNER = new HolderOwner<>() {
+    };
+
     protected final ResourceKey<R> key;
     private Holder<R> holder;
 
+    @SuppressWarnings("unchecked")
     protected DeferredHolder(ResourceKey<R> key) {
-        this.key = Objects.requireNonNull(key);
+        super(Holder.Reference.Type.STAND_ALONE, (HolderOwner<R>) (HolderOwner<?>) OWNER, Objects.requireNonNull(key), null);
+        this.key = key;
+    }
+
+    @Override
+    public ResourceKey<R> key() {
+        return key;
     }
 
     public static <R, T extends R> DeferredHolder<R, T> create(ResourceKey<? extends Registry<R>> registryKey, Identifier id) {
@@ -118,6 +129,11 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
     @Override
     public net.minecraft.core.component.DataComponentMap components() {
         return bind(true).components();
+    }
+
+    @Override
+    public void bindComponents(net.minecraft.core.component.DataComponentMap components) {
+        // the registry binds the components on the vanilla holder; this one always reads them from there
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.config.CommonConfig;
@@ -294,7 +295,7 @@ public final class AxolotlCare {
                 if (spawn(level, c, g, o.generation, p) != null) made++;
             }
             TankCare.log(level, c, "log.bettacraft.axolotl_hatched", String.valueOf(made));
-            org.overengineer.bettacraft.api.ApiEvents.born(level, c, net.minecraft.world.entity.EntityType.AXOLOTL, made, true); // M32 part d
+            org.overengineer.bettacraft.api.ApiEvents.born(level, c, net.minecraft.world.entity.EntityTypes.AXOLOTL, made, true); // M32 part d
         }
         if (changed) {
             c.setChanged();
@@ -305,7 +306,7 @@ public final class AxolotlCare {
     /** A baby axolotl with these genes in the tank (hatching, tests). */
     @Nullable
     public static Axolotl spawn(ServerLevel level, TankBlockEntity c, CritterGenes g, int generation, Vec3 p) {
-        Axolotl a = EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Axolotl a = EntityTypes.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (a == null) return null;
         a.setComponent(net.minecraft.core.component.DataComponents.AXOLOTL_VARIANT, variant(g));
         a.setAge(-24000);

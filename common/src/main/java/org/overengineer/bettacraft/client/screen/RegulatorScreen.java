@@ -57,7 +57,7 @@ public class RegulatorScreen extends Screen {
     @Override
     public void tick() {
         Minecraft mc = Minecraft.getInstance();
-        if (device() == null || mc.player == null || mc.player.distanceToSqr(pos.getCenter()) > 64) onClose();
+        if (device() == null || mc.player == null || mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 64) onClose();
     }
 
     @Override

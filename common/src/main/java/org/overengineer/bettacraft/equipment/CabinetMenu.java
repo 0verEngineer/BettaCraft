@@ -305,7 +305,7 @@ public class CabinetMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return cabinet == null || (!cabinet.isRemoved() && player.distanceToSqr(cabinet.getBlockPos().getCenter()) <= 64.0);
+        return cabinet == null || (!cabinet.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(cabinet.getBlockPos())) <= 64.0);
     }
 
     /** The heaters inside the filter item in the filter slot, as a two-slot container (component in and out). */

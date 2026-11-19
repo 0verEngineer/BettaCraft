@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -58,7 +59,7 @@ final class DevClientSmokeM10 {
 
     DevClientSmokeM10() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(40, () -> look(base.getX() + 6.5, base.getY() + 5.2, base.getZ() - 6.5, 0F, 32F));
         then(80, () -> shot("shapes"));
         // the inner corner of the big L (notch towards the camera)
@@ -85,7 +86,7 @@ final class DevClientSmokeM10 {
                 p.teleportTo(ow, base.getX() + 6.5, base.getY() + 5.2, base.getZ() - 6.5, java.util.Set.of(), 0F, 32F, true);
             }
         }));
-        then(40, () -> mc.options.hideGui = false);
+        then(40, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private static void place(ServerLevel level, List<BlockPos> blocks, Identifier glass) {
@@ -125,7 +126,7 @@ final class DevClientSmokeM10 {
         cb.getTank().setName("T");
         cb.getTank().setFront(Direction.NORTH);
         cb.getTank().setOwner(p.getUUID());
-        Component err = TankInhabitants.insert(level, cb, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, p, false);
+        Component err = TankInhabitants.insert(level, cb, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH, p, false);
         if (err != null) LOGGER.warn("[smoketest] M10 tropical fish: {}", err.getString());
         fish(level, p, cb, new double[][]{{2.5, 0.6, 0.6}, {0.6, 1.4, 2.5}});
 
@@ -219,7 +220,7 @@ final class DevClientSmokeM10 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -240,7 +241,7 @@ final class DevClientSmokeM10 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m10_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m10_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

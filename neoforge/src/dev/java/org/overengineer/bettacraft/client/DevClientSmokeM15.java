@@ -57,7 +57,7 @@ final class DevClientSmokeM15 {
 
     DevClientSmokeM15() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // 1. the name sign: default size, twice, half
         then(20, () -> look(base.getX() + 1.5, base.getY() + 1.6, base.getZ() - 2.6, 0F, 10F));
         then(80, () -> shot("sign"));
@@ -86,7 +86,7 @@ final class DevClientSmokeM15 {
         then(1, () -> look(base.getX() + 15.0, base.getY() + 0.55, base.getZ() - 0.55, 0F, 22F));
         then(20, () -> shot("shrimp_closeup"));
         // 4. the interior with the leave hint at the bottom left
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             p.teleportTo(p.level(), base.getX() + 1.5, base.getY(), base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false);
             enteredAt = p.position();
@@ -97,7 +97,7 @@ final class DevClientSmokeM15 {
             if (!inside) LOGGER.error("[smoketest] M15 the player is not in the interior");
             mc.player.setXRot(25F);
         });
-        then(30, () -> mc.getToastManager().clear());
+        then(30, () -> mc.gui.toastManager().clear());
         then(10, () -> shot("interior_hint"));
         String lang = mc.options.languageCode;
         then(1, () -> language("de_de"));
@@ -127,7 +127,7 @@ final class DevClientSmokeM15 {
             mc.player.setXRot(10F);
         });
         then(20, () -> shot("interior_left"));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     private static void place(ServerLevel level, List<BlockPos> blocks) {
@@ -247,7 +247,7 @@ final class DevClientSmokeM15 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -274,11 +274,11 @@ final class DevClientSmokeM15 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m15_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m15_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

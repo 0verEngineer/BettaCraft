@@ -10,6 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.minecraft.world.entity.monster.skeleton.Stray;
@@ -46,7 +47,7 @@ public final class Hardening2GameTests {
     @GameTest(template = EMPTY)
     public static void glassMobKeepsItsMarkWhenConverted(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        Skeleton s = EntityType.SKELETON.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Skeleton s = EntityTypes.SKELETON.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (s == null) throw new GameTestFailure("no skeleton");
         Vec3 at = h.absoluteVec(new Vec3(4.5, 2, 4.5));
         s.snapTo(at.x, at.y, at.z, 0, 0);
@@ -54,7 +55,7 @@ public final class Hardening2GameTests {
         GlassMobs.prepare(s);
         h.assertTrue(GlassMobs.isGlassMob(s), "marked");
         // what Skeleton#doFreezeConversion does
-        Stray n = s.convertTo(EntityType.STRAY, net.minecraft.world.entity.ConversionParams.single(s, true, true), x -> {});
+        Stray n = s.convertTo(EntityTypes.STRAY, net.minecraft.world.entity.ConversionParams.single(s, true, true), x -> {});
         if (n == null) throw new GameTestFailure("no conversion");
         GameTestCompat.converted(s, n);
         h.assertTrue(GlassMobs.isGlassMob(n), "the stray carries the mark of the skeleton");
@@ -141,19 +142,19 @@ public final class Hardening2GameTests {
     public static void foreignListShowsProfiles(GameTestHelper h) {
         ForeignGameTests.withProfile(ForeignGameTests.TROPICAL, () -> {
             TankBlockEntity c = ForeignGameTests.tank(h, 2, 2, 3, 2, 3, 25F);
-            ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> {});
-            ForeignGameTests.add(h, c, EntityType.COD, t -> {});
+            ForeignGameTests.add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
+            ForeignGameTests.add(h, c, EntityTypes.COD, t -> {});
             List<ForeignCommand.Row> rows = ForeignCommand.rows(h.getLevel(), c);
             h.assertTrue(rows.size() == 2, "two foreign animals: " + rows.size());
-            ForeignCommand.Row cod = rows.stream().filter(r -> r.type() == EntityType.COD).findFirst().orElseThrow();
-            ForeignCommand.Row tropical = rows.stream().filter(r -> r.type() == EntityType.TROPICAL_FISH).findFirst().orElseThrow();
+            ForeignCommand.Row cod = rows.stream().filter(r -> r.type() == EntityTypes.COD).findFirst().orElseThrow();
+            ForeignCommand.Row tropical = rows.stream().filter(r -> r.type() == EntityTypes.TROPICAL_FISH).findFirst().orElseThrow();
             h.assertTrue(cod.profile() == null, "the cod has no profile");
             h.assertTrue(BettaCraft.id("gametest_stand_in").equals(tropical.profile()), "the tropical fish has the test profile: " + tropical.profile());
             h.assertTrue(ForeignCommand.unprofiled(rows).isEmpty(), "vanilla types are not listed as mods without a profile");
             var modRows = new java.util.ArrayList<>(rows);
             modRows.add(new ForeignCommand.Row(org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), net.minecraft.network.chat.Component.empty(), null));
             h.assertTrue(ForeignCommand.unprofiled(modRows).size() == 1, "a type of another namespace without a profile is listed");
-            h.assertTrue(ForeignCommand.tanksNear(h.getLevel(), c.getBlockPos().getCenter(), 8).contains(c), "the tank is found nearby");
+            h.assertTrue(ForeignCommand.tanksNear(h.getLevel(), net.minecraft.world.phys.Vec3.atCenterOf(c.getBlockPos()), 8).contains(c), "the tank is found nearby");
             h.succeed();
         });
     }

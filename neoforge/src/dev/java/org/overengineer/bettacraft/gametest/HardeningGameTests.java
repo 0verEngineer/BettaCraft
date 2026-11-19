@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -302,15 +303,15 @@ public final class HardeningGameTests {
         try {
             TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 18000);
             ItemStack bucket = new ItemStack(Items.COD_BUCKET);
-            var err = TankInhabitants.insert(level, c, bucket, EntityType.COD, null, 0L);
+            var err = TankInhabitants.insert(level, c, bucket, EntityTypes.COD, null, 0L);
             h.assertTrue(err == null, "cod inserted: " + (err == null ? "" : err.getString()));
             ServerConfig.INHABITANTS_MAX_HITBOX.set(0.4);
             TankInhabitants.reconcile(level, c);
-            List<Entity> cods = level.getEntities((Entity) null, TankInhabitants.tankBox(c.getTank()), e -> e.getType() == EntityType.COD && e.isAlive());
+            List<Entity> cods = level.getEntities((Entity) null, TankInhabitants.tankBox(c.getTank()), e -> e.getType() == EntityTypes.COD && e.isAlive());
             h.assertTrue(cods.isEmpty(), "the cod left the tank");
             h.assertTrue(c.getTank().inhabitants().isEmpty(), "inhabitant list empty");
             List<ItemEntity> bags = level.getEntitiesOfClass(ItemEntity.class, TankInhabitants.tankBox(c.getTank()).inflate(4),
-                    e -> e.getItem().is(ModItems.FISH_BAG.get()) && FishBagItem.containedType(e.getItem()) == EntityType.COD);
+                    e -> e.getItem().is(ModItems.FISH_BAG.get()) && FishBagItem.containedType(e.getItem()) == EntityTypes.COD);
             h.assertTrue(bags.size() == 1, "one bag with the cod in front of the tank, found " + bags.size());
             h.assertTrue(c.getTank().log().stream().anyMatch(l -> l.key().equals("log.bettacraft.outgrown")), "logged");
             h.succeed();

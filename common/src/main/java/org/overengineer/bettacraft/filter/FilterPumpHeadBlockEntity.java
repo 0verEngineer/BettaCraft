@@ -254,7 +254,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** D2: the players near a filter from before M40 hear once (per server run) why it stopped. */
     private void tellRetrofit(ServerLevel level) {
         for (var p : level.players()) {
-            if (p.distanceToSqr(worldPosition.getCenter()) > 32 * 32 || !told.add(p.getUUID())) continue;
+            if (p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(worldPosition)) > 32 * 32 || !told.add(p.getUUID())) continue;
             p.sendSystemMessage(Component.translatable("message.bettacraft.mb_filter.retrofit", worldPosition.getX(), worldPosition.getY(), worldPosition.getZ())
                     .withStyle(net.minecraft.ChatFormatting.RED));
         }

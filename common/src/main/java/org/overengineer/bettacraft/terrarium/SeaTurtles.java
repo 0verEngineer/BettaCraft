@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.foreign.ForeignProfile;
@@ -49,14 +50,14 @@ public final class SeaTurtles {
     /** The breeding profile of this type (the sea turtle), or null. */
     @Nullable
     public static ForeignProfile breeding(EntityType<?> type) {
-        return type == EntityType.TURTLE && breedingOn() ? BREEDING : null;
+        return type == EntityTypes.TURTLE && breedingOn() ? BREEDING : null;
     }
 
     /** Why a sea turtle cannot go into this tank (no sand on its land), or null. The size and the salt: {@code BigAnimals#refusal}. */
     @Nullable
     public static Component refusal(ServerLevel level, TankBlockEntity c) {
         if (!HerpBreeding.anyNest(level, c.getTank(), ModTags.TURTLE_NEST_GROUND)) {
-            return Component.translatable("message.bettacraft.sea_turtle.no_beach", EntityType.TURTLE.getDescription());
+            return Component.translatable("message.bettacraft.sea_turtle.no_beach", EntityTypes.TURTLE.getDescription());
         }
         return null;
     }

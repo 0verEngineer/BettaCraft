@@ -60,12 +60,12 @@ final class DevClientSmokeM9 {
                 LOGGER.info("[smoketest] M9 hatchery: {} batch(es), {} (blocked {})", n, t.items().getStackInSlot(CultureTubBlockEntity.OUTPUT), t.blocker(p.level()));
             }
         }));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(30, () -> look(tankMin.getX() + 3.2, tankMin.getY() + 3.4, tankMin.getZ() - 4.2, 0F, 30F));
         then(60, () -> shot("scene"));
         then(1, () -> look(tankMin.getX() + 6.0, tankMin.getY() + 1.4, tankMin.getZ() - 1.3, 0F, 45F));
         then(50, () -> shot("breeders"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // Jade (if installed): the tank and the larva tub
         then(1, () -> look(tankMin.getX() + 0.5, tankMin.getY() + 1.5, tankMin.getZ() - 2.2, 0F, 0F));
         then(50, () -> shot("overlay_tank"));
@@ -78,15 +78,15 @@ final class DevClientSmokeM9 {
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(5);
         });
         then(30, () -> shot("menu_water"));
         then(1, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(0);
         });
         then(20, () -> shot("menu_overview"));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void build(ServerPlayer p) {
@@ -175,7 +175,7 @@ final class DevClientSmokeM9 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -196,7 +196,7 @@ final class DevClientSmokeM9 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m9_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m9_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

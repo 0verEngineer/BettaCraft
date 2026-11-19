@@ -76,6 +76,6 @@ public class CalciumReactorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return reactor == null || (!reactor.isRemoved() && player.distanceToSqr(reactor.getBlockPos().getCenter()) <= 64.0);
+        return reactor == null || (!reactor.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(reactor.getBlockPos())) <= 64.0);
     }
 }

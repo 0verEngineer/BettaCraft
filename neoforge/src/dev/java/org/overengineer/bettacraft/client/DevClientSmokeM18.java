@@ -67,7 +67,7 @@ final class DevClientSmokeM18 {
 
     DevClientSmokeM18() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // 1. the row by day and by night
         then(40, () -> look(base.getX() + 11.0, base.getY() + 3.6, base.getZ() - 13.0, 0F, 12F));
         then(80, () -> shot("row_day"));
@@ -105,7 +105,7 @@ final class DevClientSmokeM18 {
         });
         then(1, () -> server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), 6000)));
         // 5. the light items (GUI)
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true); // the menu needs it
             p.teleportTo(p.level(), base.getX() + 11.5, base.getY() + 1.0, base.getZ() - 8.5, java.util.Set.of(), 0F, 12F, false);
@@ -118,7 +118,7 @@ final class DevClientSmokeM18 {
         then(5, () -> hoverLight(DyeColor.LIGHT_BLUE));
         then(20, () -> shot("items_de"));
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         // 6. the stocking of a tank with young bettas (tooltip of the animals line)
         then(5, () -> server(p -> {
             p.teleportTo(p.level(), young.getX() + 1.5, young.getY() + 1.0, young.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
@@ -127,7 +127,7 @@ final class DevClientSmokeM18 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
         });
         then(5, this::hoverStocking);
         then(20, () -> shot("menu_stocking"));
@@ -136,8 +136,8 @@ final class DevClientSmokeM18 {
         then(20, () -> shot("menu_stocking_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
-        then(1, () -> mc.options.hideGui = true);
+        then(5, () -> mc.gui.setScreen(null));
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     /** No info overlay (Jade) in the pictures: no reach while the scene runs. */
@@ -151,7 +151,7 @@ final class DevClientSmokeM18 {
     /** The creative inventory on the Bettacraft tab (all 16 lights). */
     private void openCreativeTab() {
         var scr = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), true);
-        mc.setScreen(scr);
+        mc.gui.setScreen(scr);
         try {
             var m = net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen.class.getDeclaredMethod("selectTab", net.minecraft.world.item.CreativeModeTab.class);
             m.setAccessible(true);
@@ -173,7 +173,7 @@ final class DevClientSmokeM18 {
 
     /** Over the light of this colour in the open creative tab. */
     private void hoverLight(DyeColor c) {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             ItemStack st = s.getItem();
             if (st.is(ModItems.TANK_LIGHT.get()) && TankLightItem.colorOf(st) == c) {
@@ -290,7 +290,7 @@ final class DevClientSmokeM18 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -317,11 +317,11 @@ final class DevClientSmokeM18 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void hoverStocking() {
-        if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+        if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
             int[] at = ts.stockingLineForTest();
             mouseTo(at[0], at[1]);
         } else {
@@ -344,7 +344,7 @@ final class DevClientSmokeM18 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m18_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m18_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] " + c.getString()));
     }
 }

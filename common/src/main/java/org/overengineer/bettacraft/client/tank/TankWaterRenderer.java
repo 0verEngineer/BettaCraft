@@ -58,7 +58,7 @@ public final class TankWaterRenderer {
         if (Boolean.TRUE.equals(org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelValue(level, pos, org.overengineer.bettacraft.tank.TankBlockEntity.WATER_DYNAMIC))) return;
         var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
         TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
-        int light = LevelRenderer.getLightCoords(level, pos);
+        int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
         faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), (d, c, col, rev) -> {

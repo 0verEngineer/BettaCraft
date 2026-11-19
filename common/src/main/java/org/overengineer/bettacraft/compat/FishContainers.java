@@ -71,7 +71,7 @@ public final class FishContainers {
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
+        return t == null ? null : java.util.Optional.ofNullable(net.minecraft.resources.Identifier.tryParse(t.getStringOr("id", ""))).flatMap(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE::getOptional).orElse(null);
     }
 
     public static boolean isEmptyContainer(ItemStack stack) {
@@ -121,6 +121,6 @@ public final class FishContainers {
         t.remove("Motion");
         t.remove("Passengers");
         t.remove("OwnerName");
-        return EntityType.create(NbtCompat.input(level.registryAccess(), t), level, net.minecraft.world.entity.EntitySpawnReason.LOAD).orElse(null);
+        return EntityType.create(NbtCompat.input(level.registryAccess(), t), level, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false)).orElse(null);
     }
 }

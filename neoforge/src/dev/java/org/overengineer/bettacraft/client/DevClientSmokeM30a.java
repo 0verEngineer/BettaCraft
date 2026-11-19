@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +54,7 @@ final class DevClientSmokeM30a {
 
     DevClientSmokeM30a() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(big.getX() + 16, big.getY() + 5.5, big.getZ() - 17, 0F, 14F));
         then(260, () -> {
             int n = mc.level.getEntitiesOfClass(Dolphin.class, new net.minecraft.world.phys.AABB(big).inflate(40)).size();
@@ -76,7 +77,7 @@ final class DevClientSmokeM30a {
             LOGGER.info("[smoketest] M30 walking speed with a full tub: {}", p.getAttributeValue(Attributes.MOVEMENT_SPEED));
         }));
         then(1, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             look(small.getX() + 6, small.getY() + 2.0, small.getZ() - 4.5, 0F, 20F);
         });
         then(40, () -> shot("transport_tub"));
@@ -126,10 +127,10 @@ final class DevClientSmokeM30a {
                     for (int y = 0; y < h; y++) in.setBlock(r.toWorld(s[0] + x, y, s[1] + z), Blocks.STONE.defaultBlockState(), 2);
                 }
         for (int i = 0; i < 2; i++) {
-            Dolphin d = EntityType.DOLPHIN.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Dolphin d = EntityTypes.DOLPHIN.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack tub = TransportTubItem.fillWith(d);
             d.discard();
-            var err = TankInhabitants.insert(level, a, tub, EntityType.DOLPHIN, null, 0);
+            var err = TankInhabitants.insert(level, a, tub, EntityTypes.DOLPHIN, null, 0);
             if (err != null) LOGGER.error("[smoketest] M30 dolphin refused: {}", err.getString());
         }
         LOGGER.info("[smoketest] M30 dolphin tank {}x{}x{} scale {}, region {}x{}x{}", a.getTank().sizeX(), a.getTank().sizeY(), a.getTank().sizeZ(),
@@ -162,7 +163,7 @@ final class DevClientSmokeM30a {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -181,7 +182,7 @@ final class DevClientSmokeM30a {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m30a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m30a_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

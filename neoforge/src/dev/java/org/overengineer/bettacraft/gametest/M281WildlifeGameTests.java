@@ -97,7 +97,7 @@ public final class M281WildlifeGameTests {
             check(e.getValue().get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS) == Wildlife.spawnsWild(e.getKey()), e.getKey().id() + ": wild_animals wrong");
         }
         check(ModEntities.TANKMATES.get(TankmateSpecies.LINED_SEAHORSE).get().builtInRegistryHolder().is(ModTags.WILD_ANIMALS), "seahorses spawn wild");
-        check(!net.minecraft.world.entity.EntityType.COD.builtInRegistryHolder().is(ModTags.ALL_ANIMALS), "cod is no animal of the mod");
+        check(!net.minecraft.world.entity.EntityTypes.COD.builtInRegistryHolder().is(ModTags.ALL_ANIMALS), "cod is no animal of the mod");
         h.succeed();
     }
 

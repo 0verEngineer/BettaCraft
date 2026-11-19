@@ -29,13 +29,13 @@ final class FilterEffects {
     static void tick() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.isPaused()) return;
-        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+        Vec3 cam = mc.gameRenderer.mainCamera().position();
         List<BlockEntity> filters = new ArrayList<>(ExternalFilterBlockEntity.CLIENT_LOADED);
         filters.addAll(CabinetBlockEntity.CLIENT_FILTERS);
         boolean sound = ClientConfig.FILTER_SOUND.get();
         for (BlockEntity be : filters) {
             if (be.getLevel() != mc.level || be.isRemoved()) continue;
-            if (be.getBlockPos().getCenter().distanceToSqr(cam) > RANGE * RANGE) continue;
+            if (net.minecraft.world.phys.Vec3.atCenterOf(be.getBlockPos()).distanceToSqr(cam) > RANGE * RANGE) continue;
             FilterFlow.Path p = FilterRenderer.path(mc.level, be);
             if (p == null || !p.wet()) continue;
             if (((FilterHost) be).powerShare() <= 0) continue; // M23: switched to 0 %

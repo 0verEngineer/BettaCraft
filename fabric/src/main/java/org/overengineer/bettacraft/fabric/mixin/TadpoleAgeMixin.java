@@ -1,6 +1,7 @@
 package org.overengineer.bettacraft.fabric.mixin;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import org.overengineer.bettacraft.fabric.FabricGameEvents;
 import org.overengineer.bettacraft.platform.event.LivingConversionEvent;
@@ -16,6 +17,6 @@ public abstract class TadpoleAgeMixin {
     private void bettacraft$convertPre(CallbackInfo ci) {
         Tadpole self = (Tadpole) (Object) this;
         if (self.level().isClientSide()) return;
-        if (FabricGameEvents.post(new LivingConversionEvent.Pre(self, EntityType.FROG)).isCanceled()) ci.cancel();
+        if (FabricGameEvents.post(new LivingConversionEvent.Pre(self, EntityTypes.FROG)).isCanceled()) ci.cancel();
     }
 }

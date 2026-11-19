@@ -7,7 +7,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Items;
@@ -78,7 +77,7 @@ final class DataGenM37 {
         p.withExistingParent("fertilizer_maker", p.modLoc("block/fertilizer_maker_0"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         // the crank: an iron arm with a knob on a stick
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.CRANK.get())
                 .pattern("IN").pattern("S ")
@@ -104,7 +103,7 @@ final class DataGenM37 {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("fertilizer_canister")));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FERTILIZER_MAKER.get());
     }
 }

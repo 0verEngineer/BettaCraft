@@ -55,7 +55,7 @@ final class DevClientShowcaseTour {
                     mc.stop();
                     return;
                 }
-                mc.createWorldOpenFlows().openWorld("Bettacraft Schaukasten", () -> mc.setScreen(new TitleScreen()));
+                mc.createWorldOpenFlows().openWorld("Bettacraft Schaukasten", () -> mc.gui.setScreen(new TitleScreen()));
             }
         });
         // a world made by a dedicated server: the client offers a backup before opening it; just load it
@@ -86,7 +86,7 @@ final class DevClientShowcaseTour {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null || mc.getSingleplayerServer() == null) return;
             mc.options.pauseOnLostFocus = false;
-            if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+            if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
             if (tour == null) {
                 mc.getWindow().setWindowed(1280, 960);
                 tour = new DevClientShowcaseTour();
@@ -104,7 +104,7 @@ final class DevClientShowcaseTour {
     }
 
     private DevClientShowcaseTour() {
-        then(100, () -> mc.options.hideGui = true);
+        then(100, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> server(p -> p.getAbilities().flying = true));
         if (BENCH) {
             bench();
@@ -160,7 +160,7 @@ final class DevClientShowcaseTour {
         then(1, () -> {
             mc.options.framerateLimit().set(260);
             mc.options.enableVsync().set(false);
-            mc.getWindow().updateVsync(false);
+            mc.invalidateSurfaceConfiguration();
         });
         // the plant row: Rotala (12th tank, x ~ 67) close up, Rotala and Vallisneria (15th, x ~ 85) from 15 blocks, and the
         // whole showcase from above (the plant row further away than 24 blocks)
@@ -227,7 +227,7 @@ final class DevClientShowcaseTour {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

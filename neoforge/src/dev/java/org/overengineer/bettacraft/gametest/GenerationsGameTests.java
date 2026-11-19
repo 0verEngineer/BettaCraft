@@ -26,6 +26,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
@@ -1126,8 +1127,8 @@ public final class GenerationsGameTests {
             ServerPlayer sp = breeder(h);
             ServerLevel level = h.getLevel();
             TankBlockEntity c = ForeignGameTests.tank(h, 1, 2, 3, 2, 2, 25F);
-            ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> t.putInt("Variant", 65536));
-            ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> t.putInt("Variant", 117506305));
+            ForeignGameTests.add(h, c, EntityTypes.TROPICAL_FISH, t -> t.putInt("Variant", 65536));
+            ForeignGameTests.add(h, c, EntityTypes.TROPICAL_FISH, t -> t.putInt("Variant", 117506305));
             java.util.Set<Integer> parents = java.util.Set.of(65536, 117506305);
             for (int gen = 1; gen <= 3; gen++) {
                 List<Entity> before = new ArrayList<>(TankInhabitants.liveInhabitants(level, c.getTank()));

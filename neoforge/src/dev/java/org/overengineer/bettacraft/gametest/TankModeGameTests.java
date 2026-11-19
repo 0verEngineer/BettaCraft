@@ -91,7 +91,7 @@ public final class TankModeGameTests {
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.WATER_BUCKET));
         BlockPos pos = c.getBlockPos();
         TankInteractions.useItemOn(p.getMainHandItem(), h.getLevel(), pos, p, InteractionHand.MAIN_HAND,
-                new BlockHitResult(pos.getCenter(), Direction.UP, pos, false));
+                new BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false));
         return p.getMainHandItem().is(Items.BUCKET);
     }
 

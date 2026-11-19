@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -143,7 +144,7 @@ public final class SourcesGameTests {
 
     @GameTest(template = EMPTY, timeoutTicks = 200)
     public static void traderOffersMakeOnlyTheirProducts(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         var rnd = h.getLevel().getRandom();
         // every offer of the table reaches the trader (NeoForge builds his lists from the WandererTradesEvent)
         Set<org.overengineer.bettacraft.villager.TradeListing> registered = new HashSet<>();

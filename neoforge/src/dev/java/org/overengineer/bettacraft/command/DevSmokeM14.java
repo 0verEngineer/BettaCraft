@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.overengineer.bettacraft.critters.Critter;
@@ -131,7 +132,7 @@ final class DevSmokeM14 {
         int[] counts = info.getIntArray("critters").orElse(new int[0]);
         if (counts.length != 4 || counts[0] + counts[2] < 7) throw new IllegalStateException("M14: overlay counts " + java.util.Arrays.toString(counts));
         if (ModItems.ALGAE_SCRAPER.get() == null || ModItems.FROG_BUCKET.get() == null) throw new IllegalStateException("M14: items");
-        var trader = EntityType.WANDERING_TRADER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        var trader = EntityTypes.WANDERING_TRADER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         List<CritterSpecies> offered = new ArrayList<>();
         for (var tradePool : org.overengineer.bettacraft.gametest.framework.DevTrades.wandererPools(level)) {
             for (org.overengineer.bettacraft.villager.TradeListing l : tradePool.getLeft()) {

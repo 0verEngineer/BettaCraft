@@ -56,7 +56,7 @@ final class DevClientSmokeM12 {
 
     DevClientSmokeM12() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // once the light engine has caught up: the red of the red root floaters as their light makes it
         then(40, () -> server(p -> {
             settleRed(p.level(), TankMultiblock.getController(p.level(), base));
@@ -78,7 +78,7 @@ final class DevClientSmokeM12 {
         then(1, () -> look(base.getX() + 11.5, base.getY() + 6.2, base.getZ() - 1.4, 0F, 58F));
         then(50, () -> shot("free_shape"));
         // the info overlay and the plants page of the menu (with GUI)
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> look(base.getX() + 2.5, base.getY() + 1.5, base.getZ() - 2.2, 0F, 0F));
         then(60, () -> shot("overlay"));
         then(1, () -> server(p -> {
@@ -87,11 +87,11 @@ final class DevClientSmokeM12 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showPlantsPageForTest();
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showPlantsPageForTest();
         });
         then(30, () -> shot("menu_plants"));
         then(1, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
         });
         then(20, () -> shot("menu_water"));
         // the seven tabs (small tab font) at GUI scale 2, 3 and 4, in English and German: screenshots and a check that
@@ -106,7 +106,7 @@ final class DevClientSmokeM12 {
                     mc.resizeGui();
                 });
                 then(10, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
                         ts.showPlantsPageForTest();
                         String fit = DevClientSmokeMP.tabsFit(mc, ts.tabButtonsForTest());
                         StringBuilder labels = new StringBuilder();
@@ -118,23 +118,23 @@ final class DevClientSmokeM12 {
                 then(20, () -> shot("menu_tabs_" + code.substring(0, 2) + "_gui" + sc));
                 // the overview (button row, interior button) and the breeding tab (wrapped genotype lines)
                 then(1, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
                 });
                 then(20, () -> shot("menu_overview_" + code.substring(0, 2) + "_gui" + sc));
                 then(1, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(2);
                 });
                 then(20, () -> shot("menu_breeding_" + code.substring(0, 2) + "_gui" + sc));
                 then(1, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(Integer.MAX_VALUE);
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(Integer.MAX_VALUE);
                 });
                 then(20, () -> shot("menu_breeding_" + code.substring(0, 2) + "_gui" + sc + "_end"));
                 then(1, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(0);
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.scrollBreedingForTest(0);
                 });
             }
             then(1, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
             });
             then(20, () -> shot("menu_water_" + code.substring(0, 2) + "_gui4"));
         }
@@ -144,7 +144,7 @@ final class DevClientSmokeM12 {
             mc.resizeGui();
         });
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> {
             for (BlockPos at : List.of(base, base.offset(0, 0, 14), base.offset(9, 0, 0))) {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), at);
@@ -267,7 +267,7 @@ final class DevClientSmokeM12 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void then(int delay, Runnable action) {
@@ -280,7 +280,7 @@ final class DevClientSmokeM12 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -299,7 +299,7 @@ final class DevClientSmokeM12 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m12_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m12_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

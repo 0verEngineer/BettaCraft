@@ -65,7 +65,7 @@ final class DevClientSmokeM223 {
 
     DevClientSmokeM223() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // 1. wild fish and small animals in a pool, seen through the glass and from above
         // a long lens (field of view 30) for the small animals
         then(1, () -> mc.options.fov().set(30));
@@ -87,7 +87,7 @@ final class DevClientSmokeM223 {
         then(1, () -> look(reef.getX() + 3.5, reef.getY() + 4.0, reef.getZ() - 1.6, 0F, 35F));
         then(40, () -> shot("reef_near"));
         // 3. the tank menu: single small animals, a fish with unknown genes, the magnifier
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(this::fillInventory));
         then(1, () -> server(p -> p.teleportTo(p.level(), tank.getX() + 1.5, tank.getY() + 0.2, tank.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         menu("menu_critter_list", ts -> {
@@ -107,14 +107,14 @@ final class DevClientSmokeM223 {
             ts.selectFirstCritterForTest();
         });
         // 4. tooltips of buckets and bags with several animals
-        then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        then(5, () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
         then(20, () -> shot("inventory"));
         tooltip("tooltip_critter_bucket", s -> s.is(ModItems.CRITTER_BUCKET.get()));
         tooltip("tooltip_neon_bucket", s -> s.getItem() instanceof TankmateBucketItem);
         tooltip("tooltip_betta_bucket", s -> s.is(ModItems.BETTA_BUCKET.get()));
         tooltip("tooltip_bag", s -> s.is(ModItems.FISH_BAG.get()) && s.has(org.overengineer.bettacraft.registry.ModDataComponents.TANKMATE_GROUP.get()));
         tooltip("tooltip_magnifier", s -> s.is(ModItems.MAGNIFIER.get()));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -296,7 +296,7 @@ final class DevClientSmokeM223 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) page.accept(ts);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) page.accept(ts);
             else LOGGER.error("[smoketest] M22.3 no tank menu for {}", name);
         });
         then(20, () -> shot(name));
@@ -304,7 +304,7 @@ final class DevClientSmokeM223 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void tooltip(String name, java.util.function.Predicate<ItemStack> which) {
@@ -317,7 +317,7 @@ final class DevClientSmokeM223 {
     }
 
     private void hover(java.util.function.Predicate<ItemStack> which) {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (which.test(s.getItem())) {
                 mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
@@ -345,7 +345,7 @@ final class DevClientSmokeM223 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -361,7 +361,7 @@ final class DevClientSmokeM223 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -382,7 +382,7 @@ final class DevClientSmokeM223 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_3_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_3_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

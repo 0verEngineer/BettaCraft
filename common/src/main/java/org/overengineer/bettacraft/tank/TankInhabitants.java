@@ -27,10 +27,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -125,7 +126,7 @@ public final class TankInhabitants {
     public static boolean bagTakes(Entity e) {
         Acceptance a = accepts(e.getType(), e);
         if (a == Acceptance.OK) return true;
-        return a == Acceptance.BIG && e.getType() == EntityType.TURTLE && e instanceof LivingEntity le && le.isBaby();
+        return a == Acceptance.BIG && e.getType() == EntityTypes.TURTLE && e instanceof LivingEntity le && le.isBaby();
     }
 
     public static Acceptance accepts(EntityType<?> type, @Nullable Entity instance) {
@@ -257,7 +258,7 @@ public final class TankInhabitants {
             Component big = org.overengineer.bettacraft.big.BigAnimals.refusal(tank, liveInhabitants(level, tank), type, null);
             if (big != null) return big;
         }
-        if (type == EntityType.TURTLE) { // M35: a sea turtle needs a sand beach for its eggs
+        if (type == EntityTypes.TURTLE) { // M35: a sea turtle needs a sand beach for its eggs
             Component beach = org.overengineer.bettacraft.terrarium.SeaTurtles.refusal(level, controller);
             if (beach != null) return beach;
         }
@@ -288,7 +289,7 @@ public final class TankInhabitants {
         } else {
             @SuppressWarnings("unchecked")
             EntityType<Entity> anyType = (EntityType<Entity>) type;
-            Consumer<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
+            net.minecraft.world.entity.PostSpawnProcessor<Entity> config = EntityType.createDefaultStackConfig(level, stack, player);
             e = createFromBucket(level, anyType, config, spawn);
         }
         if (e == null || e.getType() != type) {
@@ -360,7 +361,7 @@ public final class TankInhabitants {
      * animal from the bucket is the one that lives in the tank.
      */
     @Nullable
-    static Entity createFromBucket(ServerLevel level, EntityType<Entity> type, Consumer<Entity> config, Vec3 spawn) {
+    static Entity createFromBucket(ServerLevel level, EntityType<Entity> type, net.minecraft.world.entity.PostSpawnProcessor<Entity> config, Vec3 spawn) {
         List<Entity> joined = new ArrayList<>();
         Entity e;
         ForeignAnimals.capture(joined);
@@ -375,7 +376,7 @@ public final class TankInhabitants {
             joined.forEach(Entity::discard);
             e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (e != null) {
-                config.accept(e);
+                config.apply(e);
                 e.snapTo(spawn.x, spawn.y, spawn.z, 0, 0);
             }
         }

@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -52,7 +51,7 @@ public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.L
         if (c == null || c.getTank() == null) return;
         TankData t = c.getTank();
         VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutout(TEXTURE));
-        int l = LevelRenderer.getLightCoords(level, pos);
+        int l = net.minecraft.util.LightCoordsUtil.getLightCoords(level, pos);
         Vec3 o = new Vec3(pos.getX(), pos.getY(), pos.getZ());
         Vec3 out = new Vec3(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5);
         List<Vec3> pts = new ArrayList<>();
@@ -154,7 +153,7 @@ public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.L
         pts.add(top);
         pts.add(top.add(in.scale(Math.max(0.12, reach - 0.18))));
         inWater(pts, t);
-        int light = LevelRenderer.getLightCoords(level, BlockPos.containing(p.top()));
+        int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, BlockPos.containing(p.top()));
         draw(ps, buffers.getBuffer(RenderTypes.entityCutout(TEXTURE)), new Vec3(pos.getX(), pos.getY(), pos.getZ()), pts, light);
     }
 

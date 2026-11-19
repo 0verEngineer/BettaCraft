@@ -58,10 +58,10 @@ final class DevClientSmokeM37 {
     DevClientSmokeM37() {
         base = mc.player.blockPosition().offset(30, 0, 900);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 6.2, base.getY() + 2.4, base.getZ() - 0.8, 40F, 28F));
         then(100, () -> shot("machine"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // the crank in the hand, winding the cabinet (the action bar shows the spring)
         then(1, () -> look(base.getX() + 1.5, base.getY() + 1.1, base.getZ() - 0.4, 0F, 25F));
         then(20, () -> server(p -> {
@@ -82,7 +82,7 @@ final class DevClientSmokeM37 {
             } else LOGGER.error("[smoketest] M37 no fertilizer maker");
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.FertilizerMakerScreen s)) LOGGER.error("[smoketest] M37 no fertilizer maker screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.FertilizerMakerScreen s)) LOGGER.error("[smoketest] M37 no fertilizer maker screen");
             else LOGGER.info("[smoketest] M37 fertilizer maker window: progress {} of {}, water {}, fertilizer {}, spring {} %, status {}", s.getMenu().progress(),
                     s.getMenu().batchTicks(), s.getMenu().water(), s.getMenu().fertilizer(), s.getMenu().springPercent(), s.getMenu().status());
             shot("maker_menu");
@@ -91,7 +91,7 @@ final class DevClientSmokeM37 {
         then(20, () -> shot("maker_menu_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // the cabinet's window with its spring
         then(1, () -> server(p -> {
             BlockPos at = base.offset(1, 0, 2);
@@ -99,7 +99,7 @@ final class DevClientSmokeM37 {
             else LOGGER.error("[smoketest] M37 no cabinet");
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s)) LOGGER.error("[smoketest] M37 no cabinet screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s)) LOGGER.error("[smoketest] M37 no cabinet screen");
             else if (s.getMenu().springPercent() <= 0) LOGGER.error("[smoketest] M37 the cabinet shows no spring: {}", s.getMenu().springPercent());
             shot("cabinet_menu");
         });
@@ -107,7 +107,7 @@ final class DevClientSmokeM37 {
         then(20, () -> shot("cabinet_menu_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // the water tab: the fertilizer level and the devices on the spring
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), base.offset(0, 1, 2));
@@ -118,7 +118,7 @@ final class DevClientSmokeM37 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
             else LOGGER.error("[smoketest] M37 no tank screen");
         });
         then(30, () -> shot("water"));
@@ -126,7 +126,7 @@ final class DevClientSmokeM37 {
         then(20, () -> shot("water_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> {
             ServerConfig.POWER_HEATER.set(heater);
             ServerConfig.POWER_FILTER.set(filter);
@@ -207,7 +207,7 @@ final class DevClientSmokeM37 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -223,7 +223,7 @@ final class DevClientSmokeM37 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -242,7 +242,7 @@ final class DevClientSmokeM37 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m37_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m37_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import org.overengineer.bettacraft.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -76,7 +76,7 @@ public final class PlantMeshRenderer {
     private static final Long2ObjectOpenHashMap<Mesh> MESHES = new Long2ObjectOpenHashMap<>();
     static final PlantMeshIndex INDEX = new PlantMeshIndex();
     private static ClientLevel meshLevel;
-    private static MultiBufferSource.BufferSource shadowBuffers;
+    private static org.overengineer.bettacraft.client.render.ImmediateBuffers shadowBuffers;
     /** Frames drawn (main pass); block changes remember it to measure how soon the mesh follows. */
     private static long frame;
     /** Plants drawn in the last frame / in the last shadow pass (smoke tests). */
@@ -365,7 +365,6 @@ public final class PlantMeshRenderer {
                     .useLightmap()
                     .useOverlay()
                     .affectsCrumbling()
-                    .bufferSize(1 << 18)
                     .setOutline(net.minecraft.client.renderer.rendertype.RenderSetup.OutlineProperty.AFFECTS_OUTLINE)
                     .createRenderSetup());
 
@@ -399,7 +398,7 @@ public final class PlantMeshRenderer {
         float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
         Vec3 cam = event.getCamera().position();
         PoseStack ps = event.getPoseStack();
-        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        org.overengineer.bettacraft.client.render.ImmediateBuffers buffers = org.overengineer.bettacraft.client.render.ImmediateBuffers.shared();
         int budget = BUILDS_PER_FRAME;
         for (Long key : ROOTS.toArray(new Long[0])) {
             BlockPos pos = BlockPos.of(key);
@@ -425,7 +424,7 @@ public final class PlantMeshRenderer {
             if (m == null) continue;
             if (INDEX.takeRelight(key) || m.lights.length != m.lightPos.size()) {
                 int[] l = new int[m.lightPos.size()];
-                for (int i = 0; i < l.length; i++) l[i] = LevelRenderer.getLightCoords(level, BlockPos.of(m.lightPos.getLong(i)));
+                for (int i = 0; i < l.length; i++) l[i] = net.minecraft.util.LightCoordsUtil.getLightCoords(level, BlockPos.of(m.lightPos.getLong(i)));
                 m.lights = l;
             }
             if (!event.getFrustum().isVisible(m.box)) continue;
@@ -459,7 +458,7 @@ public final class PlantMeshRenderer {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         if (level == null || !active()) return;
-        if (shadowBuffers == null) shadowBuffers = MultiBufferSource.immediate(new com.mojang.blaze3d.vertex.ByteBufferBuilder(1 << 18));
+        if (shadowBuffers == null) shadowBuffers = new org.overengineer.bettacraft.client.render.ImmediateBuffers("Bettacraft plant shadows", 1 << 18);
         float time = level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
         Vec3 cam = event.getCamera().position();
         PoseStack ps = new PoseStack();

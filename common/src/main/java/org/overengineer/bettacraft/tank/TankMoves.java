@@ -70,7 +70,7 @@ public final class TankMoves {
     }
 
     private static boolean swimsOn(CompoundTag tag) {
-        return EntityType.byString(tag.getStringOr("id", "")).map(TankMoves::swimsOn).orElse(false);
+        return java.util.Optional.ofNullable(net.minecraft.resources.Identifier.tryParse(tag.getStringOr("id", ""))).flatMap(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE::getOptional).map(TankMoves::swimsOn).orElse(false);
     }
 
     /** M50: whether the care of a tank on a moving structure runs (features.compat.create.travelCare). */
@@ -432,7 +432,7 @@ public final class TankMoves {
         for (int i = 0; i < stowed.size(); i++) {
             CompoundTag tag = stowed.getCompoundOrEmpty(i);
             if (NbtCompat.hasUUID(tag, "UUID") && level.getEntity(NbtCompat.getUUID(tag, "UUID")) != null) continue;
-            Entity e = EntityType.loadEntityRecursive(tag, level, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
+            Entity e = EntityType.loadEntityRecursive(tag, level, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false), en -> en);
             if (e == null) {
                 LOGGER.warn("A packed animal ({}) could not be loaded again", tag.getStringOr("id", ""));
                 continue;

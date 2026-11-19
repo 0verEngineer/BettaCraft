@@ -74,7 +74,7 @@ final class DevClientSmokeM218 {
     DevClientSmokeM218() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 620, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // 1. free swimming: the seahorses find their posts themselves
         then(60, () -> look(reef.getX() + 2.5, reef.getY() + 1.4, reef.getZ() - 4.2, 0F, 8F));
         then(600, () -> {
@@ -104,17 +104,17 @@ final class DevClientSmokeM218 {
         // 4. clear glass: placed (unchanged) and as items
         then(1, () -> look(glass.getX() + 1.5, glass.getY() + 1.6, glass.getZ() - 3.0, 0F, 18F));
         then(40, () -> shot("glass_placed"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(this::fillInventory));
         then(1, () -> {
             if (mc.player != null) mc.player.getInventory().setSelectedSlot(8);
         });
         then(40, () -> {
-            mc.getToastManager().clear();
+            mc.gui.toastManager().clear();
             checkStack();
         });
         then(5, () -> shot("hotbar"));
-        then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        then(5, () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
         then(10, () -> {
             boolean jei = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("jei") && org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.filterForTest("glass tank");
             LOGGER.info("[smoketest] M21.8 JEI filter set: {}", jei);
@@ -133,19 +133,19 @@ final class DevClientSmokeM218 {
         then(1, () -> {
             if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("jei")) org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.filterForTest("");
         });
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> p.setGameMode(net.minecraft.world.level.GameType.CREATIVE)));
         // 5. menus
         then(1, () -> server(p -> p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false)));
         menu(1, "menu_seahorse", s -> s.showTankmateForTest("lined_seahorse"));
         menu(2, "menu_breeding", null);
         // 6. handbook
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         guide("en");
         then(1, () -> language("de_de"));
         guide("de");
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ scene
@@ -202,7 +202,7 @@ final class DevClientSmokeM218 {
             clear.setStyle(TankStyle.CLEAN);
             level.sendBlockUpdated(glass, level.getBlockState(glass), level.getBlockState(glass), 3);
         }
-        for (int x = -1; x < 4; x++) for (int y = -1; y < 3; y++) level.setBlockAndUpdate(glass.offset(x, y, 2), Blocks.WHITE_CONCRETE.defaultBlockState());
+        for (int x = -1; x < 4; x++) for (int y = -1; y < 3; y++) level.setBlockAndUpdate(glass.offset(x, y, 2), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState());
         Seahorses.forget();
         LOGGER.info("[smoketest] M21.8 hitching spots in the reef tank: {}", Seahorses.spots(level, c.getTank()).size());
         if (Seahorses.spots(level, c.getTank()).isEmpty()) LOGGER.warn("[smoketest] M21.8 no hitching posts found yet (interior chunks loading)");
@@ -328,7 +328,7 @@ final class DevClientSmokeM218 {
     private void menu(int tab, String name, java.util.function.Consumer<org.overengineer.bettacraft.client.screen.TankScreen> page) {
         then(10, () -> openMenu(reef));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
                 ts.selectTabForTest(tab);
                 if (page != null) page.accept(ts);
             } else {
@@ -340,7 +340,7 @@ final class DevClientSmokeM218 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void openMenu(BlockPos at) {
@@ -357,16 +357,16 @@ final class DevClientSmokeM218 {
         then(10, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("saltwater/seahorses.md")));
         then(40, () -> shot("guide_" + l));
         then(5, () -> {
-            if (mc.screen == null) return;
+            if (mc.gui.screen() == null) return;
             double x = mc.getWindow().getGuiScaledWidth() / 2.0, y = mc.getWindow().getGuiScaledHeight() / 2.0;
-            for (int i = 0; i < 8; i++) mc.screen.mouseScrolled(x, y, 0, -3);
+            for (int i = 0; i < 8; i++) mc.gui.screen().mouseScrolled(x, y, 0, -3);
         });
         then(20, () -> shot("guide_" + l + "_2"));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void hover(java.util.function.Predicate<ItemStack> which) {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (which.test(s.getItem())) {
                 mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
@@ -459,7 +459,7 @@ final class DevClientSmokeM218 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -475,7 +475,7 @@ final class DevClientSmokeM218 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -494,7 +494,7 @@ final class DevClientSmokeM218 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_8_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_8_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

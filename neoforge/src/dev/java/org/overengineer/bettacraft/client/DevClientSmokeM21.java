@@ -66,7 +66,7 @@ final class DevClientSmokeM21 {
 
     DevClientSmokeM21() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> setMeshes(true));
         then(120, () -> look(base.getX() + 1.5, base.getY() + 1.6, base.getZ() - 2.6, 0F, 12F));
         then(100, () -> shot("outside_miniature"));
@@ -158,14 +158,14 @@ final class DevClientSmokeM21 {
             items.add(new ItemStack(ModItems.FROG_BUCKET.get()));
             for (int i = 0; i < items.size() && i < 9; i++) p.getInventory().setItem(i, items.get(i));
         }));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(30, () -> shot("buckets_hotbar"));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     private void setMeshes(boolean on) {
         Features.set(Feature.PLANT_MESHES, on);
-        if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
+        if (mc.levelRenderer != null) mc.levelExtractor.allChanged();
     }
 
     private static void place(ServerLevel level, List<BlockPos> blocks) {
@@ -231,7 +231,7 @@ final class DevClientSmokeM21 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -250,7 +250,7 @@ final class DevClientSmokeM21 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

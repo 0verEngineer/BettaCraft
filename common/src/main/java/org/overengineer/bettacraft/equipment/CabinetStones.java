@@ -107,7 +107,7 @@ public final class CabinetStones {
     /** Whether {@code stack} may be the stone of a cabinet (the slab is checked separately, {@link #slabFor}). */
     public static boolean isStone(ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof BlockItem bi)) return false;
-        if (stack.is(ModTags.CABINET_EXCLUDED) || stack.is(ItemTags.PLANKS) || stack.is(ItemTags.SLABS)) return false;
+        if (stack.is(ModTags.CABINET_EXCLUDED) || stack.is(ItemTags.PLANKS) || stack.is(net.minecraft.tags.BlockItemTags.SLABS.item())) return false;
         Block b = bi.getBlock();
         if (b instanceof EntityBlock || !fullCube(b.defaultBlockState())) return false;
         if (stack.is(ModTags.CABINET_STONES)) return true;

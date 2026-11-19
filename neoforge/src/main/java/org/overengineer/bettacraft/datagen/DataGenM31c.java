@@ -4,7 +4,6 @@ import java.util.function.Function;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -65,7 +64,7 @@ final class DataGenM31c {
         }
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.CRICKET_CULTURE.get(), 3)
                 .requires(Items.WHEAT).requires(Items.SHORT_GRASS).requires(Items.PAPER)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("cricket_culture")));
@@ -74,12 +73,12 @@ final class DataGenM31c {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("fruit_fly_culture")));
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(ModTags.FROG_NEST_GROUND).addTag(BlockTags.LEAVES).addTag(BlockTags.SUBSTRATE_OVERWORLD)
                 .add(Blocks.MOSS_BLOCK, Blocks.MOSS_CARPET, Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS);
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         tag.apply(ModTags.FEEDER_INSECTS).add(ModItems.CRICKETS.get());
         tag.apply(ModTags.SMALL_FEEDER_INSECTS).add(ModItems.FRUIT_FLIES.get());
         tag.apply(ModTags.GECKO_FRUIT).add(Items.SWEET_BERRIES, Items.GLOW_BERRIES, Items.MELON_SLICE);

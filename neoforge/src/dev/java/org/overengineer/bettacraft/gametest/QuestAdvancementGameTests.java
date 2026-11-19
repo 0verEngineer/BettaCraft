@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
@@ -61,15 +62,15 @@ public final class QuestAdvancementGameTests {
             h.assertTrue(err == null, "the tetra goes in: " + (err == null ? "" : err.getString()));
             QuestAdv.check(h, sp, "tankmate_inserted");
             h.assertTrue(!QuestAdv.done(sp, "foreign_animal"), "no guest yet");
-            err = TankInhabitants.insert(level, c, new ItemStack(Items.AXOLOTL_BUCKET), EntityType.AXOLOTL, sp, false);
+            err = TankInhabitants.insert(level, c, new ItemStack(Items.AXOLOTL_BUCKET), EntityTypes.AXOLOTL, sp, false);
             h.assertTrue(err == null, "the axolotl goes in: " + (err == null ? "" : err.getString()));
             QuestAdv.check(h, sp, "foreign_animal");
             // the classification of the other kinds (their own GameTests put them in)
-            Entity cow = EntityType.COW.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Entity cow = EntityTypes.COW.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             h.assertTrue(cow != null && Progress.insertEvent(cow, true) != null, "a cow by the size rule counts as a pet or a big animal: " + Progress.insertEvent(cow, true));
-            Entity zombie = EntityType.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Entity zombie = EntityTypes.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             h.assertTrue(Progress.MOB_IN_GLASS.equals(Progress.insertEvent(zombie, false)), "a zombie is a mob in glass");
-            Entity turtle = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Entity turtle = EntityTypes.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             h.assertTrue(Progress.SEA_TURTLE.equals(Progress.insertEvent(turtle, true)), "a sea turtle has its own");
             h.succeed();
         } finally {

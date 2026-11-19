@@ -59,7 +59,7 @@ final class DevClientSmokeM42b {
 
     DevClientSmokeM42b() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(water.getX() + 5, water.getY() + 3.0, water.getZ() - 6.5, 0F, 18F));
         then(140, () -> shot("water"));
@@ -73,7 +73,7 @@ final class DevClientSmokeM42b {
         then(100, () -> shot("plants"));
         then(1, () -> look(plants.getX() + 1.6, plants.getY() + 0.9, plants.getZ() - 0.6, 0F, 35F));
         then(80, () -> shot("plants_close"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz) {
@@ -238,7 +238,7 @@ final class DevClientSmokeM42b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -257,7 +257,7 @@ final class DevClientSmokeM42b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m42b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m42b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

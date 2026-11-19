@@ -99,7 +99,7 @@ final class DevClientSmokeM222 {
         // building 49 tanks with their interiors stalls the server for a while: wait until it is done
         then(1, this::awaitBuilt);
         then(1, () -> {
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             fov = mc.options.fov().get();
             mc.options.fov().set(40);
         });
@@ -125,7 +125,7 @@ final class DevClientSmokeM222 {
         guide("de");
         then(1, () -> language(lang));
         then(1, this::awaitReload);
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ scene
@@ -144,7 +144,7 @@ final class DevClientSmokeM222 {
             // floor and a white wall behind the tank (the same background for every picture)
             for (int x = -2; x < 4; x++) {
                 for (int z = -4; z < 3; z++) level.setBlockAndUpdate(min.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState());
-                for (int y = 0; y < 5; y++) level.setBlockAndUpdate(min.offset(x, y, 3), Blocks.WHITE_CONCRETE.defaultBlockState());
+                for (int y = 0; y < 5; y++) level.setBlockAndUpdate(min.offset(x, y, 3), Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState());
             }
             boolean salt = s.kind() == Kind.CORAL || (s.kind() == Kind.FISH) || (s.kind() == Kind.CRITTER && ((CritterSpecies) s.what()).marine());
             int size = s.kind() == Kind.CRITTER ? 1 : 2;
@@ -323,7 +323,7 @@ final class DevClientSmokeM222 {
         open("invertebrates/snails.md");
         then(40, () -> shot("guide_snails_" + l));
         then(1, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             mc.options.guiScale().set(gui);
             mc.resizeGui();
         });
@@ -334,34 +334,34 @@ final class DevClientSmokeM222 {
     }
 
     private void expand(java.util.function.Predicate<Identifier> which) {
-        if (mc.screen == null) {
+        if (mc.gui.screen() == null) {
             LOGGER.error("[smoketest] M22.2 the handbook did not open");
             return;
         }
-        if (!org.overengineer.bettacraft.compat.guideme.DeepNavigation.expandAll(mc.screen, true, which)) {
+        if (!org.overengineer.bettacraft.compat.guideme.DeepNavigation.expandAll(mc.gui.screen(), true, which)) {
             LOGGER.error("[smoketest] M22.2 the deep navigation could not be folded open");
         }
     }
 
     private void scrollNav(int notches) {
-        if (mc.screen == null) return;
-        for (int i = 0; i < notches; i++) mc.screen.mouseScrolled(40, mc.getWindow().getGuiScaledHeight() / 2.0, 0, -1);
+        if (mc.gui.screen() == null) return;
+        for (int i = 0; i < notches; i++) mc.gui.screen().mouseScrolled(40, mc.getWindow().getGuiScaledHeight() / 2.0, 0, -1);
     }
 
     private void scrollPage() {
-        if (mc.screen == null) return;
+        if (mc.gui.screen() == null) return;
         double x = mc.getWindow().getGuiScaledWidth() * 0.65, y = mc.getWindow().getGuiScaledHeight() / 2.0;
-        for (int i = 0; i < 8; i++) mc.screen.mouseScrolled(x, y, 0, -3);
+        for (int i = 0; i < 8; i++) mc.gui.screen().mouseScrolled(x, y, 0, -3);
     }
 
     /** The German handbook shows German text: the Java fern page is titled "Javafarn" there. */
     private void check(String l) {
-        if (mc.screen == null) return;
-        String title = mc.screen.getTitle().getString();
+        if (mc.gui.screen() == null) return;
+        String title = mc.gui.screen().getTitle().getString();
         String narration = "";
         try {
-            var m = mc.screen.getClass().getMethod("getCurrentPageId");
-            LOGGER.info("[smoketest] M22.2 {} handbook page {} ({})", l, m.invoke(mc.screen), title);
+            var m = mc.gui.screen().getClass().getMethod("getCurrentPageId");
+            LOGGER.info("[smoketest] M22.2 {} handbook page {} ({})", l, m.invoke(mc.gui.screen()), title);
         } catch (ReflectiveOperationException e) {
             LOGGER.info("[smoketest] M22.2 {} handbook: {}", l, title);
         }
@@ -403,7 +403,7 @@ final class DevClientSmokeM222 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -422,7 +422,7 @@ final class DevClientSmokeM222 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_2_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_2_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

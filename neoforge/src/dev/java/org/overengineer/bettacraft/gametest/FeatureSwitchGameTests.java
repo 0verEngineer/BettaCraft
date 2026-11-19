@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
@@ -152,7 +153,7 @@ public final class FeatureSwitchGameTests {
     /** Tankmates off: no tankmate from the trader or the net, none spawns wild; cichlids alone off: only they are gone. */
     @GameTest(template = EMPTY, batch = "bettacraft_m33_tankmates", timeoutTicks = 200)
     public static void tankmatesOff(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         BlockPos spot = water(h);
         var level = h.getLevel();
         var neon = ModEntities.TANKMATES.get(TankmateSpecies.NEON_TETRA).get();
@@ -183,7 +184,7 @@ public final class FeatureSwitchGameTests {
     /** Small animals off: their recipes (shrimp food), trader offers, net catches, the trumpet snail and wild spawns are gone. */
     @GameTest(template = EMPTY, batch = "bettacraft_m33_invertebrates", timeoutTicks = 200)
     public static void invertebratesOff(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         BlockPos spot = water(h);
         var level = h.getLevel();
         check(has(recipes(level), "food_maker/shrimp_food"), "on: shrimp food recipe");
@@ -213,7 +214,7 @@ public final class FeatureSwitchGameTests {
     /** Corals off: the frag recipes, the coral offer, the frags of the net and the wild corals are gone; sea salt stays. */
     @GameTest(template = EMPTY, batch = "bettacraft_m33_corals", timeoutTicks = 200)
     public static void coralsOff(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         check(offers(h, trader, "coral_frags"), "on: coral frags");
         Map<Feature, Boolean> saved = off(Feature.CORALS);
         try {
@@ -241,7 +242,7 @@ public final class FeatureSwitchGameTests {
     /** Turtles off: no turtle at the trader, no wild turtles; terrariums off takes the turtles with them. */
     @GameTest(template = EMPTY, batch = "bettacraft_m33_turtles", timeoutTicks = 200)
     public static void turtlesOff(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         check(offers(h, trader, "musk_turtle"), "on: the trader sells musk turtles");
         check(HerpSpawns.enabled(HerpSpecies.MUSK), "on: wild musk turtles");
         Map<Feature, Boolean> saved = off(Feature.TURTLES);

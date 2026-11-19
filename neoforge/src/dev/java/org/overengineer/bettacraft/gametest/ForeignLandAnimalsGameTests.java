@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
@@ -226,8 +227,8 @@ public final class ForeignLandAnimalsGameTests {
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m39b_cleanup", timeoutTicks = 200)
     public static void cleanUpCrewEatsLeftoversAndWaste(GameTestHelper h) {
-        var crew = ForeignTerrariumGameTests.animal("crittersandcompanions_roly_poly", "crittersandcompanions:roly_poly", EntityType.ARMADILLO);
-        var lizard = ForeignTerrariumGameTests.animal("naturalist_lizard", "naturalist:lizard", EntityType.RABBIT);
+        var crew = ForeignTerrariumGameTests.animal("crittersandcompanions_roly_poly", "crittersandcompanions:roly_poly", EntityTypes.ARMADILLO);
+        var lizard = ForeignTerrariumGameTests.animal("naturalist_lizard", "naturalist:lizard", EntityTypes.RABBIT);
         ForeignTerrariumGameTests.with(List.of(crew, lizard), () -> {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = terrarium(h, 2, 2, 6, 3, 6);

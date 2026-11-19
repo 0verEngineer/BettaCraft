@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -418,7 +419,7 @@ public final class BreedingGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity c = tank(h, 3, 2, 2, 12000);
         for (int i = 0; i < 5; i++) insert(h, c, BettaData.offspring(BettaGenotype.homozygous(BettaGenome.DEFAULT), i % 2 == 0, null, null, 1, 0));
-        Component err = TankInhabitants.insert(level, c, new ItemStack(Items.PUFFERFISH_BUCKET), EntityType.PUFFERFISH, null, false);
+        Component err = TankInhabitants.insert(level, c, new ItemStack(Items.PUFFERFISH_BUCKET), EntityTypes.PUFFERFISH, null, false);
         h.assertTrue(err == null, "pufferfish accepted");
         h.assertTrue(TankBreeding.warnings(level, c).contains("predator"), "predator warning");
         for (int i = 0; i < 16; i++) TankBreeding.step(level, c, 0.25);

@@ -4,7 +4,6 @@ import java.util.function.Function;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -27,7 +26,7 @@ final class DataGenM48 {
         p.basicItem(ModItems.ROTIFERS.get());
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasSaltWater) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasSaltWater) {
         // phytoplankton: salt water, a sea plant and some nutrients; ripens in light
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.PHYTOPLANKTON_CULTURE.get())
                 .requires(ModItems.SALT_WATER_BOTTLE.get()).requires(Items.SEAGRASS).requires(Items.BONE_MEAL)
@@ -38,16 +37,16 @@ final class DataGenM48 {
         // rotifers: a starter from an infusoria culture (rotifers live in it) on phytoplankton ...
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get())
                 .requires(ModItems.PHYTOPLANKTON.get()).requires(ModItems.INFUSORIA.get())
-                .unlockedBy("has_phytoplankton", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PHYTOPLANKTON.get()))
+                .unlockedBy("has_phytoplankton", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.PHYTOPLANKTON.get()))
                 .save(out, RecipeCompat.key(BettaCraft.id("rotifer_culture_start")));
         // ... then the culture goes on: a bottle of rotifers on two of phytoplankton makes two cultures
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.FOOD, ModItems.ROTIFER_CULTURE.get(), 2)
                 .requires(ModItems.ROTIFERS.get()).requires(ModItems.PHYTOPLANKTON.get(), 2)
-                .unlockedBy("has_rotifers", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.ROTIFERS.get()))
+                .unlockedBy("has_rotifers", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.ROTIFERS.get()))
                 .save(out, RecipeCompat.key(BettaCraft.id("rotifer_culture")));
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         // rotifers are the finest fry food (from the first day, like infusoria)
         tag.apply(ModTags.FRY_FOOD_START).add(ModItems.ROTIFERS.get());
         tag.apply(ModTags.BETTA_FOOD).add(ModItems.ROTIFERS.get());

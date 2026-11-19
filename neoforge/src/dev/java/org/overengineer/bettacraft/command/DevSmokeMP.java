@@ -550,7 +550,7 @@ public final class DevSmokeMP {
         lMin = base.offset(7, 0, 0);
         for (int cx = (base.getX() - 8) >> 4; cx <= (base.getX() + 14) >> 4; cx++)
             for (int cz = (base.getZ() - 8) >> 4; cz <= (base.getZ() + 14) >> 4; cz++) level.setChunkForced(cx, cz, true);
-        AABB box = new AABB(base.offset(-6, -1, -6).getCenter(), base.offset(12, 8, 12).getCenter()).inflate(1);
+        AABB box = new AABB(net.minecraft.world.phys.Vec3.atCenterOf(base.offset(-6, -1, -6)), net.minecraft.world.phys.Vec3.atCenterOf(base.offset(12, 8, 12))).inflate(1);
         // leftovers of an earlier run (the dev world persists): animals, dropped plants, blocks
         for (Entity e : level.getEntitiesOfClass(Entity.class, box, e -> !(e instanceof ServerPlayer))) e.discard();
         for (BlockPos p : BlockPos.betweenClosed(base.offset(-6, 0, -6), base.offset(12, 8, 12))) {
@@ -1065,12 +1065,12 @@ public final class DevSmokeMP {
             }
             // M31 part d: a zombie from a mob jar into the terrarium: shrunk on every client (the synced scale attribute)
             for (var old : level.getEntitiesOfClass(net.minecraft.world.entity.monster.zombie.Zombie.class, new net.minecraft.world.phys.AABB(min).inflate(8))) old.discard();
-            var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            var zombie = net.minecraft.world.entity.EntityTypes.ZOMBIE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (zombie != null) {
                 zombie.setHealth(1F);
                 var jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(zombie);
                 zombie.discard();
-                var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, jar, net.minecraft.world.entity.EntityType.ZOMBIE, null, 0L);
+                var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, jar, net.minecraft.world.entity.EntityTypes.ZOMBIE, null, 0L);
                 check("a zombie goes into the terrarium" + (err == null ? "" : ": " + err.getString()), err == null);
             }
             c.markTankChanged();
@@ -1648,7 +1648,7 @@ public final class DevSmokeMP {
             aqBase = base.offset(-26, 0, -10);
             for (int cx = (aqBase.getX() - 4) >> 4; cx <= (aqBase.getX() + 22) >> 4; cx++)
                 for (int cz = (aqBase.getZ() - 4) >> 4; cz <= (aqBase.getZ() + 14) >> 4; cz++) level.setChunkForced(cx, cz, true);
-            AABB box = new AABB(aqBase.offset(-3, -1, -3).getCenter(), aqBase.offset(22, 6, 14).getCenter()).inflate(1);
+            AABB box = new AABB(net.minecraft.world.phys.Vec3.atCenterOf(aqBase.offset(-3, -1, -3)), net.minecraft.world.phys.Vec3.atCenterOf(aqBase.offset(22, 6, 14))).inflate(1);
             for (Entity e : level.getEntitiesOfClass(Entity.class, box, e -> !(e instanceof ServerPlayer))) e.discard();
             for (BlockPos p : BlockPos.betweenClosed(aqBase.offset(-3, 0, -3), aqBase.offset(22, 5, 14))) {
                 if (!level.getBlockState(p).isAir()) level.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
@@ -1736,7 +1736,7 @@ public final class DevSmokeMP {
     private static org.overengineer.bettacraft.aquarist.AquaristEntity aquarist(ServerLevel level, ServerPlayer p, BlockPos at) {
         level.setBlockAndUpdate(at, org.overengineer.bettacraft.registry.ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         level.setBlockAndUpdate(at.east(), Blocks.CHEST.defaultBlockState());
-        var foot = Blocks.WHITE_BED.defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.FACING, net.minecraft.core.Direction.SOUTH)
+        var foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.FACING, net.minecraft.core.Direction.SOUTH)
                 .setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.FOOT);
         level.setBlockAndUpdate(at.offset(-2, 0, 0), foot);
         level.setBlockAndUpdate(at.offset(-2, 0, 1), foot.setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));

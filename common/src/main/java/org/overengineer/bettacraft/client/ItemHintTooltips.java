@@ -14,7 +14,7 @@ final class ItemHintTooltips {
 
     static void onTooltip(net.minecraft.world.item.ItemStack stack, List<Component> tip) {
         String key = ItemHints.key(stack.getItem());
-        if (key == null || !I18n.exists(key)) return;
+        if (key == null || !net.minecraft.locale.Language.getInstance().has(key)) return;
         if (Minecraft.getInstance().hasShiftDown()) {
             for (Component line : ItemHints.lines(I18n.get(key))) tip.add(line.copy().withStyle(ChatFormatting.GRAY));
         } else {

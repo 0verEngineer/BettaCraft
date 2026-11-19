@@ -7,7 +7,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -58,7 +57,7 @@ final class DataGenM49 {
         p.withExistingParent("calcium_reactor", p.modLoc("block/calcium_reactor"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasCabinet, net.minecraft.advancements.Criterion<?> hasSaltWater) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasCabinet, net.minecraft.advancements.triggers.Criterion<?> hasSaltWater) {
         // the sump: a glass box with a glass baffle (it goes into a cabinet)
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SUMP.get())
                 .pattern("G G").pattern("GPG").pattern("GGG")
@@ -82,15 +81,15 @@ final class DataGenM49 {
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.DECOR.get(org.overengineer.bettacraft.decor.DecorType.MANGROVE_STILT_ROOTS).get())
                 .requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS).requires(Items.MANGROVE_ROOTS)
                 .requires(Items.MANGROVE_LOG).requires(Items.MANGROVE_LOG).requires(Items.MUD)
-                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS))
+                .unlockedBy("has_mangrove_roots", net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(Items.MANGROVE_ROOTS))
                 .save(out, RecipeCompat.key(BettaCraft.id("decor_mangrove_stilt_roots")));
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.CALCIUM_REACTOR.get());
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         // the harvested Chaetomorpha: food for the shrimp and snails, a vegetable for the food maker
         tag.apply(ModTags.CRITTER_FOOD).add(ModItems.CHAETOMORPHA.get());
         tag.apply(ModTags.FOOD_VEGETABLES).add(ModItems.CHAETOMORPHA.get());

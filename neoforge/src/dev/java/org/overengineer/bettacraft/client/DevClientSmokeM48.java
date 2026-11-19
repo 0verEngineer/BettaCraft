@@ -66,7 +66,7 @@ final class DevClientSmokeM48 {
     DevClientSmokeM48() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 900, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(100, () -> server(this::pose));
         // part a
         then(1, () -> look(forms.getX() + 3.0, forms.getY() + 1.0, forms.getZ() - 4.6, 0F, 6F));
@@ -117,7 +117,7 @@ final class DevClientSmokeM48 {
         then(1, () -> look(larvae.getX() + 1.0, larvae.getY() + 0.75, larvae.getZ() - 0.7, 0F, 14F));
         then(60, () -> shot("larvae"));
         // the menu: the reef line with copepods, rotifers and phytoplankton
-        then(10, () -> mc.options.hideGui = false);
+        then(10, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), reef.getX() + 2.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
@@ -126,7 +126,7 @@ final class DevClientSmokeM48 {
         menu(() -> reef, 5, "menu_reef", lang);
         menu(() -> larvae, 5, "menu_larvae", lang);
         menu(() -> reef, 1, "menu_animals", lang);
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     // ------------------------------------------------------------------ scene
@@ -320,7 +320,7 @@ final class DevClientSmokeM48 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab);
             else LOGGER.error("[smoketest] M48 no tank menu for {}", name);
         });
         then(20, () -> shot(name));
@@ -328,7 +328,7 @@ final class DevClientSmokeM48 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, float temp, float salt) {
@@ -397,7 +397,7 @@ final class DevClientSmokeM48 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -413,7 +413,7 @@ final class DevClientSmokeM48 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -432,8 +432,8 @@ final class DevClientSmokeM48 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M48 shot {} from {}", name, mc.player.getEyePosition());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m48_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m48_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

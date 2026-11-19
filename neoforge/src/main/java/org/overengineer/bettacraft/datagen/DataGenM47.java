@@ -67,7 +67,7 @@ final class DataGenM47 {
         p.withExistingParent("breeding_basin", p.modLoc("block/breeding_basin"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> has) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> has) {
         Ingredient plant = CompoundIngredient.of(RecipeCompat.tag(ModTags.AQUATIC_PLANT_ITEMS), Ingredient.of(Items.SEAGRASS, Items.KELP, Items.LILY_PAD));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.BREEDING_BASIN.get())
                 .pattern("G G").pattern("GPG").pattern("SSS")
@@ -75,7 +75,7 @@ final class DataGenM47 {
                 .unlockedBy("has_pane", has).save(out, RecipeCompat.key(BettaCraft.id("breeding_basin")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.BREEDING_BASIN.get());
     }
 }

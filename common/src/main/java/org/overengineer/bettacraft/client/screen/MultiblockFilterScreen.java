@@ -45,7 +45,7 @@ public class MultiblockFilterScreen extends Screen {
     @Override
     public void tick() {
         Minecraft mc = Minecraft.getInstance();
-        if (be() == null || mc.player == null || mc.player.distanceToSqr(pos.getCenter()) > 100) onClose();
+        if (be() == null || mc.player == null || mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 100) onClose();
     }
 
     @Override

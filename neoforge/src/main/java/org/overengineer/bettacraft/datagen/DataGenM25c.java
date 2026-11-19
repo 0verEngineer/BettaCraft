@@ -43,7 +43,7 @@ final class DataGenM25c {
         p.withExistingParent("dosing_pump", p.modLoc("block/dosing_pump"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.DOSING_PUMP.get())
                 .pattern("TTT").pattern("IRI").pattern("III")
                 .define('T', Items.DRIED_KELP).define('R', Tags.Items.DUSTS_REDSTONE).define('I', Tags.Items.INGOTS_IRON)
@@ -67,7 +67,7 @@ final class DataGenM25c {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("trace_canister")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.DOSING_PUMP.get());
     }
 }

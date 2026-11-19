@@ -58,7 +58,7 @@ final class DevClientSmokeM31a {
 
     DevClientSmokeM31a() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // the turtles: one on the basking spot, one on the bottom of the water (once the interior is there)
         then(150, () -> server(pl -> place(pl.level())));
         then(1, () -> look(terra.getX() + 2.0, terra.getY() + 2.2, terra.getZ() - 3.4, 0F, 18F));
@@ -76,7 +76,7 @@ final class DevClientSmokeM31a {
         then(60, () -> shot("paludarium"));
         then(1, () -> look(palu.getX() + 2.9, palu.getY() + 2.0, palu.getZ() - 0.9, 0F, 38F));
         then(40, () -> shot("turtle"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), palu);
             if (c == null) return;
@@ -84,15 +84,15 @@ final class DevClientSmokeM31a {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(40, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(8);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(8);
             else LOGGER.error("[smoketest] M31a no tank menu");
         });
         then(30, () -> shot("climate_tab"));
         then(1, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
         });
         then(20, () -> shot("overview_tab"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -229,7 +229,7 @@ final class DevClientSmokeM31a {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -248,7 +248,7 @@ final class DevClientSmokeM31a {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m31a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m31a_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

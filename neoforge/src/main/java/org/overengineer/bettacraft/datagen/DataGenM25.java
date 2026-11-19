@@ -22,7 +22,7 @@ final class DataGenM25 {
         }
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.TDS_METER.get())
                 .requires(Tags.Items.INGOTS_IRON).requires(Tags.Items.INGOTS_COPPER).requires(Tags.Items.DUSTS_REDSTONE).requires(Tags.Items.GLASS_PANES)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("tds_meter")));

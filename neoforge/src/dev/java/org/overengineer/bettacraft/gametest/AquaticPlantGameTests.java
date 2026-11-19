@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.Item;
@@ -493,7 +494,7 @@ public final class AquaticPlantGameTests {
     /** The wandering trader sells sword, Vallisneria, Monte Carlo and Alternanthera; the tiger lotus and Flamingo rarely. */
     @GameTest(template = EMPTY)
     public static void wanderingTraderSellsAquariumPlants(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         var rnd = h.getLevel().getRandom();
         java.util.Set<Item> generic = new java.util.HashSet<>(), rare = new java.util.HashSet<>();
         for (int level = 1; level <= 2; level++) {

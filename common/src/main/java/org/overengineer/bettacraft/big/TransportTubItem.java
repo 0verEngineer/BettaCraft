@@ -28,7 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.Bucketable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -173,7 +173,7 @@ public class TransportTubItem extends Item {
         }
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
-            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
+            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false), en -> en);
             if (e == null) {
                 player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;

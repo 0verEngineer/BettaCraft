@@ -103,7 +103,7 @@ final class DataGenM25b {
         p.withExistingParent("ro_unit", p.modLoc("block/ro_unit"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         // yeast: brown mushrooms and sugar set up in a bowl
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.YEAST.get(), 2)
                 .requires(Items.BROWN_MUSHROOM).requires(Items.SUGAR).requires(Items.BOWL)
@@ -135,7 +135,7 @@ final class DataGenM25b {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("ro_prefilter")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, ObjTags.Appender<Block>> tag) {
         for (Block b : List.of(ModBlocks.CO2_CYLINDER.get(), ModBlocks.CO2_STATION.get(), ModBlocks.RO_UNIT.get()))
             tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         tag.apply(ModTags.FLUE_GAS_SOURCES).add(Blocks.FURNACE, Blocks.SMOKER, Blocks.BLAST_FURNACE, Blocks.CAMPFIRE, Blocks.SOUL_CAMPFIRE);
@@ -149,8 +149,13 @@ final class DataGenM25b {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(ModTags.CO2_GAS).add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "carbon_dioxide")))
+            obj(ModTags.CO2_GAS).add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "carbon_dioxide")))
                     .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "co2")));
+        }
+    
+        /** M52d: objects to resource keys (26.2 tag providers take keys only). */
+        ObjTags.Appender<net.minecraft.world.level.material.Fluid> obj(net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid> t) {
+            return ObjTags.of(tag(t), net.minecraft.core.registries.BuiltInRegistries.FLUID);
         }
     }
 }

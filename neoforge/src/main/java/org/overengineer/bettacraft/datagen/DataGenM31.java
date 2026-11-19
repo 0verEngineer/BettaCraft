@@ -132,7 +132,7 @@ final class DataGenM31 {
         p.withExistingParent("musk_turtle_spawn_egg", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/musk_turtle_spawn_egg"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         // heat mat: copper heating trace laminated between paper, a redstone thermostat lead
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.HEAT_MAT.get(), 2)
                 .pattern("PPP").pattern("CRC").pattern("PPP")
@@ -155,7 +155,7 @@ final class DataGenM31 {
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("thermo_hygrometer")));
     }
 
-    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<net.minecraft.tags.TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.BASKING_LAMP.get(), ModBlocks.MISTER.get(), ModBlocks.THERMO_HYGROMETER.get());
     }
 }

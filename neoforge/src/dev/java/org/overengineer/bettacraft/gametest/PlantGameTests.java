@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -494,7 +495,7 @@ public final class PlantGameTests {
             use(sp, h, top, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()),
                     org.overengineer.bettacraft.entity.betta.BettaData.create(g, false, 0)));
             h.assertTrue(TankInhabitants.liveInhabitants(level, t).size() == 1, "betta bucket puts the fish in");
-            var tropical = net.minecraft.world.entity.EntityType.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            var tropical = net.minecraft.world.entity.EntityTypes.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(tropical);
             tropical.discard();
             use(sp, h, top, bag);
@@ -624,7 +625,7 @@ public final class PlantGameTests {
     /** The wandering trader sells frogbit and salvinia, the red root floater among his rare offers. */
     @GameTest(template = EMPTY)
     public static void wanderingTraderSellsPlants(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         var rnd = h.getLevel().getRandom();
         java.util.Set<Item> generic = new java.util.HashSet<>(), rare = new java.util.HashSet<>();
         for (int level = 1; level <= 2; level++) {

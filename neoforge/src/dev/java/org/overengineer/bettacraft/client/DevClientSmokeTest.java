@@ -309,7 +309,7 @@ final class DevClientSmokeTest {
         mc.options.pauseOnLostFocus = false;
         if (ticks == 2) mc.getWindow().setWindowed(1280, 960); // larger screenshots (handbook images, menus at GUI scale 4)
         if (ticks > 60 && m8 == null) mc.player.getAbilities().flying = true; // hover at the camera positions
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         try {
             if (README_ONLY) {
                 if (ticks == 60) readme = new DevClientSmokeReadme();
@@ -1031,7 +1031,7 @@ final class DevClientSmokeTest {
                             buf -> buf.writeBlockPos(c.getBlockPos()));
                 });
                 case 700 -> {
-                    if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
+                    if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(1);
                 }
                 case 730 -> shot(mc, "bettacraft_m5_menu_inhabitants");
                 case 735 -> mc.getSingleplayerServer().execute(() -> {
@@ -1044,7 +1044,7 @@ final class DevClientSmokeTest {
                     p.onUpdateAbilities();
                     fillInventory(p);
                 });
-                case 760 -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+                case 760 -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
                 case 770 -> hoverSlot(mc, 0, 1);
                 case 800 -> shot(mc, "bettacraft_m5_inventory");
                 case 805 -> hoverSlot(mc, 3, 3);
@@ -1052,7 +1052,7 @@ final class DevClientSmokeTest {
                 case 835 -> hoverSlot(mc, 7, 2);
                 case 860 -> shot(mc, "bettacraft_m5_inventory_cabinet");
                 case 865 -> {
-                    mc.setScreen(null);
+                    mc.gui.setScreen(null);
                     mc.getSingleplayerServer().execute(() -> {
                         ServerPlayer p = player(mc);
                         p.getInventory().clearContent();
@@ -1214,7 +1214,7 @@ final class DevClientSmokeTest {
 
     /** Moves the mouse over a slot of the open inventory screen (col 0-8, row 0-2 main inventory, row 3 hotbar). */
     private static void hoverSlot(Minecraft mc, int col, int row) {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         double scale = mc.getWindow().getGuiScale();
         int left = (scr.width - 176) / 2, top = (scr.height - 166) / 2;
         int x = left + 8 + col * 18 + 8, y = top + (row < 3 ? 84 + row * 18 : 142) + 8;
@@ -1319,7 +1319,7 @@ final class DevClientSmokeTest {
     }
 
     private static void shot(Minecraft mc, String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 
     private static void buildScene() {

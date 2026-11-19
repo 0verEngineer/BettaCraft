@@ -80,7 +80,7 @@ final class DevClientSmokeM221 {
         for (int i = 0; i < corals.length; i++) spots.add(new Spot(corals[i], 2, co[i][0], co[i][1]));
 
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> meshes(true));
         // outside: every tank near and far, new and old
         for (boolean on : new boolean[] {true, false}) {
@@ -188,15 +188,15 @@ final class DevClientSmokeM221 {
             });
         });
         then(30, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
         });
         then(20, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen)) LOGGER.error("[smoketest] M22.1 no confirm screen for the betta bucket");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen)) LOGGER.error("[smoketest] M22.1 no confirm screen for the betta bucket");
             shot("confirm_screen");
         });
         then(5, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) c.cancel();
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) c.cancel();
         });
         then(20, () -> {
             boolean kept = mc.player.getMainHandItem().is(org.overengineer.bettacraft.registry.ModItems.BETTA_BUCKET.get());
@@ -205,7 +205,7 @@ final class DevClientSmokeM221 {
             mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
         });
         then(20, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) c.confirm();
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ConfirmEmptyScreen c) c.confirm();
             else LOGGER.error("[smoketest] M22.1 no confirm screen the second time");
         });
         then(30, () -> {
@@ -213,7 +213,7 @@ final class DevClientSmokeM221 {
             int bettas = mc.level.getEntitiesOfClass(org.overengineer.bettacraft.entity.betta.BettaEntity.class, mc.player.getBoundingBox().inflate(6)).size();
             LOGGER.info("[smoketest] M22.1 confirm screen: empty lets the betta go: bucket empty {}, {} betta(s) near", empty, bettas);
             if (!empty || bettas < 1) LOGGER.error("[smoketest] M22.1 the confirmed betta bucket did not empty");
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             shot("confirm_released");
             server(p -> p.setGameMode(net.minecraft.world.level.GameType.CREATIVE));
         });
@@ -262,7 +262,7 @@ final class DevClientSmokeM221 {
 
     private void meshes(boolean on) {
         ClientConfig.PLANT_MESHES.set(on);
-        if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
+        if (mc.levelRenderer != null) mc.levelExtractor.allChanged();
     }
 
     // ------------------------------------------------------------------ the scene
@@ -393,7 +393,7 @@ final class DevClientSmokeM221 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -412,7 +412,7 @@ final class DevClientSmokeM221 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_1_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m22_1_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

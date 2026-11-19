@@ -40,7 +40,7 @@ public final class InteriorLeaveHud {
     /** Whether the hint is drawn now (in an interior, GUI shown, hint on or progress running). */
     public static boolean visible() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null || mc.level.dimension() != ModDimensions.TANK_INTERIOR || mc.options.hideGui) return false;
+        if (mc.level == null || mc.player == null || mc.level.dimension() != ModDimensions.TANK_INTERIOR || mc.gui.hud.isHidden()) return false;
         return hintEnabled() || progress() > 0;
     }
 

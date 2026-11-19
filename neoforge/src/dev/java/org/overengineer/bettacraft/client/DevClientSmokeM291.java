@@ -65,22 +65,22 @@ final class DevClientSmokeM291 {
         for (int p = 0; p < pages; p++) {
             List<ItemStack> page = items.subList(p * perPage, Math.min(items.size(), (p + 1) * perPage));
             int n = p + 1;
-            then(1, () -> mc.setScreen(new Grid(page, 2F)));
+            then(1, () -> mc.gui.setScreen(new Grid(page, 2F)));
             then(15, () -> shot("items_" + n));
         }
         int smallPer = Grid.COLS * 2 * Grid.ROWS;
         for (int p = 0; p * smallPer < items.size(); p++) {
             List<ItemStack> page = items.subList(p * smallPer, Math.min(items.size(), (p + 1) * smallPer));
             int n = p + 1;
-            then(1, () -> mc.setScreen(new Grid(page, 1F)));
+            then(1, () -> mc.gui.setScreen(new Grid(page, 1F)));
             then(15, () -> shot("items_small_" + n));
         }
         // close-ups of the icons that were hard to read before M29.1
         List<ItemStack> zoom = new ArrayList<>();
         for (String id : ZOOM) zoom.add(new ItemStack(BuiltInRegistries.ITEM.getValue(BettaCraft.id(id))));
-        then(1, () -> mc.setScreen(new Grid(zoom, 4F)));
+        then(1, () -> mc.gui.setScreen(new Grid(zoom, 4F)));
         then(15, () -> shot("items_zoom"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(1, () -> mc.options.guiScale().set(prevScale));
         then(1, mc::resizeGui);
     }
@@ -155,6 +155,6 @@ final class DevClientSmokeM291 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m291_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m291_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

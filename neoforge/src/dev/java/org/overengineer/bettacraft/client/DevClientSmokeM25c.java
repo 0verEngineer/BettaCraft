@@ -50,7 +50,7 @@ final class DevClientSmokeM25c {
     DevClientSmokeM25c() {
         base = mc.player.blockPosition().offset(-10, 0, 700);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(20, () -> look(base.getX() + 2.0, base.getY() + 2.2, base.getZ() - 3.0, 0F, 18F));
         then(80, () -> server(this::arrange));
         // the bee shrimp close up, eye at the glass
@@ -59,7 +59,7 @@ final class DevClientSmokeM25c {
         // the Sulawesi tank
         then(1, () -> look(base.getX() + 7.4, base.getY() + 0.75, base.getZ() - 0.75, 0F, 22F));
         then(60, () -> shot("sulawesi"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // the dosing pump next to the reef tank: its window en + de
         then(1, () -> server(p -> {
             p.teleportTo(p.level(), base.getX() + 14.5, base.getY() + 0.2, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false);
@@ -70,13 +70,13 @@ final class DevClientSmokeM25c {
             } else LOGGER.error("[smoketest] M25c no dosing pump");
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.DosingPumpScreen)) LOGGER.error("[smoketest] M25c no dosing pump screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.DosingPumpScreen)) LOGGER.error("[smoketest] M25c no dosing pump screen");
             shot("dosing_pump");
         });
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("dosing_pump_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void build(ServerPlayer p) {
@@ -196,7 +196,7 @@ final class DevClientSmokeM25c {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -212,7 +212,7 @@ final class DevClientSmokeM25c {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -231,7 +231,7 @@ final class DevClientSmokeM25c {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m25_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m25_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

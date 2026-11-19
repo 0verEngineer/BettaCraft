@@ -230,7 +230,7 @@ public final class BigCrayfishGameTests {
         h.assertTrue(logged(c.getTank(), "log.bettacraft.axolotl_warm"), "logged");
         CompoundTagHolder data = new CompoundTagHolder();
         AxolotlCare.toBucket(a, data.tag);
-        Axolotl b = net.minecraft.world.entity.EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Axolotl b = net.minecraft.world.entity.EntityTypes.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         h.assertTrue(b != null, "second axolotl");
         b.setComponent(net.minecraft.core.component.DataComponents.AXOLOTL_VARIANT, Axolotl.Variant.WILD);
         AxolotlCare.fromBucket(b, data.tag);

@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -233,7 +234,7 @@ public final class ShapeGameTests {
             if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         }
         ItemStack tropical = new ItemStack(Items.TROPICAL_FISH_BUCKET);
-        var err = TankInhabitants.insert(h.getLevel(), c, tropical, EntityType.TROPICAL_FISH, player, false);
+        var err = TankInhabitants.insert(h.getLevel(), c, tropical, EntityTypes.TROPICAL_FISH, player, false);
         if (err != null) throw new GameTestFailure("insert failed: " + err.getString());
         TankData t = c.getTank();
         // the volume never hands out a point in the notch (swim targets, food, fry)

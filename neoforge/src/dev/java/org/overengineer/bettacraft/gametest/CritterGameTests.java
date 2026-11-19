@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -652,7 +653,7 @@ public final class CritterGameTests {
     /** The wandering trader sells crayfish and apple snails; shrimp colour lines, ramshorns, assassins and frogs rarely. */
     @GameTest(template = EMPTY)
     public static void wanderingTraderSellsSmallAnimals(GameTestHelper h) {
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(2, 1, 2));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(2, 1, 2));
         var rnd = h.getLevel().getRandom();
         Set<CritterSpecies> generic = EnumSet.noneOf(CritterSpecies.class), rare = EnumSet.noneOf(CritterSpecies.class);
         boolean frog = false, coloured = false;

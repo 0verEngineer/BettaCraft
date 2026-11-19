@@ -56,7 +56,7 @@ final class DevClientSmokeM217 {
 
     DevClientSmokeM217() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // the row near, in parts of four cabinets (two blocks apart)
         for (int part = 0; part < 12; part++) {
             int n = part;
@@ -83,7 +83,7 @@ final class DevClientSmokeM217 {
         then(1, () -> look(counters.getX() + 6.0, counters.getY() + 1.8, counters.getZ() - 5.5, 0F, 12F));
         then(60, () -> shot("counters"));
         // items: hotbar and inventory
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             for (int i = 0; i < 9 && i < hotbar.size(); i++) p.getInventory().setItem(i, CabinetBlockItem.setWood(new ItemStack(ModItems.CABINET.get()), hotbar.get(i)));
             for (int i = 9; i < 36; i++) {
@@ -96,7 +96,7 @@ final class DevClientSmokeM217 {
         then(1, () -> {
             if (mc.player != null) mc.player.getInventory().setSelectedSlot(4);
         });
-        then(60, () -> mc.getToastManager().clear());
+        then(60, () -> mc.gui.toastManager().clear());
         then(5, () -> shot("hotbar"));
         // the menu of a stone cabinet (its name in the title) with stone cabinet items in the storage
         then(1, () -> server(p -> {
@@ -115,10 +115,10 @@ final class DevClientSmokeM217 {
         then(10, () -> shot("menu_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // JEI
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("jei")) {
-            then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+            then(5, () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
             then(10, () -> {
                 boolean ok = org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.showStoneCabinet();
                 LOGGER.info("[smoketest] M21.7 JEI stone cabinet recipe shown: {}", ok);
@@ -126,15 +126,15 @@ final class DevClientSmokeM217 {
             });
             then(20, () -> shot("jei_1"));
             then(30, () -> shot("jei_2"));
-            then(5, () -> mc.setScreen(null));
+            then(5, () -> mc.gui.setScreen(null));
         }
         // the handbook page (en, de)
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         guide("en");
         then(1, () -> language("de_de"));
         guide("de");
         then(1, () -> language(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void guide(String l) {
@@ -143,18 +143,18 @@ final class DevClientSmokeM217 {
         then(40, () -> shot("guide_" + l));
         then(5, () -> scrollGuide());
         then(20, () -> shot("guide_" + l + "_2"));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void scrollGuide() {
-        if (mc.screen == null) return;
+        if (mc.gui.screen() == null) return;
         double x = mc.getWindow().getGuiScaledWidth() / 2.0, y = mc.getWindow().getGuiScaledHeight() / 2.0;
-        for (int i = 0; i < 6; i++) mc.screen.mouseScrolled(x, y, 0, -3);
+        for (int i = 0; i < 6; i++) mc.gui.screen().mouseScrolled(x, y, 0, -3);
     }
 
     /** Mouse over the fifth storage slot of the open cabinet menu (tooltip with the name of the stone). */
     private void hoverMenu() {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr) || scr.getMenu().slots.size() < 6) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr) || scr.getMenu().slots.size() < 6) return;
         double scale = mc.getWindow().getGuiScale();
         var slot = scr.getMenu().slots.stream().filter(sl -> sl.getItem().is(ModItems.CABINET.get())).skip(4).findFirst().orElse(null);
         if (slot == null) return;
@@ -241,7 +241,7 @@ final class DevClientSmokeM217 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -257,7 +257,7 @@ final class DevClientSmokeM217 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -276,7 +276,7 @@ final class DevClientSmokeM217 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_7_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m21_7_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

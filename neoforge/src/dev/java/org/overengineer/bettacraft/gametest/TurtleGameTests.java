@@ -11,6 +11,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.animal.turtle.Turtle;
@@ -164,16 +165,16 @@ public final class TurtleGameTests {
         h.assertTrue(TankInhabitants.insert(level, palu, container(h, HerpSpecies.HERMANN, true), ModEntities.HERMANN_TORTOISE.get(), null, 0L) != null,
                 "a paludarium refuses the tortoise");
         // the vanilla sea turtle (M35: a big animal): neither a grown one nor a hatchling fits a small paludarium
-        Turtle grown = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Turtle grown = EntityTypes.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         grown.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(20, 2, 20)));
         ItemStack bigBag = FishBagItem.fillWith(grown);
         grown.discard();
-        h.assertTrue(TankInhabitants.insert(level, palu, bigBag, EntityType.TURTLE, null, true) != null, "a grown sea turtle is refused");
-        Turtle baby = EntityType.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        h.assertTrue(TankInhabitants.insert(level, palu, bigBag, EntityTypes.TURTLE, null, true) != null, "a grown sea turtle is refused");
+        Turtle baby = EntityTypes.TURTLE.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         baby.setAge(-24000);
         ItemStack bag = FishBagItem.fillWith(baby);
         baby.discard();
-        var err = TankInhabitants.insert(level, palu, bag, EntityType.TURTLE, null, true);
+        var err = TankInhabitants.insert(level, palu, bag, EntityTypes.TURTLE, null, true);
         h.assertTrue(BigTankGameTests.says(err, "message.bettacraft.big.too_small"), "a hatchling too: " + (err == null ? "accepted" : err.getString()));
         h.succeed();
     }

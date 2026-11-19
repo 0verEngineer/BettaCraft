@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -90,14 +89,14 @@ final class DataGenM27 {
         p.withExistingParent("monitor", p.modLoc("block/monitor_single")).texture("screen", p.modLoc("block/monitor_screen_item"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.MONITOR.get(), 4)
                 .pattern("IGI").pattern("GRG").pattern("IGI")
                 .define('I', Tags.Items.INGOTS_IRON).define('G', Tags.Items.GLASS_PANES).define('R', Tags.Items.DUSTS_REDSTONE)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("monitor")));
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MONITOR.get());
     }
 }

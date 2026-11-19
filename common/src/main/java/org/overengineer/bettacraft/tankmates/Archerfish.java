@@ -65,7 +65,7 @@ public final class Archerfish {
 
     /** Pure: a block on top of a tank where insects gather (leaves, flowers, saplings, crops, vines). */
     public static boolean insectPlant(BlockState s) {
-        return s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.is(BlockTags.SAPLINGS) || s.is(BlockTags.CROPS)
+        return s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.is(net.minecraft.tags.BlockItemTags.SAPLINGS.block()) || s.is(BlockTags.CROPS)
                 || s.is(net.minecraft.world.level.block.Blocks.VINE) || s.is(BlockTags.CAVE_VINES);
     }
 

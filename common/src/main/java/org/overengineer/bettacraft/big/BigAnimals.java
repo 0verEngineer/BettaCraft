@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.registry.ModTags;
@@ -41,7 +42,7 @@ public final class BigAnimals {
         // M39: a big water animal of another mod by the length of its aquarium profile (Aquaculture's tuna, Fintastic's arapaima ...)
         var p = org.overengineer.bettacraft.foreign.ForeignProfiles.of(type);
         if (p != null && p.bigLength() > 0) return p.bigLength();
-        if (type == EntityType.TURTLE) return org.overengineer.bettacraft.terrarium.SeaTurtles.LENGTH_M;
+        if (type == EntityTypes.TURTLE) return org.overengineer.bettacraft.terrarium.SeaTurtles.LENGTH_M;
         if (!type.builtInRegistryHolder().is(ModTags.BIG_TANK_ANIMALS)) return 0;
         float w = e != null ? e.getBbWidth() : type.getDimensions().width(), h = e != null ? e.getBbHeight() : type.getDimensions().height();
         // a young one is judged by its adult size (it grows in the tank)
@@ -133,10 +134,10 @@ public final class BigAnimals {
             };
             return Component.translatable(key, type.getDescription(), (int) Math.ceil(others + BigTankRules.water(len, f) - 1e-6), (int) Math.floor(have + 1e-6));
         }
-        if (type == EntityType.DOLPHIN && t.salinity() < DOLPHIN_MIN_SALT) {
+        if (type == EntityTypes.DOLPHIN && t.salinity() < DOLPHIN_MIN_SALT) {
             return Component.translatable("message.bettacraft.big.dolphin_salt", type.getDescription(), Math.round(DOLPHIN_MIN_SALT));
         }
-        if (type == EntityType.TURTLE && t.salinity() < org.overengineer.bettacraft.terrarium.SeaTurtles.MIN_SALT) { // M35
+        if (type == EntityTypes.TURTLE && t.salinity() < org.overengineer.bettacraft.terrarium.SeaTurtles.MIN_SALT) { // M35
             return Component.translatable("message.bettacraft.big.dolphin_salt", type.getDescription(), Math.round(org.overengineer.bettacraft.terrarium.SeaTurtles.MIN_SALT));
         }
         return null;

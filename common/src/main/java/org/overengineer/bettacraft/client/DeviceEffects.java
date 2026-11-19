@@ -45,15 +45,15 @@ public final class DeviceEffects {
     public static void init() {
         org.overengineer.bettacraft.platform.client.ClientEvents.TICK_POST.add(DeviceEffects::tick);
         org.overengineer.bettacraft.platform.client.ClientEvents.MOUSE_SCROLL.add(DeviceEffects::onScroll);
-        org.overengineer.bettacraft.util.ClientHooks.regulator = pos -> Minecraft.getInstance().setScreen(
+        org.overengineer.bettacraft.util.ClientHooks.regulator = pos -> Minecraft.getInstance().gui.setScreen(
                 new org.overengineer.bettacraft.client.screen.RegulatorScreen(pos));
         org.overengineer.bettacraft.util.ClientHooks.bubbles = DeviceEffects::stoneTick;
         // M24
-        org.overengineer.bettacraft.util.ClientHooks.waterChanger = pos -> Minecraft.getInstance().setScreen(
+        org.overengineer.bettacraft.util.ClientHooks.waterChanger = pos -> Minecraft.getInstance().gui.setScreen(
                 new org.overengineer.bettacraft.client.screen.WaterChangerScreen(pos));
-        org.overengineer.bettacraft.util.ClientHooks.filter = pos -> Minecraft.getInstance().setScreen(
+        org.overengineer.bettacraft.util.ClientHooks.filter = pos -> Minecraft.getInstance().gui.setScreen(
                 new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(pos));
-        org.overengineer.bettacraft.util.ClientHooks.monitor = pos -> Minecraft.getInstance().setScreen(
+        org.overengineer.bettacraft.util.ClientHooks.monitor = pos -> Minecraft.getInstance().gui.setScreen(
                 new org.overengineer.bettacraft.client.screen.MonitorEditorScreen(pos)); // M27
     }
 
@@ -96,7 +96,7 @@ public final class DeviceEffects {
             return;
         }
         if (mc.isPaused()) return;
-        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+        Vec3 cam = mc.gameRenderer.mainCamera().position();
         spongeFilters(mc);
         if (volume(Regulator.Sound.AIR_PUMP) <= 0.001) { // M29.1: the hum is off by default
             HUMS.values().forEach(PumpHum::silence);
@@ -112,7 +112,7 @@ public final class DeviceEffects {
     private static <T extends net.minecraft.world.level.block.entity.BlockEntity & org.overengineer.bettacraft.equipment.AirSource> void hum(Minecraft mc, Vec3 cam, T be) {
         if (be.getLevel() != mc.level || be.isRemoved() || !be.airRunning() || !ModSounds.devices()) return;
         BlockPos p = be.getBlockPos();
-        if (p.getCenter().distanceToSqr(cam) > 16 * 16) return;
+        if (net.minecraft.world.phys.Vec3.atCenterOf(p).distanceToSqr(cam) > 16 * 16) return;
         PumpHum h = HUMS.get(p);
         if (h == null || h.isStopped()) {
             h = new PumpHum(be, be);
@@ -151,7 +151,7 @@ public final class DeviceEffects {
         public void tick() {
             Minecraft mc = Minecraft.getInstance();
             if (be.isRemoved() || !air.airRunning() || mc.level == null || be.getLevel() != mc.level
-                    || be.getBlockPos().getCenter().distanceToSqr(mc.gameRenderer.getMainCamera().position()) > 18 * 18) {
+                    || net.minecraft.world.phys.Vec3.atCenterOf(be.getBlockPos()).distanceToSqr(mc.gameRenderer.mainCamera().position()) > 18 * 18) {
                 stop();
                 return;
             }
@@ -166,7 +166,7 @@ public final class DeviceEffects {
     private static void stoneTick(Level level, BlockPos pos, BlockState state, float surfaceY) {
         if (!state.hasProperty(DeviceSegmentBlock.ACTIVE) || !state.getValue(DeviceSegmentBlock.ACTIVE)) return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.isPaused() || mc.player.distanceToSqr(pos.getCenter()) > 48 * 48) return;
+        if (mc.player == null || mc.isPaused() || mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 48 * 48) return;
         double share = Regulator.share(state);
         if (share <= 0) return;
         if (!Float.isNaN(surfaceY)) SURFACE.put(org.overengineer.bettacraft.tank.interior.InteriorRegion.idAt(pos.getX(), pos.getZ()), surfaceY);
@@ -178,7 +178,7 @@ public final class DeviceEffects {
                     pos.getX() + 0.5 + (RAND.nextDouble() - 0.5) * 0.4, pos.getY() + 0.4, pos.getZ() + 0.5 + (RAND.nextDouble() - 0.5) * 0.4,
                     (RAND.nextDouble() - 0.5) * 0.02, 0.06 + RAND.nextDouble() * 0.03, (RAND.nextDouble() - 0.5) * 0.02);
         }
-        if (ClientConfig.FILTER_SOUND.get() && RAND.nextInt(50) == 0 && mc.player.distanceToSqr(pos.getCenter()) < 16 * 16) {
+        if (ClientConfig.FILTER_SOUND.get() && RAND.nextInt(50) == 0 && mc.player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) < 16 * 16) {
             float vol = (float) (0.5 * share * volume(Regulator.Sound.AIR_STONE));
             if (vol > 0.001F) level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                     ModSounds.pick(ModSounds.AIR_STONE_BUBBLES, ModSounds.AIR_STONE_BUBBLES_VANILLA), SoundSource.BLOCKS, vol,
@@ -249,7 +249,7 @@ public final class DeviceEffects {
 
     private static boolean onScroll(double deltaX, double deltaY) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.screen != null || !mc.player.isShiftKeyDown()) return false;
+        if (mc.player == null || mc.level == null || mc.gui.screen() != null || !mc.player.isShiftKeyDown()) return false;
         HitResult hit = mc.hitResult;
         if (!(hit instanceof BlockHitResult bh) || hit.getType() != HitResult.Type.BLOCK) return false;
         Regulator.Device d = Regulator.find(mc.level, bh.getBlockPos());

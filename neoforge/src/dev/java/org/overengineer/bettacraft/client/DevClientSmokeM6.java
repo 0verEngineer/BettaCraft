@@ -41,7 +41,7 @@ final class DevClientSmokeM6 {
 
     DevClientSmokeM6(java.util.List<Spot> worldShots, BlockPos overviewTank, BlockPos typesTank, BlockPos breedTank) {
         // English world shots for the handbook, without HUD
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         for (Spot s : worldShots) {
             then(1, () -> server(p -> p.teleportTo(p.level(), s.x(), s.y(), s.z(), java.util.Set.of(), s.yaw(), s.pitch(), false)));
             then(45, () -> shot("guide_" + s.name()));
@@ -51,7 +51,7 @@ final class DevClientSmokeM6 {
         advancements("en");
         // German
         then(5, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             mc.options.languageCode = "de_de";
             mc.getLanguageManager().setSelected("de_de");
             reload = mc.reloadResourcePacks();
@@ -62,8 +62,8 @@ final class DevClientSmokeM6 {
         guide("de");
         advancements("de");
         then(5, () -> {
-            mc.setScreen(null);
-            mc.options.hideGui = false;
+            mc.gui.setScreen(null);
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             // leave the dev options in English (only the file, no second reload)
             mc.options.languageCode = "en_us";
             mc.getLanguageManager().setSelected("en_us");
@@ -89,7 +89,7 @@ final class DevClientSmokeM6 {
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(tab);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(tab);
         });
         then(25, this::mouseToTopRight);
         then(5, () -> shot(name));
@@ -108,14 +108,14 @@ final class DevClientSmokeM6 {
             // JEI information page (the "without GuideME" help) of the tank and of the mosquito larvae
             for (var item : java.util.List.of(org.overengineer.bettacraft.registry.ModItems.TANK, org.overengineer.bettacraft.registry.ModItems.MOSQUITO_LARVAE)) {
                 then(5, () -> {
-                    mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+                    mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
                 });
                 then(10, () -> LOGGER.info("[smoketest] JEI info for {}: {}", item.getId(),
                         org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.showInfo(new net.minecraft.world.item.ItemStack(item.get()))));
                 then(25, this::mouseToTopRight);
                 then(5, () -> shot("m6_jei_" + lang + "_" + item.getId().getPath()));
             }
-            then(5, () -> mc.setScreen(null));
+            then(5, () -> mc.gui.setScreen(null));
         }
         then(1, () -> guiScale(0));
     }
@@ -131,16 +131,16 @@ final class DevClientSmokeM6 {
             then(45, this::mouseToCorner);
             then(5, () -> shot("m6_guide_" + lang + "_" + page.replace('/', '_')));
         }
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void advancements(String lang) {
         then(1, () -> guiScale(3));
         then(5, () -> {
-            mc.setScreen(null);
-            mc.getToastManager().clear();
+            mc.gui.setScreen(null);
+            mc.gui.toastManager().clear();
             var adv = mc.player.connection.getAdvancements();
-            mc.setScreen(new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(adv));
+            mc.gui.setScreen(new net.minecraft.client.gui.screens.advancements.AdvancementsScreen(adv));
         });
         then(10, () -> {
             var adv = mc.player.connection.getAdvancements();
@@ -149,7 +149,7 @@ final class DevClientSmokeM6 {
         });
         then(25, this::mouseToCorner);
         then(5, () -> shot("m6_advancements_" + lang));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> guiScale(0));
     }
 
@@ -172,7 +172,7 @@ final class DevClientSmokeM6 {
 
     /** Returns true when all steps are done. */
     boolean tick() {
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -215,6 +215,6 @@ final class DevClientSmokeM6 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

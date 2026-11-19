@@ -80,7 +80,7 @@ public final class MobCaptures {
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
+        return t == null ? null : java.util.Optional.ofNullable(net.minecraft.resources.Identifier.tryParse(t.getStringOr("id", ""))).flatMap(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE::getOptional).orElse(null);
     }
 
     /** The item given back after its mob went into a tank: the same item, empty. */

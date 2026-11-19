@@ -20,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -134,7 +135,7 @@ public final class YoungAndLightGameTests {
     @GameTest(template = EMPTY)
     public static void otherYoungCountLikeJuveniles(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        Axolotl a = EntityType.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Axolotl a = EntityTypes.AXOLOTL.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         h.assertTrue(a != null, "axolotl");
         a.setBaby(true);
         near(h, TankInhabitants.weight(a), 0.1, "baby axolotl");
@@ -214,7 +215,7 @@ public final class YoungAndLightGameTests {
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         try {
             sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
-            ItemStack dye = new ItemStack(Items.RED_DYE, 2);
+            ItemStack dye = new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.RED), 2);
             sp.setItemInHand(InteractionHand.MAIN_HAND, dye);
             BlockPos abs = h.absolutePos(new BlockPos(3, 2, 2));
             BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false);
@@ -272,12 +273,12 @@ public final class YoungAndLightGameTests {
     public static void lightDyeRecipes(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         ItemStack blue = TankLightItem.of(ModItems.TANK_LIGHT.get(), DyeColor.BLUE, 1);
-        ItemStack out = craft(level, CraftingInput.of(2, 1, List.of(blue, new ItemStack(Items.RED_DYE))));
+        ItemStack out = craft(level, CraftingInput.of(2, 1, List.of(blue, new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.RED)))));
         h.assertTrue(out.is(ModItems.TANK_LIGHT.get()) && TankLightItem.colorOf(out) == DyeColor.RED && out.getCount() == 1, "blue + red dye = red: " + out);
-        ItemStack back = craft(level, CraftingInput.of(2, 1, List.of(out, new ItemStack(Items.WHITE_DYE))));
+        ItemStack back = craft(level, CraftingInput.of(2, 1, List.of(out, new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.WHITE)))));
         h.assertTrue(back.is(ModItems.TANK_LIGHT.get()) && !back.has(DataComponents.BLOCK_STATE), "white dye: plain light " + back);
         List<ItemStack> grid = new ArrayList<>();
-        for (int i = 0; i < 9; i++) grid.add(i == 4 ? new ItemStack(Items.LIME_DYE) : new ItemStack(ModItems.TANK_LIGHT.get()));
+        for (int i = 0; i < 9; i++) grid.add(i == 4 ? new ItemStack(Items.DYE.pick(net.minecraft.world.item.DyeColor.LIME)) : new ItemStack(ModItems.TANK_LIGHT.get()));
         ItemStack eight = craft(level, CraftingInput.of(3, 3, grid));
         h.assertTrue(TankLightItem.colorOf(eight) == DyeColor.LIME && eight.getCount() == 8, "eight lime lights: " + eight);
         h.succeed();

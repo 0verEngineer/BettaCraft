@@ -17,6 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.item.ItemStack;
@@ -520,7 +521,7 @@ public final class WildlifeGameTests {
         ServerPlayer sp = player(h);
         pool(h, 4, 4, 6, 3);
         BlockPos at = h.absolutePos(new BlockPos(6, 3, 6));
-        var cod = EntityType.COD.spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
+        var cod = EntityTypes.COD.spawn(level, at, EntitySpawnReason.SPAWN_ITEM_USE);
         sp.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         sp.interactOn(cod, InteractionHand.MAIN_HAND, net.minecraft.world.phys.Vec3.ZERO);
         check(sp.getItemInHand(InteractionHand.MAIN_HAND).is(Items.COD_BUCKET), "the sea water bucket did not catch a cod: " + sp.getItemInHand(InteractionHand.MAIN_HAND));

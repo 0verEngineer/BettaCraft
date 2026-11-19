@@ -112,7 +112,7 @@ public final class Regulator {
     /** Changes the power by {@code delta} steps or sets it ({@code absolute}); server side, checked. */
     public static void apply(ServerPlayer player, BlockPos pos, int value, boolean absolute) {
         Level level = player.level();
-        if (player.distanceToSqr(pos.getCenter()) > 64) return;
+        if (player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 64) return;
         // like a lever: no spawn protection check (turning a knob is not building), but spectators and adventure players cannot
         if (!player.mayBuild() || player.isSpectator() || !level.getWorldBorder().isWithinBounds(pos)) return;
         Device d = find(level, pos);

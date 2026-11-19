@@ -21,6 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
@@ -142,7 +143,7 @@ public final class ForeignGameTests {
         withProfile(TROPICAL, () -> {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 25F);
-            LivingEntity fish = add(h, c, EntityType.TROPICAL_FISH, t -> {});
+            LivingEntity fish = add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
             ForeignProfile p = ForeignProfiles.cared(fish);
             h.assertTrue(p != null, "the stand-in has a profile");
             h.assertTrue(SaltTolerance.of(fish) == null, "lenient by default: the salt does not matter");
@@ -154,7 +155,7 @@ public final class ForeignGameTests {
             float[] menu = ForeignCare.menuValues(fish);
             h.assertTrue(menu != null && menu[1] > 0.9F, "the menu shows it fed");
             // a fish of the same kind outside any tank gets nothing
-            Entity wild = EntityType.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Entity wild = EntityTypes.TROPICAL_FISH.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             wild.snapTo(h.absoluteVec(new Vec3(20, 3, 20)));
             level.addFreshEntity(wild);
             ForeignCare.step(level, c, 5.0);
@@ -177,7 +178,7 @@ public final class ForeignGameTests {
             try {
                 ServerLevel level = h.getLevel();
                 TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 15F);
-                LivingEntity fish = add(h, c, EntityType.TROPICAL_FISH, t -> {});
+                LivingEntity fish = add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
                 ForeignProfile p = ForeignProfiles.of(fish.getType());
                 h.assertTrue(ForeignCare.conditions(c, fish, p).tempBad(), "15 °C is too cold for it");
                 c.getTank().setWaterTemp(25F);
@@ -216,8 +217,8 @@ public final class ForeignGameTests {
         withProfile(TROPICAL, () -> {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 25F);
-            LivingEntity a = add(h, c, EntityType.TROPICAL_FISH, t -> t.putInt("Variant", 65536));
-            LivingEntity b = add(h, c, EntityType.TROPICAL_FISH, t -> t.putInt("Variant", 117506305));
+            LivingEntity a = add(h, c, EntityTypes.TROPICAL_FISH, t -> t.putInt("Variant", 65536));
+            LivingEntity b = add(h, c, EntityTypes.TROPICAL_FISH, t -> t.putInt("Variant", 117506305));
             int va = variant(a), vb = variant(b);
             h.assertTrue(va != vb, "two patterns " + va + " " + vb);
             ForeignBreeding.step(level, c, 0.01); // mating (rate 1000)
@@ -225,7 +226,7 @@ public final class ForeignGameTests {
             h.assertTrue(org.overengineer.bettacraft.platform.Platform.get().persistentData(mother).contains(ForeignBreeding.BROOD), "a mother carries young");
             h.assertTrue(logged(c.getTank(), "log.bettacraft.foreign.pregnant"), "logged");
             ForeignBreeding.step(level, c, 1.1); // birth
-            List<Entity> all = ofType(h, c, EntityType.TROPICAL_FISH);
+            List<Entity> all = ofType(h, c, EntityTypes.TROPICAL_FISH);
             h.assertTrue(all.size() == 5, "three young (" + all.size() + " fish)");
             for (Entity e : all) {
                 if (e == a || e == b) continue;
@@ -236,11 +237,11 @@ public final class ForeignGameTests {
         });
         withProfile(TROPICAL.replace("\"days\": 1,", "\"days\": 1, \"min_water_blocks\": 24,"), () -> {
             TankBlockEntity c = tank(h, 12, 2, 2, 2, 2, 25F);
-            add(h, c, EntityType.TROPICAL_FISH, t -> {});
-            add(h, c, EntityType.TROPICAL_FISH, t -> {});
+            add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
+            add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
             ForeignBreeding.step(h.getLevel(), c, 1.0);
-            for (Entity e : ofType(h, c, EntityType.TROPICAL_FISH)) h.assertTrue(!org.overengineer.bettacraft.platform.Platform.get().persistentData(e).contains(ForeignBreeding.BROOD), "no brood in 8 blocks");
-            h.assertTrue("tank_size".equals(ForeignBreeding.blocked(h.getLevel(), c, ForeignProfiles.of(EntityType.TROPICAL_FISH))), "too small");
+            for (Entity e : ofType(h, c, EntityTypes.TROPICAL_FISH)) h.assertTrue(!org.overengineer.bettacraft.platform.Platform.get().persistentData(e).contains(ForeignBreeding.BROOD), "no brood in 8 blocks");
+            h.assertTrue("tank_size".equals(ForeignBreeding.blocked(h.getLevel(), c, ForeignProfiles.of(EntityTypes.TROPICAL_FISH))), "too small");
             h.assertTrue(logged(c.getTank(), "log.bettacraft.foreign.cannot_breed"), "logged why");
         });
         h.succeed();
@@ -256,15 +257,15 @@ public final class ForeignGameTests {
         try {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 18F);
-            Axolotl a = (Axolotl) add(h, c, EntityType.AXOLOTL, t -> {});
-            Axolotl b = (Axolotl) add(h, c, EntityType.AXOLOTL, t -> {});
+            Axolotl a = (Axolotl) add(h, c, EntityTypes.AXOLOTL, t -> {});
+            Axolotl b = (Axolotl) add(h, c, EntityTypes.AXOLOTL, t -> {});
             a.setInLove(null);
             b.setInLove(null);
             ForeignBreeding.step(level, c, 0.001);
             h.assertTrue(!a.isInLove() && !b.isInLove(), "no love in the tank");
             a.spawnChildFromBreeding(level, b);
-            h.assertTrue(ofType(h, c, EntityType.AXOLOTL).size() == 2, "no vanilla baby");
-            h.assertTrue(level.getEntities(EntityType.AXOLOTL, TankInhabitants.tankBox(c.getTank()).inflate(2), e -> e.isBaby()).isEmpty(), "none at all");
+            h.assertTrue(ofType(h, c, EntityTypes.AXOLOTL).size() == 2, "no vanilla baby");
+            h.assertTrue(level.getEntities(EntityTypes.AXOLOTL, TankInhabitants.tankBox(c.getTank()).inflate(2), e -> e.isBaby()).isEmpty(), "none at all");
             // our breeding still works: an axolotl baby of M29 joins
             h.assertTrue(org.overengineer.bettacraft.tank.AxolotlCare.spawn(level, c, org.overengineer.bettacraft.critters.CritterGenes.WILD, 1,
                     a.position()) != null, "our hatching is not suppressed");
@@ -272,7 +273,7 @@ public final class ForeignGameTests {
             a.setAge(0);
             b.setAge(0);
             a.spawnChildFromBreeding(level, b);
-            h.assertTrue(level.getEntities(EntityType.AXOLOTL, TankInhabitants.tankBox(c.getTank()).inflate(2), e -> e.isBaby()).size() >= 2,
+            h.assertTrue(level.getEntities(EntityTypes.AXOLOTL, TankInhabitants.tankBox(c.getTank()).inflate(2), e -> e.isBaby()).size() >= 2,
                     "off: the vanilla baby comes");
         } finally {
             Features.set(Feature.SUPPRESS_FOREIGN_BREEDING, saved);
@@ -286,11 +287,11 @@ public final class ForeignGameTests {
         withProfile("""
                 {"entity": ["minecraft:allay", "minecraft:axolotl", "bettacraft:betta"], "group": "test",
                  "terrarium": {"habitat": "paludarium", "air": [15, 30], "water": [12, 28], "land": [0.2, 0.8]}}""", () -> {
-            h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityType.ALLAY), "the allay is a terrarium animal by its profile (M39 part c: the frog has a shipped one)");
-            h.assertTrue(ForeignProfiles.of(EntityType.AXOLOTL) == null, "the axolotl keeps its own care (M29)");
+            h.assertTrue(TerrariumAnimals.isTerrariumAnimal(EntityTypes.ALLAY), "the allay is a terrarium animal by its profile (M39 part c: the frog has a shipped one)");
+            h.assertTrue(ForeignProfiles.of(EntityTypes.AXOLOTL) == null, "the axolotl keeps its own care (M29)");
             h.assertTrue(ForeignProfiles.of(type("bettacraft:betta")) == null, "our bettas are never mapped");
         });
-        h.assertTrue(!TerrariumAnimals.isTerrariumAnimal(EntityType.ALLAY), "taken back with the profile");
+        h.assertTrue(!TerrariumAnimals.isTerrariumAnimal(EntityTypes.ALLAY), "taken back with the profile");
         h.succeed();
     }
 

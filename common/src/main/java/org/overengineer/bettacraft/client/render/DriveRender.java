@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -47,7 +46,7 @@ public final class DriveRender {
         Direction face = cab.driveFace();
         if (face == null || cab.getLevel() == null) return;
         // the light in front of the face (the cabinet's own block is dark inside)
-        light = net.minecraft.client.renderer.LevelRenderer.getLightCoords(cab.getLevel(), cab.getBlockPos().relative(face));
+        light = net.minecraft.util.LightCoordsUtil.getLightCoords(cab.getLevel(), cab.getBlockPos().relative(face));
         VertexConsumer vc = buffers.getBuffer(RenderTypes.entityCutoutCull(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
         TextureAtlasSprite s = sprite("drive_coupling");
         ps.pushPose();

@@ -33,7 +33,7 @@ final class DevClientSmokeM45 {
     DevClientSmokeM45() {
         LOGGER.info("[smoketest] M45 mods: ftbquests {}, kubejs {}", org.overengineer.bettacraft.platform.Platform.get().isModLoaded("ftbquests"), org.overengineer.bettacraft.platform.Platform.get().isModLoaded("kubejs"));
         lang = mc.options.languageCode;
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         // the player already has some advancements (as in an old world): the new quests must complete by themselves
         then(1, () -> server(p -> {
             for (String a : List.of("build_tank", "fill_tank", "swamp_water", "mosquito_larvae", "paludarium", "tankmate_inserted")) {
@@ -42,7 +42,7 @@ final class DevClientSmokeM45 {
             }
         }));
         then(60, this::checkServer);
-        then(200, () -> mc.getToastManager().clear()); // the advancement toasts
+        then(200, () -> mc.gui.toastManager().clear()); // the advancement toasts
         then(5, () -> language("en_us"));
         then(10, this::openChapter);
         then(40, () -> shot("chapter_en"));
@@ -50,7 +50,7 @@ final class DevClientSmokeM45 {
         then(30, () -> shot("quest_en"));
         // a feature switched off while the player is online: the script hides its quests on the client too, and shows them again
         then(5, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             server(p -> {
                 org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, false);
                 org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.level().getServer());
@@ -60,7 +60,7 @@ final class DevClientSmokeM45 {
         then(5, this::openChapter);
         then(40, () -> shot("chapter_tankmates_off"));
         then(5, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             server(p -> {
                 org.overengineer.bettacraft.config.Features.set(org.overengineer.bettacraft.config.Feature.TANKMATES, true);
                 org.overengineer.bettacraft.api.ApiEvents.featuresChanged(p.level().getServer());
@@ -73,7 +73,7 @@ final class DevClientSmokeM45 {
         then(5, () -> openQuest("tankmates"));
         then(30, () -> shot("quest_de"));
         then(5, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             language(lang);
         });
     }
@@ -139,7 +139,7 @@ final class DevClientSmokeM45 {
             call(screen, "selectChapter", chapter);
             for (int i = 0; i < 2; i++) call(screen, "addZoom", -1.0);
             org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), 2, 2); // no tooltip over the chapter
-            LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.screen == null ? "NONE (FAIL)" : mc.screen.getClass().getSimpleName(), call(screen, "getZoom"));
+            LOGGER.info("[smoketest] M45 quest book open: {} zoom {}", mc.gui.screen() == null ? "NONE (FAIL)" : mc.gui.screen().getClass().getSimpleName(), call(screen, "getZoom"));
         } catch (ReflectiveOperationException | LinkageError e) {
             LOGGER.error("[smoketest] M45 quest book (FAIL)", e);
         }
@@ -180,7 +180,7 @@ final class DevClientSmokeM45 {
 
     /** Switches the client language without a full resource reload (only the translations). */
     private void language(String code) {
-        mc.setScreen(null);
+        mc.gui.setScreen(null);
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
@@ -195,7 +195,7 @@ final class DevClientSmokeM45 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -214,7 +214,7 @@ final class DevClientSmokeM45 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m45_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m45_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

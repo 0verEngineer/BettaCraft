@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +58,7 @@ final class DevClientSmokeM39c {
 
     DevClientSmokeM39c() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         // long waits: the miniatures of the interiors come to the client chunk by chunk
         then(1, () -> look(pets.getX() + 6, pets.getY() + 3.0, pets.getZ() - 4.6, 0F, 26F));
@@ -66,7 +67,7 @@ final class DevClientSmokeM39c {
         then(200, () -> shot("frogs"));
         then(1, () -> look(big.getX() + 15, big.getY() + 9.5, big.getZ() - 14.0, 0F, 24F));
         then(500, () -> shot("big"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -205,30 +206,30 @@ final class DevClientSmokeM39c {
             c.getTank().setClimate(new org.overengineer.bettacraft.terrarium.Climate.State(22, 22, 28, 60, 2, 0));
         }
         LOGGER.info("[smoketest] M39c modes {} {} {}", pc.getTank().terrariumMode(), fc.getTank().terrariumMode(), bc.getTank().terrariumMode());
-        pose(level, pc, insert(level, pc, EntityType.CHICKEN, false), 1.6, 2.0, 0, 150F);
-        pose(level, pc, insert(level, pc, EntityType.CHICKEN, false), 2.6, 3.8, 0, 210F);
-        pose(level, pc, insert(level, pc, EntityType.CHICKEN, true), 2.2, 1.4, 0, 170F);
-        pose(level, pc, insert(level, pc, EntityType.RABBIT, false), 4.2, 1.6, 0, 120F);
-        pose(level, pc, insert(level, pc, EntityType.RABBIT, false), 4.8, 3.0, 0, 200F);
-        pose(level, pc, insert(level, pc, EntityType.BEE, false), 9.4, 1.6, 0.9, 200F);
-        pose(level, pc, insert(level, pc, EntityType.BEE, false), 10.6, 2.6, 1.3, 150F);
-        pose(level, pc, insert(level, pc, EntityType.CAT, false), 6.2, 1.5, 0, 160F);
-        pose(level, pc, insert(level, pc, EntityType.FOX, false), 7.6, 3.6, 0, 220F);
-        pose(level, pc, insert(level, pc, EntityType.PARROT, false), 3.4, 4.6, 1.4, 140F);
-        pose(level, pc, insert(level, pc, EntityType.ARMADILLO, false), 8.6, 1.4, 0, 190F);
-        pose(level, pc, insert(level, pc, EntityType.BAT, false), 11.0, 4.6, 1.6, 180F);
-        pose(level, fc, insert(level, fc, EntityType.FROG, false), 5.6, 1.6, 0, 200F);
-        pose(level, fc, insert(level, fc, EntityType.FROG, false), 6.6, 3.4, 0, 160F);
-        LivingEntity swim = insert(level, fc, EntityType.FROG, false);
+        pose(level, pc, insert(level, pc, EntityTypes.CHICKEN, false), 1.6, 2.0, 0, 150F);
+        pose(level, pc, insert(level, pc, EntityTypes.CHICKEN, false), 2.6, 3.8, 0, 210F);
+        pose(level, pc, insert(level, pc, EntityTypes.CHICKEN, true), 2.2, 1.4, 0, 170F);
+        pose(level, pc, insert(level, pc, EntityTypes.RABBIT, false), 4.2, 1.6, 0, 120F);
+        pose(level, pc, insert(level, pc, EntityTypes.RABBIT, false), 4.8, 3.0, 0, 200F);
+        pose(level, pc, insert(level, pc, EntityTypes.BEE, false), 9.4, 1.6, 0.9, 200F);
+        pose(level, pc, insert(level, pc, EntityTypes.BEE, false), 10.6, 2.6, 1.3, 150F);
+        pose(level, pc, insert(level, pc, EntityTypes.CAT, false), 6.2, 1.5, 0, 160F);
+        pose(level, pc, insert(level, pc, EntityTypes.FOX, false), 7.6, 3.6, 0, 220F);
+        pose(level, pc, insert(level, pc, EntityTypes.PARROT, false), 3.4, 4.6, 1.4, 140F);
+        pose(level, pc, insert(level, pc, EntityTypes.ARMADILLO, false), 8.6, 1.4, 0, 190F);
+        pose(level, pc, insert(level, pc, EntityTypes.BAT, false), 11.0, 4.6, 1.6, 180F);
+        pose(level, fc, insert(level, fc, EntityTypes.FROG, false), 5.6, 1.6, 0, 200F);
+        pose(level, fc, insert(level, fc, EntityTypes.FROG, false), 6.6, 3.4, 0, 160F);
+        LivingEntity swim = insert(level, fc, EntityTypes.FROG, false);
         if (swim != null) {
             pose(level, fc, swim, 1.8, 2.4, 0, 120F);
             swim.snapTo(swim.getX(), fc.getTank().waterSurfaceY() - 0.25, swim.getZ(), 120F, 0F);
         }
-        pose(level, bc, insert(level, bc, EntityType.COW, false), 7.0, 5.0, 0, 150F);
-        pose(level, bc, insert(level, bc, EntityType.SHEEP, false), 11.5, 3.0, 0, 200F);
-        pose(level, bc, insert(level, bc, EntityType.HORSE, false), 17.0, 8.0, 0, 120F);
-        pose(level, bc, insert(level, bc, EntityType.PIG, false), 21.5, 3.0, 0, 230F);
-        pose(level, bc, insert(level, bc, EntityType.PANDA, false), 24.5, 10.0, 0, 200F);
+        pose(level, bc, insert(level, bc, EntityTypes.COW, false), 7.0, 5.0, 0, 150F);
+        pose(level, bc, insert(level, bc, EntityTypes.SHEEP, false), 11.5, 3.0, 0, 200F);
+        pose(level, bc, insert(level, bc, EntityTypes.HORSE, false), 17.0, 8.0, 0, 120F);
+        pose(level, bc, insert(level, bc, EntityTypes.PIG, false), 21.5, 3.0, 0, 230F);
+        pose(level, bc, insert(level, bc, EntityTypes.PANDA, false), 24.5, 10.0, 0, 200F);
         for (TankBlockEntity c : List.of(pc, fc, bc)) {
             MinecraftPets.step(level, c, 0.01);
             c.markTankChanged();
@@ -250,7 +251,7 @@ final class DevClientSmokeM39c {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -269,7 +270,7 @@ final class DevClientSmokeM39c {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m39c_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m39c_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

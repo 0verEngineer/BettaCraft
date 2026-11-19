@@ -103,10 +103,10 @@ public final class StoneCabinetGameTests {
         h.assertTrue(bricks.getHoverName().getString().contains(Items.STONE_BRICKS.getDefaultInstance().getHoverName().getString())
                 || bricks.getHoverName().getString().contains("Stone Bricks"), "named after the stone: " + bricks.getHoverName().getString());
         // not: metal (also copper with its own slabs), glass, purpur, prismarine, mud bricks, terracotta without slabs
-        for (Item[] bad : new Item[][] {{Items.IRON_BLOCK, Items.STONE_SLAB}, {Items.CUT_COPPER, Items.CUT_COPPER_SLAB},
-                {Items.WAXED_CUT_COPPER, Items.WAXED_CUT_COPPER_SLAB}, {Items.GOLD_BLOCK, Items.STONE_SLAB}, {Items.GLASS, Items.STONE_SLAB},
+        for (Item[] bad : new Item[][] {{Items.IRON_BLOCK, Items.STONE_SLAB}, {Items.CUT_COPPER.weathering().unaffected(), Items.CUT_COPPER_SLAB.weathering().unaffected()},
+                {Items.CUT_COPPER.waxed().unaffected(), Items.CUT_COPPER_SLAB.waxed().unaffected()}, {Items.GOLD_BLOCK, Items.STONE_SLAB}, {Items.GLASS, Items.STONE_SLAB},
                 {Items.PURPUR_BLOCK, Items.PURPUR_SLAB}, {Items.END_STONE_BRICKS, Items.END_STONE_BRICK_SLAB}, {Items.PRISMARINE, Items.PRISMARINE_SLAB},
-                {Items.MUD_BRICKS, Items.MUD_BRICK_SLAB}, {Items.TERRACOTTA, Items.STONE_SLAB}, {Items.WHITE_CONCRETE, Items.STONE_SLAB},
+                {Items.MUD_BRICKS, Items.MUD_BRICK_SLAB}, {Items.TERRACOTTA, Items.STONE_SLAB}, {Items.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE), Items.STONE_SLAB},
                 {Items.OAK_PLANKS, Items.STONE_SLAB}, {Items.COAL_ORE, Items.STONE_SLAB}, {Items.FURNACE, Items.STONE_SLAB}}) {
             h.assertTrue(craft(level, grid(bad[1], bad[0])).isEmpty(), "no cabinet of " + BuiltInRegistries.ITEM.getKey(bad[0]));
         }

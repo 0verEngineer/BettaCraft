@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -52,7 +51,7 @@ final class NestRenderer {
         BlockPos origin = be.getBlockPos();
         Vec3 p = nest.pos();
         float size = size(nest);
-        int light = be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(p));
+        int light = be.getLevel() == null ? 0xF000F0 : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), BlockPos.containing(p));
         long time = be.getLevel() == null ? 0 : be.getLevel().getGameTime();
         // a stable lumpy shape per nest
         long seed = Mth.getSeed(Mth.floor(p.x * 16), Mth.floor(p.y * 16), Mth.floor(p.z * 16));

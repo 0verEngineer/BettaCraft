@@ -27,7 +27,7 @@ public final class RenderFrame {
         Frustum f = frustum;
         if (f == null) {
             f = new Frustum(new Matrix4f(), new Matrix4f());
-            var cam = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+            var cam = Minecraft.getInstance().gameRenderer.mainCamera().position();
             f.prepare(cam.x, cam.y, cam.z);
         }
         return f;

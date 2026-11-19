@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.mixin.mob;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.player.Player;
 import org.overengineer.bettacraft.mobs.GlassMobs;
 import org.spongepowered.asm.mixin.Mixin;

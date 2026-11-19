@@ -68,7 +68,7 @@ public class SumpMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return cabinet == null || (!cabinet.isRemoved() && cabinet.hasSump() && player.distanceToSqr(cabinet.getBlockPos().getCenter()) <= 64.0);
+        return cabinet == null || (!cabinet.isRemoved() && cabinet.hasSump() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(cabinet.getBlockPos())) <= 64.0);
     }
 
     private static final class ChamberSlot extends Slot {

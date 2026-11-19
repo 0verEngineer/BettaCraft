@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import org.overengineer.bettacraft.client.render.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -249,7 +249,7 @@ public final class MiniaturePlants {
     }
 
     /** Flushes the meshes drawn this frame (one render type for all of them). */
-    static void endFrame(MultiBufferSource.BufferSource buffers) {
+    static void endFrame(org.overengineer.bettacraft.client.render.ImmediateBuffers buffers) {
         if (lastDrawn > 0) buffers.endBatch(PlantMeshRenderer.MINI);
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -84,7 +85,7 @@ final class DevClientSmokeM44 {
 
     DevClientSmokeM44() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         then(40, () -> server(pl -> force(pl.level())));
         for (String cond : new String[]{"0", "auto"}) {
@@ -138,7 +139,7 @@ final class DevClientSmokeM44 {
         then(1, () -> server(p -> fronts(p.level(), true)));
         then(40, () -> {});
         // the menu of a cabinet in a row (auto) and of the one with the single door
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> look(cab.getX() + 66, cab.getY() + 1.9, cab.getZ() - 3.0, 0F, 12F));
         then(10, () -> server(p -> open(p, cab.offset(60 + 5, 0, 0))));
         then(40, () -> shot("menu_auto"));
@@ -353,7 +354,7 @@ final class DevClientSmokeM44 {
         m.setPersistenceRequired();
         m.goalSelector.removeAllGoals(g -> true);
         m.targetSelector.removeAllGoals(g -> true);
-        if (type == EntityType.ZOMBIE || type == EntityType.SKELETON) m.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+        if (type == EntityTypes.ZOMBIE || type == EntityTypes.SKELETON) m.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
         level.addFreshEntity(m);
         walkersOutside.add(m);
         return m;
@@ -368,26 +369,26 @@ final class DevClientSmokeM44 {
             for (int cx = r.originX() >> 4; cx <= (r.originX() + r.sizeX()) >> 4; cx++)
                 for (int cz = r.originZ() >> 4; cz <= (r.originZ() + r.sizeZ()) >> 4; cz++) in.getChunk(cx, cz);
         }
-        track("glass_zombie", insertJar(level, gc, EntityType.ZOMBIE));
-        track("glass_skeleton", insertJar(level, gc, EntityType.SKELETON));
-        track("glass_spider", insertJar(level, gc, EntityType.SPIDER));
-        track("glass_husk", insertJar(level, gc, EntityType.HUSK));
-        track("pet_chicken", insertBox(level, pc, EntityType.CHICKEN));
-        track("pet_cat", insertBox(level, pc, EntityType.CAT));
-        track("pet_rabbit", insertBox(level, pc, EntityType.RABBIT));
-        track("pet_fox", insertBox(level, pc, EntityType.FOX));
+        track("glass_zombie", insertJar(level, gc, EntityTypes.ZOMBIE));
+        track("glass_skeleton", insertJar(level, gc, EntityTypes.SKELETON));
+        track("glass_spider", insertJar(level, gc, EntityTypes.SPIDER));
+        track("glass_husk", insertJar(level, gc, EntityTypes.HUSK));
+        track("pet_chicken", insertBox(level, pc, EntityTypes.CHICKEN));
+        track("pet_cat", insertBox(level, pc, EntityTypes.CAT));
+        track("pet_rabbit", insertBox(level, pc, EntityTypes.RABBIT));
+        track("pet_fox", insertBox(level, pc, EntityTypes.FOX));
         track("herp_leopard_gecko", insertBox(level, hc, ModEntities.HERPS.get(HerpSpecies.LEOPARD_GECKO).get()));
         track("herp_hermann", insertBox(level, hc, ModEntities.HERMANN_TORTOISE.get()));
         track("climb_crested_gecko", insertBox(level, hc, ModEntities.HERPS.get(HerpSpecies.CRESTED_GECKO).get()));
-        track("big_wolf", insertBox(level, bc, EntityType.WOLF));
-        track("big_pig", insertBox(level, bc, EntityType.PIG));
-        track("big_cow", insertBox(level, bc, EntityType.COW));
-        track("big_sheep", insertBox(level, bc, EntityType.SHEEP));
-        track("out_chicken", outside(level, EntityType.CHICKEN, 1, 2));
-        track("out_zombie", outside(level, EntityType.ZOMBIE, 3, 3));
-        track("out_pig", outside(level, EntityType.PIG, 5, 2));
-        track("out_wolf", outside(level, EntityType.WOLF, 7, 3));
-        track("out_spider", outside(level, EntityType.SPIDER, 9, 2));
+        track("big_wolf", insertBox(level, bc, EntityTypes.WOLF));
+        track("big_pig", insertBox(level, bc, EntityTypes.PIG));
+        track("big_cow", insertBox(level, bc, EntityTypes.COW));
+        track("big_sheep", insertBox(level, bc, EntityTypes.SHEEP));
+        track("out_chicken", outside(level, EntityTypes.CHICKEN, 1, 2));
+        track("out_zombie", outside(level, EntityTypes.ZOMBIE, 3, 3));
+        track("out_pig", outside(level, EntityTypes.PIG, 5, 2));
+        track("out_wolf", outside(level, EntityTypes.WOLF, 7, 3));
+        track("out_spider", outside(level, EntityTypes.SPIDER, 9, 2));
         for (TankBlockEntity c : List.of(gc, pc, hc, bc)) c.markTankChanged();
         // spread them out (they all start at the same spot)
         int k = 0;
@@ -501,7 +502,7 @@ final class DevClientSmokeM44 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (glass != null) measure();
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
@@ -521,7 +522,7 @@ final class DevClientSmokeM44 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m44_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m44_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

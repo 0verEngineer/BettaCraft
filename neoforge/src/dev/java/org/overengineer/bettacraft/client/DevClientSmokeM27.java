@@ -47,7 +47,7 @@ final class DevClientSmokeM27 {
     DevClientSmokeM27() {
         base = mc.player.blockPosition().offset(-10, 0, 800);
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 1.5, base.getY() + 2.2, base.getZ() - 5.5, 0F, 8F));
         then(120, this::check);
         then(1, () -> shot("wall"));
@@ -64,10 +64,10 @@ final class DevClientSmokeM27 {
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("dashboard_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, this::openEditor);
         then(20, () -> shot("editor"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void build(ServerPlayer p) {
@@ -113,7 +113,7 @@ final class DevClientSmokeM27 {
         }
         if (level.getBlockEntity(base.offset(4, 0, 1)) instanceof TankBlockEntity a && a.isController()) {
             var err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, a, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET),
-                    net.minecraft.world.entity.EntityType.TROPICAL_FISH, p, false);
+                    net.minecraft.world.entity.EntityTypes.TROPICAL_FISH, p, false);
             if (err != null) LOGGER.warn("[smoketest] M27 tropical fish: {}", err.getString());
             org.overengineer.bettacraft.tank.TankCare.log(level, a, "log.bettacraft.critters_born", "6", "@" + org.overengineer.bettacraft.critters.CritterSpecies.values()[0].translationKey());
         }
@@ -142,7 +142,7 @@ final class DevClientSmokeM27 {
 
     private void openEditor() {
         var screen = new org.overengineer.bettacraft.client.screen.MonitorEditorScreen(base.offset(2, 2, 1));
-        mc.setScreen(screen);
+        mc.gui.setScreen(screen);
         if (screen.editing() == null) {
             LOGGER.error("[smoketest] M27 the editor has no layout");
             return;
@@ -186,7 +186,7 @@ final class DevClientSmokeM27 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -202,7 +202,7 @@ final class DevClientSmokeM27 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -221,7 +221,7 @@ final class DevClientSmokeM27 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m27_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m27_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

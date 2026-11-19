@@ -184,8 +184,8 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
         PoseStack ps = e.getPoseStack() != null ? e.getPoseStack() : new PoseStack();
         for (RenderLevelStageEvent.Stage s : stages) {
             org.overengineer.bettacraft.platform.client.ClientEvents.fireRenderLevel(new RenderLevelStageEvent(s, e.getLevelRenderer(), ps,
-                    new org.joml.Matrix4f(e.getModelViewMatrix()), RenderFrame.projection(), mc.levelRenderer.getTicks(), mc.getDeltaTracker(),
-                    mc.gameRenderer.getMainCamera(), RenderFrame.frustum()));
+                    new org.joml.Matrix4f(e.getModelViewMatrix()), RenderFrame.projection(), (int) mc.level.getGameTime(), mc.getDeltaTracker(),
+                    mc.gameRenderer.mainCamera(), RenderFrame.frustum()));
         }
     }
 }

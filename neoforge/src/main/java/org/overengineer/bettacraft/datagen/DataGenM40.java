@@ -17,7 +17,6 @@ import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
 import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.platform.Tags;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
@@ -150,7 +149,7 @@ final class DataGenM40 {
 
     // ------------------------------------------------------------------ recipes
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasFilter) {
         Ingredient pipe = Ingredient.of(ModItems.GLASS_PIPE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_INLET_PIPE.get(), 8)
                 .pattern("PPP").pattern("PDP").pattern("PPP").define('P', pipe).define('D', Tags.Items.DYES_BLUE)
@@ -169,7 +168,7 @@ final class DataGenM40 {
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("outlet_guard")));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         for (Block b : pipes()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         for (Block b : blocks()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
     }

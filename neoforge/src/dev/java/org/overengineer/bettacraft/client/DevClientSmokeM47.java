@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.StructureTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.inventory.MerchantMenu;
@@ -76,7 +77,7 @@ final class DevClientSmokeM47 {
 
     DevClientSmokeM47() {
         then(1, () -> server(this::setup));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // part 1: the aquarist in a village
         then(40, () -> server(this::village));
         then(200, () -> server(this::hire));
@@ -91,16 +92,16 @@ final class DevClientSmokeM47 {
         then(1, () -> lookAt(basin.getX() + 0.5, basin.getY() + 1.3, basin.getZ() - 1.5, 0F, 35F));
         then(40, () -> shot("basin"));
         // part 2: the trade menu (master level, a bred betta in the trade slot)
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(5, () -> server(this::trade));
         then(40, () -> shot("trade_menu"));
         then(5, () -> server(this::sellBetta));
         then(30, () -> shot("trade_betta"));
         then(1, () -> {
             if (mc.player != null) mc.player.closeContainer();
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
         });
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // part 3: the rams, part 4: the frogs
         then(5, () -> server(this::tanks));
         then(80, () -> lookAt(home.getX() + 1.5, home.getY() + 1.2, home.getZ() - 1.9, 0F, 8F));
@@ -156,7 +157,7 @@ final class DevClientSmokeM47 {
         }
         level.setBlock(basin, ModBlocks.BREEDING_BASIN.get().defaultBlockState().setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING,
                 Direction.NORTH), 3);
-        Villager v = EntityType.VILLAGER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Villager v = EntityTypes.VILLAGER.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         v.snapTo(basin.getX() + 1.5, basin.getY(), basin.getZ() + 0.5, 90F, 0F);
         v.setPersistenceRequired();
         level.addFreshEntity(v);
@@ -325,7 +326,7 @@ final class DevClientSmokeM47 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -344,7 +345,7 @@ final class DevClientSmokeM47 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m47_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m47_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

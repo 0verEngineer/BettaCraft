@@ -45,7 +45,7 @@
     "minecraft": "${fabric_minecraft_dependency}",
     "java": ">=25",
     "fabric-api": "*",
-    "forgeconfigapiport": ">=26.1.0"
+    "forgeconfigapiport": ">=26.2.0"
   },
   "suggests": {
     "modonomicon": "*",

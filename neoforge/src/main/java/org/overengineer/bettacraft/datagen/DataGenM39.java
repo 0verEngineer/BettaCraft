@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.datagen;
 
 import java.util.List;
 import java.util.function.Function;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -27,7 +26,7 @@ final class DataGenM39 {
 
     private DataGenM39() {}
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         for (var f : LIVE) {
             tag.apply(ModTags.LIVE_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
             tag.apply(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));

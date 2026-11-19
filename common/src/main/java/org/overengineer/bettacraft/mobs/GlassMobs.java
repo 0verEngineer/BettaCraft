@@ -20,13 +20,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -269,13 +270,13 @@ public final class GlassMobs {
 
     /** A zombie (or husk) under the water of its tank: after {@link #DROWN_TICKS} a drowned (a husk a zombie), as in vanilla. */
     static void drown(ServerLevel level, TankBlockEntity c, Mob m) {
-        if (!(m instanceof Zombie z) || m.getType() != EntityType.ZOMBIE && m.getType() != EntityType.HUSK) return;
+        if (!(m instanceof Zombie z) || m.getType() != EntityTypes.ZOMBIE && m.getType() != EntityTypes.HUSK) return;
         GlassMobState s = ModAttachments.GLASS_STATE.get(m);
         TankData t = c.getTank();
         boolean under = t.waterMb() > 0 && m.getEyeY() < t.waterSurfaceY();
         s.underWater = under ? s.underWater + 20 : 0;
         if (s.underWater < DROWN_TICKS) return;
-        convert(level, c, z, m.getType() == EntityType.HUSK ? EntityType.ZOMBIE : EntityType.DROWNED);
+        convert(level, c, z, m.getType() == EntityTypes.HUSK ? EntityTypes.ZOMBIE : EntityTypes.DROWNED);
     }
 
     /**
@@ -322,7 +323,7 @@ public final class GlassMobs {
         TankInhabitants.adopt(n, c);
         t.inhabitants().remove(old);
         t.inhabitants().add(n.getUUID());
-        level.playSound(null, n.blockPosition(), to == EntityType.DROWNED ? SoundEvents.ZOMBIE_CONVERTED_TO_DROWNED : SoundEvents.HUSK_CONVERTED_TO_ZOMBIE,
+        level.playSound(null, n.blockPosition(), to == EntityTypes.DROWNED ? SoundEvents.ZOMBIE_CONVERTED_TO_DROWNED : SoundEvents.HUSK_CONVERTED_TO_ZOMBIE,
                 SoundSource.HOSTILE, 0.6F, 1.6F);
         TankCare.log(level, c, "log.bettacraft.glass.converted", from, "@" + to.getDescriptionId());
         c.markTankChanged();

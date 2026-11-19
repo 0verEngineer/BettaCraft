@@ -63,6 +63,6 @@ public class LiveFoodPumpMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return pump == null || (!pump.isRemoved() && player.distanceToSqr(pump.getBlockPos().getCenter()) <= 64.0);
+        return pump == null || (!pump.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pump.getBlockPos())) <= 64.0);
     }
 }

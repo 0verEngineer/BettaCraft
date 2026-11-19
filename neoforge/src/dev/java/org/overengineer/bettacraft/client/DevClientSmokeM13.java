@@ -63,7 +63,7 @@ final class DevClientSmokeM13 {
 
     DevClientSmokeM13() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(40, () -> server(p -> {
             for (BlockPos at : List.of(base, base.offset(0, 0, 8), base.offset(8, 0, 8))) {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), at);
@@ -123,21 +123,21 @@ final class DevClientSmokeM13 {
             }
         }));
         // the aquarium plants page of the menu, English and German
-        then(60, () -> mc.options.hideGui = false);
+        then(60, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), base);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showAquaticPageForTest();
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showAquaticPageForTest();
         });
         then(30, () -> shot("menu_aquatic"));
         String lang = mc.options.languageCode;
         then(1, () -> language("de_de"));
         then(20, () -> shot("menu_aquatic_de"));
         then(1, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showPlantsPageForTest();
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showPlantsPageForTest();
         });
         then(20, () -> shot("menu_plants_de"));
         then(1, () -> {
@@ -146,7 +146,7 @@ final class DevClientSmokeM13 {
             mc.resizeGui();
         });
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> {
             for (BlockPos at : List.of(base, base.offset(0, 0, 8), base.offset(8, 0, 8))) {
                 TankBlockEntity c = TankMultiblock.getController(p.level(), at);
@@ -346,7 +346,7 @@ final class DevClientSmokeM13 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void then(int delay, Runnable action) {
@@ -359,7 +359,7 @@ final class DevClientSmokeM13 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -378,7 +378,7 @@ final class DevClientSmokeM13 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m13_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m13_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

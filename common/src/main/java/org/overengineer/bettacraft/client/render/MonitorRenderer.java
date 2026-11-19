@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -75,7 +74,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         Direction facing = be.facing();
         int w = be.width(), h = be.height();
         boolean on = be.status() == MonitorBlockEntity.ON;
-        int packed = on ? net.minecraft.util.LightCoordsUtil.FULL_BRIGHT : LevelRenderer.getLightCoords(be.getLevel(), be.getBlockPos().relative(facing));
+        int packed = on ? net.minecraft.util.LightCoordsUtil.FULL_BRIGHT : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), be.getBlockPos().relative(facing));
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // local +Z = out of the screen, +X = right as the viewer sees it, +Y = up; this block is the top left one
@@ -481,7 +480,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         pose.pushPose();
         pose.translate(sw / 2 - font.width(s) * scale / 2, sh / 2 - 4 * scale, 0.75F);
         pose.scale(scale, scale, 1F);
-        font.drawInBatch(s, 0, 0, color, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET, 0, light);
+        LegacyBlockEntityRenderer.collector().submitText(pose, 0, 0, net.minecraft.util.FormattedCharSequence.forward(s, net.minecraft.network.chat.Style.EMPTY), false, Font.DisplayMode.POLYGON_OFFSET, light, color, 0, 0);
         pose.popPose();
     }
 
@@ -498,7 +497,7 @@ public class MonitorRenderer extends org.overengineer.bettacraft.client.render.L
         pose.pushPose();
         pose.translate(x, y, 0.75F);
         pose.scale(scale, scale, 1F);
-        font.drawInBatch(s, 0, 0, color, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET, 0, light);
+        LegacyBlockEntityRenderer.collector().submitText(pose, 0, 0, net.minecraft.util.FormattedCharSequence.forward(s, net.minecraft.network.chat.Style.EMPTY), false, Font.DisplayMode.POLYGON_OFFSET, light, color, 0, 0);
         pose.popPose();
     }
 

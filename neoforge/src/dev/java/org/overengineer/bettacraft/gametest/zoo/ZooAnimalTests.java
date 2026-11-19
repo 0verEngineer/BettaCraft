@@ -20,12 +20,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.Item;
@@ -97,9 +97,9 @@ public final class ZooAnimalTests {
         if (e instanceof AbstractFish) sb.append("Fish ");
         if (e instanceof Animal) sb.append("Animal ");
         if (e instanceof Enemy) sb.append("Enemy ");
-        if (e instanceof FlyingAnimal || e instanceof net.minecraft.world.entity.monster.Ghast || e instanceof net.minecraft.world.entity.monster.Phantom) sb.append("Flying ");
+        if (e instanceof net.minecraft.world.entity.Mob fm && fm.getNavigation() instanceof net.minecraft.world.entity.ai.navigation.FlyingPathNavigation || e instanceof net.minecraft.world.entity.monster.Ghast || e instanceof net.minecraft.world.entity.monster.Phantom) sb.append("Flying ");
         if (e instanceof net.minecraft.world.entity.TamableAnimal) sb.append("Tamable ");
-        if (e instanceof net.minecraft.world.entity.animal.Bucketable) sb.append("Bucketable ");
+        if (e instanceof net.minecraft.world.entity.Bucketable) sb.append("Bucketable ");
         if (e instanceof LivingEntity le && le.canBreatheUnderwater()) sb.append("BreathesWater ");
         return sb.toString().trim();
     }
@@ -113,7 +113,7 @@ public final class ZooAnimalTests {
         for (Identifier rl : ids) {
             if (ZooSuite.OWN.contains(rl.getNamespace())) continue;
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(rl);
-            if (type == EntityType.PLAYER) continue;
+            if (type == EntityTypes.PLAYER) continue;
             Entity e;
             try {
                 e = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);

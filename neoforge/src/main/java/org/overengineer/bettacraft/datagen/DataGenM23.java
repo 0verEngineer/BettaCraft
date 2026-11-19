@@ -181,7 +181,7 @@ final class DataGenM23 {
 
     // ------------------------------------------------------------------ recipes
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasFilter, net.minecraft.advancements.Criterion<?> hasLight) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasFilter, net.minecraft.advancements.triggers.Criterion<?> hasLight) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AIR_HOSE.get(), 4)
                 .pattern("K").pattern("K").pattern("K").define('K', Items.DRIED_KELP)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_hose")));
@@ -196,10 +196,10 @@ final class DataGenM23 {
                 .requires(Items.FLINT).requires(Tags.Items.SANDS).requires(ModItems.AIR_HOSE.get())
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("air_stone")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 2)
-                .requires(Items.SPONGE).requires(Items.BLACK_DYE)
+                .requires(Items.SPONGE).requires(Items.DYE.pick(net.minecraft.world.item.DyeColor.BLACK))
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_sponge")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_SPONGE.get(), 1)
-                .requires(ItemTagsWool.WOOL).requires(Items.BLACK_DYE).requires(Items.STRING)
+                .requires(ItemTagsWool.WOOL).requires(Items.DYE.pick(net.minecraft.world.item.DyeColor.BLACK)).requires(Items.STRING)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_sponge_from_wool")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SPONGE_FILTER.get())
                 .pattern(" H ").pattern("SGS").pattern("SSS")

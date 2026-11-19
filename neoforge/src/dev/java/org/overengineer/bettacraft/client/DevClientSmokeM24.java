@@ -69,7 +69,7 @@ final class DevClientSmokeM24 {
         base = mc.player.blockPosition().offset(-10, 0, 620);
         then(1, () -> server(this::build));
         then(20, () -> {});
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // 1. the whole scene and each part
         then(1, () -> look(base.getX() + SPACING + 2.0, base.getY() + 6.5, base.getZ() - 12.0, 0F, 22F));
         then(160, () -> {
@@ -100,36 +100,36 @@ final class DevClientSmokeM24 {
         then(1, () -> server(p -> p.teleportTo(p.level().getServer().overworld(), base.getX() + 6.0, base.getY() + 1.5, base.getZ() - 2.0, java.util.Set.of(), 0F, 0F, true)));
         then(5, () -> server(p -> p.teleportTo(p.level(), base.getX() + 4.5, base.getY() + 1.0, base.getZ() - 1.5, java.util.Set.of(), 0F, 20F, false)));
         // 3. screens
-        then(60, () -> mc.options.hideGui = false);
+        then(60, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(this::fillInventory));
-        then(40, () -> mc.getToastManager().clear());
+        then(40, () -> mc.gui.toastManager().clear());
         then(1, () -> org.overengineer.bettacraft.util.ClientHooks.openFilter(base.offset(5, 3, 0)));
         then(20, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.MultiblockFilterScreen)) LOGGER.error("[smoketest] M24 no filter screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.MultiblockFilterScreen)) LOGGER.error("[smoketest] M24 no filter screen");
             mouseTo(-50, -50);
         });
         then(10, () -> shot("filter_screen"));
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("filter_screen_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(5, () -> org.overengineer.bettacraft.util.ClientHooks.openWaterChanger(base.offset(-1, 1, 2)));
         then(20, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.WaterChangerScreen)) LOGGER.error("[smoketest] M24 no water changer screen");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.WaterChangerScreen)) LOGGER.error("[smoketest] M24 no water changer screen");
             mouseTo(-50, -50);
         });
         then(10, () -> shot("water_changer"));
         then(1, () -> quickLanguage("de_de"));
         then(20, () -> shot("water_changer_de"));
         then(1, () -> quickLanguage(lang));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> p.teleportTo(p.level(), base.getX() + 2 * SPACING + 5.5, base.getY() + 1.0, base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false)));
         then(10, () -> server(p -> {
             BlockPos cp = base.offset(2 * SPACING + 5, 1, 1);
             if (p.level().getBlockEntity(cp) instanceof net.minecraft.world.MenuProvider mp) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, cp);
         }));
         then(30, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CrucibleScreen)) LOGGER.error("[smoketest] M24 no crucible menu");
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CrucibleScreen)) LOGGER.error("[smoketest] M24 no crucible menu");
             mouseTo(-50, -50);
         });
         then(10, () -> shot("crucible_menu"));
@@ -137,14 +137,14 @@ final class DevClientSmokeM24 {
         then(20, () -> shot("crucible_menu_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         then(1, () -> server(p -> p.teleportTo(p.level(), base.getX() + 2.0, base.getY() + 1.0, base.getZ() - 2.0, java.util.Set.of(), 0F, 20F, false)));
         tankMenu("menu_water", base.offset(0, 1, 0));
         // 4. the items with their tooltips
-        then(5, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        then(5, () -> mc.gui.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
         then(20, () -> hover(s -> s.is(ModItems.FILTER_FOAM.get())));
         then(10, () -> shot("items"));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
         // 5. the handbook
         guide("en");
         then(1, () -> language("de_de"));
@@ -152,7 +152,7 @@ final class DevClientSmokeM24 {
         guide("de");
         then(1, () -> language(lang));
         then(1, this::awaitReload);
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -166,7 +166,7 @@ final class DevClientSmokeM24 {
             for (int z = -14; z < 9; z++) {
                 level.setBlock(base.offset(x, -1, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
                 level.setBlock(base.offset(x, 0, z), Blocks.SMOOTH_QUARTZ.defaultBlockState(), 2);
-                for (int y = 1; y < 14; y++) level.setBlock(base.offset(x, y, z), z == 7 ? Blocks.WHITE_CONCRETE.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
+                for (int y = 1; y < 14; y++) level.setBlock(base.offset(x, y, z), z == 7 ? Blocks.CONCRETE.pick(net.minecraft.world.item.DyeColor.WHITE).defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
             }
         ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
         // ---- left: the multiblock filter, level sensor, reservoir, water change controller
@@ -332,7 +332,7 @@ final class DevClientSmokeM24 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(5);
             else LOGGER.error("[smoketest] M24 no tank menu for {}", name);
             mouseTo(-50, -50);
         });
@@ -341,7 +341,7 @@ final class DevClientSmokeM24 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> quickLanguage(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ handbook
@@ -363,7 +363,7 @@ final class DevClientSmokeM24 {
             then(40, () -> shot("guide_" + name + "_" + l));
         }
         then(1, () -> {
-            mc.setScreen(null);
+            mc.gui.setScreen(null);
             mc.options.guiScale().set(gui);
             mc.resizeGui();
         });
@@ -372,7 +372,7 @@ final class DevClientSmokeM24 {
     // ------------------------------------------------------------------ helpers
 
     private void hover(java.util.function.Predicate<ItemStack> which) {
-        if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
+        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (which.test(s.getItem())) {
                 mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
@@ -406,14 +406,14 @@ final class DevClientSmokeM24 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void awaitReload() {
         if (reload != null && !reload.isDone()) {
             steps.addFirst(new Step(10, this::awaitReload));
         } else {
-            if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+            if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
             LOGGER.info("[smoketest] M24 resources reloaded for {}", mc.options.languageCode);
         }
     }
@@ -431,7 +431,7 @@ final class DevClientSmokeM24 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -452,7 +452,7 @@ final class DevClientSmokeM24 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m24_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m24_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

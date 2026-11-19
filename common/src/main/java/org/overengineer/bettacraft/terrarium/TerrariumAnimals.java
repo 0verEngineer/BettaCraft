@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.critters.TankTerrain;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -41,7 +42,7 @@ public final class TerrariumAnimals {
     public static void registerOurs() {
         for (HerpSpecies s : HerpSpecies.ALL) register(org.overengineer.bettacraft.registry.ModEntities.herp(s), s.needs(),
                 () -> org.overengineer.bettacraft.config.Features.enabled(s.feature())); // part c: the amphibians and reptiles
-        register(EntityType.TURTLE, SEA_TURTLE, SeaTurtles::enabled);
+        register(EntityTypes.TURTLE, SEA_TURTLE, SeaTurtles::enabled);
     }
 
     /** M31 part b: a sea turtle: a paludarium with a sandy beach and warm water (M35: sea water, a big tank, {@link SeaTurtles}). */

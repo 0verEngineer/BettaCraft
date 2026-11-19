@@ -117,6 +117,6 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return filter == null || (!filter.isRemoved() && player.distanceToSqr(filter.getBlockPos().getCenter()) <= 64.0);
+        return filter == null || (!filter.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(filter.getBlockPos())) <= 64.0);
     }
 }

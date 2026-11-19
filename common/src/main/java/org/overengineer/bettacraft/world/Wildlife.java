@@ -178,7 +178,7 @@ public final class Wildlife {
         TankmateSpecies s = TankmateSpecies.of(type);
         if (s != null && s.isLarge() && s.shoaling()) {
             int[] g = group(s);
-            long mates = near.stream().filter(e -> e.species() == s && e.distanceToSqr(pos.getCenter()) < 144).count();
+            long mates = near.stream().filter(e -> e.species() == s && e.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) < 144).count();
             if (mates > 0) return mates < g[1] && near.size() < cap + g[1];
         }
         if (near.size() >= cap) return false;

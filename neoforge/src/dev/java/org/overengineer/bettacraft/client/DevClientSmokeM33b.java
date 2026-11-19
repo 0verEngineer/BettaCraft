@@ -40,13 +40,13 @@ final class DevClientSmokeM33b {
         then(5, this::openCreativeTab);
         then(20, this::checkTab);
         then(10, () -> shot("creative"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(5, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("index.md")));
         then(30, this::checkGuide);
         then(10, () -> shot("guide"));
         then(5, () -> org.overengineer.bettacraft.compat.guideme.GuideMECompat.open(mc.player, GuideBook.GUIDE_ID, BettaCraft.id("tankmates/cichlids.md")));
         then(30, () -> shot("notice"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         then(1, () -> set(true));
         then(5, () -> {
             int n = tabCount("on again");
@@ -72,7 +72,7 @@ final class DevClientSmokeM33b {
 
     private void openCreativeTab() {
         var scr = new CreativeModeInventoryScreen(mc.player, mc.player.connection.enabledFeatures(), true);
-        mc.setScreen(scr);
+        mc.gui.setScreen(scr);
         try {
             var m = CreativeModeInventoryScreen.class.getDeclaredMethod("selectTab", CreativeModeTab.class);
             m.setAccessible(true);
@@ -127,7 +127,7 @@ final class DevClientSmokeM33b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m33b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m33b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

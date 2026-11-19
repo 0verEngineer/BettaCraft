@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -187,7 +188,7 @@ public final class FeatureRestGameTests {
             if (e.getValue().isEmpty() || Features.all(FeatureContent.ofItem(e.getValue()))) continue;
             check(rm.byKey(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, e.getKey())).isEmpty(), f, "recipe " + e.getKey() + " of " + e.getValue() + " is still there");
         }
-        WanderingTrader trader = h.spawn(EntityType.WANDERING_TRADER, new BlockPos(1, 1, 1));
+        WanderingTrader trader = h.spawn(EntityTypes.WANDERING_TRADER, new BlockPos(1, 1, 1));
         try {
             for (TraderOffers.Offer o : TraderOffers.all()) {
                 if (o.allowed()) continue;

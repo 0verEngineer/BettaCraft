@@ -1,7 +1,6 @@
 package org.overengineer.bettacraft.datagen;
 
 import net.minecraft.core.Direction;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -42,7 +41,7 @@ final class DataGenM41 {
         p.withExistingParent("drive_adapter", p.modLoc("block/drive_adapter"));
     }
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("drive_adapter")));
         tag.apply(BlockTags.MINEABLE_WITH_AXE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("drive_adapter")));
     }

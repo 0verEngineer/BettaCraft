@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -82,8 +83,8 @@ public final class ModpackEventGameTests {
             ServerLevel level = h.getLevel();
             TankBlockEntity c = ForeignGameTests.tank(h, 2, 2, 2, 2, 2, 25F);
             c.getTank().setName("Gametest tank");
-            LivingEntity a = ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> {});
-            ForeignGameTests.add(h, c, EntityType.TROPICAL_FISH, t -> {});
+            LivingEntity a = ForeignGameTests.add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
+            ForeignGameTests.add(h, c, EntityTypes.TROPICAL_FISH, t -> {});
             ForeignBreeding.step(level, c, 0.01);
             ForeignBreeding.step(level, c, 1.1);
             List<AnimalBornEvent> born = caught(AnimalBornEvent.class);
@@ -149,7 +150,7 @@ public final class ModpackEventGameTests {
                     && a.getTankId().equals(t.getTank().id()) && a.getMonitorPos().equals(c.getBlockPos()), "the value, tank and monitor");
             h.assertTrue(MonitorAlarms.waypointOpen(t.getTank().id()), "a waypoint at the tank");
             // M52c: one per player in range (tests of the batch run side by side; another test's mock player may be near)
-            long inRange = level.players().stream().filter(p -> p.distanceToSqr(t.getBlockPos().getCenter()) <= (double) MonitorAlarms.WAYPOINT_RANGE * MonitorAlarms.WAYPOINT_RANGE).count();
+            long inRange = level.players().stream().filter(p -> p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(t.getBlockPos())) <= (double) MonitorAlarms.WAYPOINT_RANGE * MonitorAlarms.WAYPOINT_RANGE).count();
             h.assertTrue(inRange >= 1 && MonitorAlarms.sentWaypoints == sent + inRange, "one waypoint for each player nearby: " + (MonitorAlarms.sentWaypoints - sent) + " for " + inRange);
             CAUGHT.clear();
             MonitorSync.cycle(level, c);

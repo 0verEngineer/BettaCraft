@@ -17,6 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,7 +69,7 @@ public final class ForeignTerrariumBGameTests {
     private ForeignTerrariumBGameTests() {}
 
     private static Animal land(String file, String id) {
-        return animal(file, id, EntityType.RABBIT);
+        return animal(file, id, EntityTypes.RABBIT);
     }
 
     /** Inserts the animal (a new one from its box or tub), asserts the outcome and takes it out again. */
@@ -160,7 +161,7 @@ public final class ForeignTerrariumBGameTests {
     /** The dragonfly flies: our walker holds it in the air of the paludarium, above the water and the land, and in the tank. */
     @GameTest(template = EMPTY, batch = "bettacraft_m35b_fly", timeoutTicks = 300)
     public static void dragonflyFliesInThePaludarium(GameTestHelper h) {
-        Animal a = animal("naturalist_dragonfly", "naturalist:dragonfly", EntityType.BEE);
+        Animal a = animal("naturalist_dragonfly", "naturalist:dragonfly", EntityTypes.BEE);
         Runnable restore = install(List.of(a));
         try {
             h.assertTrue(a.profile().land().gait().style() == LandWalker.Style.FLY, "the flying style");
@@ -213,7 +214,7 @@ public final class ForeignTerrariumBGameTests {
     public static void fishLiveInThePaludariumWaterPart(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         TankBlockEntity aq = CritterGameTests.tank(h, 20, 2, 2, 4, 3, 4, 4 * 3 * 4 * 1000L / 3);
-        Component no = TankInhabitants.insert(level, aq, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, null, false);
+        Component no = TankInhabitants.insert(level, aq, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH, null, false);
         h.assertTrue(says(no, "message.bettacraft.tank.too_little_water"), "an aquarium with a third of water refuses: " + (no == null ? "-" : no.getString()));
         TankBlockEntity c = paludarium(h, 2, 2, 12, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         TankData t = c.getTank();
@@ -228,7 +229,7 @@ public final class ForeignTerrariumBGameTests {
         BettaGenome g = BettaGenome.randomDomestic(RandomSource.create(35));
         h.assertTrue(TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(g, true, 0)),
                 org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), null, false) == null, "our betta into the water part");
-        Component trop = TankInhabitants.insert(level, c, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, null, false);
+        Component trop = TankInhabitants.insert(level, c, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH, null, false);
         h.assertTrue(trop == null, "a tropical fish (M16) into the water part: " + (trop == null ? "" : trop.getString()));
         List<EntityType<?>> foreign = new ArrayList<>();
         for (String file : List.of("fintastic_guppy", "aquaculture_tropical", "crittersandcompanions_koi", "naturalist_food_fish")) {
@@ -256,7 +257,7 @@ public final class ForeignTerrariumBGameTests {
         TankBlockEntity shallow = paludarium(h, 2, 12, 12, 3, 6, 0, 0.5, Blocks.SAND.defaultBlockState());
         TankInteractions.changeWater(level, shallow, -(shallow.getTank().waterMb() - shallow.getTank().capacityMb() / 18));
         TankClimate.step(level, shallow, 0.01);
-        Component flat = TankInhabitants.insert(level, shallow, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, null, 0);
+        Component flat = TankInhabitants.insert(level, shallow, new ItemStack(Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH, null, 0);
         h.assertTrue(says(flat, "message.bettacraft.paludarium.too_shallow"), "too shallow: " + (flat == null ? "accepted" : flat.getString()));
         // a fish of another mod (or vanilla) pushed into the land goes back into the water
         Entity pushed = null;

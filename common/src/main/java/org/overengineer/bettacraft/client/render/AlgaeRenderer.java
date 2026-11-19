@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -56,7 +55,7 @@ public final class AlgaeRenderer {
                 int stage = Math.round(v[d] * AlgaeSim.STAGES);
                 if (stage <= 0) continue;
                 if (t.contains(BlockPos.asLong(p.getX() + AlgaeSim.stepX(d), p.getY(), p.getZ() + AlgaeSim.stepZ(d)))) continue;
-                int light = LevelRenderer.getLightCoords(level, p);
+                int light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, p);
                 VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(STAGES[Math.min(AlgaeSim.STAGES, stage)]));
                 // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
                 int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;

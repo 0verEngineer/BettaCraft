@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.item.ItemStack;
@@ -158,7 +159,7 @@ public final class PresetGameTests {
             var err = TankInhabitants.insert(level, c, bag, ModEntities.DWARF_FROG.get(), null, 0L);
             if (err != null) throw new GameTestFailure("frog: " + err.getString());
             for (Entity e : TankInhabitants.liveInhabitants(level, c.getTank())) if (e instanceof DwarfFrogEntity d) frog = d;
-            axolotl = (Axolotl) ForeignGameTests.add(h, c, EntityType.AXOLOTL, t -> {});
+            axolotl = (Axolotl) ForeignGameTests.add(h, c, EntityTypes.AXOLOTL, t -> {});
         }
         return new Stock(c, bettas, mates, critters, frog, axolotl);
     }

@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -86,7 +85,7 @@ final class DataGenM26b {
         out.accept(RecipeCompat.key(BettaCraft.id("food_maker/" + id)), new FoodMakerRecipe(List.of(ingredients), new net.minecraft.world.item.ItemStackTemplate(result.asItem(), n)), null);
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FOOD_MAKER.get())
                 .pattern("IHI").pattern("IGI").pattern("III")
                 .define('I', Tags.Items.INGOTS_IRON).define('H', Items.HOPPER).define('G', Items.GRINDSTONE)
@@ -110,7 +109,7 @@ final class DataGenM26b {
         return TagKey.create(net.minecraft.core.registries.Registries.ITEM, Identifier.fromNamespaceAndPath("c", path));
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         Item flakes = ModItems.FISH_FLAKES.get(), granules = ModItems.FOOD_GRANULES.get(), shrimp = ModItems.SHRIMP_FOOD.get();
         Item[] frozen = {ModItems.FROZEN_MOSQUITO_LARVAE.get(), ModItems.FROZEN_ARTEMIA.get(), ModItems.FROZEN_DAPHNIA.get()};
         tag.apply(ModTags.BETTA_FOOD).add(flakes, granules, shrimp).add(frozen);
@@ -142,7 +141,7 @@ final class DataGenM26b {
         diet(tag, FoodDiet.Diet.CARNIVORE, List.of(FoodDiet.Group.FROZEN, FoodDiet.Group.LIVE), List.of(FoodDiet.Group.FLAKES, FoodDiet.Group.WAFERS));
     }
 
-    private static void diet(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag, FoodDiet.Diet d,
+    private static void diet(Function<TagKey<Item>, ObjTags.Appender<Item>> tag, FoodDiet.Diet d,
                              List<FoodDiet.Group> favourite, List<FoodDiet.Group> poor) {
         var f = tag.apply(d.favourite);
         for (FoodDiet.Group g : favourite) f.addTag(g.tag);

@@ -4,7 +4,6 @@ import java.util.function.Function;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -75,19 +74,19 @@ final class DataGenM31b {
         }
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.TERRARIUM_BOX.get(), 2)
                 .pattern("SHS").pattern("S S").pattern("SSS")
                 .define('S', ItemTags.WOODEN_SLABS).define('H', Items.IRON_BARS)
                 .unlockedBy("has_tank", hasTank).save(out, RecipeCompat.key(BettaCraft.id("terrarium_box")));
     }
 
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(ModTags.TURTLE_NEST_GROUND).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(org.overengineer.bettacraft.platform.Tags.Blocks.SANDS)
                 .add(Blocks.FARMLAND, Blocks.DIRT_PATH);
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.TagAppender<Item, Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         tag.apply(ModTags.TURTLE_GREENS).add(Items.DANDELION, Items.PINK_PETALS, Items.SHORT_GRASS, Items.FERN, Items.OXEYE_DAISY);
     }
 }

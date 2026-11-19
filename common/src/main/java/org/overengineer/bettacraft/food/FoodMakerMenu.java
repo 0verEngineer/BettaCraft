@@ -94,6 +94,6 @@ public class FoodMakerMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return be == null || (!be.isRemoved() && player.distanceToSqr(be.getBlockPos().getCenter()) <= 64.0);
+        return be == null || (!be.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(be.getBlockPos())) <= 64.0);
     }
 }

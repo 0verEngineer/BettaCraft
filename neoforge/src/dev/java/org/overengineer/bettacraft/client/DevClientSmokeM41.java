@@ -58,7 +58,7 @@ final class DevClientSmokeM41 {
 
     DevClientSmokeM41() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(base.getX() + 0.9, base.getY() + 1.6, base.getZ() - 4.2, 0F, 12F));
         then(100, () -> shot("drive"));
         then(1, () -> look(base.getX() - 1.6, base.getY() + 1.0, base.getZ() - 1.4, -30F, 14F));
@@ -66,7 +66,7 @@ final class DevClientSmokeM41 {
         then(1, () -> look(base.getX() + 3.0, base.getY() + 0.3, base.getZ() - 0.8, 38F, 26F));
         then(40, () -> shot("cabinet"));
         // Create's goggles on the adapter: the overlay needs the GUI
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> p.setItemSlot(EquipmentSlot.HEAD, new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.parse("create:goggles"))))));
         then(1, () -> look(base.getX() - 1.6, base.getY() + 1.0, base.getZ() - 1.4, -30F, 14F));
         then(60, () -> shot("goggles"));
@@ -74,7 +74,7 @@ final class DevClientSmokeM41 {
             if (p.level().getBlockEntity(base.below().east()) instanceof CabinetBlockEntity cab) org.overengineer.bettacraft.platform.Platform.get().openMenu(p, cab, cab.getBlockPos());
         }));
         then(30, () -> shot("cabinet_menu"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -176,7 +176,7 @@ final class DevClientSmokeM41 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -195,7 +195,7 @@ final class DevClientSmokeM41 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m41_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m41_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

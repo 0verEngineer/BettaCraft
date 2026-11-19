@@ -110,7 +110,7 @@ public final class HiredAquaristGameTests {
         h.setBlock(BASIN, ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         h.setBlock(CHEST, Blocks.CHEST.defaultBlockState());
         h.setBlock(RESERVOIR, ModBlocks.RESERVOIR.get().defaultBlockState());
-        BlockState foot = Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
+        BlockState foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED).defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
         h.setBlock(BED, foot);
         h.setBlock(BED.south(), foot.setValue(BedBlock.PART, BedPart.HEAD));
     }
@@ -785,7 +785,7 @@ public final class HiredAquaristGameTests {
         try {
             AquaristEntity npc = npc(h, sp);
             float hp = npc.getHealth();
-            var zombie = h.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, new BlockPos(20, 1, 20));
+            var zombie = h.spawn(net.minecraft.world.entity.EntityTypes.ZOMBIE, new BlockPos(20, 1, 20));
             npc.hurt(h.getLevel().damageSources().mobAttack(zombie), 10F);
             npc.hurt(h.getLevel().damageSources().lava(), 10F);
             check(npc.getHealth() == hp && npc.isAlive(), "unhurt");

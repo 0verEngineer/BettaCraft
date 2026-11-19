@@ -67,7 +67,7 @@ final class DevClientSmokeM7 {
     DevClientSmokeM7() {
         then(1, () -> server(this::build));
         then(30, () -> server(this::fillBft));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         // our tank with the fish of other mods (and Fintastic plants in the miniature)
         then(40, () -> server(p -> p.teleportTo(p.level(), mixMin.getX() + 2.5, mixMin.getY() + 0.1, mixMin.getZ() - 2.0, java.util.Set.of(), 0F, 8F, false)));
         then(60, () -> shot("bettacraft_m7_foreign_fish"));
@@ -84,7 +84,7 @@ final class DevClientSmokeM7 {
             then(60, () -> shot("bettacraft_m7_plaque"));
         }
         // tank menu, animals tab, with a Better Fish Tanks bag in the inventory
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             p.teleportTo(p.level(), mixMin.getX() + 2.5, mixMin.getY() + 0.5, mixMin.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
             if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG)));
@@ -93,7 +93,7 @@ final class DevClientSmokeM7 {
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(1);
         });
         then(30, () -> shot("bettacraft_m7_menu_animals"));
         // the interior with the Fintastic plants, at full size
@@ -108,10 +108,10 @@ final class DevClientSmokeM7 {
                 BlockPos eye = r.toWorld(30, 2, 14);
                 p.teleportTo(p.level(), eye.getX() + 0.5, eye.getY(), eye.getZ() + 0.5, java.util.Set.of(), 0F, 12F, false);
             }));
-            then(1, () -> mc.options.hideGui = true);
+            then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
             then(50, () -> shot("bettacraft_m7_interior_plants"));
             then(1, () -> {
-                mc.options.hideGui = false;
+                org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
                 server(InteriorManager::leave);
             });
             then(40, () -> {});
@@ -238,7 +238,7 @@ final class DevClientSmokeM7 {
 
     /** Returns true when all steps are done. */
     boolean tick() {
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -257,6 +257,6 @@ final class DevClientSmokeM7 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

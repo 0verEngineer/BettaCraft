@@ -3,7 +3,6 @@ package org.overengineer.bettacraft.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
@@ -59,6 +58,6 @@ public class ThermoHygrometerRenderer extends org.overengineer.bettacraft.client
 
     private void draw(PoseStack pose, MultiBufferSource buffers, String text, float y, int light) {
         float x = -font.width(text) / 2F;
-        font.drawInBatch(text, x, y, LCD_TEXT, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET, 0, light);
+        LegacyBlockEntityRenderer.collector().submitText(pose, x, y, net.minecraft.util.FormattedCharSequence.forward(text, net.minecraft.network.chat.Style.EMPTY), false, Font.DisplayMode.POLYGON_OFFSET, light, LCD_TEXT, 0, 0);
     }
 }

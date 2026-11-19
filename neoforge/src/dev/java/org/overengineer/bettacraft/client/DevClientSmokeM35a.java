@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
@@ -57,7 +58,7 @@ final class DevClientSmokeM35a {
 
     DevClientSmokeM35a() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(200, () -> server(pl -> place(pl.level())));
         then(1, () -> look(gator.getX() + 12, gator.getY() + 7.5, gator.getZ() - 13.5, 0F, 22F));
         then(140, () -> {
@@ -69,7 +70,7 @@ final class DevClientSmokeM35a {
         then(100, () -> shot("tortoises"));
         then(1, () -> look(sea.getX() + 6, sea.getY() + 3.8, sea.getZ() - 7.5, 0F, 22F));
         then(100, () -> shot("sea_turtles"));
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -208,7 +209,7 @@ final class DevClientSmokeM35a {
             pose(level, tc, t1, 4.3, 2.6, Double.NaN, 200F);
             pose(level, tc, t2, 8.2, 3.4, Double.NaN, 150F);
         }
-        LivingEntity s1 = insert(level, sc, EntityType.TURTLE, 0, false), s2 = insert(level, sc, EntityType.TURTLE, 2, true);
+        LivingEntity s1 = insert(level, sc, EntityTypes.TURTLE, 0, false), s2 = insert(level, sc, EntityTypes.TURTLE, 2, true);
         pose(level, sc, s1, 5.0, 3.5, sc.getTank().waterSurfaceY() - 0.5, 140F);
         pose(level, sc, s2, 10.4, 3.6, Double.NaN, 200F);
         for (TankBlockEntity c : List.of(gc, tc, sc)) c.markTankChanged();
@@ -229,7 +230,7 @@ final class DevClientSmokeM35a {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -248,7 +249,7 @@ final class DevClientSmokeM35a {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m35a_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m35a_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

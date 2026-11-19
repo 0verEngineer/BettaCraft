@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.datagen;
 
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -17,7 +16,7 @@ final class DataGenM32b {
 
     private DataGenM32b() {}
 
-    static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
+    static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(SABLE_SILENT_ASSEMBLY_REMOVAL).add(ModBlocks.TANK.get());
     }
 }

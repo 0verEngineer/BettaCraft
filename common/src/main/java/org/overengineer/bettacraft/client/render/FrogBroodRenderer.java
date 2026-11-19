@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
@@ -60,7 +59,7 @@ public final class FrogBroodRenderer {
     }
 
     private static int light(TankBlockEntity be, double x, double y, double z) {
-        return be.getLevel() == null ? 0xF000F0 : LevelRenderer.getLightCoords(be.getLevel(), BlockPos.containing(x, y, z));
+        return be.getLevel() == null ? 0xF000F0 : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), BlockPos.containing(x, y, z));
     }
 
     /** A raft of eggs: about 9 cm across (a little bigger than in nature, so the eggs are visible). */

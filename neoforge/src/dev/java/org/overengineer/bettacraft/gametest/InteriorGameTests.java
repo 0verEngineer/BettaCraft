@@ -338,14 +338,14 @@ public final class InteriorGameTests {
         InteriorRegion r = region(h, c);
         ServerLevel in = interior(h);
         BlockPos foot = r.toWorld(5, 0, 5);
-        in.setBlockAndUpdate(foot, Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.FOOT));
-        in.setBlockAndUpdate(foot.north(), Blocks.RED_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD));
+        in.setBlockAndUpdate(foot, Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED).defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.FOOT));
+        in.setBlockAndUpdate(foot.north(), Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED).defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, BedPart.HEAD));
         ServerPlayer p = MockPlayers.serverPlayer(h);
         try {
             p.teleportTo(in, foot.getX() + 0.5, foot.getY(), foot.getZ() + 2.5, java.util.Set.of(), 0, 0, true);
             p.gameMode.useItemOn(p, in, ItemStack.EMPTY, InteractionHand.MAIN_HAND,
                     new BlockHitResult(Vec3.atCenterOf(foot), Direction.UP, foot, false));
-            h.assertTrue(in.getBlockState(foot).is(Blocks.RED_BED) && in.getBlockState(foot.north()).is(Blocks.RED_BED), "bed still there (no explosion)");
+            h.assertTrue(in.getBlockState(foot).is(Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED)) && in.getBlockState(foot.north()).is(Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED)), "bed still there (no explosion)");
             h.succeed();
         } finally {
             p.level().getServer().getPlayerList().remove(p);

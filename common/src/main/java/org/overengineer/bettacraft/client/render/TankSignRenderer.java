@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -101,7 +100,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         double x = fx + front.getStepX() * out + right.getStepX() * along;
         double z = fz + front.getStepZ() * out + right.getStepZ() * along;
         BlockPos lightPos = BlockPos.containing(x + front.getStepX() * 0.5, y, z + front.getStepZ() * 0.5);
-        int packed = be.getLevel() == null ? light : LevelRenderer.getLightCoords(be.getLevel(), lightPos);
+        int packed = be.getLevel() == null ? light : net.minecraft.util.LightCoordsUtil.getLightCoords(be.getLevel(), lightPos);
 
         pose.pushPose();
         pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
@@ -115,8 +114,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         for (int i = 0; i < 4; i++) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);
         for (int i = 3; i >= 0; i--) bg.addVertex(m, quad[i][0], quad[i][1], bz).setColor(0xFF101010).setLight(packed);
         pose.scale(scale, -scale, scale);
-        font.drawInBatch(text, -textW / 2F, -4.0F, 0xFFFFFFFF, false, pose.last().pose(), buffers, Font.DisplayMode.POLYGON_OFFSET,
-                0, packed);
+        LegacyBlockEntityRenderer.collector().submitText(pose, -textW / 2F, -4.0F, text, false, Font.DisplayMode.POLYGON_OFFSET, packed, 0xFFFFFFFF, 0, 0);
         pose.popPose();
     }
 

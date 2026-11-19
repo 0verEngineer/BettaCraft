@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.progression;
 
 import java.util.function.Supplier;
-import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.registries.Registries;
 import org.overengineer.bettacraft.platform.registry.DeferredRegister;
 import org.overengineer.bettacraft.BettaCraft;

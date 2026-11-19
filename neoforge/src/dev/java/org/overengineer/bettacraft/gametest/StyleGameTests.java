@@ -98,16 +98,16 @@ public final class StyleGameTests {
     public static void stylesHaveTheirOwnRecipes(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         // textured: any glass, iron ingot in the middle
-        var textured = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_INGOT), level);
+        var textured = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, tankGrid(Items.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE), Items.IRON_INGOT), level);
         h.assertTrue(textured.isPresent() && textured.get().value() instanceof TankRecipe, "textured tank recipe");
-        ItemStack t = craft(level, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_INGOT));
+        ItemStack t = craft(level, tankGrid(Items.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE), Items.IRON_INGOT));
         h.assertTrue(t.getCount() == 4 && TankBlockItem.getGlass(t).equals(LIGHT_BLUE) && TankBlockItem.getStyle(t) == TankStyle.TEXTURED,
                 "4 textured light blue tanks: " + t + " " + t.getComponents());
         // clean: vanilla glass, iron nugget in the middle
         ItemStack c = craft(level, tankGrid(Items.GLASS, Items.IRON_NUGGET));
         h.assertTrue(c.getCount() == 4 && TankBlockItem.getGlass(c).equals(GLASS) && TankBlockItem.getStyle(c) == TankStyle.CLEAN,
                 "4 clean tanks: " + c + " " + c.getComponents());
-        h.assertTrue(craft(level, tankGrid(Items.LIGHT_BLUE_STAINED_GLASS, Items.IRON_NUGGET)).isEmpty(), "clean only from vanilla glass");
+        h.assertTrue(craft(level, tankGrid(Items.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE), Items.IRON_NUGGET)).isEmpty(), "clean only from vanilla glass");
         // mixed glass never works
         List<ItemStack> mixed = new ArrayList<>(tankGrid(Items.GLASS, Items.IRON_INGOT).items());
         mixed.set(0, new ItemStack(Items.TINTED_GLASS));
@@ -191,7 +191,7 @@ public final class StyleGameTests {
             if (l.getContents() instanceof TranslatableContents tc && tc.getKey().equals("jade.bettacraft.tank.glass")) {
                 Object name = tc.getArgs()[0];
                 found = name instanceof Component nc && nc.getContents() instanceof TranslatableContents n
-                        && n.getKey().equals(Blocks.LIGHT_BLUE_STAINED_GLASS.getDescriptionId())
+                        && n.getKey().equals(Blocks.STAINED_GLASS.pick(net.minecraft.world.item.DyeColor.LIGHT_BLUE).getDescriptionId())
                         && tc.getArgs()[1] instanceof Component sc && sc.getContents() instanceof TranslatableContents s
                         && s.getKey().equals(TankStyle.TEXTURED.key());
             }

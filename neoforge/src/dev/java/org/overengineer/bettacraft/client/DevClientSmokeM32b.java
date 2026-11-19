@@ -67,7 +67,7 @@ final class DevClientSmokeM32b {
 
     DevClientSmokeM32b() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(bearingPos.getX() + 1.5, bearingPos.getY() + 2.6, bearingPos.getZ() - 3.6, 0F, 18F));
         then(220, () -> shot("standing"));
         then(1, () -> server(p -> assemble(30F)));
@@ -91,7 +91,7 @@ final class DevClientSmokeM32b {
             }
             shot("airship");
         });
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     // ------------------------------------------------------------------ the scene
@@ -243,7 +243,7 @@ final class DevClientSmokeM32b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (bearing != null && !Float.isNaN(hold)) {
             float a = hold;
             server(p -> angle(a));
@@ -266,7 +266,7 @@ final class DevClientSmokeM32b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m32b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m32b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

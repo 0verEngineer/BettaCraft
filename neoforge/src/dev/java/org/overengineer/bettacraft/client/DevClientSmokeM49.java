@@ -81,7 +81,7 @@ final class DevClientSmokeM49 {
     DevClientSmokeM49() {
         then(1, () -> server(p -> p.teleportTo(p.level(), p.getX(), p.getY() + 2, p.getZ() + 1100, java.util.Set.of(), 0F, 10F, false)));
         then(20, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(120, () -> server(this::pose));
         // part a: the reef tank on its cabinets with the sump and the calcium reactor
         then(1, () -> look(reef.getX() + 2.4, reef.getY() + 0.7, reef.getZ() - 4.6, 0F, 12F));
@@ -124,7 +124,7 @@ final class DevClientSmokeM49 {
         then(1, () -> look(pal.getX() + 1.3, pal.getY() + 0.5, pal.getZ() - 0.8, 0F, 20F));
         then(40, () -> shot("sp_amano_shrimp"));
         // the menus
-        then(10, () -> mc.options.hideGui = false);
+        then(10, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             reach(p, true);
             p.teleportTo(p.level(), reef.getX() + 1.5, reef.getY() + 0.5, reef.getZ() - 2.5, java.util.Set.of(), 0F, 0F, false);
@@ -145,7 +145,7 @@ final class DevClientSmokeM49 {
         }, "menu_reactor", lang);
         menu(() -> reef, 9, "menu_sump_tab", lang);
         menu(() -> pal, 0, "menu_paludarium", lang);
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     // ------------------------------------------------------------------ scene
@@ -336,14 +336,14 @@ final class DevClientSmokeM49 {
         if (name == null) return;
         then(10, () -> server(open));
         then(30, () -> {
-            if (mc.screen == null) LOGGER.error("[smoketest] M49 no window for {}", name);
+            if (mc.gui.screen() == null) LOGGER.error("[smoketest] M49 no window for {}", name);
         });
         then(10, () -> shot(name));
         then(1, () -> language("de_de"));
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private void menu(java.util.function.Supplier<BlockPos> tank, int tab, String name, String lang) {
@@ -354,7 +354,7 @@ final class DevClientSmokeM49 {
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab);
+            if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab);
             else LOGGER.error("[smoketest] M49 no tank menu for {}", name);
         });
         then(20, () -> shot(name));
@@ -362,7 +362,7 @@ final class DevClientSmokeM49 {
         then(20, () -> shot(name + "_de"));
         then(1, () -> language(lang));
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(5, () -> mc.setScreen(null));
+        then(5, () -> mc.gui.setScreen(null));
     }
 
     private TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, float temp, float salt) {
@@ -431,7 +431,7 @@ final class DevClientSmokeM49 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
@@ -447,7 +447,7 @@ final class DevClientSmokeM49 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -466,8 +466,8 @@ final class DevClientSmokeM49 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
+        mc.gui.toastManager().clear();
         if (mc.player != null) LOGGER.info("[smoketest] M49 shot {} from {}", name, mc.player.getEyePosition());
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m49_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m49_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

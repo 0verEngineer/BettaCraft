@@ -74,7 +74,7 @@ final class DevClientSmokeM50 {
 
     DevClientSmokeM50() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> look(bearingPos.getX() + 1.5, bearingPos.getY() + 3.6, bearingPos.getZ() - 4.6, 0F, 24F));
         then(200, () -> server(p -> assemble()));
         then(10, () -> speed = 4.5F);
@@ -101,7 +101,7 @@ final class DevClientSmokeM50 {
             for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
                 if (be.getLevel() != mc.level || !org.overengineer.bettacraft.compat.create.SableCompat.inSubLevel(mc.level, be.getBlockPos())) continue;
                 packed += be.stowed().size();
-                AABB box = new AABB(be.getTank().min().getCenter(), be.getTank().max().getCenter()).inflate(1.5);
+                AABB box = new AABB(net.minecraft.world.phys.Vec3.atCenterOf(be.getTank().min()), net.minecraft.world.phys.Vec3.atCenterOf(be.getTank().max())).inflate(1.5);
                 live += mc.level.getEntitiesOfClass(BettaEntity.class, box).size();
             }
             LOGGER.info("[smoketest] M50 airship: {} betta(s) live on the ship for the client, {} packed", live, packed);
@@ -117,7 +117,7 @@ final class DevClientSmokeM50 {
             }
             LOGGER.info("[smoketest] M50 travelling tank states received by the client: {}", received);
             if (received <= 0) LOGGER.error("[smoketest] M50 the client got no state of a travelling tank");
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
         });
     }
 
@@ -236,7 +236,7 @@ final class DevClientSmokeM50 {
 
     private void startCart(ServerPlayer p) {
         ServerLevel level = p.level();
-        cart = new Minecart(net.minecraft.world.entity.EntityType.MINECART, level);
+        cart = new Minecart(net.minecraft.world.entity.EntityTypes.MINECART, level);
         cart.setPos(railStart.getX() + 0.5, railStart.getY() + 0.1, railStart.getZ() + 0.5);
         level.addFreshEntity(cart);
         pushing = true;
@@ -315,7 +315,7 @@ final class DevClientSmokeM50 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (bearing != null && !Float.isNaN(angle)) {
             angle += speed;
             float a = angle;
@@ -348,7 +348,7 @@ final class DevClientSmokeM50 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m50_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m50_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.spider.Spider;
@@ -44,7 +45,7 @@ public final class IntegrationModTests {
     }
 
     private static Spider spider(GameTestHelper h) {
-        Spider s = h.spawn(EntityType.SPIDER, new BlockPos(1, 2, 8));
+        Spider s = h.spawn(EntityTypes.SPIDER, new BlockPos(1, 2, 8));
         s.setNoAi(true);
         return s;
     }
@@ -54,7 +55,7 @@ public final class IntegrationModTests {
         p.setItemInHand(InteractionHand.MAIN_HAND, full);
         var r = TankInhabitants.tryInsert(full, h.getLevel(), c.getBlockPos(), p, InteractionHand.MAIN_HAND);
         h.assertTrue(r.consumesAction(), "the tank takes the full item: " + r);
-        h.assertTrue(mobs(h, c, EntityType.SPIDER).size() == 1, "the spider is in the terrarium");
+        h.assertTrue(mobs(h, c, EntityTypes.SPIDER).size() == 1, "the spider is in the terrarium");
         ItemStack back = p.getMainHandItem();
         h.assertTrue(back.is(emptyItem) && MobCaptures.storedEntity(back) == null, "the item came back empty: " + back);
         return back;
@@ -74,7 +75,7 @@ public final class IntegrationModTests {
         var caught = vialItem.interactLivingEntity(vial, p, s, InteractionHand.MAIN_HAND);
         h.assertTrue(caught.consumesAction(), "the soul vial took the spider: " + caught);
         ItemStack full = p.getMainHandItem();
-        h.assertTrue(TankInhabitants.containedType(full) == EntityType.SPIDER, "we read the spider in EnderIO's vial: " + full.getComponents());
+        h.assertTrue(TankInhabitants.containedType(full) == EntityTypes.SPIDER, "we read the spider in EnderIO's vial: " + full.getComponents());
         release(h, c, p, full, vialItem);
         h.succeed();
     }
@@ -91,7 +92,7 @@ public final class IntegrationModTests {
         Spider s = spider(h);
         boolean ok = (boolean) call(toolItem, "capture", tool, (LivingEntity) s, p);
         h.assertTrue(ok, "Industrial Foregoing caught the spider");
-        h.assertTrue(TankInhabitants.containedType(tool) == EntityType.SPIDER, "we read the spider in the tool: " + tool.getComponents());
+        h.assertTrue(TankInhabitants.containedType(tool) == EntityTypes.SPIDER, "we read the spider in the tool: " + tool.getComponents());
         ItemStack back = release(h, c, p, tool, toolItem);
         h.assertTrue(!(boolean) call(toolItem, "containsEntity", back), "Industrial Foregoing sees the returned tool as empty");
         h.succeed();
@@ -166,16 +167,16 @@ public final class IntegrationModTests {
     public static void fishEggsBreedingStaysOutOfOurFish(GameTestHelper h) {
         if (IntegrationSuite.lacks(h, "fisheggs")) return;
         var level = h.getLevel();
-        var wild = h.spawn(EntityType.TROPICAL_FISH, new BlockPos(1, 2, 8));
+        var wild = h.spawn(EntityTypes.TROPICAL_FISH, new BlockPos(1, 2, 8));
         h.assertTrue(fishEggsGoals(wild), "Fish Eggs gives a tropical fish in the world its goals (else this test checks nothing): "
                 + wild.targetSelector.getAvailableGoals().stream().map(w -> w.getGoal().getClass().getName()).toList());
         var betta = h.spawn(org.overengineer.bettacraft.registry.ModEntities.BETTA.get(), new BlockPos(3, 2, 8));
         h.assertTrue(!fishEggsGoals(betta), "our betta has none of Fish Eggs' goals");
         TankBlockEntity t = tank(h, 2, 2, 2, 2, 2, 2, true);
-        var err = TankInhabitants.insert(level, t, new ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET), EntityType.TROPICAL_FISH, null, false);
+        var err = TankInhabitants.insert(level, t, new ItemStack(net.minecraft.world.item.Items.TROPICAL_FISH_BUCKET), EntityTypes.TROPICAL_FISH, null, false);
         h.assertTrue(err == null, "the tropical fish goes in: " + (err == null ? "" : err.getString()));
         org.overengineer.bettacraft.foreign.ForeignBreeding.step(level, t, 0.01);
-        var inTank = TankInhabitants.liveInhabitants(level, t.getTank()).stream().filter(e -> e.getType() == EntityType.TROPICAL_FISH).findFirst()
+        var inTank = TankInhabitants.liveInhabitants(level, t.getTank()).stream().filter(e -> e.getType() == EntityTypes.TROPICAL_FISH).findFirst()
                 .orElseThrow(() -> new GameTestFailure("no tropical fish in the tank"));
         h.assertTrue(!fishEggsGoals((net.minecraft.world.entity.Mob) inTank), "the tropical fish in the tank lost Fish Eggs' goals");
         h.succeed();

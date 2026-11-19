@@ -27,7 +27,7 @@ final class DataGenM30 {
         p.withExistingParent("steel_leader", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/steel_leader"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasTank) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasTank) {
         // the large net: a stainless steel hoop with a string mesh on a long handle
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.LARGE_NET.get())
                 .pattern("SSS").pattern("SWS").pattern(" T ")

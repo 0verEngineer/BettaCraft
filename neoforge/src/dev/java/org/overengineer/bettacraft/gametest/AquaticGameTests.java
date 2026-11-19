@@ -24,7 +24,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.Bucketable;
 import net.minecraft.world.entity.animal.frog.Frog;
 import net.minecraft.world.entity.animal.frog.Tadpole;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -221,30 +222,30 @@ public final class AquaticGameTests {
         var allow = ServerConfig.INHABITANTS_ALLOW.get();
         var deny = ServerConfig.INHABITANTS_DENY.get();
         try {
-            h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphin: size rule of big tanks (M30)");
-            h.assertTrue(TankInhabitants.accepts(EntityType.FROG, null) == TankInhabitants.Acceptance.OK, "frog: a paludarium pet (M39 part c; on the blacklist while the pets are off)");
-            h.assertTrue(TankInhabitants.accepts(EntityType.WITHER, null) == TankInhabitants.Acceptance.BOSS, "wither is a boss");
-            h.assertTrue(TankInhabitants.accepts(EntityType.VEX, null) == TankInhabitants.Acceptance.HOSTILE, "vex hostile");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.DOLPHIN, null) == TankInhabitants.Acceptance.BIG, "dolphin: size rule of big tanks (M30)");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.FROG, null) == TankInhabitants.Acceptance.OK, "frog: a paludarium pet (M39 part c; on the blacklist while the pets are off)");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.WITHER, null) == TankInhabitants.Acceptance.BOSS, "wither is a boss");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.VEX, null) == TankInhabitants.Acceptance.HOSTILE, "vex hostile");
             // M31 part d: the endermite is a mob in glass (shrunk in the tank), unless the deny list names it
-            h.assertTrue(TankInhabitants.accepts(EntityType.ENDERMITE, null) == TankInhabitants.Acceptance.OK, "endermite: a mob in glass");
-            Entity allay = EntityType.ALLAY.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED); // M39 part c: the bee is a terrarium pet now
-            h.assertTrue(TankInhabitants.accepts(EntityType.ALLAY, allay) == TankInhabitants.Acceptance.NOT_AQUATIC, "an allay is no water animal");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.ENDERMITE, null) == TankInhabitants.Acceptance.OK, "endermite: a mob in glass");
+            Entity allay = EntityTypes.ALLAY.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED); // M39 part c: the bee is a terrarium pet now
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.ALLAY, allay) == TankInhabitants.Acceptance.NOT_AQUATIC, "an allay is no water animal");
             allay.discard();
-            Entity squid = EntityType.SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
-            h.assertTrue(TankInhabitants.accepts(EntityType.SQUID, squid) == TankInhabitants.Acceptance.OK, "squids fit (0.8)");
+            Entity squid = EntityTypes.SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.SQUID, squid) == TankInhabitants.Acceptance.OK, "squids fit (0.8)");
             squid.discard();
-            h.assertTrue(EntityType.AXOLOTL.builtInRegistryHolder().is(ModTags.PREDATORS), "axolotls are predators");
+            h.assertTrue(EntityTypes.AXOLOTL.builtInRegistryHolder().is(ModTags.PREDATORS), "axolotls are predators");
             ServerConfig.INHABITANTS_DENY.set(List.of("minecraft:cod"));
             ServerConfig.INHABITANTS_ALLOW.set(List.of("minecraft:*"));
-            h.assertTrue(TankInhabitants.accepts(EntityType.COD, null) == TankInhabitants.Acceptance.BLACKLISTED, "deny wins");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.COD, null) == TankInhabitants.Acceptance.BLACKLISTED, "deny wins");
             ServerConfig.INHABITANTS_DENY.set(List.of("minecraft:cod", "minecraft:endermite"));
-            h.assertFalse(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityType.ENDERMITE), "deny takes the endermite out of the glass");
-            h.assertTrue(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityType.CREEPER), "allow minecraft:* puts every monster in glass");
-            h.assertTrue(TankInhabitants.accepts(EntityType.DOLPHIN, null) == TankInhabitants.Acceptance.OK, "allow minecraft:* takes dolphins");
+            h.assertFalse(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityTypes.ENDERMITE), "deny takes the endermite out of the glass");
+            h.assertTrue(org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(EntityTypes.CREEPER), "allow minecraft:* puts every monster in glass");
+            h.assertTrue(TankInhabitants.accepts(EntityTypes.DOLPHIN, null) == TankInhabitants.Acceptance.OK, "allow minecraft:* takes dolphins");
             ServerConfig.INHABITANTS_ALLOW.set(List.of());
             ServerConfig.INHABITANTS_DENY.set(List.of());
             TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 16000);
-            Component tooBig = TankInhabitants.insert(h.getLevel(), c, FishBagItem.fillWith(EntityType.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED)), EntityType.DOLPHIN, null, 100);
+            Component tooBig = TankInhabitants.insert(h.getLevel(), c, FishBagItem.fillWith(EntityTypes.DOLPHIN.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED)), EntityTypes.DOLPHIN, null, 100);
             // M30: a dolphin is a big animal: the message names the tank it needs (32 x 16 blocks)
             h.assertTrue(tooBig != null && tooBig.getString().contains("32"), "message names the size: " + tooBig);
         } finally {
@@ -258,15 +259,15 @@ public final class AquaticGameTests {
     @GameTest(template = EMPTY)
     public static void squidInFishBag(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3, 16000);
-        Entity squid = EntityType.GLOW_SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+        Entity squid = EntityTypes.GLOW_SQUID.create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         squid.setCustomName(Component.literal("Inky"));
         ItemStack bag = FishBagItem.fillWith(squid);
         squid.discard();
         h.assertTrue(FishBagItem.storedEntity(bag) != null, "full entity data in the bag");
-        Component err = TankInhabitants.insert(h.getLevel(), c, bag, EntityType.GLOW_SQUID, null, 100);
+        Component err = TankInhabitants.insert(h.getLevel(), c, bag, EntityTypes.GLOW_SQUID, null, 100);
         if (err != null) throw new GameTestFailure(err.getString());
         Entity in = TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
-        h.assertTrue(in.getType() == EntityType.GLOW_SQUID && "Inky".equals(in.getCustomName().getString()), "the named glow squid is inside");
+        h.assertTrue(in.getType() == EntityTypes.GLOW_SQUID && "Inky".equals(in.getCustomName().getString()), "the named glow squid is inside");
         h.runAfterDelay(100, () -> {
             h.assertTrue(in.isAlive() && TankInhabitants.inside(c.getTank(), in), "still inside");
             ServerPlayer sp = MockPlayers.serverPlayer(h);
@@ -290,7 +291,7 @@ public final class AquaticGameTests {
     // ------------------------------------------------------------------ tadpoles
 
     private static Tadpole tadpoleIn(GameTestHelper h, TankBlockEntity c) {
-        Component err = TankInhabitants.insert(h.getLevel(), c, new ItemStack(Items.TADPOLE_BUCKET), EntityType.TADPOLE, null, 1000);
+        Component err = TankInhabitants.insert(h.getLevel(), c, new ItemStack(Items.TADPOLE_BUCKET), EntityTypes.TADPOLE, null, 1000);
         if (err != null) throw new GameTestFailure(err.getString());
         return (Tadpole) TankInhabitants.liveInhabitants(h.getLevel(), c.getTank()).getFirst();
     }

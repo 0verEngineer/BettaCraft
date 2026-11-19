@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -110,32 +111,32 @@ public final class MobsInGlassGameTests {
         ServerPlayer p = MockPlayers.serverPlayer(h);
         p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
         MobJarItem item = ModItems.MOB_JAR.get();
-        Zombie z = h.spawn(EntityType.ZOMBIE, new BlockPos(8, 2, 8));
+        Zombie z = h.spawn(EntityTypes.ZOMBIE, new BlockPos(8, 2, 8));
         p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
         h.assertTrue(item.interactLivingEntity(p.getMainHandItem(), p, z, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "a healthy zombie stays out");
         h.assertTrue(p.getCooldowns().isOnCooldown(new net.minecraft.world.item.ItemStack(item)), "the jar cools down after a try");
         p.getCooldowns().removeCooldown(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item));
-        var creeper = h.spawn(EntityType.CREEPER, new BlockPos(10, 2, 8));
+        var creeper = h.spawn(EntityTypes.CREEPER, new BlockPos(10, 2, 8));
         creeper.setHealth(1F);
         h.assertTrue(item.interactLivingEntity(p.getMainHandItem(), p, creeper, InteractionHand.MAIN_HAND) == InteractionResult.FAIL, "no creeper in glass");
-        h.assertFalse(GlassMobs.isAllowed(EntityType.CREEPER) || GlassMobs.isAllowed(EntityType.ENDERMAN) || GlassMobs.isAllowed(EntityType.WITHER_SKELETON),
+        h.assertFalse(GlassMobs.isAllowed(EntityTypes.CREEPER) || GlassMobs.isAllowed(EntityTypes.ENDERMAN) || GlassMobs.isAllowed(EntityTypes.WITHER_SKELETON),
                 "creeper, enderman and wither skeleton are not allowed");
         z.setHealth(4F);
         h.assertTrue(item.interactLivingEntity(p.getMainHandItem(), p, z, InteractionHand.MAIN_HAND) == InteractionResult.SUCCESS, "a weak zombie goes in");
         ItemStack full = p.getMainHandItem();
-        h.assertTrue(MobJarItem.containedType(full) == EntityType.ZOMBIE && z.isRemoved(), "the jar holds the zombie");
-        h.assertTrue(TankInhabitants.insert(level, dry, full, EntityType.ZOMBIE, p, 0L) == null, "the zombie goes into the terrarium");
+        h.assertTrue(MobJarItem.containedType(full) == EntityTypes.ZOMBIE && z.isRemoved(), "the jar holds the zombie");
+        h.assertTrue(TankInhabitants.insert(level, dry, full, EntityTypes.ZOMBIE, p, 0L) == null, "the zombie goes into the terrarium");
         QuestAdv.check(h, p, "mob_in_glass"); // M45
-        Mob in = mobs(h, dry, EntityType.ZOMBIE).getFirst();
+        Mob in = mobs(h, dry, EntityTypes.ZOMBIE).getFirst();
         h.assertTrue(Math.abs(in.getScale() - 0.18F) < 0.01F && in.getBbHeight() < 0.4F, "shrunk: scale " + in.getScale() + " height " + in.getBbHeight());
         h.assertTrue(GlassMobs.isGlassMob(in) && in.isPersistenceRequired(), "marked and kept");
-        h.assertTrue(TankInhabitants.insert(level, dry, jar(h, EntityType.DROWNED), EntityType.DROWNED, null, 0L) != null, "a terrarium refuses the drowned");
-        h.assertTrue(TankInhabitants.insert(level, wet, jar(h, EntityType.SPIDER), EntityType.SPIDER, null, 0L) != null, "an aquarium refuses the spider");
-        Mob d = put(h, wet, EntityType.DROWNED);
+        h.assertTrue(TankInhabitants.insert(level, dry, jar(h, EntityTypes.DROWNED), EntityTypes.DROWNED, null, 0L) != null, "a terrarium refuses the drowned");
+        h.assertTrue(TankInhabitants.insert(level, wet, jar(h, EntityTypes.SPIDER), EntityTypes.SPIDER, null, 0L) != null, "an aquarium refuses the spider");
+        Mob d = put(h, wet, EntityTypes.DROWNED);
         h.assertTrue(d.getScale() < 0.2F, "the drowned in the aquarium is small");
-        Mob s = put(h, dry, EntityType.SPIDER);
+        Mob s = put(h, dry, EntityTypes.SPIDER);
         h.assertTrue(s.getBbWidth() < 0.3F, "a small spider: " + s.getBbWidth());
-        h.assertFalse(ModItems.FISH_BAG.get().interactLivingEntity(new ItemStack(ModItems.FISH_BAG.get()), p, h.spawn(EntityType.DROWNED, new BlockPos(12, 2, 12)),
+        h.assertFalse(ModItems.FISH_BAG.get().interactLivingEntity(new ItemStack(ModItems.FISH_BAG.get()), p, h.spawn(EntityTypes.DROWNED, new BlockPos(12, 2, 12)),
                 InteractionHand.MAIN_HAND).consumesAction(), "the fish bag takes no drowned");
         h.succeed();
     }
@@ -151,8 +152,8 @@ public final class MobsInGlassGameTests {
         ServerLevel level = h.getLevel();
         org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         TankBlockEntity c = terrarium(h, 4, 1);
-        Mob z = put(h, c, EntityType.ZOMBIE);
-        Mob sk = put(h, c, EntityType.SKELETON);
+        Mob z = put(h, c, EntityTypes.ZOMBIE);
+        Mob sk = put(h, c, EntityTypes.SKELETON);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
         p.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(3.5, 2, 3)));
@@ -180,11 +181,11 @@ public final class MobsInGlassGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity c = terrarium(h, 14, 1);
         ServerPlayer p = MockPlayers.serverPlayer(h);
-        Zombie wild = h.spawn(EntityType.ZOMBIE, new BlockPos(3, 2, 20));
+        Zombie wild = h.spawn(EntityTypes.ZOMBIE, new BlockPos(3, 2, 20));
         wild.hurt(level.damageSources().playerAttack(p), 100F);
-        Mob in = put(h, c, EntityType.ZOMBIE);
+        Mob in = put(h, c, EntityTypes.ZOMBIE);
         in.hurt(level.damageSources().playerAttack(p), 100F);
-        Mob out = put(h, c, EntityType.HUSK);
+        Mob out = put(h, c, EntityTypes.HUSK);
         TankInhabitants.release(out);
         out.snapTo(h.absoluteVec(new net.minecraft.world.phys.Vec3(25.5, 2, 20.5)));
         out.hurt(level.damageSources().inFire(), 100F);
@@ -208,18 +209,18 @@ public final class MobsInGlassGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity wet = aquarium(h, 2);
         TankBlockEntity dry = terrarium(h, 14, 2);
-        Mob wz = put(h, wet, EntityType.ZOMBIE);
-        Mob dz = put(h, dry, EntityType.ZOMBIE);
+        Mob wz = put(h, wet, EntityTypes.ZOMBIE);
+        Mob dz = put(h, dry, EntityTypes.ZOMBIE);
         wz.snapTo(wz.getX(), wet.getTank().min().getY() + 0.05, wz.getZ());
         for (int i = 0; i < GlassMobs.DROWN_TICKS / 20 + 2; i++) {
             GlassMobs.step(level, wet, 0.001);
             GlassMobs.step(level, dry, 0.001);
         }
-        h.assertTrue(mobs(h, wet, EntityType.ZOMBIE).isEmpty(), "the zombie in the water is gone");
-        List<Mob> drowned = mobs(h, wet, EntityType.DROWNED);
+        h.assertTrue(mobs(h, wet, EntityTypes.ZOMBIE).isEmpty(), "the zombie in the water is gone");
+        List<Mob> drowned = mobs(h, wet, EntityTypes.DROWNED);
         h.assertTrue(drowned.size() == 1 && GlassMobs.isGlassMob(drowned.getFirst()) && drowned.getFirst().getScale() < 0.2F, "a small drowned instead");
         h.assertTrue(wet.getTank().inhabitants().contains(drowned.getFirst().getUUID()), "it lives in the tank");
-        h.assertTrue(dz.isAlive() && mobs(h, dry, EntityType.ZOMBIE).size() == 1, "the zombie in the terrarium stays a zombie");
+        h.assertTrue(dz.isAlive() && mobs(h, dry, EntityTypes.ZOMBIE).size() == 1, "the zombie in the terrarium stays a zombie");
         h.succeed();
     }
 
@@ -229,10 +230,10 @@ public final class MobsInGlassGameTests {
         ServerLevel level = h.getLevel();
         TankBlockEntity wet = aquarium(h, 2);
         TankBlockEntity dry = terrarium(h, 14, 2);
-        put(h, wet, EntityType.DROWNED);
-        put(h, wet, EntityType.DROWNED);
-        Mob s1 = put(h, dry, EntityType.SPIDER);
-        put(h, dry, EntityType.SPIDER);
+        put(h, wet, EntityTypes.DROWNED);
+        put(h, wet, EntityTypes.DROWNED);
+        Mob s1 = put(h, dry, EntityTypes.SPIDER);
+        put(h, dry, EntityTypes.SPIDER);
         ServerPlayer p = MockPlayers.serverPlayer(h);
         BlockPos wetPos = wet.getBlockPos(), dryPos = dry.getBlockPos();
         for (int i = 0; i < 2; i++) {
@@ -243,16 +244,16 @@ public final class MobsInGlassGameTests {
         }
         GlassMobs.step(level, wet, 0.01);
         GlassMobs.step(level, dry, 0.01);
-        List<Mob> drowned = mobs(h, wet, EntityType.DROWNED);
+        List<Mob> drowned = mobs(h, wet, EntityTypes.DROWNED);
         h.assertTrue(drowned.size() == 3, "a baby drowned: " + drowned.size());
         Mob baby = drowned.stream().filter(Mob::isBaby).findFirst().orElseThrow(() -> new GameTestFailure("no baby"));
         h.assertTrue(GlassMobs.isGlassMob(baby) && GlassMobs.data(baby).growth < 1, "the baby is a young mob in glass");
-        List<Mob> spiders = mobs(h, dry, EntityType.SPIDER);
+        List<Mob> spiders = mobs(h, dry, EntityTypes.SPIDER);
         h.assertTrue(spiders.size() == 3, "a spiderling: " + spiders.size());
         Mob young = spiders.stream().filter(m -> GlassMobs.data(m).growth < 1).findFirst().orElseThrow();
         h.assertTrue(young.getScale() < s1.getScale() * 0.7F, "the spiderling is smaller: " + young.getScale() + " / " + s1.getScale());
         GlassMobs.step(level, wet, 0.05);
-        h.assertTrue(mobs(h, wet, EntityType.DROWNED).size() == 3, "no second baby right away");
+        h.assertTrue(mobs(h, wet, EntityTypes.DROWNED).size() == 3, "no second baby right away");
         GlassMobs.step(level, wet, GlassMobs.GROW_DAYS + 0.1);
         GlassMobs.step(level, dry, GlassMobs.GROW_DAYS + 0.1);
         h.assertFalse(baby.isBaby(), "the baby grew up");
@@ -273,8 +274,8 @@ public final class MobsInGlassGameTests {
                 "a lid keeps the bait off");
         h.assertTrue(GlassMobs.layBait(level, open, new ItemStack(Items.DIRT), null) == null, "dirt is no bait");
         h.assertTrue(GlassMobs.layBait(level, open, new ItemStack(Items.ROTTEN_FLESH), null) != null && GlassMobs.bait(open) != null, "rotten flesh is a bait");
-        Zombie z = h.spawn(EntityType.ZOMBIE, new BlockPos(3, 2, 2));
-        Zombie far = h.spawn(EntityType.ZOMBIE, new BlockPos(4, 2, 12));
+        Zombie z = h.spawn(EntityTypes.ZOMBIE, new BlockPos(3, 2, 2));
+        Zombie far = h.spawn(EntityTypes.ZOMBIE, new BlockPos(4, 2, 12));
         GlassMobs.lure(level, open);
         h.assertTrue(TankInhabitants.hasTankRef(z) && GlassMobs.isGlassMob(z) && z.getScale() < 0.2F, "the zombie fell in and shrank");
         h.assertTrue(TankInhabitants.inside(open.getTank(), z), "it is in the tank: " + z.position());
@@ -307,12 +308,12 @@ public final class MobsInGlassGameTests {
         } catch (Exception e) {
             throw new GameTestFailure("soul: " + e);
         }
-        h.assertTrue(TankInhabitants.containedType(vial) == EntityType.SPIDER, "the vial holds a spider");
+        h.assertTrue(TankInhabitants.containedType(vial) == EntityTypes.SPIDER, "the vial holds a spider");
         ServerPlayer p = MockPlayers.serverPlayer(h);
         p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL); // creative keeps the full item
         p.setItemInHand(InteractionHand.MAIN_HAND, vial);
         var r = TankInhabitants.tryInsert(vial, h.getLevel(), c.getBlockPos(), p, InteractionHand.MAIN_HAND);
-        h.assertTrue(r.consumesAction() && mobs(h, c, EntityType.SPIDER).size() == 1, "the spider is in the tank");
+        h.assertTrue(r.consumesAction() && mobs(h, c, EntityTypes.SPIDER).size() == 1, "the spider is in the tank");
         ItemStack back = p.getMainHandItem();
         h.assertTrue(BuiltInRegistries.ITEM.getKey(back.getItem()).equals(Identifier.fromNamespaceAndPath("enderio", "soul_vial"))
                 && MobCaptures.storedEntity(back) == null, "the vial came back empty");

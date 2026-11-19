@@ -19,6 +19,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.AABB;
@@ -463,7 +464,7 @@ public final class TankBreeding {
             if (small) {
                 TankCare.log(level, controller, "log.bettacraft.eaten", TankCare.nameArg(victim), TankCare.nameArg(pred));
                 eat(level, controller, victim);
-            } else if (pred.getType() == EntityType.PUFFERFISH) {
+            } else if (pred.getType() == EntityTypes.PUFFERFISH) {
                 victim.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 1), pred);
                 victim.hurt(level.damageSources().mobAttack(predator), 2.0F);
             } else {

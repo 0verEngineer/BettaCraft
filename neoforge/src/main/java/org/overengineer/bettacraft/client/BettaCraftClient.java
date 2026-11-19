@@ -46,7 +46,7 @@ public final class BettaCraftClient {
         if (look.equals(lastTankLook)) return;
         lastTankLook = look;
         mc.execute(() -> {
-            if (mc.levelRenderer != null && mc.level != null) mc.levelRenderer.allChanged();
+            if (mc.levelRenderer != null && mc.level != null) mc.levelExtractor.allChanged();
         });
     }
 

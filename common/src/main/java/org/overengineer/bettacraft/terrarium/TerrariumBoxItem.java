@@ -100,7 +100,7 @@ public class TerrariumBoxItem extends Item {
         if (!ContainerRules.release(level, player, hand, stack)) return ContainerRules.waiting(stack);
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
-            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, net.minecraft.world.entity.EntitySpawnReason.LOAD, en -> en);
+            Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false), en -> en);
             if (e == null) {
                 player.sendOverlayMessage(Component.translatable("message.bettacraft.fish_bag.release_failed"));
                 return InteractionResult.FAIL;

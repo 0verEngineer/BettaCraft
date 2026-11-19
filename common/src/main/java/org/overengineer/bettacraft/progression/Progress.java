@@ -272,10 +272,10 @@ public final class Progress {
         var type = e.getType();
         if (org.overengineer.bettacraft.mobs.GlassMobs.isGlassMob(e) || org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return MOB_IN_GLASS;
         if (org.overengineer.bettacraft.foreign.ForeignProfiles.pet(type)) return PET;
-        if (type == net.minecraft.world.entity.EntityType.TURTLE) return SEA_TURTLE;
+        if (type == net.minecraft.world.entity.EntityTypes.TURTLE) return SEA_TURTLE;
         if (big) return BIG_ANIMAL;
         if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity) return TANKMATE;
-        if (type == net.minecraft.world.entity.EntityType.AXOLOTL) return FOREIGN;
+        if (type == net.minecraft.world.entity.EntityTypes.AXOLOTL) return FOREIGN;
         String ns = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).getNamespace();
         if (!org.overengineer.bettacraft.BettaCraft.MOD_ID.equals(ns) && org.overengineer.bettacraft.foreign.ForeignProfiles.of(type) != null) return FOREIGN;
         return null;

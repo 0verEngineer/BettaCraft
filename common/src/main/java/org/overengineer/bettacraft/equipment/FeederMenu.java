@@ -75,6 +75,6 @@ public class FeederMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return feeder == null || (!feeder.isRemoved() && player.distanceToSqr(feeder.getBlockPos().getCenter()) <= 64.0);
+        return feeder == null || (!feeder.isRemoved() && player.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(feeder.getBlockPos())) <= 64.0);
     }
 }

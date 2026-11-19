@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,7 +68,7 @@ final class DevClientSmokeM16 {
 
     DevClientSmokeM16() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(5, () -> look(base.getX() + 2.5, base.getY() + 1.1, base.getZ() - 3.4, 0F, 8F));
         then(120, () -> server(p -> freezeAll(p.level())));
         then(30, () -> shot("mixed_tank"));
@@ -78,7 +79,7 @@ final class DevClientSmokeM16 {
         then(1, () -> look(base.getX() - 1.2, base.getY() + 2.9, base.getZ() - 2.2, -40F, 35F));
         then(40, () -> shot("mixed_above"));
         // the menu: animals tab with the foreign animals
-        then(1, () -> mc.options.hideGui = false);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             p.teleportTo(p.level(), base.getX() + 2.5, base.getY(), base.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
             p.getInventory().add(new ItemStack(ModItems.FISH_BAG.get()));
@@ -87,15 +88,15 @@ final class DevClientSmokeM16 {
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
         then(30, () -> {
-            if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(1);
+            if (mc.gui.screen() instanceof TankScreen ts) ts.selectTabForTest(1);
         });
-        then(25, () -> mc.getToastManager().clear());
+        then(25, () -> mc.gui.toastManager().clear());
         then(5, () -> shot("menu_animals"));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
         // a dolphin is refused (the message in the action bar)
         then(5, () -> server(p -> {
             p.teleportTo(p.level(), base.getX() + 2.5, base.getY() - 0.2, base.getZ() - 2.6, java.util.Set.of(), 0F, 12F, false);
-            Entity dolphin = EntityType.DOLPHIN.create(p.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
+            Entity dolphin = EntityTypes.DOLPHIN.create(p.level(), net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             ItemStack bag = FishBagItem.fillWith(dolphin);
             dolphin.discard();
             p.setItemInHand(InteractionHand.MAIN_HAND, bag);
@@ -121,7 +122,7 @@ final class DevClientSmokeM16 {
                 LOGGER.error("[smoketest] M16 no block to click in the interior: {}", hit);
             }
         });
-        then(10, () -> mc.getToastManager().clear());
+        then(10, () -> mc.gui.toastManager().clear());
         then(4, () -> shot("interior_no_tank"));
         then(20, () -> {
             var hit = mc.hitResult;
@@ -130,7 +131,7 @@ final class DevClientSmokeM16 {
             if (placed) LOGGER.error("[smoketest] M16 a tank was placed inside a tank");
         });
         then(1, () -> server(InteriorManager::leave));
-        then(40, () -> mc.options.hideGui = true);
+        then(40, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
     }
 
     private void build(ServerPlayer p) {
@@ -208,7 +209,7 @@ final class DevClientSmokeM16 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -232,7 +233,7 @@ final class DevClientSmokeM16 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m16_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m16_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

@@ -64,7 +64,7 @@ public class MobJarItem extends Item {
     @Nullable
     public static EntityType<?> containedType(ItemStack stack) {
         CompoundTag t = storedEntity(stack);
-        return t == null ? null : EntityType.byString(t.getStringOr("id", "")).orElse(null);
+        return t == null ? null : java.util.Optional.ofNullable(net.minecraft.resources.Identifier.tryParse(t.getStringOr("id", ""))).flatMap(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE::getOptional).orElse(null);
     }
 
     /** A full jar holding {@code e} (the entity itself is not removed). */
@@ -157,7 +157,7 @@ public class MobJarItem extends Item {
                     .withStyle(ChatFormatting.GRAY));
             return;
         }
-        EntityType.byString(t.getStringOr("id", "")).ifPresent(type -> lines.add(type.getDescription().copy().withStyle(ChatFormatting.GOLD)));
+        java.util.Optional.ofNullable(net.minecraft.resources.Identifier.tryParse(t.getStringOr("id", ""))).flatMap(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE::getOptional).ifPresent(type -> lines.add(type.getDescription().copy().withStyle(ChatFormatting.GOLD)));
         if (t.contains("Health")) lines.add(Component.translatable("tooltip.bettacraft.mob_jar.health", Math.round(t.getFloatOr("Health", 0f))).withStyle(ChatFormatting.GRAY));
     }
 }

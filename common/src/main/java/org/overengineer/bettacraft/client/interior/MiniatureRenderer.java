@@ -163,8 +163,8 @@ public final class MiniatureRenderer {
             if (opaque) region.swaying = MiniatureSway.wanted(distSq);
             draw(event, region, t, cam, opaque ? OPAQUE : List.of(ChunkSectionLayer.TRANSLUCENT), region.plantMeshesShown, region.swaying);
             float time = mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false);
-            if (opaque && region.plantMeshesShown) MiniaturePlants.draw(event.getPoseStack(), cam, region, t, mc.renderBuffers().bufferSource(), time);
-            if (opaque && region.swaying) MiniatureSway.draw(event.getPoseStack(), cam, region, t, mc.renderBuffers().bufferSource(), time);
+            if (opaque && region.plantMeshesShown) MiniaturePlants.draw(event.getPoseStack(), cam, region, t, org.overengineer.bettacraft.client.render.ImmediateBuffers.shared(), time);
+            if (opaque && region.swaying) MiniatureSway.draw(event.getPoseStack(), cam, region, t, org.overengineer.bettacraft.client.render.ImmediateBuffers.shared(), time);
             // jets: before the translucent terrain, so the tank water is blended over the part below the surface
             // (drawn after it, the water's depth would hide it); never in the Iris shadow pass
             if (opaque && !IrisCompat.renderingShadowPass()) MiniatureJets.render(event, be, region, cam);
@@ -179,8 +179,8 @@ public final class MiniatureRenderer {
             }
         }
         if (!opaque) TRAVELLING.clear();
-        if (opaque) MiniaturePlants.endFrame(mc.renderBuffers().bufferSource());
-        if (opaque && MiniatureSway.lastQuads > 0) mc.renderBuffers().bufferSource().endBatch(PlantMeshRenderer.MINI);
+        if (opaque) MiniaturePlants.endFrame(org.overengineer.bettacraft.client.render.ImmediateBuffers.shared());
+        if (opaque && MiniatureSway.lastQuads > 0) org.overengineer.bettacraft.client.render.ImmediateBuffers.shared().endBatch(PlantMeshRenderer.MINI);
         long dt = System.nanoTime() - t0;
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;
     }
@@ -353,7 +353,7 @@ public final class MiniatureRenderer {
                         return bbs.computeIfAbsent(layer, k -> {
                             ByteBufferBuilder mem = new ByteBufferBuilder(plant || sway ? 1 << 12 : 1 << 16);
                             mems.put(k, mem);
-                            return new BufferBuilder(mem, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+                            return new BufferBuilder(mem, com.mojang.blaze3d.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
                         });
                     };
                     if (sway) {
@@ -363,7 +363,7 @@ public final class MiniatureRenderer {
                         ps.translate(lx, ly, lz);
                         rand.setSeed(state.getSeed(pos));
                         org.overengineer.bettacraft.platform.client.ClientPlatform.get().tesselate(state, pos, getter, ps,
-                                rt -> rt == ChunkSectionLayer.TRANSLUCENT ? com.mojang.blaze3d.vertex.VertexMultiConsumer.create() : cap, true, rand, md, null);
+                                rt -> rt == ChunkSectionLayer.TRANSLUCENT ? org.overengineer.bettacraft.client.render.ImmediateBuffers.NULL : cap, true, rand, md, null);
                         ps.popPose();
                     }
                     rand.setSeed(state.getSeed(pos));
@@ -524,11 +524,11 @@ public final class MiniatureRenderer {
                 mv, chunkX, chunkY, chunkZ, 1.0F, atlas.getWidth(0), atlas.getHeight(0)))[0];
         int maxIndices = 0;
         for (List<MiniatureMesh.Buffer> l : byLayer.values()) for (MiniatureMesh.Buffer b : l) maxIndices = Math.max(maxIndices, b.indexCount());
-        RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+        RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(com.mojang.blaze3d.PrimitiveTopology.QUADS);
         com.mojang.blaze3d.buffers.GpuBuffer indices = quads.getBuffer(maxIndices);
-        var target = mc.getMainRenderTarget();
+        var target = mc.gameRenderer.mainRenderTarget();
         try (com.mojang.blaze3d.systems.RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
-                () -> "Bettacraft miniature", target.getColorTextureView(), java.util.OptionalInt.empty(),
+                () -> "Bettacraft miniature", target.getColorTextureView(), java.util.Optional.empty(),
                 target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
             RenderSystem.bindDefaultUniforms(pass);
             pass.bindTexture("Sampler2", mc.gameRenderer.lightmap(),
@@ -540,8 +540,8 @@ public final class MiniatureRenderer {
                         com.mojang.blaze3d.textures.AddressMode.CLAMP_TO_EDGE, com.mojang.blaze3d.textures.FilterMode.LINEAR, com.mojang.blaze3d.textures.FilterMode.LINEAR, true));
                 pass.setIndexBuffer(indices, quads.type());
                 for (MiniatureMesh.Buffer b : e.getValue()) {
-                    pass.setVertexBuffer(0, b.vertices());
-                    pass.drawIndexed(0, 0, b.indexCount(), 1);
+                    pass.setVertexBuffer(0, b.vertices().slice());
+                    pass.drawIndexed(b.indexCount(), 1, 0, 0, 0);
                 }
             }
         }
@@ -559,7 +559,7 @@ public final class MiniatureRenderer {
         if (region == null) return;
         schedule(mc.level, region, t, true);
         if (region.meshes.isEmpty()) return;
-        drawTravelling(region, new Travelling(t, origin, pose), new Matrix4f(RenderSystem.getModelViewMatrix()), LAYERS);
+        drawTravelling(region, new Travelling(t, origin, pose), new Matrix4f(RenderSystem.getModelViewMatrixCopy()), LAYERS);
     }
 
     /** M32 part b: a travelling tank's meshes at its recorded pose (no culling per mesh: the pose is not the world's). */
@@ -584,7 +584,7 @@ public final class MiniatureRenderer {
         Matrix4f mv = modelView.mul(tr.pose())
                 .translate(min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN)
                 .scale(fx, fy, fz);
-        Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        Vec3 cam = Minecraft.getInstance().gameRenderer.mainCamera().position();
         int bx = net.minecraft.util.Mth.floor(cam.x), by = net.minecraft.util.Mth.floor(cam.y), bz = net.minecraft.util.Mth.floor(cam.z);
         mv.translate((float) (cam.x - bx), (float) (cam.y - by), (float) (cam.z - bz));
         drawWithModelView(mv, bx, by, bz, byLayer);

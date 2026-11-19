@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.criterion.LocationPredicate;
+import net.minecraft.advancements.predicates.LocationPredicate;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -1128,8 +1129,8 @@ public final class ModDataGen {
                     .requires(Items.OAK_LEAVES).requires(Items.OAK_FENCE).requires(Tags.Items.STRINGS)
                     .unlockedBy("has_leaves", has(Items.OAK_LEAVES)).save(output, RecipeCompat.key(BettaCraft.id("decor_hammock")));
             ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.ALMOND_LEAF), 2)
-                    .requires(net.minecraft.tags.ItemTags.LEAVES).requires(Items.BROWN_DYE)
-                    .unlockedBy("has_brown_dye", has(Items.BROWN_DYE)).save(output, RecipeCompat.key(BettaCraft.id("decor_almond_leaf")));
+                    .requires(net.minecraft.tags.ItemTags.LEAVES).requires(Items.DYE.pick(net.minecraft.world.item.DyeColor.BROWN))
+                    .unlockedBy("has_brown_dye", has(Items.DYE.pick(net.minecraft.world.item.DyeColor.BROWN))).save(output, RecipeCompat.key(BettaCraft.id("decor_almond_leaf")));
             // M19: spawning cave (fired clay tube) and spawning mop (green wool on a stone)
             ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.DECORATIONS, decor(DecorType.SPAWNING_CAVE))
                     .pattern("CCC").pattern("C  ").pattern("CCC")
@@ -1143,8 +1144,8 @@ public final class ModDataGen {
                     .requires(Items.TERRACOTTA).requires(Items.TERRACOTTA).requires(Items.CLAY_BALL)
                     .unlockedBy("has_terracotta", has(Items.TERRACOTTA)).save(output, RecipeCompat.key(BettaCraft.id("spawning_cave")));
             ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.DECORATIONS, ModItems.SPAWNING_MOP.get(), 4)
-                    .requires(Items.GREEN_WOOL).requires(Tags.Items.STRINGS)
-                    .unlockedBy("has_green_wool", has(Items.GREEN_WOOL)).save(output, RecipeCompat.key(BettaCraft.id("spawning_mop")));
+                    .requires(Items.WOOL.pick(net.minecraft.world.item.DyeColor.GREEN)).requires(Tags.Items.STRINGS)
+                    .unlockedBy("has_green_wool", has(Items.WOOL.pick(net.minecraft.world.item.DyeColor.GREEN))).save(output, RecipeCompat.key(BettaCraft.id("spawning_mop")));
             ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.BREEDING_BOX.get())
                     .pattern("P P").pattern("PSP").pattern("PPP")
                     .define('P', Tags.Items.GLASS_PANES).define('S', Tags.Items.STRINGS)
@@ -1254,7 +1255,7 @@ public final class ModDataGen {
                 .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("protein_skimmer")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FLOW_PUMP.get())
                 .pattern(" I ").pattern("IRI").pattern(" K ")
-                .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('K', Items.BLACK_DYE)
+                .define('I', Tags.Items.INGOTS_IRON).define('R', Tags.Items.DUSTS_REDSTONE).define('K', Items.DYE.pick(net.minecraft.world.item.DyeColor.BLACK))
                 .unlockedBy("has_sea_salt", hasIt(ModItems.SEA_SALT.get())).save(output, RecipeCompat.key(BettaCraft.id("flow_pump")));
         // M22.3: the magnifier: a glass pane in a ring of copper (or gold) on a stick
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.MAGNIFIER.get())
@@ -1290,9 +1291,9 @@ public final class ModDataGen {
         }
     }
 
-    private static net.minecraft.advancements.Criterion<net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance> hasIt(
+    private static net.minecraft.advancements.triggers.Criterion<net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance> hasIt(
             net.minecraft.world.level.ItemLike item) {
-        return net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance.hasItems(item);
+        return net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(item);
     }
 
     static final class BlockLoot extends BlockLootSubProvider {
@@ -1316,7 +1317,7 @@ public final class ModDataGen {
                     .add(LootItem.lootTableItem(ModBlocks.TANK_LIGHT.get())
                             .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(ModBlocks.TANK_LIGHT.get()).copy(TankLightBlock.COLOR)
                                     .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(ModBlocks.TANK_LIGHT.get())
-                                            .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
+                                            .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                     .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
@@ -1331,7 +1332,7 @@ public final class ModDataGen {
                         .add(LootItem.lootTableItem(led)
                                 .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(led).copy(TankLightBlock.COLOR)
                                         .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(led)
-                                                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
+                                                .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                         .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
             }
             dropSelf(ModBlocks.REEF_ROCK.get());
@@ -1356,7 +1357,7 @@ public final class ModDataGen {
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
                         .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
                                 .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(b)
-                                        .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
+                                        .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                                 .hasProperty(org.overengineer.bettacraft.plumbing.FilterPipeBlock.JUNCTION, true))))));
             }
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
@@ -1473,50 +1474,50 @@ public final class ModDataGen {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
-            tag(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
+            obj(BlockTags.DRAGON_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
+            obj(BlockTags.WITHER_IMMUNE).add(ModBlocks.INTERIOR_FLOOR.get(), ModBlocks.INTERIOR_WALL.get());
+            obj(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.FILTER_SEGMENT.get(),
                     ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.ARTEMIA_HATCHERY.get());
-            tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(),
+            obj(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.CABINET.get(), ModBlocks.LARVA_TUB.get());
+            obj(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.SPAWNING_CAVE.get()); // M19
+            obj(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.AIR_PUMP.get(), ModBlocks.AIR_STONE.get(), ModBlocks.LED_PANEL.get(), ModBlocks.HIGH_POWER_LED.get(),
                     ModBlocks.CORNER_FILTER_SEGMENT.get()); // M23
-            for (Block b : m24Blocks()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
-            DataGenM25b.blockTags(this::tag); // M25
-            DataGenM25c.blockTags(this::tag);
-            DataGenM49.blockTags(this::tag); // M49
-            DataGenM31.blockTags(this::tag); // M31 part a
-            DataGenM31b.blockTags(this::tag); // M31 part b
-            DataGenM31c.blockTags(this::tag); // M31 part c
-            DataGenM26.blockTags(this::tag); // M26 part a
-            DataGenM37.blockTags(this::tag); // M37
-            DataGenM40.blockTags(this::tag); // M40 part a
-            DataGenM40b.blockTags(this::tag); // M40 part b
-            DataGenM40c.blockTags(this::tag); // M40 part c: Cable Facades
-            DataGenM41.blockTags(this::tag); // M41: the drive adapter (optional: only with Create)
-            DataGenM47.blockTags(this::tag); // M47: the breeding basin
-            DataGenM38.blockTags(this::tag); // M38
-            DataGenM27.blockTags(this::tag); // M27
-            DataGenM28.blockTags(this::tag); // M28 part c
-            DataGenM32b.blockTags(this::tag); // M32 part b
-            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
-            tag(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
-            tag(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
+            for (Block b : m24Blocks()) obj(BlockTags.MINEABLE_WITH_PICKAXE).add(b); // M24
+            DataGenM25b.blockTags(this::obj); // M25
+            DataGenM25c.blockTags(this::obj);
+            DataGenM49.blockTags(this::obj); // M49
+            DataGenM31.blockTags(this::obj); // M31 part a
+            DataGenM31b.blockTags(this::obj); // M31 part b
+            DataGenM31c.blockTags(this::obj); // M31 part c
+            DataGenM26.blockTags(this::obj); // M26 part a
+            DataGenM37.blockTags(this::obj); // M37
+            DataGenM40.blockTags(this::obj); // M40 part a
+            DataGenM40b.blockTags(this::obj); // M40 part b
+            DataGenM40c.blockTags(this::obj); // M40 part c: Cable Facades
+            DataGenM41.blockTags(this::obj); // M41: the drive adapter (optional: only with Create)
+            DataGenM47.blockTags(this::obj); // M47: the breeding basin
+            DataGenM38.blockTags(this::obj); // M38
+            DataGenM27.blockTags(this::obj); // M27
+            DataGenM28.blockTags(this::obj); // M28 part c
+            DataGenM32b.blockTags(this::obj); // M32 part b
+            obj(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
+            obj(ModTags.ACTIVE_SOIL).add(ModBlocks.ACTIVE_SOIL.get());
+            obj(ModTags.ARTEMIA_SAND).addTag(Tags.Blocks.SANDS);
             // M16: no tank inside a tank
-            tag(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
+            obj(ModTags.NOT_IN_TANK_INTERIOR).add(ModBlocks.TANK.get())
                     .add(net.minecraft.tags.TagEntry.optionalElement(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.TANK_BLOCK));
-            tag(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
+            obj(ModTags.FLOATING_PLANTS).add(net.minecraft.world.level.block.Blocks.LILY_PAD)
                     .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, "duckweed"))).add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, "lotus_pad")));
             // Fintastic plants may stand in the dry interior like seagrass and kelp (M7)
-            var plants = tag(ModTags.INTERIOR_WATER_PLANTS);
+            var plants = obj(ModTags.INTERIOR_WATER_PLANTS);
             for (String p : Compat.FINTASTIC_PLANTS) plants.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, p)));
             // M22.1: they sway in the miniature outside the tank too
-            var sway = tag(ModTags.SWAYING_PLANTS).add(net.minecraft.world.level.block.Blocks.KELP, net.minecraft.world.level.block.Blocks.KELP_PLANT,
+            var sway = obj(ModTags.SWAYING_PLANTS).add(net.minecraft.world.level.block.Blocks.KELP, net.minecraft.world.level.block.Blocks.KELP_PLANT,
                     net.minecraft.world.level.block.Blocks.SEAGRASS, net.minecraft.world.level.block.Blocks.TALL_SEAGRASS)
                     .addTag(BlockTags.CORALS).addTag(BlockTags.WALL_CORALS);
             for (String p : Compat.FINTASTIC_PLANTS) sway.add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.FINTASTIC, p)));
             // M13: where aquarium plants grow
-            tag(ModTags.EPIPHYTE_SURFACES).addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS)
+            obj(ModTags.EPIPHYTE_SURFACES).addTag(BlockTags.BASE_STONE_OVERWORLD).addTag(BlockTags.LOGS).addTag(BlockTags.PLANKS)
                     .addTag(BlockTags.STONE_BRICKS).addTag(Tags.Blocks.COBBLESTONES).addTag(BlockTags.WOODEN_SLABS).addTag(BlockTags.WOODEN_STAIRS)
                     .addTag(BlockTags.WOODEN_FENCES).addTag(BlockTags.WALLS).addTag(BlockTags.SLABS).addTag(BlockTags.STAIRS)
                     .add(net.minecraft.world.level.block.Blocks.MOSSY_COBBLESTONE, net.minecraft.world.level.block.Blocks.SMOOTH_STONE,
@@ -1529,32 +1530,37 @@ public final class ModDataGen {
                             net.minecraft.world.level.block.Blocks.MOSS_BLOCK, net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS,
                             net.minecraft.world.level.block.Blocks.MUDDY_MANGROVE_ROOTS, net.minecraft.world.level.block.Blocks.BAMBOO_BLOCK)
                     .addTag(BlockTags.TERRACOTTA);
-            tag(ModTags.PLANT_SUBSTRATE).add(ModBlocks.ACTIVE_SOIL.get()).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(Tags.Blocks.GRAVELS)
+            obj(ModTags.PLANT_SUBSTRATE).add(ModBlocks.ACTIVE_SOIL.get()).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(Tags.Blocks.GRAVELS)
                     .add(net.minecraft.world.level.block.Blocks.GRAVEL, net.minecraft.world.level.block.Blocks.CLAY,
                             net.minecraft.world.level.block.Blocks.MUD, net.minecraft.world.level.block.Blocks.SOUL_SAND,
                             net.minecraft.world.level.block.Blocks.SOUL_SOIL, net.minecraft.world.level.block.Blocks.SUSPICIOUS_SAND,
                             net.minecraft.world.level.block.Blocks.SUSPICIOUS_GRAVEL);
             // M20: corals are glued onto reef rock, live rock and coral blocks (also dead ones)
-            tag(ModTags.REEF_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get()).addTag(BlockTags.CORAL_BLOCKS)
+            obj(ModTags.REEF_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get()).addTag(BlockTags.CORAL_BLOCKS)
                     .add(net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK);
-            tag(ModTags.EPIPHYTE_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
-            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get(),
+            obj(ModTags.EPIPHYTE_SURFACES).add(ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get());
+            obj(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.PROTEIN_SKIMMER.get(), ModBlocks.REEF_ROCK.get(), ModBlocks.LIVE_ROCK.get(),
                     ModBlocks.PUMP_SEGMENT.get());
-            var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
+            var plantBlocks = obj(BlockTags.SWORD_EFFICIENT);
             for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
             // M25: water chemistry
-            tag(ModTags.ACID_SUBSTRATE).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
-            tag(ModTags.LIMESTONE).add(net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
+            obj(ModTags.ACID_SUBSTRATE).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
+            obj(ModTags.LIMESTONE).add(net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_TUBE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_BRAIN_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_BUBBLE_CORAL_BLOCK, net.minecraft.world.level.block.Blocks.DEAD_FIRE_CORAL_BLOCK,
                             net.minecraft.world.level.block.Blocks.DEAD_HORN_CORAL_BLOCK)
                     .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "limestone"))).add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "cut_limestone")))
                     .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl("create", "polished_cut_limestone"))).add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "stones/limestone")));
-            tag(ModTags.DRIFTWOOD).addTag(BlockTags.LOGS).add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS);
-            tag(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
+            obj(ModTags.DRIFTWOOD).addTag(BlockTags.LOGS).add(net.minecraft.world.level.block.Blocks.MANGROVE_ROOTS);
+            obj(ModTags.SUBSTRATE_BLACKLIST).add(net.minecraft.world.level.block.Blocks.BARRIER, net.minecraft.world.level.block.Blocks.BEDROCK,
                     net.minecraft.world.level.block.Blocks.REINFORCED_DEEPSLATE, net.minecraft.world.level.block.Blocks.TNT);
+        }
+    
+        /** M52d: objects to resource keys (26.2 tag providers take keys only). */
+        ObjTags.Appender<Block> obj(net.minecraft.tags.TagKey<Block> t) {
+            return ObjTags.of(tag(t), net.minecraft.core.registries.BuiltInRegistries.BLOCK);
         }
     }
 
@@ -1566,29 +1572,29 @@ public final class ModDataGen {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.INFUSORIA.get(),
+            obj(ModTags.BETTA_FOOD).add(ModItems.BETTA_PELLETS.get(), ModItems.MOSQUITO_LARVAE.get(), ModItems.INFUSORIA.get(),
                     ModItems.ARTEMIA_NAUPLII.get());
-            tag(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
-            DataGenM26.itemTags(this::tag); // M26 part a: tubifex, daphnia and what the cultures eat
-            DataGenM31b.itemTags(this::tag); // M31 part b: the greens of the turtles
-            DataGenM31c.itemTags(this::tag); // M31 part c: insects, fruit, prey
-            DataGenM31d.itemTags(this::tag); // M31 part d: capture items of other mods
-            DataGenM39.itemTags(this::tag); // M39 part a: live, flake and frozen food of other mods
-            DataGenM48.itemTags(this::tag); // M48 part b: rotifers
-            DataGenM49.itemTags(this::tag); // M49
+            obj(ModTags.LIVE_FOOD).add(ModItems.MOSQUITO_LARVAE.get());
+            DataGenM26.itemTags(this::obj); // M26 part a: tubifex, daphnia and what the cultures eat
+            DataGenM31b.itemTags(this::obj); // M31 part b: the greens of the turtles
+            DataGenM31c.itemTags(this::obj); // M31 part c: insects, fruit, prey
+            DataGenM31d.itemTags(this::obj); // M31 part d: capture items of other mods
+            DataGenM39.itemTags(this::obj); // M39 part a: live, flake and frozen food of other mods
+            DataGenM48.itemTags(this::obj); // M48 part b: rotifers
+            DataGenM49.itemTags(this::obj); // M49
             // M9: organic matter for the larva tub
-            tag(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
-            tag(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry
-            tag(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
-            tag(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
-            tag(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
+            obj(ModTags.LARVA_TUB_FOOD).addTag(net.minecraft.tags.ItemTags.LEAVES).add(Items.WHEAT, Items.ROTTEN_FLESH, Items.BONE_MEAL);
+            obj(ModTags.FRY_FOOD_START).add(ModItems.INFUSORIA.get(), ModItems.FRY_POWDER.get()); // M19: fry powder for all fry
+            obj(ModTags.BOTTOM_FOOD).add(ModItems.ALGAE_WAFER.get());
+            obj(ModTags.FRY_FOOD).add(ModItems.ARTEMIA_NAUPLII.get());
+            obj(ModTags.ENTITY_WATER_BUCKETS).add(ModItems.BETTA_BUCKET.get());
             // M24: our stainless steel (never the steel of other mods: #c:ingots/steel stays theirs)
-            tag(ModTags.STAINLESS_STEEL_INGOTS).add(ModItems.STAINLESS_STEEL_INGOT.get());
-            tag(Tags.Items.INGOTS).addTag(ModTags.STAINLESS_STEEL_INGOTS);
+            obj(ModTags.STAINLESS_STEEL_INGOTS).add(ModItems.STAINLESS_STEEL_INGOT.get());
+            obj(Tags.Items.INGOTS).addTag(ModTags.STAINLESS_STEEL_INGOTS);
             // M22.3: a bucket of sea water is a bucket of water for the recipes and machines of other mods (convention tag)
-            tag(Tags.Items.BUCKETS_WATER).add(ModItems.SEA_WATER_BUCKET.get());
+            obj(Tags.Items.BUCKETS_WATER).add(ModItems.SEA_WATER_BUCKET.get());
             // M21.7: stones of the stone cabinet (modpacks add to it) and what never counts as one
-            tag(ModTags.CABINET_STONES).addTag(Tags.Items.STONES).addTag(Tags.Items.COBBLESTONES).addTag(net.minecraft.tags.ItemTags.STONE_BRICKS)
+            obj(ModTags.CABINET_STONES).addTag(Tags.Items.STONES).addTag(Tags.Items.COBBLESTONES).addTag(net.minecraft.tags.ItemTags.STONE_BRICKS)
                     .addTag(Tags.Items.SANDSTONE_BLOCKS).addTag(net.minecraft.tags.ItemTags.TERRACOTTA)
                     .add(Items.SMOOTH_STONE, Items.POLISHED_GRANITE, Items.POLISHED_DIORITE, Items.POLISHED_ANDESITE, Items.COBBLED_DEEPSLATE,
                             Items.POLISHED_DEEPSLATE, Items.DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES,
@@ -1600,33 +1606,38 @@ public final class ModDataGen {
                             Items.CHISELED_QUARTZ_BLOCK, Items.QUARTZ_PILLAR);
             // (#c:storage_blocks is checked in CabinetStones for stones outside #bettacraft:cabinet_stones: some mods
             // tag the quartz block as a storage block)
-            tag(ModTags.CABINET_EXCLUDED).addTag(Tags.Items.ORES).addTag(Tags.Items.GLASS_BLOCKS)
+            obj(ModTags.CABINET_EXCLUDED).addTag(Tags.Items.ORES).addTag(Tags.Items.GLASS_BLOCKS)
                     .addTag(Tags.Items.CONCRETES).addTag(Tags.Items.OBSIDIANS).addTag(Tags.Items.END_STONES).addTag(Tags.Items.GLAZED_TERRACOTTAS)
                     .add(Items.PURPUR_BLOCK, Items.PURPUR_PILLAR, Items.END_STONE_BRICKS, Items.PRISMARINE, Items.PRISMARINE_BRICKS, Items.DARK_PRISMARINE,
-                            Items.MUD_BRICKS, Items.PACKED_MUD, Items.COPPER_BLOCK, Items.EXPOSED_COPPER, Items.WEATHERED_COPPER, Items.OXIDIZED_COPPER,
-                            Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.WEATHERED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WAXED_COPPER_BLOCK,
-                            Items.WAXED_EXPOSED_COPPER, Items.WAXED_WEATHERED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_CUT_COPPER,
-                            Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.CHISELED_COPPER,
-                            Items.EXPOSED_CHISELED_COPPER, Items.WEATHERED_CHISELED_COPPER, Items.OXIDIZED_CHISELED_COPPER, Items.WAXED_CHISELED_COPPER,
-                            Items.WAXED_EXPOSED_CHISELED_COPPER, Items.WAXED_WEATHERED_CHISELED_COPPER, Items.WAXED_OXIDIZED_CHISELED_COPPER,
+                            Items.MUD_BRICKS, Items.PACKED_MUD, Items.COPPER_BLOCK.weathering().unaffected(), Items.COPPER_BLOCK.weathering().exposed(), Items.COPPER_BLOCK.weathering().weathered(), Items.COPPER_BLOCK.weathering().oxidized(),
+                            Items.CUT_COPPER.weathering().unaffected(), Items.CUT_COPPER.weathering().exposed(), Items.CUT_COPPER.weathering().weathered(), Items.CUT_COPPER.weathering().oxidized(), Items.COPPER_BLOCK.waxed().unaffected(),
+                            Items.COPPER_BLOCK.waxed().exposed(), Items.COPPER_BLOCK.waxed().weathered(), Items.COPPER_BLOCK.waxed().oxidized(), Items.CUT_COPPER.waxed().unaffected(),
+                            Items.CUT_COPPER.waxed().exposed(), Items.CUT_COPPER.waxed().weathered(), Items.CUT_COPPER.waxed().oxidized(), Items.CHISELED_COPPER.weathering().unaffected(),
+                            Items.CHISELED_COPPER.weathering().exposed(), Items.CHISELED_COPPER.weathering().weathered(), Items.CHISELED_COPPER.weathering().oxidized(), Items.CHISELED_COPPER.waxed().unaffected(),
+                            Items.CHISELED_COPPER.waxed().exposed(), Items.CHISELED_COPPER.waxed().weathered(), Items.CHISELED_COPPER.waxed().oxidized(),
                             Items.MAGMA_BLOCK, Items.GILDED_BLACKSTONE, Items.REINFORCED_DEEPSLATE);
-            for (var b : ModItems.TANKMATE_BUCKETS.values()) tag(ModTags.ENTITY_WATER_BUCKETS).add(b.get());
-            var aq = tag(ModTags.AQUATIC_PLANT_ITEMS);
+            for (var b : ModItems.TANKMATE_BUCKETS.values()) obj(ModTags.ENTITY_WATER_BUCKETS).add(b.get());
+            var aq = obj(ModTags.AQUATIC_PLANT_ITEMS);
             for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
-            tag(ModTags.PLASTIC_SHEETS)
+            obj(ModTags.PLASTIC_SHEETS)
                     .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "plastics")))
                     .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("pneumaticcraft", "plastic_sheets")))
                     .add(net.minecraft.tags.TagEntry.optionalElement(Identifier.fromNamespaceAndPath("mekanism", "hdpe_sheet")));
             // raw fish for pellets: cod, salmon and the raw fish of other mods (Aquaculture, Fish of Thieves, ...)
-            tag(ModTags.PELLET_FISH).add(Items.COD, Items.SALMON).addOptionalTag(Tags.Items.FOODS_RAW_FISH)
+            obj(ModTags.PELLET_FISH).add(Items.COD, Items.SALMON).addOptionalTag(Tags.Items.FOODS_RAW_FISH)
                     .add(net.minecraft.tags.TagEntry.optionalElement(Compat.rl(Compat.AQUACULTURE, "fish_fillet_raw")));
             // food of other mods (M7): fish feed and pellets as normal food, worms and shrimp as live food
-            for (var f : Compat.FOOD) tag(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+            for (var f : Compat.FOOD) obj(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
             for (var f : Compat.LIVE_FOOD) {
-                tag(ModTags.LIVE_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
-                tag(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+                obj(ModTags.LIVE_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
+                obj(ModTags.BETTA_FOOD).add(net.minecraft.tags.TagEntry.optionalElement(f));
             }
+        }
+    
+        /** M52d: objects to resource keys (26.2 tag providers take keys only). */
+        ObjTags.Appender<net.minecraft.world.item.Item> obj(net.minecraft.tags.TagKey<net.minecraft.world.item.Item> t) {
+            return ObjTags.of(tag(t), net.minecraft.core.registries.BuiltInRegistries.ITEM);
         }
     }
 
@@ -1638,30 +1649,30 @@ public final class ModDataGen {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             EntityType<?> betta = ModEntities.BETTA.get();
-            tag(ModTags.C_FISH).add(betta);
-            tag(ModTags.C_FISHES).add(betta);
+            obj(ModTags.C_FISH).add(betta);
+            obj(ModTags.C_FISHES).add(betta);
             for (var t : ModEntities.TANKMATES.values()) { // M19
-                tag(ModTags.C_FISH).add(t.get());
-                tag(ModTags.C_FISHES).add(t.get());
+                obj(ModTags.C_FISH).add(t.get());
+                obj(ModTags.C_FISHES).add(t.get());
             }
-            tag(ModTags.BFT_CATCHABLE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("betta")));
-            var inhabitants = tag(ModTags.TANK_INHABITANTS).add(EntityType.AXOLOTL, EntityType.TADPOLE);
+            obj(ModTags.BFT_CATCHABLE).add(net.minecraft.tags.TagEntry.optionalElement(BettaCraft.id("betta")));
+            var inhabitants = obj(ModTags.TANK_INHABITANTS).add(EntityTypes.AXOLOTL, EntityTypes.TADPOLE);
             for (var e : Compat.INHABITANTS) inhabitants.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // giant fish of other mods (their hitboxes are small, the animals are not)
             // M16: the vanilla frog is no tank animal (lives on land, the tadpole grows into it and hops out)
-            var blacklist = tag(ModTags.TANK_BLACKLIST).add(EntityType.FROG);
+            var blacklist = obj(ModTags.TANK_BLACKLIST).add(EntityTypes.FROG);
             for (var e : Compat.BLACKLIST) blacklist.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // M30: big animals that go into big tanks by the size rule (their length from the hitbox): the vanilla dolphin
-            tag(ModTags.BIG_TANK_ANIMALS).add(EntityType.DOLPHIN);
+            obj(ModTags.BIG_TANK_ANIMALS).add(EntityTypes.DOLPHIN);
             // M16: axolotls hunt small fish and fry
-            var predators = tag(ModTags.PREDATORS).add(EntityType.PUFFERFISH, EntityType.AXOLOTL);
+            var predators = obj(ModTags.PREDATORS).add(EntityTypes.PUFFERFISH, EntityTypes.AXOLOTL);
             for (var e : Compat.PREDATORS) predators.add(net.minecraft.tags.TagEntry.optionalElement(e));
-            DataGenM50.entityTags(this::tag); // M50: Sable keeps our animals in its airships
-            var prey = tag(ModTags.BETTA_PREY);
+            DataGenM50.entityTags(this::obj); // M50: Sable keeps our animals in its airships
+            var prey = obj(ModTags.BETTA_PREY);
             for (var e : Compat.PREY) prey.add(net.minecraft.tags.TagEntry.optionalElement(e));
             // M28.1: every animal of the mod, and the ones that spawn wild (for commands: @e[type=#bettacraft:all_animals])
-            var all = tag(ModTags.ALL_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
-            var wild = tag(ModTags.WILD_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
+            var all = obj(ModTags.ALL_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
+            var wild = obj(ModTags.WILD_ANIMALS).add(betta, ModEntities.DWARF_FROG.get(), ModEntities.WILD_CRITTER.get());
             for (var s : org.overengineer.bettacraft.terrarium.HerpSpecies.ALL) { // M31 part b: the turtles (all of them wild)
                 all.add(ModEntities.herp(s));
                 wild.add(ModEntities.herp(s));
@@ -1671,9 +1682,14 @@ public final class ModDataGen {
                 if (org.overengineer.bettacraft.world.Wildlife.spawnsWild(e.getKey())) wild.add(e.getValue().get());
             }
         }
+    
+        /** M52d: objects to resource keys (26.2 tag providers take keys only). */
+        ObjTags.Appender<EntityType<?>> obj(net.minecraft.tags.TagKey<EntityType<?>> t) {
+            return ObjTags.of(tag(t), net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE);
+        }
     }
 
-    static final class BiomeTagsGen extends net.minecraft.data.tags.KeyTagProvider<Biome> {
+    static final class BiomeTagsGen extends net.minecraft.data.tags.TagsProvider<Biome> {
         BiomeTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper efh) {
             super(out, Registries.BIOME, lookup, BettaCraft.MOD_ID);
         }

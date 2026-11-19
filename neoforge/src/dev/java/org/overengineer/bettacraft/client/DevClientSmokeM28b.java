@@ -80,7 +80,7 @@ final class DevClientSmokeM28b {
         spots.add(new Spot(PlantSpecies.MUSHROOM_CORAL, 2, 34, 23, false, true, 3));
 
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, () -> meshes(true));
         // outside: every tank near and far; the first two also without the meshes (block models) for comparison
         for (boolean on : new boolean[] {true, false}) {
@@ -177,7 +177,7 @@ final class DevClientSmokeM28b {
 
     private void meshes(boolean on) {
         ClientConfig.PLANT_MESHES.set(on);
-        if (mc.levelRenderer != null) mc.levelRenderer.allChanged();
+        if (mc.levelRenderer != null) mc.levelExtractor.allChanged();
     }
 
     // ------------------------------------------------------------------ the scene
@@ -301,7 +301,7 @@ final class DevClientSmokeM28b {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -320,7 +320,7 @@ final class DevClientSmokeM28b {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m28b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m28b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 }

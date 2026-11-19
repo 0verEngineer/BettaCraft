@@ -33,7 +33,7 @@ public final class ConfirmEmptyScreen extends Screen {
     public static void open(InteractionHand hand, ItemStack stack) {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
-            if (mc.screen == null) mc.setScreen(new ConfirmEmptyScreen(hand, stack));
+            if (mc.gui.screen() == null) mc.gui.setScreen(new ConfirmEmptyScreen(hand, stack));
         });
     }
 

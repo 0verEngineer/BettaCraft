@@ -602,8 +602,8 @@ public final class DevShowcase {
         TankBlockEntity ac = tank(level, at, 3, 2, 2, 0F, true);
         region(level, ac, Blocks.GRAVEL.defaultBlockState());
         org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, ac);
-        glassMob(level, ac, net.minecraft.world.entity.EntityType.DROWNED, false);
-        glassMob(level, ac, net.minecraft.world.entity.EntityType.DROWNED, true);
+        glassMob(level, ac, net.minecraft.world.entity.EntityTypes.DROWNED, false);
+        glassMob(level, ac, net.minecraft.world.entity.EntityTypes.DROWNED, true);
         name(level, at, "Mobs im Glas: Ertrunkene");
         at = at.east(3 + GAP);
         TankBlockEntity sc = tank(level, at, 3, 2, 2, 0F, false);
@@ -611,10 +611,10 @@ public final class DevShowcase {
         rock(in, sr, sr.sizeX() * 2 / 3, sr.sizeZ() / 2, 8, 8, Blocks.COBBLESTONE.defaultBlockState());
         for (int x = 0; x < 3; x++) for (int z = 0; z < 2; z++) level.setBlockAndUpdate(at.offset(x, 2, z), ModBlocks.TANK_LID.get().defaultBlockState());
         org.overengineer.bettacraft.terrarium.TankClimate.refreshMode(level, sc);
-        glassMob(level, sc, net.minecraft.world.entity.EntityType.SPIDER, false);
-        glassMob(level, sc, net.minecraft.world.entity.EntityType.SKELETON, false);
-        glassMob(level, sc, net.minecraft.world.entity.EntityType.ZOMBIE, false);
-        glassMob(level, sc, net.minecraft.world.entity.EntityType.SLIME, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityTypes.SPIDER, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityTypes.SKELETON, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityTypes.ZOMBIE, false);
+        glassMob(level, sc, net.minecraft.world.entity.EntityTypes.SLIME, false);
         name(level, at, "Mobs im Glas: Spinne, Skelett");
         // M35: land animals of other mods (Naturalist), when it is installed
         if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("naturalist")) {
@@ -674,7 +674,7 @@ public final class DevShowcase {
         var m = type.create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
         if (m == null) return;
         if (baby) m.setBaby(true);
-        if (m instanceof net.minecraft.world.entity.monster.Slime s) s.setSize(1, true);
+        if (m instanceof net.minecraft.world.entity.monster.cubemob.Slime s) s.setSize(1, true);
         ItemStack jar = org.overengineer.bettacraft.mobs.MobJarItem.fillWith(m);
         m.discard();
         Component err = org.overengineer.bettacraft.tank.TankInhabitants.insert(level, c, jar, type, null, 0L);

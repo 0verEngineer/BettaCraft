@@ -21,6 +21,7 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.terrarium.TerrariumAnimals;
@@ -143,7 +144,7 @@ public final class ForeignProfiles extends SimplePreparableReloadListener<Map<Id
     public static boolean ownCare(EntityType<?> type) {
         Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
         if (BettaCraft.MOD_ID.equals(id.getNamespace())) return true;
-        if (type == EntityType.AXOLOTL || type == EntityType.DOLPHIN || type == EntityType.TURTLE || type == EntityType.TADPOLE) return true;
+        if (type == EntityTypes.AXOLOTL || type == EntityTypes.DOLPHIN || type == EntityTypes.TURTLE || type == EntityTypes.TADPOLE) return true;
         if (org.overengineer.bettacraft.mobs.GlassMobs.isAllowed(type)) return true;
         return TerrariumAnimals.isRegistered(type) && !TERRARIUM.contains(type);
     }

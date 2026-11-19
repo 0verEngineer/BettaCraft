@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import org.overengineer.bettacraft.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -86,7 +86,7 @@ public final class MiniatureJets {
         List<FilterFlow.Path> paths = paths(t, region);
         if (paths.isEmpty()) return;
         Minecraft mc = Minecraft.getInstance();
-        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        org.overengineer.bettacraft.client.render.ImmediateBuffers buffers = org.overengineer.bettacraft.client.render.ImmediateBuffers.shared();
         RenderType rt = FlowRenderer.jetType();
         PoseStack ps = event.getPoseStack();
         float time = (mc.level.getGameTime() + event.getPartialTick().getGameTimeDeltaPartialTick(false)) / 20F;
@@ -96,7 +96,7 @@ public final class MiniatureJets {
             // M23: a regulated device blows a shorter jet
             double share = i < outlets.size() ? outlets.get(i).share() : 1.0;
             double scale = jetScale(region, t, p) * (0.4 + 0.6 * share);
-            int light = LevelRenderer.getLightCoords(mc.level, BlockPos.containing(p.nozzle()));
+            int light = net.minecraft.util.LightCoordsUtil.getLightCoords(mc.level, BlockPos.containing(p.nozzle()));
             FlowRenderer.jet(ps, buffers.getBuffer(rt), p.jet(8, scale), p.inward(), cam, light, time,
                     (float) (0.05 * scale + 0.018), p.submerged() ? 0.9F : 1.0F);
         }
@@ -131,7 +131,7 @@ public final class MiniatureJets {
 
     /** Client tick: bubbles at the outlets of nearby tanks (and the quiet filter sound). */
     public static void tickParticles(Minecraft mc, RandomSource rand, boolean sound) {
-        Vec3 cam = mc.gameRenderer.getMainCamera().position();
+        Vec3 cam = mc.gameRenderer.mainCamera().position();
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
             TankData t = be.getTank();
             if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
