@@ -10,8 +10,10 @@ displayName="${mod_name}"
 authors="${mod_authors}"
 displayURL="https://github.com/0verEngineer/BettaCraft"
 # wide pixel-art banner (tools/assetgen/preview.py make_banner) in the mod list; the square icon bettacraft.png stays the
-# mod / project icon. No blur when scaled.
-logoFile="bettacraft_logo.png"
+# mod / project icon. No blur when scaled. M52d: NeoForge 26.2 names them bannerFile and iconFile (logoFile is deprecated
+# and shows a warning screen at start-up)
+bannerFile="bettacraft_logo.png"
+iconFile="bettacraft.png"
 logoBlur=false
 credits="Code, generated textures and models: 0verEngineer. Inspired by real betta keeping."
 description='''${mod_description}'''

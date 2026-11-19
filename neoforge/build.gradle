@@ -903,6 +903,14 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
             def updated = text.replaceAll(/earlyWindowControl = (true|false)/, want)
             if (updated != text) fmlToml.setText(updated, 'UTF-8')
         }
+        // M52d: NeoForge 26.2 warns about the deprecated logoFile of other mods (YACL) on a screen that waits for a click;
+        // background runs have nobody to click it
+        def neoClient = rootProject.file(runRoot + '/config/neoforge-client.toml')
+        if (background && neoClient.exists()) {
+            def text = neoClient.getText('UTF-8')
+            def updated = text.replaceAll(/showLoadWarnings = true/, 'showLoadWarnings = false')
+            if (updated != text) neoClient.setText(updated, 'UTF-8')
+        }
     }
 }
 tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestServer'] }.configureEach { t ->
