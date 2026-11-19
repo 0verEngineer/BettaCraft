@@ -14,7 +14,6 @@ final class RecipeViewerShots {
     static void show(ItemStack stack) {
         try {
             if (FabricLoader.getInstance().isModLoaded("jei")) Jei.show(stack);
-            else if (FabricLoader.getInstance().isModLoaded("emi")) Emi.show(stack);
             else if (FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) Rei.show(stack);
         } catch (Throwable t) {
             LoggerFactory.getLogger("bettacraft/smoketest").warn("[smoketest] recipe viewer: {}", t.toString());
@@ -28,14 +27,8 @@ final class RecipeViewerShots {
             var ff = rt.getJeiHelpers().getFocusFactory();
             // like JEI's own "uses" key: the item as input and as catalyst (workstation)
             rt.getRecipesGui().show(java.util.List.of(
-                    ff.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.CATALYST, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, stack),
+                    ff.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.CRAFTING_STATION, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, stack),
                     ff.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, stack)));
-        }
-    }
-
-    private static final class Emi {
-        static void show(ItemStack stack) {
-            dev.emi.emi.api.EmiApi.displayUses(dev.emi.emi.api.stack.EmiStack.of(stack));
         }
     }
 

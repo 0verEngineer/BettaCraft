@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * M52: the Fabric client smoke ({@code gradlew runFabricClient -Psmoketestfabric}, background window): a fresh flat
  * world, then the M11 scene (tank styles, connected glass, edges, water, menus) and the M13 scene (plants, the tank
- * interior, its miniature) of the NeoForge client smoke, screenshots in run-fabric/screenshots; quits at the end.
+ * interior, its miniature) of the NeoForge client smoke, screenshots in run/1.21.11/fabric/screenshots; quits at the end.
  * {@code -Psmoketest} alone quits at the title screen (models and textures baked).
  */
 public final class FabricClientSmoke implements ClientModInitializer {
@@ -30,7 +30,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static int stage;
     private static BookTour book;
 
-    /** The pages of the handbook (Patchouli) and the recipe viewer pages, screenshots in English and German. */
+    /** The pages of the handbook (Modonomicon since M52b) and the recipe viewer pages, screenshots in English and German. */
     private static final class BookTour {
         private static final String[][] PAGES = {
                 {"landing", null, "0"}, {"species", "bettacraft:tankmates/neon_tetra", "0"}, {"device", "bettacraft:equipment/air_pump", "0"},
@@ -79,15 +79,16 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
         private static void open(String entry, int page) {
             net.minecraft.resources.Identifier bookId = org.overengineer.bettacraft.BettaCraft.id("handbook");
-            var api = vazkii.patchouli.api.PatchouliAPI.get();
-            if (entry == null) api.openBookGUI(bookId);
-            else api.openBookEntry(bookId, net.minecraft.resources.Identifier.parse(entry), page);
+            // M52b: the handbook is a Modonomicon book on Fabric 1.21.11 (entries bettacraft:<category>/<page>)
+            var gui = com.klikli_dev.modonomicon.client.gui.BookGuiManager.get();
+            if (entry == null) gui.openBook(com.klikli_dev.modonomicon.client.gui.book.BookAddress.defaultFor(bookId));
+            else gui.openEntry(bookId, net.minecraft.resources.Identifier.parse(entry), page);
         }
 
         private static void shot(String name) {
             Minecraft mc = Minecraft.getInstance();
-            mc.getToasts().clear();
-            net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.getMainRenderTarget(),
+            mc.getToastManager().clear();
+            net.minecraft.client.Screenshot.grab(mc.gameDirectory, "bettacraft_fabric_" + name + ".png", mc.getMainRenderTarget(), 1,
                     c -> LOGGER.info("[smoketest] {}", c.getString()));
         }
     }
@@ -121,13 +122,13 @@ public final class FabricClientSmoke implements ClientModInitializer {
         if (created || !(screen instanceof TitleScreen)) return;
         created = true;
         Minecraft mc = Minecraft.getInstance();
-        GameRules rules = new GameRules();
-        rules.getRule(GameRules.RULE_DAYLIGHT).set(false, null);
-        rules.getRule(GameRules.SPAWN_MOBS).set(false, null);
+        GameRules rules = new GameRules(WorldDataConfiguration.DEFAULT.enabledFeatures());
+        rules.set(GameRules.ADVANCE_TIME, false, null);
+        rules.set(GameRules.SPAWN_MOBS, false, null);
         LevelSettings settings = new LevelSettings("bettacraft_fabric_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE, false,
                 Difficulty.PEACEFUL, true, rules, WorldDataConfiguration.DEFAULT);
         mc.execute(() -> mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, false, false),
-                ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
+                ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
                 screen));
     }
 

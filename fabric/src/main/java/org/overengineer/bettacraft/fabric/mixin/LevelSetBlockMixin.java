@@ -15,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Level.class)
 public abstract class LevelSetBlockMixin {
     @WrapOperation(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Lnet/minecraft/world/level/block/state/BlockState;"))
-    private BlockState bettacraft$interiorChanged(LevelChunk chunk, BlockPos pos, BlockState state, boolean moved, Operation<BlockState> op) {
-        BlockState old = op.call(chunk, pos, state, moved);
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunk;setBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Lnet/minecraft/world/level/block/state/BlockState;"))
+    private BlockState bettacraft$interiorChanged(LevelChunk chunk, BlockPos pos, BlockState state, int flags, Operation<BlockState> op) {
+        BlockState old = op.call(chunk, pos, state, flags);
         if (old != null && (Object) this instanceof ServerLevel server) InteriorSync.onBlockUpdated(server, pos, old, chunk.getBlockState(pos));
         return old;
     }

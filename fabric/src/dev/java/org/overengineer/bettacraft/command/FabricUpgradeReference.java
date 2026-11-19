@@ -162,7 +162,7 @@ public final class FabricUpgradeReference {
         // chests with every item of the mod
         List<ItemStack> all = new ArrayList<>();
         for (var e : BuiltInRegistries.ITEM.entrySet()) {
-            if (!e.getKey().location().getNamespace().equals("bettacraft")) continue;
+            if (!e.getKey().identifier().getNamespace().equals("bettacraft")) continue;
             all.add(new ItemStack(e.getValue()));
         }
         all.add(BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), BettaData.create(BettaGenome.randomDomestic(r), true, level.getGameTime())));

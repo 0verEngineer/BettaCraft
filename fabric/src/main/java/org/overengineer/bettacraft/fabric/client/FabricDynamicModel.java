@@ -1,38 +1,35 @@
 package org.overengineer.bettacraft.fabric.client;
 
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import java.util.List;
-import java.util.function.Supplier;
-import net.fabricmc.fabric.api.renderer.v1.Renderer;
-import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
-import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
-import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import java.util.function.Predicate;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
-import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
-import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.overengineer.bettacraft.platform.client.DynamicModel;
 import org.overengineer.bettacraft.platform.model.ModelValues;
 
 /**
  * M52: one of our {@link DynamicModel}s through Fabric's renderer API: the render values come from the block entity's
- * render data (our block entities hand theirs over, see the RenderDataMixin), every layer of the model is a material with
- * that layer's blend mode (Fabric draws a block's quads in one chunk layer otherwise).
+ * render data (our block entities hand theirs over, see the RenderDataMixin), every quad carries the chunk layer it was
+ * made for. M52b (1.21.11): a {@link BlockStateModel} whose {@code emitQuads} (Fabric's renderer API, no materials any
+ * more) emits the quads with their layer, vertex colours and normals ({@link FabricClientPlatform#extras}); the vanilla
+ * {@code collectParts} gives one part per layer without the block entity's values.
  */
-public final class FabricDynamicModel extends ForwardingBakedModel {
+public final class FabricDynamicModel implements BlockStateModel {
     private static final Direction[] SIDES = {Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, null};
     private final DynamicModel dynamic;
 
     public FabricDynamicModel(DynamicModel dynamic) {
-        this.wrapped = (BakedModel) dynamic;
         this.dynamic = dynamic;
     }
 
@@ -40,61 +37,82 @@ public final class FabricDynamicModel extends ForwardingBakedModel {
         return dynamic;
     }
 
-    @Override
-    public boolean isVanillaAdapter() {
-        return false;
-    }
-
-    /** The values of the block entity at {@code pos}, read for the mesher (the chunk region's render data). */
-    static ModelValues values(BlockAndTintGetter level, BlockPos pos) {
-        Object data = level.getBlockEntityRenderData(pos);
-        return data instanceof ModelValues v ? v : ModelValues.EMPTY;
+    private ModelValues values(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return dynamic.modelData(level, pos, state, FabricClientPlatform.blockEntityValues(level, pos));
     }
 
     @Override
-    public void emitBlockQuads(BlockAndTintGetter level, BlockState state, BlockPos pos, Supplier<RandomSource> random, RenderContext context) {
-        ModelValues data = dynamic.modelData(level, pos, state, values(level, pos));
-        QuadEmitter emitter = context.getEmitter();
-        for (RenderType layer : dynamic.layers(state, random.get(), data)) {
-            RenderMaterial material = material(layer);
+    public void emitQuads(QuadEmitter emitter, BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random,
+            Predicate<@Nullable Direction> cullTest) {
+        ModelValues data = values(level, pos, state);
+        TriState partAo = dynamic.ambientOcclusion() ? TriState.DEFAULT : TriState.FALSE;
+        for (ChunkSectionLayer layer : dynamic.layers(state, random, data)) {
             for (Direction side : SIDES) {
-                if (side != null && context.isFaceCulled(side)) continue;
-                for (BakedQuad q : dynamic.quads(state, side, random.get(), data, layer)) {
-                    emitter.fromVanilla(q, material, side);
-                    emitter.emit();
-                }
+                if (side != null && cullTest.test(side)) continue;
+                for (BakedQuad q : dynamic.quads(state, side, random, data, layer)) emit(emitter, q, side, layer, partAo);
             }
+        }
+    }
+
+    static void emit(QuadEmitter emitter, BakedQuad q, @Nullable Direction side, ChunkSectionLayer layer, TriState partAo) {
+        emitter.fromBakedQuad(q);
+        emitter.cullFace(side);
+        emitter.renderLayer(layer);
+        FabricClientPlatform.Extras x = FabricClientPlatform.extras(q);
+        TriState ao = partAo;
+        if (x != null) {
+            for (int i = 0; i < 4; i++) {
+                emitter.color(i, x.argb()[i]);
+                int n = x.normals()[i];
+                if (n != 0) emitter.normal(i, (byte) n / 127F, (byte) (n >> 8) / 127F, (byte) (n >> 16) / 127F);
+            }
+            if (!x.ao()) ao = TriState.FALSE;
+        }
+        emitter.ambientOcclusion(ao);
+        emitter.emit();
+    }
+
+    @Override
+    public @Nullable Object createGeometryKey(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
+        return null; // the quads depend on the neighbours and the block entity: never shared
+    }
+
+    @Override
+    public TextureAtlasSprite particleSprite(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return dynamic.particle(values(level, pos, state));
+    }
+
+    @Override
+    public void collectParts(RandomSource random, List<BlockModelPart> parts) {
+        for (ChunkSectionLayer layer : dynamic.layers(null, random, ModelValues.EMPTY)) {
+            @SuppressWarnings("unchecked")
+            List<BakedQuad>[] sides = new List[7];
+            for (Direction d : Direction.values()) sides[d.ordinal()] = dynamic.quads(null, d, random, ModelValues.EMPTY, layer);
+            sides[6] = dynamic.quads(null, null, random, ModelValues.EMPTY, layer);
+            parts.add(new Part(sides, dynamic.ambientOcclusion(), dynamic.particle(ModelValues.EMPTY)));
         }
     }
 
     @Override
-    public void emitItemQuads(ItemStack stack, Supplier<RandomSource> random, RenderContext context) {
-        List<RenderType> own = dynamic.itemLayers(false);
-        if (own == null) {
-            super.emitItemQuads(stack, random, context);
-            return;
-        }
-        // the item draws translucent (the tank's glass): one translucent material for all its quads
-        RenderMaterial material = material(ChunkSectionLayer.TRANSLUCENT);
-        QuadEmitter emitter = context.getEmitter();
-        for (Direction side : SIDES) {
-            for (BakedQuad q : wrapped.getQuads(null, side, random.get())) {
-                emitter.fromVanilla(q, material, side);
-                emitter.emit();
-            }
-        }
+    public TextureAtlasSprite particleIcon() {
+        return dynamic.particle(ModelValues.EMPTY);
     }
 
-    private static final RenderMaterial[] MATERIALS = new RenderMaterial[BlendMode.values().length];
-
-    static RenderMaterial material(RenderType layer) {
-        BlendMode mode = BlendMode.fromRenderLayer(layer);
-        RenderMaterial m = MATERIALS[mode.ordinal()];
-        if (m == null) {
-            Renderer renderer = RendererAccess.INSTANCE.getRenderer();
-            m = renderer.materialFinder().blendMode(mode).find();
-            MATERIALS[mode.ordinal()] = m;
+    /** The quads of one chunk layer for the vanilla paths. */
+    record Part(List<BakedQuad>[] sides, boolean ao, TextureAtlasSprite particle) implements BlockModelPart {
+        @Override
+        public List<BakedQuad> getQuads(@Nullable Direction side) {
+            return sides[side == null ? 6 : side.ordinal()];
         }
-        return m;
+
+        @Override
+        public boolean useAmbientOcclusion() {
+            return ao;
+        }
+
+        @Override
+        public TextureAtlasSprite particleIcon() {
+            return particle;
+        }
     }
 }

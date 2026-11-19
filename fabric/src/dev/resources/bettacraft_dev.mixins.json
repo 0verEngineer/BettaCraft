@@ -4,8 +4,7 @@
   "package": "org.overengineer.bettacraft.fabric.dev.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "FabricGameTestIdsMixin",
-    "FabricGameTestInvokerMixin"
+    "FabricGameTestIdsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

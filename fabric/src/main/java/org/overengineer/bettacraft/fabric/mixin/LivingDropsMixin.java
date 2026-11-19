@@ -18,13 +18,13 @@ public abstract class LivingDropsMixin {
     }
 
     @Inject(method = "dropExperience", at = @At("HEAD"), cancellable = true)
-    private void bettacraft$xp(net.minecraft.world.entity.Entity attacker, CallbackInfo ci) {
+    private void bettacraft$xp(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.Entity attacker, CallbackInfo ci) {
         var e = FabricGameEvents.post(new LivingExperienceDropEvent((net.minecraft.world.entity.LivingEntity) (Object) this, 1));
         if (e.isCanceled() || e.getDroppedExperience() <= 0) ci.cancel();
     }
 
     @org.spongepowered.asm.mixin.injection.ModifyVariable(method = "actuallyHurt", at = @At("HEAD"), argsOnly = true)
-    private float bettacraft$damage(float amount, net.minecraft.world.damagesource.DamageSource source) {
+    private float bettacraft$damage(float amount, net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float original) {
         if (!FabricGameEvents.listens(LivingDamageEvent.Pre.class)) return amount;
         return FabricGameEvents.post(new LivingDamageEvent.Pre((net.minecraft.world.entity.LivingEntity) (Object) this, source, amount)).getNewDamage();
     }

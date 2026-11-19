@@ -24,13 +24,14 @@ public abstract class EntityPersistentDataMixin implements PersistentDataHolder 
         return bettacraft$data;
     }
 
+    // M52b (1.21.6+): entities save through ValueOutput / ValueInput; same key and codec as NeoForge 21.11
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
-    private void bettacraft$save(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
-        if (bettacraft$data != null && !bettacraft$data.isEmpty()) tag.put("NeoForgeData", bettacraft$data.copy());
+    private void bettacraft$save(net.minecraft.world.level.storage.ValueOutput out, CallbackInfo ci) {
+        if (bettacraft$data != null && !bettacraft$data.isEmpty()) out.store("NeoForgeData", CompoundTag.CODEC, bettacraft$data.copy());
     }
 
     @Inject(method = "load", at = @At("HEAD"))
-    private void bettacraft$load(CompoundTag tag, CallbackInfo ci) {
-        if (NbtCompat.has(tag, "NeoForgeData", Tag.TAG_COMPOUND)) bettacraft$data = tag.getCompoundOrEmpty("NeoForgeData").copy();
+    private void bettacraft$load(net.minecraft.world.level.storage.ValueInput in, CallbackInfo ci) {
+        in.read("NeoForgeData", CompoundTag.CODEC).ifPresent(t -> bettacraft$data = t.copy());
     }
 }

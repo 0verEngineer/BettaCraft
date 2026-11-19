@@ -6,8 +6,7 @@ import com.google.gson.JsonParser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
@@ -26,13 +25,13 @@ final class FabricRenderLayers {
             JsonObject o = JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
             for (var e : o.entrySet()) {
                 Block b = BuiltInRegistries.BLOCK.getValue(Identifier.parse(e.getKey()));
-                RenderType t = switch (e.getValue().getAsString()) {
+                ChunkSectionLayer t = switch (e.getValue().getAsString()) {
                     case "minecraft:cutout" -> ChunkSectionLayer.CUTOUT;
                     case "minecraft:cutout_mipped" -> ChunkSectionLayer.CUTOUT;
                     case "minecraft:translucent" -> ChunkSectionLayer.TRANSLUCENT;
                     default -> null;
                 };
-                if (t != null) BlockRenderLayerMap.INSTANCE.putBlock(b, t);
+                if (t != null) BlockRenderLayerMap.putBlock(b, t);
             }
         } catch (Exception ex) {
             com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the render layers failed", ex);

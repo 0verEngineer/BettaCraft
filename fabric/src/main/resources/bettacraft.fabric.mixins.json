@@ -21,6 +21,7 @@
     "LivingDropsMixin",
     "LootTableMixin",
     "MobMixin",
+    "PickBlockMixin",
     "PistonMixin",
     "PlaceSoundMixin",
     "PlayerInteractMixin",
@@ -34,8 +35,8 @@
   "client": [
     "BreakSoundMixin",
     "ClientDestroyMixin",
+    "LevelRendererTranslucentMixin",
     "MouseScrollMixin",
-    "PickBlockMixin",
     "RenderDataMixin"
   ],
   "injectors": {

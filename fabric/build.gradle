@@ -50,13 +50,12 @@ sourceSets {
         java.srcDir(rootProject.file('tools/guide/src'))
     }
     // development only (GameTests, smoke scenes on Fabric), never in the jar
-    // the dev source set: our Fabric dev code, the stubs of NeoForge's two GameTest annotations and every file of the
-    // NeoForge dev source set that needs nothing else of NeoForge (GameTests, smoke scenes, the showcase), see devExcluded
+    // the dev source set: our Fabric dev code and every file of the NeoForge dev source set that needs nothing of NeoForge
+    // (GameTests with their own annotations since M52b, smoke scenes, the showcase), see devExcluded
     dev {
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
         java {
-            srcDir(file('src/devstubs/java'))
             srcDir(rootProject.file('neoforge/src/dev/java'))
             exclude { FileTreeElement e -> !e.directory && devExcluded(e.file) }
         }
@@ -67,12 +66,12 @@ sourceSets {
     }
 }
 
-// a NeoForge dev file is left out of the Fabric dev source set when it uses NeoForge beyond the two GameTest annotations
-// (stubbed in src/devstubs) or is listed here (it uses one of those files, or a mod that is not on Fabric)
+// a NeoForge dev file is left out of the Fabric dev source set when it uses NeoForge or is listed here (it uses one of
+// those files, or a mod that is not on Fabric)
 def devExcludedNames = (project.findProperty('fabricDevExcludes') ?: '').toString().split(',').collect { it.trim() }.findAll { it }
 ext.fabricDevSkip = [
-    // need Create (no Create for Fabric 1.21.1)
-    'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests',
+    // need Create (no Create for Fabric 1.21.1 or 1.21.11)
+    'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
 ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
@@ -85,10 +84,14 @@ ext.devExcluded = { File f ->
     if (rel.contains('/client/') && !fabricDevClient.contains(f.name - '.java')) return true
     if (devExcludedNames.contains(f.name - '.java') || fabricDevSkip.contains(f.name - '.java')) return true
     // Forge Config API Port brings NeoForge's config classes to Fabric (same names)
-    return f.readLines('UTF-8').any { l -> l.contains('net.neoforged') && !l.contains('"net.neoforged') && !l.contains('net.neoforged.neoforge.gametest.GameTestHolder')
-            && !l.contains('net.neoforged.neoforge.common.ModConfigSpec') && !l.contains('net.neoforged.fml.config')
-            && !l.contains('net.neoforged.neoforge.gametest.PrefixGameTestTemplate') }
+    return f.readLines('UTF-8').any { l -> l.contains('net.neoforged') && !l.contains('"net.neoforged')
+            && !l.contains('net.neoforged.neoforge.common.ModConfigSpec') && !l.contains('net.neoforged.fml.config') }
 }
+
+// M52b: every Fabric run of this branch (Minecraft 1.21.11) has its game directories under fabricRunRoot (default
+// run/1.21.11/fabric, -PfabricRunDir=...; the optional mod groups too); run-fabric/ holds the 1.21.1 runs of master
+def fabricRunRoot = (project.findProperty('fabricRunDir') ?: 'run/1.21.11/fabric').toString()
+ext.fabricRunRoot = fabricRunRoot
 
 loom {
     accessWidenerPath = file('src/main/resources/bettacraft.accesswidener')
@@ -99,7 +102,7 @@ loom {
         // runFabricClient [-Pbackground]: the background window like on NeoForge (BackgroundWindowMixin)
         fabricClient {
             client()
-            runDir = '../run-fabric'
+            runDir = "../${fabricRunRoot}"
             source sourceSets.dev
             ideConfigGenerated false
             if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') }) {
@@ -119,7 +122,7 @@ loom {
         }
         fabricServer {
             server()
-            runDir = '../run-fabric/server'
+            runDir = "../${fabricRunRoot}/server"
             source sourceSets.dev
             ideConfigGenerated false
             if (project.hasProperty('smoketest')) property 'bettacraft.smoketest', 'true'
@@ -128,11 +131,13 @@ loom {
         // the Fabric GameTest server (fabric-gametest entry points of the dev source set); quits with the result
         fabricGameTest {
             server()
-            runDir = '../run-fabric/gametest'
+            runDir = "../${fabricRunRoot}/gametest"
             source sourceSets.dev
             ideConfigGenerated false
             property 'fabric-api.gametest', 'true'
-            property 'fabric-api.gametest.report-file', "${rootProject.projectDir}/run-fabric/gametest/report.xml"
+            property 'fabric-api.gametest.report-file', "${rootProject.projectDir}/${fabricRunRoot}/gametest/report.xml"
+            // M52b: only our tests (libraries of other mods may bring GameTests of their own)
+            property 'fabric-api.gametest.filter', 'bettacraft:*'
             if (project.hasProperty('gametests')) property 'bettacraft.gametest.only', project.property('gametests')
         }
     }
@@ -200,13 +205,13 @@ dependencies {
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
     if (project.hasProperty('rei')) localRuntime 'me.shedaniel.cloth:basic-math:0.6.1'
 
-    // optional mod groups of the Fabric dev runs (official jars copied into run-fabric/<group>, never committed):
+    // optional mod groups of the Fabric dev runs (official jars copied into <fabricRunRoot>/<group>, never committed):
     // -Poverlays (Jade, JEI, WTHIT, TOP), -Prei, -Pemi, -Pfabricintegration (Refined Storage, JourneyMap, Better Fish Tanks,
     // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams)
     def groupJars = [:] // file name -> jar: a library in several groups (Architectury, Cloth Config) only once
     [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods'].each { flag, dir ->
         if (project.hasProperty(flag)) {
-            rootProject.file("run-fabric/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') }?.each { groupJars.putIfAbsent(it.name, it) }
+            rootProject.file("${fabricRunRoot}/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') }?.each { groupJars.putIfAbsent(it.name, it) }
         }
     }
     if (!groupJars.isEmpty()) {
@@ -306,23 +311,21 @@ tasks.register('fabricData') {
                     return [condition: c.type] + m
             }
         }
-        def base = { items ->
-            if (items instanceof List) return items.collect { String s -> s.startsWith('#') ? [tag: s.substring(1)] : [item: s] }
-            String s = items as String
-            return s.startsWith('#') ? [tag: s.substring(1)] : [item: s]
-        }
+        // M52b (1.21.2+ ingredients): an ingredient is an item id, a "#tag" or a list of item ids; NeoForge 21.11 marks its
+        // own ingredient types with "neoforge:ingredient_type"
         def fix
         fix = { Object node ->
             if (node instanceof Map) {
                 Map m = node as Map
-                if (m.type == 'neoforge:components') {
-                    return ['fabric:type': 'fabric:components', base: base(m.items), components: m.components, strict: m.strict ?: false]
+                def itype = m['neoforge:ingredient_type'] ?: m.type
+                if (itype == 'neoforge:components') {
+                    return ['fabric:type': 'fabric:components', base: m.items, components: m.components]
                 }
-                if (m.type == 'neoforge:compound') {
-                    // plain items and tags: a vanilla ingredient list; anything else: Fabric's any-of ingredient
-                    def kids = m.children.collect { fix(it) }.collectMany { it instanceof List ? it : [it] }
-                    return kids.every { it instanceof Map && (it.containsKey('item') || it.containsKey('tag')) && it.size() == 1 } ? kids
-                            : ['fabric:type': 'fabric:any', ingredients: kids]
+                if (itype == 'neoforge:compound') {
+                    def kids = m.children.collect { fix(it) }
+                    // only item ids (no tags, no custom ingredients): one plain list; otherwise Fabric's any-of ingredient
+                    def plain = kids.every { k -> (k instanceof String && !k.startsWith('#')) || (k instanceof List && k.every { it instanceof String && !it.startsWith('#') }) }
+                    return plain ? kids.collectMany { it instanceof List ? it : [it] } : ['fabric:type': 'fabric:any', ingredients: kids]
                 }
                 def r = new LinkedHashMap()
                 m.each { k, v ->
@@ -341,21 +344,13 @@ tasks.register('fabricData') {
             data.eachFileRecurse { f ->
                 if (!f.name.endsWith('.json')) return
                 def text = f.getText('UTF-8')
-                if (!text.contains('"neoforge:conditions"') && !text.contains('"neoforge:components"') && !text.contains('"neoforge:compound"')) return
+                if (!text.contains('"neoforge:conditions"') && !text.contains('"neoforge:components"') && !text.contains('"neoforge:compound"')
+                        && !text.contains('"neoforge:ingredient_type"')) return
                 def rel = root.toPath().relativize(f.toPath()).toString().replace('\\', '/')
                 def json = fix(slurper.parseText(text))
-                // a shaped key with alternatives (a NeoForge compound): one recipe per alternative (Fabric's shaped keys take one)
-                def variants = [json]
-                if (json instanceof Map && json.type == 'minecraft:crafting_shaped' && json.key instanceof Map) {
-                    json.key.each { k, v ->
-                        if (v instanceof List) variants = variants.collectMany { r -> v.collect { alt -> def c = slurper.parseText(groovy.json.JsonOutput.toJson(r)); c.key[k] = alt; c } }
-                    }
-                }
-                variants.eachWithIndex { r, i ->
-                    def dst = new File(out, i == 0 ? rel : rel.replaceAll(/\.json$/, "_alt${i}.json"))
-                    dst.parentFile.mkdirs()
-                    dst.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(r)), 'UTF-8')
-                }
+                def dst = new File(out, rel)
+                dst.parentFile.mkdirs()
+                dst.write(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json)), 'UTF-8')
                 n++
             }
         }
@@ -369,9 +364,9 @@ tasks.named('processResources', ProcessResources).configure {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// ---- the GameTest classes of the Fabric dev source set (FabricGameTests registers them)
+// ---- the GameTest classes of the Fabric dev source set (the shared BettaGameTests registers them, same list name as on NeoForge)
 tasks.register('fabricGameTestList') {
-    def out = layout.buildDirectory.file('generated/devresources/bettacraft_fabric_gametests.txt')
+    def out = layout.buildDirectory.file('generated/devresources/bettacraft_gametests.txt')
     def dirs = [rootProject.file('neoforge/src/dev/java'), file('src/dev/java')]
     dirs.each { inputs.dir(it) }
     inputs.property('skip', fabricDevSkip.toList().sort())
@@ -382,7 +377,7 @@ tasks.register('fabricGameTestList') {
             d.eachFileRecurse { f ->
                 if (!f.name.endsWith('.java') || devExcluded(f)) return
                 def text = f.getText('UTF-8')
-                if (!text.contains('@GameTestHolder')) return
+                if (!(text =~ /(?m)^@GameTestHolder/)) return
                 def pkg = (text =~ /(?m)^package ([\w.]+);/)[0][1]
                 names << pkg + '.' + (f.name - '.java')
             }
@@ -525,7 +520,7 @@ tasks.named('check').configure { dependsOn 'verifyFabricJar' }
 
 // ---- M52: production runs (intermediary, like a player's Fabric profile): the released jar, the dev smoke remapped to
 // intermediary and the official jars of the other mods; gradlew prodFabricServer -Psmoketest / prodFabricClient
-// -Psmoketestfabric (background window), run dirs run-fabric/prod-server and run-fabric/prod-client
+// -Psmoketestfabric (background window), run dirs <fabricRunRoot>/prod-server and <fabricRunRoot>/prod-client
 configurations {
     prodMods { transitive = false }
 }
@@ -568,11 +563,11 @@ tasks.register('prodFabricServer', net.fabricmc.loom.task.prod.ServerProductionR
     installerVersion = '1.0.1'
     loaderVersion = project.fabric_loader_version
     minecraftVersion = project.minecraft_version
-    runDir = rootProject.layout.projectDirectory.dir('run-fabric/prod-server')
+    runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-server")
     jvmArgs.addAll(prodProps(false))
     programArgs.add('--nogui')
     doFirst {
-        def d = rootProject.file('run-fabric/prod-server'); d.mkdirs(); new File(d, 'eula.txt').text = 'eula=true\n'
+        def d = rootProject.file("${fabricRunRoot}/prod-server"); d.mkdirs(); new File(d, 'eula.txt').text = 'eula=true\n'
     }
 }
 tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionRunTask) {
@@ -580,19 +575,19 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
     mods.from(tasks.named('remapJar'))
     mods.from(remapDevJar)
     mods.from(configurations.prodMods)
-    runDir = rootProject.layout.projectDirectory.dir('run-fabric/prod-client')
+    runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-client")
     jvmArgs.addAll(prodProps(true))
     programArgs.addAll(['--width', '1280', '--height', '760'])
 }
 
 // every Fabric GameTest run starts with a fresh world (like the NeoForge runs)
 tasks.matching { it.name == 'runFabricGameTest' }.configureEach {
-    doFirst { rootProject.file('run-fabric/gametest/world').deleteDir() }
+    doFirst { rootProject.file("${fabricRunRoot}/gametest/world").deleteDir() }
 }
 
 // -Pquests: the FTB Quests chapter of modpack/ into the Fabric runs (replaced every run, removed without the flag)
 tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGameTest'] }.configureEach { t ->
-    def base = t.name == 'runFabricGameTest' ? 'run-fabric/gametest' : t.name == 'runFabricServer' ? 'run-fabric/server' : 'run-fabric'
+    def base = t.name == 'runFabricGameTest' ? "${fabricRunRoot}/gametest" : t.name == 'runFabricServer' ? "${fabricRunRoot}/server" : fabricRunRoot
     def src = rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt')
     def dst = rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt')
     def on = project.hasProperty('quests')
@@ -604,8 +599,8 @@ tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGam
     }
 }
 
-// gradlew fabricMultiplayerTest : the Fabric multiplayer test. A dedicated Fabric server (run-fabric/mp-server, port 25595,
-// offline mode, the stage of FabricMpSmoke) and, once it is up, two background clients Dev1 and Dev2 (run-fabric/mp-client1|2,
+// gradlew fabricMultiplayerTest : the Fabric multiplayer test. A dedicated Fabric server (<fabricRunRoot>/mp-server, port 25595,
+// offline mode, the stage of FabricMpSmoke) and, once it is up, two background clients Dev1 and Dev2 (<fabricRunRoot>/mp-client1|2,
 // FabricMpClient) that join, check what they got synced and report in the chat. The game processes are started from the java
 // command lines of runFabricServer / runFabricClient. Logs: build/mptest-fabric/*.log. Fails without "MP PASSED".
 tasks.register('fabricMultiplayerTest') {
@@ -621,7 +616,7 @@ tasks.register('fabricMultiplayerTest') {
         def cmd = { t, List extraJvm, List extraArgs ->
             [java] + t.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') } + extraJvm + ['-cp', t.classpath.asPath, t.mainClass.get()] + t.args + extraArgs
         }
-        def sdir = rootProject.file('run-fabric/mp-server')
+        def sdir = rootProject.file("${fabricRunRoot}/mp-server")
         new File(sdir, 'world').deleteDir()
         sdir.mkdirs()
         new File(sdir, 'eula.txt').text = 'eula=true\n'
@@ -638,7 +633,7 @@ tasks.register('fabricMultiplayerTest') {
             }
             if (!up) throw new GradleException('the Fabric MP server did not come up')
             ['Dev1', 'Dev2'].eachWithIndex { name, i ->
-                def dir = rootProject.file("run-fabric/mp-client${i + 1}")
+                def dir = rootProject.file("${fabricRunRoot}/mp-client${i + 1}")
                 dir.mkdirs()
                 new File(dir, 'options.txt').text = 'onboardAccessibility:false\npauseOnLostFocus:false\nsoundCategory_master:0.0\nmaxFps:30\n'
                 clients << new ProcessBuilder(cmd(cli, ['-Dbettacraft.smoketest.mpclient=true', '-Dbettacraft.background=true'], ['--username', name]))
@@ -656,7 +651,7 @@ tasks.register('fabricMultiplayerTest') {
 }
 
 // gradlew fabricSaveLoadTest : the Fabric save/load test. A dedicated Fabric server builds the showcase world (every kind of
-// tank with animals, plants and equipment, plus the rows of the upgrade reference) in run-fabric/saveload and writes its
+// tank with animals, plants and equipment, plus the rows of the upgrade reference) in <fabricRunRoot>/saveload and writes its
 // manifest; then the world is loaded again twice (DevSmokeUpgrade stages 1 and 2: the manifest, then save and reload):
 // nothing may be lost. Logs: build/saveload-fabric/*.log.
 tasks.register('fabricSaveLoadTest') {
@@ -668,7 +663,7 @@ tasks.register('fabricSaveLoadTest') {
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
         def logs = rootProject.file('build/saveload-fabric')
         logs.deleteDir(); logs.mkdirs()
-        def dir = rootProject.file('run-fabric/saveload')
+        def dir = rootProject.file("${fabricRunRoot}/saveload")
         dir.deleteDir(); dir.mkdirs()
         new File(dir, 'eula.txt').text = 'eula=true\n'
         new File(dir, 'server.properties').text = ['online-mode=false', 'level-type=minecraft:flat', 'gamemode=creative', 'difficulty=peaceful',

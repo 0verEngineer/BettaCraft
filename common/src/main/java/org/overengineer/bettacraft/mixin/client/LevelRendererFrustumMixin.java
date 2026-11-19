@@ -18,6 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LevelRendererFrustumMixin {
     @Inject(method = "prepareCullFrustum", at = @At("RETURN"))
     private void bettacraft$frustum(Matrix4f modelView, Matrix4f projection, Vec3 camera, CallbackInfoReturnable<Frustum> cir) {
-        RenderFrame.capture(cir.getReturnValue(), projection);
+        RenderFrame.capture(cir.getReturnValue(), modelView, projection);
     }
 }

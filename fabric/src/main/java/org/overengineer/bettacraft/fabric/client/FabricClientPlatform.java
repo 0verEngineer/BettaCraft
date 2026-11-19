@@ -1,33 +1,36 @@
 package org.overengineer.bettacraft.fabric.client;
 
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import com.google.common.collect.MapMaker;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import net.fabricmc.fabric.api.client.model.loading.v1.ExtraModelKey;
+import net.fabricmc.fabric.api.renderer.v1.render.FabricBlockModelRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.BlockModelPart;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import org.overengineer.bettacraft.platform.client.ClientPlatform;
 import org.overengineer.bettacraft.platform.client.DynamicModel;
 import org.overengineer.bettacraft.platform.model.ModelDataSource;
@@ -35,71 +38,45 @@ import org.overengineer.bettacraft.platform.model.ModelKey;
 import org.overengineer.bettacraft.platform.model.ModelValues;
 
 /**
- * M52: the client platform on Fabric. A block has one chunk layer here ({@link ItemBlockRenderTypes}); our dynamic
- * models ({@link FabricDynamicModel}) have several, the miniature tesselates them one layer at a time through a plain
- * model of that layer's quads (vanilla's block renderer: smooth light, culling).
+ * M52: the client platform on Fabric. A foreign block has one chunk layer here ({@link ItemBlockRenderTypes}); our dynamic
+ * models ({@link FabricDynamicModel}) give each quad its own layer through Fabric's renderer API.
+ * M52b (1.21.11): vanilla's {@link BakedQuad} no longer carries vertex colours, normals or an ambient occlusion flag; the
+ * quads we bake keep theirs in {@link #EXTRAS} (weak, by identity), and {@link FabricDynamicModel} emits them again.
  */
 public final class FabricClientPlatform implements ClientPlatform {
-    private static final Direction[] SIDES = {Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
+    /** Ints per vertex of the 1.21.1 layout: x, y, z, colour ABGR, u, v, light, normal. */
+    private static final int STRIDE = 8;
 
-    private static @Nullable DynamicModel dynamic(BakedModel model) {
-        return model instanceof FabricDynamicModel f ? f.dynamic() : null;
+    /** The vertex colours (ARGB), packed normals and the ambient occlusion flag of a quad we baked. */
+    record Extras(int[] argb, int[] normals, boolean ao) {}
+
+    private static final Map<BakedQuad, Extras> EXTRAS = new MapMaker().weakKeys().concurrencyLevel(4).makeMap();
+
+    /** The extra (standalone) models of {@code ModelSwaps#extraModels} (filter bundle arms), see {@link FabricModels}. */
+    static final Map<Identifier, ExtraModelKey<BlockStateModel>> STANDALONE = new ConcurrentHashMap<>();
+
+    static @Nullable Extras extras(BakedQuad quad) {
+        return EXTRAS.get(quad);
     }
 
-    private static ModelValues blockEntityValues(BlockAndTintGetter level, BlockPos pos) {
+    static ModelValues blockEntityValues(BlockAndTintGetter level, BlockPos pos) {
         Object rd = level.getBlockEntityRenderData(pos);
         if (rd instanceof ModelValues v) return v;
         return level.getBlockEntity(pos) instanceof ModelDataSource s ? s.modelValues() : ModelValues.EMPTY;
     }
 
     @Override
-    public Object modelData(BakedModel model, BlockAndTintGetter level, BlockPos pos, BlockState state) {
-        DynamicModel d = dynamic(model);
-        return d == null ? ModelValues.EMPTY : d.modelData(level, pos, state, blockEntityValues(level, pos));
+    public Object modelData(BlockStateModel model, BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return null; // our models read the block entity's render data from the level themselves (FabricDynamicModel)
     }
 
     @Override
-    public Iterable<RenderType> renderTypes(BakedModel model, BlockState state, RandomSource rand, Object modelData) {
-        DynamicModel d = dynamic(model);
-        return d != null ? d.layers(state, rand, (ModelValues) modelData) : List.of(ItemBlockRenderTypes.getChunkRenderType(state));
-    }
-
-    @Override
-    public void renderBatched(BlockRenderDispatcher brd, BlockState state, BlockPos pos, BlockAndTintGetter level, PoseStack ps, VertexConsumer vc,
-            boolean checkSides, RandomSource rand, Object modelData, @Nullable RenderType layer) {
-        BakedModel model = brd.getBlockModel(state);
-        DynamicModel d = dynamic(model);
-        if (d == null) {
-            if (layer != null && layer != ItemBlockRenderTypes.getChunkRenderType(state)) return;
-            brd.renderBatched(state, pos, level, ps, vc, checkSides, rand);
-            return;
-        }
-        BakedModel quads = new LayerModel((BakedModel) d, d, state, rand, (ModelValues) modelData, layer);
-        brd.getModelRenderer().tesselateBlock(level, quads, state, pos, ps, vc, checkSides, rand, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
-    }
-
-    @Override
-    public void renderSingleBlock(BlockRenderDispatcher brd, BlockState state, PoseStack ps, MultiBufferSource buffers, int light, int overlay,
-            @Nullable RenderType layer) {
-        BakedModel model = brd.getBlockModel(state);
-        DynamicModel d = dynamic(model);
-        if (d == null) {
-            if (layer != null && layer != ItemBlockRenderTypes.getChunkRenderType(state)) return;
-            brd.renderSingleBlock(state, ps, buffers, light, overlay);
-            return;
-        }
-        RandomSource rand = RandomSource.create(42);
-        for (RenderType rt : d.layers(state, rand, ModelValues.EMPTY)) {
-            if (layer != null && rt != layer) continue;
-            BakedModel quads = new LayerModel((BakedModel) d, d, state, rand, ModelValues.EMPTY, rt);
-            brd.getModelRenderer().renderModel(ps.last(), buffers.getBuffer(entitySheet(rt)), state, quads, 1F, 1F, 1F, light, overlay);
-        }
-    }
-
-    private static RenderType entitySheet(RenderType chunkLayer) {
-        if (chunkLayer == ChunkSectionLayer.TRANSLUCENT) return Sheets.translucentBlockItemSheet();
-        if (chunkLayer == ChunkSectionLayer.SOLID) return Sheets.solidBlockSheet();
-        return Sheets.cutoutBlockSheet();
+    public void tesselate(BlockState state, BlockPos pos, BlockAndTintGetter level, PoseStack ps, Function<ChunkSectionLayer, VertexConsumer> buffers,
+            boolean checkSides, RandomSource rand, Object modelData, @Nullable ChunkSectionLayer only) {
+        var brd = Minecraft.getInstance().getBlockRenderer();
+        BlockStateModel model = brd.getBlockModel(state);
+        ((FabricBlockModelRenderer) brd.getModelRenderer()).render(level, model, state, pos, ps,
+                layer -> only == null || layer == only ? buffers.apply(layer) : Discard.INSTANCE, checkSides, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
     }
 
     @Override
@@ -108,37 +85,88 @@ public final class FabricClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public BakedModel wrap(DynamicModel model) {
+    public BlockStateModel wrap(DynamicModel model) {
         return new FabricDynamicModel(model);
     }
 
     @Override
-    public List<BakedQuad> quads(BakedModel model, @Nullable BlockState state, @Nullable Direction side, RandomSource rand, @Nullable RenderType layer) {
-        DynamicModel d = dynamic(model);
-        if (d != null) return d.quads(state, side, rand, ModelValues.EMPTY, layer);
-        if (layer != null && state != null && layer != ItemBlockRenderTypes.getChunkRenderType(state)) return List.of();
-        return model.getQuads(state, side, rand);
+    public @Nullable DynamicModel dynamic(BlockStateModel model) {
+        return model instanceof FabricDynamicModel f ? f.dynamic() : null;
     }
 
     @Override
-    public Collection<RenderType> layers(BakedModel model, BlockState state, RandomSource rand) {
+    public List<BakedQuad> quads(BlockStateModel model, @Nullable BlockState state, @Nullable Direction side, RandomSource rand,
+            @Nullable ChunkSectionLayer layer) {
+        DynamicModel d = dynamic(model);
+        if (d != null) return d.quads(state, side, rand, ModelValues.EMPTY, layer);
+        if (layer != null && state != null && layer != ItemBlockRenderTypes.getChunkRenderType(state)) return List.of();
+        List<BlockModelPart> parts = model.collectParts(rand);
+        if (parts.size() == 1) return parts.getFirst().getQuads(side);
+        List<BakedQuad> out = new ArrayList<>();
+        for (BlockModelPart p : parts) out.addAll(p.getQuads(side));
+        return out;
+    }
+
+    @Override
+    public Collection<ChunkSectionLayer> layers(BlockStateModel model, BlockState state, RandomSource rand) {
         DynamicModel d = dynamic(model);
         return d != null ? d.layers(state, rand, ModelValues.EMPTY) : List.of(ItemBlockRenderTypes.getChunkRenderType(state));
     }
 
     @Override
-    public BakedModel standaloneModel(Identifier id) {
-        return Minecraft.getInstance().getModelManager().getModel(id);
+    public BlockStateModel standaloneModel(Identifier id) {
+        var mm = Minecraft.getInstance().getModelManager();
+        ExtraModelKey<BlockStateModel> key = STANDALONE.get(id);
+        BlockStateModel m = key == null ? null : mm.getModel(key);
+        return m != null ? m : mm.getMissingBlockStateModel();
     }
 
     @Override
-    public BakedQuad quad(int[] vertices, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
-        return new BakedQuad(vertices, tint, direction, sprite, shade);
+    public BakedQuad quad(int[] v, int tint, Direction direction, TextureAtlasSprite sprite, boolean shade, boolean ambientOcclusion) {
+        Vector3f[] pos = new Vector3f[4];
+        long[] uv = new long[4];
+        int[] argb = new int[4], normals = new int[4];
+        for (int i = 0; i < 4; i++) {
+            int o = i * STRIDE;
+            pos[i] = new Vector3f(Float.intBitsToFloat(v[o]), Float.intBitsToFloat(v[o + 1]), Float.intBitsToFloat(v[o + 2]));
+            argb[i] = ARGB.fromABGR(v[o + 3]);
+            uv[i] = UVPair.pack(Float.intBitsToFloat(v[o + 4]), Float.intBitsToFloat(v[o + 5]));
+            normals[i] = v[o + 7] & 0xFFFFFF;
+        }
+        BakedQuad q = new BakedQuad(pos[0], pos[1], pos[2], pos[3], uv[0], uv[1], uv[2], uv[3], tint, direction, sprite, shade, 0);
+        EXTRAS.put(q, new Extras(argb, normals, ambientOcclusion));
+        return q;
+    }
+
+    @Override
+    public int[] vertices(BakedQuad q) {
+        int[] v = new int[STRIDE * 4];
+        Extras x = EXTRAS.get(q);
+        var n = q.direction().getUnitVec3i();
+        int faceNormal = packNormal(n.getX(), n.getY(), n.getZ());
+        for (int i = 0; i < 4; i++) {
+            int o = i * STRIDE;
+            var p = q.position(i);
+            v[o] = Float.floatToRawIntBits(p.x());
+            v[o + 1] = Float.floatToRawIntBits(p.y());
+            v[o + 2] = Float.floatToRawIntBits(p.z());
+            v[o + 3] = x == null ? -1 : ARGB.toABGR(x.argb[i]);
+            v[o + 4] = Float.floatToRawIntBits(UVPair.unpackU(q.packedUV(i)));
+            v[o + 5] = Float.floatToRawIntBits(UVPair.unpackV(q.packedUV(i)));
+            v[o + 6] = 0;
+            v[o + 7] = x == null || x.normals[i] == 0 ? faceNormal : x.normals[i];
+        }
+        return v;
+    }
+
+    static int packNormal(float x, float y, float z) {
+        return ((int) (x * 127F) & 0xFF) | ((int) (y * 127F) & 0xFF) << 8 | ((int) (z * 127F) & 0xFF) << 16;
     }
 
     @Override
     public boolean quadAo(BakedQuad quad) {
-        return true;
+        Extras x = EXTRAS.get(quad);
+        return x == null || x.ao;
     }
 
     @Override
@@ -146,61 +174,48 @@ public final class FabricClientPlatform implements ClientPlatform {
         return contents.originalImage;
     }
 
-    /** The quads of one layer of a dynamic model as a plain (vanilla) model. */
-    private static final class LayerModel implements BakedModel {
-        private final BakedModel base;
-        private final List<BakedQuad>[] sides;
+    /** The buffer of the layers the caller does not want. */
+    private enum Discard implements VertexConsumer {
+        INSTANCE;
 
-        @SuppressWarnings("unchecked")
-        LayerModel(BakedModel base, DynamicModel d, BlockState state, RandomSource rand, ModelValues data, @Nullable RenderType layer) {
-            this.base = base;
-            this.sides = new List[7];
-            for (int i = 0; i < 7; i++) {
-                Direction side = i < 6 ? SIDES[i] : null;
-                sides[i] = new ArrayList<>(d.quads(state, side, rand, data, layer));
-            }
+        @Override
+        public VertexConsumer addVertex(float x, float y, float z) {
+            return this;
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-            return sides[side == null ? 6 : side.ordinal()];
+        public VertexConsumer setColor(int r, int g, int b, int a) {
+            return this;
         }
 
         @Override
-        public boolean useAmbientOcclusion() {
-            return base.useAmbientOcclusion();
+        public VertexConsumer setColor(int argb) {
+            return this;
         }
 
         @Override
-        public boolean isGui3d() {
-            return base.isGui3d();
+        public VertexConsumer setUv(float u, float v) {
+            return this;
         }
 
         @Override
-        public boolean usesBlockLight() {
-            return base.usesBlockLight();
+        public VertexConsumer setUv1(int u, int v) {
+            return this;
         }
 
         @Override
-        public boolean isCustomRenderer() {
-            return false;
+        public VertexConsumer setUv2(int u, int v) {
+            return this;
         }
 
         @Override
-        @SuppressWarnings("deprecation")
-        public TextureAtlasSprite getParticleIcon() {
-            return base.getParticleIcon();
+        public VertexConsumer setNormal(float x, float y, float z) {
+            return this;
         }
 
         @Override
-        @SuppressWarnings("deprecation")
-        public ItemTransforms getTransforms() {
-            return base.getTransforms();
-        }
-
-        @Override
-        public ItemOverrides getOverrides() {
-            return ItemOverrides.EMPTY;
+        public VertexConsumer setLineWidth(float width) {
+            return this;
         }
     }
 }

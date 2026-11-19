@@ -12,8 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(net.minecraft.world.entity.Mob.class)
 public abstract class MobMixin {
 
-    @Inject(method = "convertTo", at = @At("HEAD"), cancellable = true)
-    private <T extends net.minecraft.world.entity.Mob> void bettacraft$convert(net.minecraft.world.entity.EntityType<T> type, boolean keep, CallbackInfoReturnable<T> cir) {
+    // M52b (1.21.4+): the conversion with its parameters and spawn reason (the short overload delegates to it)
+    @Inject(method = "convertTo(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/ConversionParams;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/ConversionParams$AfterConversion;)Lnet/minecraft/world/entity/Mob;",
+            at = @At("HEAD"), cancellable = true)
+    private <T extends net.minecraft.world.entity.Mob> void bettacraft$convert(net.minecraft.world.entity.EntityType<T> type, net.minecraft.world.entity.ConversionParams params,
+            net.minecraft.world.entity.EntitySpawnReason reason, net.minecraft.world.entity.ConversionParams.AfterConversion<T> after, CallbackInfoReturnable<T> cir) {
         if (FabricGameEvents.post(new LivingConversionEvent.Pre((net.minecraft.world.entity.LivingEntity) (Object) this, type)).isCanceled()) cir.setReturnValue(null);
     }
 

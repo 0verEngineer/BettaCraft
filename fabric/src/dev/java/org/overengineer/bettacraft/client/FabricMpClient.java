@@ -71,7 +71,7 @@ public final class FabricMpClient implements ClientModInitializer {
         if (me.equals("Dev1")) {
             // in the interior: the dimension of the tanks
             if (mc.level != null && mc.level.dimension() == org.overengineer.bettacraft.registry.ModDimensions.TANK_INTERIOR) ok++;
-            else bad.add("not in the interior: " + (mc.level == null ? null : mc.level.dimension().location()));
+            else bad.add("not in the interior: " + (mc.level == null ? null : mc.level.dimension().identifier()));
         } else {
             if (mc.level.getBlockEntity(tank) instanceof TankBlockEntity be && be.getTank() != null) {
                 ok++;

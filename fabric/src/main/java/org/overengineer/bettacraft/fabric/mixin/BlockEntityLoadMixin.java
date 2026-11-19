@@ -25,11 +25,12 @@ public abstract class BlockEntityLoadMixin {
     @Shadow @Nullable protected Level level;
 
     @Inject(method = "loadWithComponents", at = @At("HEAD"), cancellable = true)
-    private void bettacraft$clientLoad(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+    private void bettacraft$clientLoad(net.minecraft.world.level.storage.ValueInput input, CallbackInfo ci) {
         if (!(this instanceof ClientSyncedBlockEntity synced) || level == null || !level.isClientSide() || bettacraft$inside.get()) return;
         bettacraft$inside.set(true);
         try {
-            synced.handleUpdateTag(tag, registries);
+            // M52b (1.21.6+): the tag behind the ValueInput
+            synced.handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries((BlockEntity) (Object) this));
         } finally {
             bettacraft$inside.set(false);
         }

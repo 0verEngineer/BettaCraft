@@ -73,7 +73,7 @@ jobs:
         with:
           name: logs-integration
           path: |
-            run/gametest-integration/logs/
+            run/1.21.11/gametest-integration/logs/
             integration.log
           retention-days: 7
           if-no-files-found: ignore
