@@ -270,4 +270,10 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
         }
         return s;
     }
+
+    /** M52b: NeoForge 21.11 asks without the hit; it is the player's view ray, as for the pick-block key. */
+    public net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, net.minecraft.core.BlockPos pos, BlockState state, boolean includeData,
+            net.minecraft.world.entity.player.Player player) {
+        return getCloneItemStack(state, player.pick(player.blockInteractionRange(), 1.0F, false), level, pos, player);
+    }
 }

@@ -498,6 +498,17 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         afterClientUpdate(old);
     }
 
+    /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
+    public void handleUpdateTag(net.minecraft.world.level.storage.ValueInput input) {
+        handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
+    /** M52b: NeoForge 21.11 hands the update packet's data over as a value input. */
+    public void onDataPacket(Connection net, net.minecraft.world.level.storage.ValueInput input) {
+        net.minecraft.nbt.CompoundTag tag = org.overengineer.bettacraft.util.NbtCompat.read(input);
+        if (!tag.isEmpty()) handleUpdateTag(tag, org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
     private void afterClientUpdate(Identifier oldWood) {
         if (level == null || !level.isClientSide()) return;
         if (clientHasFilter && !isRemoved()) CLIENT_FILTERS.add(this);

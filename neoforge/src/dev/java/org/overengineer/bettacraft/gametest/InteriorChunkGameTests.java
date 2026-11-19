@@ -71,9 +71,10 @@ public final class InteriorChunkGameTests {
     @SuppressWarnings("unchecked")
     static Iterable<ChunkHolder> holders(ChunkMap map) {
         try {
-            Method m = ChunkMap.class.getDeclaredMethod("getChunks");
-            m.setAccessible(true);
-            return (Iterable<ChunkHolder>) m.invoke(map);
+            // M52b: 1.21.11 has no getChunks(); the visible holders are its map's values
+            java.lang.reflect.Field f = ChunkMap.class.getDeclaredField("visibleChunkMap");
+            f.setAccessible(true);
+            return ((it.unimi.dsi.fastutil.longs.Long2ObjectMap<ChunkHolder>) f.get(map)).values();
         } catch (ReflectiveOperationException e) {
             throw new GameTestFailure("cannot list the chunk holders: " + e);
         }
@@ -118,8 +119,9 @@ public final class InteriorChunkGameTests {
         h.runAtTickTime(450, () -> {
             for (InteriorRegion r : regions) {
                 int[] cols = shellColumns(r), n = loadedAround(in, r);
-                // at rest (care loop, a betta, a growing plant): the shell columns and the light neighbours around them
-                int bound = (cols[0] + 2) * (cols[1] + 2);
+                // at rest (care loop, a betta, a growing plant): the shell columns and the neighbours around them (M52b: the
+                // simulated tickets of 1.21.5+ keep the generation neighbours of ticking chunks three rings out, 1.21.1 one ring)
+                int bound = (cols[0] + 6) * (cols[1] + 6);
                 h.assertTrue(n[1] <= bound, "region " + r.id() + ": at rest at most " + bound + " chunks stay loaded, not " + n[1]);
             }
             h.succeed();

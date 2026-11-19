@@ -35,5 +35,9 @@ public @interface GameTest {
 
     int requiredSuccesses() default 1;
 
-    boolean skyAccess() default false;
+    /**
+     * No barrier ceiling over the test. Default true: the tests were written against 1.21.1, whose test structures had room
+     * above them (a player stands at height 9, a 10 high wreck is placed at 1); 1.21.5+ puts the ceiling right on top.
+     */
+    boolean skyAccess() default true;
 }

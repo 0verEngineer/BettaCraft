@@ -124,28 +124,24 @@ public final class NeoForgePlatform implements Platform {
         player.openMenu(provider, extra::accept);
     }
 
-    private static <T, H> @Nullable H wrap(@Nullable T handler, java.util.function.Function<T, H> f) {
-        return handler == null ? null : f.apply(handler);
-    }
-
     @Override
     public @Nullable IItemHandler itemHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Item.BLOCK, pos, side), net.neoforged.neoforge.items.IItemHandler::of));
+        return org.overengineer.bettacraft.neoforge.transfer.FromResources.items(level.getCapability(Capabilities.Item.BLOCK, pos, side));
     }
 
     @Override
     public @Nullable IFluidHandler fluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Fluid.BLOCK, pos, side), net.neoforged.neoforge.fluids.capability.IFluidHandler::of));
+        return org.overengineer.bettacraft.neoforge.transfer.FromResources.fluids(level.getCapability(Capabilities.Fluid.BLOCK, pos, side));
     }
 
     @Override
     public @Nullable IEnergyStorage energyStorage(Level level, BlockPos pos, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(wrap(level.getCapability(Capabilities.Energy.BLOCK, pos, side), net.neoforged.neoforge.energy.IEnergyStorage::of));
+        return org.overengineer.bettacraft.neoforge.transfer.FromResources.energy(level.getCapability(Capabilities.Energy.BLOCK, pos, side));
     }
 
     @Override
     public @Nullable IEnergyStorage energyStorage(Level level, BlockPos pos, BlockState state, @Nullable BlockEntity be, @Nullable Direction side) {
-        return NeoTransfer.fromNeo(wrap(Capabilities.Energy.BLOCK.getCapability(level, pos, state, be, side), net.neoforged.neoforge.energy.IEnergyStorage::of));
+        return org.overengineer.bettacraft.neoforge.transfer.FromResources.energy(Capabilities.Energy.BLOCK.getCapability(level, pos, state, be, side));
     }
 
     @Override

@@ -219,6 +219,11 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         loadM23(tag);
     }
 
+    /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
+    public void handleUpdateTag(net.minecraft.world.level.storage.ValueInput input) {
+        handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
     @Override
     protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);

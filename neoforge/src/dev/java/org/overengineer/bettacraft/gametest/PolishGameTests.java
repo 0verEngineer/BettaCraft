@@ -286,8 +286,8 @@ public final class PolishGameTests {
                                 types[i] + " size " + t.get().sizeX() + "x" + t.get().sizeY() + "x" + t.get().sizeZ());
                         // placed in the world (an interior works the same way), at least 1.5x the blocks of the old one
                         BlockPos base = h.absolutePos(new BlockPos(8 + i * 14, 1, 8));
-                        h.assertTrue(org.overengineer.bettacraft.decor.DecorItem.place(level, types[i], base, net.minecraft.world.level.block.Rotation.NONE, null) == null,
-                                types[i] + " placed");
+                        var refused = org.overengineer.bettacraft.decor.DecorItem.place(level, types[i], base, net.minecraft.world.level.block.Rotation.NONE, null);
+                        h.assertTrue(refused == null, types[i] + " placed: " + (refused == null ? "" : refused.getString()));
                     }
                 }
             }

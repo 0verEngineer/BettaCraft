@@ -92,7 +92,7 @@ public final class AquaristGameTests {
     /** Each level has its two offers, every listing gives an offer, the shown items are what the table says. */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void tradesOnEveryLevel(GameTestHelper h) {
-        var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
+        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
         check(trades != null, "no trades for the aquarist");
         Villager v = aquarist(h, new BlockPos(3, 1, 3), 1);
         var rnd = h.getLevel().getRandom();
@@ -155,7 +155,7 @@ public final class AquaristGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m47_prices", timeoutTicks = 100)
     public static void pricesByGenes(GameTestHelper h) {
         Villager v = aquarist(h, new BlockPos(3, 1, 3), 2);
-        var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
+        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
         MerchantOffer bucketOffer = trades.get(1)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()), bagOffer = trades.get(2)[1].getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom());
         try {
             ItemStack plain = betta(BettaGenome.DEFAULT, 0, "adult");
@@ -206,13 +206,13 @@ public final class AquaristGameTests {
         Features.set(Feature.AQUARIST_VILLAGER, false);
         var poi = PoiTypes.forState(ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         List<String> problems = new ArrayList<>();
-        var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
+        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
         for (int level = 1; level <= 5; level++) for (var l : trades.get(level)) if (l.getOffer((net.minecraft.server.level.ServerLevel) v.level(), v, h.getLevel().getRandom()) != null) problems.add("level " + level);
         if (poi.isPresent() && ModVillagers.AQUARIST.get().acquirableJobSite().test(poi.get())) problems.add("the basin is taken");
         h.runAfterDelay(210, () -> {
             try {
                 check(problems.isEmpty(), "with the switch off: " + problems);
-                check(v.getVillagerData().profession() == VillagerProfession.NONE && v.getOffers().isEmpty(),
+                check(v.getVillagerData().profession().is(VillagerProfession.NONE) && v.getOffers().isEmpty(),
                         "the aquarist keeps " + v.getVillagerData().profession() + " with " + v.getOffers().size() + " offers");
             } finally {
                 Features.set(Feature.AQUARIST_VILLAGER, true);

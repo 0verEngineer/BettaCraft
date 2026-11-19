@@ -16,7 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
  * (crafting an artemia culture or one batch of the hatchery uses the jar up) and jars always stack to 64.
  * <p>
  * Old jars (M2..M35) kept their spent uses in the vanilla {@code minecraft:damage} component (without {@code max_damage}).
- * {@link #verifyComponentsAfterLoad} drops that component whenever a stack of jars is made from saved or sent data
+ * {@link #stripOldUses} (M52b: called by {@code ItemStackVerifyMixin}, 1.21.2 dropped {@code Item#verifyComponentsAfterLoad}) drops that component whenever a stack of jars is made from saved or sent data
  * (every {@code ItemStack} codec, the network codec, commands and {@code copy()} go through it), so an old stack keeps
  * its count, loses its remaining uses and stacks with new jars, in inventories, containers, machine slots, item
  * entities and pipes alike, without a world scan.
@@ -24,12 +24,6 @@ import net.minecraft.world.item.TooltipFlag;
 public class ArtemiaCystsItem extends Item {
     public ArtemiaCystsItem(Properties properties) {
         super(properties.stacksTo(64));
-    }
-
-    /** M35.1: the spent uses of an old jar are gone; the jar is a whole jar again (stacks with new ones). */
-    /** M52b: no longer called by Minecraft (worlds of 1.21.1 do not come to 1.21.11). */
-    public void verifyComponentsAfterLoad(ItemStack stack) {
-        stripOldUses(stack);
     }
 
     /** Removes the old {@code minecraft:damage} of a jar of cysts (M35.1); true if there was one. */

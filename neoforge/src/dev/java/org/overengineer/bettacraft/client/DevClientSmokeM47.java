@@ -184,7 +184,7 @@ final class DevClientSmokeM47 {
 
     private static List<MerchantOffer> allOffers(Villager v) {
         List<MerchantOffer> out = new ArrayList<>();
-        var trades = VillagerTrades.TRADES.get(ModVillagers.AQUARIST.get());
+        var trades = VillagerTrades.TRADES.get(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getResourceKey(ModVillagers.AQUARIST.get()).orElseThrow());
         var r = v.getRandom();
         for (int level = 1; level <= 5; level++) {
             for (var l : trades.get(level)) {

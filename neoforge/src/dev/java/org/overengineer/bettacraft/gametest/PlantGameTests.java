@@ -584,9 +584,10 @@ public final class PlantGameTests {
             java.util.Set<FloatingPlantType> seen = java.util.EnumSet.noneOf(FloatingPlantType.class);
             for (String biome : new String[]{"minecraft:swamp", "minecraft:mangrove_swamp", "minecraft:plains"}) {
                 BlockPos at = h.absolutePos(new BlockPos(16, 2, 16));
-                var src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level);
-                level.getServer().getCommands().performPrefixedCommand(src, "fillbiome " + (at.getX() - 8) + " " + at.getY() + " " + (at.getZ() - 8) + " "
-                        + (at.getX() + 8) + " " + (at.getY() + 8) + " " + (at.getZ() + 8) + " " + biome);
+                var filled = net.minecraft.server.commands.FillBiomeCommand.fill(level, at.offset(-8, 0, -8), at.offset(8, 8, 8),
+                        level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BIOME)
+                                .getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.BIOME, net.minecraft.resources.Identifier.parse(biome))));
+                filled.ifRight(e -> h.assertTrue(false, "fillbiome " + biome + ": " + e.getMessage()));
                 h.assertTrue(level.getBiome(at).is(net.minecraft.resources.Identifier.parse(biome)), "biome set: " + level.getBiome(at));
                 int plants = 0, rolls = 200;
                 for (int i = 0, n = rolls; i < n; i++) {

@@ -153,7 +153,9 @@ public final class ContainerGameTests {
         // the cause: a vanilla bucket looks through the water for the bottom; out of reach nothing happens (the sea water
         // bucket was such a vanilla bucket)
         ItemStack vanilla = use(sp, new ItemStack(Items.WATER_BUCKET));
-        check(vanilla.is(Items.WATER_BUCKET), "the vanilla water bucket behaves differently than assumed: " + vanilla);
+        check(vanilla.is(Items.WATER_BUCKET), "the vanilla water bucket behaves differently than assumed: " + vanilla + " at " + sp.position()
+                + " looking " + sp.getXRot() + " reach " + sp.blockInteractionRange() + " hits " + sp.pick(sp.blockInteractionRange(), 1F, false).getLocation()
+                + " " + h.getLevel().getBlockState(net.minecraft.core.BlockPos.containing(sp.pick(sp.blockInteractionRange(), 1F, false).getLocation()).below()));
         ItemStack after = use(sp, new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         check(after.is(Items.BUCKET), "the sea water bucket did not empty into the sea: " + after);
         check(h.getLevel().getFluidState(h.absolutePos(new BlockPos(5, 8, 5))).is(net.minecraft.tags.FluidTags.WATER), "the sea is gone");

@@ -413,6 +413,12 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
         return l == null ? new ItemStack(ModItems.FILTER_INLET_PIPE.get()) : new ItemStack(pipeOf(l));
     }
 
+    /** M52b: NeoForge 21.11 asks without the hit; it is the player's view ray, as for the pick-block key. */
+    public net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, net.minecraft.core.BlockPos pos, BlockState state, boolean includeData,
+            net.minecraft.world.entity.player.Player player) {
+        return getCloneItemStack(state, player.pick(player.blockInteractionRange(), 1.0F, false), level, pos, player);
+    }
+
     /** The id of the item of a line's pipe (for texts). */
     public static Identifier pipeId(PipeLine l) {
         return BettaCraft.id(l.blockId());

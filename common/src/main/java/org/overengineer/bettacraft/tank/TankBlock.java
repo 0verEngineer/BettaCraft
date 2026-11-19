@@ -342,6 +342,11 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
         }
     }
 
+    /** M52b: NeoForge 21.11's form (with the tool): the same. */
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
+        return onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         Optional<Component> blocked = TankInhabitants.breakBlockedReason(level, pos);
         if (blocked.isPresent()) {
@@ -360,6 +365,12 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
             TankBlockItem.setStyle(stack, be.getStyle());
         }
         return stack;
+    }
+
+    /** M52b: NeoForge 21.11 asks without the hit; it is the player's view ray, as for the pick-block key. */
+    public net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, net.minecraft.core.BlockPos pos, BlockState state, boolean includeData,
+            net.minecraft.world.entity.player.Player player) {
+        return getCloneItemStack(state, player.pick(player.blockInteractionRange(), 1.0F, false), level, pos, player);
     }
 
     // ------------------------------------------------------------------ interaction
