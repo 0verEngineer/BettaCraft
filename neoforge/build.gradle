@@ -1118,7 +1118,7 @@ tasks.register('smoketestUpgrade') {
     dependsOn 'prepareServerRun'
     dependsOn { tasks.named('runServer').get().classpathProvider }
     doLast {
-        def worldName = project.findProperty('upgradeWorld') ?: 'Bettacraft Referenz 1.13.1'
+        def worldName = project.findProperty('upgradeWorld') ?: 'Bettacraft Referenz 1.21.11' // M52b: the reference of this branch (tools/upgrade, built with its first version)
         def src = rootProject.file("${runRoot}/saves/${worldName}")
         if (!new File(src, 'bettacraft_reference.json').exists()) {
             throw new GradleException("reference world missing: ${src} (build it with: bash tools/upgrade/build_reference.sh)")
