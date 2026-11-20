@@ -26,6 +26,12 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
   same data and assets, old worlds load).
 - The NeoForge jar is now called `bettacraft-neoforge-1.21.1-<version>.jar`.
 
+### Fixed
+- A tankmate fish heading for a spot on the glass right above the floor arrives there (it kept pushing into the floor
+  and never stood upright).
+- Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left out, so
+  mud dropped them in every biome).
+
 ### Known gaps on Fabric
 - A glowing pipe cover (glowstone, sea lantern ...) does not light up its surroundings (Fabric has no light by block
   entity).

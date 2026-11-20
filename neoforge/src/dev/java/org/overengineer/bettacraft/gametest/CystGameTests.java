@@ -263,6 +263,35 @@ public final class CystGameTests {
     }
 
     /**
+     * M52 (Fabric fix of 26.3, backported): mud broken outside {@code #bettacraft:betta_spawn_biomes} (the plains of the GameTest
+     * world) never drops mosquito larvae or tubifex. On Fabric the biome condition of these loot modifiers did not parse (no
+     * registries while the data was read) and was left out, so the mud dropped them in every biome.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void mudOutsideSwampsDropsNoLiveFood(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        BlockPos pos = h.absolutePos(new BlockPos(4, 2, 4));
+        h.assertTrue(!level.getBiome(pos).is(org.overengineer.bettacraft.registry.ModTags.BETTA_SPAWN_BIOMES), "the test stands outside the swamps: " + level.getBiome(pos));
+        var table = level.getServer().reloadableRegistries().getLootTable(Blocks.MUD.getLootTable());
+        int food = 0, mud = 0;
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(352L);
+        for (int i = 0; i < 2000; i++) {
+            LootParams params = new LootParams.Builder(level)
+                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                    .withParameter(LootContextParams.BLOCK_STATE, Blocks.MUD.defaultBlockState())
+                    .withParameter(LootContextParams.TOOL, new ItemStack(Items.IRON_SHOVEL))
+                    .create(LootContextParamSets.BLOCK);
+            for (ItemStack drop : table.getRandomItems(params, random)) {
+                if (drop.is(ModItems.MOSQUITO_LARVAE.get()) || drop.is(ModItems.TUBIFEX.get())) food += drop.getCount();
+                if (drop.is(Items.MUD)) mud += drop.getCount();
+            }
+        }
+        h.assertTrue(mud == 2000, "the mud itself: " + mud);
+        h.assertTrue(food == 0, "no mosquito larvae or tubifex from mud outside the swamps (5 % each inside): " + food);
+        h.succeed();
+    }
+
+    /**
      * M46: a world with its own server config ({@code <world>/serverconfig/bettacraft-server.toml}) still at the 1.36.0 default
      * 0.08 gets 0.04 once after the server started (the file kept as .pre-m46); the world records the migration, so 0.08 set
      * afterwards stays.
