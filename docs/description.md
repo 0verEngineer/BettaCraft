@@ -176,13 +176,13 @@ One file per loader and Minecraft version, `bettacraft-<loader>-<minecraft>-<ver
 server. Every version has the same content, ids, configs and handbook. On NeoForge no other mod is required; Fabric needs
 Fabric API and Forge Config API Port (Mod Menu shows the config screen).
 
-| Minecraft | Java | NeoForge | Fabric | Handbook on Fabric | Updates |
-|---|---|---|---|---|---|
-| 1.21.1 | 21 | 21.1.200+ | Loader 0.16+ | Patchouli | full |
-| 1.21.11 | 21 | 21.11.40+ | Loader 0.17+, Fabric API 0.141+ | Modonomicon | severe fixes only |
-| 26.1.2 (Fabric also 26.1, 26.1.1) | 25 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | Modonomicon | full |
-| 26.2 | 25 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | Modonomicon | severe fixes only |
-| 26.3 | 25 | 26.3.0.113+ | Loader 0.18.4+, Fabric API 0.166+ | Modonomicon | full while it is the newest |
+| Minecraft | Java | NeoForge | Fabric | Handbook on Fabric |
+|---|---|---|---|---|
+| 1.21.1 | 21 | 21.1.200+ | Loader 0.16+ | Patchouli |
+| 1.21.11 | 21 | 21.11.40+ | Loader 0.17+, Fabric API 0.141+ | Modonomicon |
+| 26.1.2 (Fabric also 26.1, 26.1.1) | 25 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | Modonomicon |
+| 26.2 | 25 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | Modonomicon |
+| 26.3 | 25 | 26.3.0.113+ | Loader 0.18.4+, Fabric API 0.166+ | Modonomicon |
 
 ## Compatibility
 
@@ -243,7 +243,7 @@ last three pictures under Compatibility were taken with Complementary Reimagined
 without shaders.
 
 **Which Minecraft versions and loaders?** 1.21.1, 1.21.11, 26.1.2 (on Fabric also 26.1 and 26.1.1), 26.2 and 26.3, each
-on NeoForge and Fabric, see Versions and loaders. 1.21.1, 26.1.2 and the newest 26.x get every update. A world stays on
+on NeoForge and Fabric, see Versions and loaders. Every version gets every new feature and fix. A world stays on
 its Minecraft version: within one Minecraft version it is migrated between Bettacraft versions, but it does not move to
 another Minecraft version.
 
