@@ -172,6 +172,44 @@ repositories {
     }
 }
 
+// M52-final: the jar-in-jar libraries of mods on the Fabric dev runtime (the dev runtime does not load nested jars), extracted
+// while configuring into build/<dirName>/<Minecraft version>-<hash of the source jars>. Loom resolves the dev classpath during
+// configuration, before any task runs: a directory filled by a task held the jars of the previous run then (after a branch
+// switch: libraries of another Minecraft version, so the first run failed). A new key (other jars, other branch) clears the
+// directory and extracts again; the same key reuses it.
+def nestedJars = { String dirName, Collection<File> sources, Closure<Boolean> accept ->
+    def md = java.security.MessageDigest.getInstance('SHA-256')
+    sources.each { md.update("${it.absolutePath}|${it.length()}|${it.lastModified()};".toString().getBytes('UTF-8')) }
+    def key = new BigInteger(1, md.digest()).toString(16).padLeft(64, '0').substring(0, 16)
+    def root = layout.buildDirectory.dir(dirName).get().asFile
+    def dir = new File(root, "${minecraft_version}-${key}")
+    def done = new File(dir, '.complete')
+    if (!done.exists()) {
+        root.listFiles()?.each { project.delete(it) } // other keys and the flat layout of older builds
+        dir.mkdirs()
+        Set<String> seen = []
+        sources.each { src ->
+            new java.util.zip.ZipFile(src).withCloseable { zip ->
+                zip.entries().toList().each { e ->
+                    if (e.directory || !(e.name ==~ /META-INF\/jars\/[^\/]+\.jar/)) return
+                    def name = e.name.substring(e.name.lastIndexOf('/') + 1)
+                    if (!accept(name) || !seen.add(name)) return
+                    new File(dir, name).withOutputStream { out -> zip.getInputStream(e).withCloseable { out << it } }
+                }
+            }
+        }
+        done.text = sources.collect { it.name }.join(' ')
+    }
+    return dir.listFiles().findAll { it.name.endsWith('.jar') }.sort { it.name }
+}
+
+configurations {
+    patchouliJar { transitive = false }
+}
+dependencies {
+    patchouliJar "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     // M52c: Minecraft 26.1 is not obfuscated (no mappings)
@@ -188,7 +226,7 @@ dependencies {
     if (!project.hasProperty('noPatchouli') && !project.hasProperty('noModonomicon')) {
         localRuntime "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
         // its nested config library (Fiber; the dev runtime does not load the jars inside a mod jar): extracted, read only
-        localRuntime files({ fileTree(layout.buildDirectory.dir('patchouli-libraries')).include('*.jar').files }) { builtBy 'extractPatchouliLibraries' }
+        localRuntime files(nestedJars('patchouli-libraries', configurations.patchouliJar.files, { true }))
     }
 
     // M52: the info overlays and the recipe viewer, the same plugin classes as on NeoForge (neoforge/compat/{jade,jei,wthit},
@@ -220,24 +258,11 @@ dependencies {
         localRuntime files(groupJars.values())
         // their jar-in-jar libraries (the dev runtime does not load nested jars), extracted read only; not the ones we or
         // the groups bring ourselves
-        def nested = layout.buildDirectory.dir('nested-mods')
         def own = groupJars.keySet().collect { it.replaceAll(/[-_+]?\d.*$/, '') }
-        def t = tasks.register('extractNestedMods', Sync) {
-            groupJars.values().each { j ->
-                from(zipTree(j)) {
-                    include 'META-INF/jars/*.jar'
-                    exclude '**/energy-*.jar'
-                    // M52b: Night Config comes with Forge Config API Port (an older copy nested in another mod would win)
-                    exclude '**/core-3.*.jar', '**/toml-3.*.jar'
-                    eachFile { it.path = it.name }
-                    includeEmptyDirs = false
-                }
-            }
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            eachFile { f -> if (own.any { o -> o && f.name.startsWith(o) }) f.exclude() }
-            into nested
-        }
-        localRuntime files({ fileTree(nested).include('*.jar').files }) { builtBy t }
+        localRuntime files(nestedJars('nested-mods', groupJars.values(), { String n ->
+            // energy: we bundle it; Night Config comes with Forge Config API Port (M52b: an older copy nested in another mod would win)
+            !n.startsWith('energy-') && !(n ==~ /(core|toml)-3\..*\.jar/) && !own.any { o -> o && n.startsWith(o) }
+        }))
     }
 
     guideToolImplementation 'com.google.code.gson:gson:2.11.0'
@@ -245,23 +270,6 @@ dependencies {
     devCompileOnly 'org.jetbrains:annotations:24.1.0'
     // javax.annotation.Nullable of the common code (NeoForge brings it)
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-}
-
-configurations {
-    patchouliJar { transitive = false }
-}
-dependencies {
-    patchouliJar "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
-}
-tasks.register('extractPatchouliLibraries', Copy) {
-    def jar = configurations.patchouliJar
-    inputs.files(jar)
-    from({ zipTree(jar.singleFile) }) {
-        include 'META-INF/jars/*.jar'
-        eachFile { it.path = it.name }
-        includeEmptyDirs = false
-    }
-    into layout.buildDirectory.dir('patchouli-libraries')
 }
 
 // ---- the handbook: the GuideME pages -> a Modonomicon book (build/generated/modonomicon: the book data, its textures and
