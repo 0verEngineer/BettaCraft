@@ -31,6 +31,9 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 - Fabric: no EMI entrypoint to a class that is not in the jar (there is no EMI for 1.21.11).
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
+- Test only: background test clients log whether their window came up without the focus and never grab the mouse.
+- Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
+  the multiplayer test clears the mod groups of this version.
 
 ### Known gaps on 1.21.11
 - Create (with Sable and Aeronautics), Applied Energistics 2, Refined Storage, KubeJS, the power mods of ATM10, Cable
