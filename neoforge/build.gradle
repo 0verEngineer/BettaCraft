@@ -1002,6 +1002,11 @@ tasks.register('runMultiplayerTest') {
         def sp = new File(runDir, 'server.properties')
         if (sp.exists()) sp.withInputStream { props.load(it) }
         if (props.getProperty('online-mode', 'true') != 'false') throw new GradleException('run/server.properties needs online-mode=false (dev clients have no account)')
+        // since 26.3 a new server.properties has white-list=true: the dev clients Dev1 / Dev2 are on no list
+        if (props.getProperty('white-list', 'false') != 'false') {
+            sp.text = sp.getText('UTF-8').replaceAll(/(?m)^white-list=.*$/, 'white-list=false')
+            logger.lifecycle('run/server.properties: white-list switched off for the multiplayer test')
+        }
         def port = props.getProperty('server-port', '25565')
         def cmd = { t, String name, List extraJvm, List extraArgs ->
             // the class path goes into an argument file (the Windows command line is limited to 32k characters)
@@ -1109,7 +1114,7 @@ tasks.register('buildShowcase') {
                 'spawn-animals=true', 'spawn-npcs=true', 'generate-structures=false', 'server-port=25599', 'spawn-protection=0',
                 // spawn-animals must stay true: without it the server discards every water animal (our fish too); the gamerule
                 // doMobSpawning is off instead
-                'max-players=1', 'level-seed=21', 'allow-flight=true', 'enable-command-block=true',
+                'max-players=1', 'level-seed=21', 'allow-flight=true', 'enable-command-block=true', 'white-list=false',
                 // M21.6: saving the big world can take longer than the watchdog's minute on a busy disk
                 'max-tick-time=-1'].join('\n') + '\n', 'UTF-8')
         def cp = new File(logs, 'classpath.txt')
@@ -1164,7 +1169,7 @@ tasks.register('smoketestUpgrade') {
         }
         new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
         new File(dir, 'server.properties').write(['online-mode=false', 'server-port=25598', 'spawn-protection=0', 'spawn-animals=true',
-                'spawn-npcs=true', 'max-players=1'].join('\n') + '\n', 'UTF-8')
+                'spawn-npcs=true', 'max-players=1', 'white-list=false'].join('\n') + '\n', 'UTF-8')
         def cp = new File(logs, 'classpath.txt')
         cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
         // vanilla noise of the dev runtime (translations of other mods' blocks) is not an error of the upgrade

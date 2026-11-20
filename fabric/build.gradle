@@ -587,7 +587,7 @@ tasks.register('fabricMultiplayerTest') {
         new File(sdir, 'world').deleteDir()
         sdir.mkdirs()
         new File(sdir, 'eula.txt').text = 'eula=true\n'
-        new File(sdir, 'server.properties').text = 'server-port=25595\nonline-mode=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngamemode=creative\nenforce-secure-profile=false\n'
+        new File(sdir, 'server.properties').text = 'server-port=25595\nonline-mode=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngamemode=creative\nenforce-secure-profile=false\nwhite-list=false\n'
         def server = new ProcessBuilder(cmd(srv, ['-Dbettacraft.smoketest.mp=true'], [])).directory(sdir)
                 .redirectErrorStream(true).redirectOutput(new File(logs, 'server.log')).start()
         def clients = []
@@ -635,7 +635,7 @@ tasks.register('fabricSaveLoadTest') {
         new File(dir, 'eula.txt').text = 'eula=true\n'
         new File(dir, 'server.properties').text = ['online-mode=false', 'level-type=minecraft:flat', 'gamemode=creative', 'difficulty=peaceful',
                 'spawn-monsters=false', 'spawn-animals=true', 'generate-structures=false', 'server-port=25596', 'spawn-protection=0',
-                'level-seed=21', 'allow-flight=true', 'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
+                'level-seed=21', 'allow-flight=true', 'max-tick-time=-1', 'white-list=false'].join(System.lineSeparator()) + System.lineSeparator()
         def run = { String name, List props, String expect ->
             def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') } + props + ['-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
             def log = new File(logs, name + '.log')
