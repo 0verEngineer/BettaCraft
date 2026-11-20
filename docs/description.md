@@ -2,10 +2,9 @@
 
 # Bettacraft
 
-**Realistic fishkeeping for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric.** Catch wild bettas and tankmates, keep them in multiblock
-aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the water, run
-filters, lights, CO2, pipes and reef dosing, culture live food, and breed new colours with real Mendel genetics. Water
-chemistry, temperature, stocking and food all matter, the way they do in a real tank.
+**Realistic fishkeeping for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric.** Catch wild bettas
+and tankmates, keep them in multiblock aquariums of any shape, aquascape with swaying plants and corals, and breed with
+real genetics.
 
 ![An aquarium room: a reef tank, a planted show tank with LED panels, CO2 and a multiblock filter, and a betta nano tank](images/bettacraft-aquarium-room.jpg)
 
