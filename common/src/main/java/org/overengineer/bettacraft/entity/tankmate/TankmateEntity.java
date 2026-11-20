@@ -400,6 +400,11 @@ public class TankmateEntity extends AbstractFish {
         return behaviour.glassNow();
     }
 
+    /** M52 GameTests: swim to this spot on the glass of wall {@code face} (0 north, 1 south, 2 west, 3 east); false before it knows its tank. */
+    public boolean swimToGlassForTest(Vec3 spot, int face) {
+        return behaviour.glassAt(spot, face);
+    }
+
     /** M21.8: a seahorse that holds on to a hitching post (server). */
     public boolean isHitched() {
         return behaviour.hitched && behaviour.hitchPost != null;

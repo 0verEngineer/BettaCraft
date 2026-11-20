@@ -26,7 +26,7 @@ class TankmateMoveControl extends MoveControl {
 
     @Override
     public void tick() {
-        if (fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
+        buoyancy(fish);
         if (operation != Operation.MOVE_TO) {
             fish.setSpeed(0);
             yawVel *= 0.7F;
@@ -80,6 +80,17 @@ class TankmateMoveControl extends MoveControl {
             fish.setDeltaMovement(fish.getDeltaMovement().multiply(1, 0.5, 1));
         }
         fish.setDeltaMovement(fish.getDeltaMovement().add(0, vy, 0));
+    }
+
+    /**
+     * Lifts the fish by what vanilla fish travel lets it sink after every move ({@code AbstractFish}: -0.005 a tick without an
+     * attack target), so that it hovers. M52: only while that sink is still in its motion: {@code LivingEntity#aiStep} first
+     * zeroes a vertical motion below 0.003 (as do the tank's clamp and a collision), and the lift added anyway carried every
+     * slow fish up by up to 0.005 a tick: it bobbed, and an otocinclus pressed to the surface never reached its spot on the
+     * glass 0.2 blocks below (glassCleanersStandUpOnlyAtTheGlass).
+     */
+    static void buoyancy(TankmateEntity fish) {
+        if (fish.getDeltaMovement().y != 0 && fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
     }
 
     void swimTo(double x, double y, double z, double speed) {
