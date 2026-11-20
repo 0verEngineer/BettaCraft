@@ -395,7 +395,10 @@ public final class CrankGameTests {
             ExternalFilterBlockEntity f = filter(h, new BlockPos(5, 1, 10), Direction.WEST);
             f.insertHeater(new ItemStack(ModItems.HEATER_MEDIUM.get()));
             TankEquipment.invalidate(b);
-            List<BettaEntity> fa = stock(h, a, 3701), fb = stock(h, b, 3711), fp = stock(h, p, 3721);
+            // M52: P holds two females: a pair bred in the 28 days, and its fry (2 to 23 bettas in the tank, by the shared random
+            // of the suite) set the nitrate and the quality, 0.40-0.69 at the end (0.396 failed the check once on 26.3)
+            List<BettaEntity> fa = stock(h, a, 3701), fb = stock(h, b, 3711),
+                    fp = List.of(LiveFoodGameTests.betta(h, p, true, 3721), LiveFoodGameTests.betta(h, p, true, 3722));
             float ambient = TankCare.ambient(level, a.getTank());
             // B wants it warmer than the room: only the heater can do that
             b.getTank().setTargetTemp(Math.min(29F, ambient + 2F));
