@@ -481,12 +481,14 @@ tasks.register('verifyFabricJar') {
     group = 'verification'
     def jarTask = tasks.named('remapJar')
     dependsOn jarTask
+    // only the file (the configuration cache cannot keep a task; backport of the 26.1.2 fix)
+    def jarFile = jarTask.flatMap { it.archiveFile }
     def report = layout.buildDirectory.file('verifyFabricJar.txt')
     def expected = project.findProperty('expectedVersion')
     def version = project.mod_version
     outputs.file(report)
     doLast {
-        def f = jarTask.get().archiveFile.get().asFile
+        def f = jarFile.get().asFile
         def zip = new java.util.zip.ZipFile(f)
         def names = zip.entries().collect { it.name }
         def problems = []
