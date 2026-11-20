@@ -249,7 +249,7 @@ integrations are NeoForge only.
 |---|---|---|---|---|
 | 1.21.1 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | main version (ATM10), fully maintained |
 | 1.21.11 | 21.11.40+ | Loader 0.19+, Fabric API 0.141+ | GuideME / Modonomicon | `bettacraft-<loader>-1.21.11-<version>.jar`; one release, then severe fixes only. Create, AE2, Refined Storage, KubeJS, the power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version |
-| 26.1.2 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | GuideME / Modonomicon | `bettacraft-<loader>-26.1.2-<version>.jar`, Java 25; fully maintained (ATM11). The Fabric jar also runs on 26.1 and 26.1.1. Trades are data (`villager_trade`). Create, Mekanism, Flux Networks, Industrial Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves and EMI (full list in the CHANGELOG) have no 26.1.2 version; AE2, KubeJS, Aquaculture and Cable Facades are NeoForge only |
+| 26.1.2 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | GuideME / Modonomicon | `bettacraft-<loader>-26.1.2-<version>.jar`, Java 25; fully maintained (ATM11). The Fabric jar also runs on 26.1 and 26.1.1. Trades are data (`villager_trade`). Create, Mekanism, Flux Networks, Industrial Foregoing, Farmer's Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves and EMI (full list in the CHANGELOG) have no 26.1.2 version; AE2, KubeJS, Aquaculture and Cable Facades are NeoForge only |
 
 ## Optional integrations
 

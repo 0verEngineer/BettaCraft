@@ -181,6 +181,7 @@ jobs:
             the-one-probe(optional)
             wthit-forge(optional)
             fish-of-thieves(optional)
+            better-fishtanks(optional)
             aquaculture(optional)
           files: ${{ needs.tag.outputs.jar }}
           name: Bettacraft ${{ needs.tag.outputs.version }} (NeoForge 26.1.2)
@@ -208,6 +209,7 @@ jobs:
             jei(optional)
             roughly-enough-items(optional)
             fish-of-thieves(optional)
+            better-fishtanks(optional)
           files: ${{ needs.tag.outputs.jar }}
           name: Bettacraft ${{ needs.tag.outputs.version }} (Fabric 26.1-26.1.2)
           version: ${{ needs.tag.outputs.version }}+fabric-26.1.2

@@ -16,6 +16,8 @@ as usual.
   needs 26.1.2 (NeoForge for 26.1 and 26.1.1 is beta only and lacks the 26.1.2 API).
 - **Handbook on Fabric 26.1.2** as a **Modonomicon** book (as on 1.21.11), English and German; NeoForge keeps GuideME.
 - The One Probe works on Fabric again (it has a Fabric 26.1.2 version).
+- **Better Fish Tanks** on 26.1.2, NeoForge and Fabric (its fish bag in both directions, bettas and our bags into its
+  tanks). Its 26.x versions are published on CurseForge and Modrinth; the port had missed them.
 
 ### Fixed
 - Mining an aquarium no longer crashes the client on 26.1 (the crack overlay asks block models without a block).
@@ -28,6 +30,8 @@ as usual.
   out, so mud dropped them in every biome).
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
+- Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
+  click was only hooked up on NeoForge).
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
@@ -51,7 +55,7 @@ as usual.
 
 ### Known gaps on 26.1.2
 - Create (with Sable and Aeronautics), Mekanism (and Mekanism Covers), Flux Networks, Industrial Foregoing, Farmer's
-  Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker,
+  Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker,
   Fish Eggs, Oh The Biomes We've Gone and EMI have no 26.1.2 version: their integrations stay out of this version.
   Applied Energistics 2, KubeJS, Aquaculture and Cable Facades exist for NeoForge only.
 
