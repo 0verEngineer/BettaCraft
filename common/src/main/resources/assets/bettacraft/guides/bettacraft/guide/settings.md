@@ -244,7 +244,8 @@ loaded in peaceful (like every other monster).
 On **Minecraft 26.3** everything works as on 26.2 (also on the Vulkan renderer of 26.3). On NeoForge the server config is
 `config/bettacraft-server.toml` for every world; a world that should differ keeps its own copy in `<world>/syncedconfig/`
 (on 26.2 and older: `<world>/serverconfig/`). Mods without a 26.3 version have no integration there: the same as on 26.2 and
-Modular Routers.
+Modular Routers. Shaders: Iris works on Fabric 26.3; on NeoForge 26.3 Sodium and Iris have no working
+release yet.
 
 ## Other mods
 

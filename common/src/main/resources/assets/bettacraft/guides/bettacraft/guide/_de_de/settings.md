@@ -251,7 +251,8 @@ sein Chunk im friedlichen Modus geladen wird (wie jedes andere Monster).
 Auf **Minecraft 26.3** funktioniert alles wie auf 26.2 (auch mit dem Vulkan-Renderer von 26.3). Auf NeoForge ist die
 Server-Konfiguration `config/bettacraft-server.toml` für alle Welten; eine Welt, die abweichen soll, hat ihre eigene Kopie in
 `<welt>/syncedconfig/` (auf 26.2 und älter: `<welt>/serverconfig/`). Mods ohne 26.3-Version haben dort keine Anbindung: dieselben
-wie auf 26.2 und Modular Routers.
+wie auf 26.2 und Modular Routers. Shader: Iris läuft auf Fabric 26.3; für NeoForge 26.3 gibt es von Sodium und Iris noch
+kein lauffähiges Release.
 
 ## Andere Mods
 
