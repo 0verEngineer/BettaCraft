@@ -236,13 +236,13 @@ Auf **Minecraft 26.1.2** (Fabric auch 26.1 und 26.1.1) funktioniert alles wie au
 des fahrenden Händlers und des Aquarianers sind Daten (`villager_trade`, in den Handels-Tags
 `minecraft:wandering_trader/common` / `uncommon` und `bettacraft:aquarist/level_1` ... `level_5`), Datenpakete können also
 einzelne Angebote entfernen oder hinzufügen; und Mods ohne 26.1.2-Version (Create, Mekanism, Flux Networks, Industrial
-Foregoing, Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper
+Foregoing, Farmer's Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper
 and Darker, Oh The Biomes We've Gone, EMI) haben dort keine Anbindung. Das FTB-Quests-Kapitel heißt dort `bettacraft.json5`
 (FTB Quests 26.1 liest JSON5).
 
 Auf **Minecraft 26.2** funktioniert alles wie auf 26.1.2 (auch dort ist der Handel Daten). Mods ohne 26.2-Version haben dort
 keine Anbindung: FTB Quests (daher gibt es kein Quest-Kapitel), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
-Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Better Fish Tanks, Fintastic, Critters and Companions, The
+Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Fintastic, Critters and Companions, The
 Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Cataclysm, Deeper and Darker, Oh The Biomes
 We've Gone und EMI. Naturalist gibt es auf 26.2 wieder (NeoForge und Fabric). In einer **friedlichen** Welt gibt es auf 26.2 gar keine
 Monster: Ein Monsterglas lässt sich dort weder öffnen noch in ein Terrarium setzen, und ein Monster im Terrarium ist weg, sobald

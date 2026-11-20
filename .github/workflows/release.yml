@@ -181,6 +181,7 @@ jobs:
             the-one-probe(optional)
             wthit-forge(optional)
             fish-of-thieves(optional)
+            better-fishtanks(optional)
             aquaculture(optional)
             naturalist(optional)
           files: ${{ needs.tag.outputs.jar }}
@@ -209,6 +210,7 @@ jobs:
             jei(optional)
             roughly-enough-items(optional)
             fish-of-thieves(optional)
+            better-fishtanks(optional)
             naturalist(optional)
           files: ${{ needs.tag.outputs.jar }}
           name: Bettacraft ${{ needs.tag.outputs.version }} (Fabric 26.3)

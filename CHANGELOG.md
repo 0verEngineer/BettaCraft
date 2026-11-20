@@ -15,6 +15,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
   26.3). The same content, ids, configs and handbook as on 26.2. 26.3 has no patch versions; the jars declare 26.3.
 - **Handbook:** GuideME on NeoForge (GuideME 26.3 is an alpha), a **Modonomicon** book on Fabric, English and German.
 - The Vulkan backend of 26.3 (video settings) draws the tanks, the miniature and the menus like OpenGL.
+- **Better Fish Tanks** on 26.3, NeoForge and Fabric (its fish bag in both directions, bettas and our bags into its
+  tanks). Its 26.x versions are published on CurseForge and Modrinth; the port had missed them.
 
 ### Changed (Minecraft 26.3 itself)
 - **Server config on NeoForge 26.3** (FML 12): `config/bettacraft-server.toml` is the default for every world; a world
@@ -36,6 +38,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
   there, so Bettacraft adds its own to that value.
 - Fabric: the mud drops (tubifex, mosquito larvae) keep their biome condition (`#bettacraft:betta_spawn_biomes`); it was
   left out when the loot modifiers were read without the game's registries, so they dropped in every biome.
+- Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
+  click was only hooked up on NeoForge).
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
   too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock), the monitor test allows
   for the tanks of neighbouring tests (at most four tiles on its screen).
@@ -43,7 +47,7 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 ### Known gaps on 26.3
 - No 26.3 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
   Mekanism (and Mekanism Covers), Flux Networks, EnderIO, Oritech, Industrial Foregoing, Refined Storage, LaserIO, Cable
-  Facades, **Modular Routers** (new gap against 26.2), Better Fish Tanks, Fintastic, Critters and Companions, The Undergarden,
+  Facades, **Modular Routers** (new gap against 26.2), Fintastic, Critters and Companions, The Undergarden,
   Ice and Fire, Sushi Go Crafting, Twilight Forest, Regions Unexplored, Oh The Biomes We've Gone, Alex's Caves, Cataclysm,
   Deeper and Darker, Fish Eggs, Patchouli and EMI. Applied Energistics 2 (alpha), Powah (alpha), Pipez, Integrated
   Dynamics, XNet, Aquaculture and the GuideME handbook are NeoForge only.

@@ -175,17 +175,17 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 - **Minecraft 26.1.2 (Java 25):** the same version for NeoForge 26.1.2 and Fabric (Fabric API 0.155+), files
   `bettacraft-neoforge-26.1.2-<version>.jar` and `bettacraft-fabric-26.1.2-<version>.jar` (Fabric: also 26.1 and 26.1.1).
   The handbook is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.1.2 version (Create, Mekanism, Industrial Foregoing,
-  Farmer's Delight, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, Alex's Caves, EMI and a few more)
+  Farmer's Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves, EMI and a few more)
   have no integration there.
 - **Minecraft 26.2 (Java 25):** the same version for NeoForge 26.2 and Fabric (Fabric API 0.161+), files
   `bettacraft-neoforge-26.2-<version>.jar` and `bettacraft-fabric-26.2-<version>.jar`. The handbook is GuideME on NeoForge
   and a **Modonomicon** book on Fabric. Mods without a 26.2 version (FTB Quests, KubeJS, Create, Mekanism, EnderIO,
-  Refined Storage, Better Fish Tanks, Fintastic, Critters and Companions, EMI and a few more) have no integration there;
+  Refined Storage, Fintastic, Critters and Companions, EMI and a few more) have no integration there;
   Naturalist is back.
 - **Minecraft 26.3 (Java 25):** the same version for NeoForge 26.3 and Fabric (Fabric API 0.166+), files
   `bettacraft-neoforge-26.3-<version>.jar` and `bettacraft-fabric-26.3-<version>.jar`, on OpenGL and Vulkan. The handbook
   is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.3 version (FTB Quests, KubeJS, Create,
-  Mekanism, EnderIO, Refined Storage, Modular Routers, Better Fish Tanks, Fintastic, Critters and Companions, EMI and a few
+  Mekanism, EnderIO, Refined Storage, Modular Routers, Fintastic, Critters and Companions, EMI and a few
   more) have no integration there.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
