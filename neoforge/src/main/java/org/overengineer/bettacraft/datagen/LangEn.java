@@ -254,6 +254,7 @@ final class LangEn {
         a.accept("message.bettacraft.tank.max_entities", "This tank already holds the maximum of %s animals");
         a.accept("message.bettacraft.tank.crowded_full", "The tank is full: at most %s adult animals for this amount of water");
         a.accept("message.bettacraft.tank.not_inside", "That animal is no longer in this tank");
+        a.accept("message.bettacraft.tank.take_out_by_menu", "%s lives in this tank: take it out with the tank menu (Bucket or Fish bag)");
         a.accept("message.bettacraft.tank.cannot_take", "%s cannot be put into a bucket");
         a.accept("message.bettacraft.tank.need_bucket", "You need an empty bucket in your inventory");
         a.accept("message.bettacraft.tank.need_bag", "You need an empty fish bag in your inventory (a Better Fish Tanks fish bag or a Fintastic fishnet works too)");
