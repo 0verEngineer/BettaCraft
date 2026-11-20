@@ -95,7 +95,7 @@ jobs:
       - name: Dedicated server smoke test (aquarium mods, Jade, JEI, GuideME)
         run: |
           mkdir -p run
-          echo "eula=true" > run/26.2/eula.txt
+          echo "eula=true" > run/26.3/eula.txt
           ./gradlew runServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-default.log
           grep -q "\[smoketest\] PASSED" smoke-default.log
 
@@ -104,11 +104,11 @@ jobs:
         run: ./gradlew runFabricGameTest $GRADLE_ARGS 2>&1 | tee gametest-fabric.log
 
       - name: Failed Fabric GameTests
-        if: failure() && hashFiles('run/26.2/fabric/gametest/report.xml') != ''
+        if: failure() && hashFiles('run/26.3/fabric/gametest/report.xml') != ''
         run: |
           python3 - <<'PY' || true
           import xml.etree.ElementTree as ET
-          for tc in ET.parse('run/26.2/fabric/gametest/report.xml').iter('testcase'):
+          for tc in ET.parse('run/26.3/fabric/gametest/report.xml').iter('testcase'):
               f = tc.find('failure')
               if f is not None:
                   print('::error title=Fabric GameTest failed::' + tc.get('name') + ': ' + (f.get('message') or ''))
@@ -116,8 +116,8 @@ jobs:
 
       - name: Fabric dedicated server smoke test
         run: |
-          mkdir -p run/26.2/fabric/server
-          echo "eula=true" > run/26.2/fabric/server/eula.txt
+          mkdir -p run/26.3/fabric/server
+          echo "eula=true" > run/26.3/fabric/server/eula.txt
           ./gradlew runFabricServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-fabric.log
           grep -q "\[smoketest\] PASSED" smoke-fabric.log
 
@@ -137,14 +137,14 @@ jobs:
         with:
           name: logs-build
           path: |
-            run/26.2/logs/
-            run/26.2/gametest/logs/
-            run/26.2/data/logs/
+            run/26.3/logs/
+            run/26.3/gametest/logs/
+            run/26.3/data/logs/
             gametest.log
             gametest-fabric.log
-            run/26.2/fabric/server/logs/
-            run/26.2/fabric/gametest/logs/
-            run/26.2/fabric/gametest/report.xml
+            run/26.3/fabric/server/logs/
+            run/26.3/fabric/gametest/logs/
+            run/26.3/fabric/gametest/report.xml
             smoke-*.log
             build/reports/
             common/build/reports/
@@ -209,7 +209,7 @@ jobs:
         run: |
           chmod +x gradlew
           mkdir -p run
-          echo "eula=true" > run/26.2/eula.txt
+          echo "eula=true" > run/26.3/eula.txt
           ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
           if [ "${{ matrix.check }}" = smoke ]; then grep -q "\[smoketest\] PASSED" "${{ matrix.id }}.log"; fi
 
@@ -224,8 +224,8 @@ jobs:
         with:
           name: logs-${{ matrix.id }}
           path: |
-            run/26.2/logs/
-            run/26.2/gametest/logs/
+            run/26.3/logs/
+            run/26.3/gametest/logs/
             ${{ matrix.id }}.log
           retention-days: 7
           if-no-files-found: ignore
