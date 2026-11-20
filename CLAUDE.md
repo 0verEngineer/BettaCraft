@@ -154,7 +154,7 @@ Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), t
 | `1.21.11` (M52b) | 1.21.11 | NeoForge + Fabric | 21 | one release, then only severe fixes |
 | `26.1.2` (M52c) | 26.1.2 (Fabric: 26.1-26.1.2) | NeoForge + Fabric | 25 | full |
 | `26.2` (M52d) | 26.2 | NeoForge + Fabric | 25 | one release, then only severe fixes |
-| `26.3` (M52e, planned) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
+| `26.3` (M52e) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
 
 Fabric on 1.21.1 (this branch). Gradle 9.8.2 with the daemon on JDK 25 (`gradle/gradle-daemon-jvm.properties`, needed by
 Fabric Loom 1.19.4; the game still targets Java 21):

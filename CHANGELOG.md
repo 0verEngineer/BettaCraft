@@ -4,6 +4,45 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.42.0-beta.1] - 2026-11-20 (Minecraft 26.3)
+
+The same version for **Minecraft 26.3**, on NeoForge and Fabric: `bettacraft-neoforge-26.3-<version>.jar` and
+`bettacraft-fabric-26.3-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.3 they load as
+usual. 26.3 is fully maintained while it is the newest Minecraft version.
+
+### Added
+- **Minecraft 26.3**: NeoForge 26.3.0.113+ and Fabric (Fabric Loader 0.18.4+, Fabric API 0.166+, Forge Config API Port
+  26.3). The same content, ids, configs and handbook as on 26.2. 26.3 has no patch versions; the jars declare 26.3.
+- **Handbook:** GuideME on NeoForge (GuideME 26.3 is an alpha), a **Modonomicon** book on Fabric, English and German.
+- The Vulkan backend of 26.3 (video settings) draws the tanks, the miniature and the menus like OpenGL.
+
+### Changed (Minecraft 26.3 itself)
+- **Server config on NeoForge 26.3** (FML 12): `config/bettacraft-server.toml` is the default for every world; a world
+  that should differ keeps its own copy in `<world>/syncedconfig/` (before: `<world>/serverconfig/`). Fabric keeps
+  `serverconfig/`. The file names and keys are unchanged.
+- The Chaetomorpha is compostable through its item component (65 %) instead of NeoForge's data map / Fabric's registry.
+- Generated data in the 26.3 formats: loot tables, loot modifiers and trades with one `condition` / `modifier` (`type`
+  keys), whole-number rolls, features in `worldgen/feature`; models shade with `shade_direction_override`.
+- The plates of the monitor and the tank signs are drawn as text with a plain white texture (26.3 removed the untextured
+  text background); they look as before.
+
+### Fixed
+- NeoForge 26.3: the wild animals spawn again in biomes whose spawns a datapack writes as a plain value (Terralith 2.6.5
+  does it for the vanilla biomes it replaces, swamp and jungle among them); NeoForge ignores every biome modifier's spawns
+  there, so Bettacraft adds its own to that value.
+- Fabric: the mud drops (tubifex, mosquito larvae) keep their biome condition (`#bettacraft:betta_spawn_biomes`); it was
+  left out when the loot modifiers were read without the game's registries, so they dropped in every biome.
+
+### Known gaps on 26.3
+- No 26.3 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
+  Mekanism (and Mekanism Covers), Flux Networks, EnderIO, Oritech, Industrial Foregoing, Refined Storage, LaserIO, Cable
+  Facades, **Modular Routers** (new gap against 26.2), Better Fish Tanks, Fintastic, Critters and Companions, The Undergarden,
+  Ice and Fire, Sushi Go Crafting, Twilight Forest, Regions Unexplored, Oh The Biomes We've Gone, Alex's Caves, Cataclysm,
+  Deeper and Darker, Fish Eggs, Patchouli and EMI. Applied Energistics 2 (alpha), Powah (alpha), Pipez, Integrated
+  Dynamics, XNet, Aquaculture and the GuideME handbook are NeoForge only.
+- Shaders on NeoForge 26.3: Sodium 0.9.2 does not start on NeoForge 26.3.0.113 and the Sodium betas need an Iris that is
+  not released yet; with Iris on Fabric the tanks and the miniature draw as usual.
+
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.2)
 
 The same version for **Minecraft 26.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.2-<version>.jar` and

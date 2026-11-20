@@ -182,6 +182,11 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
   and a **Modonomicon** book on Fabric. Mods without a 26.2 version (FTB Quests, KubeJS, Create, Mekanism, EnderIO,
   Refined Storage, Better Fish Tanks, Fintastic, Critters and Companions, EMI and a few more) have no integration there;
   Naturalist is back.
+- **Minecraft 26.3 (Java 25):** the same version for NeoForge 26.3 and Fabric (Fabric API 0.166+), files
+  `bettacraft-neoforge-26.3-<version>.jar` and `bettacraft-fabric-26.3-<version>.jar`, on OpenGL and Vulkan. The handbook
+  is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.3 version (FTB Quests, KubeJS, Create,
+  Mekanism, EnderIO, Refined Storage, Modular Routers, Better Fish Tanks, Fintastic, Critters and Companions, EMI and a few
+  more) have no integration there.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
 - **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and
@@ -223,7 +228,7 @@ in all): off, it loses its recipes, trades, loot and spawns, hides from the crea
 logic rests. Presets (`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps
 every animal alive, and datapacks can use the `bettacraft:feature` recipe and loot condition.
 
-**Where is the config?** `serverconfig/bettacraft-server.toml` in the world (tank size, animals, breeding, water, power
+**Where is the config?** `serverconfig/bettacraft-server.toml` in the world (NeoForge 26.3: `config/bettacraft-server.toml`, per world in `syncedconfig/`) (tank size, animals, breeding, water, power
 ...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render distances,
 connected glass, effects). Every option can also be changed in game: Mods > Bettacraft > Config.
 
