@@ -658,7 +658,9 @@ public final class TankInhabitants {
         TankRef ref = ModAttachments.TANK_REF.get(e);
         if (level.isLoaded(ref.controller())) {
             TankBlockEntity be = TankMultiblock.getBE(level, ref.controller());
-            if (be != null && be.isController() && be.getTank().id().equals(ref.tankId()) && be.getTank().contains(e.blockPosition())) {
+            // M52: inside() like reconcile, not the block of its position: an animal reaching a little over the top of the tank
+            // (a frog male on the back of his female at the surface) was let go below as if the tank were gone
+            if (be != null && be.isController() && be.getTank().id().equals(ref.tankId()) && inside(be.getTank(), e)) {
                 return be;
             }
         }
