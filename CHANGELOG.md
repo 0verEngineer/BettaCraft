@@ -40,6 +40,7 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
   chapter.
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
+- Test only: the monitor test allows for the tanks of neighbouring tests (at most four tiles on its screen).
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
