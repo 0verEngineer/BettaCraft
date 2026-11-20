@@ -45,7 +45,12 @@ public final class JourneyMapWaypoints {
             Class<?> wp = Class.forName("journeymap.api.v2.common.waypoint.Waypoint", true, cl);
             Class<?> factory = Class.forName("journeymap.api.v2.common.waypoint.WaypointFactory", true, cl);
             Object instance = Class.forName("journeymap.api.client.impl.ClientAPI", true, cl).getField("INSTANCE").get(null);
-            create = factory.getMethod("createClientWaypoint", String.class, BlockPos.class, String.class, ResourceKey.class, boolean.class);
+            try {
+                create = factory.getMethod("createClientWaypoint", String.class, BlockPos.class, String.class, ResourceKey.class, boolean.class);
+            } catch (NoSuchMethodException e) {
+                // M52: the JourneyMap API of 26.2 / 26.3 (JourneyMap 6.0.10) has only createWaypoint with these arguments
+                create = factory.getMethod("createWaypoint", String.class, BlockPos.class, String.class, ResourceKey.class, boolean.class);
+            }
             add = apiIf.getMethod("addWaypoint", String.class, wp);
             remove = apiIf.getMethod("removeWaypoint", String.class, wp);
             setColor = wp.getMethod("setColor", int.class);

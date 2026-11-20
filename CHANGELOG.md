@@ -17,6 +17,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - **Naturalist** is back (it has a 26.2 version on both loaders): its animals get our care and breeding again.
 
 ### Fixed
+- JourneyMap: the alarm waypoints of the monitors work with JourneyMap 6.0.10 for 26.2 (its API only has
+  `createWaypoint`; the integration switched itself off).
 - A fish heading for a spot on the glass right above the floor also arrives when the bottom of the water (not a block)
   holds it (an otocinclus stayed 0.15 blocks above its spot).
 - A fish heading for a spot on the glass right above the floor no longer keeps pushing into the floor: it stands up there.
