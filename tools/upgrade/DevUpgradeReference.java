@@ -337,7 +337,11 @@ public final class DevUpgradeReference {
             it.addProperty("id", BuiltInRegistries.ITEM.getKey(s.getItem()).toString());
             it.addProperty("count", s.getCount());
             List<String> comps = new ArrayList<>();
-            for (var c : s.getComponentsPatch().entrySet()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.getKey())));
+            // M52e (26.3): no entry view of a patch any more; its added components and removed types, sorted
+            var split = s.getComponentsPatch().split();
+            for (var c : split.added()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(c.type())));
+            for (var t : split.removed()) comps.add(String.valueOf(BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(t)));
+            java.util.Collections.sort(comps);
             java.util.Collections.sort(comps);
             it.addProperty("components", String.join(",", comps));
             a.add(it);
