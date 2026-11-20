@@ -168,10 +168,6 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 
   On Fabric the handbook is a Patchouli book and Mod Menu shows the config; the integrations below work on both loaders
   where the other mod exists for Fabric (Create, AE2, KubeJS, Aquaculture and Fintastic are NeoForge only).
-- **Minecraft 1.21.11:** the same version for NeoForge 21.11 and Fabric (Fabric API 0.141+), files
-  `bettacraft-neoforge-1.21.11-<version>.jar` and `bettacraft-fabric-1.21.11-<version>.jar`. The handbook is GuideME on
-  NeoForge and a **Modonomicon** book on Fabric. Mods without a 1.21.11 version (Create, AE2, Refined Storage, KubeJS, the
-  power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, EMI) have no integration there.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
 - **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and
@@ -230,8 +226,8 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 - Code, procedural textures, models, sounds and the logo: 0verEngineer. Every asset comes from the mod's own generator
   (`tools/assetgen`), no third-party assets are used. Licence: MIT.
-- Developed with the help of AI coding tools. The pictures and animations on this page are real in-game captures of the
-  mod, taken automatically in its showcase world.
+- AI disclosure: developed with the help of AI coding tools. No image or sound comes from an AI generator; the pictures
+  and animations on this page are real in-game captures of the mod, taken automatically in its showcase world.
 - Inspired by real betta and aquarium keeping. Thanks to the authors of NeoForge, GuideME, JEI, Jade, Sodium, Iris,
   Complementary Reimagined and the mods Bettacraft works with.
 - Source code, changelog and issues: [github.com/0verEngineer/BettaCraft](https://github.com/0verEngineer/BettaCraft).

@@ -243,13 +243,6 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 On NeoForge no other mod is required. Create, AE2, KubeJS, Aquaculture and Fintastic exist only for NeoForge, so their
 integrations are NeoForge only.
 
-### Versions and loaders
-
-| Minecraft | NeoForge | Fabric | Handbook (NeoForge / Fabric) | Notes |
-|---|---|---|---|---|
-| 1.21.1 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | main version (ATM10), fully maintained |
-| 1.21.11 | 21.11.40+ | Loader 0.19+, Fabric API 0.141+ | GuideME / Modonomicon | `bettacraft-<loader>-1.21.11-<version>.jar`; one release, then severe fixes only. Create, AE2, Refined Storage, KubeJS, the power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version |
-
 ## Optional integrations
 
 | Mod | What you get |
@@ -324,8 +317,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
   mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
-  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` (on 1.21.11 with its texts in
-  `config/ftbquests/quests/lang/en_us.snbt`, which FTB Quests 2111 needs) and two KubeJS scripts; the
+  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and two KubeJS scripts; the
   NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
   (`org.overengineer.bettacraft.api.event`) and `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other
   mods (`features.modpackEvents`). See "Quest chapter" below.
@@ -339,7 +331,7 @@ glass, animals of other mods), the technology (cabinet, aeration, lights, power 
 change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
-- **Updating a pack:** copy the new `bettacraft.snbt` (on 1.21.11 also the lines of `lang/en_us.snbt`) over the old one and run `/ftbquests reload` (or restart). The 33
+- **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
   quests of the first chapter keep their ids, tasks, dependencies and rewards, so the progress of every player stays;
   new quests only add to them. Advancement tasks of new quests complete by themselves for players who already have the
   advancement (FTB Quests checks them every few ticks once the quest may start), item tasks when the item is in the
@@ -561,6 +553,12 @@ locally (they need a window, local worlds or mod jars that cannot all be downloa
 
 MIT, see [LICENSE](LICENSE). This covers the code, the asset generator and all assets, so modpacks may include the mod
 freely.
+
+### AI disclosure
+
+Bettacraft is developed with the help of AI coding tools. No image or sound comes from an AI generator: textures,
+models, sounds and the logo are made by the mod's own procedural generator (`tools/assetgen`), and the pictures and
+animations in this README and on the mod page are real in-game captures, taken automatically in the showcase world.
 
 ### Sound credits
 
