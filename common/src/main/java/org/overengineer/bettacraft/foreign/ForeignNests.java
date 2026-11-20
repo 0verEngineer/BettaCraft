@@ -178,7 +178,7 @@ public final class ForeignNests {
         int females = 0;
         double chance = p.breeding().sex() == ForeignProfile.Sex.TEMPERATURE ? EggSex.femaleChance(p.breeding().nestPivot(), tsp) : 0.5;
         for (int i = 0; i < Math.min(eggs, room); i++) {
-            Vec3 spot = at.add((rnd.nextDouble() - 0.5) * 0.2, 0, (rnd.nextDouble() - 0.5) * 0.2);
+            Vec3 spot = inTank(t, at.add((rnd.nextDouble() - 0.5) * 0.2, 0, (rnd.nextDouble() - 0.5) * 0.2), at);
             Entity y = ForeignBreeding.spawnYoung(level, c, mother.getType(), p, genes, genes, spot, rnd);
             if (y == null) continue;
             made++;
@@ -198,6 +198,18 @@ public final class ForeignNests {
         org.overengineer.bettacraft.api.ApiEvents.born(level, c, org.overengineer.bettacraft.api.ApiEvents.id(mother.getType()), made, true, true, false); // M32 part d
         c.markTankChanged();
         return made;
+    }
+
+    /**
+     * M52: where a young comes into the tank: {@code spot} (a little off its nest or mother), but always inside the glass and
+     * in a block of the tank, else at {@code base}. A hatchling of a nest by the wall came out just past the glass before
+     * (the nest of the edge column lies 0.06 inside, the young up to 0.1 off it): outside the tank, the next reconcile let it go.
+     */
+    static Vec3 inTank(TankData t, Vec3 spot, Vec3 base) {
+        double m = org.overengineer.bettacraft.critters.TankTerrain.MARGIN + 0.01;
+        Vec3 p = new Vec3(net.minecraft.util.Mth.clamp(spot.x, t.min().getX() + m, t.max().getX() + 1 - m), spot.y,
+                net.minecraft.util.Mth.clamp(spot.z, t.min().getZ() + m, t.max().getZ() + 1 - m));
+        return t.contains(BlockPos.containing(p)) ? p : base;
     }
 
     /** Ends the brood (the egg block goes when given) and lets the mother rest. */

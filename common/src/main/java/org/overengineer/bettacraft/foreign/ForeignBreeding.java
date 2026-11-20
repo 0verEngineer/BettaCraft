@@ -251,7 +251,7 @@ public final class ForeignBreeding {
         CompoundTag motherGenes = inherited(mother, p), fatherGenes = brood.getCompound("father");
         int made = 0;
         for (int i = 0; i < n; i++) {
-            Vec3 at = mother.position().add((rnd.nextDouble() - 0.5) * 0.4, 0, (rnd.nextDouble() - 0.5) * 0.4);
+            Vec3 at = ForeignNests.inTank(t, mother.position().add((rnd.nextDouble() - 0.5) * 0.4, 0, (rnd.nextDouble() - 0.5) * 0.4), mother.position());
             Entity y = spawnYoung(level, c, mother.getType(), p, motherGenes, fatherGenes, at, rnd);
             if (y == null) continue;
             made++;
