@@ -143,7 +143,11 @@ public final class FrogBreedingGameTests {
             check(!male.inAmplexus(), "the amplexus ended");
             check(t.frogSpawn().size() == 1, "one clump of spawn: " + t.frogSpawn().size());
             FrogSpawn s = t.frogSpawn().getFirst();
-            check(s.count >= FrogBreeding.EGGS_MIN && s.count <= FrogBreeding.EGGS_MAX, "eggs " + s.count);
+            // M52: the number she laid (the log); the frogs may have snapped at an egg or two of it since (a clutch of 20 was 19)
+            int laid = t.log().stream().filter(e -> e.key().equals("log.bettacraft.frog.spawned")).mapToInt(e -> Integer.parseInt(e.args().get(1)))
+                    .findFirst().orElse(-1);
+            check(laid >= FrogBreeding.EGGS_MIN && laid <= FrogBreeding.EGGS_MAX && s.count <= laid && s.count >= laid * 0.8,
+                    "eggs laid " + laid + ", left " + s.count);
             check(Math.abs(s.y - new TankWaterVolume(t).surface()) < 1e-3, "the spawn floats at the surface");
             check(female.restDays() > 0 && male.restDays() > 0, "the pair rests");
             // the eggs hatch; the frogs snap at about one egg in five meanwhile. M52: drawn from a fixed seed (the check below
@@ -171,6 +175,27 @@ public final class FrogBreedingGameTests {
             check(!logged(t, "log.bettacraft.frog.tadpoles_starved"), "no tadpole starved");
             h.succeed();
         });
+    }
+
+    /**
+     * M52: a frog reaching a little over the top of its tank (the male on the back of his female at the surface) still belongs
+     * to the tank: it was let go as if the tank were gone, which ended the amplexus ("the male clasps the female" failed now
+     * and then, the male 0.008 above the top).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void aFrogOverTheTopStaysInItsTank(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity c = tank(h, 2, 2, 3, 2, 26F);
+        DwarfFrogEntity f = frog(h, c, false);
+        TankData t = c.getTank();
+        f.setPos(t.min().getX() + 1.5, t.max().getY() + 1.01, t.min().getZ() + 1.0);
+        check(c == TankInhabitants.resolveController(level, f), "the tank of a frog 0.01 over its top");
+        TankInhabitants.reconcile(level, c);
+        check(TankInhabitants.hasTankRef(f) && t.inhabitants().contains(f.getUUID()), "still an inhabitant");
+        f.setPos(t.min().getX() + 1.5, t.max().getY() + 2.5, t.min().getZ() + 1.0);
+        check(TankInhabitants.resolveController(level, f) == null && !TankInhabitants.hasTankRef(f), "a frog far above has left its tank");
+        f.discard();
+        h.succeed();
     }
 
     /** Two bettas eat almost all of an open clump of spawn in a day; under dense floating plants much of it survives. */
