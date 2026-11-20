@@ -2,7 +2,7 @@
 
 # Bettacraft
 
-**Realistic fishkeeping for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric.** Catch wild bettas
+**Realistic fishkeeping for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric.** Catch wild fish
 and tankmates, keep them in multiblock aquariums of any shape, aquascape with swaying plants and corals, and breed with
 real genetics.
 
