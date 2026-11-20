@@ -28,9 +28,6 @@
     "jei_mod_plugin": [
       "org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin"
     ],
-    "emi": [
-      "org.overengineer.bettacraft.fabric.compat.BettaCraftEmiPlugin"
-    ],
     "rei_client": [
       "org.overengineer.bettacraft.fabric.compat.BettaCraftReiPlugin"
     ],
