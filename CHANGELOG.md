@@ -25,6 +25,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
 - Test only: the frog spawn test hatches without the frogs, the chunk unload test waits longer for far chunks.
+- Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
+  too many young now and then).
 
 ### Changed (Minecraft 26.2 itself)
 - Everything that drew into Minecraft's removed buffer sources (the miniature's plant meshes and sway, filter jets, the
