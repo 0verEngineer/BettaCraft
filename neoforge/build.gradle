@@ -744,7 +744,10 @@ dependencies {
     // own loot tables, which only exist in its data, and the registry creation fails)
     boolean dataRun = gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('rundata') }
     if (!project.hasProperty('noCompat') && !dataRun) {
-        // M52b: Better Fish Tanks, Fintastic and Naturalist have no 1.21.11 build
+        // M52b: Fintastic has no build for this version. M52-final: Better Fish Tanks has one (CurseForge, the M52 ports only
+        // looked at Modrinth)
+        localRuntime "curse.maven:better-fishtanks-1196541:${bft_file_id}"
+        localRuntime "maven.modrinth:mint-lib:${mint_lib_version}"
         localRuntime "maven.modrinth:fish-of-thieves:${fish_of_thieves_version}"
         localRuntime "maven.modrinth:yacl:${yacl_version}"
         localRuntime "maven.modrinth:aquaculture:${aquaculture_version}"

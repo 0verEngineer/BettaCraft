@@ -23,7 +23,7 @@ public final class VersionGaps {
             "create", "sable", // create
             "ftbquests", "ftblibrary", "ftbteams", "kubejs", "rhino", "cable_facades", // quests, kubejs, facades
             "aether_ii", "productivebees", "thaumaturge", "mahoutsukai", "the_bumblezone", // zoo
-            "betterfishtanks", "fintastic"); // aquarium mods of the dev runtime
+            "fintastic"); // aquarium mods of the dev runtime (M52-final: Better Fish Tanks has builds, found on CurseForge)
 
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
