@@ -126,7 +126,14 @@ public final class GenerationsGameTests {
         sp.getInventory().clearContent();
         sp.getInventory().setItem(0, empty);
         Component err = TankInhabitants.takeOut(sp, from, e.getUUID(), bag);
-        if (err != null) throw new GameTestFailure("take out " + e.getType().getDescriptionId() + ": " + err.getString());
+        if (err != null) {
+            // M52: the state of the animal, for a failure seen once (26.1.2, box turtle hatchling) that never came back
+            Entity now = h.getLevel().getEntity(e.getUUID());
+            throw new GameTestFailure("take out " + e.getType().getDescriptionId() + ": " + err.getString() + " (by its UUID: "
+                    + (now == null ? "none" : now == e ? "the same" : "another") + ", alive " + e.isAlive() + ", removed " + e.getRemovalReason()
+                    + ", tank ref " + (TankInhabitants.hasTankRef(e) ? org.overengineer.bettacraft.registry.ModAttachments.TANK_REF.get(e).tankId() : "none")
+                    + ", this tank " + from.getTank().id() + ", listed " + from.getTank().inhabitants().contains(e.getUUID()) + ", at " + e.position() + ")");
+        }
         h.assertTrue(!e.isAlive() || e.isRemoved(), "the animal left the tank");
         h.assertTrue(!from.getTank().inhabitants().contains(e.getUUID()), "no longer an inhabitant");
         for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (TankInhabitants.containedType(s) != null) return s.copy();
@@ -605,6 +612,8 @@ public final class GenerationsGameTests {
         // M52: the shrimp days run within this tick and look at day or night (TankCritters.terrain): at noon in every run (the
         // shared clock of the suite made the third generation one young short now and then)
         org.overengineer.bettacraft.gametest.framework.DevTime.set(h.getLevel(), 6000);
+        // M52: the starting pair is placed by the level's random too (what the tests before left in it)
+        h.getLevel().getRandom().setSeed(4219L);
         ServerPlayer sp = breeder(h);
         CritterSpecies s = CritterSpecies.NEOCARIDINA;
         TankBlockEntity c = critterTank(h, 1, 2);
