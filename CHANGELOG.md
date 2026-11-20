@@ -32,7 +32,8 @@ as usual.
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
-  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
+  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock), the monitor test allows
+  for the tanks of neighbouring tests (at most four tiles on its screen).
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
