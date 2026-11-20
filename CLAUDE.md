@@ -23,7 +23,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
 | `docs/description.md` | the CurseForge mod page (English only); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
 | `docs/images` | README / CurseForge media (made by `tools/assetgen/readme_media.py`; banner by `preview.py`) |
-| `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>`), `integration.yml` (manual only) |
+| `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>+<loader>-<mc>`), `integration.yml` (manual only) |
 
 ## Key systems (where to look)
 
@@ -138,7 +138,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   run and filled the disk).
 - CI (`build.yml`): build, changelog section, `runData` must not change `common/src/generated`, GameTests, server smoke; the
   manual *full* run adds smokes without optional mods / with TOP + WTHIT and GameTests with `-Ppower`. `release.yml`
-  on a `v<mod_version>` tag: full tests, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
+  on a `v<mod_version>+<loader>-<mc>` tag (see Ports): full tests of that loader, GitHub release, CurseForge upload (the only mod site; no Modrinth). The local release checklist is
   `RELEASING.md` (not committed).
 
 ## Ports (M52)
@@ -196,6 +196,12 @@ Fabric Loom 1.19.4; the game still targets Java 21):
   GUI / rendering by hand. Branches with "only severe fixes" get bug fixes only. Each port branch builds, tests and
   releases on its own (its own reference world for `smoketestUpgrade`, its own CHANGELOG section).
 - Push, tag and release of any branch only with the user's OK.
+- **Release tags** (M52): `v<mod_version>+<loader>-<mc>`, e.g. `v1.42.0-beta.1+neoforge-1.21.1`,
+  `v1.42.0-beta.1+fabric-26.1.2`; one tag per loader, on the branch of that Minecraft version. `release.yml` (parsing in
+  `tools/ci/release_tag.sh`) fails at once when the mod version is not `mod_version` or the Minecraft version is not
+  `minecraft_version` of the tagged commit, runs the full tests of that loader (`build.yml` input `loader`), builds only
+  that loader's jar and uploads that one file to CurseForge (loader, Minecraft versions incl. widened ranges such as Fabric
+  26.1-26.1.2, that loader's dependency slugs). A manual run (choose the loader) is a dry run.
 
 ## Working rules
 

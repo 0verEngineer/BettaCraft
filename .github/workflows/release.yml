@@ -1,17 +1,20 @@
-# Release of a pushed tag "v<mod_version>" (e.g. v1.14.0-beta.1):
-#   1. the full test set of build.yml (build, unit tests, GameTests, all server smoke variants, -Ppower GameTests)
-#   2. the jar is built again from the tag and checked (verifyReleaseJar -PexpectedVersion=<tag without v>: no dev /
-#      smoke / GameTest classes, no foreign assets, mods.toml version = tag), the release notes are the top section of
-#      CHANGELOG.md (releaseNotes; it must be the section of this version)
-#   3. GitHub release with both jars (M52: NeoForge and Fabric) and their SHA-256 (prerelease for -alpha / -beta / -rc)
-#   4. CurseForge file upload with mc-publish, only if the token secret AND the project id variable are set (channel
-#      alpha / beta / release from the version). Without them the steps are skipped, nothing fails. CurseForge is the
-#      only mod site. M52: two files in the same project, the NeoForge jar with the loader tag neoforge, the Fabric jar
-#      with the loader tag fabric (each with its own dependencies).
+# Release of a pushed tag v<mod_version>+<loader>-<minecraft> (M52), e.g. v1.42.0-beta.1+neoforge-1.21.11 or
+# v1.42.0-beta.1+fabric-1.21.11. Every branch releases its own Minecraft version (1.21.11 on this branch), one loader per tag:
+#   0. tools/ci/release_tag.sh parses the tag and fails at once if its mod version is not mod_version or its Minecraft
+#      version is not minecraft_version of gradle.properties (a tag on the wrong branch), or the loader is unknown
+#   1. the full test set of build.yml for that loader (build, unit tests, GameTests, the server smoke variants)
+#   2. the jar of that loader is built again from the tag and checked (verifyReleaseJar / verifyFabricJar with
+#      -PexpectedVersion: no dev / smoke / GameTest classes, no foreign assets, the declared versions), the release notes
+#      are the top section of CHANGELOG.md (releaseNotes; it must be the section of this version)
+#   3. GitHub release named with version, loader and Minecraft version, with the jar and its SHA-256 (prerelease for
+#      -alpha / -beta / -rc)
+#   4. CurseForge upload of that one file (mc-publish), only if the token secret AND the project id variable are set
+#      (channel alpha / beta / release from the version): the loader tag, the Minecraft versions and the dependencies of
+#      that loader. CurseForge is the only mod site, one project for every loader and version.
 #   5. the CurseForge project description from docs/description.md with absolute image links pinned to the tag
 #      (curseforgeDescription), as a workflow artifact: CurseForge has no API for the description, paste it by hand.
-# Started by hand (Actions > Release > Run workflow) it is a dry run: tests, jar check, release notes and the description,
-# the jar as a workflow artifact, no GitHub release and no upload. Setup: the secret and variable below.
+# Started by hand (Actions > Release > Run workflow, choose the loader) it is a dry run: tests, jar check, release notes and
+# the description, the jar as a workflow artifact, no GitHub release and no upload.
 #
 # Repository settings (Settings > Secrets and variables > Actions):
 #   Secret:    CURSEFORGE_TOKEN        CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
@@ -20,8 +23,15 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
+    # "+" is a pattern character of GitHub's filters (one or more of the one before): escaped
+    tags: ['v*\+*']
   workflow_dispatch:
+    inputs:
+      loader:
+        description: "Loader of the dry run"
+        type: choice
+        options: [neoforge, fabric]
+        default: neoforge
 
 permissions:
   contents: read
@@ -35,15 +45,40 @@ defaults:
     shell: bash
 
 jobs:
+  tag:
+    name: Tag, version and branch check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      loader: ${{ steps.tag.outputs.loader }}
+      loader_name: ${{ steps.tag.outputs.loader_name }}
+      mc: ${{ steps.tag.outputs.mc }}
+      type: ${{ steps.tag.outputs.type }}
+      tag: ${{ steps.tag.outputs.tag }}
+      jar: ${{ steps.tag.outputs.jar }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Parse and check the tag
+        id: tag
+        env:
+          IS_TAG: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+          INPUT_LOADER: ${{ inputs.loader }}
+        run: bash tools/ci/release_tag.sh
+
   checks:
     name: Full test set
+    needs: tag
     uses: ./.github/workflows/build.yml
     with:
       full: true
+      loader: ${{ needs.tag.outputs.loader }}
 
   release:
-    name: Release
-    needs: checks
+    name: Release ${{ needs.tag.outputs.loader_name }} ${{ needs.tag.outputs.mc }}
+    needs: [tag, checks]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -54,6 +89,9 @@ jobs:
       CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
       CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
       IS_TAG: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+      VERSION: ${{ needs.tag.outputs.version }}
+      LOADER: ${{ needs.tag.outputs.loader }}
+      JAR: ${{ needs.tag.outputs.jar }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -72,43 +110,25 @@ jobs:
         with:
           cache-read-only: true
 
-      - name: Version and channel
-        id: version
-        run: |
-          version=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\r')
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          case "$version" in
-            *-alpha*) type=alpha ;;
-            *-beta*|*-rc*) type=beta ;;
-            *-*) echo "::error::unknown pre-release suffix in $version (use -alpha.n, -beta.n or -rc.n)"; exit 1 ;;
-            *) type=release ;;
-          esac
-          echo "type=$type" >> "$GITHUB_OUTPUT"
-          if [ "$IS_TAG" = true ]; then
-            if [ "$GITHUB_REF_NAME" != "v$version" ]; then
-              echo "::error::tag $GITHUB_REF_NAME does not match mod_version $version (expected v$version)"
-              exit 1
-            fi
-            echo "expected=-PexpectedVersion=$version" >> "$GITHUB_OUTPUT"
-          fi
-          echo "Bettacraft $version, channel $type, tag: $IS_TAG"
-
-      - name: Build, check the jar, release notes, CurseForge description
+      - name: Build and check the jar of the loader, release notes, CurseForge description
         env:
-          # images of the description: pinned to the tag, in a dry run to the commit
+          # images of the description: pinned to the tag (its "+" encoded in the links), in a dry run to the commit
           DESCRIPTION_REF: ${{ env.IS_TAG == 'true' && github.ref_name || github.sha }}
         run: |
           chmod +x gradlew
+          expected=""
+          if [ "$IS_TAG" = true ]; then expected="-PexpectedVersion=$VERSION"; fi
+          if [ "$LOADER" = neoforge ]; then
+            tasks=":neoforge:assemble :neoforge:verifyReleaseJar"; report=neoforge/build/verifyReleaseJar.txt
+          else
+            tasks=":fabric:assemble :fabric:verifyFabricJar"; report=fabric/build/verifyFabricJar.txt
+          fi
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
-          ./gradlew assemble verifyReleaseJar verifyFabricJar releaseNotes curseforgeDescription modpackZip ${{ steps.version.outputs.expected }} -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
-          cat neoforge/build/verifyReleaseJar.txt
-          cat fabric/build/verifyFabricJar.txt
-          for loader in neoforge fabric; do
-            jar="build/libs/bettacraft-$loader-1.21.1-${{ steps.version.outputs.version }}.jar"
-            test -f "$jar"
-            (cd build/libs && sha256sum "$(basename "$jar")" > "$(basename "$jar").sha256")
-          done
-          cat build/libs/*.sha256
+          ./gradlew $tasks releaseNotes curseforgeDescription modpackZip $expected -PdescriptionRef="${DESCRIPTION_REF//+/%2B}" $GRADLE_ARGS
+          cat "$report"
+          test -f "$JAR"
+          (cd build/libs && sha256sum "$(basename "$JAR")" > "$(basename "$JAR").sha256")
+          cat "$JAR.sha256"
           echo "----- release notes -----"
           cat build/release-notes.md
           echo "----- CurseForge description (build/curseforge/) -----"
@@ -117,20 +137,18 @@ jobs:
       - name: Upload jar
         uses: actions/upload-artifact@v7
         with:
-          name: bettacraft-${{ steps.version.outputs.version }}
+          name: bettacraft-${{ needs.tag.outputs.loader }}-${{ needs.tag.outputs.mc }}-${{ needs.tag.outputs.version }}
           path: |
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
+            ${{ needs.tag.outputs.jar }}
+            ${{ needs.tag.outputs.jar }}.sha256
+            build/distributions/bettacraft-modpack-${{ needs.tag.outputs.version }}.zip
             build/release-notes.md
           if-no-files-found: error
 
       - name: Upload the CurseForge description
         uses: actions/upload-artifact@v7
         with:
-          name: curseforge-description-${{ steps.version.outputs.version }}
+          name: curseforge-description-${{ needs.tag.outputs.loader }}-${{ needs.tag.outputs.mc }}-${{ needs.tag.outputs.version }}
           path: build/curseforge/
           if-no-files-found: error
 
@@ -139,72 +157,63 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
-          name: Bettacraft ${{ steps.version.outputs.version }}
+          name: Bettacraft ${{ needs.tag.outputs.version }} for ${{ needs.tag.outputs.loader_name }} ${{ needs.tag.outputs.mc }}
           body_path: build/release-notes.md
           files: |
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
-            build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar.sha256
-            build/distributions/bettacraft-modpack-${{ steps.version.outputs.version }}.zip
-          prerelease: ${{ steps.version.outputs.type != 'release' }}
-          make_latest: ${{ steps.version.outputs.type == 'release' }}
+            ${{ needs.tag.outputs.jar }}
+            ${{ needs.tag.outputs.jar }}.sha256
+            build/distributions/bettacraft-modpack-${{ needs.tag.outputs.version }}.zip
+          prerelease: ${{ needs.tag.outputs.type != 'release' }}
+          # master's NeoForge 1.21.1 release stays the latest release of the repository
+          make_latest: false
           fail_on_unmatched_files: true
 
+      # CurseForge slugs checked on their project pages (api.cfwidget.com, 2026-11-20; a wrong slug fails the upload): only
+      # mods with a file for this Minecraft version and loader. Required on Fabric: Fabric API and Forge Config API Port.
       - name: Publish to CurseForge (NeoForge)
-        if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+        if: env.LOADER == 'neoforge' && env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          # optional integrations (CurseForge slugs, all checked on their project pages in M43; a wrong slug fails the
-          # upload): Jade, GuideME, JEI, The One Probe, WTHIT, Better Fishtanks, Fish of Thieves, Fintastic, Aquaculture 2,
-          # Naturalist
           curseforge-dependencies: |
             jade(optional)
             guideme(optional)
             jei(optional)
             the-one-probe(optional)
             wthit-forge(optional)
-            better-fishtanks(optional)
             fish-of-thieves(optional)
-            fintastic(optional)
             aquaculture(optional)
-            naturalist(optional)
-          files: build/libs/bettacraft-neoforge-1.21.1-${{ steps.version.outputs.version }}.jar
-          name: Bettacraft ${{ steps.version.outputs.version }} (NeoForge)
-          version: ${{ steps.version.outputs.version }}
-          version-type: ${{ steps.version.outputs.type }}
+          files: ${{ needs.tag.outputs.jar }}
+          name: Bettacraft ${{ needs.tag.outputs.version }} (NeoForge 1.21.11)
+          version: ${{ needs.tag.outputs.version }}+neoforge-1.21.11
+          version-type: ${{ needs.tag.outputs.type }}
           changelog-file: build/release-notes.md
           loaders: neoforge
-          game-versions: "1.21.1"
+          game-versions: "1.21.11"
           java: "21"
 
-      # M52: the Fabric jar, same project, loader tag fabric. Dependencies (CurseForge slugs, CHECK BEFORE THE FIRST
-      # RELEASE: a wrong slug fails the upload): Fabric API and Forge Config API Port (required), Patchouli (the
-      # handbook), Mod Menu (the config screen), Jade, WTHIT, The One Probe, JEI, REI and EMI (optional)
       - name: Publish to CurseForge (Fabric)
-        if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+        if: env.LOADER == 'fabric' && env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
           curseforge-dependencies: |
             fabric-api(required)
-            forge-config-api-port-fabric(required)
-            patchouli-fabric(optional)
+            forge-config-api-port(required)
+            modonomicon(optional)
             modmenu(optional)
             jade(optional)
             wthit(optional)
-            the-one-probe(optional)
             jei(optional)
             roughly-enough-items(optional)
-            emi(optional)
-          files: build/libs/bettacraft-fabric-1.21.1-${{ steps.version.outputs.version }}.jar
-          name: Bettacraft ${{ steps.version.outputs.version }} (Fabric)
-          version: ${{ steps.version.outputs.version }}+fabric
-          version-type: ${{ steps.version.outputs.type }}
+            fish-of-thieves(optional)
+          files: ${{ needs.tag.outputs.jar }}
+          name: Bettacraft ${{ needs.tag.outputs.version }} (Fabric 1.21.11)
+          version: ${{ needs.tag.outputs.version }}+fabric-1.21.11
+          version-type: ${{ needs.tag.outputs.type }}
           changelog-file: build/release-notes.md
           loaders: fabric
-          game-versions: "1.21.1"
+          game-versions: "1.21.11"
           java: "21"

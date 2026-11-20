@@ -5,17 +5,17 @@
 #   one dedicated-server smoke test (aquarium mods, Jade, JEI, GuideME on the server).
 # Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
 # calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
-# WTHIT, and the GameTests with the power mods of -Ppower (pinned Modrinth jars, tools/ci/power-mods.json).
+# WTHIT (no -Ppower GameTests on 1.21.11: none of the power mods has a 1.21.11 version).
 # Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (not all jars have a pinned official
 # download, several licences forbid redistribution), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
 name: Build
 
 on:
   push:
-    branches: [master]
+    branches: [master, "1.21.11"]
     paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
   pull_request:
-    branches: [master]
+    branches: [master, "1.21.11"]
     paths-ignore: ["README.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
   workflow_dispatch:
     inputs:
@@ -23,11 +23,20 @@ on:
         description: "Full test set (smoke without/with all optional mods, GameTests with the power mods)"
         type: boolean
         default: false
+      loader:
+        description: "Loader to test (the release of one loader tests only that one)"
+        type: choice
+        options: [both, neoforge, fabric]
+        default: both
   workflow_call:
     inputs:
       full:
         type: boolean
         default: true
+      # M52: release.yml releases one loader per tag and runs only that loader's tests
+      loader:
+        type: string
+        default: both
 
 permissions:
   contents: read
@@ -86,27 +95,30 @@ jobs:
           fi
 
       - name: GameTests
+        if: inputs.loader != 'fabric'
         run: ./gradlew runGameTestServer $GRADLE_ARGS 2>&1 | tee gametest.log
 
       # the failed tests with their message as annotations on the run page (no need to search the log)
       - name: Failed GameTests
-        if: failure() && hashFiles('gametest.log') != ''
+        if: failure() && inputs.loader != 'fabric' && hashFiles('gametest.log') != ''
         run: |
           grep -E "LogTestReporter\]: .* failed at " gametest.log | sed -E 's/^.*LogTestReporter\]: /::error title=GameTest failed::/' || true
 
       - name: Dedicated server smoke test (aquarium mods, Jade, JEI, GuideME)
+        if: inputs.loader != 'fabric'
         run: |
-          mkdir -p run
+          mkdir -p run/1.21.11
           echo "eula=true" > run/1.21.11/eula.txt
           ./gradlew runServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-default.log
           grep -q "\[smoketest\] PASSED" smoke-default.log
 
       # M52: the Fabric half (fabric/: the same GameTests where they need nothing of NeoForge, a dedicated server smoke)
       - name: Fabric GameTests
+        if: inputs.loader != 'neoforge'
         run: ./gradlew runFabricGameTest $GRADLE_ARGS 2>&1 | tee gametest-fabric.log
 
       - name: Failed Fabric GameTests
-        if: failure() && hashFiles('run/1.21.11/fabric/gametest/report.xml') != ''
+        if: failure() && inputs.loader != 'neoforge' && hashFiles('run/1.21.11/fabric/gametest/report.xml') != ''
         run: |
           python3 - <<'PY' || true
           import xml.etree.ElementTree as ET
@@ -117,6 +129,7 @@ jobs:
           PY
 
       - name: Fabric dedicated server smoke test
+        if: inputs.loader != 'neoforge'
         run: |
           mkdir -p run/1.21.11/fabric/server
           echo "eula=true" > run/1.21.11/fabric/server/eula.txt
@@ -168,30 +181,31 @@ jobs:
         include:
           - name: Server smoke without optional mods
             id: smoke-none
+            loader: neoforge
             run: ./gradlew runServer -Psmoketest -PnoJade -PnoJei -PnoGuideme -PnoCompat
             check: smoke
           - name: Server smoke with The One Probe and WTHIT
             id: smoke-top-wthit
+            loader: neoforge
             run: ./gradlew runServer -Psmoketest -Ptop -Pwthit
             check: smoke
           - name: Fabric production server smoke (intermediary, official jars)
             id: fabric-prod
+            loader: fabric
             run: ./gradlew prodFabricServer -Psmoketest
             check: smoke
           - name: Fabric save and load (showcase world built, reloaded twice)
             id: fabric-saveload
+            loader: fabric
             run: ./gradlew fabricSaveLoadTest
-            check: exit
-          - name: GameTests with the power mods (-Ppower)
-            id: gametest-power
-            fetch: tools/ci/power-mods.json
-            run: ./gradlew runGameTestServer -Ppower
             check: exit
     steps:
       - name: Checkout
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
         uses: actions/checkout@v7
 
       - name: Set up Java 21
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
         uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -201,29 +215,31 @@ jobs:
             21
 
       - name: Set up Gradle
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: true
 
       - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
-        if: matrix.fetch
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && (matrix.fetch)
         run: python3 tools/ci/fetch_mods.py "${{ matrix.fetch }}"
 
       - name: ${{ matrix.name }}
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
         run: |
           chmod +x gradlew
-          mkdir -p run
+          mkdir -p run/1.21.11
           echo "eula=true" > run/1.21.11/eula.txt
           ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
           if [ "${{ matrix.check }}" = smoke ]; then grep -q "\[smoketest\] PASSED" "${{ matrix.id }}.log"; fi
 
       - name: Failed GameTests
-        if: failure() && matrix.check == 'exit' && hashFiles(format('{0}.log', matrix.id)) != ''
+        if: failure() && (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && matrix.check == 'exit' && hashFiles(format('{0}.log', matrix.id)) != ''
         run: |
           grep -E "LogTestReporter\]: .* failed at " "${{ matrix.id }}.log" | sed -E 's/^.*LogTestReporter\]: /::error title=GameTest failed::/' || true
 
       - name: Upload logs on failure
-        if: failure()
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && (failure())
         uses: actions/upload-artifact@v7
         with:
           name: logs-${{ matrix.id }}
