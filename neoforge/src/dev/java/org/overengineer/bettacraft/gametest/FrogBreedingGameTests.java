@@ -82,6 +82,19 @@ public final class FrogBreedingGameTests {
         return found;
     }
 
+    /** M52: the state of a pair for a failed amplexus check. */
+    private static String pair(TankData t, DwarfFrogEntity male, DwarfFrogEntity female) {
+        StringBuilder b = new StringBuilder();
+        for (DwarfFrogEntity f : List.of(male, female)) {
+            b.append(f == male ? "male" : " female").append(" alive ").append(f.isAlive()).append(" removed ").append(f.getRemovalReason())
+                    .append(" amplexus ").append(f.inAmplexus()).append(" ticks ").append(f.amplexusTicks()).append(" ref ")
+                    .append(TankInhabitants.hasTankRef(f)).append(" inside ").append(TankInhabitants.inside(t, f)).append(" listed ")
+                    .append(t.inhabitants().contains(f.getUUID())).append(" health ").append(f.getHealth()).append(" breath ")
+                    .append(f.breath()).append(" at ").append(f.position());
+        }
+        return b.append(" frogs on ").append(Features.enabled(Feature.FROGS)).toString();
+    }
+
     private static List<DwarfFrogEntity> frogs(GameTestHelper h, TankBlockEntity c) {
         List<DwarfFrogEntity> out = new ArrayList<>();
         for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e instanceof DwarfFrogEntity d) out.add(d);
@@ -127,7 +140,7 @@ public final class FrogBreedingGameTests {
             check(male.inAmplexus() && female.inAmplexus(), "the pair went into amplexus after the cool water change");
             check(logged(t, "log.bettacraft.frog.amplexus"), "logged the amplexus");
         });
-        h.runAfterDelay(30, () -> check(male.claspedForRender() == female, "the male clasps the female (synced)"));
+        h.runAfterDelay(30, () -> check(male.claspedForRender() == female, "the male clasps the female (synced): " + pair(t, male, female)));
         h.runAfterDelay(DwarfFrogEntity.AMPLEXUS_TICKS * 2 + 60, () -> {
             check(!male.inAmplexus(), "the amplexus ended");
             check(t.frogSpawn().size() == 1, "one clump of spawn: " + t.frogSpawn().size());
@@ -135,8 +148,11 @@ public final class FrogBreedingGameTests {
             check(s.count >= FrogBreeding.EGGS_MIN && s.count <= FrogBreeding.EGGS_MAX, "eggs " + s.count);
             check(Math.abs(s.y - new TankWaterVolume(t).surface()) < 1e-3, "the spawn floats at the surface");
             check(female.restDays() > 0 && male.restDays() > 0, "the pair rests");
-            // the eggs hatch
+            // the eggs hatch; the frogs snap at about one egg in five meanwhile. M52: drawn from a fixed seed (the check below
+            // takes at least 60 % of them, every clutch of 15-50 passes with this seed; drawn from the shared random of the
+            // suite it failed about once in 135 runs: "tadpoles 20 of 34" in a 1.21.11 integration run)
             int eggs = s.count;
+            level.getRandom().setSeed(4706L);
             FrogBreeding.step(level, c, FrogBreeding.hatchDays() + 0.01);
             check(t.frogSpawn().isEmpty(), "the spawn hatched");
             // (the frogs snap at a few eggs)
