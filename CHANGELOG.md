@@ -42,6 +42,8 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
 - The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
   tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
   inhabitants let it go into the world.
+- An animal reaching a little over the top of its tank stays in it: a dwarf frog male riding his female at the surface
+  was let go as if the tank were gone now and then, which ended the amplexus before she laid her spawn.
 - Test only: the monitor test allows for the tanks of neighbouring tests (at most four tiles on its screen), the alarm
   waypoint test for the mock players of neighbouring tests.
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
