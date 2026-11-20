@@ -41,7 +41,7 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 - Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
   click was only hooked up on NeoForge).
 - Slow fish no longer drift upwards: the lift that keeps a tankmate hovering was also added when there was no sinking to
-  undo (the game zeroes a very slow motion first), so a slowly swimming fish rose by up to 0.005 blocks a tick; fish bobbed
+  undo (the game zeroes a very slow motion first), so a slowly swimming small fish rose by up to 0.005 blocks a tick; fish bobbed
   near their targets, and an otocinclus pressed to the surface never reached its spot on the glass just below it.
 - Better Fish Tanks: its fish bag no longer catches a fish out of a Bettacraft tank through the glass (the fish left without
   its water, stayed listed in the tank and kept its tank reference in the bag); a hint points to the tank menu, whose bag
