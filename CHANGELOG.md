@@ -19,6 +19,12 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 ### Fixed
 - A fish heading for a spot on the glass right above the floor no longer keeps pushing into the floor: it stands up there.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
+- The sky and fog inside the tank interior are the overworld's again (they were dark when looking down from above).
+- Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
+  out, so mud dropped them in every biome).
+- NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
+  wrapped twice (nested transactions).
+- Test only: the frog spawn test hatches without the frogs, the chunk unload test waits longer for far chunks.
 
 ### Changed (Minecraft 26.2 itself)
 - Everything that drew into Minecraft's removed buffer sources (the miniature's plant meshes and sway, filter jets, the
