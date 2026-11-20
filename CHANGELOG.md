@@ -46,6 +46,9 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 - Better Fish Tanks: its fish bag no longer catches a fish out of a Bettacraft tank through the glass (the fish left without
   its water, stayed listed in the tank and kept its tank reference in the bag); a hint points to the tank menu, whose bag
   button takes their bag.
+- The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
+  tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
+  inhabitants let it go into the world.
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
   too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock), the monitor test allows
   for the tanks of neighbouring tests (at most four tiles on its screen).
@@ -54,6 +57,9 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
   server config (the config watcher loaded the file again a moment later, over the values of the next tests:
   `frogWithoutAirDrowns` got the default air in the middle of its run); the glass cleaner test waits long enough for the
   far spots.
+- Test only: the frog breeding test draws the eggs the frogs snap at from a fixed seed (its 60 % hatch check failed about
+  once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
+  nest by the glass.
 
 ### Known gaps on 26.3
 - No 26.3 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
