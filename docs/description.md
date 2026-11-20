@@ -168,25 +168,6 @@ where to get it, 31 advancements, JEI pages and tooltips. Without GuideME every 
 
   On Fabric the handbook is a Patchouli book and Mod Menu shows the config; the integrations below work on both loaders
   where the other mod exists for Fabric (Create, AE2, KubeJS, Aquaculture and Fintastic are NeoForge only).
-- **Minecraft 1.21.11:** the same version for NeoForge 21.11 and Fabric (Fabric API 0.141+), files
-  `bettacraft-neoforge-1.21.11-<version>.jar` and `bettacraft-fabric-1.21.11-<version>.jar`. The handbook is GuideME on
-  NeoForge and a **Modonomicon** book on Fabric. Mods without a 1.21.11 version (Create, AE2, Refined Storage, KubeJS, the
-  power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions, EMI) have no integration there.
-- **Minecraft 26.1.2 (Java 25):** the same version for NeoForge 26.1.2 and Fabric (Fabric API 0.155+), files
-  `bettacraft-neoforge-26.1.2-<version>.jar` and `bettacraft-fabric-26.1.2-<version>.jar` (Fabric: also 26.1 and 26.1.1).
-  The handbook is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.1.2 version (Create, Mekanism, Industrial Foregoing,
-  Farmer's Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves, EMI and a few more)
-  have no integration there.
-- **Minecraft 26.2 (Java 25):** the same version for NeoForge 26.2 and Fabric (Fabric API 0.161+), files
-  `bettacraft-neoforge-26.2-<version>.jar` and `bettacraft-fabric-26.2-<version>.jar`. The handbook is GuideME on NeoForge
-  and a **Modonomicon** book on Fabric. Mods without a 26.2 version (FTB Quests, KubeJS, Create, Mekanism, EnderIO,
-  Refined Storage, Fintastic, Critters and Companions, EMI and a few more) have no integration there;
-  Naturalist is back.
-- **Minecraft 26.3 (Java 25):** the same version for NeoForge 26.3 and Fabric (Fabric API 0.166+), files
-  `bettacraft-neoforge-26.3-<version>.jar` and `bettacraft-fabric-26.3-<version>.jar`, on OpenGL and Vulkan. The handbook
-  is GuideME on NeoForge and a **Modonomicon** book on Fabric. Mods without a 26.3 version (FTB Quests, KubeJS, Create,
-  Mekanism, EnderIO, Refined Storage, Modular Routers, Fintastic, Critters and Companions, EMI and a few
-  more) have no integration there.
 - **Handbook and info:** GuideME (handbook), JEI (information pages), Jade, The One Probe and WTHIT (aquarium, betta,
   filter and cabinet lines).
 - **Aquarium and animal mods:** Better Fish Tanks, Fintastic, Fish of Thieves, Aquaculture 2, Naturalist, Critters and
@@ -228,7 +209,7 @@ in all): off, it loses its recipes, trades, loot and spawns, hides from the crea
 logic rests. Presets (`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps
 every animal alive, and datapacks can use the `bettacraft:feature` recipe and loot condition.
 
-**Where is the config?** `serverconfig/bettacraft-server.toml` in the world (NeoForge 26.3: `config/bettacraft-server.toml`, per world in `syncedconfig/`) (tank size, animals, breeding, water, power
+**Where is the config?** `serverconfig/bettacraft-server.toml` in the world (tank size, animals, breeding, water, power
 ...), `config/bettacraft-common.toml` (spawns, feature switches) and `config/bettacraft-client.toml` (render distances,
 connected glass, effects). Every option can also be changed in game: Mods > Bettacraft > Config.
 
@@ -245,8 +226,8 @@ ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issue
 
 - Code, procedural textures, models, sounds and the logo: 0verEngineer. Every asset comes from the mod's own generator
   (`tools/assetgen`), no third-party assets are used. Licence: MIT.
-- Developed with the help of AI coding tools. The pictures and animations on this page are real in-game captures of the
-  mod, taken automatically in its showcase world.
+- AI disclosure: developed with the help of AI coding tools. No image or sound comes from an AI generator; the pictures
+  and animations on this page are real in-game captures of the mod, taken automatically in its showcase world.
 - Inspired by real betta and aquarium keeping. Thanks to the authors of NeoForge, GuideME, JEI, Jade, Sodium, Iris,
   Complementary Reimagined and the mods Bettacraft works with.
 - Source code, changelog and issues: [github.com/0verEngineer/BettaCraft](https://github.com/0verEngineer/BettaCraft).
