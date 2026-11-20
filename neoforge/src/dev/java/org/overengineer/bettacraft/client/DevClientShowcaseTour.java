@@ -72,7 +72,7 @@ final class DevClientShowcaseTour {
             if (pick != null) {
                 var b = pick;
                 LOGGER.info("[smoketest] showcase tour: pressing {}", b.getMessage().getString());
-                Minecraft.getInstance().execute(() -> b.onPress(new net.minecraft.client.input.MouseButtonInfo(0, 0)));
+                Minecraft.getInstance().execute(() -> b.onPress(new net.minecraft.client.input.MouseButtonInfo(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT, 0)));
             }
         });
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.RenderFrameEvent.Post e) -> {

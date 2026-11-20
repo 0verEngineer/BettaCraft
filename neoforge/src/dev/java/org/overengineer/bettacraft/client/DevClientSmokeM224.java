@@ -183,8 +183,8 @@ final class DevClientSmokeM224 {
             if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) {
                 double x = org.overengineer.bettacraft.client.DevGui.left(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_X + 10;
                 double y = org.overengineer.bettacraft.client.DevGui.top(s) + org.overengineer.bettacraft.client.screen.CabinetScreen.OUTLET_Y + 5;
-                s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)), false);
-                s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(0, 0)));
+                s.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT, 0)), false);
+                s.mouseReleased(new net.minecraft.client.input.MouseButtonEvent(x, y, new net.minecraft.client.input.MouseButtonInfo(com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT, 0)));
             }
         });
         then(10, () -> {

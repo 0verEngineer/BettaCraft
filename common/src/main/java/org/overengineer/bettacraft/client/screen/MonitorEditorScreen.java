@@ -349,7 +349,8 @@ public class MonitorEditorScreen extends Screen {
         double mx = event.x(), my = event.y();
         int button = event.button();
         if (super.mouseClicked(event, doubleClick)) return true;
-        if (button != 0 || layout == null) return false;
+        // M52e: 26.3 (SDL) counts the mouse buttons from 1 (left), older versions from 0: the constant fits both
+        if (button != com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT || layout == null) return false;
         int cx = cellX(mx), cy = cellY(my);
         if (cx < 0 || cy < 0 || cx >= gw || cy >= gh) return false;
         DashboardTile t = tileAt(cx, cy);
@@ -374,7 +375,7 @@ public class MonitorEditorScreen extends Screen {
         double mx = event.x(), my = event.y();
         int button = event.button();
         DashboardTile t = tile();
-        if (drag == 0 || t == null || button != 0) return super.mouseDragged(event, dx, dy);
+        if (drag == 0 || t == null || button != com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) return super.mouseDragged(event, dx, dy);
         int cx = cellX(mx), cy = cellY(my);
         if (drag == 1) {
             int nx = Math.max(0, Math.min(gw - t.w, cx - grabX)), ny = Math.max(0, Math.min(gh - t.h, cy - grabY));
