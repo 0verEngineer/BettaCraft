@@ -1,176 +1,176 @@
 {
-  "comment": "Optional dev mods of the integration suite (gradlew integrationTests -PintegrationPartial, .github/workflows/integration.yml) for CI (tools/ci/fetch_mods.py): only mods with an open licence and a pinned Modrinth version, downloaded from cdn.modrinth.com and checked by SHA-512, each into its group folder. The other mods of the local integration group (Flux Networks, Pipez, Refined Storage, AE2, Create, FTB Quests, KubeJS, Integrated Dynamics and Tunnels, LaserIO, Twilight Forest, the aquatic mods with closed licences ...) stay local; their integration-only tests pass with a log line in a partial run. Licences as stated on Modrinth.",
-  "target": "run/integration-mods",
-  "mods": [
-    {
-      "slug": "cloth-config",
-      "version_number": "15.0.140+neoforge",
-      "license": "LGPL-3.0-only",
-      "file": "cloth-config-15.0.140-neoforge.jar",
-      "target": "run/power-mods",
-      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/izKINKFg/cloth-config-15.0.140-neoforge.jar",
-      "sha512": "aaf9b010955b8cd294e5a92f069985b18729fd5e2cf22d351f1dff9680f15488688803ec41e77e941cbde130ceb535014ca4c868047d80ab69c2d508e216654d",
-      "size": 1163890
-    },
-    {
-      "slug": "enderio",
-      "version_number": "v8.2.12-beta",
-      "license": "Unlicense",
-      "file": "enderio-8.2.12-beta.jar",
-      "target": "run/power-mods",
-      "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/2bHl1dCW/enderio-8.2.12-beta.jar",
-      "sha512": "c4415c1e835fa7eaf7f4528fd685412151968b092e9be91528add11dd981943ba6243eee41ff73923df64d59d8f907901cb006edcb5c02783e73ab656524c995",
-      "size": 6598496
-    },
-    {
-      "slug": "mekanism",
-      "version_number": "10.7.19.85",
-      "license": "MIT",
-      "file": "Mekanism-1.21.1-10.7.19.85.jar",
-      "target": "run/power-mods",
-      "url": "https://cdn.modrinth.com/data/Ce6I4WUE/versions/5KzzycBT/Mekanism-1.21.1-10.7.19.85.jar",
-      "sha512": "66745825330a98f3e4a5ea3a44aff8b00870f715c144edc38dd2f61b4240589600b58ae89efac3b54dbb5aa430b1059dac1a28fd71cac5cc9002bbeb5ba3f22b",
-      "size": 11976009
-    },
-    {
-      "slug": "mekanism-covers",
-      "version_number": "1.3-BETA+1.21",
-      "license": "MPL-2.0",
-      "file": "mekanismcovers-1.3-BETA+1.21.jar",
-      "target": "run/power-mods",
-      "url": "https://cdn.modrinth.com/data/E3sGVcD8/versions/89QaQ0n0/mekanismcovers-1.3-BETA%2B1.21.jar",
-      "sha512": "d9a295c83dc79bcfe550b171e7dc1d5be9dbddf9047f9b843e52e083a3a3e62b3a660b346a8fa582d49ed618bad53403d3e8d01fd71694f11428eebdfca6b8b3",
-      "size": 136513
-    },
-    {
-      "slug": "powah",
-      "version_number": "6.2.10-neoforge",
-      "license": "LGPL-3.0-only",
-      "file": "Powah-6.2.10.jar",
-      "target": "run/power-mods",
-      "url": "https://cdn.modrinth.com/data/KZO4S4DO/versions/1prWLuga/Powah-6.2.10.jar",
-      "sha512": "41d616d3d944faaee2cde4d15b3fc35cdd154690169f43d8436e6432df50db90355ca5fef78bd0f7864d97d9a14039280c8fb78d8c3e1d407618c7ccff47d97f",
-      "size": 2737991
-    },
-    {
-      "slug": "deeperdarker",
-      "version_number": "1.4.1-neoforge-1.21.1",
-      "license": "AGPL-3.0-only",
-      "file": "deeperdarker-neoforge-1.21.1-1.4.1.jar",
-      "target": "run/aquatic-mods",
-      "url": "https://cdn.modrinth.com/data/fnAffV0n/versions/TuD0Zvi3/deeperdarker-neoforge-1.21.1-1.4.1.jar",
-      "sha512": "38d8d87878f39a063feb029db17702bedadf7554233ae56db6018c21225b6dff4d4cc31f4b0995254fd488e2a687f3b15bf9647c59dd42b9032791d34316ed0c",
-      "size": 3906057
-    },
-    {
-      "slug": "sushigocrafting",
-      "version_number": "1.21-0.6.7",
-      "license": "MIT",
-      "file": "sushigocrafting-1.21-0.6.7.jar",
-      "target": "run/aquatic-mods",
-      "url": "https://cdn.modrinth.com/data/G9WbcGQ2/versions/XpWxBEJd/sushigocrafting-1.21-0.6.7.jar",
-      "sha512": "96f7b05d01b18f1635e3df7b088e03f08500b26458af51d9c6103e37ae48541fecb0dc5d35af87e1ef4bcf79d2b82316fd7d21ef1da4cae07e49118ad2896623",
-      "size": 725161
-    },
-    {
-      "slug": "titanium",
-      "version_number": "1.21-4.0.51",
-      "license": "MIT",
-      "file": "titanium-1.21-4.0.51.jar",
-      "target": "run/aquatic-mods",
-      "url": "https://cdn.modrinth.com/data/1Ro7m06l/versions/vbCgpf68/titanium-1.21-4.0.51.jar",
-      "sha512": "59a1470b5b3e103f52fa9c0f2f334bb3b28cdbaba74c95234528a40a558596d598227968e5812502a41a9ee24993b00c748cee913abae8fbb4ab7df79d04ab29",
-      "size": 608070
-    },
-    {
-      "slug": "lithostitched",
-      "version_number": "1.8.1-neoforge-21.1",
-      "license": "MIT",
-      "file": "lithostitched-1.8.1-neoforge-21.1.jar",
-      "target": "run/biome-mods",
-      "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/cZu4cHY3/lithostitched-1.8.1-neoforge-21.1.jar",
-      "sha512": "6c02b8b269269d5aa84cb03bf824a1b5d52838e806c2fec8727eb4049925592dac9bb65c996858751fbb722f22ac59c4be09860e1f01e8f7b97c95be3faf7a57",
-      "size": 1023751
-    },
-    {
-      "slug": "regions-unexplored",
-      "version_number": "0.6.3-neoforge-21.1",
-      "license": "MIT",
-      "file": "regions-unexplored-0.6.3-neoforge-21.1.jar",
-      "target": "run/biome-mods",
-      "url": "https://cdn.modrinth.com/data/Tkikq67H/versions/M9SMxdTX/regions-unexplored-0.6.3-neoforge-21.1.jar",
-      "sha512": "744b7c37cfc7613c0c5f8507a309f61adcb117ab4ac1c572ea7b167fa7bc64d6ab0096ef7a1f0be7d33c0614cf01f76b88f25cf35936040938930c82c8f42501",
-      "size": 6641783
-    },
-    {
-      "slug": "terrablender",
-      "version_number": "4.1.0.8",
-      "license": "LGPL-3.0-only",
-      "file": "TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
-      "target": "run/biome-mods",
-      "url": "https://cdn.modrinth.com/data/kkmrDlKT/versions/6e8GCrLb/TerraBlender-neoforge-1.21.1-4.1.0.8.jar",
-      "sha512": "9d4b2a1be5139c0fb2fad92ed21805b17d9e83b6ea48e637e018bb14063c1823a206390755dbfe8d025c20fd62ac11cdd84db53ddb956dabaeda01bff57bac50",
-      "size": 120365
-    },
-    {
-      "slug": "cable-facades",
-      "version_number": "2.1.4",
-      "license": "MIT",
-      "file": "cable_facades-1.21.1-NeoForge-2.1.4.jar",
-      "target": "run/facade-mods",
-      "url": "https://cdn.modrinth.com/data/twipgzWx/versions/XWCAtdzJ/cable_facades-1.21.1-NeoForge-2.1.4.jar",
-      "sha512": "c7753e7eeeb76b55dee2b66fb6b311d358688dbd20f2b42977cd9366bb9a8be690635ffc5243d470321364d6b1f041673f2a021e43b37794f42c6fcc45671f86",
-      "size": 285434
-    },
-    {
-      "slug": "industrial-foregoing",
-      "version_number": "1.21-3.6.39",
-      "license": "MIT",
-      "file": "industrialforegoing-1.21-3.6.39.jar",
-      "target": "run/integration-mods",
-      "url": "https://cdn.modrinth.com/data/lWxpUd04/versions/7otXKx1D/industrialforegoing-1.21-3.6.39.jar",
-      "sha512": "a8a52f0e79fe019d8b77cc50a8b04b36d5532c92f75dff51bc528e70fb23eb67f8a9bfd37551cf91636027086f0af4f3010cb07f1903b20fc31b4d11cb3e2a02",
-      "size": 4717149
-    },
-    {
-      "slug": "mcjtylib",
-      "version_number": "1.21-9.0.22",
-      "license": "MIT",
-      "file": "mcjtylib-1.21-9.0.22.jar",
-      "target": "run/integration-mods",
-      "url": "https://cdn.modrinth.com/data/1Zu0uTEE/versions/hvOvujxs/mcjtylib-1.21-9.0.22.jar",
-      "sha512": "0c4ef91b23ca14cd59269bdf9ec68d615902a3641826cd43ff7976868ed5b8b8016e60870b02d7ac8dceb19a8f66993ed0dfa8f90a99ad9ab538ad8e0a1a0eac",
-      "size": 699974
-    },
-    {
-      "slug": "modular-routers",
-      "version_number": "13.2.7",
-      "license": "MIT",
-      "file": "modular-routers-13.2.7+mc1.21.1.jar",
-      "target": "run/integration-mods",
-      "url": "https://cdn.modrinth.com/data/EuTS81Z3/versions/6qMDJ0mn/modular-routers-13.2.7%2Bmc1.21.1.jar",
-      "sha512": "d5f560dadcc5c622fd41ab39ff5aad52503b57dfd8cee9213884b4772f9a73efc3135ddc3e129e5d915bf694d0cde2c1f630233bfd4b5a2b28b9044a5c59c22e",
-      "size": 1285765
-    },
-    {
-      "slug": "rftools-base",
-      "version_number": "1.21-6.0.11",
-      "license": "MIT",
-      "file": "rftoolsbase-1.21-6.0.11.jar",
-      "target": "run/integration-mods",
-      "url": "https://cdn.modrinth.com/data/hIO8IsD8/versions/f8Tk2cfj/rftoolsbase-1.21-6.0.11.jar",
-      "sha512": "8c6f8f7dee9dd1c02651304beaab69c439f8524cdacd5776814a57c55db0713e8ae30306875a64e66253fe004bb0254e82031f51c0371e7f443400a2f26ead3f",
-      "size": 463973
-    },
-    {
-      "slug": "xnet",
-      "version_number": "1.21-7.0.7",
-      "license": "MIT",
-      "file": "xnet-1.21-7.0.7.jar",
-      "target": "run/integration-mods",
-      "url": "https://cdn.modrinth.com/data/iu1jkWqa/versions/lvCo0M5N/xnet-1.21-7.0.7.jar",
-      "sha512": "128e13585d1036c4bc3f8cd7a373a8e1e16ce19181f2e4afbeb6a1eefd43c811fa58555f461dbdae99d1e831eb171945285b6dabe267cbed8fd5027a1632e283",
-      "size": 611577
-    }
-  ]
+ "comment": "Optional dev mods of the integration suite of Minecraft 26.1.2 (gradlew integrationTests -PintegrationPartial, .github/workflows/integration.yml) for CI (tools/ci/fetch_mods.py): only the jars of the local groups whose official Modrinth file has an open licence and whose required dependencies are in the list too, downloaded from cdn.modrinth.com and checked by SHA-512, each into its group folder. GuideME, a required dependency of some, is on the dev runtime anyway. The other mods of the local groups stay local; their integration-only tests pass with a log line in a partial run. Licences as stated on Modrinth.",
+ "target": "run/26.1.2/integration-mods",
+ "mods": [
+  {
+   "slug": "powah",
+   "version_number": "7.0.4-alpha-neoforge",
+   "license": "LGPL-3.0-only",
+   "file": "Powah-7.0.4-alpha.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/KZO4S4DO/versions/bymXTkIP/Powah-7.0.4-alpha.jar",
+   "sha512": "a5d1fcaa70529a0286783a49eac992a5d3cb15fa5e2aee5c7d080e86d3c501b3bce79adcf51b86c019f2119a377cdb20dd4f896c8ae468a30b01d8cdf4bd0d01",
+   "size": 2707967
+  },
+  {
+   "slug": "athena-ctm",
+   "version_number": "4.7.3",
+   "license": "MIT",
+   "file": "athena-4.7.3.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/b1ZV3DIJ/versions/8KRMFzZ7/athena-4.7.3.jar",
+   "sha512": "e6ef87c4eb09d36ee95584ddd94c003921fb70b7c8990b7ccbba53f7fe5a0a71ed54ed81ac857676358cbbe0639065ee7e2633cdef0ddf54ec2b8c2e7ca870bf",
+   "size": 105020
+  },
+  {
+   "slug": "cloth-config",
+   "version_number": "26.1.154+neoforge",
+   "license": "LGPL-3.0-only",
+   "file": "cloth-config-26.1.154.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/TimoYzse/cloth-config-26.1.154.jar",
+   "sha512": "b3084e992459c211617bf5247a94b93c06823277932341e7cec98602a6c6e21ca599aae5e552868ae7a60aac6ec33f3a9cee11615667470483948b3e349d3caf",
+   "size": 1135993
+  },
+  {
+   "slug": "enderio",
+   "version_number": "v9.0.7-alpha",
+   "license": "Unlicense",
+   "file": "enderio-9.0.7-alpha.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/N6zrKYgj/enderio-9.0.7-alpha.jar",
+   "sha512": "328be8ea866cc0c27cfd7264391300f61f0f34af1b30340677c99af47fad98da62ca22bed92d52d0e3020836bb4d0d8fb9042a7bc99b75c47c9a408bc444be51",
+   "size": 6584576
+  },
+  {
+   "slug": "enderio-endergy",
+   "version_number": "v9.0.1-alpha",
+   "license": "Unlicense",
+   "file": "enderio_endergy-9.0.1-alpha.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/TcYlOhqA/versions/igDmVmV0/enderio_endergy-9.0.1-alpha.jar",
+   "sha512": "de8bf047513d4fc0bd58b48cf5dbc840245e70969036e8b4609693b035ed85db4206f6ee828df2715aecf3932cc5c0fbfd05cc77d02ce0cfd2cce657f2dc6eaf",
+   "size": 118302
+  },
+  {
+   "slug": "geckolib",
+   "version_number": "5.5.2",
+   "license": "MIT",
+   "file": "geckolib-neoforge-26.1.2-5.5.2.jar",
+   "target": "run/26.1.2/power-mods",
+   "url": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/xfVfPcoC/geckolib-neoforge-26.1.2-5.5.2.jar",
+   "sha512": "d634390ad63372324220b14be3a70b0befca2a753fc8c0561f4162d31341182b08c102bd44432e59d884cb18d2906c1d0b36344f72c2d6e07c9b109a57c693f3",
+   "size": 664146
+  },
+  {
+   "slug": "titanium",
+   "version_number": "26.1.2-4.0.17",
+   "license": "MIT",
+   "file": "titanium-26.1.2-4.0.17.jar",
+   "target": "run/26.1.2/aquatic-mods",
+   "url": "https://cdn.modrinth.com/data/1Ro7m06l/versions/962E0SQz/titanium-26.1.2-4.0.17.jar",
+   "sha512": "c67c041c4f4ac162f8ec87b5b993f9df3195e522093f2f0e454b13c747b899655506cfd51986568920b5cd031e6021e1c9634f142b61137e1ef95ab602d013a0",
+   "size": 621072
+  },
+  {
+   "slug": "terrablender",
+   "version_number": "26.1.2.0.3",
+   "license": "LGPL-3.0-only",
+   "file": "TerraBlender-neoforge-26.1.2-26.1.2.0.3.jar",
+   "target": "run/26.1.2/biome-mods",
+   "url": "https://cdn.modrinth.com/data/kkmrDlKT/versions/cWLGFrxw/TerraBlender-neoforge-26.1.2-26.1.2.0.3.jar",
+   "sha512": "7c40342322c46db0506f1874a490877e99544e8fd1e7601c3598173420e4dd43c9772cec3e6d1d755f2046ebd226694e321f0e1e70753a2517e5bb54e5e43c57",
+   "size": 139774
+  },
+  {
+   "slug": "lithostitched",
+   "version_number": "1.8.1-neoforge-26.1",
+   "license": "MIT",
+   "file": "lithostitched-1.8.1-neoforge-26.1.jar",
+   "target": "run/26.1.2/biome-mods",
+   "url": "https://cdn.modrinth.com/data/XaDC71GB/versions/pLlJIqyp/lithostitched-1.8.1-neoforge-26.1.jar",
+   "sha512": "2d4bec8cda3c9f18f6806bf757c7c9352e86454237b35239d59b11e28a98023a106ea8ecd7137ea46a397f2ff7a5ce1d4e0e532fd53ecda6e6c5e51b0e1c7a61",
+   "size": 1069275
+  },
+  {
+   "slug": "regions-unexplored",
+   "version_number": "0.7.0+beta4-neoforge-26.1",
+   "license": "MIT",
+   "file": "regions-unexplored-0.7.0+beta4-neoforge-26.1.jar",
+   "target": "run/26.1.2/biome-mods",
+   "url": "https://cdn.modrinth.com/data/Tkikq67H/versions/CgLkBfwk/regions-unexplored-0.7.0%2Bbeta4-neoforge-26.1.jar",
+   "sha512": "711148c2968b94ca319bb7f4c637ebc3384b42f04e47f90ccbf1bd25cc35229e49bc332e39839285615ebad38c1d52036669eee9b442c1b772187e56fa4d5699",
+   "size": 6729897
+  },
+  {
+   "slug": "refined-storage",
+   "version_number": "3.2.1",
+   "license": "MIT",
+   "file": "refinedstorage-neoforge-3.2.1.jar",
+   "target": "run/26.1.2/storage-mods",
+   "url": "https://cdn.modrinth.com/data/KDvYkUg3/versions/P12kjgPK/refinedstorage-neoforge-3.2.1.jar",
+   "sha512": "4437544325e825703e88a6a2f6e714e7d11983777cf7663c8e8057b549c827ab4fba77e7dcadc7a723e46f2802907fa95460244478b315a73fa913c7028375d9",
+   "size": 4538659
+  },
+  {
+   "slug": "architectury-api",
+   "version_number": "20.1.17+neoforge",
+   "license": "LGPL-3.0-only",
+   "file": "architectury-neoforge-20.1.17.jar",
+   "target": "run/26.1.2/quest-mods",
+   "url": "https://cdn.modrinth.com/data/lhGA9TYQ/versions/fyNzvIcr/architectury-neoforge-20.1.17.jar",
+   "sha512": "b213c3ef37c0ab369e81e380481dc4b39b14c7ae2e377ef312d0b2a34b783cb394c937b8b3d60ec2077602666c6d74a02bb8fd6c919fd4bd7be6144951126906",
+   "size": 618823
+  },
+  {
+   "slug": "better-advanced-tooltips",
+   "version_number": "2601.1.0-build.11",
+   "license": "MIT",
+   "file": "better-advanced-tooltips-2601.1.0-build.11.jar",
+   "target": "run/26.1.2/kubejs-mods",
+   "url": "https://cdn.modrinth.com/data/iHLDc0eo/versions/DKhR2dA5/better-advanced-tooltips-2601.1.0-build.11.jar",
+   "sha512": "db68c54a275f9218b0fcc611c581306dfe1b0eed379fc9db3d787b85225d072939ad28ff9853f822a669a71c0d9c4c6d89c561047d5b49ba2cc42fe25700c251",
+   "size": 38177
+  },
+  {
+   "slug": "kubejs",
+   "version_number": "26.1.2-8.0.8+neoforge",
+   "license": "LGPL-3.0-only",
+   "file": "kubejs-neoforge-26.1.2-8.0.8.jar",
+   "target": "run/26.1.2/kubejs-mods",
+   "url": "https://cdn.modrinth.com/data/umyGl7zF/versions/5yNEdyfc/kubejs-neoforge-26.1.2-8.0.8.jar",
+   "sha512": "91b8633c3e16930f7d245411fefd77433e2a46ecc3024afb03ac7b1d0152f1ef9367b605b6b27c21b2722e8813e80f8a6e9917d4e7c35f1c5c77390c95353383",
+   "size": 2217845
+  },
+  {
+   "slug": "rhino",
+   "version_number": "2101.2.8-build.91+Rhino-1.21",
+   "license": "MPL-2.0",
+   "file": "rhino-2101.2.8-build.91.jar",
+   "target": "run/26.1.2/kubejs-mods",
+   "url": "https://cdn.modrinth.com/data/sk9knFPE/versions/SqkDvOLG/rhino-2101.2.8-build.91.jar",
+   "sha512": "e3d92f663bc07872a83b0a6474b30a75230e9f92a2844fd98da1842ec9a79712bcb7d8e76574cc11ae3aeceb47f2933c60ddd6cf41f3ad7027bd573623730945",
+   "size": 980936
+  },
+  {
+   "slug": "cable-facades",
+   "version_number": "2.1.4",
+   "license": "MIT",
+   "file": "cable_facades-26.1.2-NeoForge-2.1.4.jar",
+   "target": "run/26.1.2/facade-mods",
+   "url": "https://cdn.modrinth.com/data/twipgzWx/versions/EVOX1NLg/cable_facades-26.1.2-NeoForge-2.1.4.jar",
+   "sha512": "c3f8b8eafb0bce674eda1e33a0c2228ed3f270adde816f73c7d638892df08edb0099c246bbd90713d8fe4d86395917f76e5e717fcb4ab8b7b4aebabd019d911b",
+   "size": 295138
+  },
+  {
+   "slug": "modular-routers",
+   "version_number": "26.1.2.2",
+   "license": "MIT",
+   "file": "modular-routers-26.1.2.2.jar",
+   "target": "run/26.1.2/integration-mods",
+   "url": "https://cdn.modrinth.com/data/EuTS81Z3/versions/Rn0lLXiD/modular-routers-26.1.2.2.jar",
+   "sha512": "a49ba4604ca4a3b5da436a772175ac2fbfb191b79b6007a345efdb9593633052ee8dabcaca1d9e02312483bced9f4b28129e409af737b7eeda10bd8b13788705",
+   "size": 1338596
+  }
+ ]
 }

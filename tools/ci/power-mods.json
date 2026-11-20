@@ -1,42 +1,60 @@
 {
-  "comment": "Optional dev mods of the -Ppower group for CI (tools/ci/fetch_mods.py): pinned Modrinth versions, downloaded from cdn.modrinth.com and checked by SHA-512. Flux Networks (CurseForge only) stays local. Licences as stated on Modrinth.",
-  "target": "run/power-mods",
+  "comment": "Optional dev mods of the -Ppower group of Minecraft 26.1.2 for CI (tools/ci/fetch_mods.py): the official Modrinth files of the jars of the local group with an open licence (and their required dependencies), downloaded from cdn.modrinth.com and checked by SHA-512. Licences as stated on Modrinth. Empty: no power mod of the group has an open-licence 26.1.2 build.",
+  "target": "run/26.1.2/power-mods",
   "mods": [
     {
-      "slug": "mekanism",
-      "version_number": "10.7.19.85",
-      "license": "MIT",
-      "file": "Mekanism-1.21.1-10.7.19.85.jar",
-      "url": "https://cdn.modrinth.com/data/Ce6I4WUE/versions/5KzzycBT/Mekanism-1.21.1-10.7.19.85.jar",
-      "sha512": "66745825330a98f3e4a5ea3a44aff8b00870f715c144edc38dd2f61b4240589600b58ae89efac3b54dbb5aa430b1059dac1a28fd71cac5cc9002bbeb5ba3f22b",
-      "size": 11976009
+      "slug": "powah",
+      "version_number": "7.0.4-alpha-neoforge",
+      "license": "LGPL-3.0-only",
+      "file": "Powah-7.0.4-alpha.jar",
+      "url": "https://cdn.modrinth.com/data/KZO4S4DO/versions/bymXTkIP/Powah-7.0.4-alpha.jar",
+      "sha512": "a5d1fcaa70529a0286783a49eac992a5d3cb15fa5e2aee5c7d080e86d3c501b3bce79adcf51b86c019f2119a377cdb20dd4f896c8ae468a30b01d8cdf4bd0d01",
+      "size": 2707967
     },
     {
-      "slug": "powah",
-      "version_number": "6.2.10-neoforge",
-      "license": "LGPL-3.0-only",
-      "file": "Powah-6.2.10.jar",
-      "url": "https://cdn.modrinth.com/data/KZO4S4DO/versions/1prWLuga/Powah-6.2.10.jar",
-      "sha512": "41d616d3d944faaee2cde4d15b3fc35cdd154690169f43d8436e6432df50db90355ca5fef78bd0f7864d97d9a14039280c8fb78d8c3e1d407618c7ccff47d97f",
-      "size": 2737991
+      "slug": "athena-ctm",
+      "version_number": "4.7.3",
+      "license": "MIT",
+      "file": "athena-4.7.3.jar",
+      "url": "https://cdn.modrinth.com/data/b1ZV3DIJ/versions/8KRMFzZ7/athena-4.7.3.jar",
+      "sha512": "e6ef87c4eb09d36ee95584ddd94c003921fb70b7c8990b7ccbba53f7fe5a0a71ed54ed81ac857676358cbbe0639065ee7e2633cdef0ddf54ec2b8c2e7ca870bf",
+      "size": 105020
     },
     {
       "slug": "cloth-config",
-      "version_number": "15.0.140+neoforge",
+      "version_number": "26.1.154+neoforge",
       "license": "LGPL-3.0-only",
-      "file": "cloth-config-15.0.140-neoforge.jar",
-      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/izKINKFg/cloth-config-15.0.140-neoforge.jar",
-      "sha512": "aaf9b010955b8cd294e5a92f069985b18729fd5e2cf22d351f1dff9680f15488688803ec41e77e941cbde130ceb535014ca4c868047d80ab69c2d508e216654d",
-      "size": 1163890
+      "file": "cloth-config-26.1.154.jar",
+      "url": "https://cdn.modrinth.com/data/9s6osm5g/versions/TimoYzse/cloth-config-26.1.154.jar",
+      "sha512": "b3084e992459c211617bf5247a94b93c06823277932341e7cec98602a6c6e21ca599aae5e552868ae7a60aac6ec33f3a9cee11615667470483948b3e349d3caf",
+      "size": 1135993
     },
     {
       "slug": "enderio",
-      "version_number": "v8.2.12-beta",
+      "version_number": "v9.0.7-alpha",
       "license": "Unlicense",
-      "file": "enderio-8.2.12-beta.jar",
-      "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/2bHl1dCW/enderio-8.2.12-beta.jar",
-      "sha512": "c4415c1e835fa7eaf7f4528fd685412151968b092e9be91528add11dd981943ba6243eee41ff73923df64d59d8f907901cb006edcb5c02783e73ab656524c995",
-      "size": 6598496
+      "file": "enderio-9.0.7-alpha.jar",
+      "url": "https://cdn.modrinth.com/data/49ZofO4f/versions/N6zrKYgj/enderio-9.0.7-alpha.jar",
+      "sha512": "328be8ea866cc0c27cfd7264391300f61f0f34af1b30340677c99af47fad98da62ca22bed92d52d0e3020836bb4d0d8fb9042a7bc99b75c47c9a408bc444be51",
+      "size": 6584576
+    },
+    {
+      "slug": "enderio-endergy",
+      "version_number": "v9.0.1-alpha",
+      "license": "Unlicense",
+      "file": "enderio_endergy-9.0.1-alpha.jar",
+      "url": "https://cdn.modrinth.com/data/TcYlOhqA/versions/igDmVmV0/enderio_endergy-9.0.1-alpha.jar",
+      "sha512": "de8bf047513d4fc0bd58b48cf5dbc840245e70969036e8b4609693b035ed85db4206f6ee828df2715aecf3932cc5c0fbfd05cc77d02ce0cfd2cce657f2dc6eaf",
+      "size": 118302
+    },
+    {
+      "slug": "geckolib",
+      "version_number": "5.5.2",
+      "license": "MIT",
+      "file": "geckolib-neoforge-26.1.2-5.5.2.jar",
+      "url": "https://cdn.modrinth.com/data/8BmcQJ2H/versions/xfVfPcoC/geckolib-neoforge-26.1.2-5.5.2.jar",
+      "sha512": "d634390ad63372324220b14be3a70b0befca2a753fc8c0561f4162d31341182b08c102bd44432e59d884cb18d2906c1d0b36344f72c2d6e07c9b109a57c693f3",
+      "size": 664146
     }
   ]
 }
