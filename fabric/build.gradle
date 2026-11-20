@@ -173,8 +173,21 @@ repositories {
 // switch: libraries of another Minecraft version, so the first run failed). A new key (other jars, other branch) clears the
 // directory and extracts again; the same key reuses it.
 def nestedJars = { String dirName, Collection<File> sources, Closure<Boolean> accept ->
+    // the nested jars to take (first one of a name wins); they are part of the key, so a changed filter extracts again
+    def wanted = []
+    Set<String> seen = []
+    sources.each { src ->
+        new java.util.zip.ZipFile(src).withCloseable { zip ->
+            zip.entries().toList().each { e ->
+                if (e.directory || !(e.name ==~ /META-INF\/jars\/[^\/]+\.jar/)) return
+                def name = e.name.substring(e.name.lastIndexOf('/') + 1)
+                if (accept(name) && seen.add(name)) wanted << [src, e.name, name]
+            }
+        }
+    }
     def md = java.security.MessageDigest.getInstance('SHA-256')
     sources.each { md.update("${it.absolutePath}|${it.length()}|${it.lastModified()};".toString().getBytes('UTF-8')) }
+    wanted.each { md.update("${it[2]};".toString().getBytes('UTF-8')) }
     def key = new BigInteger(1, md.digest()).toString(16).padLeft(64, '0').substring(0, 16)
     def root = layout.buildDirectory.dir(dirName).get().asFile
     def dir = new File(root, "${minecraft_version}-${key}")
@@ -182,18 +195,12 @@ def nestedJars = { String dirName, Collection<File> sources, Closure<Boolean> ac
     if (!done.exists()) {
         root.listFiles()?.each { project.delete(it) } // other keys and the flat layout of older builds
         dir.mkdirs()
-        Set<String> seen = []
-        sources.each { src ->
-            new java.util.zip.ZipFile(src).withCloseable { zip ->
-                zip.entries().toList().each { e ->
-                    if (e.directory || !(e.name ==~ /META-INF\/jars\/[^\/]+\.jar/)) return
-                    def name = e.name.substring(e.name.lastIndexOf('/') + 1)
-                    if (!accept(name) || !seen.add(name)) return
-                    new File(dir, name).withOutputStream { out -> zip.getInputStream(e).withCloseable { out << it } }
-                }
+        wanted.each { w ->
+            new java.util.zip.ZipFile(w[0]).withCloseable { zip ->
+                new File(dir, w[2]).withOutputStream { out -> zip.getInputStream(zip.getEntry(w[1])).withCloseable { out << it } }
             }
         }
-        done.text = sources.collect { it.name }.join(' ')
+        done.text = wanted.collect { it[2] }.join(' ')
     }
     return dir.listFiles().findAll { it.name.endsWith('.jar') }.sort { it.name }
 }
