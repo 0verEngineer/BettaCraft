@@ -76,6 +76,7 @@ public final class NeoResources {
     // ------------------------------------------------------------------ items
 
     public static @Nullable ResourceHandler<ItemResource> items(@Nullable IItemHandler h) {
+        if (h instanceof FromResources.Items theirs) return theirs.h(); // M52e: another mod's handler stays itself
         return h == null ? null : new Items(h);
     }
 
@@ -151,6 +152,7 @@ public final class NeoResources {
     // ------------------------------------------------------------------ fluids (mB both)
 
     public static @Nullable ResourceHandler<FluidResource> fluids(@Nullable IFluidHandler h) {
+        if (h instanceof FromResources.Fluids theirs) return theirs.h(); // M52e: another mod's handler stays itself
         return h == null ? null : new Fluids(h);
     }
 
@@ -232,6 +234,7 @@ public final class NeoResources {
     // ------------------------------------------------------------------ energy
 
     public static @Nullable EnergyHandler energy(@Nullable IEnergyStorage e) {
+        if (e instanceof FromResources.Energy theirs) return theirs.h(); // M52e: another mod's handler stays itself
         return e == null ? null : new Energy(e);
     }
 

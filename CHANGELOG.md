@@ -21,6 +21,13 @@ as usual.
 - Mining an aquarium no longer crashes the client on 26.1 (the crack overlay asks block models without a block).
 - The tooltip lines of our blocks no longer push out those of other mods that add a block item tooltip too (sathlib in
   ATM11): they come from an inject instead of an added method.
+- A tankmate fish heading for a spot on the glass right above the floor arrives there (it kept pushing into the floor
+  and never stood upright).
+- The sky and fog inside the tank interior are the overworld's again (they were dark when looking down from above).
+- Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
+  out, so mud dropped them in every biome).
+- NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
+  wrapped twice (nested transactions).
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
