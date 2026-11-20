@@ -55,7 +55,48 @@ public final class FabricGameTests implements ModInitializer {
             throw new IllegalStateException("cannot register the GameTests", e);
         }
         String only = System.getProperty("bettacraft.gametest.only", "");
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> filter(server, only));
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            filter(server, only);
+            logFailures();
+        });
+    }
+
+    /**
+     * M52: Fabric's GameTest module puts its JUnit reporter (report.xml) in the place of vanilla's log reporter, so the log
+     * named a failed test without its reason, and the next run overwrote the file. The log reporter now runs beside it.
+     */
+    private static void logFailures() {
+        try {
+            java.lang.reflect.Field f = net.minecraft.gametest.framework.GlobalTestReporter.class.getDeclaredField("DELEGATE");
+            f.setAccessible(true);
+            Object inner = f.get(null);
+            if (!(inner instanceof net.minecraft.gametest.framework.TestReporter r) || inner instanceof net.minecraft.gametest.framework.LogTestReporter
+                    || inner instanceof AlsoLog) return;
+            net.minecraft.gametest.framework.GlobalTestReporter.replaceWith(new AlsoLog(r));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            LOGGER.warn("[gametest] cannot add the log reporter: {}", e.toString());
+        }
+    }
+
+    /** Vanilla's log line of a failed test ("... failed at ...! reason"), then the reporter that was there. */
+    private record AlsoLog(net.minecraft.gametest.framework.TestReporter inner) implements net.minecraft.gametest.framework.TestReporter {
+        private static final net.minecraft.gametest.framework.LogTestReporter LOG = new net.minecraft.gametest.framework.LogTestReporter();
+
+        @Override
+        public void onTestFailed(net.minecraft.gametest.framework.GameTestInfo info) {
+            LOG.onTestFailed(info);
+            inner.onTestFailed(info);
+        }
+
+        @Override
+        public void onTestSuccess(net.minecraft.gametest.framework.GameTestInfo info) {
+            inner.onTestSuccess(info);
+        }
+
+        @Override
+        public void finish() {
+            inner.finish();
+        }
     }
 
     /**
