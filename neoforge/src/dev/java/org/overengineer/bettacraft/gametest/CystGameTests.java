@@ -294,7 +294,8 @@ public final class CystGameTests {
     /**
      * M46: a world with its own server config ({@code <world>/serverconfig/bettacraft-server.toml}) still at the 1.36.0 default
      * 0.08 gets 0.04 once after the server started (the file kept as .pre-m46); the world records the migration, so 0.08 set
-     * afterwards stays.
+     * afterwards stays. (M52: only in memory: saving the server's config file made the config watcher load it again a moment
+     * later, in the middle of the next batch, over the values that batch had set.)
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m46_world_config", timeoutTicks = 100)
     public static void worldServerConfigGetsTheHalvedSandChanceOnce(GameTestHelper h) throws java.io.IOException {
@@ -309,18 +310,18 @@ public final class CystGameTests {
             h.assertTrue(migrations.has(id), "the test world was migrated when it started");
             migrations.remove(id); // an old world: not migrated yet
             ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.set(0.08);
-            h.assertTrue(org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file), "the old default was not migrated");
+            h.assertTrue(org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file, false), "the old default was not migrated");
             h.assertTrue(Math.abs(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.get() - 0.04) < 1e-9, "0.08 -> 0.04: " + ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.get());
             h.assertTrue(migrations.has(id), "the world records the migration");
             h.assertTrue(java.nio.file.Files.exists(dir.resolve("bettacraft-server.toml.pre-m46")), "the old file is kept");
             // the player sets 0.08 again: it stays
             ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.set(0.08);
-            h.assertTrue(!org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file), "migrated twice");
+            h.assertTrue(!org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file, false), "migrated twice");
             h.assertTrue(Math.abs(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.get() - 0.08) < 1e-9, "a chance set later stays");
             // a set chance (0.10) in a world not migrated yet stays, the world is still recorded
             migrations.remove(id);
             ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.set(0.10);
-            h.assertTrue(!org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file), "0.10 changed");
+            h.assertTrue(!org.overengineer.bettacraft.config.WorldConfigMigration.run(server, file, false), "0.10 changed");
             h.assertTrue(Math.abs(ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.get() - 0.10) < 1e-9 && migrations.has(id), "0.10 stays, recorded");
         } finally {
             migrations.add(id);

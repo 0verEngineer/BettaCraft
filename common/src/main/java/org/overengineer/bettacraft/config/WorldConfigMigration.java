@@ -37,6 +37,15 @@ public final class WorldConfigMigration {
      * Returns whether a value changed.
      */
     public static boolean run(MinecraftServer server, @Nullable Path worldFile) {
+        return run(server, worldFile, true);
+    }
+
+    /**
+     * Like {@link #run(MinecraftServer, Path)}; {@code save} false (GameTests) changes the values only in memory: a saved config
+     * file is read again later by the loader's config watcher, and that reload put back the file's values over the ones the
+     * tests after it had set in memory (frogWithoutAirDrowns got the default air of two minutes in the middle of its run).
+     */
+    public static boolean run(MinecraftServer server, @Nullable Path worldFile, boolean save) {
         Done done = Done.get(server);
         if (done.has(ARTEMIA_M46)) return false;
         boolean changed = false;
@@ -48,7 +57,7 @@ public final class WorldConfigMigration {
                 LOGGER.warn("Could not keep {} before the M46 migration: {}", worldFile, e.toString());
             }
             ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.set(ServerConfig.ARTEMIA_SAND_CHANCE);
-            ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.save();
+            if (save) ServerConfig.DROPS_ARTEMIA_FROM_SAND_CHANCE.save();
             LOGGER.info("Migrated the world's server config {} (M46): drops.artemiaFromSandChance 0.08 -> {} (the 1.36.0 default, halved in 1.36.1)",
                     worldFile, ServerConfig.ARTEMIA_SAND_CHANCE);
             changed = true;
