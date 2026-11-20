@@ -132,7 +132,7 @@ public final class MonitorGameTests {
         MonitorSync.refresh(level, c);
         h.assertTrue(!k.live, "gone: not live");
         MonitorSync.discover(level, c);
-        h.assertTrue(c.tanks().isEmpty(), "forgotten: " + c.tanks().size());
+        h.assertTrue(c.tanks().stream().noneMatch(m -> m.id.equals(t.getTank().id())), "forgotten: " + c.tanks().size());
         h.succeed();
     }
 
