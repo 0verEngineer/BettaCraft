@@ -32,6 +32,7 @@ public abstract class BackgroundWindowMixin {
         if (!BACKGROUND) return;
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
+        HINTS_APPLIED = true;
     }
 
     /** M52: Fabric (no early loading window): the window hints before vanilla creates the window. */
@@ -40,6 +41,21 @@ public abstract class BackgroundWindowMixin {
         if (!BACKGROUND) return;
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUSED, GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_FOCUS_ON_SHOW, GLFW.GLFW_FALSE);
+        HINTS_APPLIED = true;
+    }
+
+    private static boolean HINTS_APPLIED;
+
+    /**
+     * M52 (backport of the 26.2 fix): verifiable, whether the background window really came up without the focus (logged
+     * once, after it is shown; the client smoke runs look for "focused false").
+     */
+    @Inject(method = "<init>", require = 1, at = @At("TAIL"))
+    private void bettacraft$logFocus(CallbackInfo ci) {
+        if (!BACKGROUND) return;
+        boolean focused = GLFW.glfwGetWindowAttrib(((Window) (Object) this).handle(), GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
+        org.slf4j.LoggerFactory.getLogger("bettacraft/background").info("[background] window created: hints applied {}, focused {}",
+                HINTS_APPLIED, focused);
     }
 
     @Inject(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;setMode()V"))
