@@ -255,8 +255,9 @@ dependencies {
         // the groups bring ourselves
         def own = groupJars.keySet().collect { it.replaceAll(/[-_+]?\d.*$/, '') }
         modLocalRuntime files(nestedJars('nested-mods', groupJars.values(), { String n ->
-            // energy: we bundle it; Night Config comes with Forge Config API Port (M52b: an older copy nested in another mod would win)
-            !n.startsWith('energy-') && !(n ==~ /(core|toml)-3\..*\.jar/) && !own.any { o -> o && n.startsWith(o) }
+            // energy: we bundle it; Night Config (core-3.6.x.jar, toml-3.6.x.jar) comes with Forge Config API Port (M52b: an older
+            // copy nested in another mod would win); not Porting Lib's core-3.1.0-beta...jar (nested in Fabric mods of 1.21.1)
+            !n.startsWith('energy-') && !(n ==~ /(core|toml)-3\.\d+\.\d+\.jar/) && !own.any { o -> o && n.startsWith(o) }
         }))
     }
 
