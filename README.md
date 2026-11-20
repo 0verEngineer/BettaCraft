@@ -243,15 +243,6 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 On NeoForge no other mod is required. Create, AE2, KubeJS, Aquaculture and Fintastic exist only for NeoForge, so their
 integrations are NeoForge only.
 
-### Versions and loaders
-
-| Minecraft | NeoForge | Fabric | Handbook (NeoForge / Fabric) | Notes |
-|---|---|---|---|---|
-| 1.21.1 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | main version (ATM10), fully maintained |
-| 1.21.11 | 21.11.40+ | Loader 0.19+, Fabric API 0.141+ | GuideME / Modonomicon | `bettacraft-<loader>-1.21.11-<version>.jar`; one release, then severe fixes only. Create, AE2, Refined Storage, KubeJS, the power mods, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version |
-| 26.1.2 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | GuideME / Modonomicon | `bettacraft-<loader>-26.1.2-<version>.jar`, Java 25; fully maintained (ATM11). The Fabric jar also runs on 26.1 and 26.1.1. Trades are data (`villager_trade`). Create, Mekanism, Flux Networks, Industrial Foregoing, Farmer's Delight, Fintastic, Naturalist, Critters and Companions, Alex's Caves and EMI (full list in the CHANGELOG) have no 26.1.2 version; AE2, KubeJS, Aquaculture and Cable Facades are NeoForge only |
-| 26.2 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | GuideME (alpha) / Modonomicon | `bettacraft-<loader>-26.2-<version>.jar`, Java 25; one release, then severe fixes only. Trades are data as on 26.1.2. FTB Quests, KubeJS, Create, Mekanism, EnderIO, Oritech, Refined Storage, Cable Facades, Fintastic, Critters and Companions, EMI and more (full list in the CHANGELOG) have no 26.2 version; Naturalist is back; AE2, Powah, Integrated Dynamics, XNet, Aquaculture are NeoForge only |
-
 ## Optional integrations
 
 | Mod | What you get |
@@ -326,8 +317,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
   mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
-  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.json5` (26.1.2: FTB Quests 26.1 reads
-  JSON5; `bettacraft.snbt` on 1.21.x) and two KubeJS scripts; the
+  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and two KubeJS scripts; the
   NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
   (`org.overengineer.bettacraft.api.event`) and `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other
   mods (`features.modpackEvents`). See "Quest chapter" below.
@@ -341,16 +331,14 @@ glass, animals of other mods), the technology (cabinet, aeration, lights, power 
 change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
-- **Updating a pack:** copy the new `bettacraft.json5` (1.21.x: `bettacraft.snbt`) over the old one and run `/ftbquests reload` (or restart). The 33
+- **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
   quests of the first chapter keep their ids, tasks, dependencies and rewards, so the progress of every player stays;
   new quests only add to them. Advancement tasks of new quests complete by themselves for players who already have the
   advancement (FTB Quests checks them every few ticks once the quest may start), item tasks when the item is in the
   inventory. Quests you changed in the editor are replaced by the file's version, so keep your own quests in another chapter.
 - **Switched-off features:** every quest carries FTB Quests tags for its feature switches
-  (`bettacraft_feature_<path>`, also those of the quests it depends on), `bettacraft_mod_create` and
-  `bettacraft_needs_power` (a power option of the server config). FTB Quests 26.1 keeps only tags of `[a-z0-9_]`: the path
-  is in lower case with `__` for `.`; on 1.21.x the tags are `bettacraft_feature:<path>`, `bettacraft_mod:create` and
-  `bettacraft_needs:power`. `kubejs/server_scripts/bettacraft_quests.js` hides the
+  (`bettacraft_feature:<path>`, also those of the quests it depends on), `bettacraft_mod:create` and
+  `bettacraft_needs:power` (a power option of the server config). `kubejs/server_scripts/bettacraft_quests.js` hides the
   quests whose tags are off (invisible and optional, so they never block the chapter) when the server starts, when a
   player logs in and when the configs are reloaded; switched on again, they show again. Nothing is written into the
   quest file. Without KubeJS the quests of switched-off features stay visible (hide them in the editor), and the Create
@@ -565,6 +553,12 @@ locally (they need a window, local worlds or mod jars that cannot all be downloa
 
 MIT, see [LICENSE](LICENSE). This covers the code, the asset generator and all assets, so modpacks may include the mod
 freely.
+
+### AI disclosure
+
+Bettacraft is developed with the help of AI coding tools. No image or sound comes from an AI generator: textures,
+models, sounds and the logo are made by the mod's own procedural generator (`tools/assetgen`), and the pictures and
+animations in this README and on the mod page are real in-game captures, taken automatically in the showcase world.
 
 ### Sound credits
 
