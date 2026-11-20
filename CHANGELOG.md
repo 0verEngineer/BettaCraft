@@ -26,7 +26,7 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
   wrapped twice (nested transactions).
 - Test only: the frog spawn test hatches without the frogs, the chunk unload test waits longer for far chunks.
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
-  too many young now and then).
+  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
 
 ### Changed (Minecraft 26.2 itself)
 - Everything that drew into Minecraft's removed buffer sources (the miniature's plant meshes and sway, filter jets, the
