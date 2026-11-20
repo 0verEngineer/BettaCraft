@@ -40,6 +40,9 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
   chapter.
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
+- Slow fish no longer drift upwards: the lift that keeps a tankmate hovering was also added when there was no sinking to
+  undo (the game zeroes a very slow motion first), so a slowly swimming small fish rose by up to 0.005 blocks a tick; fish bobbed
+  near their targets, and an otocinclus pressed to the surface never reached its spot on the glass just below it.
 - Test only: the monitor test allows for the tanks of neighbouring tests (at most four tiles on its screen), the alarm
   waypoint test for the mock players of neighbouring tests.
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
@@ -49,6 +52,11 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
   too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
 - Test only: the integration suite runs on 1.21.11: mods without a 1.21.11 build are a documented gap (VersionGaps), the
   mock players stay off NeoForge's config sync, Integrated Tunnels' new activation call.
+- Test only: the shrimp generations come out the same in every run (the life of the small animals draws from its own
+  random, the number of draws of their movement no longer shifts it); the M46 world config test no longer saves the
+  server config (the config watcher loaded the file again a moment later, over the values of the next tests:
+  `frogWithoutAirDrowns` got the default air in the middle of its run); the glass cleaner test waits long enough for the
+  far spots.
 
 ### Known gaps on 1.21.11
 - Create (with Sable and Aeronautics), Applied Energistics 2, Refined Storage, KubeJS, the power mods of ATM10, Cable
