@@ -27,6 +27,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
   text background); they look as before.
 
 ### Fixed
+- JourneyMap: the alarm waypoints of the monitors work with JourneyMap 6.0.10 for 26.3 (its API only has
+  `createWaypoint`; the integration switched itself off).
 - A fish heading for a spot on the glass right above the floor also arrives when the bottom of the water (not a block)
   holds it (an otocinclus stayed 0.15 blocks above its spot).
 - NeoForge 26.3: the wild animals spawn again in biomes whose spawns a datapack writes as a plain value (Terralith 2.6.5
