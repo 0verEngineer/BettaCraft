@@ -25,6 +25,7 @@
     "villager.MerchantContainerMixin"
   ],
   "client": [
+    "client.BackgroundMouseMixin",
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
