@@ -148,7 +148,10 @@ public final class ModpackEventGameTests {
             h.assertTrue("temperature".equals(a.getValue()) && Math.abs(a.getCurrent() - 30F) < 0.5F && !a.isBelow()
                     && a.getTankId().equals(t.getTank().id()) && a.getMonitorPos().equals(c.getBlockPos()), "the value, tank and monitor");
             h.assertTrue(MonitorAlarms.waypointOpen(t.getTank().id()), "a waypoint at the tank");
-            h.assertTrue(MonitorAlarms.sentWaypoints == sent + 1, "one waypoint for the player nearby: " + (MonitorAlarms.sentWaypoints - sent));
+            // M52 (backport of the 26.x fix): one per player in range (tests of the batch run side by side; another test's mock
+            // player may be near)
+            long inRange = level.players().stream().filter(p -> p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(t.getBlockPos())) <= (double) MonitorAlarms.WAYPOINT_RANGE * MonitorAlarms.WAYPOINT_RANGE).count();
+            h.assertTrue(inRange >= 1 && MonitorAlarms.sentWaypoints == sent + inRange, "one waypoint for each player nearby: " + (MonitorAlarms.sentWaypoints - sent) + " for " + inRange);
             CAUGHT.clear();
             MonitorSync.cycle(level, c);
             h.assertTrue(CAUGHT.isEmpty(), "no change, no event");
@@ -161,7 +164,7 @@ public final class ModpackEventGameTests {
             t.getTank().setWaterTemp(25F);
             MonitorSync.cycle(level, c);
             h.assertTrue(caught(TankAlarmEvent.class).size() == 1, "the 28 alarm cleared");
-            h.assertTrue(!MonitorAlarms.waypointOpen(t.getTank().id()) && MonitorAlarms.sentWaypoints == sent + 2, "the waypoint is removed");
+            h.assertTrue(!MonitorAlarms.waypointOpen(t.getTank().id()) && MonitorAlarms.sentWaypoints == sent + 2 * inRange, "the waypoint is removed");
             // the monitor broken while an alarm is on: cleared
             t.getTank().setWaterTemp(30F);
             MonitorSync.cycle(level, c);
