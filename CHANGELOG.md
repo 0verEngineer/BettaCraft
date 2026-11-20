@@ -39,6 +39,9 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
 - Better Fish Tanks: its fish bag no longer catches a fish out of a Bettacraft tank through the glass (the fish left without
   its water, stayed listed in the tank and kept its tank reference in the bag); a hint points to the tank menu, whose bag
   button takes their bag.
+- The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
+  tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
+  inhabitants let it go into the world.
 - Test only: the monitor test allows for the tanks of neighbouring tests (at most four tiles on its screen), the alarm
   waypoint test for the mock players of neighbouring tests.
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
@@ -50,6 +53,10 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
   server config (the config watcher loaded the file again a moment later, over the values of the next tests:
   `frogWithoutAirDrowns` got the default air in the middle of its run); the glass cleaner test waits long enough for the
   far spots.
+- Test only: the frog breeding test draws the eggs the frogs snap at from a fixed seed (its 60 % hatch check failed about
+  once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
+  nest by the glass. The Fabric GameTests on Minecraft 1.21.1 write the reason of a failed test into the log
+  again (only its name was there).
 
 ### Known gaps on Fabric
 - A glowing pipe cover (glowstone, sea lantern ...) does not light up its surroundings (Fabric has no light by block
