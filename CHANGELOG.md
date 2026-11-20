@@ -62,6 +62,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 - Test only: the frog breeding test draws the eggs the frogs snap at from a fixed seed (its 60 % hatch check failed about
   once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
   nest by the glass.
+- Test only: the floating plant tank of the test of keeping fish without a generator holds two female bettas (a pair
+  bred there, and its fry, 2 to 23 bettas by chance, set the water quality; it fell below the check once).
 
 ### Known gaps on 26.3
 - No 26.3 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
