@@ -186,7 +186,7 @@ public final class ForeignLandAnimalsGameTests {
             lid(h, c);
             LivingEntity f = put(h, c, container(h, firefly, false, false));
             h.assertTrue(ForeignHabits.glows(firefly), "a glowing profile");
-            level.setDayTime(18000); // midnight
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 18000); // midnight
             boolean[] glowed = {false};
             h.onEachTick(() -> {
                 if (ForeignHabits.glowing(f)) glowed[0] = true;
@@ -194,10 +194,10 @@ public final class ForeignLandAnimalsGameTests {
             h.runAfterDelay(ForeignHabits.FLASH_EVERY + 20, () -> {
                 try {
                     h.assertTrue(glowed[0], "it glowed in the dark tank");
-                    level.setDayTime(6000); // noon: the sun would drive it away after 600 ticks
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000); // noon: the sun would drive it away after 600 ticks
                     ForeignHabits.setSunTicks(f, 590);
                 } catch (RuntimeException ex) {
-                    level.setDayTime(time);
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
                     throw ex;
                 }
             });
@@ -208,11 +208,11 @@ public final class ForeignLandAnimalsGameTests {
                     h.assertTrue(TankInhabitants.tankBox(c.getTank()).contains(f.position()), "in its tank");
                     h.succeed();
                 } finally {
-                    level.setDayTime(time);
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
                 }
             });
         } catch (RuntimeException ex) {
-            level.setDayTime(time);
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, time);
             throw ex;
         }
     }

@@ -232,6 +232,9 @@ public final class FrogBreedingGameTests {
             t.setLastCoolChange(level.getGameTime());
             for (int i = 0; i < 5; i++) FrogBreeding.step(level, c, 2.0);
             check(!male.inAmplexus() && !female.inAmplexus(), "a pair in amplexus with the switch off");
+            // the frogs snap at the spawn now and then (about one egg in five in 2 days): without them the hatch is certain
+            male.discard();
+            female.discard();
             t.frogSpawn().add(new FrogSpawn(t.nextFrogBroodId(), t.min().getX() + 1.5, new TankWaterVolume(t).surface(), t.min().getZ() + 1.0, 12));
             FrogBreeding.step(level, c, FrogBreeding.hatchDays() + 0.1);
             check(t.tadpoles().size() >= 7, "laid spawn still hatches: " + t.tadpoles().size());
