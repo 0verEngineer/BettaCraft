@@ -7,16 +7,16 @@ import java.util.Set;
  * M52c: the mods of our test groups (power, aquatic, biomes, create, integration) that have no build for the Minecraft version
  * of this branch. Tests that need one of them pass with a log line instead of failing on an incomplete group: a documented gap
  * of this version (report, CHANGELOG, handbook), not a missing jar. M52d: the list for 26.2 (Modrinth, CurseForge and the FTB
- * maven checked on 2026-11-19).
+ * maven checked on 2026-11-19). M52e: the list for 26.3 (same sources, 2026-11-19): Modular Routers has no 26.3 build.
  */
 public final class VersionGaps {
     private VersionGaps() {}
 
-    public static final String MINECRAFT = "26.2";
+    public static final String MINECRAFT = "26.3";
 
     public static final Set<String> NO_BUILD = Set.of(
             "mekanism", "mekanismcovers", "fluxnetworks", "industrialforegoing", "oritech", "enderio", "enderio_endergy", "athena", // power, integration
-            "refinedstorage", "laserio", // storage, integration
+            "refinedstorage", "laserio", "modularrouters", // storage, integration
             "alexscaves", "cataclysm", "crittersandcompanions", "deeperdarker", "shiny", "fisheggs", "undergarden", "iceandfire",
             "sushigocrafting", "titanium", "jupiter", "uranus", "patchouli", // aquatic
             "biomeswevegone", "regions_unexplored", "twilightforest", // biomes

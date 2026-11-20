@@ -228,7 +228,7 @@ Exemplar: Stelle es aus einem Buch und Betta-Pellets her, oder bitte einen Opera
 Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) und in JEI.
 
 Auf **Fabric** ist das Handbuch ein Buch einer anderen Mod mit denselben Seiten: **Patchouli** auf Minecraft 1.21.1,
-**Modonomicon** auf 1.21.11, 26.1.2 und 26.2 (Patchouli gibt es dafür nicht als Release). Dort erscheinen die Szenen dieses
+**Modonomicon** auf 1.21.11, 26.1.2, 26.2 und 26.3 (Patchouli gibt es dafür nicht als Release). Dort erscheinen die Szenen dieses
 Handbuchs (Beckenformen, Tiere) als Items, und nach einem Sprachwechsel zeigt das Buch die neue Sprache, sobald du die
 Welt neu betrittst.
 
@@ -247,6 +247,11 @@ Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Ca
 We've Gone und EMI. Naturalist gibt es auf 26.2 wieder (NeoForge und Fabric). In einer **friedlichen** Welt gibt es auf 26.2 gar keine
 Monster: Ein Monsterglas lässt sich dort weder öffnen noch in ein Terrarium setzen, und ein Monster im Terrarium ist weg, sobald
 sein Chunk im friedlichen Modus geladen wird (wie jedes andere Monster).
+
+Auf **Minecraft 26.3** funktioniert alles wie auf 26.2 (auch mit dem Vulkan-Renderer von 26.3). Auf NeoForge ist die
+Server-Konfiguration `config/bettacraft-server.toml` für alle Welten; eine Welt, die abweichen soll, hat ihre eigene Kopie in
+`<welt>/syncedconfig/` (auf 26.2 und älter: `<welt>/serverconfig/`). Mods ohne 26.3-Version haben dort keine Anbindung: dieselben
+wie auf 26.2 und Modular Routers.
 
 ## Andere Mods
 

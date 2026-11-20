@@ -223,7 +223,7 @@ craft a book with betta pellets, or ask an operator for `/guideme give <player> 
 Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift) and in JEI.
 
 On **Fabric** the handbook is a book of another mod with the same pages: **Patchouli** on Minecraft 1.21.1,
-**Modonomicon** on 1.21.11, 26.1.2 and 26.2 (Patchouli has no release for them). There the scenes of this handbook (tank shapes,
+**Modonomicon** on 1.21.11, 26.1.2, 26.2 and 26.3 (Patchouli has no release for them). There the scenes of this handbook (tank shapes,
 animals) are shown as items, and after changing the language the book shows the new one once you join the world again.
 
 On **Minecraft 26.1.2** (Fabric also 26.1 and 26.1.1) everything works as on 1.21.1, with two differences of Minecraft itself: the offers of the
@@ -240,6 +240,11 @@ Undergarden, Ice and Fire, Twilight Forest, Regions Unexplored, Alex's Caves, Ca
 We've Gone and EMI. Naturalist is back on 26.2 (NeoForge and Fabric). In a **peaceful** world 26.2 has no monsters at all: a mob jar
 with a monster can neither be opened nor put into a terrarium there, and a monster in a terrarium is gone once its chunk is
 loaded in peaceful (like every other monster).
+
+On **Minecraft 26.3** everything works as on 26.2 (also on the Vulkan renderer of 26.3). On NeoForge the server config is
+`config/bettacraft-server.toml` for every world; a world that should differ keeps its own copy in `<world>/syncedconfig/`
+(on 26.2 and older: `<world>/serverconfig/`). Mods without a 26.3 version have no integration there: the same as on 26.2 and
+Modular Routers.
 
 ## Other mods
 
