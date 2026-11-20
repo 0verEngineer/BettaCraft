@@ -892,6 +892,19 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.co
         }
     }
 }
+// M52: Iris (-Pshaders) cannot start on NeoForge's Blaze3D validation layer of the dev runtime (it casts the GPU device to
+// GlDevice); production has no validation layer. Off for shader runs, on again for the others (neoforge-client.toml).
+def neoClientToml = rootProject.file(runRoot + '/config/neoforge-client.toml')
+tasks.matching { it.name == 'runClient' }.configureEach { t ->
+    def shaders = project.hasProperty('shaders')
+    t.doFirst {
+        if (neoClientToml.exists()) {
+            def text = neoClientToml.getText('UTF-8')
+            def updated = text.replaceAll(/enableB3DValidationLayer = (true|false)/, "enableB3DValidationLayer = ${!shaders}")
+            if (updated != text) neoClientToml.setText(updated, 'UTF-8')
+        }
+    }
+}
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = rootProject.file(runRoot + '/config/fml.toml')
 def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }
