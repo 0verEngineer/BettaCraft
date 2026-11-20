@@ -1200,6 +1200,7 @@ tasks.named('jar', Jar).configure {
 //  - the version in neoforge.mods.toml is mod_version (and -PexpectedVersion, e.g. the tag without "v", if given)
 def verifyVersion = mod_version
 def verifyModId = mod_id
+def verifyMinecraft = minecraft_version // captured (the configuration cache has no project in the task action; as on 26.1.2)
 def verifyExpected = providers.gradleProperty('expectedVersion')
 def verifyDevClasses = sourceSets.dev.output.classesDirs
 def verifyJar = tasks.named('jar', Jar).flatMap { it.archiveFile }
@@ -1271,7 +1272,7 @@ tasks.register('verifyReleaseJar') {
         if (!expected.isEmpty() && expected != verifyVersion) {
             problems << "expected version ${expected} (tag), but mod_version is ${verifyVersion}".toString()
         }
-        if (jarFile.name != "${verifyModId}-neoforge-${minecraft_version}-${verifyVersion}.jar".toString()) problems << "unexpected jar name ${jarFile.name}".toString()
+        if (jarFile.name != "${verifyModId}-neoforge-${verifyMinecraft}-${verifyVersion}.jar".toString()) problems << "unexpected jar name ${jarFile.name}".toString()
         ["${verifyModId}.mixins.json", "${verifyModId}.neoforge.mixins.json"].each { String name ->
             def json = mixinConfigs[name]
             if (json == null) { problems << "${name} missing".toString(); return }
