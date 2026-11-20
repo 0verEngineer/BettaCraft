@@ -28,6 +28,9 @@ as usual.
   out, so mud dropped them in every biome).
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
+- Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
+- Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
+  the multiplayer test clears the mod groups of this version.
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
