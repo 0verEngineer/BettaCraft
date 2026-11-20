@@ -33,7 +33,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 - Fabric: the mud drops (tubifex, mosquito larvae) keep their biome condition (`#bettacraft:betta_spawn_biomes`); it was
   left out when the loot modifiers were read without the game's registries, so they dropped in every biome.
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
-  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
+  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock), the monitor test allows
+  for the tanks of neighbouring tests (at most four tiles on its screen).
 
 ### Known gaps on 26.3
 - No 26.3 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
