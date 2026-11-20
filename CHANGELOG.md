@@ -17,6 +17,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - **Naturalist** is back (it has a 26.2 version on both loaders): its animals get our care and breeding again.
 
 ### Fixed
+- A fish heading for a spot on the glass right above the floor also arrives when the bottom of the water (not a block)
+  holds it (an otocinclus stayed 0.15 blocks above its spot).
 - A fish heading for a spot on the glass right above the floor no longer keeps pushing into the floor: it stands up there.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - The sky and fog inside the tank interior are the overworld's again (they were dark when looking down from above).
