@@ -21,11 +21,18 @@ import net.minecraft.server.network.CommonListenerCookie;
 final class MockPlayers {
     private MockPlayers() {}
 
-    /** The connection claims to listen on every channel; the packets just end up in the embedded channel. */
+    /**
+     * NeoForge's server config sync: a plain mock player (class ServerPlayer itself) on that channel makes NeoForge expect a
+     * login it never had, and the next config reload crashes the server ("configsToSync should contain an entry", seen in
+     * the M52c integration run). The mock players do not listen on it.
+     */
+    private static final Identifier CONFIG_SYNC = Identifier.fromNamespaceAndPath("neoforge", "config_file");
+
+    /** The connection claims to listen on every channel (but the config sync); the packets end up in the embedded channel. */
     private static final class AnyChannel extends AbstractSet<Identifier> {
         @Override
         public boolean contains(Object o) {
-            return true;
+            return !CONFIG_SYNC.equals(o);
         }
 
         @Override

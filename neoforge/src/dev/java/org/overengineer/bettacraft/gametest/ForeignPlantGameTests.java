@@ -415,7 +415,10 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void biomeModPlantsCount(GameTestHelper h) {
         boolean ru = block("regions_unexplored:cattail") != null, tf = block("twilightforest:huge_lily_pad") != null;
-        if (Boolean.getBoolean("bettacraft.biomemods") && !(ru && tf)) throw new GameTestFailure("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
+        // M52: a mod without a build for this Minecraft version is no missing jar
+        boolean ruGap = !ru && org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains("regions_unexplored");
+        boolean tfGap = !tf && org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains("twilightforest");
+        if (Boolean.getBoolean("bettacraft.biomemods") && !((ru || ruGap) && (tf || tfGap))) throw new GameTestFailure("-Pbiomes but Regions Unexplored / Twilight Forest are not loaded");
         if (!ru && !tf) {
             h.succeed();
             return;
@@ -439,7 +442,7 @@ public final class ForeignPlantGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m38_plants", timeoutTicks = 100)
     public static void alexsCavesSpongeCounts(GameTestHelper h) {
         boolean ac = block("alexscaves:ping_pong_sponge") != null;
-        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac) throw new GameTestFailure("-Paquatic but Alex's Caves is not loaded");
+        if (Boolean.getBoolean("bettacraft.aquaticmods") && !ac && !org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains("alexscaves")) throw new GameTestFailure("-Paquatic but Alex's Caves is not loaded");
         if (!ac) {
             h.succeed();
             return;

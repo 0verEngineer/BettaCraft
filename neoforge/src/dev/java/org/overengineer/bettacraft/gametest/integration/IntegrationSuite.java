@@ -38,6 +38,12 @@ public final class IntegrationSuite {
     public static boolean lacks(GameTestHelper h, String... mods) {
         List<String> missing = java.util.Arrays.stream(mods).filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)).toList();
         if (missing.isEmpty()) return false;
+        if (org.overengineer.bettacraft.gametest.framework.VersionGaps.allWithoutBuild(missing.toArray(String[]::new))) {
+            // M52: no build of these mods for this Minecraft version (a documented gap)
+            LOGGER.warn("[integration] skipped: {} have no build for Minecraft {}", missing, org.overengineer.bettacraft.gametest.framework.VersionGaps.MINECRAFT);
+            h.succeed();
+            return true;
+        }
         if (!PARTIAL) throw new GameTestFailure("the integration group lacks " + missing + " (see run/*-mods)");
         LOGGER.warn("[integration] partial run: skipped, lacks {}", missing);
         h.succeed();
