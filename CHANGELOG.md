@@ -31,6 +31,8 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
   and never stood upright).
 - Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left out, so
   mud dropped them in every biome).
+- Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
+  click was only hooked up on NeoForge).
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks).
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took

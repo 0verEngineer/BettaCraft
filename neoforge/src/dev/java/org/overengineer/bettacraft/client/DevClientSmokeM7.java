@@ -118,6 +118,18 @@ final class DevClientSmokeM7 {
         }
     }
 
+    /** M52-final: a copy of DevSmokeM7#foreignBucket (that class needs NeoForge's fake players; this scene also runs on Fabric). */
+    private static ItemStack foreignBucket(Item item) {
+        ItemStack stack = new ItemStack(item);
+        if ("fintastic:gourami_bucket".equals(BuiltInRegistries.ITEM.getKey(item).toString())) {
+            net.minecraft.nbt.CompoundTag t = new net.minecraft.nbt.CompoundTag();
+            t.putInt("VariantModel", 1);
+            t.putInt("VariantSkin", 11);
+            stack.set(net.minecraft.core.component.DataComponents.BUCKET_ENTITY_DATA, net.minecraft.world.item.component.CustomData.of(t));
+        }
+        return stack;
+    }
+
     private void build(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
         BlockPos feet = p.blockPosition();
@@ -138,7 +150,7 @@ final class DevClientSmokeM7 {
         for (String id : FOREIGN) {
             Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id));
             if (item == Items.AIR) continue;
-            ItemStack stack = org.overengineer.bettacraft.command.DevSmokeM7.foreignBucket(item);
+            ItemStack stack = foreignBucket(item);
             var err = TankInhabitants.insert(level, c, stack, TankInhabitants.containedType(stack), p, 0L);
             if (err != null) LOGGER.warn("[smoketest] M7 {}: {}", id, err.getString());
             else in.add(id);

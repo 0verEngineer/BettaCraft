@@ -27,6 +27,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static int ticks;
     private static DevClientSmokeM11 m11;
     private static DevClientSmokeM13 m13;
+    private static DevClientSmokeM7 m7;
     private static int stage;
     private static BookTour book;
 
@@ -162,6 +163,20 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 stage = 2;
             }
             if (stage == 2 && m13.tick()) {
+                stage = 4;
+                // M52-final: with Better Fish Tanks (-Pfabricintegration) also the M7 scene: the animals of other mods in our
+                // tank, a betta in a Better Fish Tanks tank, the menu with its fish bag
+                if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("betterfishtanks")) {
+                    LOGGER.info("[smoketest] fabric client: M7 scene (aquarium mods)");
+                    m7 = new DevClientSmokeM7();
+                    stage = 5;
+                }
+            }
+            if (stage == 5 && m7.tick()) {
+                mc.player.closeContainer();
+                stage = 4;
+            }
+            if (stage == 4) {
                 stage = 3;
                 LOGGER.info("[smoketest] fabric client world test finished");
                 LOGGER.info("[smoketest] PASSED");

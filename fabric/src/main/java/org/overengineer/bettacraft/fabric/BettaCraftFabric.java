@@ -42,6 +42,17 @@ public final class BettaCraftFabric implements ModInitializer {
         FabricNetwork.register();
         FabricCapabilities.register();
         FabricCapabilities.buckets();
+        // Better Fish Tanks (M7): our filled bags and betta buckets release their animal into its tanks. M52-final: on Fabric
+        // too (NeoForge: BettaCraftNeoForge, RightClickBlock); before our own block events, like a cancelled RightClickBlock
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.MOD_ID)) {
+            org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.register();
+            net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+                if (player.isSpectator()) return net.minecraft.world.InteractionResult.PASS;
+                var r = org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.onRightClickBlock(
+                        player, level, hand, hit.getBlockPos(), player.getItemInHand(hand));
+                return r != null ? r : net.minecraft.world.InteractionResult.PASS;
+            });
+        }
         FabricGameEvents.register();
         FabricWorld.register();
 
