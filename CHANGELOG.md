@@ -29,6 +29,9 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 - Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
   out, so mud dropped them in every biome).
 - Fabric: no EMI entrypoint to a class that is not in the jar (there is no EMI for 1.21.11).
+- NeoForge: looking at a tank or another block of ours with The One Probe (1.21.11_neo-13.0.0) crashed the client (TOP's
+  own fluid bar asks for the block atlas by an id 1.21.11 no longer has); TOP's fluid bar is left out on our blocks, our
+  lines show the water.
 - FTB Quests 2111 (1.21.11): the quest chapter of the modpack files showed no titles or descriptions (FTB Quests 2111
   reads the texts only from its lang file); `modpack/` now has `config/ftbquests/quests/lang/en_us.snbt` next to the
   chapter.

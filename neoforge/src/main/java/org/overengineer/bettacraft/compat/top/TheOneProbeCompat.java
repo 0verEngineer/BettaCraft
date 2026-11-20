@@ -40,6 +40,20 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     public Void apply(ITheOneProbe probe) {
         probe.registerProvider(new Blocks());
         probe.registerEntityProvider(new Bettas());
+        // M52 (1.21.11): The One Probe 1.21.11_neo-13.0.0 crashes the client when it draws its own fluid bar (it asks for the
+        // block atlas by its pre-1.21.9 id): no fluid bar of TOP on our blocks, our own lines show the water anyway
+        probe.registerProbeConfigProvider(new mcjty.theoneprobe.api.IProbeConfigProvider() {
+            @Override
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level level, Entity entity, IProbeHitEntityData data) {
+            }
+
+            @Override
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level level, BlockState state, IProbeHitData data) {
+                if (BettaCraft.MOD_ID.equals(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace())) {
+                    config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
+                }
+            }
+        });
         // looking through the glass at a fish shows the fish, not the tank block
         probe.registerBlockDisplayOverride((mode, info, player, level, state, data) -> {
             if (!(state.getBlock() instanceof TankBlock)) return false;
