@@ -2,7 +2,7 @@
 
 # Bettacraft
 
-Betta fish and real aquariums for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric: catch wild bettas and tankmates, keep them in multiblock
+Betta fish and real aquariums for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric: catch wild fish and tankmates, keep them in multiblock
 aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the water,
 run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel genetics.
 
