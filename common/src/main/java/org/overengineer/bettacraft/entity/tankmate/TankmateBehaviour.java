@@ -167,7 +167,11 @@ final class TankmateBehaviour {
                     apply();
                     return;
                 }
-                if (fish.position().distanceToSqr(target) > arrive) {
+                // M52d: a spot on the glass just above the floor: the fish lies on the floor right under it (its body cannot get
+                // lower), so it has arrived once it is there horizontally (it used to keep pushing into the floor, never upright)
+                Vec3 off = target.subtract(fish.position());
+                boolean onFloorBelow = fish.verticalCollisionBelow && off.y < 0 && off.horizontalDistanceSqr() <= arrive;
+                if (fish.position().distanceToSqr(target) > arrive && !onFloorBelow) {
                     // M21.5: a kuhli loach creeps into its shelter around the decoration
                     Vec3 to = sheltered ? steer(server, w, target) : target;
                     // M21.5: a little faster while still far away (on the way to the glass it took minutes)

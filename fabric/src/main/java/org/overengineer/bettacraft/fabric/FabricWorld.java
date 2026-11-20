@@ -87,6 +87,13 @@ public final class FabricWorld {
     record Modifier(String type, Identifier table, List<LootItemCondition> conditions, ItemStack item) {}
 
     static volatile List<Modifier> modifiers = List.of();
+    /**
+     * M52 (backport of the 26.3 fix): the files of the last reload, parsed again with the registries of the level that rolls
+     * loot: a condition with a biome tag (LocationCheck) does not parse without them and was left out, so the mud gave
+     * mosquito larvae and tubifex in every biome.
+     */
+    static volatile List<JsonObject> files = List.of();
+    static volatile net.minecraft.core.HolderLookup.@org.jetbrains.annotations.Nullable Provider parsedFor;
 
     private static void loot() {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
@@ -97,13 +104,20 @@ public final class FabricWorld {
 
             @Override
             public void onResourceManagerReload(ResourceManager rm) {
-                modifiers = read(rm);
+                files = read(rm);
+                parsedFor = null;
+                modifiers = parse(files, null);
             }
         });
     }
 
     /** The loot of a table was rolled (LootTableMixin; the table's id is its random sequence, as vanilla's tables have it). */
     public static void modify(Identifier id, LootContext context, ObjectArrayList<ItemStack> loot) {
+        var registries = context.getLevel().registryAccess();
+        if (parsedFor != registries) {
+            modifiers = parse(files, registries);
+            parsedFor = registries;
+        }
         List<Modifier> ms = modifiers;
         if (ms.isEmpty()) return;
         for (Modifier m : ms) {
@@ -124,9 +138,8 @@ public final class FabricWorld {
         }
     }
 
-    private static List<Modifier> read(ResourceManager rm) {
-        List<Modifier> out = new ArrayList<>();
-        var ops = RegistryOps.create(JsonOps.INSTANCE, net.minecraft.core.RegistryAccess.EMPTY);
+    private static List<JsonObject> read(ResourceManager rm) {
+        List<JsonObject> out = new ArrayList<>();
         var list = rm.getResource(Identifier.fromNamespaceAndPath("neoforge", "loot_modifiers/global_loot_modifiers.json"));
         if (list.isEmpty()) return out;
         try (Reader r = list.get().openAsReader()) {
@@ -137,23 +150,43 @@ public final class FabricWorld {
                 var res = rm.getResource(Identifier.fromNamespaceAndPath(id.getNamespace(), "loot_modifiers/" + id.getPath() + ".json"));
                 if (res.isEmpty()) continue;
                 try (Reader mr = res.get().openAsReader()) {
-                    JsonObject o = JsonParser.parseReader(mr).getAsJsonObject();
-                    Identifier table = null;
-                    List<LootItemCondition> conds = new ArrayList<>();
-                    for (JsonElement c : o.getAsJsonArray("conditions")) {
-                        JsonObject co = c.getAsJsonObject();
-                        if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
-                            table = Identifier.parse(co.get("loot_table_id").getAsString());
-                            continue;
-                        }
-                        LootItemCondition.DIRECT_CODEC.parse(ops, co).result().ifPresent(conds::add);
-                    }
-                    ItemStack item = o.has("item") ? ItemStack.CODEC.parse(ops, o.get("item")).result().orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
-                    out.add(new Modifier(o.get("type").getAsString(), table, conds, item));
+                    out.add(JsonParser.parseReader(mr).getAsJsonObject());
                 }
             }
         } catch (Exception ex) {
             com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifiers failed", ex);
+        }
+        return List.copyOf(out);
+    }
+
+    /** The modifiers of the files, parsed with the registries of a level (biome tags); never one without all its conditions. */
+    private static List<Modifier> parse(List<JsonObject> files, net.minecraft.core.HolderLookup.@org.jetbrains.annotations.Nullable Provider registries) {
+        List<Modifier> out = new ArrayList<>();
+        var ops = RegistryOps.create(JsonOps.INSTANCE, registries != null ? registries : net.minecraft.core.RegistryAccess.EMPTY);
+        for (JsonObject o : files) {
+            try {
+                Identifier table = null;
+                List<LootItemCondition> conds = new ArrayList<>();
+                boolean complete = true;
+                for (JsonElement c : o.getAsJsonArray("conditions")) {
+                    JsonObject co = c.getAsJsonObject();
+                    if ("neoforge:loot_table_id".equals(co.get("condition").getAsString())) {
+                        table = Identifier.parse(co.get("loot_table_id").getAsString());
+                        continue;
+                    }
+                    var parsed = LootItemCondition.DIRECT_CODEC.parse(ops, co).result();
+                    if (parsed.isPresent()) conds.add(parsed.get());
+                    else complete = false;
+                }
+                if (!complete && registries != null) {
+                    com.mojang.logging.LogUtils.getLogger().error("Bettacraft: a condition of the loot modifier {} does not parse", o.get("type"));
+                    continue;
+                }
+                ItemStack item = o.has("item") ? ItemStack.CODEC.parse(ops, o.get("item")).result().orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
+                out.add(new Modifier(o.get("type").getAsString(), table, conds, item));
+            } catch (Exception ex) {
+                com.mojang.logging.LogUtils.getLogger().error("Bettacraft: reading the loot modifier {} failed", o.get("type"), ex);
+            }
         }
         return List.copyOf(out);
     }

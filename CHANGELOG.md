@@ -21,6 +21,17 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 - Flat worlds have their generator's sea level (−63) since 1.21.2: wild bettas and the other wild animals spawn by it.
 - An artemia culture in the inventory ripens on the server only (1.21.5 gives no slot any more), at the same rate.
 
+### Fixed
+- A tankmate fish heading for a spot on the glass right above the floor arrives there (it kept pushing into the floor
+  and never stood upright).
+- The tooltip lines of our blocks' items no longer clash with other mods that add the same tooltip method to block
+  items (the lines of one of the mods went missing).
+- Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
+  out, so mud dropped them in every biome).
+- Fabric: no EMI entrypoint to a class that is not in the jar (there is no EMI for 1.21.11).
+- NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
+  wrapped twice (nested transactions).
+
 ### Known gaps on 1.21.11
 - Create (with Sable and Aeronautics), Applied Energistics 2, Refined Storage, KubeJS, the power mods of ATM10, Cable
   Facades, Better Fish Tanks, Fintastic, Naturalist, Critters and Companions and EMI have no 1.21.11 version: their
