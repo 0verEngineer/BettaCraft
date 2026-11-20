@@ -123,8 +123,9 @@ public final class MonitorGameTests {
         h.assertTrue(Math.abs(k.value(MonitorValue.TEMPERATURE) - 24F) < 0.01F, "refreshed: " + k.value(MonitorValue.TEMPERATURE));
         // the automatic layout: two tiles for the tank
         MonitorSync.work(level, c);
-        // M52c: two tiles per tank in range (the tests of the batch stand side by side; another test's tank may be in range)
-        h.assertTrue(c.layout().auto && c.layout().tiles.size() == 2 * c.tanks().size()
+        // M52c: two tiles per tank in range (the tests of the batch stand side by side; another test's tank may be in range);
+        // M52: at most four on this 2 x 1 screen, the named tank first (it always has its two)
+        h.assertTrue(c.layout().auto && c.layout().tiles.size() == Math.min(4, 2 * c.tanks().size())
                         && c.layout().tiles.stream().filter(tile -> t.getTank().id().equals(tile.tank)).count() == 2,
                 "auto layout: " + c.layout().tiles.size() + " tiles for " + c.tanks().size() + " tanks");
         // the tank is broken: not live, then forgotten
