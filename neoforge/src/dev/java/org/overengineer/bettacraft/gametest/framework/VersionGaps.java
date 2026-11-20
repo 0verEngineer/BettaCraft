@@ -20,10 +20,10 @@ public final class VersionGaps {
             "ae2", "refinedstorage", "laserio", "xnet", "rftoolsbase", "mcjtylib", "modularrouters", // storage, integration
             "alexscaves", "cataclysm", "crittersandcompanions", "deeperdarker", "shiny", "fisheggs", "undergarden", "iceandfire",
             "sushigocrafting", "titanium", "jupiter", "uranus", "patchouli", "naturalist", // aquatic
-            "biomeswevegone", "regions_unexplored", "twilightforest", // biomes
+            "regions_unexplored", "twilightforest", // biomes (M52-final: Oh The Biomes We've Gone has a 1.21.11 build, CurseForge)
             "create", "sable", "aeronautics", // create
             "kubejs", "rhino", "cable_facades", // kubejs, facades
-            "aether", "aether_ii", "ars_nouveau", "ars_elemental", "productivebees", "occultism", "thaumaturge", "mahoutsukai",
+            "aether", "ars_nouveau", "ars_elemental", "productivebees", "occultism", "thaumaturge", "mahoutsukai",
             "actuallyadditions", "psychadelicchem", "fungidelight", "farmersdelight", "oritechthings", "garnished", // zoo
             "betterfishtanks", "fintastic"); // aquarium mods of the dev runtime
 

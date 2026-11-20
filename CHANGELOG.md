@@ -14,6 +14,9 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
   The same content, ids, data and configs as on 1.21.1.
 - **Handbook on Fabric 1.21.11** as a **Modonomicon** book (optional dependency; Patchouli has no 1.21.11 version), made
   from the same pages as the GuideME handbook, English and German. NeoForge keeps GuideME.
+- Oh The Biomes We've Gone on 1.21.11 (NeoForge and Fabric): its swamps, mangroves and rainforests get the wild
+  animals, net catches and wild plants as on 1.21.1 (its 1.21.11 version had been missed; now in the biome tests of
+  both loaders).
 
 ### Changed (Minecraft 1.21.11 itself)
 - Spawn eggs have their own procedural textures (since 1.21.5 spawn eggs are no longer tinted).
