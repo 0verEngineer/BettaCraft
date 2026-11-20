@@ -47,9 +47,10 @@ branches from the first tank:
 The tasks are Bettacraft [advancements](../progress.md) and items, the rewards some experience and small items: plant
 cuttings, food, a spare test kit, filter media, salt, a few glass pipes. The texts are translation keys of Bettacraft
 (`quest.bettacraft.*`), so every language of the mod is in the quests too (English and German). Copy the file into
-`config/ftbquests/quests/chapters/` and run `/ftbquests reload` or restart: the chapter appears in the default group;
-move it, change rewards or add quests in the quest editor as with any chapter. FTB Quests moves the texts into its
-`lang/en_us.snbt` the first time it saves; they stay translation keys there.
+`config/ftbquests/quests/chapters/` and, on Minecraft 1.21.11, also `config/ftbquests/quests/lang/en_us.snbt` of the zip
+(FTB Quests 2111 reads the texts only from there; merge its lines into an existing file), then run `/ftbquests reload` or
+restart: the chapter appears in the default group; move it, change rewards or add quests in the quest editor as with any
+chapter. The texts stay translation keys there.
 
 **Updating:** the ids, tasks and dependencies of the quests never change, so a newer version of the file replaces the old
 quests instead of adding them twice, and every player keeps their progress. Advancements a player already has complete

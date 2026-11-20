@@ -47,10 +47,11 @@ in Zweigen vom ersten Becken aus:
 Die Aufgaben sind Bettacraft-[Fortschritte](../progress.md) und -Gegenstände, die Belohnungen etwas Erfahrung und kleine
 Gegenstände: Pflanzenstecklinge, Futter, ein Ersatz-Testkit, Filtermedien, Salz, ein paar Glasrohre. Die Texte sind
 Übersetzungsschlüssel von Bettacraft (`quest.bettacraft.*`), also kommt jede Sprache der Mod auch in die Quests (Englisch
-und Deutsch). Die Datei nach `config/ftbquests/quests/chapters/` kopieren und `/ftbquests reload` ausführen oder neu
-starten: Das Kapitel erscheint in der Standardgruppe; verschieben, Belohnungen ändern oder Quests ergänzen geht im
-Quest-Editor wie bei jedem Kapitel. FTB Quests verschiebt die Texte beim ersten Speichern in seine `lang/en_us.snbt`; dort
-bleiben es Übersetzungsschlüssel.
+und Deutsch). Die Datei nach `config/ftbquests/quests/chapters/` kopieren und auf Minecraft 1.21.11 auch
+`config/ftbquests/quests/lang/en_us.snbt` aus dem Zip (FTB Quests 2111 liest die Texte nur von dort; in eine vorhandene
+Datei die Zeilen übernehmen), dann `/ftbquests reload` ausführen oder neu starten: Das Kapitel erscheint in der
+Standardgruppe; verschieben, Belohnungen ändern oder Quests ergänzen geht im Quest-Editor wie bei jedem Kapitel. Die
+Texte bleiben dort Übersetzungsschlüssel.
 
 **Aktualisieren:** IDs, Aufgaben und Abhängigkeiten der Quests ändern sich nie; eine neuere Fassung der Datei ersetzt also
 die alten Quests, statt sie doppelt anzulegen, und jeder Spieler behält seinen Fortschritt. Fortschritte, die ein Spieler

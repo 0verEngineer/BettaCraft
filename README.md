@@ -324,7 +324,8 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
   mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
-  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and two KubeJS scripts; the
+  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` (on 1.21.11 with its texts in
+  `config/ftbquests/quests/lang/en_us.snbt`, which FTB Quests 2111 needs) and two KubeJS scripts; the
   NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
   (`org.overengineer.bettacraft.api.event`) and `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other
   mods (`features.modpackEvents`). See "Quest chapter" below.
@@ -338,7 +339,7 @@ glass, animals of other mods), the technology (cabinet, aeration, lights, power 
 change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
-- **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
+- **Updating a pack:** copy the new `bettacraft.snbt` (on 1.21.11 also the lines of `lang/en_us.snbt`) over the old one and run `/ftbquests reload` (or restart). The 33
   quests of the first chapter keep their ids, tasks, dependencies and rewards, so the progress of every player stays;
   new quests only add to them. Advancement tasks of new quests complete by themselves for players who already have the
   advancement (FTB Quests checks them every few ticks once the quest may start), item tasks when the item is in the

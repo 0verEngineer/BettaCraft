@@ -878,6 +878,8 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.co
     def base = t.name == 'runGameTestServer' ? gameTestDir : runRoot
     def copies = [
             [src: rootProject.file('modpack/config/ftbquests/quests/chapters/bettacraft.snbt'), dst: rootProject.file(base + '/config/ftbquests/quests/chapters/bettacraft.snbt'), on: withGroup('quests')],
+            // M52: FTB Quests 2111 reads the texts only from its lang file
+            [src: rootProject.file('modpack/config/ftbquests/quests/lang/en_us.snbt'), dst: rootProject.file(base + '/config/ftbquests/quests/lang/en_us.snbt'), on: withGroup('quests')],
             [src: rootProject.file('modpack/kubejs/server_scripts/bettacraft_events.js'), dst: rootProject.file(base + '/kubejs/server_scripts/bettacraft_events.js'), on: withGroup('kubejs')],
             [src: rootProject.file('modpack/kubejs/server_scripts/bettacraft_quests.js'), dst: rootProject.file(base + '/kubejs/server_scripts/bettacraft_quests.js'), on: withGroup('kubejs')], // M45
     ]

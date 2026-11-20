@@ -67,8 +67,37 @@ public final class QuestGameTests {
      */
     private static Component title(GameTestHelper h, Object questObject) throws ReflectiveOperationException {
         String raw = (String) call(questObject, "getRawTitle");
+        if (raw == null || raw.isEmpty()) raw = translatedTitle(questObject);
         Method parse = Class.forName("dev.ftb.mods.ftbquests.util.TextUtils").getMethod("parseRawText", String.class, HolderLookup.Provider.class);
         return (Component) parse.invoke(null, raw, h.getLevel().registryAccess());
+    }
+
+    /**
+     * M52: FTB Quests 2111 (1.21.11) moves the titles of a chapter into its translation tables on load
+     * ({@code quests/lang/<locale>.snbt}); the raw title is empty then. The title of the fallback locale (en_us): our JSON text
+     * component with the translation key (as on 26.1.2).
+     */
+    private static String translatedTitle(Object questObject) throws ReflectiveOperationException {
+        Object file = questFile();
+        Object manager = file.getClass().getMethod("getTranslationManager").invoke(file);
+        Class<?> keyType = Class.forName("dev.ftb.mods.ftbquests.quest.translation.TranslationKey");
+        Object titleKey = keyType.getField("TITLE").get(null);
+        String locale = (String) file.getClass().getMethod("getFallbackLocale").invoke(file);
+        Class<?> base = Class.forName("dev.ftb.mods.ftbquests.quest.QuestObjectBase");
+        Object t = manager.getClass().getMethod("getStringTranslation", base, String.class, keyType).invoke(manager, questObject, locale, titleKey);
+        return ((java.util.Optional<?>) t).map(Object::toString).orElse("");
+    }
+
+    /** The quest progress of the player's team: getOrCreateTeamData(Entity) in FTB Quests 2101, getTeamData(Player) since 2111. */
+    private static Object teamData(Object file, ServerPlayer sp) throws ReflectiveOperationException {
+        try {
+            return file.getClass().getMethod("getOrCreateTeamData", net.minecraft.world.entity.Entity.class).invoke(file, sp);
+        } catch (NoSuchMethodException e) {
+            Object known = file.getClass().getMethod("getTeamData", net.minecraft.world.entity.player.Player.class).invoke(file, sp);
+            if (known instanceof java.util.Optional<?> o && o.isPresent()) return o.get();
+            // the personal team of a player has the player's UUID
+            return file.getClass().getMethod("getOrCreateTeamData", java.util.UUID.class).invoke(file, sp.getUUID());
+        }
     }
 
     private static Object questFile() throws ReflectiveOperationException {
@@ -160,7 +189,7 @@ public final class QuestGameTests {
             h.assertTrue(deps >= QUESTS - 1 && items >= 40 && advancements >= 45 && itemRewards >= 30,
                     "dependencies " + deps + ", items " + items + ", advancements " + advancements + ", item rewards " + itemRewards);
         } catch (ReflectiveOperationException e) {
-            throw new GameTestFailure("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e + " (" + e.getCause() + ")");
         }
         h.succeed();
     }
@@ -186,7 +215,7 @@ public final class QuestGameTests {
             Map<String, Object> q = quests(h);
             for (String a : List.of("build_tank", "swamp_water", "mosquito_larvae", "paludarium")) grant(sp, a);
             Object file = questFile();
-            Object team = file.getClass().getMethod("getOrCreateTeamData", net.minecraft.world.entity.Entity.class).invoke(file, sp);
+            Object team = teamData(file, sp);
             Method completed = team.getClass().getMethod("isCompleted", Class.forName("dev.ftb.mods.ftbquests.quest.QuestObject"));
             // the player tick of FTB Quests (a mock player is not ticked by a connection; the client smoke has a real one)
             h.onEachTick(() -> LoaderHooks.get().playerTickPost(sp));
@@ -204,12 +233,12 @@ public final class QuestGameTests {
                     h.assertTrue(!(boolean) completed.invoke(team, q.get("food_bred")), "food_bred not (no advancement)");
                     QuestAdv.gone(h, sp);
                 } catch (ReflectiveOperationException e) {
-                    throw new GameTestFailure("FTB Quests API changed: " + e);
+                    throw new GameTestFailure("FTB Quests API changed: " + e + " (" + e.getCause() + ")");
                 }
             });
         } catch (ReflectiveOperationException e) {
             QuestAdv.gone(h, sp);
-            throw new GameTestFailure("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e + " (" + e.getCause() + ")");
         }
     }
 
@@ -264,7 +293,7 @@ public final class QuestGameTests {
             h.assertTrue(!back.getBooleanOr("invisible", false) && !back.getBooleanOr("optional", false), "shown and required again");
             assertShownByTags(h, q, "tankmates on again");
         } catch (ReflectiveOperationException e) {
-            throw new GameTestFailure("FTB Quests API changed: " + e);
+            throw new GameTestFailure("FTB Quests API changed: " + e + " (" + e.getCause() + ")");
         } finally {
             Features.set(Feature.TANKMATES, saved);
             ApiEvents.featuresChanged(h.getLevel().getServer());

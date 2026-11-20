@@ -5,8 +5,9 @@ The chapter is a progression from the first tank in branches: bettas and their b
 frogs, terraria, paludaria and turtles, big animals, guests (axolotls, pets, mobs, animals of other mods) and the
 optional Create quests, with advancement and item tasks. Titles and descriptions are JSON text components with
 translation keys (quest.bettacraft.<quest>.title / .desc), so the texts come from the mod's own en_us / de_de lang files
-and every language of the mod works. FTB Quests moves the inline texts into its lang/en_us.snbt on the first load (that
-is its migration of older chapter files); they stay translation keys there.
+and every language of the mod works. FTB Quests 2101 (1.21.1) moves the inline texts into its lang/en_us.snbt on the first
+load (its migration of older chapter files); FTB Quests 2111 (1.21.11) reads the texts only from that file, so the
+generator writes it too (modpack/config/ftbquests/quests/lang/en_us.snbt, the same translation components).
 
 The ids are fixed (from a hash of the quest name), so a new version of the file replaces the old quests instead of adding
 copies, and players keep their progress. The 33 quests of the first chapter (1.25.0) keep their ids, tasks, dependencies
@@ -29,6 +30,7 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "chapters", "bettacraft.snbt")
+LANG_OUT = os.path.join(ROOT, "modpack", "config", "ftbquests", "quests", "lang", "en_us.snbt")
 FEATURE_JAVA = os.path.join(ROOT, "common", "src", "main", "java", "org", "overengineer", "bettacraft", "config", "Feature.java")
 
 
@@ -416,6 +418,19 @@ def main():
     with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(L) + "\n")
     print("wrote %s (%d quests, %d new)" % (OUT, len(QUESTS), len(QUESTS) - FIRST_CHAPTER))
+    # M52 (FTB Quests 2111): the texts in the lang file, keyed <type>.<id>.<key> as TranslationManager.makeKey does
+    T = ["{"]
+    T.append("\t%s: %s," % (s("chapter.%s.title" % qid("chapter")), s(text("quest.bettacraft.chapter.title"))))
+    T.append("\t%s: [%s]," % (s("chapter.%s.chapter_subtitle" % qid("chapter")), s(text("quest.bettacraft.chapter.subtitle"))))
+    for qi, q in enumerate(QUESTS):
+        name = q[0]
+        T.append("\t%s: %s," % (s("quest.%s.title" % qid(name)), s(text("quest.bettacraft.%s.title" % name))))
+        T.append("\t%s: [%s]%s" % (s("quest.%s.quest_desc" % qid(name)), s(text("quest.bettacraft.%s.desc" % name)), "," if qi < len(QUESTS) - 1 else ""))
+    T.append("}")
+    os.makedirs(os.path.dirname(LANG_OUT), exist_ok=True)
+    with open(LANG_OUT, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(T) + "\n")
+    print("wrote %s" % LANG_OUT)
     readme_table(eff)
     if os.environ.get("PREVIEW"):
         preview(os.environ["PREVIEW"])
