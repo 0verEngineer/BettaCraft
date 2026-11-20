@@ -38,6 +38,9 @@ as usual.
 - Better Fish Tanks: its fish bag no longer catches a fish out of a Bettacraft tank through the glass (the fish left without
   its water, stayed listed in the tank and kept its tank reference in the bag); a hint points to the tank menu, whose bag
   button takes their bag.
+- The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
+  tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
+  inhabitants let it go into the world.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
@@ -49,6 +52,9 @@ as usual.
   server config (the config watcher loaded the file again a moment later, over the values of the next tests:
   `frogWithoutAirDrowns` got the default air in the middle of its run); the glass cleaner test waits long enough for the
   far spots.
+- Test only: the frog breeding test draws the eggs the frogs snap at from a fixed seed (its 60 % hatch check failed about
+  once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
+  nest by the glass.
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
