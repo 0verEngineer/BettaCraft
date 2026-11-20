@@ -223,7 +223,11 @@ public final class TankCritters {
         if (t.critters().isEmpty() && t.critterObjects().isEmpty()) return;
         // M33 part b: the small animals off: they rest where they are (no moving, eating, ageing, breeding or dying)
         if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.INVERTEBRATES)) return;
-        RandomGenerator rnd = random(level);
+        // M52: two generators, each seeded by one draw of the level's random: the life of the animals (food order, deaths,
+        // mates, broods) and their movement. How many draws the movement takes depends on where the animals are, and with one
+        // shared stream the breeding of a colony followed their positions (a seeded breeding run differed from run to run)
+        RandomGenerator life = new java.util.SplittableRandom(random(level).nextLong());
+        RandomGenerator rnd = new java.util.SplittableRandom(random(level).nextLong());
         TankTerrain terrain = terrain(level, t);
         long now = level.getGameTime();
         // one second of movement
@@ -266,10 +270,10 @@ public final class TankCritters {
                 dry || !org.overengineer.bettacraft.co2.TankCo2.enabled() ? Double.NaN : t.co2(), // M25 part b
                 org.overengineer.bettacraft.config.Care.mode()); // M33 part c
         double[] pool = {t.critterFood()};
-        CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, rnd, t::nextCritterId);
+        CritterLife.Result r = CritterLife.step(t.critters(), t.critterObjects(), env, days, pool, life, t::nextCritterId);
         t.setCritterFood(pool[0]);
         afterLife(level, c, terrain, r, bettas, rnd);
-        BigCrayfish.step(level, c, days, rnd); // M29 part d: plants and fish
+        BigCrayfish.step(level, c, days, life); // M29 part d: plants and fish
         c.setChanged();
         sync(level, c);
     }
