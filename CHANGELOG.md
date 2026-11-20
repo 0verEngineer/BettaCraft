@@ -27,6 +27,8 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
   text background); they look as before.
 
 ### Fixed
+- A fish heading for a spot on the glass right above the floor also arrives when the bottom of the water (not a block)
+  holds it (an otocinclus stayed 0.15 blocks above its spot).
 - NeoForge 26.3: the wild animals spawn again in biomes whose spawns a datapack writes as a plain value (Terralith 2.6.5
   does it for the vanilla biomes it replaces, swamp and jungle among them); NeoForge ignores every biome modifier's spawns
   there, so Bettacraft adds its own to that value.
