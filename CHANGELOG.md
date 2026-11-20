@@ -15,6 +15,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
   26.2). The same content, ids, configs and handbook as on 26.1.2. 26.2 has no patch versions; the jars declare 26.2.
 - **Handbook:** GuideME on NeoForge (GuideME 26.2 is an alpha), a **Modonomicon** book on Fabric, English and German.
 - **Naturalist** is back (it has a 26.2 version on both loaders): its animals get our care and breeding again.
+- **Better Fish Tanks** on 26.2, NeoForge and Fabric (its fish bag in both directions, bettas and our bags into its
+  tanks). Its 26.x versions are published on CurseForge and Modrinth; the port had missed them.
 
 ### Fixed
 - JourneyMap: the alarm waypoints of the monitors work with JourneyMap 6.0.10 for 26.2 (its API only has
@@ -22,6 +24,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - A fish heading for a spot on the glass right above the floor also arrives when the bottom of the water (not a block)
   holds it (an otocinclus stayed 0.15 blocks above its spot).
 - A fish heading for a spot on the glass right above the floor no longer keeps pushing into the floor: it stands up there.
+- Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
+  click was only hooked up on NeoForge).
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - The sky and fog inside the tank interior are the overworld's again (they were dark when looking down from above).
 - Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
@@ -45,7 +49,7 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 ### Known gaps on 26.2
 - No 26.2 version (so no integration there): FTB Quests (no quest chapter), KubeJS, Create (with Sable and Aeronautics),
   Mekanism (and Mekanism Covers), Flux Networks, EnderIO, Oritech, Industrial Foregoing, Refined Storage, LaserIO, Cable
-  Facades, Better Fish Tanks, Fintastic, Critters and Companions, The Undergarden, Ice and Fire, Sushi Go Crafting, Twilight
+  Facades, Fintastic, Critters and Companions, The Undergarden, Ice and Fire, Sushi Go Crafting, Twilight
   Forest, Regions Unexplored, Oh The Biomes We've Gone, Alex's Caves, Cataclysm, Deeper and Darker, Fish Eggs and EMI.
   Applied Energistics 2 (alpha), Powah (alpha), Pipez, Integrated Dynamics, XNet, Modular Routers, Aquaculture and the
   GuideME handbook are NeoForge only.
