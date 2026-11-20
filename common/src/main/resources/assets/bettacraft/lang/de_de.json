@@ -114,6 +114,7 @@
   "message.bettacraft.tank.max_entities": "In diesem Aquarium sind schon die maximal %s Tiere",
   "message.bettacraft.tank.crowded_full": "Das Aquarium ist voll: höchstens %s erwachsene Tiere bei dieser Wassermenge",
   "message.bettacraft.tank.not_inside": "Dieses Tier ist nicht mehr in diesem Aquarium",
+  "message.bettacraft.tank.take_out_by_menu": "%s lebt in diesem Aquarium: nimm es über das Aquarium-Menü heraus (Eimer oder Fischtüte)",
   "message.bettacraft.tank.cannot_take": "%s passt in keinen Eimer",
   "message.bettacraft.tank.need_bucket": "Du brauchst einen leeren Eimer im Inventar",
   "message.bettacraft.tank.need_bag": "Du brauchst eine leere Fischtüte im Inventar (eine Fish Bag von Better Fish Tanks oder ein Fintastic-Fischnetz geht auch)",

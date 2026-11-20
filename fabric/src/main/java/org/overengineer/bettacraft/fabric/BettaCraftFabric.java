@@ -52,6 +52,12 @@ public final class BettaCraftFabric implements ModInitializer {
                         player, level, hand, hit.getBlockPos(), player.getItemInHand(hand));
                 return r != null ? r : net.minecraft.world.InteractionResult.PASS;
             });
+            // M52: their bag does not catch a fish out of our tank past the menu (NeoForge: RightClickItem)
+            net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, level, hand) -> {
+                var r = org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.onRightClickItem(player, level, player.getItemInHand(hand));
+                return r != null ? net.minecraft.world.InteractionResultHolder.fail(player.getItemInHand(hand))
+                        : net.minecraft.world.InteractionResultHolder.pass(player.getItemInHand(hand));
+            });
         }
         FabricGameEvents.register();
         FabricWorld.register();

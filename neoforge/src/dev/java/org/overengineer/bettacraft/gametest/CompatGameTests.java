@@ -28,6 +28,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.InteractionResult;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.compat.FishContainers;
 import org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat;
@@ -200,6 +202,81 @@ public final class CompatGameTests {
             h.assertTrue(!TankInhabitants.hasTankRef(in.getFirst()), "no Bettacraft tank_ref in a BFT tank");
             h.succeed();
         });
+    }
+
+    /** M52: the player at {@code at} (relative, survival) looking at {@code target}, the stack in the main hand. */
+    private static ServerPlayer aim(GameTestHelper h, Vec3 at, Vec3 target, ItemStack stack) {
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
+        sp.getInventory().clearContent();
+        Vec3 abs = h.absoluteVec(at);
+        sp.teleportTo(h.getLevel(), abs.x, abs.y, abs.z, 0F, 0F);
+        sp.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, target);
+        sp.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        return sp;
+    }
+
+    /**
+     * M52: Better Fish Tanks' own bag both ways, by its own code: it catches a betta (its use(), the fish the player looks at),
+     * that bag puts the betta into our tank by a right click (+100 mB, the same fish); the menu takes it out into their bag again
+     * and their release (use while sneaking) lets the same fish out, free (no tank reference). A betta in our tank cannot be
+     * caught past our menu with their bag (it would leave the tank without its water and with its tank reference).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void betterFishTanksOwnBagCatchesAndReleases(GameTestHelper h) {
+        if (skip(h, "betterfishtanks")) return;
+        var level = h.getLevel();
+        Item bagItem = item("betterfishtanks", "fish_bag_item");
+        TankBlockEntity c = tank(h, 2, 1, 6, 2, 2, 2, 5000);
+        // a free betta in front of the player, caught by their bag
+        BettaEntity free = betta(h, 31);
+        Vec3 spot = h.absoluteVec(new Vec3(8.5, 2.2, 2.5));
+        free.moveTo(spot.x, spot.y, spot.z, 0F, 0F);
+        h.assertTrue(level.addFreshEntity(free), "the betta is in the world");
+        BettaData data = free.getBettaData();
+        ServerPlayer sp = aim(h, new Vec3(8.5, 2, 0.5), free.getEyePosition(), new ItemStack(bagItem));
+        try {
+            sp.gameMode.useItem(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND);
+            ItemStack caught = sp.getMainHandItem();
+            CompoundTag stored = FishContainers.storedEntity(caught);
+            h.assertTrue(stored != null && "bettacraft:betta".equals(stored.getString("id")) && free.isRemoved(), "their bag caught the betta");
+            // into our tank with a right click
+            net.minecraft.world.ItemInteractionResult r = TankInhabitants.tryInsert(caught, level, c.getBlockPos(), sp, InteractionHand.MAIN_HAND);
+            h.assertTrue(r == net.minecraft.world.ItemInteractionResult.CONSUME, "inserted: " + r);
+            List<Entity> live = TankInhabitants.liveInhabitants(level, c.getTank());
+            h.assertTrue(live.size() == 1 && live.getFirst() instanceof BettaEntity, "the betta is in our tank: " + live.size());
+            BettaEntity in = (BettaEntity) live.getFirst();
+            h.assertTrue(in.getBettaData().fishId().equals(data.fishId()) && in.getBettaData().genome().equals(data.genome()), "the same fish");
+            h.assertTrue(c.getTank().waterMb() == 5100, "their bag brought 100 mB: " + c.getTank().waterMb());
+            h.assertTrue(sp.getMainHandItem().is(bagItem) && FishContainers.storedEntity(sp.getMainHandItem()) == null, "their empty bag back in the hand");
+            // their bag cannot take it out of our tank past the menu (the player right in front of the glass)
+            Vec3 front = h.absoluteVec(new Vec3(3.0, 1.0, 4.6));
+            sp.teleportTo(level, front.x, front.y, front.z, 0F, 0F);
+            sp.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, in.getEyePosition());
+            sp.gameMode.useItem(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND);
+            h.assertTrue(BetterFishTanksCompat.inhabitantTheirBagWouldCatch(sp, sp.getMainHandItem()) == in, "their bag aims at the betta in our tank");
+            h.assertTrue(in.isAlive() && TankInhabitants.liveInhabitants(level, c.getTank()).contains(in) && c.getTank().waterMb() == 5100, "still in our tank");
+            h.assertTrue(FishContainers.storedEntity(sp.getMainHandItem()) == null, "their bag stays empty");
+            // the menu takes it out into their bag
+            h.assertTrue(TankInhabitants.takeOut(sp, c, in.getUUID(), true) == null, "taken out with their bag");
+            ItemStack filled = findFilled(sp, bagItem);
+            h.assertTrue(c.getTank().waterMb() == 5000, "with 100 mB: " + c.getTank().waterMb());
+            // their release lets the same fish out (sneaking, looking at the open ground)
+            sp.getInventory().clearContent();
+            sp.setItemInHand(InteractionHand.MAIN_HAND, filled);
+            sp.setXRot(10F);
+            sp.setShiftKeyDown(true);
+            sp.gameMode.useItem(sp, level, sp.getMainHandItem(), InteractionHand.MAIN_HAND);
+            sp.setShiftKeyDown(false);
+            h.assertTrue(FishContainers.storedEntity(sp.getMainHandItem()) == null, "their bag is empty after the release");
+            List<BettaEntity> out = level.getEntitiesOfClass(BettaEntity.class, sp.getBoundingBox().inflate(16),
+                    b -> b.isAlive() && b.getBettaData().fishId().equals(data.fishId()));
+            h.assertTrue(out.size() == 1, "the same betta is out: " + out.size());
+            h.assertTrue(!TankInhabitants.hasTankRef(out.getFirst()) && out.getFirst().getBettaData().genome().equals(data.genome()), "free, with its genes");
+            h.succeed();
+        } finally {
+            sp.getServer().getPlayerList().remove(sp);
+        }
     }
 
     // ------------------------------------------------------------------ Fintastic

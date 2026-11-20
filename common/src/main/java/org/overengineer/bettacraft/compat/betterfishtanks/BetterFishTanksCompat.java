@@ -25,6 +25,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
+import org.overengineer.bettacraft.compat.FishContainers;
 import org.overengineer.bettacraft.entity.betta.BettaBucketItem;
 import org.overengineer.bettacraft.entity.betta.FishBagItem;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -73,6 +74,39 @@ public final class BetterFishTanksCompat {
             if (error != null) player.displayClientMessage(error, true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /**
+     * M52: a right click with an item: their empty fish bag catches the mob the player looks at within 5 blocks (the one nearest the
+     * line of sight, at most about 32 degrees off) without looking for walls, so also a fish behind the glass of our tank. That fish
+     * left the tank without its water, stayed listed in it, and their bag kept our tank reference (let out again, it still belonged to
+     * the old tank). An inhabitant of our tanks goes into their bag through the tank menu (its bag button takes their bag): the
+     * catch is refused with a hint. Null: not that case, the click goes on.
+     */
+    @Nullable
+    public static InteractionResult onRightClickItem(Player player, Level level, ItemStack stack) {
+        Entity in = inhabitantTheirBagWouldCatch(player, stack);
+        if (in == null) return null;
+        if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.tank.take_out_by_menu", in.getName()), true);
+        return InteractionResult.FAIL;
+    }
+
+    /** The inhabitant of one of our tanks that their empty fish bag in {@code stack} would catch now (their choice), or null. */
+    @Nullable
+    public static Entity inhabitantTheirBagWouldCatch(Player player, ItemStack stack) {
+        if (FishContainers.kind(stack) != FishContainers.Foreign.BFT_BAG || FishContainers.storedEntity(stack) != null || player.isShiftKeyDown()) return null;
+        net.minecraft.world.phys.Vec3 look = player.getLookAngle(), eye = player.getEyePosition();
+        net.minecraft.world.entity.Mob best = null;
+        double bestDot = -1;
+        for (net.minecraft.world.entity.Mob m : player.level().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, player.getBoundingBox().inflate(5),
+                net.minecraft.world.entity.Mob::isAlive)) {
+            double dot = look.dot(m.getEyePosition().subtract(eye).normalize());
+            if (dot > bestDot) {
+                bestDot = dot;
+                best = m;
+            }
+        }
+        return best != null && bestDot > 0.85 && org.overengineer.bettacraft.tank.TankInhabitants.hasTankRef(best) ? best : null;
     }
 
     /** Releases the animal of {@code stack} into the BFT tank at {@code pos}; returns an error or null. */
