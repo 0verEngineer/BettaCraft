@@ -1,8 +1,8 @@
-<p align="center"><img src="src/main/resources/bettacraft.png" width="128" alt="Bettacraft logo"></p>
+<p align="center"><img src="common/src/main/resources/bettacraft.png" width="128" alt="Bettacraft logo"></p>
 
 # Bettacraft
 
-Betta fish and real aquariums for Minecraft 1.21.1 (NeoForge and Fabric): catch wild bettas and tankmates, keep them in multiblock
+Betta fish and real aquariums for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on NeoForge and Fabric: catch wild bettas and tankmates, keep them in multiblock
 aquariums of any glass and shape, aquascape the inside block by block with plants and corals that sway in the water,
 run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel genetics.
 
@@ -73,8 +73,8 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket,
   rendered clear (also with Sodium and Iris). The animals are real entities.
 - **Interior:** sneak and right-click with an empty hand to step inside a pocket dimension at 16 blocks per tank block
-  and build with any block: substrates, equipment and 28 decorations (castle, wrecks, skull, aquascaping stones such
-  as Seiryu, dragon stone and holey rock, roots, clay tubes that are spawning caves, a diving helmet, a treasure chest
+  and build with any block: substrates, equipment and 29 decorations (castle, wrecks, skull, aquascaping stones such
+  as Seiryu, dragon stone and holey rock, roots, mangrove stilt roots, clay tubes that are spawning caves, a diving helmet, a treasure chest
   that bubbles from the air pump ...). Almond leaves and alder cones on the floor lower the pH and feed the shrimp. The
   aquarium shows the result as a live miniature; several players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, overcrowding, water quality, oxygen,
@@ -128,7 +128,7 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   hostile mobs are refused with a reason, other big animals go by the size rule of the big tanks.
 
 ### Reef tanks and seahorses
-- Sea water, salinity, protein skimmer, flow pump, reef and live rock, actinic light. Eight corals and the bubble tip
+- Sea water, salinity, protein skimmer, flow pump, reef and live rock, actinic light. Seven corals and the bubble tip
   anemone grow with light, flow, calcium, alkalinity and magnesium (four-channel dosing pump), bleach or glow and give
   frags. Clownfish spawn at their anemone, and their **larvae need rotifers** that live on phytoplankton (both cultured in
   bottles); tang, goby, chromis, damsel, the lyretail anthias (a shoal fed often), the **Banggai cardinalfish** (the male
@@ -197,13 +197,17 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   block.
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
-- Optional Forge Energy for the equipment, power regulator, own procedural sounds. No generator? A **crank** winds the
-  filters, the water devices and the cabinet under a tank, which then powers every device of its tank. With **Create** a
-  drive adapter on the tank (or a shaft on its cabinet) powers every device of the tank from rotation, with real stress.
-- **Tanks on the road:** on Create contraptions the care goes on with the tank's data (hunger, temperature, water quality,
-  the filters and heaters that travel along, powered by the tank's buffer, a drive adapter that turns with the trip or FE
+- Optional Forge Energy (Team Reborn Energy on Fabric) for the equipment, power regulator, own procedural sounds. No
+  generator? A **crank** winds the filters, the water devices and the cabinet under a tank, which then powers every device
+  of its tank. With **Create** a drive adapter on the tank (or a shaft on its cabinet) powers every device of the tank
+  from rotation, with real stress.
+- **Tanks on the road** (Create, NeoForge 1.21.1): on Create contraptions the care goes on with the tank's data (hunger,
+  temperature, water quality, the filters and heaters that travel along, powered by the tank's buffer, a drive adapter that turns with the trip or FE
   batteries of the contraption); on Create Aeronautics airships the animals stay real and everything runs as on the ground.
   The water sloshes in curves and when a contraption stops.
+- **Monitors:** monitor blocks join into screens of up to 8 x 5 blocks that find every tank around them and show a
+  dashboard: values, traffic lights with the tank's warnings, graphs over up to 7 in-game days, animals and breeding,
+  devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
 
 ### Food and live food
 - **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
@@ -214,43 +218,71 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   AE2 and Refined Storage fill and empty it, the feeder and the reservoir.
 - **Food variety:** favourite and poorly suited food for every kind of eater; a varied diet helps the fish recover and
   makes the bettas' colours stronger. All data-driven (item tags).
-- **Monitors:** monitor blocks join into screens of up to 8 x 5 blocks that find every tank around them and show a
-  dashboard: values, traffic lights with the tank's warnings, graphs over up to 7 in-game days, animals and breeding,
-  devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
 
 ### Handbook, progression, languages
-- 311 handbook pages (GuideME) in English and German with a page for every animal, plant, coral and device and where to
-  get it (generated from the game data), 56 advancements, JEI pages and tooltips.
-- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 122 in all): off, it loses its recipes,
+- 327 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
+  (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
+  Modonomicon book (1.21.11 and 26.x), converted at build time. 70 advancements, information pages in JEI (and REI and EMI
+  on Fabric), tooltips, and an FTB Quests chapter of 112 quests for modpacks.
+- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 136 in all): off, it loses its recipes,
   trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
 - Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
   old age (`health.oldAge.enabled`).
 
 ## Requirements
 
-| | |
-|---|---|
-| Minecraft | 1.21.1 |
-| Loader | NeoForge 21.1.200 or newer, **or** Fabric Loader 0.16 or newer |
-| Java | 21 |
-| Side | client and dedicated server (install on both) |
+One CurseForge project, one file per loader and Minecraft version: `bettacraft-<loader>-<minecraft>-<version>.jar`.
+Install it on client and dedicated server. Every version has the same content, ids, data, configs and handbook pages, and
+every branch gets every new feature and fix. Worlds load within their Minecraft version (old Bettacraft versions are
+migrated); they do not move between Minecraft versions.
 
-| Loader | File | Required mods | Optional |
-|---|---|---|---|
-| NeoForge | `bettacraft-neoforge-1.21.1-<version>.jar` | none | GuideME (handbook), JEI, Jade, The One Probe, WTHIT, ... |
-| Fabric | `bettacraft-fabric-1.21.1-<version>.jar` | Fabric API, Forge Config API Port | Patchouli (handbook), Mod Menu (config screen), Jade, WTHIT, The One Probe, JEI, REI, EMI, FTB Quests, ... |
+| Minecraft | Java | NeoForge | Fabric | Handbook (NeoForge / Fabric) | Branch |
+|---|---|---|---|---|---|
+| 1.21.1 (main version, ATM10) | 21 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | `master` |
+| 1.21.11 | 21 | 21.11.40+ | Loader 0.17+, Fabric API 0.141+ | GuideME / Modonomicon | `1.21.11` |
+| 26.1.2 (Fabric also 26.1 and 26.1.1) | 25 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | GuideME / Modonomicon | `26.1.2` |
+| 26.2 | 25 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | GuideME (alpha) / Modonomicon | `26.2` |
+| 26.3 | 25 | 26.3.0.113+ | Loader 0.18.4+, Fabric API 0.166+ | GuideME (alpha) / Modonomicon | `26.3` |
 
-On NeoForge no other mod is required. Create, AE2, KubeJS, Aquaculture and Fintastic exist only for NeoForge, so their
-integrations are NeoForge only.
+| Loader | Required mods | Optional |
+|---|---|---|
+| NeoForge | none | GuideME (handbook), JEI, Jade, The One Probe, WTHIT, ... |
+| Fabric | Fabric API, Forge Config API Port | Patchouli or Modonomicon (handbook), Mod Menu (config screen), Jade, WTHIT, The One Probe, JEI, REI, EMI, FTB Quests, ... |
+
+On Fabric, items and fluids go through Fabric's transfer API (pipes and tanks of Fabric tech mods) and energy through Team
+Reborn Energy; the configs are the same TOML files and keys (Forge Config API Port). Since 26.1, trades are data
+(`villager_trade` entries in the trade tags of the wandering trader and of `bettacraft:aquarist/level_1` ... `level_5`).
+
+### What is missing where
+
+An integration works where the other mod exists for that loader and Minecraft version (full lists in each version's
+CHANGELOG section):
+
+- **Fabric, every version:** Create (with Create Aeronautics and Sable), AE2, KubeJS, Aquaculture, Fintastic and Cable
+  Facades are NeoForge only, and so are the script events of `api/event`; Mekanism, EnderIO and Thermal have no Fabric
+  version. A glowing pipe cover gives no light on Fabric. The REI and EMI plugins are Fabric only.
+- **1.21.11:** no 1.21.11 version of Create, AE2, Refined Storage, KubeJS, the power mods of ATM10, Cable Facades, Better
+  Fish Tanks, Fintastic, Naturalist, Critters and Companions, Regions Unexplored, Twilight Forest and EMI; The One Probe is
+  NeoForge only. The Modonomicon book shows the tank shapes and the animals of the GuideME scenes as items.
+- **26.1.2:** no version of Create, Mekanism (and Mekanism Covers), Flux Networks, Industrial Foregoing, Farmer's Delight,
+  Fintastic, Naturalist, Critters and Companions, Alex's Caves, Cataclysm, Deeper and Darker, Fish Eggs, Oh The Biomes
+  We've Gone and EMI; AE2, KubeJS, Aquaculture and Cable Facades are NeoForge only.
+- **26.2:** no version of FTB Quests (no quest chapter), KubeJS, Create, Mekanism, Flux Networks, EnderIO, Oritech,
+  Industrial Foregoing, Refined Storage, LaserIO, Cable Facades, Fintastic, Critters and Companions, Twilight Forest,
+  Regions Unexplored, Oh The Biomes We've Gone, Alex's Caves, EMI and a few more; AE2, Powah, Pipez, Integrated Dynamics,
+  XNet, Modular Routers and Aquaculture are NeoForge only. Naturalist and Better Fish Tanks work on both loaders. Peaceful
+  worlds have no monsters at all since 26.2, so a mob jar with a monster stays closed there.
+- **26.3:** as 26.2, and no Modular Routers. The Vulkan backend draws the tanks, the miniature and the menus like OpenGL.
+  Shaders work with Iris on Fabric; on NeoForge 26.3 Sodium and Iris do not run yet.
 
 ## Optional integrations
 
 | Mod | What you get |
 |---|---|
-| [GuideME](https://modrinth.com/mod/guideme) | the in-game handbook (given once per player, see `guide.giveBook`) |
-| [JEI](https://modrinth.com/mod/jei) | information pages for every Bettacraft item |
+| [GuideME](https://modrinth.com/mod/guideme) (NeoForge), Patchouli (Fabric 1.21.1), Modonomicon (Fabric 1.21.11 and 26.x) | the in-game handbook (given once per player, see `guide.giveBook`) |
+| [JEI](https://modrinth.com/mod/jei); REI and EMI (Fabric) | information pages for every Bettacraft item; crucible and food maker recipes |
 | [Jade](https://modrinth.com/mod/jade), [The One Probe](https://modrinth.com/mod/the-one-probe), [WTHIT](https://modrinth.com/mod/wthit) | aquarium (name, glass and style, temperature, water, animals, nest, filters, warnings), betta behind the glass (type, sex, health, hunger, stage, genes), filter and cabinet. Sneak for details; The One Probe needs its probe for the extended view.; with several overlay mods only the first shows them, see `compat.overlayProvider` |
-| Better Fish Tanks | its fish bag puts animals into and takes them out of Bettacraft aquariums; bettas live in its tanks |
+| Better Fish Tanks | its fish bag puts animals into and takes them out of Bettacraft aquariums (through the tank menu's bag button, not through the glass); bettas live in its tanks |
 | [Fintastic](https://modrinth.com/mod/fintastic) | fish and fishnet in both directions, live prey, fish food, water plants in the interior |
 | [Fish of Thieves](https://modrinth.com/mod/fish-of-thieves) | fish and predators in Bettacraft aquariums, bettas on the fish plaque |
 | [Aquaculture 2](https://modrinth.com/mod/aquaculture) | small fish welcome, piranha as predator, worms as live food, fillets for pellets |
@@ -259,14 +291,16 @@ integrations are NeoForge only.
 | [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals, cared for on the road (live on airships), the water sloshing; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; a drive adapter on a tank (or a shaft on its cabinet) powers every device of the tank with real stress; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients, products and filter media; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
-| [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off |
+| [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off, and at the tanks the hired aquarist warns about |
+| FTB Teams | the hired aquarist also works at the tanks of his employer's party (`hiredAquarist.ftbTeams`) |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
 | Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the filter pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
 | Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water`, `bettacraft:sea_water` and `bettacraft:live_food` (Mekanism tanks too); CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Biome mods (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Twilight Forest, ...) | their swamps, rivers, mangroves, lush caves and warm oceans get the wild animals, net catches, fishing loot and corals of their vanilla counterparts (biome tags `#bettacraft:*_waters`, `#bettacraft:coral_reef_biomes`) |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
 
-Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift).
+Without a handbook mod every Bettacraft item explains itself in its tooltip (hold Shift). See "What is missing where"
+above for the integrations of each loader and Minecraft version.
 
 ## Getting started
 
@@ -278,19 +312,19 @@ Without GuideME every Bettacraft item explains itself in its tooltip (hold Shift
 5. Outside warm biomes add a heater (in the interior or in an external filter) and feed every day with betta pellets
    or mosquito larvae, or place a feeder on top.
 
-The handbook (GuideME) and the JEI pages explain everything else.
+The handbook (GuideME, Patchouli or Modonomicon) and the JEI / REI / EMI pages explain everything else.
 
 ## Configuration
 
 | File | Content |
 |---|---|
-| `<world>/serverconfig/bettacraft-server.toml` | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, betta size (`sizes.betta`), food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks |
+| `<world>/serverconfig/bettacraft-server.toml` (NeoForge 26.3: `config/bettacraft-server.toml` for every world, a world's own copy in `<world>/syncedconfig/`) | game rules per world: tank size, shapes and limits, which animals aquariums take, health timers, temperature and tolerated range, breeding, fights, betta size (`sizes.betta`), food, life stages, interior, drops, water quality, floating plants, aquarium plants, small animals, frogs, tankmates (breeding, getting along, food), stocking, algae, salt water and reef tanks, evaporation, power, food breeding, handbook, time in unloaded chunks, the hired aquarist (`hiredAquarist.*`), sump, brackish water, Create travel (`createTravel.*`) |
 | `config/bettacraft-common.toml` | spawn weight and group size of wild bettas, fish bag recipe (kelp or plastic), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`), feature switches (`features.*`, a tree per feature group; old 1.25 keys are migrated automatically, backup
 `bettacraft-common.toml.pre-m33`), presets (`preset`, `presetKeep`) |
 | `config/bettacraft-client.toml` | animation, miniature and tank detail distances, water surface animation, connected glass, edge width, name sign size, water tint of coloured lights, interior leave hint, filter sound, device volumes, air pump and flow pump sounds (off by default) |
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
-Config). By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
+Config; on Fabric through Mod Menu). The files and keys are the same on every loader and Minecraft version. By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
 and evaporation are on but gentle, and no equipment needs power (`power.*RequiresEnergy = false`).
 
 ### For pack makers
@@ -317,8 +351,9 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
   mod counts as in an aquarium (a stem plant, a carpet, floating leaves, a coral, live rock ...; handbook "Plants of other
   mods").
 - **Quests and scripts:** `bettacraft-modpack-<version>.zip` of every release (`gradlew modpackZip`, the folder
-  `modpack/`) has the FTB Quests chapter `config/ftbquests/quests/chapters/bettacraft.snbt` and two KubeJS scripts; the
-  NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
+  `modpack/`) has the FTB Quests chapter (`config/ftbquests/quests/chapters/bettacraft.snbt` on 1.21.x,
+  `bettacraft.json5` on 26.1.2, because FTB Quests 26.1 reads JSON5; FTB Quests has no 26.2 or 26.3 version yet) and two
+  KubeJS scripts; the NeoForge events `AnimalBornEvent`, `AnimalDiedEvent`, `TankAlarmEvent`, `FeaturesChangedEvent`
   (`org.overengineer.bettacraft.api.event`) and `org.overengineer.bettacraft.api.BettacraftApi` are for scripts and other
   mods (`features.modpackEvents`). See "Quest chapter" below.
 
@@ -331,14 +366,16 @@ glass, animals of other mods), the technology (cabinet, aeration, lights, power 
 change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
-- **Updating a pack:** copy the new `bettacraft.snbt` over the old one and run `/ftbquests reload` (or restart). The 33
+- **Updating a pack:** copy the new `bettacraft.snbt` (26.1.2: `bettacraft.json5`) over the old one and run `/ftbquests reload` (or restart). The 33
   quests of the first chapter keep their ids, tasks, dependencies and rewards, so the progress of every player stays;
   new quests only add to them. Advancement tasks of new quests complete by themselves for players who already have the
   advancement (FTB Quests checks them every few ticks once the quest may start), item tasks when the item is in the
   inventory. Quests you changed in the editor are replaced by the file's version, so keep your own quests in another chapter.
 - **Switched-off features:** every quest carries FTB Quests tags for its feature switches
   (`bettacraft_feature:<path>`, also those of the quests it depends on), `bettacraft_mod:create` and
-  `bettacraft_needs:power` (a power option of the server config). `kubejs/server_scripts/bettacraft_quests.js` hides the
+  `bettacraft_needs:power` (a power option of the server config); FTB Quests 26.1 keeps only tags of `[a-z0-9_]`, so on
+  26.1.2 they are `bettacraft_feature_<path>` (lower case, `__` for `.`), `bettacraft_mod_create` and
+  `bettacraft_needs_power`. `kubejs/server_scripts/bettacraft_quests.js` (KubeJS, NeoForge only) hides the
   quests whose tags are off (invisible and optional, so they never block the chapter) when the server starts, when a
   player logs in and when the configs are reloaded; switched on again, they show again. Nothing is written into the
   quest file. Without KubeJS the quests of switched-off features stay visible (hide them in the editor), and the Create
@@ -447,31 +484,50 @@ A quest is shown while its switch is on and also those of the quests it depends 
 
 ## Building from source
 
+The repository is a multiloader build (layout of the MultiLoader-Template): `common/` holds the whole mod against vanilla
+only, `neoforge/` (ModDevGradle) and `fabric/` (Fabric Loom) the thin loader glue. Each Minecraft version has its own
+branch (see Requirements); `master` is 1.21.1 with Java 21, the 26.x branches need Java 25. Gradle runs on JDK 25
+(`gradle/gradle-daemon-jvm.properties`). Add `--no-configuration-cache` to the run, data and GameTest tasks.
+
 ```
-./gradlew build                 # jar in build/libs, runs the unit tests
-./gradlew runGameTestServer     # GameTests
-./gradlew runData               # regenerate src/generated (recipes, tags, models, en_us, advancements)
-./gradlew runClient             # dev client with Jade, JEI, GuideME and the aquarium mods
+./gradlew build                 # both jars in build/libs, unit tests, verifyReleaseJar
+./gradlew runGameTestServer     # NeoForge GameTests
+./gradlew runData               # regenerate common/src/generated (recipes, tags, models, en_us, advancements)
+./gradlew updateGuide           # regenerate the data-driven handbook sections
+./gradlew runClient             # NeoForge dev client with Jade, JEI, GuideME and the aquarium mods
 ./gradlew buildShowcase         # (re)builds the showcase world "Bettacraft Schaukasten" in run/saves (no window)
 ./gradlew runMultiplayerTest    # dedicated server + two background clients (Dev1, Dev2) play a scripted session
+./gradlew smoketestUpgrade      # loads a reference world of an old version, nothing may be lost
 ./gradlew runClient -Psmoketestm43 -PnoJei      # README / mod page media in a copy of the showcase world (background
 ./gradlew runClient -Psmoketestm43 -PnoJei -Pshaders  # window; fixed day and weather), then the stills with Complementary
 py tools/assetgen/readme_media.py       # run/screenshots -> docs/images (stills, GIF and WebP animations)
+
+./gradlew :fabric:build         # the Fabric jar (+ the handbook book converted from the GuideME pages, verifyFabricJar)
+./gradlew runFabricGameTest     # Fabric GameTests (the shared GameTest classes)
+./gradlew runFabricServer -Psmoketest           # Fabric server smoke
+./gradlew runFabricClient -Psmoketestfabric     # Fabric background client with smoke scenes (run-fabric/screenshots)
+./gradlew prodFabricServer -Psmoketest          # production (intermediary) run with the official jars
+./gradlew fabricMultiplayerTest                 # Fabric server + two background clients
+./gradlew fabricSaveLoadTest                    # the showcase world built on Fabric, reloaded twice, nothing lost
 ```
 
-Leave optional mods out of the dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme` and `-PnoCompat`; add The One
+Leave optional mods out of the NeoForge dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme` and `-PnoCompat`; add The One
 Probe and WTHIT with `-Ptop` and `-Pwthit` (config `compat.overlayProvider` picks which overlay shows the Bettacraft
-lines; AUTO = only the first of Jade, WTHIT, The One Probe). Textures, models and the logo come from the procedural generator in `tools/assetgen` (Python, see its
-README); the generated files are committed, so the Gradle build does not need Python.
+lines; AUTO = only the first of Jade, WTHIT, The One Probe). Fabric has its own dev mod groups in `run-fabric/<group>`:
+`-Poverlays` (Jade, JEI, WTHIT, The One Probe), `-Prei`, `-Pemi`, `-Pfabricintegration` (Refined Storage, JourneyMap,
+Better Fish Tanks, Naturalist, Fish of Thieves, Critters and Companions) and `-Pquests`. Textures, models and the logo come
+from the procedural generator in `tools/assetgen` (Python, see its README); the generated files are committed, so the
+Gradle build does not need Python. The Fabric handbook is converted at build time from the GuideME pages (`tools/guide`).
 
-Development-only code (smoke tests, the showcase world, GameTests) lives in the source set `src/dev`: every `run*` task
-loads it, the jar does not contain it.
+Development-only code (smoke tests, the showcase world, GameTests) lives in the source set `neoforge/src/dev` (Fabric:
+`fabric/src/dev`, which also compiles the shared GameTests): every `run*` task loads it, the jars do not contain it.
 
-The normal GameTests (about 716, 3 to 4 minutes) include complete breeding runs over several generations
+The normal NeoForge GameTests (about 800, a few minutes) include complete breeding runs over several generations
 (`GenerationsGameTests`): a pair breeds, the young are reared, the chosen ones go by bucket, fish bag, net, transport tub or
-terrarium box into a new tank and breed on, for bettas, guppies, shrimp and snails, axolotls, dart frogs, slider turtles and
-leopard geckos, bamboo sharks and stingrays and animals of other mods by their profiles (inheritance, varieties, pedigree,
-the menu's values, rare traits). `-Pgametests=generations` runs only them (about a minute with the server start).
+terrarium box into a new tank and breed on, for bettas, guppies, Neocaridina, ramshorns, axolotls, dart frogs, slider
+turtles, leopard geckos, bamboo sharks, stingrays, tropical fish and animals of other mods by their profiles (inheritance,
+varieties, pedigree, the menu's values, rare traits). `-Pgametests=generations` runs only them (about a minute with the
+server start); `-Pgametests=<prefix>[,...]` works for every GameTest run.
 
 ### Integration tests (optional)
 
@@ -520,15 +576,18 @@ lost or doubled, a refused animal left in the tank, an inhabited tank that can b
 [![Build](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/0verEngineer/BettaCraft/actions/workflows/build.yml)
 
 - **Build** (`.github/workflows/build.yml`, every push to `master` and every pull request): `gradlew build` (unit tests
-  and `verifyReleaseJar`), the changelog section, `runData` must not change `src/generated`, GameTests and a dedicated
-  server smoke test. Started by hand with *full* (and before every release) it also runs the server smoke without any
-  optional mod and with The One Probe and WTHIT, and the GameTests with the power mods of `-Ppower` (pinned Modrinth
+  and `verifyReleaseJar`), the changelog section, `runData` must not change `common/src/generated`, the NeoForge and
+  Fabric GameTests and a dedicated server smoke test on both loaders. Started by hand with *full* (and before every
+  release) it also runs the server smoke without any optional mod and with The One Probe and WTHIT, the Fabric production
+  server smoke, the Fabric save and load test, and the GameTests with the power mods of `-Ppower` (pinned Modrinth
   jars, `tools/ci/power-mods.json`, fetched and SHA-512 checked by `tools/ci/fetch_mods.py`). A failed GameTest shows
   up with its message as an annotation on the run page.
-- **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>`): the full test set, the jar of the tag,
-  `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
+- **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>+<loader>-<mc>`, e.g.
+  `v1.42.0-beta.1+neoforge-1.21.1` or `v1.42.0-beta.1+fabric-26.1.2`, one tag per loader on the branch of that Minecraft
+  version; it fails at once when the mod or Minecraft version does not match the tagged commit): the full tests of that
+  loader, that loader's jar, `verifyReleaseJar`, the top section of `CHANGELOG.md` as release notes, a GitHub release (a prerelease for `-alpha`,
   `-beta` and `-rc` versions) and, once the token and project id are set, the file upload to CurseForge (the only mod
-  site). It also builds the CurseForge project description (`curseforgeDescription`, see below) as a workflow artifact.
+  site; the loader, the Minecraft versions and that loader's dependencies). A manual run is a dry run. It also builds the CurseForge project description (`curseforgeDescription`, see below) as a workflow artifact.
 - **Integration tests** (`.github/workflows/integration.yml`, only started by hand): `gradlew integrationTests
   -PintegrationPartial` with the integrated mods that have an open licence and a pinned Modrinth download
   (`tools/ci/integration-mods.json`); the integration-only tests of the other mods pass with a notice. The complete run is
