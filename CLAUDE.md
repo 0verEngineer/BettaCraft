@@ -151,10 +151,10 @@ Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), t
 | Branch | MC | Loaders | Java | Maintenance |
 |---|---|---|---|---|
 | `master` | 1.21.1 | NeoForge + Fabric | 21 | full (main target ATM10) |
-| `1.21.11` (M52b, planned) | 1.21.11 | NeoForge + Fabric | 21 | one release, then only severe fixes |
-| `26.1.2` (M52c, planned) | 26.1.2 | NeoForge + Fabric | 25 | full |
-| `26.2` (M52d, planned) | 26.2 | NeoForge + Fabric | 25 | one release, then only severe fixes |
-| `26.3` (M52e, planned) | 26.3 (newest) | NeoForge + Fabric | 25 | full while it is the newest |
+| `1.21.11` (M52b) | 1.21.11 | NeoForge + Fabric | 21 | full |
+| `26.1.2` (M52c) | 26.1.2 | NeoForge + Fabric | 25 | full |
+| `26.2` (M52d) | 26.2 | NeoForge + Fabric | 25 | full |
+| `26.3` (M52e) | 26.3 (newest) | NeoForge + Fabric | 25 | full |
 
 Fabric on 1.21.1 (this branch). Gradle 9.8.2 with the daemon on JDK 25 (`gradle/gradle-daemon-jvm.properties`, needed by
 Fabric Loom 1.19.4; the game still targets Java 21):
@@ -192,8 +192,8 @@ Fabric Loom 1.19.4; the game still targets Java 21):
   `platform/`. A new NeoForge-only API use needs its Fabric counterpart in the same milestone (or a documented gap).
 - Work on `master` first (1.21.1, both loaders). Green means: the NeoForge suites as before **and** `:fabric:build`,
   `runFabricGameTest`, `runFabricServer -Psmoketest` (client smoke when rendering changed).
-- Then forward to the fully maintained branches (`26.1.2`, the newest 26.x) by cherry-pick; MC-free parts apply cleanly,
-  GUI / rendering by hand. Branches with "only severe fixes" get bug fixes only. Each port branch builds, tests and
+- Then forward to all four port branches (`1.21.11`, `26.1.2`, `26.2`, `26.3`) by cherry-pick: every branch is fully
+  maintained and gets every feature and every fix. MC-free parts apply cleanly, GUI / rendering by hand. Each port branch builds, tests and
   releases on its own (its own reference world for `smoketestUpgrade`, its own CHANGELOG section).
 - Push, tag and release of any branch only with the user's OK.
 - **Release tags** (M52): `v<mod_version>+<loader>-<mc>`, e.g. `v1.42.0-beta.1+neoforge-1.21.1`,
