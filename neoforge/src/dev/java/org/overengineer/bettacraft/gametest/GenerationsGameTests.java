@@ -599,6 +599,9 @@ public final class GenerationsGameTests {
     }
 
     private static void shrimp4(GameTestHelper h) {
+        // M52: the shrimp days run within this tick and look at day or night (TankCritters.terrain): at noon in every run (the
+        // shared clock of the suite made the third generation one young short now and then)
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(h.getLevel(), 6000);
         ServerPlayer sp = breeder(h);
         CritterSpecies s = CritterSpecies.NEOCARIDINA;
         TankBlockEntity c = critterTank(h, 1, 2);

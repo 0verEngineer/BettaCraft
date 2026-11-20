@@ -34,7 +34,7 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks).
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
-  too many young now and then).
+  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
 
 ### Known gaps on Fabric
 - A glowing pipe cover (glowstone, sea lantern ...) does not light up its surroundings (Fabric has no light by block
