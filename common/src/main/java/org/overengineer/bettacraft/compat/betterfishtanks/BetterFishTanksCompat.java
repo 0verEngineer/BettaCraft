@@ -87,7 +87,7 @@ public final class BetterFishTanksCompat {
     public static InteractionResult onRightClickItem(Player player, Level level, ItemStack stack) {
         Entity in = inhabitantTheirBagWouldCatch(player, stack);
         if (in == null) return null;
-        if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.tank.take_out_by_menu", in.getName()));
+        if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.bettacraft.tank.take_out_by_menu", in.getName()), true);
         return InteractionResult.FAIL;
     }
 
