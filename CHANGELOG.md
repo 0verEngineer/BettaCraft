@@ -29,11 +29,18 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 - Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
   out, so mud dropped them in every biome).
 - Fabric: no EMI entrypoint to a class that is not in the jar (there is no EMI for 1.21.11).
+- FTB Quests 2111 (1.21.11): the quest chapter of the modpack files showed no titles or descriptions (FTB Quests 2111
+  reads the texts only from its lang file); `modpack/` now has `config/ftbquests/quests/lang/en_us.snbt` next to the
+  chapter.
 - NeoForge: another mod's item, fluid or energy handler that we hand back to a third mod is passed on as it is, not
   wrapped twice (nested transactions).
 - Test only: background test clients log whether their window came up without the focus and never grab the mouse.
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
+- Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
+  too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock).
+- Test only: the integration suite runs on 1.21.11: mods without a 1.21.11 build are a documented gap (VersionGaps), the
+  mock players stay off NeoForge's config sync, Integrated Tunnels' new activation call.
 
 ### Known gaps on 1.21.11
 - Create (with Sable and Aeronautics), Applied Energistics 2, Refined Storage, KubeJS, the power mods of ATM10, Cable
