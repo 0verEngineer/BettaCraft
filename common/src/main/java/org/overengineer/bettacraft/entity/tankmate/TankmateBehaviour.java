@@ -745,6 +745,20 @@ final class TankmateBehaviour {
         return glass(server, fish.tankWater);
     }
 
+    /** M52 GameTests: swim to this spot on the glass (wall {@code face} as in {@link #glass}) and cling to it (false before the fish knows its tank). */
+    boolean glassAt(Vec3 spot, int face) {
+        if (fish.tankWater == null) return false;
+        target = spot;
+        mode = Mode.GLASS;
+        glassFace = face;
+        ticks = 600;
+        travel = 0;
+        sheltered = false;
+        hitchPost = null;
+        behaviourFlags = Features.enabled(Feature.SMOOTH_SWIMMING) ? 0 : TankmateEntity.FLAG_GLASS;
+        return true;
+    }
+
     /** M21.8 GameTests and smoke scenes: hitch to the nearest post now (false if there is none). */
     boolean hitchNow() {
         if (!(fish.level() instanceof ServerLevel server) || fish.tankWater == null) return false;

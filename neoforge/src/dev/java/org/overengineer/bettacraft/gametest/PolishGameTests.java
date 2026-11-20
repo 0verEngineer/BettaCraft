@@ -76,8 +76,12 @@ public final class PolishGameTests {
 
     // ------------------------------------------------------------------ glass cleaners
 
-    /** An otocinclus and an L134 in the middle of a big tank swim to the glass lying flat and stand up only there. */
-    @GameTest(template = EMPTY, timeoutTicks = 900)
+    /**
+     * An otocinclus and an L134 in the middle of a big tank swim to the glass lying flat and stand up only there. (M52: an
+     * otocinclus crosses at about 0.003 blocks a tick and slows down on its last 0.4 blocks: a spot up to 1.9 blocks away takes
+     * up to about 1000 ticks; 900 was too short for the far spots.)
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 1600)
     public static void glassCleanersStandUpOnlyAtTheGlass(GameTestHelper h) {
         // each in its own tank (the territorial L134 chases other fish away)
         TankmateEntity[] made = new TankmateEntity[2];
@@ -115,6 +119,34 @@ public final class PolishGameTests {
                 h.assertTrue(arrived[i], fish[i].species().id() + " reached the glass and stands upright (now "
                         + (t == null ? "no target" : String.format("%.2f", fish[i].position().distanceTo(t))) + " blocks away)");
             }
+        });
+    }
+
+    /**
+     * M52: an otocinclus pressed to the surface with its spot on the glass 0.2 blocks below it goes down and stands up there. The
+     * lift that undoes the vanilla sinking was also added when a slow fish had no sinking left (vanilla zeroes a vertical motion
+     * below 0.003): it rose by up to 0.005 a tick, stayed at the surface 0.19 blocks above its spot and never stood up.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 600)
+    public static void glassCleanerReachesASpotJustBelowIt(GameTestHelper h) {
+        TankBlockEntity c = tank(h, 2, 1, 2, 3, 2, 3);
+        TankWaterVolume w = new TankWaterVolume(c.getTank());
+        double mz = (w.box().minZ + w.box().maxZ) / 2;
+        TankmateEntity oto = spawn(h, c, TankmateSpecies.OTOCINCLUS, new Vec3(w.box().minX + 0.5, w.box().minY + 0.8, mz));
+        double top = w.surface() - org.overengineer.bettacraft.entity.tankmate.TankmateExtents.surfaceMargin(oto);
+        Vec3 spot = new Vec3(w.box().minX + oto.sideMargin() + 0.005, top - 0.2, mz);
+        boolean[] started = {false};
+        h.onEachTick(() -> {
+            if (started[0]) return;
+            oto.setPos(spot.x + 0.35, top, mz);
+            started[0] = oto.swimToGlassForTest(spot, 2);
+        });
+        h.succeedWhen(() -> {
+            h.assertTrue(started[0], "it knows its tank");
+            String at = String.format("%.3f from its spot, %.3f above it", oto.position().distanceTo(spot), oto.getY() - spot.y);
+            h.assertTrue(oto.isAlive() && oto.behaviourTarget() != null && oto.behaviourTarget().distanceToSqr(spot) < 1e-9, "still on the way to its spot");
+            h.assertTrue(oto.flag(TankmateEntity.FLAG_GLASS), "the otocinclus stands on the glass (" + at + ")");
+            h.assertTrue(oto.position().distanceTo(spot) < 0.2, "upright at its spot (" + at + ")");
         });
     }
 

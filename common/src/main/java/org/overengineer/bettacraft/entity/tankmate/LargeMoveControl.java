@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.entity.tankmate;
 
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -26,7 +25,7 @@ final class LargeMoveControl extends TankmateMoveControl {
 
     @Override
     public void tick() {
-        if (fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
+        buoyancy(fish);
         float base = (float) fish.getAttributeValue(Attributes.MOVEMENT_SPEED);
         if (operation != Operation.MOVE_TO || speedModifier <= 0) {
             // no target: glide on, slowly losing speed and turn (a big body does not stop at once)
