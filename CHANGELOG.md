@@ -32,12 +32,23 @@ as usual.
   wrapped twice (nested transactions).
 - Fabric: a filled fish bag or betta bucket releases its animal into a Better Fish Tanks tank with a right-click (the
   click was only hooked up on NeoForge).
+- Slow fish no longer drift upwards: the lift that keeps a tankmate hovering was also added when there was no sinking to
+  undo (the game zeroes a very slow motion first), so a slowly swimming small fish rose by up to 0.005 blocks a tick; fish bobbed
+  near their targets, and an otocinclus pressed to the surface never reached its spot on the glass just below it.
+- Better Fish Tanks: its fish bag no longer catches a fish out of a Bettacraft tank through the glass (the fish left without
+  its water, stayed listed in the tank and kept its tank reference in the bag); a hint points to the tank menu, whose bag
+  button takes their bag.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
 - Test only: the clownfish larva tests seed the level's random for their larva days (the fry hunting of the adults took
   too many young now and then), the shrimp generations run at noon (day and night came from the shared test clock), the monitor test allows
   for the tanks of neighbouring tests (at most four tiles on its screen).
+- Test only: the shrimp generations come out the same in every run (the life of the small animals draws from its own
+  random, the number of draws of their movement no longer shifts it); the M46 world config test no longer saves the
+  server config (the config watcher loaded the file again a moment later, over the values of the next tests:
+  `frogWithoutAirDrowns` got the default air in the middle of its run); the glass cleaner test waits long enough for the
+  far spots.
 
 ### Changed (Minecraft 26.1 itself)
 - **Trades are data**: the offers of the wandering trader and of the aquarist villager are `villager_trade` entries
