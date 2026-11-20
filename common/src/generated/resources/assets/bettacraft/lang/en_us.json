@@ -3992,6 +3992,7 @@
   "message.bettacraft.tank.refused.unsuitable": "%s does not live in a Bettacraft tank",
   "message.bettacraft.tank.rejected": "%s cannot live in this tank",
   "message.bettacraft.tank.split": "The tank was split into %s tanks",
+  "message.bettacraft.tank.take_out_by_menu": "%s lives in this tank: take it out with the tank menu (Bucket or Fish bag)",
   "message.bettacraft.tank.too_big": "%s is too big for an aquarium",
   "message.bettacraft.tank.too_large": "Connecting would exceed the maximum tank size of %sx%sx%s, so this block forms a separate tank",
   "message.bettacraft.tank.too_little_water": "Fill the tank to at least %s%% before adding animals",
