@@ -270,6 +270,9 @@ public final class ReefBreedingGameTests {
         check(kf.stage() == 1 && kh.stage() == 1, "larvae");
         double days = Clutch.larvaDays(TankmateSpecies.OCELLARIS_CLOWNFISH) + 0.3;
         check(days > 2.5, "the larvae drift for days: " + days);
+        // M52: the larva days run within this tick: a fixed seed of the level's random makes them the same in every run (the shared
+        // random of the suite let the adults' fry hunting take 11 of 20 young now and then)
+        h.getLevel().getRandom().setSeed(4811L);
         larvaDays(h, fed, days, () -> {
             TankCare.feed(level, fed, new ItemStack(ModItems.ROTIFERS.get()), 1);
             TankCare.feed(level, fed, new ItemStack(ModItems.ARTEMIA_NAUPLII.get()), 1);
@@ -301,6 +304,7 @@ public final class ReefBreedingGameTests {
             check(Clutch.larvaDays(s) <= 1.0 + 1e-9, "one larva day again");
             Clutch k = clownClutch(h, c, 12);
             check(!ClownLarvae.wantFood(c.getTank(), new ItemStack(ModItems.ROTIFERS.get())), "no plankton pool");
+            h.getLevel().getRandom().setSeed(4812L); // M52: the same larva days in every run (see above)
             larvaDays(h, c, 1.5, () -> {});
             // (the adults may still catch a free young now and then: their fry hunting)
             check(c.getTank().clutches().isEmpty() && clownYoung(h, c) >= 8 && !logged(c.getTank(), "log.bettacraft.reef.larvae_died"),
