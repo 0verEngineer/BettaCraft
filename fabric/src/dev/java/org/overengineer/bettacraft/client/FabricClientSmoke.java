@@ -27,6 +27,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static int ticks;
     private static DevClientSmokeM11 m11;
     private static DevClientSmokeM13 m13;
+    private static DevClientSmokeM7 m7;
     private static int stage;
     private static BookTour book;
 
@@ -196,6 +197,19 @@ public final class FabricClientSmoke implements ClientModInitializer {
             if (stage == 2 && m13.tick()) {
                 stage = 4;
                 crackTicks = 0;
+                // M52-final: with Better Fish Tanks (-Pfabricintegration) also the M7 scene: the animals of other mods in our
+                // tank, a betta in a Better Fish Tanks tank, the menu with its fish bag
+                if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("betterfishtanks")) {
+                    LOGGER.info("[smoketest] fabric client: M7 scene (aquarium mods)");
+                    m7 = new DevClientSmokeM7();
+                    stage = 5;
+                }
+            }
+            if (stage == 5 && m7.tick()) {
+                // the scene ends in the tank menu: close it and give the world a second before the crack overlay
+                mc.player.closeContainer();
+                crackTicks = -20;
+                stage = 4;
             }
             // M52c (26.1): the crack overlay of mined blocks asks the models with AIR and no level (it crashed the tank model)
             if (stage == 4 && crack(mc)) {

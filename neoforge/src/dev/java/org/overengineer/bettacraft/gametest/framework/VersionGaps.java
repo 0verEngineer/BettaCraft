@@ -18,7 +18,7 @@ public final class VersionGaps {
             "alexscaves", "cataclysm", "crittersandcompanions", "deeperdarker", "shiny", "fisheggs", // aquatic
             "biomeswevegone", // biomes
             "create", "sable", // create
-            "betterfishtanks", "fintastic", "naturalist"); // aquarium mods of the dev runtime
+            "fintastic", "naturalist"); // aquarium mods of the dev runtime
 
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
