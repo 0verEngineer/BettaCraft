@@ -85,6 +85,12 @@ public final class AquaristGameTests {
         check(ModVillagers.AQUARIST.get().acquirableJobSite().test(poi.get()), "the profession takes the basin");
         check(net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getValueOrThrow(VillagerProfession.NONE).acquirableJobSite().test(poi.get()), "an unemployed villager looks for it");
         for (int x = 0; x < 16; x++) for (int z = 0; z < 16; z++) h.setBlock(new BlockPos(x, 0, z), net.minecraft.world.level.block.Blocks.GRASS_BLOCK);
+        // M52c: villagers left behind by earlier batches (they wander off their test areas) would claim the basin first; this
+        // batch runs alone, so none of them belongs to a running test
+        for (var other : h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.PathfinderMob.class,
+                new net.minecraft.world.phys.AABB(h.absolutePos(basin)).inflate(64), e -> e instanceof net.minecraft.world.entity.npc.villager.AbstractVillager || e instanceof org.overengineer.bettacraft.aquarist.AquaristEntity)) other.discard();
+        // M52d: in the morning (villagers look for a job site only while awake; the shared clock of earlier batches may be at night)
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(h.getLevel(), 1000);
         Villager v = h.spawn(EntityType.VILLAGER, new BlockPos(10, 1, 8));
         h.succeedWhen(() -> check(Aquarists.isAquarist(v), "still " + v.getVillagerData().profession()));
     }

@@ -452,12 +452,12 @@ public final class AerationGameTests {
         c.getTank().setLightTimer(true);
         c.getTank().setLightOn(8 * 60);
         c.getTank().setLightOff(20 * 60);
-        level.setDayTime(18000); // midnight
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 18000); // midnight
         TankLighting.step(level, c);
         h.runAfterDelay(5, () -> {
             h.assertTrue(!h.getBlockState(l).getValue(TankLightBlock.LIT), "off at midnight");
             h.assertTrue(TankPlants.strongLight(level, c) < 15, "no LED light at night");
-            level.setDayTime(6000); // noon
+            org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000); // noon
             TankLighting.step(level, c);
             h.runAfterDelay(5, () -> {
                 h.assertTrue(h.getBlockState(l).getValue(TankLightBlock.LIT) && h.getBlockState(l).getValue(TankLightBlock.DIM) == 0, "on at noon, full");
@@ -467,7 +467,7 @@ public final class AerationGameTests {
                     h.assertTrue(h.getBlockState(l).getValue(TankLightBlock.DIM) == 2, "dimmer 50 %: dim step 2: " + h.getBlockState(l));
                     h.assertTrue(TankLightBlock.lightLevel(h.getBlockState(l)) == 9, "light level 9");
                     h.assertTrue(Math.abs(TankLighting.ledLight(level, c) - 7.5) < 1e-6, "half the light for the plants: " + TankLighting.ledLight(level, c));
-                    level.setDayTime(savedTime);
+                    org.overengineer.bettacraft.gametest.framework.DevTime.set(level, savedTime);
                     h.succeed();
                 });
             });

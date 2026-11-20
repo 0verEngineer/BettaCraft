@@ -963,11 +963,12 @@ tasks.register('runMultiplayerTest') {
         // the extra mods of -Pshaders / -Ppower / -Paquatic / -Pbiomes / -Pstorage are not part of this test; M50: -Pcreate puts
         // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
         def mpCreate = project.hasProperty('create')
-        ['run/shader-mods', 'run/power-mods', 'run/aquatic-mods', 'run/biome-mods', 'run/storage-mods', 'run/create-mods', 'run/quest-mods', 'run/map-mods', 'run/kubejs-mods', 'run/facade-mods', 'run/compare-mods', 'run/integration-mods', 'run/zoo-mods'].each { d ->
+        // M52d: the groups of this branch's run root (run/<minecraft>/...; the list named the 1.21.1 folders under run/)
+        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'kubejs-mods', 'facade-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
             (rootProject.file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j ->
                 ['mods', 'client1/mods', 'client2/mods'].each { m ->
                     def dst = new File(runDir, "${m}/${j.name}")
-                    if (mpCreate && d == 'run/create-mods') {
+                    if (mpCreate && d == runRoot + '/create-mods') {
                         dst.parentFile.mkdirs()
                         java.nio.file.Files.copy(j.toPath(), dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
                     } else dst.delete()

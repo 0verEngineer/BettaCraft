@@ -149,7 +149,7 @@ public final class MobsInGlassGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 260)
     public static void mobsInGlassAreHarmless(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         TankBlockEntity c = terrarium(h, 4, 1);
         Mob z = put(h, c, EntityType.ZOMBIE);
         Mob sk = put(h, c, EntityType.SKELETON);

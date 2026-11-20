@@ -108,12 +108,13 @@ public final class ChunkUnloadGameTests {
      * Three unloads: one after a while, one in the tick right after a care step (the controller's care tick), and one that comes back
      * one tick after it unloaded.
      */
-    @GameTest(template = "empty_32x10x32", batch = "bettacraft_m42_chunk_unload", timeoutTicks = 3000)
+    @GameTest(template = "empty_32x10x32", batch = "bettacraft_m42_chunk_unload", timeoutTicks = 4000)
     public static void aStockedTankSurvivesItsChunkUnloadingAndLoading(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         BlockPos min = h.absolutePos(new BlockPos(2, 2, 2)).offset(3000, 0, 0);
         force(level, min, true);
-        await(h, 400, () -> level.isPositionEntityTicking(min) && level.isPositionEntityTicking(min.offset(3, 0, 2)), "the far chunks load", () -> {
+        // M52e: 1000 ticks for the far chunks: with the biome mods of the integration suite generating them can take 20+ s
+        await(h, 1000, () -> level.isPositionEntityTicking(min) && level.isPositionEntityTicking(min.offset(3, 0, 2)), "the far chunks load", () -> {
             TankBlockEntity c = build(h, min);
             stock(h, c);
             Snapshot first = snapshot(level, c.getTank());
