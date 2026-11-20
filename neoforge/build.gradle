@@ -129,6 +129,8 @@ neoForge {
             // M52d: the dev runtime validates every draw (26.2); Iris 1.11.4's shadow pipelines trip a bounds bug of that validation
             // (index past the pipeline's vertex bindings), production has no validation: off for shader runs
             if (project.hasProperty('shaders')) systemProperty 'neoforge.disableGlValidation', 'true'
+            // M52: -Pvulkan starts the client on the Vulkan backend of 26.2 (launch argument, overrides the video setting)
+            if (project.hasProperty('vulkan')) programArguments.addAll '--graphicsBackend', 'vulkan'
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits

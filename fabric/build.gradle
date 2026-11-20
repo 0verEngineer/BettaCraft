@@ -118,6 +118,8 @@ loom {
                 property 'bettacraft.smoketest.fabric', 'true'
             }
             programArgs '--width', '1280', '--height', '760'
+            // M52: -Pvulkan starts the client on the Vulkan backend of 26.2 (launch argument, overrides the video setting)
+            if (project.hasProperty('vulkan')) programArgs '--graphicsBackend', 'vulkan'
         }
         fabricServer {
             server()
