@@ -346,6 +346,42 @@ public final class ForeignTerrariumGameTests {
         });
     }
 
+    /**
+     * M52: the young of a nest right by the glass hatch inside the tank and stay its inhabitants. They came out up to 0.1 off
+     * the nest, past the glass now and then (the nest of the edge column lies 0.06 inside); the next reconcile let them go.
+     * A clutch of 20 at a nest by the west wall, the spots drawn from a fixed seed.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_m35_foreign_terrarium", timeoutTicks = 200)
+    public static void hatchlingsOfANestByTheGlassStayInside(GameTestHelper h) {
+        Animal a = tortoise();
+        with(List.of(a), () -> {
+            ServerLevel level = h.getLevel();
+            TankBlockEntity c = terrarium(h, 2, 2, 12, 3, 6);
+            TankData t = c.getTank();
+            put(h, c, container(h, a.type(), false, false));
+            put(h, c, container(h, a.type(), false, false));
+            LivingEntity mother = layEggs(h, c, a.type());
+            var data = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother);
+            var brood = data.getCompoundOrEmpty(ForeignBreeding.BROOD);
+            var nest = brood.getCompoundOrEmpty("nest");
+            nest.putDouble("x", t.min().getX() + 0.06);
+            nest.putInt("eggs", 20);
+            brood.put("nest", nest);
+            data.put(ForeignBreeding.BROOD, brood);
+            int before = ofType(h, c, a.type()).size();
+            level.getRandom().setSeed(52_400L);
+            ForeignBreeding.step(level, c, 5.0);
+            List<LivingEntity> young = ofType(h, c, a.type()).stream().filter(LivingEntity::isBaby).toList();
+            h.assertTrue(young.size() == 20 && ofType(h, c, a.type()).size() == before + 20, "20 hatchlings, got " + young.size());
+            for (LivingEntity y : young) h.assertTrue(TankInhabitants.inside(t, y), "a hatchling past the glass at " + y.position() + " (tank from x " + t.min().getX() + ")");
+            TankInhabitants.reconcile(level, c);
+            for (LivingEntity y : young) {
+                h.assertTrue(TankInhabitants.hasTankRef(y) && t.inhabitants().contains(y.getUUID()), "a hatchling let go at " + y.position());
+            }
+            h.succeed();
+        });
+    }
+
     // ------------------------------------------------------------------ alligator
 
     /**
