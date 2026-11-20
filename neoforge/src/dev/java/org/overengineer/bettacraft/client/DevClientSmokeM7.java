@@ -83,12 +83,26 @@ final class DevClientSmokeM7 {
             then(1, () -> server(p -> p.teleportTo(p.level(), plaquePos.getX() + 0.5, plaquePos.getY() - 1.12, plaquePos.getZ() - 0.85, java.util.Set.of(), 0F, 0F, false)));
             then(60, () -> shot("bettacraft_m7_plaque"));
         }
-        // tank menu, animals tab, with a Better Fish Tanks bag in the inventory
+        // tank menu, animals tab, with Better Fish Tanks bags in the inventory: M52: one of them filled through the menu's take-out
+        // (their full bag, beside an empty one: their empty bag looks like a water bottle, the screenshots seemed to show none)
         then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
         then(1, () -> server(p -> {
             p.teleportTo(p.level(), mixMin.getX() + 2.5, mixMin.getY() + 0.5, mixMin.getZ() - 2.5, java.util.Set.of(), 0F, 20F, false);
-            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG)));
             TankBlockEntity c = TankMultiblock.getController(p.level(), mixMin);
+            if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded(BetterFishTanksCompat.MOD_ID)) {
+                p.getInventory().add(new ItemStack(BuiltInRegistries.ITEM.getValue(FishContainers.BFT_FISH_BAG), 2));
+                Entity betta = null;
+                for (Entity e : TankInhabitants.liveInhabitants(p.level(), c.getTank())) if (e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity) betta = e;
+                Component err = betta == null ? Component.literal("no betta") : TankInhabitants.takeOut(p, c, betta.getUUID(), true);
+                int full = 0, empty = 0;
+                for (ItemStack s : p.getInventory().getNonEquipmentItems()) {
+                    if (FishContainers.kind(s) != FishContainers.Foreign.BFT_BAG) continue;
+                    if (FishContainers.storedEntity(s) != null) full += s.getCount();
+                    else empty += s.getCount();
+                }
+                LOGGER.info("[smoketest] M7 betta taken out into a Better Fish Tanks bag: {}, their bags in the inventory: {} full, {} empty",
+                        err == null ? "ok" : err.getString(), full, empty);
+            }
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
                     buf -> buf.writeBlockPos(c.getBlockPos()));
         }));

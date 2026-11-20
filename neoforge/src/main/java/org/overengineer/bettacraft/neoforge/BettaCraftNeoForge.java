@@ -80,6 +80,14 @@ public final class BettaCraftNeoForge {
                     e.setCancellationResult(r);
                 }
             });
+            // M52: their bag does not catch a fish out of our tank past the menu
+            NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickItem e) -> {
+                var r = org.overengineer.bettacraft.compat.betterfishtanks.BetterFishTanksCompat.onRightClickItem(e.getEntity(), e.getLevel(), e.getItemStack());
+                if (r != null) {
+                    e.setCanceled(true);
+                    e.setCancellationResult(r);
+                }
+            });
         }
         // M40 part c: Cable Facades (its facades on our filter pipes: the block tag in our data; here the pipes hidden under them)
         if (ModList.get().isLoaded(org.overengineer.bettacraft.compat.facades.CableFacadesCompat.MOD_ID)) {
