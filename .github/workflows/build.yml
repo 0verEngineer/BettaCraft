@@ -255,5 +255,6 @@ jobs:
             run/1.21.11/logs/
             run/1.21.11/gametest/logs/
             ${{ matrix.id }}.log
+            build/saveload-fabric/
           retention-days: 7
           if-no-files-found: ignore

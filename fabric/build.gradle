@@ -641,7 +641,9 @@ tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGam
 tasks.register('fabricMultiplayerTest') {
     group = 'verification'
     notCompatibleWithConfigurationCache('starts the game processes of the run tasks')
-    dependsOn 'classes', 'devClasses', 'processDevResources'
+    // configureLaunch: Loom's launch.cfg (without it the dev launcher runs in pass-through mode, without the mods; a fresh
+    // checkout such as CI has none)
+    dependsOn 'classes', 'devClasses', 'processDevResources', 'configureLaunch'
     doLast {
         def srv = tasks.named('runFabricServer').get()
         def cli = tasks.named('runFabricClient').get()
@@ -692,7 +694,9 @@ tasks.register('fabricMultiplayerTest') {
 tasks.register('fabricSaveLoadTest') {
     group = 'verification'
     notCompatibleWithConfigurationCache('starts the game processes of the run task')
-    dependsOn 'classes', 'devClasses', 'processDevResources'
+    // configureLaunch: Loom's launch.cfg (without it the dev launcher runs in pass-through mode, without the mods; a fresh
+    // checkout such as CI has none)
+    dependsOn 'classes', 'devClasses', 'processDevResources', 'configureLaunch'
     doLast {
         def srv = tasks.named('runFabricServer').get()
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
