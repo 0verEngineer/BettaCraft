@@ -43,7 +43,7 @@ final class LangM51 {
         a.accept("advancements.bettacraft.aquarist_hired.description", "Hire the aquarist who comes to look after your tanks");
         a.accept("quest.bettacraft.aquarist_hired.title", "An Aquarist Comes By");
         a.accept("quest.bettacraft.aquarist_hired.desc", "Build a few tanks and breed something: an aquarist comes and offers to work for you. Hire him, give him a bed and a breeding basin with a chest of food next to it, and he feeds, changes water, cleans and reports. He wants an emerald (or some bread) a day.");
-        a.accept("gui.bettacraft.tank.aquarist.owner", "the aquarists of the owner (and his team)");
+        a.accept("gui.bettacraft.tank.aquarist.owner", "the aquarists of the owner (and the owner's team)");
         a.accept("gui.bettacraft.tank.aquarist.all", "the aquarists of every player (released)");
         a.accept("gui.bettacraft.tank.aquarist.none", "no aquarist");
         a.accept("gui.bettacraft.tank.aquarist.owner.short", "A");

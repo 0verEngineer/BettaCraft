@@ -25,7 +25,7 @@ final class LangM53 {
         a.accept("gui.bettacraft.users.role.other.desc", "Everyone else: may change the tank while it is open, only look while it is locked");
         a.accept("gui.bettacraft.users.role_button", "Role: %s");
         a.accept("gui.bettacraft.users.role_button_none", "Role: -");
-        a.accept("gui.bettacraft.users.role_tooltip", "Select a user in the list, then switch him between caretaker and viewer");
+        a.accept("gui.bettacraft.users.role_tooltip", "Select a user in the list, then switch them between caretaker and viewer");
         a.accept("gui.bettacraft.users.remove", "Remove");
         a.accept("gui.bettacraft.users.remove_tooltip", "Takes the selected user off the list (owner and caretakers)");
         a.accept("gui.bettacraft.users.leave_tooltip", "Takes you off the list of this tank");
@@ -40,7 +40,7 @@ final class LangM53 {
         a.accept("gui.bettacraft.users.add_tooltip", "Adds the player with this name (he has to be online) as caretaker or viewer");
         a.accept("gui.bettacraft.users.all_waypoints_on", "Waypoints for all: on");
         a.accept("gui.bettacraft.users.all_waypoints_off", "Waypoints for all: off");
-        a.accept("gui.bettacraft.users.all_waypoints_tooltip", "The alarm waypoints of this tank for all of its users (owner and caretakers switch this; off: nobody gets one, whatever his own switch says)");
+        a.accept("gui.bettacraft.users.all_waypoints_tooltip", "The alarm waypoints of this tank for all of its users (owner and caretakers switch this; off: nobody gets one, whatever their own switch says)");
         a.accept("gui.bettacraft.users.others_change", "Others: may change");
         a.accept("gui.bettacraft.users.others_view", "Others: view only");
         a.accept("gui.bettacraft.users.others_tooltip", "Players who are not on the list: while the tank is open they may change it and go in, locked they only look (the same as the lock in the overview)");
@@ -63,7 +63,7 @@ final class LangM53 {
         a.accept("advancements.bettacraft.shared_tank.title", "Open House");
         a.accept("advancements.bettacraft.shared_tank.description", "Add another player to the users of a tank (users tab of the tank menu)");
         a.accept("quest.bettacraft.shared_tank.title", "Open House");
-        a.accept("quest.bettacraft.shared_tank.desc", "In the users tab of the tank menu the owner lists other players: caretakers may do everything he may, viewers only look. Players who are not listed are ruled by the lock. Add a player who is online.");
+        a.accept("quest.bettacraft.shared_tank.desc", "In the users tab of the tank menu the owner lists other players: caretakers may do everything the owner may, viewers only look. Players who are not listed are ruled by the lock. Add a second player while they are online: this needs a second player on the server (an optional quest, it blocks nothing).");
         a.accept("bettacraft.configuration.journeyMap", "JourneyMap");
         a.accept("bettacraft.configuration.journeyMap.tooltip", "Put the alarm waypoints into JourneyMap (when it is installed)");
         a.accept("bettacraft.configuration.xaerosMinimap", "Xaero's Minimap / World Map");
