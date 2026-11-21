@@ -4,6 +4,23 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.45.0-beta.1] - 2026-11-21
+
+Every animal shows in its own icon, and the wild carpets and mosses look like plants.
+
+### Changed
+- **Wild carpets** (HC Cuba, Monte Carlo, Marsilea, Staurogyne, hairgrass) are **fine sprigs** standing apart on a few
+  loose leaves, the ground showing between them, each species in its own leaf form (round leaves, four-leafed clover,
+  leaf pairs, needles); the trimmed carpet is short and sparse. Before they were flat cushions with straight edges. Three
+  designs were compared (a dense lawn, loose cushions with runners, the sprigs); the other two stay in the generator.
+- **Wild mosses** (Java, Christmas, flame moss, Riccia) are **round cushions** of stacked leafy discs, the **Marimo** are
+  **round balls** instead of cubes.
+- **Every animal has its own icon in its container:** every tankmate bucket shows its species (rendered from its model; the
+  buckets all showed a betta in two tints), the **critter bucket** shows the shrimp, crayfish, snail or hermit crab inside
+  (the apple snail showed a shrimp), a **filled fish bag** shows the tankmate or small animal inside and a **filled
+  transport tub** the big animal. Neocaridina, Caridina, the crayfish, apple snails and ramshorns keep the colour of their
+  genes. A betta, a clutch and the animals of other mods keep the fish of before.
+
 ## [1.44.0-beta.1] - 2026-11-21
 
 The animals move like the real ones: amphibians and reptiles keep their hours, climb, hide and do things while they sit

@@ -44,6 +44,15 @@ Most wild animals are wild-coloured, some carry a bred colour hidden, and about 
 (config `wildlife.beautifulWildChance`). What a new animal carries hidden shows the [magnifier](../equipment/magnifier.md).
 All spawns with their weights: [Where to find what](sources.md).
 
+## In the bucket, the bag and the tub
+
+Every animal shows in its container: the bucket of a tankmate shows its species, the critter bucket and a filled fish bag
+the shrimp, crayfish, snail, hermit crab or fish inside, the transport tub the big animal. Neocaridina, bee shrimp,
+crayfish, apple snails and ramshorns show the colour of their genes. A betta and the animals of other mods show as a fish
+in their colours.
+
+![Buckets, fish bags and transport tubs with their animals in a chest](../images/animal_icons.png)
+
 ## Other ways
 
 * A **shovel on mud** in a swamp now and then turns up a Malaysian trumpet snail.
