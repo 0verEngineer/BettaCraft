@@ -41,6 +41,8 @@ as usual.
 - The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
   tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
   inhabitants let it go into the world.
+- An animal reaching a little over the top of its tank stays in it: a dwarf frog male riding his female at the surface
+  was let go as if the tank were gone now and then, which ended the amplexus before she laid her spawn.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - Test only: deterministic GameTests (sky darkness with the test time, basin test in the morning, frog spawn, far chunks);
   the multiplayer test clears the mod groups of this version.
