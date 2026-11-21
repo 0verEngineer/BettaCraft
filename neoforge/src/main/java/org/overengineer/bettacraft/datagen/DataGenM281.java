@@ -118,17 +118,24 @@ final class DataGenM281 {
         });
     }
 
+    /** M55: the texture variables of the wild carpet templates ({@code CARPET_VARIABLES} in {@code tools/assetgen/wild_plants.py}). */
+    static final String[] CARPET_TEXTURES = {"lawn_ground", "lawn_low", "lawn_high", "dome", "runners", "blade_ground", "sprig"};
+
     private static ModelFile model(BlockStateProvider p, WildPlantKind kind, String look, boolean trimmed, String name) {
         var b = p.models().withExistingParent(name, p.modLoc("block/" + template(kind, look, trimmed)));
         if (kind == WildPlantKind.MOSS) {
-            return b.texture("moss", p.modLoc("block/wild_moss"));
+            // M55: round cushions of moss discs and Marimo balls of crossed discs (tools/assetgen/wild_plants.py)
+            return b.texture("moss_disc", p.modLoc("block/wild_moss_disc")).texture("moss_disc_small", p.modLoc("block/wild_moss_disc_small"))
+                    .texture("marimo", p.modLoc("block/wild_marimo"));
         }
         String tex = "block/" + kind.id() + "_" + look;
+        if (kind == WildPlantKind.CARPET) {
+            // M55: the textures of all three carpet designs (tools/assetgen/wild_plants.py); the template names the one in use
+            for (String v : CARPET_TEXTURES) b.texture(v, p.modLoc(tex + "_" + v));
+            return b;
+        }
         b.texture("leaf", p.modLoc(tex)).texture("accent", p.modLoc(tex + "_accent")).texture("top", p.modLoc(tex + "_top"));
         if (kind == WildPlantKind.EPIPHYTE) b.texture("rhizome", p.modLoc("block/plant_rhizome"));
-        if (kind == WildPlantKind.CARPET) { // M46: cushions with leafy tops and sides on a ground layer with a ragged rim
-            b.texture("cushion", p.modLoc(tex + "_cushion")).texture("side", p.modLoc(tex + "_side")).texture("ground", p.modLoc(tex + "_ground"));
-        }
         return b;
     }
 }

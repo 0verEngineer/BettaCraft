@@ -1,6 +1,8 @@
 {
   "parent": "bettacraft:block/template_wild_marimo_short",
   "textures": {
-    "moss": "bettacraft:block/wild_moss"
+    "marimo": "bettacraft:block/wild_marimo",
+    "moss_disc": "bettacraft:block/wild_moss_disc",
+    "moss_disc_small": "bettacraft:block/wild_moss_disc_small"
   }
 }

@@ -1,11 +1,12 @@
 {
   "parent": "bettacraft:block/template_wild_carpet",
   "textures": {
-    "accent": "bettacraft:block/wild_carpet_needle_accent",
-    "cushion": "bettacraft:block/wild_carpet_needle_cushion",
-    "ground": "bettacraft:block/wild_carpet_needle_ground",
-    "leaf": "bettacraft:block/wild_carpet_needle",
-    "side": "bettacraft:block/wild_carpet_needle_side",
-    "top": "bettacraft:block/wild_carpet_needle_top"
+    "blade_ground": "bettacraft:block/wild_carpet_needle_blade_ground",
+    "dome": "bettacraft:block/wild_carpet_needle_dome",
+    "lawn_ground": "bettacraft:block/wild_carpet_needle_lawn_ground",
+    "lawn_high": "bettacraft:block/wild_carpet_needle_lawn_high",
+    "lawn_low": "bettacraft:block/wild_carpet_needle_lawn_low",
+    "runners": "bettacraft:block/wild_carpet_needle_runners",
+    "sprig": "bettacraft:block/wild_carpet_needle_sprig"
   }
 }
