@@ -8,6 +8,7 @@ version as release notes.
 
 The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-neoforge-1.21.11-<version>.jar` and
 `bettacraft-fabric-1.21.11-<version>.jar`. Worlds do not move between Minecraft versions; within 1.21.11 they load as usual.
+Every Minecraft version gets every new feature and every fix.
 
 ### Added
 - **Minecraft 1.21.11**: NeoForge 21.11 and Fabric (Fabric Loader 0.19+, Fabric API 0.141+, Forge Config API Port 21.11).
