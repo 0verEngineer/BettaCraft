@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/fish_bag",
+    "layer1": "bettacraft:item/animal/marbled_crayfish_body",
+    "layer2": "bettacraft:item/animal/marbled_crayfish"
+  }
+}

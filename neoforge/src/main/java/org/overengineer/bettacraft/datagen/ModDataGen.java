@@ -707,8 +707,9 @@ public final class ModDataGen {
                     .texture("layer3", modLoc("item/betta_bucket_glass")); // M21: the glass in front of the fish
             ModelFile filledBag = withExistingParent("fish_bag_filled", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/fish_bag")).texture("layer1", modLoc("item/fish_bag_fish")).texture("layer2", modLoc("item/fish_bag_fish_fins"));
-            withExistingParent("fish_bag", mcLoc("item/generated")).texture("layer0", modLoc("item/fish_bag"))
+            var bag = withExistingParent("fish_bag", mcLoc("item/generated")).texture("layer0", modLoc("item/fish_bag"))
                     .override().predicate(BettaCraft.id("filled"), 1.0F).model(filledBag).end();
+            DataGenM55.bagOverrides(this, bag);
             withExistingParent("betta_spawn_egg", mcLoc("item/generated")).texture("layer0", modLoc("item/betta_spawn_egg"));
             basicItem(ModItems.SWAMP_WATER_BOTTLE.get());
             basicItem(ModItems.BETTA_PELLETS.get());
@@ -734,12 +735,9 @@ public final class ModDataGen {
             DataGenM291.tube(this, "cooler_large", "cooler_segment", 12);
             DataGenM291.filter(this, "internal_filter", "filter_segment_middle", "filter_segment_anchor", "filter_segment_top", "filter_segment_outlet");
             for (var d : ModItems.DECOR.values()) basicItem(d.get());
-            // M19: tankmates (bucket with the betta's fish overlay, tinted per species), spawn eggs, breeding items
+            // M19: tankmates (M55: the bucket with the species' own sprite), spawn eggs, breeding items
             for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) {
-                String fish = sp.seahorse() ? "item/seahorse_bucket_fish" : "item/betta_bucket_fish"; // M21.8: a seahorse in the bucket
-                if (!sp.isLarge()) withExistingParent(sp.bucketId(), mcLoc("item/generated")) // M30: no bucket for a big animal
-                        .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc(fish))
-                        .texture("layer2", modLoc(fish + "_fins")).texture("layer3", modLoc("item/betta_bucket_glass"));
+                if (!sp.isLarge()) DataGenM55.bucket(this, sp.bucketId(), org.overengineer.bettacraft.containers.AnimalIcons.sprite(sp)); // M30: no bucket for a big animal
                 withExistingParent(sp.spawnEggId(), mcLoc("item/generated")).texture("layer0", modLoc("item/" + sp.spawnEggId()));
             }
             basicItem(ModItems.BREEDING_BOX.get());
@@ -756,9 +754,10 @@ public final class ModDataGen {
             withExistingParent("reef_rock", modLoc("block/reef_rock"));
             withExistingParent("live_rock", modLoc("block/live_rock"));
             // M22.3: the critter bucket (a shrimp in the water, tinted per animal), the magnifier, the wild corals
-            withExistingParent("critter_bucket", mcLoc("item/generated"))
+            var critterBucket = withExistingParent("critter_bucket", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/critter_bucket_animal"))
                     .texture("layer2", modLoc("item/critter_bucket_animal_legs")).texture("layer3", modLoc("item/betta_bucket_glass"));
+            DataGenM55.critterBucketOverrides(this, critterBucket);
             handheldItem(ModItems.MAGNIFIER.get());
             for (var e : ModItems.WILD_CORALS.entrySet()) {
                 String id = "wild_" + e.getKey().id();
