@@ -231,6 +231,9 @@ public final class ForeignTerrariumGameTests {
     static LivingEntity layEggs(GameTestHelper h, TankBlockEntity c, EntityType<?> type) {
         ServerLevel level = h.getLevel();
         for (LivingEntity e : ofType(h, c, type)) feed(e);
+        // M54: the mating is a draw of the level's random (shared by every running test): 30 days at the lizard's rate leave a
+        // chance of 1 in 1800 that no pair mated ("no rabbit carries eggs", seen once); a fixed seed makes it the same every run
+        level.getRandom().setSeed(54_000L + BuiltInRegistries.ENTITY_TYPE.getKey(type).hashCode());
         ForeignBreeding.step(level, c, 30.0);
         LivingEntity mother = null;
         for (LivingEntity e : ofType(h, c, type)) if (org.overengineer.bettacraft.platform.Platform.get().persistentData(e).contains(ForeignBreeding.BROOD)) mother = e;

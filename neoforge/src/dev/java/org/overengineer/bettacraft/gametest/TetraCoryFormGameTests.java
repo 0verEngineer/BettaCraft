@@ -113,9 +113,17 @@ public final class TetraCoryFormGameTests {
 
     // ------------------------------------------------------------------ the bronze cory
 
-    /** An albino bronze cory pair (and four wild carriers of gold laser) spawns on the glass after a cool water change; the fry of the albinos are albino. */
-    @GameTest(template = EMPTY, timeoutTicks = 300)
+    /**
+     * Six albino bronze corys spawn on the glass after a cool water change; the fry of the albinos are albino. M54: in a batch of
+     * its own with the mutations off (they were on: at 0.3 % per gene a young one now and then carried a mutated gene and
+     * showed it, "17 of 19" against the 90 % of the check), so every young one must be albino.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 300, batch = "bettacraft_m54_albino_cory")
     public static void albinoBronzeCorysSpawnAfterACoolWaterChange(GameTestHelper h) {
+        GenerationsGameTests.withConfig(() -> albinoBronzeCorys(h));
+    }
+
+    private static void albinoBronzeCorys(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2, 2, 2, 26F);
         TankmateSpecies s = TankmateSpecies.BRONZE_CORY;
         for (int i = 0; i < 6; i++) add(h, c, s, TankmateGenes.pure(s, "albino"), i % 2 == 0);
@@ -132,10 +140,9 @@ public final class TetraCoryFormGameTests {
         days(h, c, 2.5, 0.25, 25F);
         List<TankmateEntity> fry = mates(h, c, s);
         check(!fry.isEmpty(), "fry swim free, clutches left " + t.clutches().size());
-        for (TankmateEntity m : fry) check(m.genes().pure() && m.genes().carries("albino") || m.genes().carries("albino") && !m.genes().pure(),
-                "albino parents give albino young (mutations aside): " + m.genes().text());
+        for (TankmateEntity m : fry) check(m.genes().pure() && m.genes().carries("albino"), "albino parents give albino young: " + m.genes().text());
         long albino = fry.stream().filter(m -> m.variety().equals("albino")).count();
-        check(albino >= fry.size() * 0.9, "the young are albino: " + albino + " of " + fry.size());
+        check(albino == fry.size(), "the young are albino: " + albino + " of " + fry.size());
         h.succeed();
     }
 

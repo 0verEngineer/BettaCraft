@@ -152,6 +152,10 @@ public final class ReefBreedingGameTests {
         TankmateEntity male = add(h, c, TankmateSpecies.BANGGAI_CARDINAL, false, LifeStage.ADULT);
         TankmateEntity female = add(h, c, TankmateSpecies.BANGGAI_CARDINAL, true, LifeStage.ADULT);
         TankData t = c.getTank();
+        // M54: the courtship and the birth are draws of the level's random (shared by every running test): 15 days at half a
+        // courtship a day leave a chance of 1 in 1800 that the pair never paired ("the male carries the eggs", seen once in CI on
+        // 26.2); a fixed seed before the synchronous steps makes them the same every run
+        level.getRandom().setSeed(54_048L);
         for (int i = 0; i < 150 && !male.isGravid(); i++) {
             male.health().feed();
             female.health().feed();
