@@ -424,6 +424,7 @@ public final class InteriorCleanupGameTests {
             h.assertTrue(regions.dead().contains(id), "dead after the save");
             h.runAfterDelay(800, () -> {
                 try {
+                    in.save(null, true, false); // the interior's chunks to the disk (stored although empty: the switch is off)
                     h.assertTrue(regions.dead().contains(id) && !regions.free().contains(id), "still dead with the switch off: " + id);
                     h.assertTrue(!InteriorCleanup.storedChunks(server, id, "region").isEmpty(), "its chunks are still on the disk");
                     h.succeed();

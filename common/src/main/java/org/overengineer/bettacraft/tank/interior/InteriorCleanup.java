@@ -457,7 +457,8 @@ public final class InteriorCleanup {
         for (Tag t : chunk.getList("sections", Tag.TAG_COMPOUND)) {
             ListTag palette = ((CompoundTag) t).getCompound("block_states").getList("palette", Tag.TAG_COMPOUND);
             for (Tag b : palette) {
-                String name = ((CompoundTag) b).getString("Name");
+                // a state with properties is a compound; newer versions write one without as its name alone
+                String name = b instanceof CompoundTag c ? c.getString("Name") : b.getAsString();
                 if (name.equals(FLOOR) || name.equals(WALL)) return true;
             }
         }
