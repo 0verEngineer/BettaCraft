@@ -38,6 +38,15 @@ class Cube:
     u: int = 0
     v: int = 0
 
+    @property
+    def uv_size(self) -> tuple[int, int, int]:
+        """M53: the whole-texel box-UV size of the cube (each size rounded, at least 1). The Java layer gives ``addBox``
+        these sizes and grows the box to its real (fractional) size with a ``CubeDeformation``, which moves the vertices
+        but not the UV: every face then has whole texels of its own. With the fractional sizes as UV size (before M53)
+        neighbouring faces met inside a texel and one of them showed a sliver of the other's paint along its edge (the
+        corn snake's belly checks along the top of its right flank, its back saddles on the belly)."""
+        return tuple(0 if s <= 0 else max(1, math.floor(s + 0.5)) for s in self.size)
+
 
 @dataclass
 class Group:
@@ -284,8 +293,8 @@ MODELS = {
 # ---------------------------------------------------------------------------------------------------------- UV + textures
 
 def footprint(cube: Cube) -> tuple[int, int]:
-    w, h, d = cube.size
-    return int(math.ceil(2 * (d + w))) + 1, int(math.ceil(d + h)) + 1
+    w, h, d = cube.uv_size
+    return 2 * (d + w) + 1, d + h + 1
 
 
 def pack(groups: list[Group]) -> int:
@@ -313,29 +322,32 @@ def pack(groups: list[Group]) -> int:
 
 
 def box_texels(cu: Cube):
-    """M46: the texels the box UV of ``cu`` really samples, in the layout of Minecraft's ``ModelPart.Cube`` (fractional
-    sizes give fractional face rectangles: west ``u..u+d``, north ``u+d..u+d+w``, east ``u+d+w..u+2d+w``, south
-    ``u+2d+w..u+2d+2w`` in the rows ``v+d..v+d+h``; top (min y) ``u+d..u+d+w`` and bottom (max y) ``u+d+w..u+d+2w`` in
-    ``v..v+d``), with the orientation of its vertices. Every texel a face touches is listed once; where two faces share a
-    texel (a fractional edge) the face covering more of it gets it. Yields ``(face, u, v, px, py, pz)`` with the model point
-    at the texel centre (clamped into the face). Face names as the colour functions use them: ``top`` = min y (up, the model's
-    y points down), ``bottom`` = max y, ``north`` = min z, ``south`` = max z, ``west`` = min x, ``east`` = max x.
+    """M46: the texels the box UV of ``cu`` really samples, in the layout of Minecraft's ``ModelPart.Cube`` (west
+    ``u..u+d``, north ``u+d..u+d+w``, east ``u+d+w..u+2d+w``, south ``u+2d+w..u+2d+2w`` in the rows ``v+d..v+d+h``; top
+    (min y) ``u+d..u+d+w`` and bottom (max y) ``u+d+w..u+d+2w`` in ``v..v+d``), with the orientation of its vertices.
+    M53: ``w, h, d`` are the whole-texel UV sizes (``Cube.uv_size``, the box is grown to its real size), so every texel
+    belongs to exactly one face; the model point of a texel is scaled from the UV size to the real size. Yields
+    ``(face, u, v, px, py, pz)`` with the model point at the texel centre. Face names as the colour functions use them:
+    ``top`` = min y (up, the model's y points down), ``bottom`` = max y, ``north`` = min z, ``south`` = max z, ``west`` =
+    min x, ``east`` = max x.
 
     Before M46 the painters laid the faces out with the sizes rounded up, so faces with fractional sizes sampled unpainted,
     transparent texels at their edges (holes with the cutout render type: one saw into the model and its grey insides)."""
-    w, h, d = cu.size
+    rw, rh, rd = cu.size
+    w, h, d = cu.uv_size
+    kx, ky, kz = (r / n if n else 0.0 for r, n in ((rw, w), (rh, h), (rd, d)))
     cx, cy, cz = cu.center
-    x0, y0, z0 = cx - w / 2, cy - h / 2, cz - d / 2
-    x1, y1, z1 = x0 + w, y0 + h, z0 + d
+    x0, y0, z0 = cx - rw / 2, cy - rh / 2, cz - rd / 2
+    x1, y1, z1 = x0 + rw, y0 + rh, z0 + rd
     u, v = cu.u, cu.v
     # face, u1, v1, u2, v2 (as in ModelPart.Cube), model point from (a, b) = distance from (u1, v1) in texels
     faces = [
-        ("top", u + d, v, u + d + w, v + d, lambda a, b: (x0 + a, y0, z1 - b)),
-        ("bottom", u + d + w, v, u + d + 2 * w, v + d, lambda a, b: (x0 + a, y1, z1 - b)),
-        ("west", u, v + d, u + d, v + d + h, lambda a, b: (x0, y0 + b, z1 - a)),
-        ("north", u + d, v + d, u + d + w, v + d + h, lambda a, b: (x0 + a, y0 + b, z0)),
-        ("east", u + d + w, v + d, u + 2 * d + w, v + d + h, lambda a, b: (x1, y0 + b, z0 + a)),
-        ("south", u + 2 * d + w, v + d, u + 2 * d + 2 * w, v + d + h, lambda a, b: (x1 - a, y0 + b, z1)),
+        ("top", u + d, v, u + d + w, v + d, lambda a, b: (x0 + a * kx, y0, z1 - b * kz)),
+        ("bottom", u + d + w, v, u + d + 2 * w, v + d, lambda a, b: (x0 + a * kx, y1, z1 - b * kz)),
+        ("west", u, v + d, u + d, v + d + h, lambda a, b: (x0, y0 + b * ky, z1 - a * kz)),
+        ("north", u + d, v + d, u + d + w, v + d + h, lambda a, b: (x0 + a * kx, y0 + b * ky, z0)),
+        ("east", u + d + w, v + d, u + 2 * d + w, v + d + h, lambda a, b: (x1, y0 + b * ky, z0 + a * kz)),
+        ("south", u + 2 * d + w, v + d, u + 2 * d + 2 * w, v + d + h, lambda a, b: (x1 - a * kx, y0 + b * ky, z1)),
     ]
     best: dict[tuple[int, int], tuple[float, tuple]] = {}
     for face, fu1, fv1, fu2, fv2, fn in faces:
@@ -487,11 +499,13 @@ def java_layer(name: str, groups: list[Group], frog_offset: bool, size: int) -> 
         lines.append(f"        PartDefinition {var} = root.addOrReplaceChild(\"{g.name}\", CubeListBuilder.create(), "
                      f"PartPose.offset({f(px)}, {f(py)}, {f(pz)}));")
         for cu in g.cubes:
-            w, h, d = cu.size
+            w, h, d = cu.uv_size
+            grow = tuple((r - n) / 2 for r, n in zip(cu.size, cu.uv_size))
+            deform = "" if all(abs(x) < 1e-9 for x in grow) else f", new CubeDeformation({f(grow[0])}, {f(grow[1])}, {f(grow[2])})"
             cx, cy, cz = cu.center
             rx, ry, rz = cu.rot
             lines.append(f"        {var}.addOrReplaceChild(\"{cu.name}\", CubeListBuilder.create().texOffs({cu.u}, {cu.v})"
-                         f".addBox({f(-w / 2)}, {f(-h / 2)}, {f(-d / 2)}, {f(w)}, {f(h)}, {f(d)}), "
+                         f".addBox({f(-w / 2)}, {f(-h / 2)}, {f(-d / 2)}, {f(w)}, {f(h)}, {f(d)}{deform}), "
                          f"PartPose.offsetAndRotation({f(cx - px)}, {f(cy - py)}, {f(cz - pz)}, {rad(rx)}, {rad(ry)}, {rad(rz)}));")
     lines.append(f"        return LayerDefinition.create(mesh, {size}, {size});")
     lines.append("    }")
@@ -503,6 +517,7 @@ def write_java(models: dict[str, list[Group]], sizes: dict[str, int]) -> object:
             "package org.overengineer.bettacraft.client.model;",
             "",
             "import net.minecraft.client.model.geom.PartPose;",
+            "import net.minecraft.client.model.geom.builders.CubeDeformation;",
             "import net.minecraft.client.model.geom.builders.CubeListBuilder;",
             "import net.minecraft.client.model.geom.builders.LayerDefinition;",
             "import net.minecraft.client.model.geom.builders.MeshDefinition;",
@@ -511,7 +526,8 @@ def write_java(models: dict[str, list[Group]], sizes: dict[str, int]) -> object:
             "/**",
             " * M14: meshes of the small tank animals (nominal length 16 px, standing on y = 0, head to -Z) and of the dwarf",
             " * clawed frog (entity model, ground y = 24). Each model is a set of named top-level groups drawn with their own tint.",
-            " * Textures: textures/entity/critters/<model>.png (64x64 or 128x128 box UV).",
+            " * Textures: textures/entity/critters/<model>.png (64x64 or 128x128 box UV). M53: whole-texel UV sizes, the boxes",
+            " * grown to their fractional sizes by a CubeDeformation (no face samples a neighbouring face's texels).",
             " */",
             "public final class CritterModelDefinitions {",
             "    /** Model names (texture names); the critter models match CritterSpecies.Model. */",
