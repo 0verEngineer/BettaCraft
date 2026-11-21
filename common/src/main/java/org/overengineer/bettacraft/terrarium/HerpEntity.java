@@ -152,6 +152,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide && isAlive()) habitsTick();
         if (!level().isClientSide && isBaby() && tickCount % 100 == 0) {
             float g = growth();
             if (Math.abs(g - entityData.get(DATA_GROWTH)) > 0.005F) {
@@ -177,6 +178,74 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     protected Component getTypeName() {
         if (species.varieties().size() > 1) return Component.translatable(species.translationKey() + "." + species.varieties().get(variety()));
         return super.getTypeName();
+    }
+
+    // ------------------------------------------------------------------ M54: habits
+
+    @Nullable
+    @Override
+    public Habits habits() {
+        return Habits.enabled() && !isTadpole() ? Habits.of(species) : null;
+    }
+
+    @Nullable
+    private Vec3 lastPos;
+    private int still, actionLeft, hopWait;
+
+    /**
+     * M54: what it does while it sits still: a snake lies coiled through a rest; otherwise now and then one of its idle actions
+     * for a while (a step ends it, the tongue of a snake goes on while it crawls).
+     */
+    private void habitsTick() {
+        Habits hb = isBrumating() ? null : habits();
+        Habits.Action now = syncedAction();
+        if (hb == null) {
+            if (now != Habits.Action.NONE) setAction(Habits.Action.NONE);
+            return;
+        }
+        Vec3 p = position();
+        boolean moved = lastPos != null && p.distanceToSqr(lastPos) > 1e-6;
+        lastPos = p;
+        still = moved ? 0 : still + 1;
+        boolean settled = inTank() ? walker.settled() : worldResting || worldBasking;
+        if (now == Habits.Action.COIL) {
+            if (moved || !settled) setAction(Habits.Action.NONE);
+            return;
+        }
+        if (now != Habits.Action.NONE) {
+            if (moved && now != Habits.Action.TONGUE || --actionLeft <= 0) setAction(Habits.Action.NONE);
+            return;
+        }
+        if (moved) return;
+        if (hb.coils() && settled && still > 40) {
+            setAction(Habits.Action.COIL);
+            return;
+        }
+        if (still > 15 && random.nextInt(settled ? 70 : 140) == 0) {
+            Habits.Action a = hb.randomIdle(random::nextLong);
+            actionLeft = a.ticks(random::nextLong);
+            setAction(a);
+        }
+    }
+
+    /**
+     * M54: a frog or a mudskipper outside a tank hops (it used to glide over the ground with its legs still): while it walks on
+     * the ground it jumps a little every few ticks.
+     */
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (level().isClientSide || inTank() || isTadpole() || isInWater()) return;
+        if (species.body() != HerpSpecies.Body.FROG && species.body() != HerpSpecies.Body.MUDSKIPPER) return;
+        if (hopWait > 0) hopWait--;
+        Vec3 v = getDeltaMovement();
+        boolean walking = !getNavigation().isDone() && v.x * v.x + v.z * v.z > 1e-5;
+        if (walking && onGround() && hopWait <= 0) {
+            double up = species == HerpSpecies.HORNED_FROG ? 0.24 : species.body() == HerpSpecies.Body.MUDSKIPPER ? 0.2 : 0.3;
+            setDeltaMovement(v.x * 1.6, up, v.z * 1.6);
+            hasImpulse = true;
+            hopWait = 8 + random.nextInt(8);
+        }
     }
 
     // ------------------------------------------------------------------ needs, food

@@ -26,6 +26,9 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
     }
 
     private static final double CRUISE = 0.75;
+    /** M54: a dart (speed and the share of the swims that are one). */
+    static final double DART = 1.6;
+    static final float DART_CHANCE = 0.1F;
     private boolean direct;
     private int directTicks;
 
@@ -40,7 +43,10 @@ final class BettaSwimGoal extends RandomSwimmingGoal {
         directTicks = 0;
         // calm cruising speed (the path finder used to brake at every node); hand-fed food is approached at full speed
         boolean food = fish.foodTarget != null && fish.level().getGameTime() < fish.foodUntil;
-        ((BettaMoveControl) fish.getMoveControl()).swimTo(wantedX, wantedY, wantedZ, food ? 1.0 : CRUISE);
+        // M54 (lively movement): now and then a short dart instead of the calm cruise
+        boolean dart = !food && org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.LIVELY_MOVEMENT)
+                && fish.getRandom().nextFloat() < DART_CHANCE;
+        ((BettaMoveControl) fish.getMoveControl()).swimTo(wantedX, wantedY, wantedZ, food ? 1.0 : dart ? DART : CRUISE);
     }
 
     @Override

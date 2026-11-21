@@ -251,6 +251,8 @@ def corn_snake() -> list[Group]:
         c("snout", (0, -0.85, -17.7), (2.0, 1.2, 1.2), (0, 0, 0), "head"),
         c("eye_r", (1.35, -1.45, -15.9), (0.3, 0.6, 0.6), (0, 0, 0), "eye"),
         c("eye_l", (-1.35, -1.45, -15.9), (0.3, 0.6, 0.6), (0, 0, 0), "eye"),
+        # M54: the forked tongue, out of the mouth in short flicks (SnakeModel scales it along z and hides it in between)
+        c("tongue", (0, -0.55, -19.3), (0.5, 0.15, 2.0), (0, 0, 0), "tongue"),
     ])]
     for i in range(SNAKE_SEGMENTS):
         w = _seg_width(i)
@@ -415,6 +417,8 @@ def _corn(morph: str):
     def colour(cu, face, px, py, pz, rng):
         if cu.pattern == "eye":
             return eye
+        if cu.pattern == "tongue":  # M54: dark red, black at the fork
+            return np.array([0.10, 0.04, 0.05]) if pz < -19.9 else np.array([0.42, 0.08, 0.10])
         if face == "bottom":
             # the checkered belly (no black in the amelanistic one): one row per texel row of the segments (their 3.8 px
             # are 4 texels of 0.95 px), the dark checks on alternate sides of the pale middle (M53: the old 1.2 x 1 px

@@ -325,9 +325,10 @@ public final class TerrariumModelDefinitions {
         root = root.addOrReplaceChild("animal", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
         PartDefinition g_head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offset(0F, -0.9F, -13.8F));
         g_head.addOrReplaceChild("skull", CubeListBuilder.create().texOffs(0, 14).addBox(-1.5F, -1F, -1.5F, 3F, 2F, 3F, new CubeDeformation(-0.1F, -0.2F, 0.2F)), PartPose.offsetAndRotation(0F, -0.1F, -1.7F, 0F, 0F, 0F));
-        g_head.addOrReplaceChild("snout", CubeListBuilder.create().texOffs(37, 14).addBox(-1F, -0.5F, -0.5F, 2F, 1F, 1F, new CubeDeformation(0F, 0.1F, 0.1F)), PartPose.offsetAndRotation(0F, 0.05F, -3.9F, 0F, 0F, 0F));
-        g_head.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(44, 14).addBox(-0.5F, -0.5F, -0.5F, 1F, 1F, 1F, new CubeDeformation(-0.35F, -0.2F, -0.2F)), PartPose.offsetAndRotation(1.35F, -0.55F, -2.1F, 0F, 0F, 0F));
-        g_head.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(49, 14).addBox(-0.5F, -0.5F, -0.5F, 1F, 1F, 1F, new CubeDeformation(-0.35F, -0.2F, -0.2F)), PartPose.offsetAndRotation(-1.35F, -0.55F, -2.1F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("snout", CubeListBuilder.create().texOffs(44, 14).addBox(-1F, -0.5F, -0.5F, 2F, 1F, 1F, new CubeDeformation(0F, 0.1F, 0.1F)), PartPose.offsetAndRotation(0F, 0.05F, -3.9F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(51, 14).addBox(-0.5F, -0.5F, -0.5F, 1F, 1F, 1F, new CubeDeformation(-0.35F, -0.2F, -0.2F)), PartPose.offsetAndRotation(1.35F, -0.55F, -2.1F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(56, 14).addBox(-0.5F, -0.5F, -0.5F, 1F, 1F, 1F, new CubeDeformation(-0.35F, -0.2F, -0.2F)), PartPose.offsetAndRotation(-1.35F, -0.55F, -2.1F, 0F, 0F, 0F));
+        g_head.addOrReplaceChild("tongue", CubeListBuilder.create().texOffs(37, 14).addBox(-0.5F, -0.5F, -1F, 1F, 1F, 2F, new CubeDeformation(-0.25F, -0.425F, 0F)), PartPose.offsetAndRotation(0F, 0.35F, -5.5F, 0F, 0F, 0F));
         PartDefinition g_seg0 = root.addOrReplaceChild("seg0", CubeListBuilder.create(), PartPose.offset(0F, -0.78F, -12F));
         g_seg0.addOrReplaceChild("scales", CubeListBuilder.create().texOffs(0, 0).addBox(-1F, -1F, -2F, 2F, 2F, 4F, new CubeDeformation(0F, -0.22F, -0.1F)), PartPose.offsetAndRotation(0F, 0F, 0F, 0F, 0F, 0F));
         PartDefinition g_seg1 = root.addOrReplaceChild("seg1", CubeListBuilder.create(), PartPose.offset(0F, -0.895F, -8.4F));

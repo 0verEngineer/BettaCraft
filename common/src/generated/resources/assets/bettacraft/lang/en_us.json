@@ -724,6 +724,8 @@
   "bettacraft.configuration.features.turtles.wildSpawns": "Wild turtles",
   "bettacraft.configuration.features.turtles.wildSpawns.tooltip": "Wild turtles: sliders and musk turtles in swamps and rivers, Reeves' turtles in rivers, Hermann's tortoises in savannas and dry shrublands (#bettacraft:tortoise_lands)",
   "bettacraft.configuration.features.visuals": "Looks and movement",
+  "bettacraft.configuration.features.visuals.livelyMovement": "Lively animal movement",
+  "bettacraft.configuration.features.visuals.livelyMovement.tooltip": "Lively animal movement (M54): amphibians and reptiles keep their own hours (day, night, dusk), go at a pace like the real animal with short fast phases, climb branches, rocks and leaves, hide in caves and under the decoration, bask, and do things while they sit still (a snake raises its head, flicks its tongue and coils up; lizards look around, frogs call, turtles stretch their necks), in the world as in tanks and terraria; fish dart off now and then and rest more at night, crayfish hide by day (off: the movement of 1.43)",
   "bettacraft.configuration.features.visuals.plantMeshes": "New plant look",
   "bettacraft.configuration.features.visuals.plantMeshes.tooltip": "Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the miniature outside (off: the old blocks). Under Features for everyone (modpack, server), under Rendering only for you",
   "bettacraft.configuration.features.visuals.smoothSwimming": "Smooth swimming",

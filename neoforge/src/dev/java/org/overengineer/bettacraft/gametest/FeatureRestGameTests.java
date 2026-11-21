@@ -263,6 +263,8 @@ public final class FeatureRestGameTests {
             ItemStack ripe = ((org.overengineer.bettacraft.food.CultureItem) culture.getItem()).ripen(culture, h.getLevel(), s.bettas().getFirst());
             return off == (ripe != null) ? (off ? "a culture ripens" : "an old culture does not ripen") : null;
         });
+        // M54: the habits of the amphibians and reptiles (lively movement) follow the switch
+        PROBES.put(Feature.LIVELY_MOVEMENT, (h, s, off) -> off == org.overengineer.bettacraft.terrarium.Habits.enabled() ? "the habits of the animals" : null);
         // M53c: the clean-up and the empty chunks follow the switch
         PROBES.put(Feature.INTERIOR_CLEANUP, (h, s, off) -> off == org.overengineer.bettacraft.tank.interior.InteriorCleanup.enabled()
                 ? "the clean-up switch" : null);

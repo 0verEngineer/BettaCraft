@@ -58,6 +58,17 @@ public class FrogModel extends HierarchicalModel<TerrariumAnimalEntity> {
         float breath = Mth.sin(ageInTicks * 0.35F) * 0.04F;
         head.y += breath * 4F;
         head.yRot = Mth.clamp(netHeadYaw, -20F, 20F) * Mth.DEG_TO_RAD * 0.3F;
+        // M54: the actions of a frog while it sits still (eased in and out): it looks around, it calls (the throat pumps fast)
+        float look = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.LOOK, ageInTicks);
+        float call = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.CALL, ageInTicks);
+        if (look > 0) head.yRot += Mth.clamp(Mth.sin(ageInTicks * 0.06F) * 1.6F, -1F, 1F) * 0.35F * look;
+        if (call > 0) {
+            float pump = Math.max(0F, Mth.sin(ageInTicks * 1.3F));
+            head.y += pump * 0.5F * call;
+            body.xScale = 1F + 0.1F * pump * call;
+            body.yScale = 1F + 0.06F * pump * call;
+            head.xRot -= 0.12F * call;
+        }
         if (e.herpPose() == LandWalker.Pose.BURIED) {
             // sitting buried: legs drawn in, only the head and the eyes above the ground
             for (ModelPart leg : new ModelPart[]{legFr, legFl, legBr, legBl}) {
