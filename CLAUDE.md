@@ -199,6 +199,9 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 - **A milestone is done only when all 10 combinations (5 Minecraft versions x NeoForge + Fabric) are green** (the
   checks above, on every branch). Something that cannot exist on a version or loader (the foreign mod has no build
   there; checked on Modrinth, CurseForge and the mod's maven) is a documented gap (CHANGELOG, `VersionGaps`).
+- Every foreign mod added for testing (a new integration, mod group or single test jar, on any branch and loader) goes
+  into the reproducible test suite: pinned with its official source and hash in the branch's dev mod manifest, so a
+  fresh clone runs the test without manual work (until that manifest exists: listed for it in the local planning notes).
 - Push, tag and release of any branch only with the user's OK.
 - **Release tags** (M52): `v<mod_version>+<loader>-<mc>`, e.g. `v1.42.0-beta.1+neoforge-1.21.1`,
   `v1.42.0-beta.1+fabric-26.1.2`; one tag per loader, on the branch of that Minecraft version. `release.yml` (parsing in
