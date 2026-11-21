@@ -125,9 +125,11 @@ public final class ModDataGen {
                     ctx.register(WILD_CORAL_CONFIGURED, new net.minecraft.world.level.levelgen.feature.ConfiguredFeature<>(
                             org.overengineer.bettacraft.registry.ModCodecs.WILD_CORAL.get(), net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration.NONE));
                     DataGenM281.configuredFeatures(ctx); // M28.1
+                    DataGenM56.configuredFeatures(ctx); // M56: wild terrarium plants
                 })
                 .add(Registries.PLACED_FEATURE, ctx -> {
                     DataGenM281.placedFeatures(ctx); // M28.1
+                    DataGenM56.placedFeatures(ctx); // M56
                     ctx.register(WILD_CORAL_PLACED, new net.minecraft.world.level.levelgen.placement.PlacedFeature(
                         ctx.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(WILD_CORAL_CONFIGURED), List.of(
                         net.minecraft.world.level.levelgen.placement.RarityFilter.onAverageOnceEvery(2),
@@ -137,6 +139,7 @@ public final class ModDataGen {
                 })
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ctx -> {
                     DataGenM281.biomeModifiers(ctx); // M28.1: wild aquarium and floating plants
+                    DataGenM56.biomeModifiers(ctx); // M56: wild terrarium plants
                     ctx.register(BETTA_SPAWNS, new BettaSpawnsBiomeModifier(ctx.lookup(Registries.BIOME).getOrThrow(ModTags.BETTA_SPAWN_BIOMES)));
                     // M22.3: wild tankmates, frogs and small animals; the wild corals on the warm ocean reefs
                     ctx.register(WILDLIFE_SPAWNS, new org.overengineer.bettacraft.world.WildlifeSpawnsBiomeModifier());
@@ -348,6 +351,7 @@ public final class ModDataGen {
             DataGenM27.blockStates(this); // M27
             DataGenM28.blockStates(this); // M28 part c
             DataGenM281.blockStates(this); // M28.1
+            DataGenM56.blockStates(this); // M56: the terrarium plants in the world
             DataGenM31.blockStates(this); // M31 part a
             DataGenM31b.blockStates(this); // M31 part b
             DataGenM31c.blockStates(this); // M31 part c
@@ -769,6 +773,10 @@ public final class ModDataGen {
             }
             // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
             for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
+                if (e.getKey().land()) { // M56: the terrarium plants have an icon per look
+                    DataGenM56.itemModel(this, e.getKey());
+                    continue;
+                }
                 String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
                 withExistingParent(e.getKey().id(), mcLoc("item/generated")).texture("layer0", modLoc("item/plant_" + form))
                         .texture("layer1", modLoc("item/plant_" + form + "_detail"));
@@ -1287,6 +1295,7 @@ public final class ModDataGen {
                     .requires(e.getKey()).requires(ModItems.REEF_ROCK.get())
                     .unlockedBy("has_" + id, hasIt(e.getKey())).save(output, RecipeCompat.key(BettaCraft.id("frag_from_" + id)));
         }
+        DataGenM56.recipes(output); // M56: terrarium plants from vanilla plants
     }
 
     private static net.minecraft.advancements.Criterion<net.minecraft.advancements.criterion.InventoryChangeTrigger.TriggerInstance> hasIt(
@@ -1543,6 +1552,7 @@ public final class ModDataGen {
                     ModBlocks.PUMP_SEGMENT.get());
             var plantBlocks = tag(BlockTags.SWORD_EFFICIENT);
             for (var b : ModBlocks.AQUATIC_PLANTS.values()) plantBlocks.add(b.get());
+            DataGenM56.blockTags(this::tag); // M56: the soil and the plants in the world
             // M25: water chemistry
             tag(ModTags.ACID_SUBSTRATE).addTag(BlockTags.SUBSTRATE_OVERWORLD).add(net.minecraft.world.level.block.Blocks.SOUL_SOIL);
             tag(ModTags.LIMESTONE).add(net.minecraft.world.level.block.Blocks.CALCITE, net.minecraft.world.level.block.Blocks.DRIPSTONE_BLOCK,
@@ -1611,7 +1621,8 @@ public final class ModDataGen {
                             Items.MAGMA_BLOCK, Items.GILDED_BLACKSTONE, Items.REINFORCED_DEEPSLATE);
             for (var b : ModItems.TANKMATE_BUCKETS.values()) tag(ModTags.ENTITY_WATER_BUCKETS).add(b.get());
             var aq = tag(ModTags.AQUATIC_PLANT_ITEMS);
-            for (var it : ModItems.AQUATIC_PLANTS.values()) aq.add(it.get());
+            for (var e : ModItems.AQUATIC_PLANTS.entrySet()) if (!e.getKey().land()) aq.add(e.getValue().get()); // M56: not the terrarium plants
+            DataGenM56.itemTags(this::tag); // M56
             // plastic of other mods (all optional): Industrial Foregoing, PneumaticCraft, Mekanism
             tag(ModTags.PLASTIC_SHEETS)
                     .add(net.minecraft.tags.TagEntry.optionalTag(Identifier.fromNamespaceAndPath("c", "plastics")))
@@ -1701,6 +1712,7 @@ public final class ModDataGen {
                     net.minecraft.world.level.biome.Biomes.OLD_GROWTH_PINE_TAIGA, net.minecraft.world.level.biome.Biomes.OLD_GROWTH_SPRUCE_TAIGA);
             tag(ModTags.SALT_WATER_BIOMES).addTag(Tags.Biomes.IS_OCEAN).addTag(Tags.Biomes.IS_BEACH); // M20: beaches too
             // M31 part b: Hermann's tortoise: savannas and the dry shrublands of biome mods (its home is Mediterranean scrub)
+            DataGenM56.biomeTags(this::tag); // M56: the land of the wild terrarium plants
             var tortoise = tag(ModTags.TORTOISE_LANDS).addTag(Tags.Biomes.IS_SAVANNA);
             Compat.TORTOISE_BIOMES.forEach(id -> tortoise.add(net.minecraft.tags.TagEntry.optionalElement(id)));
             // M31 part c: the leopard gecko (rocky semi-desert) and the corn snake (fields and woods of temperate lands)

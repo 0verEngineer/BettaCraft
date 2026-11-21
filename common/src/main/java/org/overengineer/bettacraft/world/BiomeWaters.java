@@ -80,6 +80,20 @@ public final class BiomeWaters {
         return null;
     }
 
+    /**
+     * M56: the land of the wild terrarium plants in a biome, or null where none grow ({@code #bettacraft:*_plant_lands}; a lush
+     * cave also by {@code #c:is_lush} and {@code #c:is_cave}). Swamps before jungles, deserts before savannas.
+     */
+    @javax.annotation.Nullable
+    public static org.overengineer.bettacraft.sources.WildTables.LandPlace landPlace(Holder<Biome> b) {
+        if (b.is(ModTags.LUSH_CAVE_PLANT_LANDS) || b.is(Tags.Biomes.IS_LUSH) && b.is(Tags.Biomes.IS_CAVE)) return org.overengineer.bettacraft.sources.WildTables.LandPlace.LUSH_CAVES;
+        if (b.is(ModTags.SWAMP_PLANT_LANDS)) return org.overengineer.bettacraft.sources.WildTables.LandPlace.SWAMP;
+        if (b.is(ModTags.JUNGLE_PLANT_LANDS)) return org.overengineer.bettacraft.sources.WildTables.LandPlace.JUNGLE;
+        if (b.is(ModTags.DESERT_PLANT_LANDS)) return org.overengineer.bettacraft.sources.WildTables.LandPlace.DESERT;
+        if (b.is(ModTags.SAVANNA_PLANT_LANDS)) return org.overengineer.bettacraft.sources.WildTables.LandPlace.SAVANNA;
+        return null;
+    }
+
     /** Swamps for the fishing of plants: the swamp waters and the betta biomes. */
     public static boolean swampOrBettaBiome(Holder<Biome> b) {
         return swamp(b) || b.is(ModTags.BETTA_SPAWN_BIOMES);

@@ -46,28 +46,28 @@ Der Pflanzen-Reiter des Aquariums zeigt, wie viele Pflanzen anderer Mods zählen
 |---|---|---|---|
 | Minecraft | `#minecraft:coral_blocks` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `#minecraft:corals`, `#minecraft:wall_corals` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
-| Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
+| Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | Stängelpflanze | 117 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:lily_pad` | Schwimmblätter | 44 Blöcke Pflanzenmasse pro Pflanze, Schatten |
-| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
+| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | Stängelpflanze | 117 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:sea_pickle` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
 | Minecraft | `minecraft:seagrass`, `minecraft:tall_seagrass` | Bandpflanze | 83 Blöcke Pflanzenmasse pro Pflanze |
 | Alex's Caves | `alexscaves:ping_pong_sponge` | Koralle | 190 Blöcke Pflanzenmasse pro Pflanze |
-| Fintastic | `fintastic:amazon_sword`, `fintastic:tall_amazon_sword` | Rosette | 71 Blöcke Pflanzenmasse pro Pflanze |
-| Fintastic | `fintastic:anubias` | Aufsitzerpflanze | 68 Blöcke Pflanzenmasse pro Pflanze |
+| Fintastic | `fintastic:amazon_sword`, `fintastic:tall_amazon_sword` | Rosette | 81 Blöcke Pflanzenmasse pro Pflanze |
+| Fintastic | `fintastic:anubias` | Aufsitzerpflanze | 64 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:aquatic_moss_block`, `fintastic:aquatic_moss_carpet`, `fintastic:aquatic_moss_phyllid` | Moos | 78 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:blue_hypnea` | Moos | 78 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:caulerpa` | Bandpflanze | 83 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:dragons_breath_algae` | Moos | 78 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:duckweed` | Schwimmblätter | 44 Blöcke Pflanzenmasse pro Pflanze, Schatten |
 | Fintastic | `fintastic:green_algae_block`, `fintastic:green_algae_carpet` | Bodendecker | 44 Blöcke Pflanzenmasse pro Pflanze |
-| Fintastic | `fintastic:hornwort` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
+| Fintastic | `fintastic:hornwort` | Stängelpflanze | 117 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:live_rock`, `fintastic:porous_live_rock`, `fintastic:green_algae_live_rock`, `fintastic:red_algae_live_rock` | Lebendgestein | biologischer Filter im Meerwasser, 60 % unseres Lebendgesteins |
 | Fintastic | `fintastic:lotus`, `fintastic:lotus_flower` | Knollenpflanze | 100 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:lotus_pad` | Schwimmblätter | 44 Blöcke Pflanzenmasse pro Pflanze, Schatten |
 | Fintastic | `fintastic:mermaid_fan` | Moos | 78 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:red_algae`, `fintastic:red_algae_fan`, `fintastic:red_algae_wall_fan` | Moos | 78 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:red_algae_block`, `fintastic:red_algae_carpet` | Bodendecker | 44 Blöcke Pflanzenmasse pro Pflanze |
-| Fintastic | `fintastic:sea_grapes`, `fintastic:sea_grapes_plant` | Stängelpflanze | 120 Blöcke Pflanzenmasse pro Pflanze |
+| Fintastic | `fintastic:sea_grapes`, `fintastic:sea_grapes_plant` | Stängelpflanze | 117 Blöcke Pflanzenmasse pro Pflanze |
 | Fintastic | `fintastic:stromatolite_growths` | Bodendecker | 44 Blöcke Pflanzenmasse pro Pflanze |
 | Regions Unexplored | `regions_unexplored:cattail` | Bandpflanze | 83 Blöcke Pflanzenmasse pro Pflanze |
 | Regions Unexplored | `regions_unexplored:duckweed` | Schwimmblätter | 44 Blöcke Pflanzenmasse pro Pflanze, Schatten |

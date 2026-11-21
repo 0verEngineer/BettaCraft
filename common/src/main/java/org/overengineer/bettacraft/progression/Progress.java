@@ -126,6 +126,10 @@ public final class Progress {
     public static final String MUDSKIPPER = "mudskipper_paludarium";
     /** A mangrove in a tank grew its crown over the water (log mangrove.crown). */
     public static final String MANGROVE = "mangrove_grown";
+    /** M56: a terrarium plant grew to full size in a tank (log terrarium_plant.grown). */
+    public static final String TERRARIUM_PLANT = "terrarium_plant_grown";
+    /** M56: dart frog tadpoles went into the cups of bromeliads (log terrarium_plant.tadpoles_in_bromeliads). */
+    public static final String BROMELIAD_TADPOLE = "bromeliad_tadpole";
     /** Amano larvae settled as young shrimp in brackish water (log amano.young). */
     public static final String AMANO_YOUNG = "amano_young";
     // M51
@@ -191,6 +195,8 @@ public final class Progress {
             case "log.bettacraft.tm.banggai_born" -> BANGGAI_YOUNG;
             case "log.bettacraft.mangrove.crown" -> MANGROVE; // M49
             case "log.bettacraft.amano.young" -> AMANO_YOUNG;
+            case "log.bettacraft.terrarium_plant.grown" -> TERRARIUM_PLANT; // M56
+            case "log.bettacraft.terrarium_plant.tadpoles_in_bromeliads" -> BROMELIAD_TADPOLE;
             default -> null;
         };
         if (event != null) awardNear(level, controller, event, 0);

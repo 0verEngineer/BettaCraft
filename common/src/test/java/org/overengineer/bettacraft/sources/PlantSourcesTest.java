@@ -33,9 +33,30 @@ class PlantSourcesTest {
     /** Every plant target: aquarium plants and corals, the growing floating plants (not the vanilla lily pad). */
     private static Map<String, String> plants() {
         Map<String, String> out = new LinkedHashMap<>();
-        for (PlantSpecies p : PlantSpecies.values()) out.put(Target.plant(p), p.id());
+        for (PlantSpecies p : PlantSpecies.values()) if (!p.land()) out.put(Target.plant(p), p.id()); // M56: the terrarium plants below
         for (FloatingPlantType f : FloatingPlantType.values()) if (f.grows() && !f.plantItem()) out.put(Target.floating(f), f.id());
         return out;
+    }
+
+    /** M56: every terrarium plant grows wild somewhere (shears on the wild plant), never only at the trader; its info text says so. */
+    @Test
+    void terrariumPlantsGrowWild() throws IOException {
+        JsonObject en = lang("src/generated/resources/assets/bettacraft/lang/en_us.json");
+        JsonObject de = lang("src/main/resources/assets/bettacraft/lang/de_de.json");
+        List<String> problems = new ArrayList<>();
+        for (PlantSpecies p : PlantSpecies.landSpecies()) {
+            List<Source> all = Sources.of(Target.plant(p));
+            if (all.stream().noneMatch(s -> s.kind() == Source.Kind.SHEARS)) problems.add(p.id() + ": does not grow wild");
+            boolean trader = all.stream().anyMatch(s -> TRADER.contains(s.kind()));
+            String key = "info.bettacraft." + p.id();
+            String tEn = findLine(en, key), tDe = findLine(de, key);
+            if (tEn.isEmpty() || tDe.isEmpty()) problems.add(key + ": no line on where to find it");
+            check(problems, key + " (en)", tEn, "wandering trader", trader);
+            check(problems, key + " (de)", tDe, "Händler", trader);
+            check(problems, key + " (en)", tEn, "fishing", false);
+            check(problems, key + " (en)", tEn, "aquarium net", false);
+        }
+        assertTrue(problems.isEmpty(), "terrarium plants: " + String.join("; ", problems));
     }
 
     @Test

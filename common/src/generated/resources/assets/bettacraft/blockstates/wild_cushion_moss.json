@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "planted=false,trimmed=false": {
+      "model": "bettacraft:block/wild_land_moss"
+    },
+    "planted=false,trimmed=true": {
+      "model": "bettacraft:block/wild_land_moss_trimmed"
+    },
+    "planted=true,trimmed=false": {
+      "model": "bettacraft:block/wild_land_moss"
+    },
+    "planted=true,trimmed=true": {
+      "model": "bettacraft:block/wild_land_moss_trimmed"
+    }
+  }
+}

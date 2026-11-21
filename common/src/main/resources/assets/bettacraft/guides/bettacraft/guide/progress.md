@@ -72,8 +72,10 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sunrise, Sunset** | Switch on the daylight timer of a tank's lights |
 | <ItemImage id="minecraft:moss_block" /> | ↳ **Half and Half** | Open the menu of a paludarium: water and land in one tank |
 | <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Hatchlings** | A clutch of a terrarium animal hatches |
+| <ItemImage id="bettacraft:guzmania" /> | ↳ **A Nursery in a Cup** | Dart frogs carry their tadpoles into the cup of a bromeliad |
 | <ItemImage id="bettacraft:mudskipper_box" /> | ↳ **Fish Out of Water** | Keep a mudskipper in a brackish paludarium |
 | <ItemImage id="minecraft:rabbit_foot" /> | ↳ **House Pet** | A peaceful Minecraft animal moves into a terrarium or paludarium |
+| <ItemImage id="bettacraft:neoregelia" /> | ↳ **Green Thumb Under Glass** | Grow a terrarium plant to full size in a terrarium or paludarium |
 | <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm or Cool** | Turtle eggs hatch: the nest temperature decided their sex |
 | <ItemImage id="minecraft:turtle_scute" /> | ↳ **Ocean Giant** | Put a sea turtle into a big sea water paludarium |
 | <ItemImage id="bettacraft:sponge_filter" /> | ↳ **Turn It Down** | Turn a filter, an air pump or a flow pump below 100 % with its power regulator |

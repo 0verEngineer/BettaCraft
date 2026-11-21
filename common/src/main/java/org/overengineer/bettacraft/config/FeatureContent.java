@@ -95,7 +95,7 @@ public final class FeatureContent {
         }
         String plant = path.startsWith("wild_") ? path.substring(5) : path;
         PlantSpecies p = PlantSpecies.byIdOrNull(plant);
-        if (p != null) out.add(p.marine() ? Feature.CORALS : Feature.AQUATIC_PLANTS);
+        if (p != null) out.add(p.marine() ? Feature.CORALS : p.land() ? Feature.TERRARIUM_PLANTS : Feature.AQUATIC_PLANTS); // M56: the terrarium plants
         FloatingPlantType f = FloatingPlantType.byIdOrNull(path);
         if (f != null && p == null) out.add(f.plantItem() ? Feature.AQUATIC_PLANTS : Feature.FLOATING_PLANTS);
         return minimal(out);

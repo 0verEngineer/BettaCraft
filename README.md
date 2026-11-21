@@ -470,6 +470,8 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.tankmates.moreBottomFish` | Bronze Cory and Panda Garra |
 | `features.tankmates.puffers` | Puffers |
 | `features.tankmates.tetraCoryForms` | Bred Forms of Tetras and Corys |
+| `features.terrariumPlants.bromeliadTadpoles` | A Nursery in a Cup |
+| `features.terrariumPlants.enabled` | Green Thumb Under Glass |
 | `features.terrariums.devices` | Desert and Rainforest |
 | `features.terrariums.devices` + `features.terrariums.herps` | Leopard Gecko |
 | `features.terrariums.enabled` | Half and Half |

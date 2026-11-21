@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "planted=false,trimmed=false": {
+      "model": "bettacraft:block/wild_land_carpet_fine"
+    },
+    "planted=false,trimmed=true": {
+      "model": "bettacraft:block/wild_land_carpet_fine_trimmed"
+    },
+    "planted=true,trimmed=false": {
+      "model": "bettacraft:block/wild_land_carpet_fine"
+    },
+    "planted=true,trimmed=true": {
+      "model": "bettacraft:block/wild_land_carpet_fine_trimmed"
+    }
+  }
+}

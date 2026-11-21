@@ -57,6 +57,7 @@ final class LangEn {
         LangM50.addAll(a); // M50: care on the road (Create contraptions, airships), sloshing water
         LangM51.addAll(a); // M51: the hired aquarist
         LangM53.addAll(a); // M53: tank users, alarm waypoint switches, map mods
+        LangM56.addAll(a); // M56: terrarium plants
         LangM33c.addAll(a); // M33 part c
         LangM33d.addAll(a); // M33 part d
         LangM331.addAll(a); // M33.1
@@ -335,7 +336,7 @@ final class LangEn {
         a.accept("gui.bettacraft.tab.inhabitants", "Animals");
         a.accept("gui.bettacraft.tab.log", "Log");
         a.accept("gui.bettacraft.tank.name", "Tank name");
-        a.accept("gui.bettacraft.tank.name_hint", "Name (shown on the sign)");
+        a.accept("gui.bettacraft.tank.name_hint", "Name"); // M56: the hint fits next to the lock button; the sign in the tooltip
         a.accept("gui.bettacraft.tank.locked", "Locked");
         a.accept("gui.bettacraft.tank.unlocked", "Unlocked");
         a.accept("gui.bettacraft.tank.lock_tooltip", "Owner: %s. When locked, only the owner, the caretakers (users tab) and operators can change this tank; other players can only look.");

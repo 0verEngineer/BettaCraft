@@ -25,7 +25,8 @@ class M28bPlantsTest {
     void appendedAfterPartA() {
         assertEquals(PlantSpecies.BACOPA_CAROLINIANA.ordinal() + 1, PlantSpecies.HC_CUBA.ordinal());
         for (int i = 0; i < NEW.size(); i++) assertEquals(PlantSpecies.HC_CUBA.ordinal() + i, NEW.get(i).ordinal());
-        assertEquals(PlantSpecies.values().length, PlantSpecies.NYMPHAEA_GREEN.ordinal() + 1);
+        // M56: the terrarium plants come after the last aquarium plant
+        assertEquals(PlantSpecies.values().length, PlantSpecies.NYMPHAEA_GREEN.ordinal() + 1 + PlantSpecies.landSpecies().size());
         for (PlantSpecies s : NEW) assertTrue(!s.marine() && !s.form().coral() && s.meshed(), s.toString());
         // the floating plants: after the lily pad (the ordinal goes over the network)
         assertEquals(FloatingPlantType.LILY_PAD.ordinal() + 1, FloatingPlantType.WATER_LETTUCE.ordinal());

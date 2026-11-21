@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/terrarium_bromeliad_spike",
+    "layer1": "bettacraft:item/terrarium_bromeliad_spike_detail"
+  }
+}

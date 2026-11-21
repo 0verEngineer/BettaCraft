@@ -96,7 +96,7 @@ public final class PlantColors {
             case RIBBON -> PlantPart.RIBBON;
             case CARPET -> PlantPart.MAT;
             case MOSS -> PlantPart.MOSS;
-            case ROSETTE, POLYPS, BRANCH, DOME, ANEMONE -> PlantPart.LEAF;
+            case ROSETTE, POLYPS, BRANCH, DOME, ANEMONE, CACTUS -> PlantPart.LEAF;
             case DISC, TOADSTOOL -> PlantPart.STEM;
         };
     }

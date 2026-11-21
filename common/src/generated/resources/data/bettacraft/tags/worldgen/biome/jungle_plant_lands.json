@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#minecraft:is_jungle",
+    {
+      "id": "regions_unexplored:tropics",
+      "required": false
+    },
+    {
+      "id": "biomesoplenty:tropics",
+      "required": false
+    }
+  ]
+}
