@@ -93,6 +93,8 @@ Warnung bei dichter Decke und der Knopf **Ausdünnen**.
 
 ## Nutzer
 
+![Der Nutzer-Tab](../images/menu_users.png)
+
 Der Nutzer-Tab (er hat in 1.43.0 den Innenraum-Tab ersetzt) zeigt, wer an diesem Aquarium was darf:
 
 | Rolle | Darf |
