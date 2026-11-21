@@ -43,6 +43,9 @@ checked from all sides.
   checks on the flank), and the belly checks doubled at random. The same edge slivers are gone from every small animal (shrimp,
   snails, crayfish, frog) and every terrarium animal.
 - Alarm waypoints come back after the player leaves and joins again while the alarm is still on.
+- **Iris shader packs:** the miniature's mesh builders are made on the render thread during the level render, so they always
+  get Iris's extended vertex format with a pack (made on the mesher threads, they got it only by chance; on Minecraft 26.x this
+  gave large black rectangles), and a mesh in another vertex format than its pipeline takes is never drawn (it is rebuilt).
 
 ### Known gaps (Minecraft 26.3)
 - FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.3 build; the Vulkan backend of 26.3 itself is tested.

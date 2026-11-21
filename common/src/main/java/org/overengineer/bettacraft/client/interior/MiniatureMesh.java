@@ -4,6 +4,7 @@ import com.mojang.renderpearl.api.buffers.GpuBuffer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.MeshData;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
@@ -12,12 +13,15 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
  * device (the vertex buffers of 1.21.1 are gone), drawn with the terrain pipelines like vanilla's chunk sections.
  */
 final class MiniatureMesh implements AutoCloseable {
-    /** A vertex buffer with its quad count (the indices come from the shared sequential quad index buffer). */
-    record Buffer(GpuBuffer vertices, int indexCount) {
+    /**
+     * A vertex buffer with its quad count (the indices come from the shared sequential quad index buffer) and its vertex format
+     * (M53b: with an Iris shader pack the terrain pipelines take Iris's extended format; a buffer in another format is not drawn).
+     */
+    record Buffer(GpuBuffer vertices, int indexCount, com.mojang.renderpearl.api.vertex.VertexFormat format) {
         static Buffer upload(MeshData d, String label) {
             try (d) {
                 GpuBuffer vb = RenderSystem.getDevice().createBuffer(() -> label, GpuBuffer.USAGE_VERTEX, d.vertexBuffer());
-                return new Buffer(vb, d.drawState().indexCount());
+                return new Buffer(vb, d.drawState().indexCount(), d.drawState().format());
             }
         }
 
@@ -37,6 +41,18 @@ final class MiniatureMesh implements AutoCloseable {
     int quads;
     /** Interior-local bounds of the cell (for frustum culling): min x/y/z, size in blocks. */
     int minX, minY, minZ, extent;
+
+    /** M53b: a buffer is in another vertex format than its pipeline takes; the cell is rebuilt (asked once). */
+    boolean formatStale;
+
+    /** M53b: every buffer of this layer is in the vertex format of the layer's pipeline. */
+    boolean formatMatches(ChunkSectionLayer layer, com.mojang.renderpearl.api.vertex.VertexFormat format) {
+        for (Map<ChunkSectionLayer, Buffer> m : List.of(buffers, plantBuffers, swayBuffers)) {
+            Buffer b = m.get(layer);
+            if (b != null && !b.format().equals(format)) return false;
+        }
+        return true;
+    }
 
     @Override
     public void close() {
