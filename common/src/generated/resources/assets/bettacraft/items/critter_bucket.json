@@ -1,24 +1,640 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "bettacraft:item/critter_bucket",
-    "tints": [
-      {
-        "type": "bettacraft:tint",
-        "index": 0
+    "type": "minecraft:condition",
+    "name": "bettacraft:animal",
+    "on_false": {
+      "type": "minecraft:condition",
+      "name": "bettacraft:animal",
+      "on_false": {
+        "type": "minecraft:condition",
+        "name": "bettacraft:animal",
+        "on_false": {
+          "type": "minecraft:condition",
+          "name": "bettacraft:animal",
+          "on_false": {
+            "type": "minecraft:condition",
+            "name": "bettacraft:animal",
+            "on_false": {
+              "type": "minecraft:condition",
+              "name": "bettacraft:animal",
+              "on_false": {
+                "type": "minecraft:condition",
+                "name": "bettacraft:animal",
+                "on_false": {
+                  "type": "minecraft:condition",
+                  "name": "bettacraft:animal",
+                  "on_false": {
+                    "type": "minecraft:condition",
+                    "name": "bettacraft:animal",
+                    "on_false": {
+                      "type": "minecraft:condition",
+                      "name": "bettacraft:animal",
+                      "on_false": {
+                        "type": "minecraft:condition",
+                        "name": "bettacraft:animal",
+                        "on_false": {
+                          "type": "minecraft:condition",
+                          "name": "bettacraft:animal",
+                          "on_false": {
+                            "type": "minecraft:condition",
+                            "name": "bettacraft:animal",
+                            "on_false": {
+                              "type": "minecraft:condition",
+                              "name": "bettacraft:animal",
+                              "on_false": {
+                                "type": "minecraft:condition",
+                                "name": "bettacraft:animal",
+                                "on_false": {
+                                  "type": "minecraft:condition",
+                                  "name": "bettacraft:animal",
+                                  "on_false": {
+                                    "type": "minecraft:condition",
+                                    "name": "bettacraft:animal",
+                                    "on_false": {
+                                      "type": "minecraft:condition",
+                                      "name": "bettacraft:animal",
+                                      "on_false": {
+                                        "type": "minecraft:condition",
+                                        "name": "bettacraft:animal",
+                                        "on_false": {
+                                          "type": "minecraft:condition",
+                                          "name": "bettacraft:animal",
+                                          "on_false": {
+                                            "type": "minecraft:condition",
+                                            "name": "bettacraft:animal",
+                                            "on_false": {
+                                              "type": "minecraft:condition",
+                                              "name": "bettacraft:animal",
+                                              "on_false": {
+                                                "type": "minecraft:model",
+                                                "model": "bettacraft:item/critter_bucket",
+                                                "tints": [
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 0
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 1
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 2
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 3
+                                                  }
+                                                ]
+                                              },
+                                              "on_true": {
+                                                "type": "minecraft:model",
+                                                "model": "bettacraft:item/critter_bucket_neocaridina",
+                                                "tints": [
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 0
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 1
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 2
+                                                  },
+                                                  {
+                                                    "type": "bettacraft:tint",
+                                                    "index": 3
+                                                  }
+                                                ]
+                                              },
+                                              "property": "bettacraft:property",
+                                              "threshold": 0.0715
+                                            },
+                                            "on_true": {
+                                              "type": "minecraft:model",
+                                              "model": "bettacraft:item/critter_bucket_dwarf_crayfish",
+                                              "tints": [
+                                                {
+                                                  "type": "bettacraft:tint",
+                                                  "index": 0
+                                                },
+                                                {
+                                                  "type": "bettacraft:tint",
+                                                  "index": 1
+                                                },
+                                                {
+                                                  "type": "bettacraft:tint",
+                                                  "index": 2
+                                                },
+                                                {
+                                                  "type": "bettacraft:tint",
+                                                  "index": 3
+                                                }
+                                              ]
+                                            },
+                                            "property": "bettacraft:property",
+                                            "threshold": 0.0725
+                                          },
+                                          "on_true": {
+                                            "type": "minecraft:model",
+                                            "model": "bettacraft:item/critter_bucket_zebra_nerite",
+                                            "tints": [
+                                              {
+                                                "type": "bettacraft:tint",
+                                                "index": 0
+                                              },
+                                              {
+                                                "type": "bettacraft:tint",
+                                                "index": 1
+                                              },
+                                              {
+                                                "type": "bettacraft:tint",
+                                                "index": 2
+                                              },
+                                              {
+                                                "type": "bettacraft:tint",
+                                                "index": 3
+                                              }
+                                            ]
+                                          },
+                                          "property": "bettacraft:property",
+                                          "threshold": 0.0735
+                                        },
+                                        "on_true": {
+                                          "type": "minecraft:model",
+                                          "model": "bettacraft:item/critter_bucket_horned_nerite",
+                                          "tints": [
+                                            {
+                                              "type": "bettacraft:tint",
+                                              "index": 0
+                                            },
+                                            {
+                                              "type": "bettacraft:tint",
+                                              "index": 1
+                                            },
+                                            {
+                                              "type": "bettacraft:tint",
+                                              "index": 2
+                                            },
+                                            {
+                                              "type": "bettacraft:tint",
+                                              "index": 3
+                                            }
+                                          ]
+                                        },
+                                        "property": "bettacraft:property",
+                                        "threshold": 0.0745
+                                      },
+                                      "on_true": {
+                                        "type": "minecraft:model",
+                                        "model": "bettacraft:item/critter_bucket_olive_nerite",
+                                        "tints": [
+                                          {
+                                            "type": "bettacraft:tint",
+                                            "index": 0
+                                          },
+                                          {
+                                            "type": "bettacraft:tint",
+                                            "index": 1
+                                          },
+                                          {
+                                            "type": "bettacraft:tint",
+                                            "index": 2
+                                          },
+                                          {
+                                            "type": "bettacraft:tint",
+                                            "index": 3
+                                          }
+                                        ]
+                                      },
+                                      "property": "bettacraft:property",
+                                      "threshold": 0.0755
+                                    },
+                                    "on_true": {
+                                      "type": "minecraft:model",
+                                      "model": "bettacraft:item/critter_bucket_red_nerite",
+                                      "tints": [
+                                        {
+                                          "type": "bettacraft:tint",
+                                          "index": 0
+                                        },
+                                        {
+                                          "type": "bettacraft:tint",
+                                          "index": 1
+                                        },
+                                        {
+                                          "type": "bettacraft:tint",
+                                          "index": 2
+                                        },
+                                        {
+                                          "type": "bettacraft:tint",
+                                          "index": 3
+                                        }
+                                      ]
+                                    },
+                                    "property": "bettacraft:property",
+                                    "threshold": 0.0765
+                                  },
+                                  "on_true": {
+                                    "type": "minecraft:model",
+                                    "model": "bettacraft:item/critter_bucket_yellow_nerite",
+                                    "tints": [
+                                      {
+                                        "type": "bettacraft:tint",
+                                        "index": 0
+                                      },
+                                      {
+                                        "type": "bettacraft:tint",
+                                        "index": 1
+                                      },
+                                      {
+                                        "type": "bettacraft:tint",
+                                        "index": 2
+                                      },
+                                      {
+                                        "type": "bettacraft:tint",
+                                        "index": 3
+                                      }
+                                    ]
+                                  },
+                                  "property": "bettacraft:property",
+                                  "threshold": 0.0775
+                                },
+                                "on_true": {
+                                  "type": "minecraft:model",
+                                  "model": "bettacraft:item/critter_bucket_apple_snail",
+                                  "tints": [
+                                    {
+                                      "type": "bettacraft:tint",
+                                      "index": 0
+                                    },
+                                    {
+                                      "type": "bettacraft:tint",
+                                      "index": 1
+                                    },
+                                    {
+                                      "type": "bettacraft:tint",
+                                      "index": 2
+                                    },
+                                    {
+                                      "type": "bettacraft:tint",
+                                      "index": 3
+                                    }
+                                  ]
+                                },
+                                "property": "bettacraft:property",
+                                "threshold": 0.0785
+                              },
+                              "on_true": {
+                                "type": "minecraft:model",
+                                "model": "bettacraft:item/critter_bucket_ramshorn",
+                                "tints": [
+                                  {
+                                    "type": "bettacraft:tint",
+                                    "index": 0
+                                  },
+                                  {
+                                    "type": "bettacraft:tint",
+                                    "index": 1
+                                  },
+                                  {
+                                    "type": "bettacraft:tint",
+                                    "index": 2
+                                  },
+                                  {
+                                    "type": "bettacraft:tint",
+                                    "index": 3
+                                  }
+                                ]
+                              },
+                              "property": "bettacraft:property",
+                              "threshold": 0.0795
+                            },
+                            "on_true": {
+                              "type": "minecraft:model",
+                              "model": "bettacraft:item/critter_bucket_bladder_snail",
+                              "tints": [
+                                {
+                                  "type": "bettacraft:tint",
+                                  "index": 0
+                                },
+                                {
+                                  "type": "bettacraft:tint",
+                                  "index": 1
+                                },
+                                {
+                                  "type": "bettacraft:tint",
+                                  "index": 2
+                                },
+                                {
+                                  "type": "bettacraft:tint",
+                                  "index": 3
+                                }
+                              ]
+                            },
+                            "property": "bettacraft:property",
+                            "threshold": 0.0805
+                          },
+                          "on_true": {
+                            "type": "minecraft:model",
+                            "model": "bettacraft:item/critter_bucket_trumpet_snail",
+                            "tints": [
+                              {
+                                "type": "bettacraft:tint",
+                                "index": 0
+                              },
+                              {
+                                "type": "bettacraft:tint",
+                                "index": 1
+                              },
+                              {
+                                "type": "bettacraft:tint",
+                                "index": 2
+                              },
+                              {
+                                "type": "bettacraft:tint",
+                                "index": 3
+                              }
+                            ]
+                          },
+                          "property": "bettacraft:property",
+                          "threshold": 0.0815
+                        },
+                        "on_true": {
+                          "type": "minecraft:model",
+                          "model": "bettacraft:item/critter_bucket_assassin_snail",
+                          "tints": [
+                            {
+                              "type": "bettacraft:tint",
+                              "index": 0
+                            },
+                            {
+                              "type": "bettacraft:tint",
+                              "index": 1
+                            },
+                            {
+                              "type": "bettacraft:tint",
+                              "index": 2
+                            },
+                            {
+                              "type": "bettacraft:tint",
+                              "index": 3
+                            }
+                          ]
+                        },
+                        "property": "bettacraft:property",
+                        "threshold": 0.0825
+                      },
+                      "on_true": {
+                        "type": "minecraft:model",
+                        "model": "bettacraft:item/critter_bucket_cleaner_shrimp",
+                        "tints": [
+                          {
+                            "type": "bettacraft:tint",
+                            "index": 0
+                          },
+                          {
+                            "type": "bettacraft:tint",
+                            "index": 1
+                          },
+                          {
+                            "type": "bettacraft:tint",
+                            "index": 2
+                          },
+                          {
+                            "type": "bettacraft:tint",
+                            "index": 3
+                          }
+                        ]
+                      },
+                      "property": "bettacraft:property",
+                      "threshold": 0.0835
+                    },
+                    "on_true": {
+                      "type": "minecraft:model",
+                      "model": "bettacraft:item/critter_bucket_hermit_crab",
+                      "tints": [
+                        {
+                          "type": "bettacraft:tint",
+                          "index": 0
+                        },
+                        {
+                          "type": "bettacraft:tint",
+                          "index": 1
+                        },
+                        {
+                          "type": "bettacraft:tint",
+                          "index": 2
+                        },
+                        {
+                          "type": "bettacraft:tint",
+                          "index": 3
+                        }
+                      ]
+                    },
+                    "property": "bettacraft:property",
+                    "threshold": 0.0845
+                  },
+                  "on_true": {
+                    "type": "minecraft:model",
+                    "model": "bettacraft:item/critter_bucket_turbo_snail",
+                    "tints": [
+                      {
+                        "type": "bettacraft:tint",
+                        "index": 0
+                      },
+                      {
+                        "type": "bettacraft:tint",
+                        "index": 1
+                      },
+                      {
+                        "type": "bettacraft:tint",
+                        "index": 2
+                      },
+                      {
+                        "type": "bettacraft:tint",
+                        "index": 3
+                      }
+                    ]
+                  },
+                  "property": "bettacraft:property",
+                  "threshold": 0.0855
+                },
+                "on_true": {
+                  "type": "minecraft:model",
+                  "model": "bettacraft:item/critter_bucket_caridina",
+                  "tints": [
+                    {
+                      "type": "bettacraft:tint",
+                      "index": 0
+                    },
+                    {
+                      "type": "bettacraft:tint",
+                      "index": 1
+                    },
+                    {
+                      "type": "bettacraft:tint",
+                      "index": 2
+                    },
+                    {
+                      "type": "bettacraft:tint",
+                      "index": 3
+                    }
+                  ]
+                },
+                "property": "bettacraft:property",
+                "threshold": 0.0865
+              },
+              "on_true": {
+                "type": "minecraft:model",
+                "model": "bettacraft:item/critter_bucket_sulawesi_shrimp",
+                "tints": [
+                  {
+                    "type": "bettacraft:tint",
+                    "index": 0
+                  },
+                  {
+                    "type": "bettacraft:tint",
+                    "index": 1
+                  },
+                  {
+                    "type": "bettacraft:tint",
+                    "index": 2
+                  },
+                  {
+                    "type": "bettacraft:tint",
+                    "index": 3
+                  }
+                ]
+              },
+              "property": "bettacraft:property",
+              "threshold": 0.0875
+            },
+            "on_true": {
+              "type": "minecraft:model",
+              "model": "bettacraft:item/critter_bucket_tylomelania",
+              "tints": [
+                {
+                  "type": "bettacraft:tint",
+                  "index": 0
+                },
+                {
+                  "type": "bettacraft:tint",
+                  "index": 1
+                },
+                {
+                  "type": "bettacraft:tint",
+                  "index": 2
+                },
+                {
+                  "type": "bettacraft:tint",
+                  "index": 3
+                }
+              ]
+            },
+            "property": "bettacraft:property",
+            "threshold": 0.0885
+          },
+          "on_true": {
+            "type": "minecraft:model",
+            "model": "bettacraft:item/critter_bucket_florida_crayfish",
+            "tints": [
+              {
+                "type": "bettacraft:tint",
+                "index": 0
+              },
+              {
+                "type": "bettacraft:tint",
+                "index": 1
+              },
+              {
+                "type": "bettacraft:tint",
+                "index": 2
+              },
+              {
+                "type": "bettacraft:tint",
+                "index": 3
+              }
+            ]
+          },
+          "property": "bettacraft:property",
+          "threshold": 0.0895
+        },
+        "on_true": {
+          "type": "minecraft:model",
+          "model": "bettacraft:item/critter_bucket_marbled_crayfish",
+          "tints": [
+            {
+              "type": "bettacraft:tint",
+              "index": 0
+            },
+            {
+              "type": "bettacraft:tint",
+              "index": 1
+            },
+            {
+              "type": "bettacraft:tint",
+              "index": 2
+            },
+            {
+              "type": "bettacraft:tint",
+              "index": 3
+            }
+          ]
+        },
+        "property": "bettacraft:property",
+        "threshold": 0.0905
       },
-      {
-        "type": "bettacraft:tint",
-        "index": 1
+      "on_true": {
+        "type": "minecraft:model",
+        "model": "bettacraft:item/critter_bucket_fire_shrimp",
+        "tints": [
+          {
+            "type": "bettacraft:tint",
+            "index": 0
+          },
+          {
+            "type": "bettacraft:tint",
+            "index": 1
+          },
+          {
+            "type": "bettacraft:tint",
+            "index": 2
+          },
+          {
+            "type": "bettacraft:tint",
+            "index": 3
+          }
+        ]
       },
-      {
-        "type": "bettacraft:tint",
-        "index": 2
-      },
-      {
-        "type": "bettacraft:tint",
-        "index": 3
-      }
-    ]
+      "property": "bettacraft:property",
+      "threshold": 0.0915
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "bettacraft:item/critter_bucket_amano_shrimp",
+      "tints": [
+        {
+          "type": "bettacraft:tint",
+          "index": 0
+        },
+        {
+          "type": "bettacraft:tint",
+          "index": 1
+        },
+        {
+          "type": "bettacraft:tint",
+          "index": 2
+        },
+        {
+          "type": "bettacraft:tint",
+          "index": 3
+        }
+      ]
+    },
+    "property": "bettacraft:property",
+    "threshold": 0.0925
   }
 }

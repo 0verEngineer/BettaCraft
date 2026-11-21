@@ -1,7 +1,7 @@
 package org.overengineer.bettacraft.datagen;
 
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ItemModelBuilder;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.containers.AnimalIcons;
 import org.overengineer.bettacraft.critters.CritterSpecies;
 import org.overengineer.bettacraft.tankmates.TankmateSpecies;
