@@ -20,6 +20,12 @@ public final class VersionGaps {
             "create", "sable", // create
             "fintastic", "naturalist"); // aquarium mods of the dev runtime
 
+    /**
+     * M53: the map and render mods of the client test groups (maps, shaders, perf, vulkanmod) without a build for this
+     * version (Modrinth, CurseForge and the FTB maven checked on 2026-11-21): ModernFix has no Fabric 26.1.2 build (NeoForge: tested).
+     */
+    public static final Set<String> RENDER_NO_BUILD = Set.of("modernfix-fabric");
+
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
         return mods.length > 0 && Arrays.stream(mods).allMatch(NO_BUILD::contains);
