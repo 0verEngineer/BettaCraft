@@ -17,6 +17,34 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 public final class BettaCraftCommands {
     private BettaCraftCommands() {}
 
+    private static String mb(long bytes) {
+        return String.format(java.util.Locale.ROOT, "%.1f", bytes / 1048576.0);
+    }
+
+    /** M53c: {@code /bettacraft interior cleanup [run]}. */
+    private static int cleanup(CommandSourceStack src, boolean run) {
+        var server = src.getServer();
+        org.overengineer.bettacraft.tank.interior.InteriorCleanup.Survey s;
+        try {
+            s = org.overengineer.bettacraft.tank.interior.InteriorCleanup.survey(server);
+        } catch (java.io.IOException e) {
+            src.sendFailure(Component.literal("Cannot read the interior folders: " + e.getMessage()));
+            return 0;
+        }
+        var fs = s;
+        src.sendSuccess(() -> Component.translatable("command.bettacraft.interior.cleanup.preview", fs.living(), fs.dead(), fs.deadWithFiles(),
+                mb(fs.deadBytes()), fs.deadFiles(), fs.free(), fs.kept(), mb(fs.unknownBytes()), mb(fs.totalBytes())), false);
+        if (!run) {
+            src.sendSuccess(() -> Component.translatable("command.bettacraft.interior.cleanup.hint",
+                    Component.translatable(org.overengineer.bettacraft.tank.interior.InteriorCleanup.enabled()
+                            ? "command.bettacraft.interior.cleanup.on" : "command.bettacraft.interior.cleanup.off"), mb(fs.deadBytes())), false);
+            return s.dead();
+        }
+        org.overengineer.bettacraft.tank.interior.InteriorCleanup.runNow(server);
+        src.sendSuccess(() -> Component.translatable("command.bettacraft.interior.cleanup.run", fs.dead(), mb(fs.deadBytes())), true);
+        return s.dead();
+    }
+
 
     public static void register(CommandDispatcher<CommandSourceStack> d) {
         d.register(Commands.literal(BettaCraft.MOD_ID)
@@ -36,6 +64,10 @@ public final class BettaCraftCommands {
                                     : "Real-region bench not started (already running or no interior dimension)"), false);
                             return 1;
                         }))
+                        // M53c: what removed interiors leave on the disk (preview) and the clean-up by hand
+                        .then(Commands.literal("cleanup").requires(s -> Perms.has(s, 2))
+                                .executes(ctx -> cleanup(ctx.getSource(), false))
+                                .then(Commands.literal("run").executes(ctx -> cleanup(ctx.getSource(), true))))
                         .then(Commands.literal("resync").requires(s -> Perms.has(s, 2)).executes(ctx -> {
                             int n = 0;
                             for (InteriorRegion r : InteriorRegions.get(ctx.getSource().getServer()).all()) {

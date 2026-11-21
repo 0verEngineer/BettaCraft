@@ -281,6 +281,12 @@ final class LangEn {
         a.accept("log.bettacraft.inserted", "%s was put in");
         a.accept("log.bettacraft.taken_out", "%s was taken out");
         a.accept("command.bettacraft.wateranimals", "Found %s water animals: %s may live in tanks, %s may not. Table: %s");
+        // M53c: /bettacraft interior cleanup
+        a.accept("command.bettacraft.interior.cleanup.preview", "Interior regions: %s living, %s removed (%s of them with files on the disk: %s MB in %s files), %s free for new tanks, %s kept. Files of no known region (left alone): %s MB. All interior files: %s MB.");
+        a.accept("command.bettacraft.interior.cleanup.hint", "The automatic clean-up is %s. /bettacraft interior cleanup run saves the world and deletes the chunks of the removed regions now; their region files (%s MB) go at the next start.");
+        a.accept("command.bettacraft.interior.cleanup.on", "on");
+        a.accept("command.bettacraft.interior.cleanup.off", "off");
+        a.accept("command.bettacraft.interior.cleanup.run", "World saved. Cleaning up %s removed interior region(s): their chunks are deleted once nothing of them is loaded, their region files (%s MB) at the next start.");
         a.accept("message.bettacraft.tank.boss", "%s is a boss and does not belong in an aquarium");
         a.accept("message.bettacraft.tank.hostile", "%s is hostile and cannot live in an aquarium");
         a.accept("message.bettacraft.tank.not_aquatic", "%s is not a water animal");
