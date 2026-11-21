@@ -116,6 +116,8 @@ real genetics.
 - **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**; grown sea turtles go into big sea water paludaria with a beach.
+- They **move like the real animals**, in the world as in the tank: their own hours, a calm pace with short sprints,
+  climbing onto branches and leaves, hiding in caves; the snake raises its head, flicks its tongue and lies coiled.
 - **Land animals of other mods** (insects, small mammals, birds and reptiles of Naturalist, Critters and Companions and
   Living Things) live in terraria with our care and breeding; catch them with the terrarium box.
 - **Minecraft animals as pets:** chickens with chicks from eggs in the sand, rabbits on grass, bees with flowers and a

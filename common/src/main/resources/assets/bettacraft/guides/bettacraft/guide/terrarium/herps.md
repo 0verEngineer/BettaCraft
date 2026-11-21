@@ -27,6 +27,33 @@ same climate values as the turtles (air, humidity, UV, basking spot, land) but m
 Their food: [feeder insects](feeder_insects.md) (crickets and fruit flies from cultures), soft fruit for the crested gecko
 and raw rabbit or chicken for the snake.
 
+## How they move
+
+They live like the real animals, in the world as in the tank (switch `features.visuals.livelyMovement`):
+
+* **Their own hours.** Outside them they rest more and longer, and the ones that hide go **under cover**: into a cave or
+  under an overhang of the decoration in a tank, under leaves or a roof in the world.
+* **A calm pace with short fast phases:** the snake shoots forward, the lizards sprint off, the frogs hop in quick series.
+* **The furnishing:** the snake and the geckos **climb** onto rocks, roots and branches of the decoration (faces up to
+  almost a block high), the dart frogs sit up on **leaves** and plants, and the turtles and lizards bask under the
+  [basking lamp](basking_lamp.md).
+* **While they sit still** they do something: the corn snake **raises its head** and **flicks its tongue** (now and then
+  also while it crawls) and lies **coiled** while it rests; lizards look around, stretch up and wave the tip of the tail;
+  frogs look around and **call** (the throat pumps); turtles look around and stretch their necks.
+
+| Animal | Active | Pace | Climbs, hides |
+|---|---|---|---|
+| Corn snake | dusk, dawn, night | calm, shoots forward | climbs rocks and branches, hides by day |
+| Leopard gecko | night | deliberate, sprints | low rocks, hides by day |
+| Crested gecko | night | slow, jumpy | the glass, branches and leaves |
+| Dart frogs | day | quick hops | sit on leaves, under the leaves at night |
+| Horned frog | night | sits buried, lunges | buried in the ground |
+| Turtles | day (the musk turtle at night) | slow, faster in the water | hide in caves, bask |
+
+In the world they also bask in the sun on bright days and the small and shy ones run from a player who comes close.
+With the switch off they move as before (1.43). The same switch makes **fish** dart off now and then and rest more at night,
+and lets **crayfish** stay in their hides by day.
+
 ## Breeding
 
 A grown, fed female (two days), without a harmful problem and with little stress, and a grown male of the same species
