@@ -26,6 +26,7 @@ Stachelige Kämme laufen über seine Augen und den Rücken hinab; seine breiten 
 
 * Er **klettert die Glaswände hinauf** und hängt dort eine Weile kopfüber nach oben, dann kommt er wieder herunter; Steine und
   Holz klettert er senkrecht hinauf und mag die hohen Stellen des Landes.
+* Tagsüber versteckt er sich zwischen großen [Terrarienpflanzen](plants.md) und unter der Deko (`features.terrariumPlants.hiding`).
 
 ## Zucht
 

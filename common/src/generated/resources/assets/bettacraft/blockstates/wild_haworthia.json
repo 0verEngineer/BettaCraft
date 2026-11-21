@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "planted=false,trimmed=false": [
+      {
+        "model": "bettacraft:block/wild_land_succulent"
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 270
+      }
+    ],
+    "planted=false,trimmed=true": [
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 270
+      }
+    ],
+    "planted=true,trimmed=false": [
+      {
+        "model": "bettacraft:block/wild_land_succulent"
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent",
+        "y": 270
+      }
+    ],
+    "planted=true,trimmed=true": [
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_succulent_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:paludarium",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "terrarium_plant_grown"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.terrarium_plant_grown.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:neoregelia"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.terrarium_plant_grown.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

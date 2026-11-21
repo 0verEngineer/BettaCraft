@@ -256,6 +256,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         nameBox = new EditBox(font, x + 11, y + 21, 80, 13, Component.translatable("gui.bettacraft.tank.name"));
         nameBox.setMaxLength(TankData.MAX_NAME_LENGTH);
         nameBox.setHint(Component.translatable("gui.bettacraft.tank.name_hint").withStyle(ChatFormatting.DARK_GRAY));
+        nameBox.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.name_tooltip"))); // M56: where the name shows
         nameBox.setResponder(s -> nameDirtyTicks = 15);
         overview.add(addRenderableWidget(nameBox));
         lockButton = addRenderableWidget(new FitButton(x + 148, y + 20, 62, 15, Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null)));
@@ -1524,11 +1525,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (a.total > 0) {
             Component growth;
             if (a.growthSpeed <= 0) growth = Component.translatable("gui.bettacraft.plants.growth_off").withStyle(ChatFormatting.GRAY);
-            else if (a.temp < 18 || a.temp > 32) growth = Component.translatable("gui.bettacraft.aquatic.temp", fmt(a.temp)).withStyle(ChatFormatting.GOLD);
+            else if (a.land < a.total && (a.temp < 18 || a.temp > 32)) growth = Component.translatable("gui.bettacraft.aquatic.temp", fmt(a.temp)).withStyle(ChatFormatting.GOLD);
             else {
                 MutableComponent m = Component.translatable("gui.bettacraft.aquatic.growing", a.growing, a.fullGrown).withStyle(ChatFormatting.GREEN);
                 if (a.dark > 0) m.append(" ").append(Component.translatable("gui.bettacraft.aquatic.dark", a.dark).withStyle(ChatFormatting.GOLD));
                 if (a.dry > 0) m.append(" ").append(Component.translatable("gui.bettacraft.aquatic.dry", a.dry).withStyle(ChatFormatting.GOLD));
+                if (a.wilting > 0) m.append(" ").append(Component.translatable("gui.bettacraft.aquatic.wilting", a.wilting).withStyle(ChatFormatting.GOLD)); // M56
                 growth = m;
             }
             fitLine(g, growth, x, y, TEXT_LIGHT, right);

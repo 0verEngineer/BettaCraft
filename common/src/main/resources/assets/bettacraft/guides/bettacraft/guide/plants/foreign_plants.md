@@ -43,28 +43,28 @@ The plants tab of the aquarium shows how many plants of other mods count and the
 |---|---|---|---|
 | Minecraft | `#minecraft:coral_blocks` | coral | 190 blocks of plant mass per plant |
 | Minecraft | `#minecraft:corals`, `#minecraft:wall_corals` | coral | 190 blocks of plant mass per plant |
-| Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | stem plant | 120 blocks of plant mass per plant |
+| Minecraft | `minecraft:kelp`, `minecraft:kelp_plant` | stem plant | 117 blocks of plant mass per plant |
 | Minecraft | `minecraft:lily_pad` | floating leaves | 44 blocks of plant mass per plant, shade |
-| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | stem plant | 120 blocks of plant mass per plant |
+| Minecraft | `minecraft:mangrove_leaves`, `minecraft:mangrove_propagule` | stem plant | 117 blocks of plant mass per plant |
 | Minecraft | `minecraft:sea_pickle` | coral | 190 blocks of plant mass per plant |
 | Minecraft | `minecraft:seagrass`, `minecraft:tall_seagrass` | ribbon plant | 83 blocks of plant mass per plant |
 | Alex's Caves | `alexscaves:ping_pong_sponge` | coral | 190 blocks of plant mass per plant |
-| Fintastic | `fintastic:amazon_sword`, `fintastic:tall_amazon_sword` | rosette | 71 blocks of plant mass per plant |
-| Fintastic | `fintastic:anubias` | epiphyte | 68 blocks of plant mass per plant |
+| Fintastic | `fintastic:amazon_sword`, `fintastic:tall_amazon_sword` | rosette | 81 blocks of plant mass per plant |
+| Fintastic | `fintastic:anubias` | epiphyte | 64 blocks of plant mass per plant |
 | Fintastic | `fintastic:aquatic_moss_block`, `fintastic:aquatic_moss_carpet`, `fintastic:aquatic_moss_phyllid` | moss | 78 blocks of plant mass per plant |
 | Fintastic | `fintastic:blue_hypnea` | moss | 78 blocks of plant mass per plant |
 | Fintastic | `fintastic:caulerpa` | ribbon plant | 83 blocks of plant mass per plant |
 | Fintastic | `fintastic:dragons_breath_algae` | moss | 78 blocks of plant mass per plant |
 | Fintastic | `fintastic:duckweed` | floating leaves | 44 blocks of plant mass per plant, shade |
 | Fintastic | `fintastic:green_algae_block`, `fintastic:green_algae_carpet` | carpet | 44 blocks of plant mass per plant |
-| Fintastic | `fintastic:hornwort` | stem plant | 120 blocks of plant mass per plant |
+| Fintastic | `fintastic:hornwort` | stem plant | 117 blocks of plant mass per plant |
 | Fintastic | `fintastic:live_rock`, `fintastic:porous_live_rock`, `fintastic:green_algae_live_rock`, `fintastic:red_algae_live_rock` | live rock | biological filter in salt water, 60 % of our live rock |
 | Fintastic | `fintastic:lotus`, `fintastic:lotus_flower` | bulb | 100 blocks of plant mass per plant |
 | Fintastic | `fintastic:lotus_pad` | floating leaves | 44 blocks of plant mass per plant, shade |
 | Fintastic | `fintastic:mermaid_fan` | moss | 78 blocks of plant mass per plant |
 | Fintastic | `fintastic:red_algae`, `fintastic:red_algae_fan`, `fintastic:red_algae_wall_fan` | moss | 78 blocks of plant mass per plant |
 | Fintastic | `fintastic:red_algae_block`, `fintastic:red_algae_carpet` | carpet | 44 blocks of plant mass per plant |
-| Fintastic | `fintastic:sea_grapes`, `fintastic:sea_grapes_plant` | stem plant | 120 blocks of plant mass per plant |
+| Fintastic | `fintastic:sea_grapes`, `fintastic:sea_grapes_plant` | stem plant | 117 blocks of plant mass per plant |
 | Fintastic | `fintastic:stromatolite_growths` | carpet | 44 blocks of plant mass per plant |
 | Regions Unexplored | `regions_unexplored:cattail` | ribbon plant | 83 blocks of plant mass per plant |
 | Regions Unexplored | `regions_unexplored:duckweed` | floating leaves | 44 blocks of plant mass per plant, shade |

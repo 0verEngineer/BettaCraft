@@ -21,7 +21,15 @@ enum PlantTex {
     COFFEE("leaf_coffee", true), LOBED("leaf_lobed", true), FEATHER("leaf_feather", true), CRISP("leaf_crisp", true),
     PINTO("leaf_pinto", true),
     // M28 part b: the forked thalli of Riccia, the velvet of the Marimo ball (opaque, tiled over the sphere)
-    RICCIA("riccia", true), MARIMO("marimo", false);
+    RICCIA("riccia", true), MARIMO("marimo", false),
+    // M56: the terrarium plants: bromeliad straps (plain and banded), spiky succulent and air plant leaves, the netted Fittonia
+    // leaf, the heart leaf of the Pothos, the shingle leaf, the fern frond, the lichen, the velvet begonia leaf, the sundew pad,
+    // the pitcher tube (opaque, tiled), the trap lobe, the ribbed cactus body (opaque, tiled), the prickly pear pad, the fat
+    // succulent leaf, the striped Haworthia leaf and a flower
+    STRAP("leaf_strap", true), BANDED("leaf_banded", true), SPIKY("leaf_spiky", true), VEINED("leaf_veined", true), HEART("leaf_heart", true),
+    SHINGLE("leaf_shingle", true), FERN("leaf_fern", true), LICHEN("lichen", true), VELVET("leaf_velvet", true), SUNDEW("leaf_sundew", true),
+    PITCHER("pitcher", false), TRAP("leaf_trap", true), CACTUS("cactus", false), CACTUS_PAD("cactus_pad", true), SUCCULENT("leaf_succulent", true),
+    ZEBRA("leaf_zebra", true), FLOWER("flower", true);
 
     static final PlantTex[] ALL = values();
 

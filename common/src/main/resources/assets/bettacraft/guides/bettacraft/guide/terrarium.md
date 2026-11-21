@@ -81,6 +81,12 @@ a lit lamp much warmer (12 K, `terrarium.baskingSpotLift`).
 | [Mister](terrarium/mister.md) | on top of or beside the tank | sprays while the humidity is below its setting; uses water |
 | [Thermo-hygrometer](terrarium/thermo_hygrometer.md) | on the glass | shows air temperature and humidity |
 
+## Terrarium plants
+
+The land of a terrarium or paludarium has [plants of its own](terrarium/plants.md): bromeliads, ferns, mosses and orchids for
+the rainforest, carnivorous plants and sedges for the shore, cacti and succulents for the desert. They grow by the light,
+the humidity and the air temperature of the tank, raise the humidity and give the animals food and hiding places.
+
 ## Terrarium animals
 
 A terrarium animal lives in the kind of tank it needs (a turtle of the swamps in a paludarium, a tortoise in a dry

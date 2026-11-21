@@ -126,7 +126,7 @@ public final class GuideGen {
             }
             case "plant" -> {
                 PlantSpecies p = PlantSpecies.byId(id);
-                yield (p.marine() ? "saltwater/" : "plants/") + p.id() + ".md";
+                yield (p.marine() ? "saltwater/" : p.land() ? "terrarium/plants/" : "plants/") + p.id() + ".md"; // M56: the terrarium plants
             }
             case "floating" -> "plants/" + id + ".md";
             case "item" -> itemPages.get("bettacraft:" + id);
@@ -176,6 +176,7 @@ public final class GuideGen {
 
     public static String groupPage(PlantSpecies p) {
         if (p.marine()) return "saltwater/corals.md";
+        if (p.land()) return "terrarium/plants_" + p.habitat().id() + ".md"; // M56
         return switch (p.form()) {
             case EPIPHYTE, MOSS -> "plants/epiphytes.md";
             case ROSETTE, BULB -> "plants/rosettes.md";
@@ -241,7 +242,13 @@ public final class GuideGen {
         critterTable(out, "invertebrates.md", s -> !s.marine(), true, t("## All species", "## Alle Arten"));
         critterTable(out, "invertebrates/snails.md", s -> !s.marine() && s.isSnail(), false, t("## Species", "## Arten"));
         critterTable(out, "saltwater/reef_invertebrates.md", CritterSpecies::marine, false, t("## Species", "## Arten"));
-        plantTable(out, "plants.md", p -> !p.marine(), t("## All plants", "## Alle Pflanzen"));
+        plantTable(out, "plants.md", p -> !p.marine() && !p.land(), t("## All plants", "## Alle Pflanzen"));
+        // M56: the terrarium plants (all of them, and by habitat)
+        landTable(out, "terrarium/plants.md", p -> p.land(), t("## All terrarium plants", "## Alle Terrarienpflanzen"));
+        for (PlantSpecies.Habitat h : PlantSpecies.Habitat.values()) {
+            if (h == PlantSpecies.Habitat.AQUATIC) continue;
+            landTable(out, "terrarium/plants_" + h.id() + ".md", p -> p.habitat() == h, t("## Species", "## Arten"));
+        }
         for (String g : List.of("plants/epiphytes.md", "plants/rosettes.md", "plants/stem_plants.md", "plants/runners.md", "saltwater/corals.md")) {
             plantTable(out, g, p -> groupPage(p).equals(g), t("## Species", "## Arten"));
         }
@@ -385,6 +392,7 @@ public final class GuideGen {
     }
 
     private String plantProfile(PlantSpecies p) {
+        if (p.land()) return landProfile(p); // M56
         Table tb = new Table();
         tb.row(t("Growth form", "Wuchsform"), p.rolls() ? t("ball of algae (lies loose)", "Algenkugel (liegt lose)") : form(p.form()));
         tb.row(t("Grows on", "Wächst auf"), p.marine() ? t("reef rock, live rock", "Riffgestein, lebendem Gestein") : switch (p.form()) {
@@ -437,8 +445,83 @@ public final class GuideGen {
         return tb.render();
     }
 
+    // ================================================================== M56: terrarium plants
+
+    private String habitat(PlantSpecies.Habitat h) {
+        return switch (h) {
+            case TROPICAL -> t("tropical and humid (rainforest terrarium, the land of a paludarium)", "tropisch-feucht (Regenwald-Terrarium, Land eines Paludariums)");
+            case SWAMP -> t("swamp and shore (paludarium)", "Sumpf und Ufer (Paludarium)");
+            case DRY -> t("dry and hot (desert terrarium)", "trocken und heiß (Wüstenterrarium)");
+            case AQUATIC -> t("under water", "unter Wasser");
+        };
+    }
+
+    private String light(PlantSpecies.Light l) {
+        return switch (l) {
+            case LOW -> t("low", "wenig");
+            case MID -> t("medium", "mittel");
+            case HIGH -> t("strong", "viel");
+            case VERY_HIGH -> t("very strong (an LED panel, a high-power LED or a basking lamp and the sun)", "sehr viel (LED-Panel, Hochleistungs-LED oder Wärmelampe und Sonne)");
+        };
+    }
+
+    private String landProfile(PlantSpecies p) {
+        Table tb = new Table();
+        tb.row(t("Habitat", "Lebensraum"), habitat(p.habitat()));
+        tb.row(t("Growth form", "Wuchsform"), form(p.form()));
+        tb.row(t("Grows on", "Wächst auf"), switch (p.form()) {
+            case EPIPHYTE -> t("stone and wood (also decoration), soil", "Stein und Holz (auch Deko), Erde");
+            case MOSS -> t("any solid block", "jedem festen Block");
+            default -> t("soil, sand or gravel on the land (above the water)", "Erde, Sand oder Kies auf dem Land (über dem Wasser)");
+        });
+        tb.row(t("Light", "Licht"), light(p.light()));
+        tb.row(t("Humidity", "Luftfeuchte"), num(p.humidityMin()) + "–" + num(p.humidityMax()) + " %");
+        tb.row(t("Air temperature", "Lufttemperatur"), num(p.tempMin()) + "–" + num(p.tempMax()) + " °C");
+        tb.row(t("Full size", "Volle Größe"), t("after about " + num(p.daysToFull()) + " days", "nach etwa " + num(p.daysToFull()) + " Tagen"));
+        tb.row(t("Spreads", "Breitet sich aus"), spreads(p));
+        tb.row(t("Shears", "Schere"), switch (p.propagation()) {
+            case OFFSET -> t("an offset (a small rooted plant)", "ein Ableger (eine kleine bewurzelte Pflanze)");
+            case DIVISION -> t("divides the clump (half of it as a plant)", "teilt das Polster (die Hälfte als Pflanze)");
+            case CUTTING -> t(p.cuttingsPerTrim(p.trimStages()) + " cutting(s) per trim", p.cuttingsPerTrim(p.trimStages()) + " Steckling(e) pro Schnitt");
+        });
+        if (p.tinted()) tb.row(t("Colour", "Farbe"), t("redder in strong light", "röter bei viel Licht"));
+        tb.row(t("Humidity it gives", "Gibt Feuchte ab"), p.transpiration() < 1 ? t("little (it keeps its water)", "wenig (sie hält ihr Wasser)") : t("yes", "ja"));
+        if (p.bromeliad()) tb.row(t("Water cup", "Wasserkelch"), t("takes a dart frog tadpole when half grown (config `features.terrariumPlants.bromeliadTadpoles`)",
+                "nimmt ab halber Größe eine Pfeilgiftfrosch-Kaulquappe auf (Einstellung `features.terrariumPlants.bromeliadTadpoles`)"));
+        if (p.edible()) tb.row(t("Tortoises", "Landschildkröten"), t("graze it (config `features.terrariumPlants.tortoiseGrazing`)",
+                "fressen sie (Einstellung `features.terrariumPlants.tortoiseGrazing`)"));
+        if (p.shelter()) tb.row(t("Hiding place", "Versteck"), t("snakes and geckos hide in it when half grown (config `features.terrariumPlants.hiding`)",
+                "Schlangen und Geckos verstecken sich ab halber Größe darin (Einstellung `features.terrariumPlants.hiding`)"));
+        return tb.render();
+    }
+
+    private void landTable(Map<String, Map<String, String>> out, String page, Predicate<PlantSpecies> which, String heading) {
+        Table tb = new Table("", t("Plant", "Pflanze"), t("Light", "Licht"), t("Humidity", "Luftfeuchte"), "°C", t("Shears", "Schere"));
+        for (PlantSpecies p : PlantSpecies.values()) {
+            if (!which.test(p)) continue;
+            String name = link(lang("item.bettacraft." + p.id()), page(Target.plant(p)), page, false);
+            String light = switch (p.light()) {
+                case LOW -> t("low", "wenig");
+                case MID -> t("medium", "mittel");
+                case HIGH -> t("strong", "viel");
+                case VERY_HIGH -> t("very strong", "sehr viel");
+            };
+            tb.row("<ItemImage id=\"bettacraft:" + p.id() + "\" />", name, light, num(p.humidityMin()) + "–" + num(p.humidityMax()) + " %",
+                    num(p.tempMin()) + "–" + num(p.tempMax()), switch (p.propagation()) {
+                        case OFFSET -> t("offsets", "Ableger");
+                        case DIVISION -> t("division", "Teilung");
+                        case CUTTING -> t("cuttings", "Stecklinge");
+                    });
+        }
+        out.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(heading, tb.render());
+    }
+
     private String spreads(PlantSpecies p) {
         if (!p.spreads()) return t("no", "nein");
+        if (p.land()) { // M56
+            if (p.propagation() == PlantSpecies.Propagation.OFFSET) return t("offsets around it", "Ableger rundherum");
+            if (p.form() == PlantSpecies.Form.MOSS) return t("it creeps on", "wächst weiter");
+        }
         return switch (p.form()) {
             case STEM -> t("side shoots", "Seitentriebe");
             case POLYPS, DISC -> t("over the rock", "über das Gestein");
@@ -570,6 +653,19 @@ public final class GuideGen {
     private String propagation(String target) {
         int c = target.indexOf(':');
         String kind = c < 0 ? target : target.substring(0, c), id = c < 0 ? "" : target.substring(c + 1);
+        if (kind.equals("plant") && PlantSpecies.byId(id).land()) { // M56
+            PlantSpecies p = PlantSpecies.byId(id);
+            String s = switch (p.propagation()) {
+                case OFFSET -> bold(t("Offsets", "Ableger")) + t(": shears on a grown plant take an offset (a small rooted plant)",
+                        ": eine Schere an einer gewachsenen Pflanze nimmt einen Ableger ab (eine kleine bewurzelte Pflanze)");
+                case DIVISION -> bold(t("Division", "Teilung")) + t(": shears divide the clump (half of it as a plant); breaking a piece of it divides it too",
+                        ": eine Schere teilt das Polster (die Hälfte als Pflanze); ein abgebautes Stück teilt es auch");
+                case CUTTING -> bold(t("Cuttings", "Stecklinge")) + t(": shears on a grown plant give " + p.cuttingsPerTrim(p.trimStages()) + " cutting(s) per trim",
+                        ": eine Schere an einer gewachsenen Pflanze gibt " + p.cuttingsPerTrim(p.trimStages()) + " Steckling(e) pro Schnitt");
+            };
+            if (p.spreads()) s += t("; it also spreads by itself (" + spreads(p) + ")", "; sie breitet sich auch selbst aus (" + spreads(p) + ")");
+            return s;
+        }
         if (kind.equals("plant")) {
             PlantSpecies p = PlantSpecies.byId(id);
             int n = p.cuttingsPerTrim(p.trimStages());
@@ -992,6 +1088,7 @@ public final class GuideGen {
             case JUNGLE_FLOOR -> t("on the floor of jungles", "auf dem Boden von Dschungeln"); // M31 part c
             case ARID -> t("in deserts and badlands", "in Wüsten und Tafelbergen");
             case WOODLAND -> t("in forests and plains", "in Wäldern und Ebenen");
+            case SWAMP_LAND -> t("on the land of swamps and mangroves", "auf dem Land von Sümpfen und Mangroven"); // M56
         };
     }
 
@@ -1004,7 +1101,9 @@ public final class GuideGen {
             case "bettacraft:wild_epiphyte", "bettacraft:wild_moss", "bettacraft:wild_rosette", "bettacraft:wild_stem", "bettacraft:wild_carpet" ->
                     t("wild plant", "wilden Pflanzenbestand");
             case "bettacraft:wild_floating_plant" -> t("wild floating plants", "Wilde Schwimmpflanzen");
-            default -> id.startsWith("bettacraft:wild_") ? t("wild coral colony", "wilden Korallenstock") : id; // M22.3
+            default -> id.startsWith("bettacraft:wild_") && PlantSpecies.byIdOrNull(id.substring("bettacraft:wild_".length())) != null
+                    && PlantSpecies.byIdOrNull(id.substring("bettacraft:wild_".length())).land() ? t("wild plant", "wilden Pflanzenbestand") // M56
+                    : id.startsWith("bettacraft:wild_") ? t("wild coral colony", "wilden Korallenstock") : id; // M22.3
         };
     }
 
@@ -1023,6 +1122,7 @@ public final class GuideGen {
             case BRANCH -> t("branches (stony coral)", "Äste (Steinkoralle)");
             case DOME -> t("dome (stony coral)", "Kuppel (Steinkoralle)");
             case ANEMONE -> t("anemone", "Anemone");
+            case CACTUS -> t("cactus", "Kaktus"); // M56
         };
     }
 

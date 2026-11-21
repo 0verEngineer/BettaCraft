@@ -1,0 +1,12 @@
+{
+  "parent": "bettacraft:block/template_wild_carpet_short",
+  "textures": {
+    "blade_ground": "bettacraft:block/wild_carpet_mat_blade_ground",
+    "dome": "bettacraft:block/wild_carpet_mat_dome",
+    "lawn_ground": "bettacraft:block/wild_carpet_mat_lawn_ground",
+    "lawn_high": "bettacraft:block/wild_carpet_mat_lawn_high",
+    "lawn_low": "bettacraft:block/wild_carpet_mat_lawn_low",
+    "runners": "bettacraft:block/wild_carpet_mat_runners",
+    "sprig": "bettacraft:block/wild_carpet_mat_sprig"
+  }
+}

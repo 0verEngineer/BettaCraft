@@ -47,7 +47,9 @@ final class ModAdvancements extends net.minecraft.data.advancements.AdvancementS
             // M51
             "aquarist_hired",
             // M53
-            "shared_tank"};
+            "shared_tank",
+            // M56
+            "terrarium_plant_grown", "bromeliad_tadpole"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -176,7 +178,12 @@ final class ModAdvancements extends net.minecraft.data.advancements.AdvancementS
         event(filled, "critters_bred", ModItems.CRITTER_BUCKET.get(), AdvancementType.TASK, Progress.CRITTERS_BRED);
         event(filled, "algae_scraped", ModItems.ALGAE_SCRAPER.get(), AdvancementType.TASK, Progress.ALGAE_SCRAPED);
         AdvancementHolder palu = event(tank, "paludarium", Items.MOSS_BLOCK, AdvancementType.TASK, Progress.PALUDARIUM);
-        event(palu, "herp_clutch", ModItems.TERRARIUM_BOX.get(), AdvancementType.GOAL, Progress.HERP_CLUTCH);
+        AdvancementHolder herpClutch = event(palu, "herp_clutch", ModItems.TERRARIUM_BOX.get(), AdvancementType.GOAL, Progress.HERP_CLUTCH);
+        // M56: a terrarium plant grown in a terrarium; a dart frog tadpole raised in a bromeliad
+        event(palu, "terrarium_plant_grown", ModItems.AQUATIC_PLANTS.get(org.overengineer.bettacraft.plants.PlantSpecies.NEOREGELIA).get(),
+                AdvancementType.TASK, Progress.TERRARIUM_PLANT);
+        event(herpClutch, "bromeliad_tadpole", ModItems.AQUATIC_PLANTS.get(org.overengineer.bettacraft.plants.PlantSpecies.GUZMANIA).get(),
+                AdvancementType.GOAL, Progress.BROMELIAD_TADPOLE);
         AdvancementHolder turtle = event(palu, "turtle_clutch", Items.TURTLE_EGG, AdvancementType.GOAL, Progress.TURTLE_CLUTCH);
         event(turtle, "sea_turtle", Items.TURTLE_SCUTE, AdvancementType.CHALLENGE, Progress.SEA_TURTLE);
         event(palu, "pet_terrarium", Items.RABBIT_FOOT, AdvancementType.TASK, Progress.PET);

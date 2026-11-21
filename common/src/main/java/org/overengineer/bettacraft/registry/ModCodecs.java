@@ -20,6 +20,11 @@ public final class ModCodecs {
             () -> org.overengineer.bettacraft.plants.wild.WildPlantFeature.CODEC);
     public static final Supplier<com.mojang.serialization.MapCodec<org.overengineer.bettacraft.plants.wild.WildPlantFeature>> WILD_CAVE_PLANTS = FEATURES.register("wild_cave_plants",
             () -> org.overengineer.bettacraft.plants.wild.WildPlantFeature.CAVE_CODEC);
+    /** M56: wild terrarium plants on the land of their biomes, and on the moss of the lush caves. */
+    public static final Supplier<com.mojang.serialization.MapCodec<org.overengineer.bettacraft.plants.wild.WildLandPlantFeature>> WILD_LAND_PLANTS = FEATURES.register("wild_land_plants",
+            () -> org.overengineer.bettacraft.plants.wild.WildLandPlantFeature.CODEC);
+    public static final Supplier<com.mojang.serialization.MapCodec<org.overengineer.bettacraft.plants.wild.WildLandPlantFeature>> WILD_CAVE_LAND_PLANTS = FEATURES.register("wild_cave_land_plants",
+            () -> org.overengineer.bettacraft.plants.wild.WildLandPlantFeature.CAVE_CODEC);
     // M52c (26.1): the loot condition registry holds the map codecs themselves
     public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.storage.loot.predicates.LootItemCondition>> LOOT_CONDITIONS =
             DeferredRegister.create(net.minecraft.core.registries.Registries.LOOT_CONDITION_TYPE, BettaCraft.MOD_ID);

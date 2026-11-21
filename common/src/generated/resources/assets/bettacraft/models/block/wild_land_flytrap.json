@@ -1,0 +1,8 @@
+{
+  "parent": "bettacraft:block/template_wild_plant",
+  "textures": {
+    "accent": "bettacraft:block/wild_land_flytrap_accent",
+    "leaf": "bettacraft:block/wild_land_flytrap",
+    "top": "bettacraft:block/wild_land_flytrap_top"
+  }
+}

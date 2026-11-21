@@ -94,7 +94,8 @@ public final class TankClimate {
         if (r == null || !r.built() || interior == null) return new Land(t.waterMb() <= 0 ? 1 : 0, 0, true);
         double water = t.waterMb() <= 0 ? -1 : TankCare.waterLocalHeight(t, r.scale());
         int step = Math.max(1, Math.max(r.sizeX(), r.sizeZ()) / 48);
-        int total = 0, land = 0, planted = 0;
+        int total = 0, land = 0;
+        double planted = 0;
         it.unimi.dsi.fastutil.ints.IntArrayList tops = new it.unimi.dsi.fastutil.ints.IntArrayList();
         boolean complete = true;
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
@@ -114,12 +115,24 @@ public final class TankClimate {
                 land++;
                 int ly = Math.max(0, (top16 - 1) / 16);
                 p.set(wx, InteriorRegion.BASE_Y + ly, wz);
-                if (plant(interior.getBlockState(p))) planted++;
-                else if (ly + 1 < r.sizeY() && plant(interior.getBlockState(p.move(0, 1, 0)))) planted++;
+                double w = cover(interior.getBlockState(p));
+                if (w <= 0 && ly + 1 < r.sizeY()) w = cover(interior.getBlockState(p.move(0, 1, 0)));
+                planted += w;
             }
         }
         if (total == 0) return new Land(t.waterMb() <= 0 ? 1 : 0, 0, complete, tops.toIntArray());
         return new Land(land / (double) total, land == 0 ? 0 : planted / (double) land, complete, tops.toIntArray());
+    }
+
+    /**
+     * M56: how much a block on the land counts as plant cover for the humidity: 1 for a plant, the terrarium plants by how much
+     * water they give off ({@link org.overengineer.bettacraft.plants.PlantSpecies#transpiration()}: cacti and succulents little),
+     * 0 for anything else.
+     */
+    static double cover(BlockState s) {
+        if (!plant(s)) return 0;
+        if (s.getBlock() instanceof org.overengineer.bettacraft.plants.AquaticPlantBlock b && b.species().land()) return b.species().transpiration();
+        return 1;
     }
 
     static boolean plant(BlockState s) {

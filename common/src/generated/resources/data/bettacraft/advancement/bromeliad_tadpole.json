@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:herp_clutch",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "bromeliad_tadpole"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.bromeliad_tadpole.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:guzmania"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.bromeliad_tadpole.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

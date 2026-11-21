@@ -128,6 +128,9 @@ public final class InteriorPlants {
 
     /** Room up to the water surface for a plant (fixed once it begins to grow). */
     static int room(double waterLocal, InteriorRegion r, InteriorPlant p) {
+        // M56: a terrarium plant has the room up to the lid; an aquarium plant above the water (emersed) at most a tank block
+        if (p.species.land()) return Math.max(2, r.sizeY() - p.y);
+        if (waterLocal > 0 && p.y + 0.5 >= waterLocal) return Math.max(2, Math.min(r.sizeY() - p.y, r.scale()));
         int top = (int) Math.floor(Math.min(r.sizeY(), waterLocal <= 0 ? r.sizeY() : waterLocal));
         return Math.max(2, top - p.y);
     }
@@ -204,6 +207,18 @@ public final class InteriorPlants {
             return false;
         }
         int lx = r.localX(pos.getX()), ly = r.localY(pos.getY()), lz = r.localZ(pos.getZ());
+        if (s.land()) {
+            // M56: a terrarium plant goes on the land (above the water) while the terrarium plants are on
+            if (!LandPlants.enabled()) {
+                message(player, "terrarium_plants_off", ChatFormatting.GOLD);
+                return false;
+            }
+            double wl = waterLocal(level.getServer(), r);
+            if (wl > 0 && ly + 0.5 < wl) {
+                message(player, "needs_land", ChatFormatting.GOLD);
+                return false;
+            }
+        }
         if (tooClose(r, lx, ly, lz, null)) {
             message(player, "too_close", ChatFormatting.GOLD);
             return false;
@@ -280,6 +295,7 @@ public final class InteriorPlants {
 
         /** Growth factor of a plant (0..1): light for its need, nutrients, temperature, under water. */
         public double rate(InteriorPlant p) {
+            if (p.species.land()) return 0; // M56: the terrarium plants grow by the climate ({@link LandPlants})
             if (p.y + 0.5 >= waterLocal) return 0; // dry: no growth
             if (p.species.marine()) return org.overengineer.bettacraft.reef.Corals.rate(at(p), p.species, effectiveLight);
             // M20: freshwater plants stop growing in brackish and salt water
@@ -402,10 +418,38 @@ public final class InteriorPlants {
         int redTarget = PlantColors.tintFor(env.light());
         double soilBoost = activeSoilBoost(level, r);
         double fertilizer = org.overengineer.bettacraft.fertilizer.Fertilizer.growth(t); // M37: liquid fertilizer speeds up our freshwater plants
+        LandPlants.Env landEnv = null; // M56: the climate of the land, only looked up when a plant needs it
         for (InteriorPlant p : r.plants().all()) {
+            if (p.species.land()) {
+                // M56: a terrarium plant: grows by the light, humidity and air temperature, languishes in a bad climate
+                if (!LandPlants.enabled()) continue;
+                if (landEnv == null) landEnv = LandPlants.env(level, c);
+                double fit = LandPlants.rate(p.species, landEnv, p.y + 0.5 < env.waterLocal());
+                int was = p.target;
+                if (p.stage > 0 && LandPlants.wilt(p, fit, days) > 0 && was == p.species.stages()) {
+                    TankCare.log(level, c, "log.bettacraft.terrarium_plant.languishing", "@" + item(p.species, 0).getDescriptionId());
+                }
+                double rate = speed * fit;
+                if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
+                if (rate > 0) advance(level, c, p, rate, days, spread, shoots);
+                if (p.species.tinted() && tintToward(p, redTarget / (double) PlantColors.MAX_TINT, days) && !due.contains(p)) due.add(p);
+                if (p.target != p.stage && !due.contains(p)) due.add(p);
+                continue;
+            }
             // M33 part b: aquarium plants / corals off: they rest (no growth, spreading, uptake or colour change)
             if (!org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.AQUATIC_PLANTS) && !p.species.marine() || !org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.CORALS) && p.species.marine()) continue;
             double rate = speed * env.rate(p);
+            // M56: an aquarium plant above the water of a humid paludarium grows in its emersed form (slower, no CO2 or fertilizer)
+            if (rate <= 0 && !p.species.marine() && env.waterLocal() > 0 && p.y + 0.5 >= env.waterLocal() && LandPlants.enabled()) {
+                if (landEnv == null) landEnv = LandPlants.env(level, c);
+                double emersed = speed * LandPlants.emersedRate(p.species, landEnv, temperatureFactor((float) landEnv.air()));
+                if (emersed > 0) {
+                    if (p.room == 0) p.room = room(env.waterLocal(), r, p);
+                    advance(level, c, p, emersed, days, spread, shoots);
+                }
+                if (p.target != p.stage && !due.contains(p)) due.add(p);
+                continue;
+            }
             // M25: CO2 makes the freshwater plants grow faster, the strong-light plants most
             if (rate > 0 && !p.species.marine()) rate *= org.overengineer.bettacraft.co2.TankCo2.growth(t, PlantSpecies.Light.need(p.species.light()));
             // M25 part d: active soil feeds the freshwater plants (up to +25 % on a fully covered floor)
@@ -472,13 +516,49 @@ public final class InteriorPlants {
             InteriorPlant n = offshoot(interior, r, p);
             if (n != null) {
                 changed++;
-                TankCare.log(level, c, n.species.form() == PlantSpecies.Form.STEM ? "log.bettacraft.aquatic_side_shoot" : "log.bettacraft.aquatic_runner",
+                TankCare.log(level, c, n.species.propagation() == PlantSpecies.Propagation.OFFSET ? "log.bettacraft.terrarium_plant.offset"
+                        : n.species.form() == PlantSpecies.Form.STEM ? "log.bettacraft.aquatic_side_shoot" : "log.bettacraft.aquatic_runner",
                         "@" + item(n.species, 0).getItem().getDescriptionId());
             }
         }
         InteriorRegions.get(level.getServer()).setDirty();
         LOGGER.debug("Aquarium plants of region {}: {} plant(s) changed in {} ms", r.id(), changed, (System.nanoTime() - t0) / 1e6);
         return changed;
+    }
+
+    /** M56: the growth of one plant for {@code days} at {@code rate} (stages, then side shoots, runners or offsets once grown). */
+    static void advance(ServerLevel level, TankBlockEntity c, InteriorPlant p, double rate, double days, boolean spread, List<InteriorPlant> shoots) {
+        double dps = p.species.daysPerStage();
+        if (p.target < p.species.stages()) {
+            p.progress += days * rate / dps;
+            while (p.progress >= 1 && p.target < p.species.stages()) {
+                p.target++;
+                p.progress -= 1;
+                if (p.target == p.species.stages()) {
+                    p.progress = 0;
+                    TankCare.log(level, c, p.species.land() ? "log.bettacraft.terrarium_plant.grown" : "log.bettacraft.aquatic_grown",
+                            "@" + item(p.species, 0).getDescriptionId());
+                }
+            }
+        } else if (spread && p.species.spreads()) {
+            double every = p.species.form() == PlantSpecies.Form.ROSETTE || p.species.form() == PlantSpecies.Form.CACTUS ? 3.0
+                    : p.species.form() == PlantSpecies.Form.STEM ? 1.5 : 1.0;
+            p.progress += days * rate / (dps * every);
+            if (p.progress >= 1) {
+                p.progress -= 1;
+                shoots.add(p);
+            }
+        }
+    }
+
+    /** M56: the redness of a red terrarium plant follows its light like under water; true when the tint level changed. */
+    static boolean tintToward(InteriorPlant p, double want, double days) {
+        p.redness += (want - p.redness) * Math.min(1.0, days / 2.0);
+        int tint = p.tint;
+        if (Math.abs(p.redness * PlantColors.MAX_TINT - tint) > 0.6) tint = (int) Math.round(p.redness * PlantColors.MAX_TINT);
+        if (tint == p.tint) return false;
+        p.tint = tint;
+        return true;
     }
 
     // ------------------------------------------------------------------ M28: rolling Marimo balls
@@ -765,7 +845,7 @@ public final class InteriorPlants {
     static InteriorPlant offshoot(ServerLevel interior, InteriorRegion r, InteriorPlant p) {
         if (r.plants().size() >= maxPerTank()) return null;
         var rnd = interior.getRandom();
-        int[] dist = switch (p.species.form()) {
+        int[] dist = p.species.propagation() == PlantSpecies.Propagation.OFFSET ? new int[]{2, 4} : switch (p.species.form()) { // M56: offsets stay close
             case STEM -> new int[]{2, 4};
             case RIBBON -> new int[]{3, 7};
             case CARPET -> new int[]{3, 5};
@@ -860,6 +940,7 @@ public final class InteriorPlants {
      * (the caller takes {@link #item}{@code (species, 0)} times the result). Returns the cuttings.
      */
     public static int trimBy(ServerLevel interior, InteriorRegion r, InteriorPlant p, String who) {
+        if (p.species.land()) return 0; // M56: the hired aquarist leaves the terrarium plants alone (they are no aquarium plants)
         int cut = Math.min(p.species.trimStages(), p.stage - p.species.trimFloor());
         if (cut <= 0) return 0;
         p.target = p.stage - cut;
@@ -877,24 +958,32 @@ public final class InteriorPlants {
     /** Cuts a plant back by {@link PlantSpecies#trimStages()} and gives the cuttings. Returns the cuttings given. */
     public static int trim(ServerLevel interior, InteriorRegion r, InteriorPlant p, @Nullable Player player, @Nullable ItemStack shears,
                            @Nullable InteractionHand hand) {
-        int cut = Math.min(p.species.trimStages(), p.stage - p.species.trimFloor());
-        if (cut <= 0) {
+        PlantSpecies.Propagation how = p.species.propagation();
+        // M56: a divided moss gives half of its clump (a plant at that stage); an offset is a small rooted plant (stage 1)
+        int cut = how == PlantSpecies.Propagation.DIVISION ? p.stage / 2 : Math.min(p.species.trimStages(), p.stage - p.species.trimFloor());
+        if (cut <= 0 || p.stage - cut < 1) {
             message(player, "too_small", ChatFormatting.GOLD);
             return 0;
         }
         p.target = p.stage - cut;
         p.progress = 0;
         apply(interior, r, p);
-        int n = p.species.cuttingsPerTrim(cut);
+        int n = how == PlantSpecies.Propagation.CUTTING ? p.species.cuttingsPerTrim(cut) : 1;
+        int stageGiven = how == PlantSpecies.Propagation.DIVISION ? cut : how == PlantSpecies.Propagation.OFFSET ? 1 : 0;
         if (player != null) {
-            ItemStack items = item(p.species, 0).copyWithCount(n);
+            ItemStack items = item(p.species, stageGiven).copyWithCount(n);
             if (!player.getInventory().add(items) && !items.isEmpty()) player.drop(items, false, net.minecraft.util.Prediction.SERVER_ONLY);
             if (shears != null && hand != null && !player.getAbilities().instabuild) {
                 shears.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 0.7F, 1.4F);
-            player.sendOverlayMessage(Component.translatable("message.bettacraft.aquatic.trimmed", n,
-                    Component.translatable(item(p.species, 0).getItem().getDescriptionId())).withStyle(ChatFormatting.GREEN));
+            String msg = switch (how) { // M56
+                case OFFSET -> "message.bettacraft.terrarium_plant.offset";
+                case DIVISION -> "message.bettacraft.aquatic.divided";
+                default -> "message.bettacraft.aquatic.trimmed";
+            };
+            player.sendOverlayMessage((how == PlantSpecies.Propagation.DIVISION ? Component.translatable(msg)
+                    : Component.translatable(msg, n, Component.translatable(item(p.species, 0).getItem().getDescriptionId()))).withStyle(ChatFormatting.GREEN));
         }
         InteriorRegions.get(interior.getServer()).setDirty();
         TankBlockEntity c = controller(interior.getServer(), r);
@@ -924,7 +1013,8 @@ public final class InteriorPlants {
             if (drops) Block.popResource(interior, pos, item(s, stage));
             message(player, "taken_out", ChatFormatting.GREEN);
             logAt(interior, r, "log.bettacraft.aquatic_taken_out", TankCare.nameArg(player), "@" + item(s, 0).getItem().getDescriptionId());
-        } else if (part == PlantPart.RHIZOME && s.form() == PlantSpecies.Form.EPIPHYTE && p.stage >= 2) {
+        } else if ((part == PlantPart.RHIZOME && s.form() == PlantSpecies.Form.EPIPHYTE
+                || part == PlantPart.MOSS && s.propagation() == PlantSpecies.Propagation.DIVISION) && p.stage >= 2) { // M56: mosses divide
             int half = p.stage / 2;
             p.target = p.stage - half;
             p.progress = 0;
