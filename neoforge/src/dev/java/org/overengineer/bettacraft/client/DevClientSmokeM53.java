@@ -141,6 +141,9 @@ final class DevClientSmokeM53 {
             if (mc.screen != null) mc.setScreen(null);
             if (mc.player != null && mc.level != null && !mc.level.dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) server(InteriorManager::leave);
         });
+        then(100, () -> {
+            if (mc.player != null && mc.level != null && !mc.level.dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) server(InteriorManager::leave);
+        });
         // the frame rate where the M13 scene ended: in front of its planted tanks with their miniatures
         int[] samples = new int[5];
         for (int i = 0; i < samples.length; i++) {
@@ -163,6 +166,13 @@ final class DevClientSmokeM53 {
             // the menu stays open only near the tank (stillValid)
             then(40, () -> look(base.getX() + 1.5, base.getY() + 1.2, base.getZ() - 2.5, 0F, 10F));
             then(5, () -> openMenu());
+            // after the render part the player may still be on his way back from an interior: open it once more if needed
+            then(40, () -> {
+                if (!(mc.screen instanceof TankScreen)) {
+                    look(base.getX() + 1.5, base.getY() + 1.2, base.getZ() - 2.5, 0F, 10F);
+                    openMenu();
+                }
+            });
             then(30, () -> {
                 if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
             });
@@ -230,7 +240,7 @@ final class DevClientSmokeM53 {
             tank.getTank().setWaterTemp(24F);
             MonitorSync.cycle(p.level(), monitor);
         }));
-        then(20, () -> LOGGER.info("[smoketest] M53 waypoint removed {}", AlarmWaypoints.shown().isEmpty() ? "PASS" : "FAIL " + AlarmWaypoints.shown()));
+        then(40, () -> LOGGER.info("[smoketest] M53 waypoint removed {}", AlarmWaypoints.shown().isEmpty() ? "PASS" : "FAIL " + AlarmWaypoints.shown()));
     }
 
     // ------------------------------------------------------------------ interior (26.x: black walls and fog)
