@@ -474,6 +474,8 @@ final class DevClientSmokeM53 {
             TankCritters.sync(level, tank);
             LOGGER.info("[smoketest] M53 critters: {} species", i);
         }));
+        // once more after a while: with slow chunk loading (Distant Horizons) the first update can come too early
+        then(40, () -> server(p -> TankCritters.sync(p.level(), tank)));
         then(1, () -> mc.options.hideGui = true);
         String[] names = {"front", "back", "left", "right", "top"};
         double[][] at = {{0, 0, -2.3, 0, 15}, {0, 0, 2.3, 180, 15}, {-2.8, 0, 0, 270, 15}, {2.8, 0, 0, 90, 15}, {0, 2.0, 0.01, 180, 89.9}};
