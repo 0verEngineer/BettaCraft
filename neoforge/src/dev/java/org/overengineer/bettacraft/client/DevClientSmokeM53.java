@@ -259,11 +259,12 @@ final class DevClientSmokeM53 {
         shot("interior_" + name);
         try (com.mojang.blaze3d.platform.NativeImage img = Screenshot.takeScreenshot(mc.getMainRenderTarget())) {
             int w = img.getWidth(), h = img.getHeight();
-            double[] sums = new double[3];
-            int[] counts = new int[3];
-            for (int y = h / 10; y < h * 7 / 10; y += 2) {
+            double[] sums = new double[4];
+            int[] counts = new int[4];
+            for (int y = h / 10; y < h * 85 / 100; y += 2) {
                 for (int x = 0; x < w; x += 2) {
-                    int band = x < w / 8 ? 0 : x >= w * 7 / 8 ? 1 : y < h / 5 ? 2 : -1;
+                    // left, right, top edge, and the floor below the horizon (the 26.2 "black interior" was a black floor)
+                    int band = y >= h * 6 / 10 ? (x > w / 4 && x < w * 3 / 4 ? 3 : -1) : x < w / 8 ? 0 : x >= w * 7 / 8 ? 1 : y < h / 5 ? 2 : -1;
                     if (band < 0) continue;
                     int c = img.getPixelRGBA(x, y); // ABGR
                     double lum = 0.299 * (c & 0xFF) + 0.587 * ((c >> 8) & 0xFF) + 0.114 * ((c >> 16) & 0xFF);
@@ -271,12 +272,13 @@ final class DevClientSmokeM53 {
                     counts[band]++;
                 }
             }
-            double left = sums[0] / Math.max(1, counts[0]), right = sums[1] / Math.max(1, counts[1]), top = sums[2] / Math.max(1, counts[2]);
-            boolean ok = Math.min(left, Math.min(right, top)) > 40;
+            double left = sums[0] / Math.max(1, counts[0]), right = sums[1] / Math.max(1, counts[1]), top = sums[2] / Math.max(1, counts[2]),
+                    floor = sums[3] / Math.max(1, counts[3]);
+            boolean ok = Math.min(left, Math.min(right, top)) > 40 && (name.equals("up") || floor > 40);
             interiorShots++;
             if (!ok) interiorFails++;
-            LOGGER.info("[smoketest] M53 interior {} {}: edges left {} right {} top {}", name, ok ? "PASS" : "FAIL",
-                    Math.round(left), Math.round(right), Math.round(top));
+            LOGGER.info("[smoketest] M53 interior {} {}: edges left {} right {} top {}, floor {}", name, ok ? "PASS" : "FAIL",
+                    Math.round(left), Math.round(right), Math.round(top), Math.round(floor));
         } catch (Throwable t) {
             LOGGER.warn("[smoketest] M53 interior {}: no pixel check ({})", name, t.toString());
         }
@@ -305,6 +307,9 @@ final class DevClientSmokeM53 {
         }
         if (!cur.isEmpty()) groups.add(cur);
         LOGGER.info("[smoketest] M53 animals: {} types in {} groups", types.size(), groups.size());
+        // in water (fish out of water lie on their side): a cube of water in barriers around the spot, the camera inside too
+        then(1, () -> server(this::waterCube));
+        then(40, () -> {});
         then(1, () -> {
             mc.options.hideGui = true;
             mc.options.fov().set(30);
@@ -322,13 +327,13 @@ final class DevClientSmokeM53 {
                 String side = sides[s];
                 then(1, () -> server(p -> turn(yaw)));
                 // the camera south of the row, looking north; the animals face it at yaw 0 (south)
-                then(1, () -> look(centre().x, centre().y + 0.3, centre().z + dist(span[0]), 180F, 8F));
+                then(1, () -> look(centre().x, centre().y, centre().z + dist(span[0]), 180F, 0F));
                 then(25, () -> shot("animals_" + gi + "_" + side));
             }
             then(1, () -> server(p -> turn(0F)));
-            then(1, () -> look(centre().x, centre().y + dist(span[0]) + 0.5, centre().z + 0.01, 180F, 89.9F));
+            then(1, () -> look(centre().x, centre().y + dist(span[0]), centre().z + 0.01, 180F, 89.9F));
             then(25, () -> shot("animals_" + gi + "_top"));
-            then(1, () -> look(centre().x, centre().y - dist(span[0]) - 2.0, centre().z + 0.01, 180F, -89.9F));
+            then(1, () -> look(centre().x, centre().y - dist(span[0]), centre().z + 0.01, 180F, -89.9F));
             then(25, () -> shot("animals_" + gi + "_bottom"));
             then(1, () -> {
                 StringBuilder b = new StringBuilder();
@@ -344,6 +349,17 @@ final class DevClientSmokeM53 {
     }
 
     private Vec3 groupCentre = Vec3.ZERO;
+
+    private void waterCube(ServerPlayer p) {
+        ServerLevel level = p.serverLevel();
+        BlockPos c = BlockPos.containing(base.getX() + 0.5, base.getY() + 40, base.getZ() + 40.5);
+        int r = 9;
+        for (int x = -r; x <= r; x++) for (int y = -r; y <= r; y++) for (int z = -r; z <= r; z++) {
+            boolean shell = Math.abs(x) == r || Math.abs(y) == r || Math.abs(z) == r;
+            level.setBlock(c.offset(x, y, z), shell ? Blocks.BARRIER.defaultBlockState() : Blocks.WATER.defaultBlockState(), 2);
+        }
+        LOGGER.info("[smoketest] M53 animals: water cube at {}", c);
+    }
 
     private Vec3 centre() {
         return groupCentre;
@@ -363,7 +379,7 @@ final class DevClientSmokeM53 {
         for (EntityType<?> t : group) total += Math.max(t.getHeight(), t.getWidth()) * 2.0;
         double at = x - total / 2;
         for (EntityType<?> t : group) {
-            double w = Math.max(0.45, t.getWidth() * 1.3);
+            double w = Math.max(t.getHeight(), t.getWidth()) * 2.0;
             Entity e;
             try {
                 e = t.create(level);
