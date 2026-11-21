@@ -426,6 +426,7 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m53only', 'true'
                 if (project.hasProperty('m53parts')) systemProperty 'bettacraft.smoketest.m53parts', project.property('m53parts').toString()
+                if (project.hasProperty('m53animals')) systemProperty 'bettacraft.smoketest.m53animals', project.property('m53animals').toString()
             }
             if (project.hasProperty('smoketestm51')) {
                 // gradlew runClient -Psmoketestm51 : the M51 scene (an aquarist comes and offers his work, is hired, finds the
