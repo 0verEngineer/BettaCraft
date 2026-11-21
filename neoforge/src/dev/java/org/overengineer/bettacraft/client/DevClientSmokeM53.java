@@ -236,8 +236,13 @@ final class DevClientSmokeM53 {
     // ------------------------------------------------------------------ interior (26.x: black walls and fog)
 
     private void interior() {
-        then(1, () -> server(p -> InteriorManager.enter(p, tank.getBlockPos())));
-        then(200, () -> LOGGER.info("[smoketest] M53 interior: in {}", mc.level == null ? "-" : mc.level.dimension().identifier()));
+        // back at the tank first (after the render part the player is far away and its chunk may be unloaded)
+        then(1, () -> look(base.getX() + 1.5, base.getY() + 1.2, base.getZ() - 2.5, 0F, 10F));
+        then(40, () -> server(p -> InteriorManager.enter(p, tank.getBlockPos())));
+        then(200, () -> {
+            String dim = mc.level == null ? "-" : mc.level.dimension().identifier().toString();
+            LOGGER.info("[smoketest] M53 interior: in {} {}", dim, dim.equals("bettacraft:tank_interior") ? "PASS" : "FAIL");
+        });
         float[][] views = {{0F, 5F}, {90F, 5F}, {180F, 5F}, {270F, 5F}, {0F, -60F}, {0F, 60F}};
         String[] names = {"south", "west", "north", "east", "up", "down"};
         for (int i = 0; i < views.length; i++) {
