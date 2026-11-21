@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * M19 part of the dedicated-server smoke test: a 3x2x2 tank with a shoal of six cardinals (from one fish bag), six
  * sterbai corys and a bristlenose, a clutch of cory eggs and a breeding box; a second tank with a guppy pair whose
- * breeding runs ten accelerated days (the level's random seeded). The real care loop runs for the rest of the test; at the end everybody is alive
+ * breeding runs ten accelerated days in the check (the level's random seeded). The real care loop runs for the rest of the test; at the end everybody is alive
  * in the tank without shoal stress, the stocking adds up, the overlay lists them, the clutch and the box survive saving
  * (schema 9) and reach the client view, and the guppies have young.
  */
@@ -85,22 +85,11 @@ final class DevSmokeM19 {
         t.clutches().add(k);
         t.setBreedingBox(true);
         c.markTankChanged();
-        // guppies: a few accelerated days of breeding
+        // guppies: a few accelerated days of breeding (in the check)
         TankBlockEntity g = tank(level, p.offset(5, 0, 0), 2, 2, 2, 26F);
         var wg = new org.overengineer.bettacraft.tank.TankWaterVolume(g.getTank());
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), true, wg);
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), false, wg);
-        // the level's random seeded (the breeding draws from it): the same ten days every run (on CI no young was born now
-        // and then, and longer runs lost the parents)
-        level.getRandom().setSeed(1919L);
-        for (int i = 0; i < 40; i++) {
-            for (TankmateEntity m : TankmateBreeding.tankmates(level, g.getTank())) {
-                m.health().feed();
-                TankmateCare.advance(level, g, m, 0.25);
-            }
-            g.getTank().setWaterTemp(26F);
-            TankmateBreeding.step(level, g, 0.25);
-        }
         LOGGER.info("[smoketest] M19 tanks at {}: 6 cardinals, 6 sterbai corys, an albino bristlenose, a clutch, a breeding box; guppies {}", p,
                 TankmateBreeding.tankmates(level, g.getTank()).size());
     }
@@ -150,6 +139,19 @@ final class DevSmokeM19 {
         if (info == null || info.getList("tankmates", 10).size() != 3) throw new IllegalStateException("M19: the overlay does not list the three species");
         // the guppies bred
         TankBlockEntity g = TankMultiblock.getController(level, p.offset(5, 0, 0));
+        // M52.5: the ten accelerated days run here, not in the setup: right after spawning, the guppies' chunk did not list its
+        // entities yet now and then (CI: "guppies 0" after the setup, so nobody bred); the level's random seeded
+        if (g != null) {
+            level.getRandom().setSeed(1919L);
+            for (int i = 0; i < 40; i++) {
+                for (TankmateEntity m : TankmateBreeding.tankmates(level, g.getTank())) {
+                    m.health().feed();
+                    TankmateCare.advance(level, g, m, 0.25);
+                }
+                g.getTank().setWaterTemp(26F);
+                TankmateBreeding.step(level, g, 0.25);
+            }
+        }
         // (the first young are grown up after ten days)
         long all = g == null ? 0 : TankmateBreeding.tankmates(level, g.getTank()).size();
         long young = g == null ? 0 : TankmateBreeding.tankmates(level, g.getTank()).stream().filter(m -> m.generation() > 0).count();
