@@ -479,6 +479,10 @@ final class DevClientSmokeM53 {
             double[] a = at[i];
             String n = names[i];
             then(i == 0 ? 30 : 1, () -> look(base.getX() + 1.5 + a[0], base.getY() + 0.6 + a[1], base.getZ() + 1.0 + a[2], (float) a[3], (float) a[4]));
+            if (i == 0) then(20, () -> {
+                int count = mc.level != null && mc.level.getBlockEntity(tank.getBlockPos()) instanceof TankBlockEntity c && c.getTank() != null ? c.getTank().critters().size() : -1;
+                LOGGER.info("[smoketest] M53 critters on the client: {} {}", count, count > 0 ? "PASS" : "FAIL");
+            });
             then(30, () -> shot("critters_" + n));
         }
         then(1, () -> mc.options.hideGui = false);
