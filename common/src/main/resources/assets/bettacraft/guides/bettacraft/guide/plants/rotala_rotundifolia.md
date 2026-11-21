@@ -37,7 +37,7 @@ item_ids:
 * **Fishing** in mangrove swamps: 0.94 % per catch (about 1 in 106 catches), instead of the fish.
 * **Glass bottle** filled with water in swamps: 0.85 % per bottle, along with the water.
 * **Shears** on a wild plant in swamps: 100 % per cut (config `features.aquaticPlants.wildPlants`).
-* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 12 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 3 cuttings per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../settings.md)).

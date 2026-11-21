@@ -164,6 +164,12 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 - **Terrarium and paludarium:** a tank without water is a terrarium, one with water and land built in its interior a
   paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer. The
   tank type can also be fixed in the menu, so a terrarium is never flooded by mistake.
+- **Terrarium plants:** 36 species for the land of terraria and paludaria: bromeliads, ferns, mosses, orchids, begonias
+  and Pothos for the rainforest, carnivorous plants, sedges and papyrus for the shore, cacti and succulents for the desert.
+  They grow by the light, humidity and air temperature of the tank, languish in the wrong climate, spread and keep the air
+  humid; cuttings, offsets and division with the shears. Wild in jungles, swamps, deserts, savannas and the lush caves,
+  and plantable as decoration in the world. Tortoises graze them, dart frogs raise their tadpoles in the bromeliads, snakes
+  and geckos hide in them; aquarium plants grow emersed above the water of a humid paludarium.
 - **Turtles:** musk turtle, red-eared and yellow-bellied slider, Hermann's tortoise (brumates in the cold) and Reeves'
   turtle; eggs in sand or soil, and the **nest temperature decides the sex** of the hatchlings.
 - **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested

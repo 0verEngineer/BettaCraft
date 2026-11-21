@@ -318,6 +318,9 @@ class GuidePagesTest {
         }
         // M31: the terrarium animals are entities (their buckets and eggs are the items with pages)
         if (org.overengineer.bettacraft.terrarium.HerpSpecies.byId(p) != null) return false;
+        // M56: the terrarium plants in the world have no item (the plant item plants them)
+        if (p.startsWith("wild_") && org.overengineer.bettacraft.plants.PlantSpecies.byIdOrNull(p.substring(5)) != null
+                && org.overengineer.bettacraft.plants.PlantSpecies.byIdOrNull(p.substring(5)).land()) return false;
         if (p.equals("turtle_eggs")) return false; // M31 part b: eggs only in the interior, no item
         if (p.equals("pipe_anchor")) return false; // M40: the pipe dock is put in by the game, no item
         if (p.equals("filter_pipe_bundle")) return false; // M40 part b: made by putting a second line into a filter pipe, no item

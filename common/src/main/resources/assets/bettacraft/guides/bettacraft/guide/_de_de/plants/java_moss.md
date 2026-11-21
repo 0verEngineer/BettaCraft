@@ -38,7 +38,7 @@ Javamoos (*Taxiphyllum barbieri*) aus Südostasien: feine grüne Triebe, die Ste
 * **Schere** an einem wilden Pflanzenbestand in Flüssen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Schere** an einem wilden Pflanzenbestand in Mangrovensümpfen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
 * **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.aquaticPlants.wildPlants`).
-* **[Aquarianer](../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* **[Aquarianer](../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 12 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze gibt 2 Ableger pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../settings.md)).
