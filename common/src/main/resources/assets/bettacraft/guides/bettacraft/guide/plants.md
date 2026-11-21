@@ -37,7 +37,12 @@ calm water like lily pads: pick them up by hand, with shears or scoop them with 
 Strong-light plants grow only in shallow water and, like the soft-water plants, are rare. Config:
 `features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
-![Wild carpets in a swamp pool: cushions of HC Cuba, Marsilea, Staurogyne and hairgrass, grown and trimmed](images/wild_carpets.png)
+![Wild carpets in a pool: fine sprigs of HC Cuba, Marsilea, Staurogyne and hairgrass, grown and trimmed](images/wild_carpets.png)
+
+Wild carpets grow as fine sprigs standing apart, each species in its own leaf form; wild mosses form round cushions on
+stone and wood, the Marimo lie as round balls on the bottom.
+
+![Wild mosses: round cushions of Java and Christmas moss and Riccia, Marimo balls, grown and trimmed](images/wild_mosses.png)
 
 ## All plants
 
