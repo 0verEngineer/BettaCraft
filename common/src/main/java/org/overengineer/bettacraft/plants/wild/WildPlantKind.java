@@ -26,6 +26,7 @@ public enum WildPlantKind {
     /** The kind of block a species grows wild in, or null (corals: {@code reef/WildCoralBlock}). */
     @Nullable
     public static WildPlantKind of(PlantSpecies s) {
+        if (s.land()) return null; // M56: the terrarium plants have blocks of their own (WildLandPlantBlock)
         return switch (s.form()) {
             case EPIPHYTE -> EPIPHYTE;
             case MOSS -> MOSS;

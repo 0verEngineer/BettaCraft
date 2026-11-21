@@ -1,0 +1,50 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:or",
+    "values": [
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:jungle_plant_lands"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:swamp_plant_lands"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:desert_plant_lands"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:savanna_plant_lands"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#bettacraft:lush_cave_plant_lands"
+        ]
+      },
+      {
+        "type": "neoforge:and",
+        "values": [
+          "#c:is_lush",
+          "#c:is_cave"
+        ]
+      }
+    ]
+  },
+  "features": [
+    "bettacraft:wild_land_plants",
+    "bettacraft:wild_cave_land_plants"
+  ],
+  "step": "vegetal_decoration"
+}

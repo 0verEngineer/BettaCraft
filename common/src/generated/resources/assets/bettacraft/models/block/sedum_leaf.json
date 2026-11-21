@@ -1,0 +1,7 @@
+{
+  "parent": "bettacraft:block/template_plant_leaf",
+  "render_type": "minecraft:cutout_mipped",
+  "textures": {
+    "tex": "bettacraft:block/plant_leaf_round"
+  }
+}

@@ -25,6 +25,7 @@ echt.
 | Besatz | ein Schlüpfling 0,4 Bettas, wächst auf 4 |
 
 * Sie schlängelt sich in S-Kurven über das Land und ruht lange.
+* Sie versteckt sich unter der Deko und zwischen großen [Terrarienpflanzen](plants.md) (`features.terrariumPlants.hiding`).
 * **Winterstarre**: Wie die Griechische Landschildkröte ruht sie in der Kälte (Luft unter 12 °C, `terrarium.brumationBelow`):
   kein Futter, kein Schaden (nur Frost).
 

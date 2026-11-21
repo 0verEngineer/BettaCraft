@@ -236,6 +236,102 @@ public final class WildTables {
     /** M20: share of the net's catch chance on a reef that brings up a frag (times {@code reef.netShare}). */
     public static final double NET_FRAG_FACTOR = 0.25;
 
+    // ------------------------------------------------------------------ M56 wild terrarium plants on the land
+
+    /**
+     * M56: the land where terrarium plants grow wild ({@code plants/wild/WildLandPlantFeature}), by their real origin; the biomes
+     * are the tags {@code #bettacraft:*_plant_lands} ({@link org.overengineer.bettacraft.world.BiomeWaters#landPlace}).
+     */
+    public enum LandPlace {
+        /** The floor of the jungles: bromeliads, ferns, orchids, Pothos, Fittonia, begonias. */
+        JUNGLE(Where.JUNGLE_FLOOR),
+        /** The moss of the lush caves: mosses, spikemoss, ferns. */
+        LUSH_CAVES(Where.LUSH_CAVES),
+        /** Swamps and mangroves: the carnivorous plants, sedges, rushes and papyrus. */
+        SWAMP(Where.SWAMP_LAND),
+        /** Deserts and badlands: cacti and succulents. */
+        DESERT(Where.ARID),
+        /** Savannas: the grasses, aloes and the prickly pear. */
+        SAVANNA(Where.DRY_LAND);
+
+        private final Where where;
+
+        LandPlace(Where where) {
+            this.where = where;
+        }
+
+        public Where where() {
+            return where;
+        }
+    }
+
+    /** M56: the terrarium plants growing wild on the land (one species per group). Every terrarium plant stands in at least one table. */
+    public static WeightedTable<PlantSpecies> wildLandPlants(LandPlace p) {
+        return switch (p) {
+            case JUNGLE -> WILD_LAND_JUNGLE;
+            case LUSH_CAVES -> WILD_LAND_LUSH_CAVES;
+            case SWAMP -> WILD_LAND_SWAMP;
+            case DESERT -> WILD_LAND_DESERT;
+            case SAVANNA -> WILD_LAND_SAVANNA;
+        };
+    }
+
+    public static final WeightedTable<PlantSpecies> WILD_LAND_JUNGLE = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.NEOREGELIA, 6)
+            .add(PlantSpecies.GUZMANIA, 5)
+            .add(PlantSpecies.VRIESEA, 4)
+            .add(PlantSpecies.TILLANDSIA, 4)
+            .add(PlantSpecies.BOSTON_FERN, 8)
+            .add(PlantSpecies.BIRDS_NEST_FERN, 6)
+            .add(PlantSpecies.POTHOS, 6)
+            .add(PlantSpecies.FITTONIA, 5)
+            .add(PlantSpecies.PEPEROMIA, 5)
+            .add(PlantSpecies.BEGONIA, 3)
+            .add(PlantSpecies.MINI_ORCHID, 3)
+            .add(PlantSpecies.MARCGRAVIA, 3)
+            .add(PlantSpecies.NEPENTHES, 2)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_LAND_LUSH_CAVES = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.CUSHION_MOSS, 10)
+            .add(PlantSpecies.SELAGINELLA, 8)
+            .add(PlantSpecies.REINDEER_LICHEN, 4)
+            .add(PlantSpecies.BOSTON_FERN, 3)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_LAND_SWAMP = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.SWAMP_SEDGE, 10)
+            .add(PlantSpecies.SOFT_RUSH, 8)
+            .add(PlantSpecies.SUNDEW, 5)
+            .add(PlantSpecies.SARRACENIA, 4)
+            .add(PlantSpecies.VENUS_FLYTRAP, 3)
+            .add(PlantSpecies.BUTTERWORT, 3)
+            .add(PlantSpecies.PAPYRUS, 4)
+            .add(PlantSpecies.UMBRELLA_SEDGE, 4)
+            .add(PlantSpecies.CUSHION_MOSS, 3)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_LAND_DESERT = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.BARREL_CACTUS, 5)
+            .add(PlantSpecies.COLUMN_CACTUS, 6)
+            .add(PlantSpecies.PRICKLY_PEAR, 6)
+            .add(PlantSpecies.MAMMILLARIA, 4)
+            .add(PlantSpecies.ECHEVERIA, 4)
+            .add(PlantSpecies.HAWORTHIA, 3)
+            .add(PlantSpecies.AGAVE, 4)
+            .add(PlantSpecies.LITHOPS, 2)
+            .add(PlantSpecies.SEDUM, 3)
+            .build();
+
+    public static final WeightedTable<PlantSpecies> WILD_LAND_SAVANNA = WeightedTable.<PlantSpecies>builder()
+            .add(PlantSpecies.BLUE_GRAMA, 10)
+            .add(PlantSpecies.NEEDLEGRASS, 8)
+            .add(PlantSpecies.ALOE, 5)
+            .add(PlantSpecies.PRICKLY_PEAR, 3)
+            .add(PlantSpecies.AGAVE, 2)
+            .add(PlantSpecies.SEDUM, 2)
+            .build();
+
     // ------------------------------------------------------------------ M28.1 wild plants in the world
 
     /**

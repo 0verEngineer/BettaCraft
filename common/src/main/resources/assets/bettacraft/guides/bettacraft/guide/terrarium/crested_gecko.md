@@ -26,6 +26,7 @@ glass** and the decoration.
 
 * It **climbs up the glass walls** and clings there, head up, for a while, then comes down again; it climbs straight up
   the faces of stones and wood and likes the high places of the land.
+* By day it hides among grown [terrarium plants](plants.md) and under the decoration (`features.terrariumPlants.hiding`).
 
 ## Breeding
 

@@ -1,0 +1,8 @@
+{
+  "parent": "bettacraft:block/template_wild_cactus_barrel_short",
+  "textures": {
+    "body": "bettacraft:block/wild_land_cactus",
+    "crown": "bettacraft:block/wild_land_cactus_top",
+    "spines": "bettacraft:block/wild_land_cactus_spines"
+  }
+}

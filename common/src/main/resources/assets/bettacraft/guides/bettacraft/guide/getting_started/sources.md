@@ -322,6 +322,47 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 * [Java Moss](../plants/java_moss.md): shears on a wild plant in lush caves (always).
 * [Christmas Moss](../plants/christmas_moss.md): shears on a wild plant in lush caves (always).
 * [Flame Moss](../plants/flame_moss.md): shears on a wild plant in lush caves (always).
+* [Neoregelia (Blushing Bromeliad)](../terrarium/plants/neoregelia.md): shears on a wild plant on the floor of jungles (always).
+* [Guzmania](../terrarium/plants/guzmania.md): shears on a wild plant on the floor of jungles (always).
+* [Vriesea (Flaming Sword)](../terrarium/plants/vriesea.md): shears on a wild plant on the floor of jungles (always).
+* [Tillandsia (Air Plant)](../terrarium/plants/tillandsia.md): shears on a wild plant on the floor of jungles (always).
+* [Boston Fern](../terrarium/plants/boston_fern.md): shears on a wild plant on the floor of jungles (always).
+* [Bird's Nest Fern](../terrarium/plants/birds_nest_fern.md): shears on a wild plant on the floor of jungles (always).
+* [Pothos](../terrarium/plants/pothos.md): shears on a wild plant on the floor of jungles (always).
+* [Fittonia (Nerve Plant)](../terrarium/plants/fittonia.md): shears on a wild plant on the floor of jungles (always).
+* [Peperomia](../terrarium/plants/peperomia.md): shears on a wild plant on the floor of jungles (always).
+* [Rex Begonia](../terrarium/plants/begonia_rex.md): shears on a wild plant on the floor of jungles (always).
+* [Miniature Orchid](../terrarium/plants/mini_orchid.md): shears on a wild plant on the floor of jungles (always).
+* [Marcgravia (Shingle Plant)](../terrarium/plants/marcgravia.md): shears on a wild plant on the floor of jungles (always).
+* [Tropical Pitcher Plant (Nepenthes)](../terrarium/plants/nepenthes.md): shears on a wild plant on the floor of jungles (always).
+* [Cushion Moss](../terrarium/plants/cushion_moss.md): shears on a wild plant in lush caves (always).
+* [Selaginella (Spikemoss)](../terrarium/plants/selaginella.md): shears on a wild plant in lush caves (always).
+* [Reindeer Lichen](../terrarium/plants/reindeer_lichen.md): shears on a wild plant in lush caves (always).
+* [Boston Fern](../terrarium/plants/boston_fern.md): shears on a wild plant in lush caves (always).
+* [Swamp Sedge](../terrarium/plants/swamp_sedge.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Soft Rush](../terrarium/plants/soft_rush.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Sundew](../terrarium/plants/sundew.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Trumpet Pitcher (Sarracenia)](../terrarium/plants/sarracenia.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Venus Flytrap](../terrarium/plants/venus_flytrap.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Butterwort](../terrarium/plants/butterwort.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Papyrus](../terrarium/plants/papyrus.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Umbrella Sedge](../terrarium/plants/umbrella_sedge.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Cushion Moss](../terrarium/plants/cushion_moss.md): shears on a wild plant on the land of swamps and mangroves (always).
+* [Golden Barrel Cactus](../terrarium/plants/golden_barrel_cactus.md): shears on a wild plant in deserts and badlands (always).
+* [Column Cactus](../terrarium/plants/column_cactus.md): shears on a wild plant in deserts and badlands (always).
+* [Prickly Pear](../terrarium/plants/prickly_pear.md): shears on a wild plant in deserts and badlands (always).
+* [Mammillaria](../terrarium/plants/mammillaria.md): shears on a wild plant in deserts and badlands (always).
+* [Echeveria](../terrarium/plants/echeveria.md): shears on a wild plant in deserts and badlands (always).
+* [Zebra Haworthia](../terrarium/plants/haworthia.md): shears on a wild plant in deserts and badlands (always).
+* [American Agave](../terrarium/plants/agave.md): shears on a wild plant in deserts and badlands (always).
+* [Living Stones (Lithops)](../terrarium/plants/lithops.md): shears on a wild plant in deserts and badlands (always).
+* [Stonecrop](../terrarium/plants/sedum.md): shears on a wild plant in deserts and badlands (always).
+* [Blue Grama](../terrarium/plants/blue_grama.md): shears on a wild plant in savannas and dry shrublands (always).
+* [Needlegrass](../terrarium/plants/needlegrass.md): shears on a wild plant in savannas and dry shrublands (always).
+* [Aloe Vera](../terrarium/plants/aloe_vera.md): shears on a wild plant in savannas and dry shrublands (always).
+* [Prickly Pear](../terrarium/plants/prickly_pear.md): shears on a wild plant in savannas and dry shrublands (always).
+* [American Agave](../terrarium/plants/agave.md): shears on a wild plant in savannas and dry shrublands (always).
+* [Stonecrop](../terrarium/plants/sedum.md): shears on a wild plant in savannas and dry shrublands (always).
 
 ## Wandering trader: usual offers
 
@@ -372,6 +413,15 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 | [Vallisneria](../plants/vallisneria.md) | 2 | 1 |
 | [Monte Carlo](../plants/monte_carlo.md) | 2 | 1 |
 | [Alternanthera Reineckii](../plants/alternanthera_reineckii.md) | 1 | 2 |
+| [Neoregelia (Blushing Bromeliad)](../terrarium/plants/neoregelia.md) | 2 | 2 |
+| [Guzmania](../terrarium/plants/guzmania.md) | 2 | 2 |
+| [Tillandsia (Air Plant)](../terrarium/plants/tillandsia.md) | 2 | 2 |
+| [Pothos](../terrarium/plants/pothos.md) | 2 | 2 |
+| [Fittonia (Nerve Plant)](../terrarium/plants/fittonia.md) | 2 | 2 |
+| [Echeveria](../terrarium/plants/echeveria.md) | 2 | 2 |
+| [Zebra Haworthia](../terrarium/plants/haworthia.md) | 2 | 2 |
+| [Sundew](../terrarium/plants/sundew.md) | 2 | 2 |
+| [Cushion Moss](../terrarium/plants/cushion_moss.md) | 2 | 2 |
 | [Amazon Frogbit](../plants/amazon_frogbit.md) | 2 | 1 |
 | [Salvinia](../plants/salvinia.md) | 3 | 1 |
 | [Sea Salt](../saltwater/water.md) | 8 | 2 |
@@ -417,6 +467,12 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 | [Archerfish](../brackish/archerfish.md) | 6 | 15 |
 | [Red Tiger Lotus](../plants/red_tiger_lotus.md) | 1 | 4 |
 | [Cryptocoryne 'Flamingo'](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| [Tropical Pitcher Plant (Nepenthes)](../terrarium/plants/nepenthes.md) | 1 | 4 |
+| [Venus Flytrap](../terrarium/plants/venus_flytrap.md) | 1 | 4 |
+| [Miniature Orchid](../terrarium/plants/mini_orchid.md) | 1 | 4 |
+| [Living Stones (Lithops)](../terrarium/plants/lithops.md) | 1 | 4 |
+| [Vriesea (Flaming Sword)](../terrarium/plants/vriesea.md) | 1 | 4 |
+| [Rex Begonia](../terrarium/plants/begonia_rex.md) | 1 | 4 |
 | [Red Root Floater](../plants/red_root_floater.md) | 2 | 3 |
 | [Yellow Tang](../saltwater/yellow_tang.md) | 2 | 9 |
 | [Lined Seahorse](../saltwater/lined_seahorse.md) | 2 | 7 |
@@ -447,6 +503,14 @@ its species under **Obtaining**. The biomes of biome mods count too: their swamp
 | Apprentice | [Amazon Sword](../plants/amazon_sword.md) | 2 | 2 |
 | Apprentice | [Rotala Rotundifolia](../plants/rotala_rotundifolia.md) | 2 | 2 |
 | Apprentice | [Sagittaria Subulata](../plants/sagittaria_subulata.md) | 2 | 2 |
+| Apprentice | [Neoregelia (Blushing Bromeliad)](../terrarium/plants/neoregelia.md) | 2 | 2 |
+| Apprentice | [Boston Fern](../terrarium/plants/boston_fern.md) | 2 | 2 |
+| Apprentice | [Pothos](../terrarium/plants/pothos.md) | 2 | 2 |
+| Apprentice | [Fittonia (Nerve Plant)](../terrarium/plants/fittonia.md) | 2 | 2 |
+| Apprentice | [Cushion Moss](../terrarium/plants/cushion_moss.md) | 2 | 2 |
+| Apprentice | [Echeveria](../terrarium/plants/echeveria.md) | 2 | 2 |
+| Apprentice | [Aloe Vera](../terrarium/plants/aloe_vera.md) | 2 | 2 |
+| Apprentice | [Swamp Sedge](../terrarium/plants/swamp_sedge.md) | 2 | 2 |
 | Journeyman | [Neocaridina Shrimp](../invertebrates/neocaridina.md) | 2 | 4 |
 | Journeyman | [Ramshorn Snail](../invertebrates/ramshorn.md) | 2 | 3 |
 | Journeyman | [Zebra Nerite](../invertebrates/zebra_nerite.md) | 1 | 3 |
