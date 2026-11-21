@@ -456,7 +456,8 @@ public final class InteriorCleanup {
         for (Tag t : chunk.getListOrEmpty("sections")) {
             ListTag palette = ((CompoundTag) t).getCompoundOrEmpty("block_states").getListOrEmpty("palette");
             for (Tag b : palette) {
-                String name = ((CompoundTag) b).getStringOr("Name", "");
+                // a state with properties is a compound; newer versions write one without as its name alone
+                String name = b instanceof CompoundTag c ? c.getStringOr("Name", "") : org.overengineer.bettacraft.util.NbtCompat.asString(b);
                 if (name.equals(FLOOR) || name.equals(WALL)) return true;
             }
         }
