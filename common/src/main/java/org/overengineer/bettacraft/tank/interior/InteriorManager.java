@@ -83,8 +83,10 @@ public final class InteriorManager {
                     ? "message.bettacraft.interior.missing_dimension" : "message.bettacraft.tank.not_formed"), true);
             return;
         }
-        if (!TankInhabitants.canModify(player, controller.getTank())) {
-            player.displayClientMessage(Component.translatable("message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
+        if (!org.overengineer.bettacraft.tank.TankAccess.canEnter(player, controller.getTank())) {
+            // M53: a viewer of the tank only looks from outside
+            boolean viewer = org.overengineer.bettacraft.tank.TankAccess.role(player, controller.getTank()) == org.overengineer.bettacraft.tank.TankUsers.Role.VIEWER;
+            player.displayClientMessage(Component.translatable(viewer ? "message.bettacraft.users.viewer" : "message.bettacraft.tank.locked").withStyle(ChatFormatting.RED), true);
             return;
         }
         InteriorRegion region = regionFor((ServerLevel) player.level(), controller);

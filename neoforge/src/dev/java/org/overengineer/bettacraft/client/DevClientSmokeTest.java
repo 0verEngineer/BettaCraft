@@ -171,6 +171,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM49 m49;
     /** -Pcreate -Psmoketestm50: tanks on a turning bearing, a minecart contraption in a curve and an airship (M50). */
     private static final boolean M50_ONLY = Boolean.getBoolean("bettacraft.smoketest.m50only");
+    /** -Psmoketestm53: users tab, gear, map mods, interior brightness, every animal from six sides (M53). */
+    private static final boolean M53_ONLY = Boolean.getBoolean("bettacraft.smoketest.m53only");
+    private static DevClientSmokeM53 m53;
     /** -Psmoketestm51: the hired aquarist comes, is hired, works; his menu, the tank menu button, his looks, asleep (M51). */
     private static final boolean M51_ONLY = Boolean.getBoolean("bettacraft.smoketest.m51only");
     private static DevClientSmokeM51 m51;
@@ -437,6 +440,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M53_ONLY) {
+                if (ticks == 60) m53 = new DevClientSmokeM53();
+                if (m53 != null && m53.tick()) {
+                    m53 = null;
+                    LOGGER.info("[smoketest] client world test finished (M53 only)");
                     mc.stop();
                 }
                 return;

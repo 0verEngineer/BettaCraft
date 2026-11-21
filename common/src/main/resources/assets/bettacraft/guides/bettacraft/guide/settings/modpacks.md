@@ -94,5 +94,7 @@ tags of a quest are on; the quest script above uses them.
 
 ## Map waypoints
 
-With **JourneyMap** an alarm of a monitor puts a red waypoint at its tank, see [Monitors](../equipment/monitor.md)
-(`features.compat.journeymap`, `map.showAlarmWaypoints`). Xaero's Minimap is not supported.
+With **JourneyMap**, **Xaero's Minimap** (and its World Map) or **FTB Chunks** an alarm of a monitor puts a red waypoint
+at its tank for the owner and the listed users, see [Monitors](../equipment/monitor.md) and the
+[users tab](../aquarium/menu.md#users) (`features.compat.journeymap`, client: `map.showAlarmWaypoints` and one switch per map
+mod, `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; a pack with several map mods can leave one on).

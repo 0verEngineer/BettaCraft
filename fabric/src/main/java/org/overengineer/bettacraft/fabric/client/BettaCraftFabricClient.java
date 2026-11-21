@@ -44,6 +44,9 @@ public final class BettaCraftFabricClient implements ClientModInitializer {
         for (FabricNetwork.ClientHandler<?> h : FabricNetwork.CLIENT_BOUND) register((FabricNetwork.ClientHandler) h);
 
         ClientSetup.init();
+        // M53: the config screen in Mod Menu (Forge Config API Port's port of NeoForge's screen, like NeoForge's mod list)
+        fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry.INSTANCE.register(org.overengineer.bettacraft.BettaCraft.MOD_ID,
+                net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("jei")) {
             org.overengineer.bettacraft.client.ClientFeatures.jeiRefresh = () -> org.overengineer.bettacraft.compat.jei.BettaCraftJeiPlugin.applyFeatures();
         }

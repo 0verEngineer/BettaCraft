@@ -97,5 +97,7 @@ Tags einer Quest an sind; das Quest-Skript oben nutzt sie.
 
 ## Wegpunkte auf der Karte
 
-Mit **JourneyMap** setzt ein Alarm eines Monitors einen roten Wegpunkt an sein Becken, siehe [Monitor](../equipment/monitor.md)
-(`features.compat.journeymap`, `map.showAlarmWaypoints`). Xaero's Minimap wird nicht unterstützt.
+Mit **JourneyMap**, **Xaero's Minimap** (und seiner World Map) oder **FTB Chunks** setzt ein Alarm eines Monitors einen roten
+Wegpunkt an sein Becken, für den Besitzer und die eingetragenen Nutzer, siehe [Monitor](../equipment/monitor.md) und den
+[Nutzer-Tab](../aquarium/menu.md#nutzer) (`features.compat.journeymap`, Client: `map.showAlarmWaypoints` und ein Schalter je
+Karten-Mod, `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; ein Pack mit mehreren Karten-Mods kann einen anlassen).

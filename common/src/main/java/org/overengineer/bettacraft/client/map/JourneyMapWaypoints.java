@@ -19,23 +19,31 @@ import org.overengineer.bettacraft.BettaCraft;
  * (not persistent: JourneyMap does not save it), coloured red, and removed with the same object. Without JourneyMap,
  * or when its API does not fit, nothing happens (one warning in the log).
  */
-public final class JourneyMapWaypoints {
+public final class JourneyMapWaypoints implements MapWaypoints {
+    static final JourneyMapWaypoints INSTANCE = new JourneyMapWaypoints();
+
     private static final String MOD = "journeymap";
     private static final int RED = 0xE03030;
 
-    private static boolean tried;
+    private boolean tried;
     @Nullable
-    private static Object api;
-    private static Method create, add, remove, setColor;
-    private static final Map<UUID, Object> WAYPOINTS = new HashMap<>();
+    private Object api;
+    private Method create, add, remove, setColor;
+    private final Map<UUID, Object> waypoints = new HashMap<>();
 
     private JourneyMapWaypoints() {}
 
-    public static boolean available() {
+    @Override
+    public String id() {
+        return "journeymap";
+    }
+
+    @Override
+    public boolean available() {
         return init();
     }
 
-    private static boolean init() {
+    private boolean init() {
         if (tried) return api != null;
         tried = true;
         if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded(MOD)) return false;
@@ -60,7 +68,8 @@ public final class JourneyMapWaypoints {
     }
 
     /** Puts the waypoint of {@code tank} (again). Returns false without JourneyMap. */
-    public static boolean add(UUID tank, Identifier dimension, BlockPos pos, String label) {
+    @Override
+    public boolean add(UUID tank, Identifier dimension, BlockPos pos, String label) {
         if (!init()) return false;
         remove(tank);
         try {
@@ -68,7 +77,7 @@ public final class JourneyMapWaypoints {
             Object w = create.invoke(null, BettaCraft.MOD_ID, pos.above(), label, dim, false);
             setColor.invoke(w, RED);
             add.invoke(api, BettaCraft.MOD_ID, w);
-            WAYPOINTS.put(tank, w);
+            waypoints.put(tank, w);
             return true;
         } catch (Throwable t) {
             org.slf4j.LoggerFactory.getLogger(JourneyMapWaypoints.class).warn("JourneyMap: could not add the alarm waypoint ({})", t.toString());
@@ -76,8 +85,9 @@ public final class JourneyMapWaypoints {
         }
     }
 
-    public static void remove(UUID tank) {
-        Object w = WAYPOINTS.remove(tank);
+    @Override
+    public void remove(UUID tank) {
+        Object w = waypoints.remove(tank);
         if (w == null || api == null) return;
         try {
             remove.invoke(api, BettaCraft.MOD_ID, w);

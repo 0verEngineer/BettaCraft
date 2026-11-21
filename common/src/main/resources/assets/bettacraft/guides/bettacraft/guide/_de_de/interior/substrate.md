@@ -25,5 +25,5 @@ Wasser weich und sauer, einfache Erde ein wenig, Kalkstein (Kalzit, Tropfstein) 
 Nur volle Blöcke mit normalem Modell und ohne Block-Entity gehen (und der Aktivboden der Mod). Der Block-Tag `#bettacraft:substrate_blacklist`
 schließt weitere Blöcke aus.
 
-Im Aquarium erscheint der Bodengrund als dünne Schicht ganz unten. Der Innenraum-Tab im Menü zählt die belegten
+Im Aquarium erscheint der Bodengrund als dünne Schicht ganz unten. Der Tooltip des Innenraum-Knopfs im Menü zählt die belegten
 Bodenblöcke.

@@ -119,7 +119,7 @@ public final class ModpackEventGameTests {
         h.succeed();
     }
 
-    /** A monitor alarm: the event when it goes off and when it clears; the waypoint for a player near the tank. */
+    /** A monitor alarm: the event when it goes off and when it clears; the waypoint for the tank's owner. */
     @GameTest(template = EMPTY, batch = "bettacraft_m32_events", timeoutTicks = 100)
     public static void alarmEventsAndWaypoints(GameTestHelper h) {
         listen();
@@ -127,6 +127,7 @@ public final class ModpackEventGameTests {
         TankBlockEntity t = AerationGameTests.tank(h, 2, 1, 2, 2, 2, 2);
         t.getTank().setWaterTemp(30F);
         ServerPlayer sp = MockPlayers.serverPlayer(h);
+        t.getTank().setOwner(sp.getUUID()); // M53: the waypoint goes to the owner and the users only
         try {
             Vec3 near = h.absoluteVec(new Vec3(4, 3, 8));
             sp.teleportTo(level, near.x, near.y, near.z, java.util.Set.of(), 0, 0, false);
@@ -148,10 +149,9 @@ public final class ModpackEventGameTests {
             h.assertTrue("temperature".equals(a.getValue()) && Math.abs(a.getCurrent() - 30F) < 0.5F && !a.isBelow()
                     && a.getTankId().equals(t.getTank().id()) && a.getMonitorPos().equals(c.getBlockPos()), "the value, tank and monitor");
             h.assertTrue(MonitorAlarms.waypointOpen(t.getTank().id()), "a waypoint at the tank");
-            // M52 (backport of the 26.x fix): one per player in range (tests of the batch run side by side; another test's mock
-            // player may be near)
-            long inRange = level.players().stream().filter(p -> p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(t.getBlockPos())) <= (double) MonitorAlarms.WAYPOINT_RANGE * MonitorAlarms.WAYPOINT_RANGE).count();
-            h.assertTrue(inRange >= 1 && MonitorAlarms.sentWaypoints == sent + inRange, "one waypoint for each player nearby: " + (MonitorAlarms.sentWaypoints - sent) + " for " + inRange);
+            // M53: only the owner (and listed users with their switch on) get it, never a player who is merely near
+            long inRange = 1;
+            h.assertTrue(MonitorAlarms.sentWaypoints == sent + inRange, "one waypoint for the owner: " + (MonitorAlarms.sentWaypoints - sent));
             CAUGHT.clear();
             MonitorSync.cycle(level, c);
             h.assertTrue(CAUGHT.isEmpty(), "no change, no event");

@@ -54,6 +54,16 @@ public final class TankActions {
     public static final int SET_LIGHT_OFF = 19;
     /** M51: who may let his hired aquarist work here (owner or OP; value = the {@code AquaristAccess} ordinal). */
     public static final int SET_AQUARIST = 20;
+    /** M53: adds a user (text = player name, value = the role ordinal: caretaker or viewer); owner, caretakers or OP. */
+    public static final int USERS_ADD = 21;
+    /** M53: changes the role of a listed user (target, value = role ordinal). */
+    public static final int USERS_ROLE = 22;
+    /** M53: removes a listed user (target; a user may also remove himself). */
+    public static final int USERS_REMOVE = 23;
+    /** M53: the sender's own alarm waypoint switch for this tank (value 1 on, 0 off); any user, also a viewer. */
+    public static final int WAYPOINT_OWN = 24;
+    /** M53: the alarm waypoints of this tank for all of its users (value 1 on, 0 off); owner, caretakers or OP. */
+    public static final int WAYPOINT_ALL = 25;
 
     /** M22.3: bits of the value of {@link #TAKE_CRITTER}: 0-1 how many (one best, one worst, a full container), 2-3 the sex, 4 a bucket. */
     public static int critterValue(int mode, int sex, boolean bucket) {
@@ -71,7 +81,8 @@ public final class TankActions {
         if (controller == null) return;
         TankData tank = controller.getTank();
         boolean modify = TankInhabitants.canModify(player, tank);
-        boolean owner = player.getUUID().equals(tank.owner()) || Perms.has(player, 2);
+        // M53: owner, caretakers and operators manage the tank (lock, aquarist, users, the waypoints of all)
+        boolean owner = org.overengineer.bettacraft.tank.TankAccess.canManage(player, tank);
         Component error = null;
         switch (p.action()) {
             case SET_NAME -> {
@@ -174,6 +185,7 @@ public final class TankActions {
                 if (!modify) error = locked();
                 else error = org.overengineer.bettacraft.tankmates.TankmateItems.removeBox(player.level(), controller, player);
             }
+            case USERS_ADD, USERS_ROLE, USERS_REMOVE, WAYPOINT_OWN, WAYPOINT_ALL -> error = TankUserActions.handle(player, controller, p, owner);
             case ENTER_INTERIOR -> {
                 player.closeContainer();
                 InteriorManager.enter(player, controller.getBlockPos());

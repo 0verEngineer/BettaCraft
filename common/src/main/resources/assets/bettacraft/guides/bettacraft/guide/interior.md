@@ -54,7 +54,7 @@ the aquarium. A 2x1x1 aquarium has an interior of 32x16x16 blocks. Servers can c
 ## The miniature
 
 The miniature is built in the background and updated block by block. Block entities like chests or signs are not
-shown. Very large builds stop at a limit (`interior.maxRenderedBlocks`); the interior tab of the menu then says
+shown. Very large builds stop at a limit (`interior.maxRenderedBlocks`); the tooltip of the interior button in the menu then says
 "Render limit reached".
 
 ## In this chapter

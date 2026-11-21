@@ -38,6 +38,12 @@ public final class MonitorAlarmsHandlers {
         }
     }
 
+    /** M53: the map mods forget the waypoints when the player leaves: he gets them again when he comes back. */
+    @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        BOOK.left(event.getEntity().getUUID());
+    }
+
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         BOOK.clear();

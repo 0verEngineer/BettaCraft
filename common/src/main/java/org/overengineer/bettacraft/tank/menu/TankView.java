@@ -115,6 +115,61 @@ public final class TankView {
 
     public record LogLine(long time, String key, List<String> args) {}
 
+    /** M53: one listed user of the tank as the menu shows him. */
+    public record User(UUID id, String name, org.overengineer.bettacraft.tank.TankUsers.Role role, boolean waypoint, boolean online) {}
+
+    /** M53: the users tab. */
+    public static final class Users {
+        public boolean feature, waypointFeature, canManage, ownerWaypoint = true, waypointsAll = true, myWaypoint, ownerOnline;
+        public org.overengineer.bettacraft.tank.TankUsers.Role myRole = org.overengineer.bettacraft.tank.TankUsers.Role.OTHER;
+        public final List<User> list = new ArrayList<>();
+
+        static CompoundTag build(ServerPlayer player, TankData t) {
+            CompoundTag o = new CompoundTag();
+            var server = player.level().getServer();
+            o.putBoolean("feature", org.overengineer.bettacraft.tank.TankAccess.usersEnabled());
+            o.putBoolean("waypoint_feature", Features.enabled(Feature.ALARM_WAYPOINTS));
+            o.putBoolean("manage", org.overengineer.bettacraft.tank.TankAccess.canManage(player, t));
+            o.putString("role", org.overengineer.bettacraft.tank.TankAccess.role(player, t).id());
+            o.putBoolean("owner_waypoint", t.users().ownerWaypoint());
+            o.putBoolean("waypoints", t.users().waypointsAll());
+            o.putBoolean("my_waypoint", org.overengineer.bettacraft.tank.TankAccess.ownWaypoint(player.getUUID(), t));
+            o.putBoolean("owner_online", t.owner() != null && server != null && server.getPlayerList().getPlayer(t.owner()) != null);
+            net.minecraft.nbt.ListTag l = new net.minecraft.nbt.ListTag();
+            for (var e : t.users().entries()) {
+                CompoundTag u = new CompoundTag();
+                org.overengineer.bettacraft.util.NbtCompat.putUUID(u, "id", e.id);
+                u.putString("name", server == null ? e.name : org.overengineer.bettacraft.tank.TankAccess.name(server, e.id, e.name));
+                u.putString("role", e.role.id());
+                u.putBoolean("waypoint", e.waypoint);
+                u.putBoolean("online", server != null && server.getPlayerList().getPlayer(e.id) != null);
+                l.add(u);
+            }
+            o.put("list", l);
+            return o;
+        }
+
+        void read(CompoundTag o) {
+            feature = o.getBooleanOr("feature", false);
+            waypointFeature = o.getBooleanOr("waypoint_feature", false);
+            canManage = o.getBooleanOr("manage", false);
+            myRole = org.overengineer.bettacraft.tank.TankUsers.Role.byId(o.getStringOr("role", ""));
+            if (!o.contains("role")) myRole = org.overengineer.bettacraft.tank.TankUsers.Role.OTHER;
+            ownerWaypoint = o.getBooleanOr("owner_waypoint", false);
+            waypointsAll = o.getBooleanOr("waypoints", false);
+            myWaypoint = o.getBooleanOr("my_waypoint", false);
+            ownerOnline = o.getBooleanOr("owner_online", false);
+            list.clear();
+            net.minecraft.nbt.ListTag l = o.getListOrEmpty("list");
+            for (int i = 0; i < l.size(); i++) {
+                CompoundTag u = l.getCompoundOrEmpty(i);
+                if (!org.overengineer.bettacraft.util.NbtCompat.hasUUID(u, "id")) continue;
+                list.add(new User(org.overengineer.bettacraft.util.NbtCompat.getUUID(u, "id"), u.getStringOr("name", ""), org.overengineer.bettacraft.tank.TankUsers.Role.byId(u.getStringOr("role", "")),
+                        u.getBooleanOr("waypoint", false), u.getBooleanOr("online", false)));
+            }
+        }
+    }
+
     /** M19: what the animals tab shows of a tankmate. */
     /** M26 part b: the diet of a betta (in the details tag; it has no "species", so it is no tankmate). */
     static CompoundTag bettaDetails(BettaEntity b) {
@@ -163,6 +218,8 @@ public final class TankView {
     public boolean canModify = true;
     public boolean isOwner;
     public String ownerName = "";
+    /** M53: the users tab: the feature switches, the viewer's role and rights, the listed users and the waypoint switches. */
+    public final Users users = new Users();
     public long waterMb, capacityMb;
     public int sizeX, sizeY, sizeZ;
     /** M11: glass block id and style of the tank. */
@@ -1052,6 +1109,7 @@ public final class TankView {
             else ownerName = level.getServer().services().nameToIdCache().get(t.owner()).map(net.minecraft.server.players.NameAndId::name).orElse("");
         }
         out.putString("owner_name", ownerName);
+        out.put("users", Users.build(player, t)); // M53
         out.putLong("water", t.waterMb());
         out.putLong("cap", t.capacityMb());
         out.putIntArray("size", new int[]{t.sizeX(), t.sizeY(), t.sizeZ()});
@@ -1338,6 +1396,7 @@ public final class TankView {
         v.canModify = t.getBooleanOr("can_modify", false);
         v.isOwner = t.getBooleanOr("owner", false);
         v.ownerName = t.getStringOr("owner_name", "");
+        v.users.read(t.getCompoundOrEmpty("users")); // M53
         v.waterMb = t.getLongOr("water", 0L);
         v.capacityMb = t.getLongOr("cap", 0L);
         v.glass = t.getStringOr("glass", "");

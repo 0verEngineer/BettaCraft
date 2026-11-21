@@ -56,7 +56,7 @@ abgetrennt.
 ## Die Miniatur
 
 Die Miniatur wird im Hintergrund gebaut und Block für Block aktualisiert. Block-Entities wie Truhen oder Schilder werden
-nicht gezeigt. Sehr große Bauten enden an einem Limit (`interior.maxRenderedBlocks`); der Innenraum-Tab im Menü meldet
+nicht gezeigt. Sehr große Bauten enden an einem Limit (`interior.maxRenderedBlocks`); der Tooltip des Innenraum-Knopfs im Menü meldet
 dann „Render-Limit erreicht“.
 
 ## In diesem Kapitel
