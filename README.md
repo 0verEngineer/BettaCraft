@@ -238,11 +238,14 @@ migrated); they do not move between Minecraft versions.
 
 | Minecraft | Java | NeoForge | Fabric | Handbook (NeoForge / Fabric) | Branch |
 |---|---|---|---|---|---|
-| 1.21.1 (main version, ATM10) | 21 | 21.1.200+ | Loader 0.16+ | GuideME / Patchouli | `master` |
-| 1.21.11 | 21 | 21.11.40+ | Loader 0.17+, Fabric API 0.141+ | GuideME / Modonomicon | `1.21.11` |
-| 26.1.2 (Fabric also 26.1 and 26.1.1) | 25 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | GuideME / Modonomicon | `26.1.2` |
-| 26.2 | 25 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | GuideME (alpha) / Modonomicon | `26.2` |
-| 26.3 | 25 | 26.3.0.113+ | Loader 0.18.4+, Fabric API 0.166+ | GuideME (alpha) / Modonomicon | `26.3` |
+| 1.21.1 (main version, ATM10) | 21 | 21.1.200+ | Loader 0.16.1+, Fabric API 0.116+ | GuideME / Patchouli | `master` |
+| 1.21.11 | 21 | 21.11.40+ | Loader 0.18+, Fabric API 0.141+ | GuideME / Modonomicon | `1.21.11` |
+| 26.1.2 (Fabric also 26.1 and 26.1.1) | 25 | 26.1.2.100+ | Loader 0.19.0+, Fabric API 0.155+ | GuideME / Modonomicon | `26.1.2` |
+| 26.2 | 25 | 26.2.0.95+ | Loader 0.19.2+, Fabric API 0.161+ | GuideME (alpha) / Modonomicon | `26.2` |
+| 26.3 | 25 | 26.3.0.113+ | Loader 0.19.4+, Fabric API 0.166+ | GuideME (alpha) / Modonomicon | `26.3` |
+
+The Fabric minimums are tested: the GameTests, the server and client smoke tests and the production runs with the
+official jars pass with exactly that Fabric Loader and Fabric API (`-PexactFabricVersions`, see "Building from source").
 
 | Loader | Required mods | Optional |
 |---|---|---|
@@ -509,6 +512,8 @@ py tools/assetgen/readme_media.py       # run/screenshots -> docs/images (stills
 ./gradlew prodFabricServer -Psmoketest          # production (intermediary) run with the official jars
 ./gradlew fabricMultiplayerTest                 # Fabric server + two background clients
 ./gradlew fabricSaveLoadTest                    # the showcase world built on Fabric, reloaded twice, nothing lost
+# the declared Fabric minimums: any Fabric task with exactly that loader and Fabric API (other mods pull newer ones)
+./gradlew runFabricGameTest -Pfabric_loader_version=<min> -Pfabric_api_version=<min> -PexactFabricVersions
 ```
 
 Leave optional mods out of the NeoForge dev runtime with `-PnoJade`, `-PnoJei`, `-PnoGuideme` and `-PnoCompat`; add The One
