@@ -8,7 +8,7 @@ version as release notes.
 
 The same version for **Minecraft 26.1.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.1.2-<version>.jar` and
 `bettacraft-fabric-26.1.2-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.1.2 they load
-as usual.
+as usual. Every Minecraft version gets every new feature and every fix.
 
 ### Added
 - **Minecraft 26.1.2**: NeoForge 26.1.2 and Fabric (Fabric Loader 0.18.4+, Fabric API 0.155+, Forge Config API Port 26.1).
