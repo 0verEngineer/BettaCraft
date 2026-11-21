@@ -273,7 +273,7 @@ public final class InteriorCleanup {
         return "region " + id + ": living " + r.living(id) + ", dying " + r.dying().contains(id) + ", dead " + r.dead().contains(id)
                 + " (deletable " + r.deletable(id) + "), free " + r.free().contains(id) + ", kept " + r.kept().contains(id) + ", held "
                 + held(server, id) + ", quiet since " + quietSince.getOrDefault(id, -1) + " (now " + server.getTickCount() + "), stage " + stage
-                + " " + batch + ", tries " + tries.get(id) + ", gave up " + gaveUp.contains(id) + ", switch " + enabled() + ", forced " + forced;
+                + " " + batch + ", storages written " + java.util.Arrays.stream(syncParts).map(f -> f.isDone() ? "yes" : "no").toList() + ", tries " + tries.get(id) + ", gave up " + gaveUp.contains(id) + ", switch " + enabled() + ", forced " + forced;
     }
 
     /** Whether a round is going on or dead regions wait for one (tests). */
@@ -318,12 +318,20 @@ public final class InteriorCleanup {
         return storage instanceof EntityStorage es ? ((EntityStorageAccessor) es).bettacraft$storage() : null;
     }
 
-    /** Both storages have written everything they were given so far. */
+    /**
+     * Both storages have written everything they were given so far (into the files, without forcing them to the disk: the
+     * headers read afterwards see it, and a forced flush of every open region file can take long on a busy disk).
+     */
     private static CompletableFuture<Void> syncStorages(ServerLevel in) {
-        CompletableFuture<Void> chunks = in.getChunkSource().chunkMap.synchronize(true);
+        CompletableFuture<Void> chunks = in.getChunkSource().chunkMap.synchronize(false);
         SimpleRegionStorage entities = entityStorage(in);
-        return entities == null ? chunks : CompletableFuture.allOf(chunks, entities.synchronize(true));
+        CompletableFuture<Void> ents = entities == null ? CompletableFuture.completedFuture(null) : entities.synchronize(false);
+        syncParts = new CompletableFuture<?>[]{chunks, ents};
+        return CompletableFuture.allOf(chunks, ents);
     }
+
+    /** The parts of the last wait for the storages (chunks, entities; describe). */
+    private static CompletableFuture<?>[] syncParts = new CompletableFuture<?>[0];
 
     static Path dimensionFolder(MinecraftServer server) {
         return DimensionType.getStorageFolder(ModDimensions.TANK_INTERIOR, server.getWorldPath(LevelResource.ROOT));
