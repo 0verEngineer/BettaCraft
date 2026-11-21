@@ -46,6 +46,11 @@ public final class FabricDevSmoke implements ModInitializer {
         for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
             level.setBlockAndUpdate(BASE.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
         }
+        // M52.5: the tank formed at once, as a player's placing does (in a fresh world the forced chunks do not tick yet, and
+        // the blocks' scheduled tick that forms a tank put there without a player came too late: CI on 26.x)
+        for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
+            org.overengineer.bettacraft.tank.TankMultiblock.onTankBlockAdded(level, BASE.offset(x, y, z), null);
+        }
         built = 0;
     }
 
