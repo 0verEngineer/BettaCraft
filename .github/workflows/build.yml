@@ -58,7 +58,8 @@ env:
 
 jobs:
   build:
-    name: Build, unit tests, GameTests, server smoke (NeoForge and Fabric)
+    # the required status check of the branch ruleset (master, 1.21.11, 26.*): keep the name; both loaders
+    name: Build, unit tests, GameTests, server smoke
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
