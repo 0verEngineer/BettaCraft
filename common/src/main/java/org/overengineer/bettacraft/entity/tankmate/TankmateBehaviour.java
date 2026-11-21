@@ -235,6 +235,8 @@ final class TankmateBehaviour {
         }
         boolean night = !server.isBrightOutside();
         double restChance = s.nocturnal() ? (night ? 0.15 : 0.75) : 0.3;
+        boolean lively = Features.enabled(Feature.LIVELY_MOVEMENT);
+        if (lively && night && !s.nocturnal()) restChance = 0.6; // M54: a day fish rests more at night
         if (eel(s)) {
             // M21.5: kuhli loaches: by day mostly lying still, often half hidden under the decoration; at night calm gliding
             if (r.nextDouble() < (night ? 0.2 : 0.85)) {
@@ -271,7 +273,7 @@ final class TankmateBehaviour {
                     gulp(w);
                     return;
                 }
-                if (!s.shoaling() && r.nextDouble() < 0.25) {
+                if (!s.shoaling() && r.nextDouble() < (lively && night ? 0.5 : 0.25)) {
                     // a solitary fish (gourami) hovers for a while
                     target = fish.position();
                     mode = Mode.REST;
@@ -457,10 +459,20 @@ final class TankmateBehaviour {
         return true;
     }
 
+    /** M54: a dart of a fish (lively movement): its speed and the share of its swims that are one. */
+    static final double DART = 1.9, DART_CHANCE = 0.08;
+
     private void shoal(ServerLevel server, TankWaterVolume w, TankmateSpecies s) {
+        boolean lively = Features.enabled(Feature.LIVELY_MOVEMENT);
         TankmateEntity lead = s.shoaling() ? leader(server, w) : null;
         RandomSource r = r();
         if (lead == null || lead == fish) {
+            if (lively && r.nextDouble() < DART_CHANCE) {
+                // M54: a dart: a short, fast swim (the shoal follows its leader)
+                go(cruiseTarget(w, s, 0.6, 1.6), DART, Mode.CRUISE);
+                ticks = 12 + r.nextInt(14);
+                return;
+            }
             go(cruiseTarget(w, s, 1.2, 3.5), 0.75, Mode.CRUISE);
             ticks = 60 + r.nextInt(100);
             return;
@@ -484,8 +496,10 @@ final class TankmateBehaviour {
             double ang = r.nextDouble() * Math.PI * 2, dist = 0.3 + r.nextDouble() * 1.2;
             Vec3 t = onGround(server, w, from.x + Math.cos(ang) * dist, from.z + Math.sin(ang) * dist);
             if (!pathFree(server, fish.position(), t)) continue;
-            go(t, 0.5, Mode.CRUISE);
-            ticks = 40 + r.nextInt(60);
+            // M54: a bottom fish scoots off now and then
+            boolean dart = Features.enabled(Feature.LIVELY_MOVEMENT) && r.nextDouble() < DART_CHANCE;
+            go(t, dart ? 1.4 : 0.5, Mode.CRUISE);
+            ticks = dart ? 15 + r.nextInt(15) : 40 + r.nextInt(60);
             return;
         }
         rest(server, w, 60);
