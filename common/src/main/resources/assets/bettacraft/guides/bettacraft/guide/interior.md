@@ -57,6 +57,16 @@ The miniature is built in the background and updated block by block. Block entit
 shown. Very large builds stop at a limit (`interior.maxRenderedBlocks`); the tooltip of the interior button in the menu then says
 "Render limit reached".
 
+## Disk space
+
+Every interior lies in its own area of the interior dimension. When a tank is broken, grown, split, merged or turned, its
+old interior is removed: after the next save of the world its chunks are deleted from the disk while the game runs (the space
+inside the region files is used again), its region files at the next start, and its number goes to the next new tank. Empty
+chunks of the interior (nothing but air) are not stored at all. The interiors of standing tanks, of tanks packed into an item
+and of tanks travelling on a contraption are never touched; an old interior whose walls are still there is kept. Operators see
+with `/bettacraft interior cleanup` how much the removed interiors take and start the clean-up at once with
+`/bettacraft interior cleanup run`. Switch: `features.interior.cleanup` (off: everything stays on the disk as before).
+
 ## In this chapter
 
 <SubPages icons={true} />
