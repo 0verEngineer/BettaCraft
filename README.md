@@ -166,7 +166,10 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   turtle; eggs in sand or soil, and the **nest temperature decides the sex** of the hatchlings.
 - **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested
   geckos (the crested one climbs the glass) and the corn snake, with crickets and fruit flies from their cultures; wild
-  in jungles, deserts, forests, savannas and swamps.
+  in jungles, deserts, forests, savannas and swamps. They **move like the real animals**, in the world as in the tank:
+  each keeps its hours (day, night, dusk), goes at a calm pace with short sprints, climbs branches and rocks, sits on
+  leaves, hides in caves and does things while it sits still: the snake raises its head, flicks its tongue and lies
+  coiled, lizards look around, frogs call, turtles stretch their necks.
 - **Land animals of other mods:** with a terrarium profile they get our care, breeding and walker in terraria and
   paludaria: the Naturalist tortoise, alligator, lizard, snake, scorpions, snail, crab, dragonfly, duck and capybara, the
   Critters and Companions dragonfly, leaf insect and otter; the terrarium box catches them. Fish live in the water part of a
