@@ -82,23 +82,52 @@ class AnimalIconsTest {
         }
     }
 
-    /** The overrides of a model by the value of {@code bettacraft:animal}: value -> model name (without the namespace). */
+    /**
+     * The overrides of a model by the value of {@code bettacraft:animal}: value -> model name (without the namespace). On
+     * 1.21.1 the item model's {@code overrides} (the last match wins); from 1.21.4 on the item definition
+     * ({@code items/<id>.json}): nested conditions, the outermost checked first (the same order reversed).
+     */
     private static Map<Integer, String> animalOverrides(String name) throws IOException {
-        Map<Integer, String> m = new HashMap<>();
+        List<JsonObject> rising = new ArrayList<>(); // {threshold, model} in the order of 1.21.1 (rising)
+        JsonObject model = itemModel(name);
+        if (model.has("overrides")) {
+            for (JsonElement e : model.getAsJsonArray("overrides")) {
+                JsonObject o = e.getAsJsonObject();
+                JsonObject pred = o.getAsJsonObject("predicate");
+                if (!pred.has("bettacraft:animal")) continue;
+                JsonObject r = new JsonObject();
+                r.add("threshold", pred.get("bettacraft:animal"));
+                r.add("model", o.get("model"));
+                rising.add(r);
+            }
+        } else {
+            Path def = res("generated").resolve("items/" + name + ".json");
+            assertTrue(Files.exists(def), "neither overrides nor an item definition for " + name);
+            JsonObject m = JsonParser.parseString(Files.readString(def, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject("model");
+            List<JsonObject> outerFirst = new ArrayList<>();
+            while (m != null && "minecraft:condition".equals(m.get("type").getAsString())) {
+                if ("bettacraft:animal".equals(m.get("name").getAsString())) {
+                    JsonObject r = new JsonObject();
+                    r.add("threshold", m.get("threshold"));
+                    r.add("model", m.getAsJsonObject("on_true").get("model"));
+                    outerFirst.add(r);
+                }
+                m = m.getAsJsonObject("on_false");
+            }
+            for (int i = outerFirst.size() - 1; i >= 0; i--) rising.add(outerFirst.get(i));
+        }
+        Map<Integer, String> out = new HashMap<>();
         double last = 0;
-        for (JsonElement e : itemModel(name).getAsJsonArray("overrides")) {
-            JsonObject o = e.getAsJsonObject();
-            JsonObject pred = o.getAsJsonObject("predicate");
-            if (!pred.has("bettacraft:animal")) continue;
-            double v = pred.get("bettacraft:animal").getAsDouble();
+        for (JsonObject r : rising) {
+            double v = r.get("threshold").getAsDouble();
             assertTrue(v > last, name + ": the overrides must rise (the last match wins): " + v + " after " + last);
             last = v;
-            String model = o.get("model").getAsString();
             int index = Math.round((float) v * AnimalIcons.SCALE + 0.5F);
             assertEquals(AnimalIcons.threshold(index), (float) v, 1e-6, name + ": threshold of " + index);
-            m.put(index, model.substring(model.indexOf(":item/") + 6));
+            String model2 = r.get("model").getAsString();
+            out.put(index, model2.substring(model2.indexOf(":item/") + 6));
         }
-        return m;
+        return out;
     }
 
     private static void assertUnique(String kind, Map<String, String> modelOfAnimal) throws IOException {
