@@ -98,7 +98,9 @@ final class DevClientSmokeM55 {
         if (parts.contains("carpets")) carpets();
         if (parts.contains("plants")) plants();
         if (parts.contains("icons")) icons();
-        then(5, () -> LOGGER.info("[smoketest] M55 done"));
+        // back at the comparison tank: the Fabric runner of the ports checks the crack overlay on tank blocks near the player
+        if (parts.contains("carpets")) then(20, () -> look(carpetPool, 20.0, 2.4, 0.2, 0F, 38F));
+        then(20, () -> LOGGER.info("[smoketest] M55 done"));
     }
 
     private void setup(ServerPlayer p) {
