@@ -26,7 +26,9 @@ final class BettaMoveControl extends MoveControl {
 
     @Override
     public void tick() {
-        if (fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
+        // M54: the lift only while the sink of the fish travel is still in its motion (like the tankmates since M52): aiStep
+        // zeroes a vertical motion below 0.003 first, and the lift added anyway carried a betta that waited up by 0.005 a tick
+        if (fish.getDeltaMovement().y != 0 && fish.isEyeInFluid(FluidTags.WATER)) fish.setDeltaMovement(fish.getDeltaMovement().add(0, 0.005, 0));
         if (direct && (operation != Operation.MOVE_TO || fish.distanceToSqr(wantedX, wantedY, wantedZ) < 0.3 * 0.3)) {
             direct = false;
             operation = Operation.WAIT;
