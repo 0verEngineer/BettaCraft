@@ -55,6 +55,7 @@ jobs:
       - name: Integration GameTests
         run: |
           chmod +x gradlew
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew integrationTests -PintegrationPartial $GRADLE_ARGS 2>&1 | tee integration.log
 
       - name: Failed GameTests
