@@ -282,32 +282,68 @@ public final class MiniatureRenderer {
             RegionBlockGetter getter = new RegionBlockGetter(map, region.sizeX, region.sizeY, region.sizeZ, region.scale, level, t.min(),
                     t.sizeX(), t.sizeY(), t.sizeZ(), light);
             int id = region.id;
+            Builders out = new Builders();
             POOL.execute(() -> {
                 try {
-                    DONE.add(build(id, cell, gen, map, getter));
+                    DONE.add(build(id, cell, gen, map, getter, out));
                 } catch (Throwable e) {
                     LOGGER.error("Miniature mesh job failed for region {} cell {}", id, cell, e);
-                    DONE.add(new Result(id, cell, gen, Map.of(), Map.of(), Map.of(), null, List.of(), 0, 0, 0, 0, 0, 0));
+                    DONE.add(new Result(id, cell, gen, Map.of(), Map.of(), Map.of(), null, out.memory(), 0, 0, 0, 0, 0, 0));
                 }
             });
         }
     }
 
-    /** Worker thread: meshes all blocks of one cell. */
-    private static Result build(int regionId, long cell, int gen, Long2ObjectOpenHashMap<InteriorSnapshot.Section> map, RegionBlockGetter getter) {
+    /**
+     * M53b: the buffer builders of one cell job (blocks, mesh plants, swaying plants; one per layer), made on the render thread
+     * while the level is drawn. Iris gives a builder of the block format its extended vertex format only when it is made while
+     * the level renders with a shader pack ({@code ImmediateState.isRenderingLevel}, a global flag); made on the mesher threads,
+     * most cells got the plain format at random and the terrain pipeline (extended format with a pack) read them with the wrong
+     * stride: garbage triangles that the pack's deferred passes turned into large black rectangles (NeoForge 26.1.2 / 26.2).
+     */
+    private static final class Builders {
+        final Map<ChunkSectionLayer, ByteBufferBuilder> memory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        final Map<ChunkSectionLayer, BufferBuilder> builders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        final Map<ChunkSectionLayer, ByteBufferBuilder> plantMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        final Map<ChunkSectionLayer, BufferBuilder> plantBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        final Map<ChunkSectionLayer, ByteBufferBuilder> swayMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        final Map<ChunkSectionLayer, BufferBuilder> swayBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+
+        Builders() {
+            for (ChunkSectionLayer layer : LAYERS) {
+                add(memory, builders, layer, 1 << 16);
+                add(plantMemory, plantBuilders, layer, 1 << 12);
+                add(swayMemory, swayBuilders, layer, 1 << 12);
+            }
+        }
+
+        private static void add(Map<ChunkSectionLayer, ByteBufferBuilder> mems, Map<ChunkSectionLayer, BufferBuilder> bbs, ChunkSectionLayer layer, int size) {
+            ByteBufferBuilder mem = new ByteBufferBuilder(size);
+            mems.put(layer, mem);
+            bbs.put(layer, new BufferBuilder(mem, com.mojang.blaze3d.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK));
+        }
+
+        List<ByteBufferBuilder> memory() {
+            List<ByteBufferBuilder> all = new ArrayList<>(memory.values());
+            all.addAll(plantMemory.values());
+            all.addAll(swayMemory.values());
+            return all;
+        }
+    }
+
+    /** Worker thread: meshes all blocks of one cell into the builders made for it on the render thread. */
+    private static Result build(int regionId, long cell, int gen, Long2ObjectOpenHashMap<InteriorSnapshot.Section> map, RegionBlockGetter getter,
+                                Builders out) {
         long t0 = System.nanoTime();
         // M52c (26.1): the block render dispatcher is gone; the models come from the model manager
         var models = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
         RandomSource rand = RandomSource.create();
         PoseStack ps = new PoseStack();
-        Map<ChunkSectionLayer, ByteBufferBuilder> memory = new java.util.EnumMap<>(ChunkSectionLayer.class);
-        Map<ChunkSectionLayer, BufferBuilder> builders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> builders = out.builders;
         // M21.1: the mesh plants into buffers of their own (left out while the tank shows their meshes)
-        Map<ChunkSectionLayer, ByteBufferBuilder> plantMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
-        Map<ChunkSectionLayer, BufferBuilder> plantBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> plantBuilders = out.plantBuilders;
         // M22.1: the swaying water plants into buffers of their own, and their quads once more for drawing them swaying
-        Map<ChunkSectionLayer, ByteBufferBuilder> swayMemory = new java.util.EnumMap<>(ChunkSectionLayer.class);
-        Map<ChunkSectionLayer, BufferBuilder> swayBuilders = new java.util.EnumMap<>(ChunkSectionLayer.class);
+        Map<ChunkSectionLayer, BufferBuilder> swayBuilders = out.swayBuilders;
         MiniatureSway.Data swayData = null;
         MiniatureSway.Capture capture = null;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -346,16 +382,9 @@ public final class MiniatureRenderer {
                         capture.footY = MiniatureSway.footOf(getter, lx, ly, lz);
                         capture.phase = (float) ((Math.floorMod(lx, 64) * 0.37 + Math.floorMod(lz, 64) * 0.61) % (Math.PI * 2));
                     }
-                    Map<ChunkSectionLayer, ByteBufferBuilder> mems = plant ? plantMemory : sway ? swayMemory : memory;
                     Map<ChunkSectionLayer, BufferBuilder> bbs = plant ? plantBuilders : sway ? swayBuilders : builders;
-                    java.util.function.Function<ChunkSectionLayer, com.mojang.blaze3d.vertex.VertexConsumer> buffers = rt -> {
-                        ChunkSectionLayer layer = LAYERS.contains(rt) ? rt : ChunkSectionLayer.TRANSLUCENT;
-                        return bbs.computeIfAbsent(layer, k -> {
-                            ByteBufferBuilder mem = new ByteBufferBuilder(plant || sway ? 1 << 12 : 1 << 16);
-                            mems.put(k, mem);
-                            return new BufferBuilder(mem, com.mojang.blaze3d.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
-                        });
-                    };
+                    java.util.function.Function<ChunkSectionLayer, com.mojang.blaze3d.vertex.VertexConsumer> buffers =
+                            rt -> bbs.get(LAYERS.contains(rt) ? rt : ChunkSectionLayer.TRANSLUCENT);
                     if (sway) {
                         // the swaying copy (everything but the translucent parts, drawn with their sway)
                         MiniatureSway.Capture cap = capture;
@@ -397,9 +426,7 @@ public final class MiniatureRenderer {
                 quads += d.drawState().vertexCount() / 4;
             }
         }
-        List<ByteBufferBuilder> mem = new ArrayList<>(memory.values());
-        mem.addAll(plantMemory.values());
-        mem.addAll(swayMemory.values());
+        List<ByteBufferBuilder> mem = out.memory();
         return new Result(regionId, cell, gen, data, plantData, swayStatic, swayData != null && swayData.quads() > 0 ? swayData : null, mem, quads,
                 blocks, System.nanoTime() - t0, cx * 32, cy * 32 - InteriorRegion.BASE_Y, cz * 32);
     }
@@ -480,7 +507,15 @@ public final class MiniatureRenderer {
         java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
         for (ChunkSectionLayer rt : layers) {
             List<MiniatureMesh.Buffer> l = new ArrayList<>();
-            for (MiniatureMesh m : region.meshes.values()) {
+            com.mojang.blaze3d.vertex.VertexFormat format = rt.vertexFormat();
+            for (var me : region.meshes.long2ObjectEntrySet()) {
+                MiniatureMesh m = me.getValue();
+                if (!m.formatMatches(rt, format)) {
+                    // M53b: built in another vertex format (a shader pack switched on or off meanwhile): not drawn, rebuilt once
+                    if (!m.formatStale) region.dirtyCells.add(me.getLongKey());
+                    m.formatStale = true;
+                    continue;
+                }
                 MiniatureMesh.Buffer vb = m.buffers.get(rt);
                 MiniatureMesh.Buffer pb = noPlants ? null : m.plantBuffers.get(rt);
                 MiniatureMesh.Buffer sb = noSway ? null : m.swayBuffers.get(rt);
@@ -572,7 +607,14 @@ public final class MiniatureRenderer {
         java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
         for (ChunkSectionLayer rt : layers) {
             List<MiniatureMesh.Buffer> l = new ArrayList<>();
-            for (MiniatureMesh m : region.meshes.values()) {
+            com.mojang.blaze3d.vertex.VertexFormat format = rt.vertexFormat();
+            for (var me : region.meshes.long2ObjectEntrySet()) {
+                MiniatureMesh m = me.getValue();
+                if (!m.formatMatches(rt, format)) {
+                    if (!m.formatStale) region.dirtyCells.add(me.getLongKey());
+                    m.formatStale = true;
+                    continue;
+                }
                 for (MiniatureMesh.Buffer vb : new MiniatureMesh.Buffer[]{m.buffers.get(rt), m.plantBuffers.get(rt), m.swayBuffers.get(rt)}) {
                     if (vb != null) l.add(vb);
                 }

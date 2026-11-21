@@ -43,11 +43,13 @@ checked from all sides.
   checks on the flank), and the belly checks doubled at random. The same edge slivers are gone from every small animal (shrimp,
   snails, crayfish, frog) and every terrarium animal.
 - Alarm waypoints come back after the player leaves and joins again while the alarm is still on.
+- **Iris shader packs:** views with a tank miniature showed large black rectangles (NeoForge). The miniature's mesh builders
+  only got Iris's extended vertex format when they happened to be made while the level was drawn; most were plain, and the
+  terrain pipeline read them with the wrong stride. The builders are now made on the render thread during the level render,
+  and a mesh in another vertex format than its pipeline takes is never drawn (it is rebuilt).
 
 ### Known gaps (Minecraft 26.2)
 - FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.2 build; the Vulkan backend of 26.2 itself is tested.
-- Iris + Complementary on NeoForge 26.2: views with a large tank miniature can show black areas (not on Fabric with the same
-  Iris, Sodium and shader pack, not without a shader pack); still being looked into.
 
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.2)
 
