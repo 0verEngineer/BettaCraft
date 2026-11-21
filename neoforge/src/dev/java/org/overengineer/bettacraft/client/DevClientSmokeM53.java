@@ -455,7 +455,9 @@ final class DevClientSmokeM53 {
     // ------------------------------------------------------------------ the small animals in a tank
 
     private void critters() {
-        then(1, () -> server(p -> {
+        // at the tank first: a critter update for a chunk the client has not loaded yet is dropped
+        then(1, () -> look(base.getX() + 1.5, base.getY() + 0.6, base.getZ() - 1.3, 0F, 15F));
+        then(40, () -> server(p -> {
             ServerLevel level = p.serverLevel();
             TankData t = tank.getTank();
             t.critters().clear();
