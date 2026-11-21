@@ -100,7 +100,7 @@ final class LangM14 {
         a.accept("tooltip.bettacraft.algae_scraper.sneak", "Sneak + right-click: the whole side");
         a.accept("tooltip.bettacraft.tank_net.water", "In open water: catches shrimp, snails and frogs into an empty fish bag, now and then a plant from the bottom");
         a.accept("gui.bettacraft.tank.stocking", "Animals: %s + %s small (stocking %s of %s)");
-        a.accept("gui.bettacraft.critters.page", "Small animals (%s)");
+        a.accept("gui.bettacraft.critters.page", "Small animals %s"); // M56: fits its button
         a.accept("gui.bettacraft.critters.page_fish", "Fish & frogs (%s)");
         a.accept("gui.bettacraft.critters.take", "Into bag");
         a.accept("gui.bettacraft.critters.take_tooltip", "One animal into a fish bag (the best grade; with Shift the worst; with Ctrl a full bag)");

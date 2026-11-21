@@ -35,7 +35,7 @@ A low, bushy plant of the shade with dark leaves netted with pale veins; it wilt
 
 * **Shears** on a wild plant on the floor of jungles: 100 % per cut (config `features.terrariumPlants.wildPlants`).
 * **Wandering trader** (usual offers): 2 for 2 emeralds; one of 9 in this offer.
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 3 cutting(s) per trim; it also spreads by itself (side shoots).
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).

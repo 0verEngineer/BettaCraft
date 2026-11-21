@@ -33,6 +33,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM54 m54;
     /** M55: -Psmoketestm55 (wild carpets, wild plants, container icons). */
     private static DevClientSmokeM55 m55;
+    private static DevClientSmokeM56 m56;
     private static int stage;
     private static BookTour book;
 
@@ -187,6 +188,15 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 LOGGER.info("[smoketest] fabric client book test finished");
                 LOGGER.info("[smoketest] PASSED");
                 mc.stop();
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m56only")) {
+                LOGGER.info("[smoketest] fabric client in world: M56 scene");
+                m56 = new DevClientSmokeM56();
+                stage = 23;
+            }
+            if (stage == 23) {
+                if (m56.tick()) stage = 4;
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m55only")) {
