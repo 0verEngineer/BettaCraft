@@ -78,7 +78,15 @@ final class DevSmokeM18 {
             if (err != null) throw new IllegalStateException("M18: " + s.id() + " not inserted: " + err.getString());
         }
         LOGGER.info("[smoketest] M18 tank at {}: red light bar, a fry, a juvenile, a subadult and an adult", p);
+        setupTime = level.getGameTime();
     }
+
+    /**
+     * M55: the animals of this run. The bettas of an earlier run in the saved dev world can load after the set-up (their
+     * entities load later than the chunk on a busy machine) and doubled the stocking; the check sends them away first (born
+     * before this run's set-up).
+     */
+    private static long setupTime;
 
     static void check(ServerLevel level, BlockPos base) {
         BlockPos p = tankPos(base);
@@ -89,6 +97,12 @@ final class DevSmokeM18 {
             if (!s.is(ModBlocks.TANK_LIGHT.get()) || s.getValue(TankLightBlock.COLOR) != DyeColor.RED || !s.getValue(TankLightBlock.LIT)) {
                 throw new IllegalStateException("M18: light segment " + x + " is " + s);
             }
+        }
+        AABB box = new AABB(p).expandTowards(3, 3, 2).inflate(2);
+        for (Entity e : level.getEntities((Entity) null, box, e -> e instanceof org.overengineer.bettacraft.entity.betta.BettaEntity b
+                && b.getBettaData().bornTime() < setupTime - 1)) {
+            LOGGER.info("[smoketest] M18 an animal of an earlier run loaded late: {}", e);
+            e.discard();
         }
         int[] lights = TankCare.lights(level, c.getTank());
         int light = TankPlants.light(level, c);
