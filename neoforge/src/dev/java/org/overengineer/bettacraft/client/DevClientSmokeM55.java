@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.client;
 
-import com.mojang.datafixers.util.Pair;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -14,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,8 +21,6 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * M55 client smoke ({@code -Psmoketestm55}, NeoForge and Fabric, background window; parts by
  * {@code -Pm55parts=carpets,plants,icons}, default all; {@code -Pm55tag=<name>} names the carpet shots, e.g. the design):
  * <ul>
- *     <li>carpets: the wild carpets (the four looks, grown, trimmed and a loose patch) in a river pool from above, close and
+ *     <li>carpets: the wild carpets (the four looks, grown, trimmed and a loose patch) in a pool from above, close and
  *     low, each look close up, and a tank on the bank with the same four species planted inside for comparison;</li>
  *     <li>plants: every wild plant of the world (each growth form and look, grown and trimmed, the floating plants and the
  *     wild corals) in a pool, an overview and a close-up per growth form;</li>
@@ -147,7 +143,7 @@ final class DevClientSmokeM55 {
     /** A pool 14 x 9 in a river: the four looks grown (3 x 2 each), trimmed behind them, loose patches; a tank on the bank. */
     private void carpetPool(ServerPlayer p) {
         ServerLevel level = p.level();
-        BlockPos b = pool(level, Biomes.RIVER, home, new Block[]{Blocks.SAND, Blocks.GRAVEL, Blocks.SAND, Blocks.DIRT});
+        BlockPos b = pool(level, home, new Block[]{Blocks.SAND, Blocks.GRAVEL, Blocks.SAND, Blocks.DIRT});
         for (int i = 0; i < CARPETS.length; i++) {
             for (int dx = 0; dx < 3; dx++) for (int dz = 0; dz < 2; dz++) {
                 level.setBlock(b.offset(1 + i * 3 + dx, -1, 2 + dz), carpet(CARPETS[i], false), 2);
@@ -225,10 +221,10 @@ final class DevClientSmokeM55 {
         then(40, () -> shot("plants_floating"));
     }
 
-    /** A pool 18 x 15 in a swamp: a row per growth form (each look grown and trimmed side by side), a row of wild corals, floating plants. */
+    /** A pool 18 x 15 : a row per growth form (each look grown and trimmed side by side), a row of wild corals, floating plants. */
     private void plantPool(ServerPlayer p) {
         ServerLevel level = p.level();
-        BlockPos b = pool(level, Biomes.SWAMP, home.offset(600, 0, 0), new Block[]{Blocks.SAND, Blocks.MUD, Blocks.GRAVEL, Blocks.CLAY});
+        BlockPos b = pool(level, home.offset(40, 0, 0), new Block[]{Blocks.SAND, Blocks.MUD, Blocks.GRAVEL, Blocks.CLAY});
         // rocks for the epiphytes and mosses
         Map<WildPlantKind, Integer> col = new java.util.EnumMap<>(WildPlantKind.class);
         StringBuilder made = new StringBuilder();
@@ -271,13 +267,14 @@ final class DevClientSmokeM55 {
         LOGGER.info("[smoketest] M55 plant pool at {}: {}", b, made);
     }
 
-    /** A pool (2 blocks of water, 18 x 15) in the nearest biome of that kind, its bed of the given blocks; returns its corner. */
-    private static BlockPos pool(ServerLevel level, net.minecraft.resources.ResourceKey<Biome> biome, BlockPos from, Block[] bed) {
-        Pair<BlockPos, Holder<Biome>> found = level.findClosestBiome3d(h -> h.is(biome), from.atY(62), 6400, 32, 64);
-        BlockPos at = found == null ? from.offset(0, 0, 200) : found.getFirst();
-        BlockPos b = new BlockPos(at.getX() - 9, level.getSeaLevel() - 1, at.getZ() - 7);
+    /**
+     * A pool (2 blocks of water, 18 x 15) at sea level next to {@code from} (near the start: its chunks are loaded on the client
+     * at once; a pool in a far biome showed empty chunks), its bed of the given blocks; returns its corner.
+     */
+    private static BlockPos pool(ServerLevel level, BlockPos from, Block[] bed) {
+        BlockPos b = new BlockPos(from.getX() - 9, level.getSeaLevel() - 1, from.getZ() + 10);
         for (int x = -4; x < 24; x++) for (int z = -6; z < 20; z++) {
-            for (int y = -4; y < 16; y++) level.setBlock(b.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+            for (int y = -4; y < 32; y++) level.setBlock(b.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
             boolean water = x >= 0 && x < 18 && z >= 1 && z < 16;
             for (int y = -4; y < -2; y++) level.setBlock(b.offset(x, y, z), Blocks.DIRT.defaultBlockState(), 2);
             if (water) {
@@ -290,7 +287,6 @@ final class DevClientSmokeM55 {
                 level.setBlock(b.offset(x, 0, z), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
             }
         }
-        LOGGER.info("[smoketest] M55 {} at {} (found {})", biome, at, found != null);
         return b;
     }
 
