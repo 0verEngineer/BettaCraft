@@ -22,6 +22,8 @@ checked from all sides.
 - A **gear button** right of the interior button in the overview opens Bettacraft's client settings (on Fabric the same
   screen is now also in Mod Menu).
 - Advancement and quest "Open House": add a user to a tank.
+- `/bettacraft interior cleanup` (operators): what the interiors of removed tanks take on the disk; `... cleanup run` saves the
+  world and cleans up at once. Switch for the automatic clean-up: `features.interior.cleanup`.
 - `tools/assetgen/check_textures.py`: checks every entity texture against its model (holes, faces outside the texture,
   paint of a neighbouring face, stretched pixels) and the block and item models and textures.
 - Development: `-Pperf` (performance mods: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons, More
@@ -40,6 +42,13 @@ checked from all sides.
   checks on the flank), and the belly checks doubled at random. The same edge slivers are gone from every small animal (shrimp,
   snails, crayfish, frog) and every terrarium animal.
 - Alarm waypoints come back after the player leaves and joins again while the alarm is still on.
+- **The tank interior dimension no longer grows without end on the disk.** Every broken, grown, split, merged or turned tank
+  left its old interior in the region files for ever (18 GB in a long-used test world). Now a removed interior is deleted
+  after the next save of the world (its chunks while the game runs, its region files at the next start; a log line with the
+  count and size first), and its number goes to the next new tank. Existing worlds are cleaned up the same way when they are
+  loaded. Empty interior chunks (only air) are no longer stored: a small tank takes 12 to 30 chunks (50 to 120 KB) instead
+  of 90 to 130 (360 to 530 KB), the interior dimension of the server smoke test 1.3 MB instead of 7.3 MB. The interiors of
+  standing, packed and travelling tanks are never touched; an old interior whose walls are still there is kept.
 
 ## [1.42.0-beta.1] - 2026-11-17
 
