@@ -108,7 +108,8 @@ public final class DevSmokeUpgrade {
                 Path file = root.resolve(STAGE == 1 ? REFERENCE : SNAPSHOT);
                 if (!Files.exists(file)) throw new IllegalStateException("missing " + file);
                 expected = JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
-                legacy = legacyVersion(expected.has("version") ? expected.get("version").getAsString() : "");
+                refVersion = expected.has("version") ? expected.get("version").getAsString() : "";
+                legacy = legacyVersion(refVersion);
                 sameVersion = expected.has("version") && expected.get("version").getAsString().equals(org.overengineer.bettacraft.platform.Platform.get().modVersion(BettaCraft.MOD_ID));
                 Set<Long> chunks = new HashSet<>();
                 for (JsonElement e : expected.getAsJsonArray("tanks")) {
@@ -149,8 +150,8 @@ public final class DevSmokeUpgrade {
                 }
                 if (STAGE == 2 && legacy) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
                 // M40: old multiblock filters need their guards now (M52: not in a world this version saved itself, the
-                // Fabric save/load test)
-                if (!sameVersion) m40Check(level);
+                // Fabric save/load test; M53c: nor in a world of 1.32 or later, whose filters have them: the ports' references)
+                if (!sameVersion && olderThan(refVersion, 1, 32)) m40Check(level);
                 if (!problems.isEmpty()) {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
@@ -190,6 +191,20 @@ public final class DevSmokeUpgrade {
     }
 
     // ------------------------------------------------------------------ M40 old multiblock filters
+
+    /** The version that saved the reference world. */
+    private static String refVersion = "";
+
+    /** Whether a version is older than {@code major.minor} (unknown: older). */
+    static boolean olderThan(String v, int major, int minor) {
+        String[] p = v.split("[.-]");
+        try {
+            int a = Integer.parseInt(p[0]), b = p.length > 1 ? Integer.parseInt(p[1]) : 0;
+            return a < major || a == major && b < minor;
+        } catch (NumberFormatException e) {
+            return true;
+        }
+    }
 
     /** Whether the reference version is of the 1.13 line or older (before M22: the checks for later changes apply). */
     static boolean legacyVersion(String v) {
