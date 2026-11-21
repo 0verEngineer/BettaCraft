@@ -148,9 +148,12 @@ final class DevClientSmokeM222 {
             }
             boolean salt = s.kind() == Kind.CORAL || (s.kind() == Kind.FISH) || (s.kind() == Kind.CRITTER && ((CritterSpecies) s.what()).marine());
             int size = s.kind() == Kind.CRITTER ? 1 : 2;
-            TankBlockEntity c = tank(level, p, min, size, salt ? Salinity.SEA : 0F, s.kind() != Kind.FLOATING || true);
+            // M56: a terrarium plant stands in a dry terrarium on soil (the dry ones on sand)
+            boolean land = s.kind() == Kind.PLANT && ((PlantSpecies) s.what()).land();
+            TankBlockEntity c = tank(level, p, min, size, salt ? Salinity.SEA : 0F, s.kind() != Kind.FLOATING || true, !land);
             InteriorRegion reg = InteriorManager.ensureRegion(level, c);
-            BlockState floor = salt ? Blocks.SAND.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
+            BlockState floor = salt ? Blocks.SAND.defaultBlockState() : land ? (((PlantSpecies) s.what()).habitat() == PlantSpecies.Habitat.DRY
+                    ? Blocks.SAND : Blocks.DIRT).defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
             for (int x = 0; x < reg.sizeX(); x++)
                 for (int z = 0; z < reg.sizeZ(); z++) Substrate.set(in, new BlockPos(reg.originX() + x, InteriorRegion.FLOOR_Y, reg.originZ() + z), floor, false);
             int cx = reg.sizeX() / 2, cz = reg.sizeZ() / 2;
@@ -171,7 +174,9 @@ final class DevClientSmokeM222 {
                     int z = cz + 3;
                     if (sp.marine()) {
                         mound(in, reg, cx, z, 5, 5, ModBlocks.REEF_ROCK.get().defaultBlockState(), ModBlocks.LIVE_ROCK.get().defaultBlockState());
-                    } else if (sp.form() == PlantSpecies.Form.EPIPHYTE || sp.form() == PlantSpecies.Form.MOSS) {
+                    } else if (sp.land() && sp.form() == PlantSpecies.Form.EPIPHYTE) {
+                        mound(in, reg, cx, z, 3, 3, Blocks.OAK_LOG.defaultBlockState(), Blocks.OAK_LOG.defaultBlockState()); // M56: a piece of wood
+                    } else if (sp.form() == PlantSpecies.Form.EPIPHYTE || sp.form() == PlantSpecies.Form.MOSS && !sp.land()) {
                         mound(in, reg, cx, z, 4, 4, Blocks.STONE.defaultBlockState(), Blocks.ANDESITE.defaultBlockState());
                     }
                     int y = 0;
@@ -250,11 +255,11 @@ final class DevClientSmokeM222 {
         return e;
     }
 
-    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int size, float salt, boolean light) {
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int size, float salt, boolean light, boolean water) {
         for (int y = 0; y < size; y++) for (int z = 0; z < size; z++) for (int x = 0; x < size; x++) level.setBlockAndUpdate(min.offset(x, y, z), ModBlocks.TANK.get().defaultBlockState());
         for (int y = 0; y < size; y++) for (int z = 0; z < size; z++) for (int x = 0; x < size; x++) TankMultiblock.onTankBlockAdded(level, min.offset(x, y, z), null);
         TankBlockEntity c = TankMultiblock.getController(level, min);
-        TankInteractions.changeWater(level, c, (long) size * size * size * 1000, salt);
+        if (water) TankInteractions.changeWater(level, c, (long) size * size * size * 1000, salt);
         c.getTank().setFront(Direction.NORTH);
         c.getTank().setSignVisible(false);
         c.getTank().setOwner(p.getUUID());

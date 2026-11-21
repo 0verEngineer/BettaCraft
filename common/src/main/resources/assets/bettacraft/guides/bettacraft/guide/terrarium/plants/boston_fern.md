@@ -35,7 +35,7 @@ A lush fern with long, arching fronds of many small leaflets; it likes shade and
 
 * **Shears** on a wild plant on the floor of jungles: 100 % per cut (config `features.terrariumPlants.wildPlants`).
 * **Shears** on a wild plant in lush caves: 100 % per cut (config `features.terrariumPlants.wildPlants`).
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting(s) per trim.
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).

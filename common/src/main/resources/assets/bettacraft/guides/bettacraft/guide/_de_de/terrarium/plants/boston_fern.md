@@ -35,7 +35,7 @@ Ein üppiger Farn mit langen, überhängenden Wedeln aus vielen kleinen Fiederbl
 
 * **Schere** an einem wilden Pflanzenbestand auf dem Boden von Dschungeln: 100 % pro Schnitt (Config `features.terrariumPlants.wildPlants`).
 * **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.terrariumPlants.wildPlants`).
-* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 24 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Stecklinge**: eine Schere an einer gewachsenen Pflanze gibt 1 Steckling(e) pro Schnitt.
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../../settings.md)).

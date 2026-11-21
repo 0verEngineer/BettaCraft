@@ -103,13 +103,11 @@ public final class AquaristTrades {
         out.add(sell("food_or_floating", 1, food, 2, 16));
         out.add(new Offer("buys_bettas", 1, true, List::of, () -> buy(ModItems.BETTA_BUCKET.get(), 2, 10)));
         // ---------------------------------------------------------------- apprentice
+        // M56: the terrarium plants in the same offer (a third of it)
         List<Product> plants = new ArrayList<>();
-        for (PlantSpecies p : PLANTS) plants.add(new Product(Target.plant(p), 2, 2, 1.0 / PLANTS.size(), null));
+        for (PlantSpecies p : PLANTS) plants.add(new Product(Target.plant(p), 2, 2, 2.0 / 3 / PLANTS.size(), null));
+        for (PlantSpecies p : TERRA_PLANTS) plants.add(new Product(Target.plant(p), 2, 2, 1.0 / 3 / TERRA_PLANTS.size(), null));
         out.add(sell("plants", 2, plants, 5, 12));
-        // M56: terrarium plants
-        List<Product> terra = new ArrayList<>();
-        for (PlantSpecies p : TERRA_PLANTS) terra.add(new Product(Target.plant(p), 2, 2, 1.0 / TERRA_PLANTS.size(), null));
-        out.add(sell("terrarium_plants", 2, terra, 5, 12));
         out.add(new Offer("buys_fish_bags", 2, true, List::of, () -> buy(ModItems.FISH_BAG.get(), 2, 15)));
         // ---------------------------------------------------------------- journeyman
         List<Product> animals = List.of(new Product(Target.critter(CritterSpecies.NEOCARIDINA), 2, 4, 0.4, null),
