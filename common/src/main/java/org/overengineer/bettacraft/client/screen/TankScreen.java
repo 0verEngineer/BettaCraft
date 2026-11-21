@@ -617,6 +617,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             b.setTooltip(Tooltip.create(mod ? modeTooltip(v) : Component.translatable("message.bettacraft.tank.locked")));
         }
         enterButton.active = mod; // M53: a viewer stays out
+        configButton.active = true; // M53: everyone's own client settings
         enterButton.setTooltip(Tooltip.create(interiorTooltip(v))); // M53: what the old interior tab showed
         thinButton.active = mod && v.plants.total - v.plants.counts[org.overengineer.bettacraft.tank.plants.FloatingPlantType.LILY_PAD.ordinal()] > 0;
         thinButton.setTooltip(Tooltip.create(Component.translatable(mod ? "gui.bettacraft.plants.thin_tooltip" : "message.bettacraft.tank.locked")));
@@ -1798,12 +1799,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     /** M53: the gear of the overview: Bettacraft's client config (back to this menu when it closes). */
     private void openClientConfig() {
         net.minecraft.client.gui.screens.Screen s = org.overengineer.bettacraft.platform.client.ClientPlatform.get().clientConfigScreen(this);
-        if (s != null && minecraft != null) minecraft.setScreen(s);
+        if (s == null) org.slf4j.LoggerFactory.getLogger(TankScreen.class).warn("No client config screen of Bettacraft found");
+        if (s != null && minecraft != null) minecraft.gui.setScreen(s);
     }
 
     /** Dev smoke test only (M53): opens the client config like the gear button (false when there is none). */
     public boolean openClientConfigForTest() {
-        if (!configButton.visible || !configButton.active) return false;
+        if (!configButton.visible || !configButton.active) {
+            org.slf4j.LoggerFactory.getLogger(TankScreen.class).warn("gear: visible {} active {}", configButton.visible, configButton.active);
+            return false;
+        }
         configButton.onPress(new net.minecraft.client.input.KeyEvent(0, 0, 0));
         return true;
     }
