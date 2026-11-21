@@ -25,6 +25,12 @@ public final class VersionGaps {
             "aether_ii", "productivebees", "thaumaturge", "mahoutsukai", "the_bumblezone", // zoo
             "fintastic"); // aquarium mods of the dev runtime (M52-final: Better Fish Tanks has builds, found on CurseForge)
 
+    /**
+     * M53: the map and render mods of the client test groups (maps, shaders, perf, vulkanmod) without a build for this
+     * version (Modrinth, CurseForge and the FTB maven checked on 2026-11-21): FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.3 build; the Vulkan backend of 26.3 itself is tested.
+     */
+    public static final Set<String> RENDER_NO_BUILD = Set.of("ftbchunks", "modernfix", "vulkanmod");
+
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
         return mods.length > 0 && Arrays.stream(mods).allMatch(NO_BUILD::contains);

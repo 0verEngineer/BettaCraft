@@ -4,6 +4,49 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.43.0-beta.1] - 2026-11-21 (Minecraft 26.3)
+
+Tank users and alarm waypoints you can switch in the menu, waypoints in Xaero's Minimap and FTB Chunks, and every animal texture
+checked from all sides.
+
+### Added
+- **Users tab** in the tank menu (it replaces the interior tab): the owner (who built the tank) lists other players as
+  **caretakers** (may do everything the owner may: care, settings, going in, the users and the lock) or **viewers** (see the
+  menu, change nothing, cannot go into the tank). Everybody else is ruled by the lock as before; players of the owner's
+  FTB Teams party count as caretakers. Switch: `features.equipment.tankUsers`.
+- **Alarm waypoints per tank and per user:** in the users tab every user switches his own waypoint of the tank (on by default
+  for the owner, off for the other users), and the owner and the caretakers switch them off for all of its users.
+- **Map mods:** the alarm waypoints also go into **Xaero's Minimap** (and its World Map) and **FTB Chunks**, besides
+  JourneyMap; the client config has a switch per map mod (`map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`), for packs
+  with several of them.
+- A **gear button** right of the interior button in the overview opens Bettacraft's client settings (on Fabric the same
+  screen is now also in Mod Menu).
+- Advancement and quest "Open House": add a user to a tank.
+- `tools/assetgen/check_textures.py`: checks every entity texture against its model (holes, faces outside the texture,
+  paint of a neighbouring face, stretched pixels) and the block and item models and textures.
+- Development: `-Pperf` (performance mods: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons, More
+  Culling and others), `-Pshaders` and `-Pmaps` on both loaders, and a client smoke scene for the users tab, the map mods, the
+  tank interior and every animal from six sides (`-Psmoketestm53`).
+
+### Changed
+- **Alarm waypoints go only to the owner and the listed users** of a tank, no longer to every player within 128 blocks.
+- The client option `map.showAlarmWaypoints` is now called "Alarm waypoints of all tanks".
+- The interior button of the overview is a little narrower; its tooltip shows what the interior tab showed (scale and size,
+  blocks in the miniature, substrate, heaters and filters inside).
+- The lock also lets the caretakers change a locked tank; "only the owner" actions are open to the caretakers too.
+
+### Fixed
+- **Tank interior on Minecraft 26.x:** the walls and the floor were black and darkened towards the edges (the dimension had
+  no sky light factor and a black ambient light since 26.1: without a day timeline these attributes default to 0); it is
+  bright again, as on 1.21.1.
+- Corn snake: one side and the belly showed slivers of the wrong paint along the edges (the back saddles on the belly, the belly
+  checks on the flank), and the belly checks doubled at random. The same edge slivers are gone from every small animal (shrimp,
+  snails, crayfish, frog) and every terrarium animal.
+- Alarm waypoints come back after the player leaves and joins again while the alarm is still on.
+
+### Known gaps (Minecraft 26.3)
+- FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.3 build; the Vulkan backend of 26.3 itself is tested.
+
 ## [1.42.0-beta.1] - 2026-11-20 (Minecraft 26.3)
 
 The same version for **Minecraft 26.3**, on NeoForge and Fabric: `bettacraft-neoforge-26.3-<version>.jar` and

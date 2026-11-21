@@ -64,7 +64,7 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   procedural looks) comes by and offers his work; refused, the next one comes days later after another breeding. Hired, he
   lives in a bed near a breeding basin, takes an emerald (or some bread) a day from a chest there and really walks to the
   tanks: feeding from the chest, water changes from the reservoir, algae, trimming plants (cuttings into the chest),
-  moving young into a rearing tank and warnings in the chat (JourneyMap waypoints); six tasks with three levels each in his
+  moving young into a rearing tank and warnings in the chat (map waypoints); six tasks with three levels each in his
   menu. Multiplayer: each player has his own; he works only at his employer's tanks, those of the FTB Teams party and
   those released for him in the tank menu, never at locked ones. Without wage he slows down and leaves after three days.
 
@@ -79,8 +79,8 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   aquarium shows the result as a live miniature; several players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, overcrowding, water quality, oxygen,
   sickness and recovery; a tank log tells you what happened. Tank menu with overview, inhabitants and their
-  genotype, breeding tab with Punnett squares, water, devices, plants, interior and log; name sign, owner lock and a
-  break protection.
+  genotype, breeding tab with Punnett squares, water, devices, plants, users and log; name sign, owner lock, a
+  break protection and tank users (owner, caretakers, viewers) with their own alarm waypoint switches.
 
 ### Plants and corals
 - **49 aquarium plants** (Java fern, six Anubias, ten Bucephalandras, Java, Christmas and flame moss, Riccia,
@@ -223,7 +223,7 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
 - 327 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
   (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
   Modonomicon book (1.21.11 and 26.x), converted at build time. 70 advancements, information pages in JEI (and REI and EMI
-  on Fabric), tooltips, and an FTB Quests chapter of 112 quests for modpacks.
+  on Fabric), tooltips, and an FTB Quests chapter of 113 quests for modpacks.
 - Every feature has its own switch (`features.<group>.enabled` and sub-switches, 136 in all): off, it loses its recipes,
   trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
 - Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
@@ -294,7 +294,7 @@ CHANGELOG section):
 | [Create](https://modrinth.com/mod/create), Create Aeronautics | aquariums travel on contraptions, trains and airships with their animals, cared for on the road (live on airships), the water sloshing; rotation drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker; a drive adapter on a tank (or a shaft on its cabinet) powers every device of the tank with real stress; Display Links show tank values; Create pipes fill aquariums |
 | Applied Energistics 2, Refined Storage | buses and interfaces move food, ingredients, products and filter media; pattern providers and autocrafters feed the food maker and the crucible |
 | [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge), [KubeJS](https://modrinth.com/mod/kubejs) | a quest chapter "Bettacraft" and events for scripts (animal born, animal died, monitor alarm), in `bettacraft-modpack-<version>.zip` of the release |
-| [JourneyMap](https://modrinth.com/mod/journeymap) | a waypoint at a tank whose monitor alarm went off, and at the tanks the hired aquarist warns about |
+| [JourneyMap](https://modrinth.com/mod/journeymap), [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) / [World Map](https://modrinth.com/mod/xaeros-world-map), [FTB Chunks](https://www.curseforge.com/minecraft/mc-mods/ftb-chunks-forge) | a waypoint at a tank whose monitor alarm went off, and at the tanks the hired aquarist warns about, for the owner and the listed users of the tank (switch per tank, per user and per map mod) |
 | FTB Teams | the hired aquarist also works at the tanks of his employer's party (`hiredAquarist.ftbTeams`) |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
 | Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the filter pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
@@ -362,7 +362,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 112 quests (1.41.0; 33 before 1.36.0) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 113 quests (1.43.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
@@ -521,7 +521,11 @@ Leave optional mods out of the NeoForge dev runtime with `-PnoJade`, `-PnoJei`, 
 Probe and WTHIT with `-Ptop` and `-Pwthit` (config `compat.overlayProvider` picks which overlay shows the Bettacraft
 lines; AUTO = only the first of Jade, WTHIT, The One Probe). Fabric has its own dev mod groups in `run-fabric/<group>`:
 `-Poverlays` (Jade, JEI, WTHIT, The One Probe), `-Prei`, `-Pemi`, `-Pfabricintegration` (Refined Storage, JourneyMap,
-Better Fish Tanks, Naturalist, Fish of Thieves, Critters and Companions) and `-Pquests`. Textures, models and the logo come
+Better Fish Tanks, Naturalist, Fish of Thieves, Critters and Companions) and `-Pquests`. On both loaders `-Pmaps` (JourneyMap,
+Xaero's Minimap and World Map, FTB Chunks), `-Pshaders` (Sodium, Iris, Sodium Extra; Complementary Reimagined in the run's
+`shaderpacks`) and `-Pperf` (ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons, More Culling and other
+render mods of the ATM packs) put the map, shader and performance mods into the run; `-Psmoketestm53` checks the users tab,
+the waypoints in every map mod, the tank interior and every animal from six sides with them. Textures, models and the logo come
 from the procedural generator in `tools/assetgen` (Python, see its README); the generated files are committed, so the
 Gradle build does not need Python. The Fabric handbook is converted at build time from the GuideME pages (`tools/guide`).
 
