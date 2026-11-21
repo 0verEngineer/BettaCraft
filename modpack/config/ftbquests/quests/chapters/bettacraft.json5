@@ -1505,6 +1505,19 @@
 			title: "{\"translate\":\"quest.bettacraft.aquarist_hired.title\"}",
 			x: 11.0,
 			y: 1.1
+		},
+		{
+			dependencies: ["5C6C5D793BB24640"],
+			description: ["{\"translate\":\"quest.bettacraft.shared_tank.desc\"}"],
+			id: "5B30791AA5DE43DC",
+			rewards: [{ id: "250FD48DF8898A8F", type: "xp", xp: 25 }],
+			tags: ["bettacraft_feature_equipment__tankusers"],
+			tasks: [
+				{ advancement: "bettacraft:shared_tank", criterion: "", id: "6AAB10D5FC7421E5", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.shared_tank.title\"}",
+			x: 0.2,
+			y: 1.8
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],
