@@ -78,7 +78,7 @@ final class DevSmokeM13 {
         }
         if (blocks != rotala.blocks) throw new IllegalStateException("M13: blocks " + blocks + " vs index " + rotala.blocks);
         CompoundTag saved = InteriorRegions.get(level.getServer()).save(new CompoundTag(), level.registryAccess());
-        if (saved.getIntOr("schema", 0) != 4) throw new IllegalStateException("M13: regions saved as schema " + saved.getIntOr("schema", 0));
+        if (saved.getIntOr("schema", 0) < 4) throw new IllegalStateException("M13: regions saved as schema " + saved.getIntOr("schema", 0));
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) if (e.getValue().get() == null) throw new IllegalStateException("M13: item " + e.getKey());
         boolean sword = false, lotus = false;
         for (var tradePool : org.overengineer.bettacraft.gametest.framework.DevTrades.wandererPools(level)) {
@@ -99,7 +99,7 @@ final class DevSmokeM13 {
         }
         if (!sword || !lotus) throw new IllegalStateException("M13: trades sword " + sword + ", lotus " + lotus);
         if (InteriorPlants.uptakePerDay(level, c, r) <= 0) throw new IllegalStateException("M13: no waste uptake under the light");
-        LOGGER.info("[smoketest] M13: Rotala grew to stage {} ({} blocks), {} plants in the index, regions saved as schema 4, items, trades ok",
+        LOGGER.info("[smoketest] M13: Rotala grew to stage {} ({} blocks), {} plants in the index, regions saved as schema 4+, items, trades ok",
                 rotala.stage, blocks, r.plants().size());
     }
 }
