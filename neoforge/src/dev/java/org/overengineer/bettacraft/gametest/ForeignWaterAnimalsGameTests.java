@@ -244,6 +244,15 @@ public final class ForeignWaterAnimalsGameTests {
             ForeignBreeding.setFemale(f, true);
             ForeignBreeding.setFemale(m, false);
             LivingEntity mother = ForeignTerrariumGameTests.layEggs(h, c, box);
+            // M52.5: the clutch incubates at the nest temperature from the start (the eggs she carried had progressed at 28 °C for a
+            // random time, now and then into the thermosensitive period: a male at 33 °C)
+            if (mother != null) {
+                net.minecraft.nbt.CompoundTag clutch = org.overengineer.bettacraft.platform.Platform.get().persistentData(mother)
+                        .getCompoundOrEmpty(ForeignBreeding.BROOD).getCompoundOrEmpty("nest");
+                clutch.putDouble("progress", 0d);
+                clutch.remove("tsp_sum");
+                clutch.remove("tsp_days");
+            }
             h.assertTrue(mother == f, "the female lays the eggs");
             c.getTank().setClimate(new Climate.State(nest, nest, 40, 75, 5, 0));
             List<LivingEntity> before = ofType(h, c, box);
