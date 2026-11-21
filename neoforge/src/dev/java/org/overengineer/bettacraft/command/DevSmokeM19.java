@@ -64,6 +64,7 @@ final class DevSmokeM19 {
 
     static void setup(ServerLevel level, BlockPos base) {
         BlockPos p = tankPos(base);
+        idsFrom = new net.minecraft.world.entity.Marker(net.minecraft.world.entity.EntityType.MARKER, level).getId();
         // beyond the spawn chunks: keep the chunks ticking (the animals live only in ticking chunks)
         for (int cx = (p.getX() - 2) >> 4; cx <= (p.getX() + 9) >> 4; cx++) for (int cz = (p.getZ() - 2) >> 4; cz <= (p.getZ() + 4) >> 4; cz++) level.setChunkForced(cx, cz, true);
         TankBlockEntity c = tank(level, p, 3, 2, 2, 27F);
@@ -92,7 +93,15 @@ final class DevSmokeM19 {
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), false, wg);
         LOGGER.info("[smoketest] M19 tanks at {}: 6 cardinals, 6 sterbai corys, an albino bristlenose, a clutch, a breeding box; guppies {}", p,
                 TankmateBreeding.tankmates(level, g.getTank()).size());
+        idsTo = new net.minecraft.world.entity.Marker(net.minecraft.world.entity.EntityType.MARKER, level).getId();
     }
+
+    /**
+     * M55: the fish of this run have the entity ids handed out during the set-up. Those of an earlier run in the saved dev
+     * world load with the forced chunks after the set-up (it could not send them away; they added up run by run): the check
+     * sends them away first.
+     */
+    private static int idsFrom, idsTo;
 
     private static void spawn(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female,
                               org.overengineer.bettacraft.tank.TankWaterVolume w) {
@@ -109,6 +118,12 @@ final class DevSmokeM19 {
         TankBlockEntity c = TankMultiblock.getController(level, p);
         if (c == null) throw new IllegalStateException("M19: tank gone");
         TankData t = c.getTank();
+        for (TankmateEntity m : TankmateBreeding.tankmates(level, t)) {
+            if (m.getId() < idsFrom || m.getId() > idsTo) {
+                LOGGER.info("[smoketest] M19 a fish of an earlier run loaded late: {}", m);
+                m.discard();
+            }
+        }
         List<TankmateEntity> mates = TankmateBreeding.tankmates(level, t);
         long cardinals = mates.stream().filter(m -> m.species() == TankmateSpecies.CARDINAL_TETRA).count();
         long corys = mates.stream().filter(m -> m.species() == TankmateSpecies.STERBAI_CORY && m.isAdult()).count();
