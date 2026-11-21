@@ -102,7 +102,7 @@ public final class InteriorManager {
         ServerLevel interior = interiorLevel(player.level().getServer());
         if (interior == null || isInterior(player.level())) return;
         ModAttachments.INTERIOR_RETURN.set(player, new InteriorReturn(player.level().dimension(), player.position(),
-                player.getYRot(), player.getXRot(), region.id()));
+                player.getYRot(), player.getXRot(), region));
         BlockPos target = entryPoint(region);
         while (target.getY() < InteriorRegion.BASE_Y + region.sizeY() - 2 && !interior.getBlockState(target).isAir()) target = target.above();
         player.teleportTo(interior, target.getX() + 0.5, target.getY(), target.getZ() + 0.5, java.util.Set.of(), player.getYRot(), player.getXRot(), false);
@@ -170,6 +170,13 @@ public final class InteriorManager {
         TankData t = controller.getTank();
         InteriorRegions regions = InteriorRegions.get(tankLevel.getServer());
         InteriorRegion r = regions.get(t.regionId());
+        if (r != null && !ownedBy(r, tankLevel, t)) {
+            // M53c: the id was handed out again (this tank comes from a world saved before its region was removed)
+            LOGGER.warn("Tank {} at {} points to interior region {} of tank {} at {}: it gets a new region", t.id(), t.anchor(), r.id(),
+                    r.tankId(), r.tankMin());
+            t.setRegionId(-1);
+            r = null;
+        }
         if (r == null) {
             r = allocate(tankLevel, t);
             controller.markTankChanged();
@@ -178,6 +185,27 @@ public final class InteriorManager {
             regions.setDirty();
         }
         return r;
+    }
+
+    /**
+     * M53c: whether the region belongs to this tank. Region ids are reused, so a tank of a world saved before its region was
+     * removed (a crash) could point to the region of another tank now: it does not when the region has another tank id AND
+     * another tank position (a tank keeps its id when it is moved, grown or split; a region follows its tank's position).
+     */
+    public static boolean ownedBy(InteriorRegion r, ServerLevel tankLevel, TankData t) {
+        if (r.tankId() == null || t.id() == null || r.tankId().equals(t.id())) return true;
+        return r.tankDimension() == tankLevel.dimension() && r.tankMin().equals(t.anchor());
+    }
+
+    /** M53c: on the first tick of a loaded controller: a region id that belongs to another tank now is let go. */
+    public static void checkRegionOwner(ServerLevel tankLevel, TankBlockEntity controller) {
+        TankData t = controller.getTank();
+        InteriorRegion r = InteriorRegions.get(tankLevel.getServer()).get(t.regionId());
+        if (r == null || ownedBy(r, tankLevel, t)) return;
+        LOGGER.warn("Tank {} at {} points to interior region {} of tank {} at {}: it lets it go", t.id(), t.anchor(), r.id(), r.tankId(),
+                r.tankMin());
+        t.setRegionId(-1);
+        controller.markTankChanged();
     }
 
     /** Returns the tank's region, allocating and building it synchronously on first use (tests, commands). */
@@ -195,13 +223,19 @@ public final class InteriorManager {
         InteriorRegion r;
         for (int skipped = 0; ; skipped++) {
             r = regions.allocate(t.sizeX() * s, t.sizeY() * s, t.sizeZ() * s, s, tankLevel.dimension(), t.anchor(), t.id(), t.owner(), cells);
-            if (skipped >= MAX_SKIPPED_REGIONS || !usedBefore(tankLevel.getServer(), r)) break;
+            boolean reused = regions.lastReused;
+            if (skipped >= MAX_SKIPPED_REGIONS || !usedBefore(tankLevel.getServer(), r)) {
+                // M53c: a reused id: the list saying it is taken is on the disk before its interior is (a crash in between must not
+                // find it free and delete the new interior at the next start)
+                if (reused) regions.saveNow(tankLevel.getServer());
+                break;
+            }
             // M42 part b: the region list (saved data, written at autosave and shutdown) is older than the interior chunks (written
             // whenever they unload), e.g. after a crash: this id was handed out before and its interior is still there. A new tank
-            // must not take over that old interior (its blocks, plants, chests); the id stays used.
+            // must not take over that old interior (its blocks, plants, chests); the id stays used (M53c: and is never deleted).
             LOGGER.warn("Interior region {} was used before (its chunks are still in the interior dimension; the region list is older "
                     + "than the world, e.g. after a crash): skipping it", r.id());
-            regions.remove(r.id());
+            regions.keep(r.id());
         }
         t.setRegionId(r.id());
         return r;
@@ -329,8 +363,16 @@ public final class InteriorManager {
             InteriorWorldOps.resendChunks(level, touched);
         }
         InteriorRegions.get(server).remove(r.id());
-        InteriorSync.forget(r.id());
+        forgetCaches(r.id());
         InteriorPreparation.cancel(r.id());
+    }
+
+    /** M53c: the caches by region id (the id is handed out again later). */
+    static void forgetCaches(int id) {
+        InteriorSync.forget(id);
+        org.overengineer.bettacraft.tankmates.TankmateSpots.forget(id);
+        org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.forget(id);
+        OCCUPANTS.remove(id);
     }
 
     /** Benchmark helper: removes a region that belongs to no tank. */
@@ -609,7 +651,7 @@ public final class InteriorManager {
             p.teleportTo(level, to.originX() + lx, InteriorRegion.BASE_Y + ly, to.originZ() + lz, java.util.Set.of(), p.getYRot(), p.getXRot(), false);
             InteriorReturn ret = ModAttachments.INTERIOR_RETURN.get(p);
             if (ret.isSet()) {
-                ModAttachments.INTERIOR_RETURN.set(p, new InteriorReturn(ret.dimension(), ret.position(), ret.yRot(), ret.xRot(), to.id()));
+                ModAttachments.INTERIOR_RETURN.set(p, new InteriorReturn(ret.dimension(), ret.position(), ret.yRot(), ret.xRot(), to));
             }
         }
     }
@@ -675,6 +717,17 @@ public final class InteriorManager {
 
     static void clearOccupants() {
         OCCUPANTS.clear();
+    }
+
+    /**
+     * Whether the player stands in a region of the interior dimension, and (M53c) in the one they went into: region ids are
+     * reused, so a player who logged out in an interior that was removed meanwhile could stand in another tank's interior.
+     */
+    public static boolean inOwnRegion(ServerPlayer player) {
+        InteriorRegion r = regionAt(player.server, player.blockPosition());
+        if (r == null) return false;
+        InteriorReturn ret = ModAttachments.INTERIOR_RETURN.get(player);
+        return !ret.isSet() || ret.belongsTo(r);
     }
 
     /** Region a position of the interior dimension belongs to (shell included), or null. */
