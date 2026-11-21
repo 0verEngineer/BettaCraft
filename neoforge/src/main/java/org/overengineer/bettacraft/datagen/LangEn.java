@@ -56,6 +56,7 @@ final class LangEn {
         LangM49.addAll(a); // M49: sump, refugium, calcium reactor; the brackish water theme
         LangM50.addAll(a); // M50: care on the road (Create contraptions, airships), sloshing water
         LangM51.addAll(a); // M51: the hired aquarist
+        LangM53.addAll(a); // M53: tank users, alarm waypoint switches, map mods
         LangM33c.addAll(a); // M33 part c
         LangM33d.addAll(a); // M33 part d
         LangM331.addAll(a); // M33.1
@@ -168,7 +169,6 @@ final class LangEn {
         a.accept("message.bettacraft.interior.preparing", "Preparing the tank interior...");
         a.accept("message.bettacraft.interior.preparing_progress", "Preparing the tank interior... %s%%");
         a.accept("message.bettacraft.interior.no_sleep", "You cannot sleep or set a spawn point inside a tank");
-        a.accept("gui.bettacraft.tab.interior", "Interior");
         a.accept("gui.bettacraft.interior.size", "Interior %sx%sx%s, scale %s (1 block = %s px)");
         a.accept("gui.bettacraft.interior.not_built", "Not created yet - enter it once to build");
         a.accept("gui.bettacraft.interior.blocks", "Blocks shown: %s of max. %s");
@@ -246,7 +246,7 @@ final class LangEn {
         a.accept("message.bettacraft.tank.not_formed", "This tank is not ready (its controller is not loaded)");
         a.accept("message.bettacraft.tank.info", "Tank %sx%sx%s | %s/%s mB | scale %s | %s");
         a.accept("message.bettacraft.tank.locked", "This tank is locked by its owner");
-        a.accept("message.bettacraft.tank.only_owner", "Only the owner can lock or unlock this tank");
+        a.accept("message.bettacraft.tank.only_owner", "Only the owner or a caretaker of this tank can do that");
         a.accept("message.bettacraft.tank.too_little_water", "Fill the tank to at least %s%% before adding animals");
         a.accept("message.bettacraft.tank.keep_water", "The inhabitants need at least %s%% water in the tank");
         a.accept("message.bettacraft.tank.rejected", "%s cannot live in this tank");
@@ -332,7 +332,7 @@ final class LangEn {
         a.accept("gui.bettacraft.tank.name_hint", "Name (shown on the sign)");
         a.accept("gui.bettacraft.tank.locked", "Locked");
         a.accept("gui.bettacraft.tank.unlocked", "Unlocked");
-        a.accept("gui.bettacraft.tank.lock_tooltip", "Owner: %s. When locked, only the owner and operators can change this tank.");
+        a.accept("gui.bettacraft.tank.lock_tooltip", "Owner: %s. When locked, only the owner, the caretakers (users tab) and operators can change this tank; other players can only look.");
         a.accept("gui.bettacraft.tank.no_owner", "nobody");
         a.accept("gui.bettacraft.tank.sign_on", "Sign: on");
         a.accept("gui.bettacraft.tank.sign_off", "Sign: off");

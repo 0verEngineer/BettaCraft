@@ -37,7 +37,7 @@ import org.overengineer.bettacraft.tank.menu.TankActions;
 import org.overengineer.bettacraft.tank.menu.TankMenu;
 import org.overengineer.bettacraft.tank.menu.TankView;
 
-/** Tank menu screen with the tabs Overview, Inhabitants, Breeding, Water (M9), Plants (M12), Interior (M3) and Log (PLAN 8). */
+/** Tank menu screen with the tabs Overview, Inhabitants, Breeding, Water (M9), Plants (M12), Users (M53, was Interior) and Log (PLAN 8). */
 public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final ResourceLocation TEXTURE = BettaCraft.id("textures/gui/tank.png");
     private static final int TEXT = 0x404040;
@@ -50,7 +50,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private static final int ENTER_X = 176;
 
     /** Order of the constants = index of {@link #selectTabForTest}; the buttons are drawn in a different order. */
-    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, INTERIOR, WATER, PLANTS, DEVICES, CLIMATE, SUMP }
+    /** M53: USERS took the place (and the index) of the old interior tab. */
+    private enum Tab { OVERVIEW, INHABITANTS, BREEDING, LOG, USERS, WATER, PLANTS, DEVICES, CLIMATE, SUMP }
 
     /** Scale of the tab labels: seven tabs fit into the 236 px of the menu (also the longer German labels). */
     /** Scale of the tab labels: 0.75, smaller when the eight labels (M23) would not fit otherwise (set in init). */
@@ -62,7 +63,18 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     private Tab tab = Tab.OVERVIEW;
     private final List<AbstractWidget> overview = new ArrayList<>();
     private final List<AbstractWidget> inhabitants = new ArrayList<>();
-    private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabInterior, tabWater, tabPlants, logFilterButton, interiorEnterButton;
+    private Button tabOverview, tabInhabitants, tabBreeding, tabLog, tabUsers, tabWater, tabPlants, logFilterButton;
+    /** M53: the gear right of the interior button: the client config of Bettacraft (alarm waypoints of all tanks, map mods ...). */
+    private Button configButton;
+    /** M53: the users tab. */
+    private final List<AbstractWidget> usersWidgets = new ArrayList<>();
+    private Button userRoleButton, userRemoveButton, myWaypointButton, newRoleButton, addUserButton, allWaypointsButton, othersButton;
+    private EditBox addUserBox;
+    @Nullable
+    private UUID selectedUser;
+    private org.overengineer.bettacraft.tank.TankUsers.Role newRole = org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER;
+    private int userScroll;
+    private static final int USER_ROWS = 5;
     /** M23: tab Devices (oxygen, aeration, lights with dimmer and timer). */
     private Button tabDevices;
     /** M31: the climate tab, only for a terrarium or paludarium (the tabs are laid out again when that changes). */
@@ -182,7 +194,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         java.util.List<Tab> tabList = new java.util.ArrayList<>(java.util.List.of(Tab.OVERVIEW, Tab.INHABITANTS, Tab.BREEDING, Tab.WATER, Tab.DEVICES));
         if (sumpTabShown) tabList.add(Tab.SUMP); // M49
         if (climateTabShown) tabList.add(Tab.CLIMATE);
-        tabList.addAll(java.util.List.of(Tab.PLANTS, Tab.INTERIOR, Tab.LOG));
+        tabList.addAll(java.util.List.of(Tab.PLANTS, Tab.USERS, Tab.LOG));
         Tab[] order = tabList.toArray(new Tab[0]);
         String[] keys = new String[order.length];
         for (int i = 0; i < order.length; i++) keys[i] = order[i].name().toLowerCase(java.util.Locale.ROOT);
@@ -211,7 +223,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 case CLIMATE -> tabClimate = tabs[i];
                 case SUMP -> tabSump = tabs[i];
                 case PLANTS -> tabPlants = tabs[i];
-                case INTERIOR -> tabInterior = tabs[i];
+                case USERS -> tabUsers = tabs[i];
                 case LOG -> tabLog = tabs[i];
             }
         }
@@ -228,8 +240,6 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         devices.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> lightSetting(TankActions.SET_LIGHT_ON, 30)).bounds(x + 96, y + 114, 14, 13).build()));
         devices.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> lightSetting(TankActions.SET_LIGHT_OFF, -30)).bounds(x + 168, y + 114, 14, 13).build()));
         devices.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> lightSetting(TankActions.SET_LIGHT_OFF, 30)).bounds(x + 218, y + 114, 14, 13).build()));
-        interiorEnterButton = addRenderableWidget(new FitButton(x + 176, y + 124, 62, 14, Component.translatable("gui.bettacraft.tank.enter"),
-                b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
         thinButton = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.plants.thin"), b -> send(TankActions.THIN_PLANTS, 0, "", null))
                 .bounds(x + 166, y + 124, 72, 14).build());
         plantPageButton = addRenderableWidget(new FitButton(x + 92, y + 124, 72, 14, Component.empty(), b -> {
@@ -273,9 +283,12 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 .bounds(x + 168, y + 77, 14, 12).build());
         plusButton = addRenderableWidget(Button.builder(Component.literal("+"), b -> changeTarget(1))
                 .bounds(x + 224, y + 77, 14, 12).build());
-        enterButton = addRenderableWidget(new FitButton(x + ENTER_X, y + 123, 238 - ENTER_X, 14, Component.translatable("gui.bettacraft.tank.enter"),
+        // M53: the interior button is a little narrower; right of it the gear opens the client config
+        enterButton = addRenderableWidget(new FitButton(x + ENTER_X, y + 123, 238 - ENTER_X - 16, 14, Component.translatable("gui.bettacraft.tank.enter"),
                 b -> send(TankActions.ENTER_INTERIOR, 0, "", null)));
-        overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton));
+        configButton = addRenderableWidget(Button.builder(Component.literal("⚙"), b -> openClientConfig()).bounds(x + 224, y + 123, 14, 14).build());
+        configButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.tank.client_config")));
+        overview.addAll(List.of(signButton, signPosButton, frontButton, minusButton, plusButton, enterButton, configButton));
         // M33.1: the tank type (automatic, aquarium, paludarium, terrarium) left of the target temperature, again in the climate tab
         modeButton = addRenderableWidget(new FitButton(x + 116, y + 77, 49, 12, Component.empty(), b -> cycleMode()));
         overview.add(modeButton);
@@ -326,6 +339,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 b -> send(TankActions.REMOVE_CLUTCHES, 0, "", null)));
         boxButton = addRenderableWidget(new FitButton(x + 150, y + 124, 88, 14, Component.translatable("gui.bettacraft.breeding.tm.box_out"),
                 b -> send(TankActions.REMOVE_BREEDING_BOX, 0, "", null)));
+        initUsers(x, y);
         sentName = null;
         updateWidgets();
         if (pendingName != null && nameBox != null) {
@@ -373,8 +387,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** Dev smoke test only: the tab buttons from left to right (to check that they fit). */
     public List<Button> tabButtonsForTest() {
-        if (tabClimate != null) return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabClimate, tabPlants, tabInterior, tabLog);
-        return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabPlants, tabInterior, tabLog);
+        if (tabClimate != null) return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabClimate, tabPlants, tabUsers, tabLog);
+        return List.of(tabOverview, tabInhabitants, tabBreeding, tabWater, tabDevices, tabPlants, tabUsers, tabLog);
     }
 
     /** M23: dimmer (+-10 %, shift +-1 %) and the timer times (+-30 min, shift +-60 min). */
@@ -527,7 +541,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         tabInhabitants.active = tab != Tab.INHABITANTS;
         tabBreeding.active = tab != Tab.BREEDING;
         tabLog.active = tab != Tab.LOG;
-        tabInterior.active = tab != Tab.INTERIOR;
+        tabUsers.active = tab != Tab.USERS;
         tabWater.active = tab != Tab.WATER;
         tabPlants.active = tab != Tab.PLANTS;
         tabDevices.active = tab != Tab.DEVICES;
@@ -543,7 +557,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         plantPageButton.visible = tab == Tab.PLANTS;
         plantPageButton.setX(leftPos + (aquaticPage ? 166 : 92));
         plantPageButton.setMessage(Component.translatable(aquaticPage ? "gui.bettacraft.plants.page_floating" : "gui.bettacraft.plants.page_aquatic"));
-        interiorEnterButton.visible = tab == Tab.INTERIOR;
+        updateUsers(v);
         logFilterButton.visible = tab == Tab.LOG;
         logFilterButton.setMessage(Component.translatable("gui.bettacraft.log.filter." + logFilter.name().toLowerCase(java.util.Locale.ROOT)));
         if (v == null) {
@@ -559,7 +573,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         boolean mod = v.canModify;
         nameBox.setEditable(mod);
         nameBox.active = mod;
-        lockButton.active = v.isOwner || v.ownerName.isEmpty() || minecraft.player.hasPermissions(2);
+        lockButton.active = v.users.canManage; // M53: owner, caretakers, OP (or nobody owns it)
         lockButton.setMessage(Component.translatable(v.locked ? "gui.bettacraft.tank.locked" : "gui.bettacraft.tank.unlocked"));
         protectButton.visible = v.protectionFeature && tab == Tab.OVERVIEW;
         protectButton.active = lockButton.active;
@@ -593,8 +607,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     .withStyle(setting == org.overengineer.bettacraft.terrarium.TankModeSetting.AUTO ? ChatFormatting.WHITE : ChatFormatting.AQUA));
             b.setTooltip(Tooltip.create(mod ? modeTooltip(v) : Component.translatable("message.bettacraft.tank.locked")));
         }
-        enterButton.active = mod || !v.locked;
-        interiorEnterButton.active = mod;
+        enterButton.active = mod; // M53: a viewer stays out
+        enterButton.setTooltip(Tooltip.create(interiorTooltip(v))); // M53: what the old interior tab showed
         thinButton.active = mod && v.plants.total - v.plants.counts[org.overengineer.bettacraft.tank.plants.FloatingPlantType.LILY_PAD.ordinal()] > 0;
         thinButton.setTooltip(Tooltip.create(Component.translatable(mod ? "gui.bettacraft.plants.thin_tooltip" : "message.bettacraft.tank.locked")));
 
@@ -673,10 +687,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
         if (key == GLFW.GLFW_KEY_ESCAPE) return super.keyPressed(key, scan, mods);
-        for (EditBox box : List.of(nameBox, fishNameBox)) {
+        for (EditBox box : List.of(nameBox, fishNameBox, addUserBox)) {
             if (box.isVisible() && box.isFocused()) {
                 if (box == fishNameBox && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && renameButton.active) {
                     renameButton.onPress();
+                    return true;
+                }
+                if (box == addUserBox && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) && addUserButton.active) {
+                    addUserButton.onPress();
                     return true;
                 }
                 box.keyPressed(key, scan, mods);
@@ -708,6 +726,16 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     return true;
                 }
             }
+        } else if (tab == Tab.USERS && v != null) {
+            int lx = leftPos + 10, ly = topPos + USERS_LIST_Y;
+            if (mx >= lx && mx < lx + 228 && my >= ly && my < ly + USER_ROWS * ROW_H) {
+                int idx = userScroll + (int) ((my - ly) / ROW_H) - 1; // row 0 is the owner
+                if (idx >= 0 && idx < v.users.list.size()) {
+                    selectedUser = v.users.list.get(idx).id();
+                    updateWidgets();
+                    return true;
+                }
+            }
         } else if (tab == Tab.INHABITANTS && v != null) {
             int lx = leftPos + 10, ly = topPos + 20;
             if (mx >= lx && mx < lx + 100 && my >= ly && my < ly + LIST_ROWS * ROW_H) {
@@ -732,6 +760,10 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             }
             if (tab == Tab.INHABITANTS) {
                 listScroll = Mth.clamp(listScroll - (int) Math.signum(sy), 0, Math.max(0, v.inhabitants.size() - LIST_ROWS));
+                return true;
+            }
+            if (tab == Tab.USERS) {
+                userScroll = Mth.clamp(userScroll - (int) Math.signum(sy), 0, Math.max(0, v.users.list.size() + 1 - USER_ROWS));
                 return true;
             }
             if (tab == Tab.LOG) {
@@ -791,7 +823,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             }
             case BREEDING -> drawBreeding(g, v);
             case LOG -> drawLog(g, v, mouseX - leftPos, mouseY - topPos);
-            case INTERIOR -> drawInterior(g, v, mouseX - leftPos, mouseY - topPos);
+            case USERS -> drawUsers(g, v, mouseX - leftPos, mouseY - topPos);
             case WATER -> {
                 drawWater(g, v);
                 // M24: what the nitrate means (hover over its line)
@@ -1582,50 +1614,192 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         return c.append(ok ? " ✔" : " ✘").withStyle(ok ? ChatFormatting.GREEN : ChatFormatting.RED);
     }
 
-    private void drawInterior(GuiGraphics g, TankView v, int mx, int my) {
+    // ------------------------------------------------------------------ M53: users tab
+
+    /** y of the first row of the users list (row 0 is the owner). */
+    private static final int USERS_LIST_Y = 31;
+
+    private void initUsers(int x, int y) {
+        usersWidgets.clear();
+        userRoleButton = addRenderableWidget(new FitButton(x + 10, y + 88, 74, 14, Component.empty(), b -> {
+            TankView v = view();
+            TankView.User u = v == null ? null : selectedUser(v);
+            if (u != null) send(TankActions.USERS_ROLE, (u.role() == org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER
+                    ? org.overengineer.bettacraft.tank.TankUsers.Role.VIEWER : org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER).ordinal(), "", u.id());
+        }));
+        userRemoveButton = addRenderableWidget(new FitButton(x + 86, y + 88, 50, 14, Component.translatable("gui.bettacraft.users.remove"), b -> {
+            TankView v = view();
+            TankView.User u = v == null ? null : selectedUser(v);
+            if (u != null) send(TankActions.USERS_REMOVE, 0, "", u.id());
+        }));
+        myWaypointButton = addRenderableWidget(new FitButton(x + 138, y + 88, 100, 14, Component.empty(), b -> {
+            TankView v = view();
+            if (v != null) send(TankActions.WAYPOINT_OWN, v.users.myWaypoint ? 0 : 1, "", null);
+        }));
+        addUserBox = new EditBox(font, x + 11, y + 106, 95, 12, Component.translatable("gui.bettacraft.users.name"));
+        addUserBox.setMaxLength(16);
+        addUserBox.setHint(Component.translatable("gui.bettacraft.users.name_hint").withStyle(ChatFormatting.DARK_GRAY));
+        addRenderableWidget(addUserBox);
+        newRoleButton = addRenderableWidget(new FitButton(x + 110, y + 105, 64, 14, Component.empty(), b -> {
+            newRole = newRole == org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER ? org.overengineer.bettacraft.tank.TankUsers.Role.VIEWER
+                    : org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER;
+            updateWidgets();
+        }));
+        addUserButton = addRenderableWidget(new FitButton(x + 176, y + 105, 62, 14, Component.translatable("gui.bettacraft.users.add"), b -> {
+            String n = addUserBox.getValue().strip();
+            if (n.isEmpty()) return;
+            send(TankActions.USERS_ADD, newRole.ordinal(), n, null);
+            addUserBox.setValue("");
+        }));
+        allWaypointsButton = addRenderableWidget(new FitButton(x + 10, y + 123, 112, 14, Component.empty(), b -> {
+            TankView v = view();
+            if (v != null) send(TankActions.WAYPOINT_ALL, v.users.waypointsAll ? 0 : 1, "", null);
+        }));
+        othersButton = addRenderableWidget(new FitButton(x + 124, y + 123, 114, 14, Component.empty(), b -> send(TankActions.TOGGLE_LOCK, 0, "", null)));
+        usersWidgets.addAll(List.of(userRoleButton, userRemoveButton, myWaypointButton, addUserBox, newRoleButton, addUserButton, allWaypointsButton, othersButton));
+    }
+
+    @Nullable
+    private TankView.User selectedUser(TankView v) {
+        for (TankView.User u : v.users.list) if (u.id().equals(selectedUser)) return u;
+        return null;
+    }
+
+    private void updateUsers(@Nullable TankView v) {
+        boolean shown = tab == Tab.USERS;
+        for (AbstractWidget w : usersWidgets) w.visible = shown;
+        if (v == null) {
+            for (AbstractWidget w : usersWidgets) w.active = false;
+            return;
+        }
+        TankView.Users u = v.users;
+        boolean manage = u.canManage, list = u.feature;
+        if (selectedUser != null && selectedUser(v) == null) selectedUser = null;
+        TankView.User sel = selectedUser(v);
+        boolean self = sel != null && minecraft != null && minecraft.player != null && sel.id().equals(minecraft.player.getUUID());
+        userRoleButton.visible = shown && list;
+        userRemoveButton.visible = shown && list;
+        addUserBox.visible = shown && list;
+        newRoleButton.visible = shown && list;
+        addUserButton.visible = shown && list;
+        userRoleButton.active = manage && sel != null;
+        userRoleButton.setMessage(sel == null ? Component.translatable("gui.bettacraft.users.role_button_none")
+                : Component.translatable("gui.bettacraft.users.role_button", Component.translatable(sel.role().translationKey())));
+        userRoleButton.setTooltip(Tooltip.create(Component.translatable(manage ? "gui.bettacraft.users.role_tooltip" : "message.bettacraft.tank.only_owner")));
+        userRemoveButton.active = sel != null && (manage || self);
+        userRemoveButton.setTooltip(Tooltip.create(Component.translatable(self && !manage ? "gui.bettacraft.users.leave_tooltip" : "gui.bettacraft.users.remove_tooltip")));
+        boolean isUser = u.myRole != org.overengineer.bettacraft.tank.TankUsers.Role.OTHER;
+        myWaypointButton.active = u.waypointFeature && isUser;
+        myWaypointButton.setMessage(Component.translatable(u.myWaypoint ? "gui.bettacraft.users.my_waypoint_on" : "gui.bettacraft.users.my_waypoint_off")
+                .withStyle(u.myWaypoint && u.waypointsAll ? ChatFormatting.GREEN : ChatFormatting.WHITE));
+        myWaypointButton.setTooltip(Tooltip.create(Component.translatable(!u.waypointFeature ? "message.bettacraft.users.waypoints_off"
+                : isUser ? "gui.bettacraft.users.my_waypoint_tooltip" : "message.bettacraft.users.not_user")));
+        addUserBox.active = manage;
+        addUserBox.setEditable(manage);
+        newRoleButton.active = manage;
+        newRoleButton.setMessage(Component.translatable("gui.bettacraft.users.new_role", Component.translatable(newRole.translationKey())));
+        newRoleButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.users.new_role_tooltip")));
+        addUserButton.active = manage && !addUserBox.getValue().isBlank();
+        addUserButton.setTooltip(Tooltip.create(Component.translatable(manage ? "gui.bettacraft.users.add_tooltip" : "message.bettacraft.tank.only_owner")));
+        allWaypointsButton.active = manage && u.waypointFeature;
+        allWaypointsButton.setMessage(Component.translatable(u.waypointsAll ? "gui.bettacraft.users.all_waypoints_on" : "gui.bettacraft.users.all_waypoints_off")
+                .withStyle(u.waypointsAll ? ChatFormatting.WHITE : ChatFormatting.GRAY));
+        allWaypointsButton.setTooltip(Tooltip.create(Component.translatable(!u.waypointFeature ? "message.bettacraft.users.waypoints_off"
+                : manage ? "gui.bettacraft.users.all_waypoints_tooltip" : "message.bettacraft.tank.only_owner")));
+        othersButton.active = manage;
+        othersButton.setMessage(Component.translatable(v.locked ? "gui.bettacraft.users.others_view" : "gui.bettacraft.users.others_change")
+                .withStyle(v.locked ? ChatFormatting.GOLD : ChatFormatting.WHITE));
+        othersButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.users.others_tooltip")));
+    }
+
+    private void drawUsers(GuiGraphics g, TankView v, int mx, int my) {
+        TankView.Users u = v.users;
         int x = 11, y = 20;
-        line(g, Component.translatable("gui.bettacraft.interior.size", v.interiorX, v.interiorY, v.interiorZ, v.scale, 16 / v.scale), x, y, TEXT_LIGHT);
-        y += 11;
+        Component me = Component.translatable(u.myRole.translationKey()).withStyle(ChatFormatting.AQUA);
+        line(g, Component.translatable("gui.bettacraft.users.header", me), x, y, TEXT_LIGHT);
+        // the rows: the owner first, then the listed users
+        List<Object[]> rows = new ArrayList<>();
+        rows.add(new Object[]{v.ownerName.isEmpty() ? Component.translatable("gui.bettacraft.tank.no_owner").getString() : v.ownerName,
+                org.overengineer.bettacraft.tank.TankUsers.Role.OWNER, u.ownerWaypoint, u.ownerOnline, null});
+        if (u.feature) {
+            for (TankView.User e : u.list) {
+                rows.add(new Object[]{e.name().isEmpty() ? e.id().toString().substring(0, 8) : e.name(), e.role(), e.waypoint(), e.online(), e.id()});
+            }
+        }
+        int ly = USERS_LIST_Y;
+        g.fill(9, ly - 1, 239, ly + USER_ROWS * ROW_H, 0x30000000);
+        for (int i = 0; i < USER_ROWS && userScroll + i < rows.size(); i++) {
+            Object[] r = rows.get(userScroll + i);
+            int ry = ly + i * ROW_H;
+            boolean sel = r[4] != null && r[4].equals(selectedUser);
+            if (sel) g.fill(9, ry - 1, 239, ry + ROW_H - 1, 0x60FFFFFF);
+            var role = (org.overengineer.bettacraft.tank.TankUsers.Role) r[1];
+            int color = role == org.overengineer.bettacraft.tank.TankUsers.Role.OWNER ? 0xFFD060
+                    : role == org.overengineer.bettacraft.tank.TankUsers.Role.CARETAKER ? 0x80E080 : 0xA0C8FF;
+            g.fill(12, ry + 3, 15, ry + 6, (Boolean) r[3] ? 0xFF40D040 : 0xFF707070); // online dot
+            fitLine(g, Component.literal((String) r[0]), 18, ry, color, 98);
+            fitLine(g, Component.translatable(role.translationKey()), 120, ry, TEXT_LIGHT, 62);
+            if (u.waypointFeature) {
+                boolean on = (Boolean) r[2] && u.waypointsAll;
+                fitLine(g, Component.translatable(on ? "gui.bettacraft.users.waypoint_on" : "gui.bettacraft.users.waypoint_off"), 186, ry, on ? 0x80E080 : 0x909090, 50);
+            }
+        }
+        if (!u.feature) {
+            line(g, Component.translatable("gui.bettacraft.users.feature_off").withStyle(ChatFormatting.GRAY), x, ly + 2 * ROW_H, 0xA0A0A0);
+        } else if (u.list.isEmpty()) {
+            line(g, Component.translatable("gui.bettacraft.users.empty").withStyle(ChatFormatting.GRAY), x, ly + ROW_H, 0xA0A0A0);
+        }
+        // hover over the role column: what the roles may do
+        if (mx >= 118 && mx < 184 && my >= ly && my < ly + USER_ROWS * ROW_H) {
+            pendingTooltip = List.of(Component.translatable("gui.bettacraft.users.roles_title").withStyle(ChatFormatting.YELLOW),
+                    Component.translatable("gui.bettacraft.users.role.owner.desc"), Component.translatable("gui.bettacraft.users.role.caretaker.desc"),
+                    Component.translatable("gui.bettacraft.users.role.viewer.desc"), Component.translatable("gui.bettacraft.users.role.other.desc"));
+        }
+    }
+
+    /** M53: what the old interior tab showed, as the tooltip of the interior button. */
+    private static Component interiorTooltip(TankView v) {
+        MutableComponent t = Component.translatable("gui.bettacraft.interior.size", v.interiorX, v.interiorY, v.interiorZ, v.scale, 16 / Math.max(1, v.scale));
         if (!v.interiorBuilt) {
-            line(g, Component.translatable("gui.bettacraft.interior.not_built").withStyle(ChatFormatting.GRAY), x, y, TEXT_LIGHT);
+            t.append("\n").append(Component.translatable("gui.bettacraft.interior.not_built").withStyle(ChatFormatting.GRAY));
         } else {
             Component blocks = v.interiorBlocks < 0 ? Component.translatable("gui.bettacraft.interior.blocks_unknown")
                     : Component.translatable("gui.bettacraft.interior.blocks", String.format(java.util.Locale.ROOT, "%,d", v.interiorBlocks),
                     String.format(java.util.Locale.ROOT, "%,d", v.renderLimit));
-            line(g, blocks.copy().withStyle(v.interiorTruncated ? ChatFormatting.RED : ChatFormatting.RESET), x, y, v.interiorTruncated ? 0xFF7070 : TEXT_LIGHT);
-            if (v.interiorTruncated) {
-                y += 10;
-                line(g, Component.translatable("gui.bettacraft.interior.limit").withStyle(ChatFormatting.RED), x, y, 0xFF7070);
-            }
-            y += 11;
-            line(g, Component.translatable("gui.bettacraft.interior.substrate", v.substrate), x, y, TEXT_LIGHT);
-            y += 11;
+            t.append("\n").append(blocks.copy().withStyle(v.interiorTruncated ? ChatFormatting.RED : ChatFormatting.RESET));
+            if (v.interiorTruncated) t.append("\n").append(Component.translatable("gui.bettacraft.interior.limit").withStyle(ChatFormatting.RED));
+            t.append("\n").append(Component.translatable("gui.bettacraft.interior.substrate", v.substrate));
             MutableComponent heat = Component.translatable("gui.bettacraft.interior.heaters", v.heatersInside, v.heaterCapWet);
             if (v.heaterCapDry > 0) heat.append(" ").append(Component.translatable("gui.bettacraft.interior.heaters_dry", v.heaterCapDry).withStyle(ChatFormatting.GOLD));
             if (v.coolersInside > 0) heat.append("  ").append(Component.translatable("gui.bettacraft.interior.coolers", v.coolersInside, v.coolerCapWet));
-            line(g, heat, x, y, TEXT_LIGHT);
-            y += 11;
-            line(g, Component.translatable("gui.bettacraft.interior.filters", v.filters, v.floating), x, y, TEXT_LIGHT);
+            t.append("\n").append(heat);
+            t.append("\n").append(Component.translatable("gui.bettacraft.interior.filters", v.filters, v.floating));
         }
-        y += 13;
-        line(g, Component.translatable("gui.bettacraft.interior.decor").withStyle(ChatFormatting.YELLOW), x, y, TEXT_LIGHT);
-        y += 10;
-        int i = 0;
-        for (var d : org.overengineer.bettacraft.registry.ModItems.DECOR.values()) {
-            int ix = x + (i % 11) * 20, iy = y + (i / 11) * 18;
-            net.minecraft.world.item.ItemStack st = new net.minecraft.world.item.ItemStack(d.get());
-            g.fill(ix - 1, iy - 1, ix + 17, iy + 17, 0x40FFFFFF);
-            g.renderItem(st, ix, iy);
-            if (mx >= ix && mx < ix + 16 && my >= iy && my < iy + 16) {
-                List<Component> tip = new ArrayList<>(getTooltipFromContainerItem(st));
-                pendingTooltip = tip;
-            }
-            i++;
+        if (!v.canModify) {
+            t.append("\n").append(Component.translatable(v.users.myRole == org.overengineer.bettacraft.tank.TankUsers.Role.VIEWER
+                    ? "message.bettacraft.users.viewer" : "message.bettacraft.tank.locked").withStyle(ChatFormatting.RED));
         }
-        y += (i + 10) / 11 * 18 + 2; // M28: three rows of decorations
-        line(g, Component.translatable("gui.bettacraft.interior.hint_enter").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
-        y += 10;
-        line(g, Component.translatable("gui.bettacraft.interior.hint_substrate").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+        t.append("\n").append(Component.translatable("gui.bettacraft.interior.hint_substrate").withStyle(ChatFormatting.GRAY));
+        return t;
+    }
+
+    /** M53: the gear of the overview: Bettacraft's client config (back to this menu when it closes). */
+    private void openClientConfig() {
+        net.minecraft.client.gui.screens.Screen s = org.overengineer.bettacraft.platform.client.ClientPlatform.get().clientConfigScreen(this);
+        if (s != null && minecraft != null) minecraft.setScreen(s);
+    }
+
+    /** Dev smoke test only (M53): opens the client config like the gear button (false when there is none). */
+    public boolean openClientConfigForTest() {
+        if (!configButton.visible || !configButton.active) return false;
+        configButton.onPress();
+        return true;
+    }
+
+    /** Dev smoke test only (M53): selects a listed user of the users tab. */
+    public void selectUserForTest(UUID id) {
+        selectedUser = id;
+        updateWidgets();
     }
 
     private static String fmt(float f) {

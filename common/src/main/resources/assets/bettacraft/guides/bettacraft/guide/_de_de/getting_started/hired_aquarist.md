@@ -60,7 +60,7 @@ schaltet sie an oder aus, die Zahl stellt ihre Stufe 1 bis 3:
 | Algen putzen | kratzt die Algen von der Scheibe | ab 50 / 30 / 15 % Algen |
 | Pflanzen schneiden | dünnt Schwimmpflanzen aus und schneidet ausgewachsene Aquarienpflanzen zurück; Pflanzen und Stecklinge kommen in die Kiste | ab 90 / 75 / 60 % Bedeckung, ausgewachsene / fast / halb gewachsene Pflanzen |
 | Jungtiere umsetzen | trägt junge Bettas, junge Beifische und Jungfrösche in das **Aufzuchtbecken**, das du in seinem Menü wählst (die Pfeile) | 2 / 4 / 8 je Gang |
-| Warnungen | sagt dir im Chat, was nicht stimmt (mit JourneyMap auch als Wegpunkt am Becken) | kranke Tiere und zu wenig Wasser / auch Temperatur, Wasser, Hunger, Überbesatz / auch die Zuchtwarnungen |
+| Warnungen | sagt dir im Chat, was nicht stimmt (mit einer Karten-Mod auch als Wegpunkt am Becken, wenn dein Wegpunkt-Schalter dort an ist) | kranke Tiere und zu wenig Wasser / auch Temperatur, Wasser, Hunger, Überbesatz / auch die Zuchtwarnungen |
 
 Er pflegt bis zu **16 Becken im Umkreis von 32 Blöcken** um sein Zuchtbecken (die nächsten zuerst), und nur Becken, die
 **geladen** sind. Jede Runde holt er am Zuchtbecken, was er braucht, geht von Becken zu Becken und bringt Stecklinge und

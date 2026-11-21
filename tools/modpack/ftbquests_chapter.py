@@ -223,6 +223,8 @@ QUESTS = [
     ("powered_trip", [adv("powered_trip")], ["travelling_tank"], 12.25, -6.75, 150, None),
     # ------------------------------------------------------------ M51: the hired aquarist
     ("aquarist_hired", [adv("aquarist_hired")], ["spawned"], 11.00, 1.10, 150, None),
+    # ------------------------------------------------------------ M53: the users of a tank
+    ("shared_tank", [adv("shared_tank")], ["first_tank"], 0.25, 1.75, 25, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -260,7 +262,7 @@ OWN_FEATURES = {
     "sump": ["SUMP"], "refugium": ["REFUGIUM"], "calcium_reactor": ["CALCIUM_REACTOR"], "archerfish": ["ARCHERFISH"],
     "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
     "powered_trip": ["CREATE_TRAVEL_CARE"],
-    "aquarist_hired": ["AQUARIST_NPC"],
+    "aquarist_hired": ["AQUARIST_NPC"], "shared_tank": ["TANK_USERS"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.

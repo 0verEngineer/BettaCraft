@@ -46,7 +46,9 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
             // M50
             "powered_trip",
             // M51
-            "aquarist_hired"};
+            "aquarist_hired",
+            // M53
+            "shared_tank"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -195,6 +197,8 @@ final class ModAdvancements implements AdvancementProvider.AdvancementGenerator 
         event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
         // M51: the hired aquarist (he comes after the first breeding)
         event(inserted, "aquarist_hired", Items.EMERALD, AdvancementType.GOAL, Progress.AQUARIST_HIRED);
+        // M53: another player added to the users of a tank
+        event(tank, "shared_tank", Items.NAME_TAG, AdvancementType.TASK, Progress.SHARED_TANK);
         // M48: a bred form of a tetra or a cory
         event(inserted, "tetra_cory_form", ModItems.FISH_BAG.get(), AdvancementType.GOAL, Progress.TETRA_CORY_FORM);
         // M49 part a: the sump under the tank, the calcium reactor; part b: the brackish water theme

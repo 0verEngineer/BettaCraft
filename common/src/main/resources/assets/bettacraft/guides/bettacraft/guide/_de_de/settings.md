@@ -116,7 +116,7 @@ Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 B
 Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere und Algen gezeichnet werden (`render.tankDetailDistance`, 48), wie
 stark farbige Lichter das Wasser tönen (`render.lightTint`, 0 bis 1, Standard 0,6; 0 = die Farbe zeigt sich nur an der
 Lampe), die Beinbewegung der Mobs und Haustiere, die im Becken gehen (`render.walkAnimationBoost`: `auto` passt sie an
-ihre Größe an, ein Faktor von 0,1 bis 10, 0 = Vanilla), den Verlassen-Hinweis im Innenraum (`hud.interiorLeaveHint`) und die Alarm-Wegpunkte auf der eigenen Karte (`map.showAlarmWaypoints`).
+ihre Größe an, ein Faktor von 0,1 bis 10, 0 = Vanilla), den Verlassen-Hinweis im Innenraum (`hud.interiorLeaveHint`) und die Alarm-Wegpunkte aller Becken auf der eigenen Karte (`map.showAlarmWaypoints`, je Karten-Mod `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; auch hinter dem Zahnrad im Becken-Menü).
 
 ## Feature-Schalter
 
@@ -271,8 +271,8 @@ Ohne GuideME erklärt sich jedes Bettacraft-Item im Tooltip (Umschalt halten) un
   Grow) schon.
 * **FTB Quests:** ein Quest-Kapitel „Bettacraft“ für Modpacks, **KubeJS:** Events, wenn Tiere geboren werden oder
   sterben und wenn ein Monitor-Alarm auslöst, siehe [Modpacks: Quests und Skripte](settings/modpacks.md).
-* **JourneyMap:** ein Wegpunkt an einem Becken, dessen [Monitor-Alarm](equipment/monitor.md) ausgelöst hat, bis er
-  wieder aus ist.
+* **JourneyMap, Xaero's Minimap / World Map, FTB Chunks:** ein Wegpunkt an einem Becken, dessen
+  [Monitor-Alarm](equipment/monitor.md) ausgelöst hat, bis er wieder aus ist (nur Besitzer und eingetragene Nutzer).
 * **Jede andere Mod mit Wassertieren** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, …): Ihre kleinen Wassertiere gehen ins Aquarium, große und
   feindliche werden abgelehnt. Siehe [Tiere anderer Mods](settings/other_animals.md).

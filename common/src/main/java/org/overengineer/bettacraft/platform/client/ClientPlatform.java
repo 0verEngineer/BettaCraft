@@ -63,6 +63,13 @@ public interface ClientPlatform {
     /** The pixels of a sprite as loaded (frame 0 on top). */
     com.mojang.blaze3d.platform.NativeImage spriteImage(net.minecraft.client.renderer.texture.SpriteContents contents);
 
+    /**
+     * M53: the screen of Bettacraft's client config (NeoForge's config screen, on Fabric the same one of Forge Config API
+     * Port), returning to {@code parent}; null when there is none.
+     */
+    @Nullable
+    net.minecraft.client.gui.screens.Screen clientConfigScreen(net.minecraft.client.gui.screens.Screen parent);
+
     final class Instance {
         private static final ClientPlatform PLATFORM = ServiceLoader.load(ClientPlatform.class, ClientPlatform.class.getClassLoader()).findFirst()
                 .orElseThrow(() -> new IllegalStateException("Bettacraft: no client platform implementation"));

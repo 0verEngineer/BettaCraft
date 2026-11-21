@@ -57,7 +57,7 @@ number to set its level 1 to 3:
 | Algae | scrapes the algae off the glass | from 50 / 30 / 15 % algae |
 | Plants | thins out floating plants and trims grown aquarium plants; plants and cuttings go into the chest | from 90 / 75 / 60 % cover, full-grown / nearly / half-grown plants |
 | Moving young | carries young bettas, young tankmates and froglets into the **rearing tank** you choose in his menu (the arrows) | 2 / 4 / 8 per trip |
-| Warnings | tells you in the chat what is wrong (with JourneyMap also as a waypoint at the tank) | sick animals and too little water / also temperature, water, hunger, crowding / also the breeding warnings |
+| Warnings | tells you in the chat what is wrong (with a map mod also as a waypoint at the tank, when your waypoint switch is on there) | sick animals and too little water / also temperature, water, hunger, crowding / also the breeding warnings |
 
 He looks after up to **16 tanks within 32 blocks** of his basin (the nearest first) and only tanks that are **loaded**.
 Each round he fetches what he needs at the basin, walks from tank to tank and brings the cuttings and the unused food back.

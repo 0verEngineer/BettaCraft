@@ -16,18 +16,20 @@ import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.api.ApiEvents;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.network.AlarmWaypointPayload;
+import org.overengineer.bettacraft.tank.TankAccess;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
+import org.overengineer.bettacraft.tank.TankData;
 
 /**
  * M32 part d: the alarm tiles of a monitor as events. Every cycle of a working screen ({@link MonitorSync#cycle}) the
  * triggered state of each alarm tile of a tank is compared with the last one: going off posts a {@code TankAlarmEvent}
- * (active) and opens a waypoint at the tank for its owner and the players within {@link #WAYPOINT_RANGE} blocks
- * ({@code features.compat.journeymap}, client: JourneyMap); clearing posts the event again (not active) and closes the
+ * (active) and opens a waypoint at the tank for its owner and its listed users whose waypoint switches are on (M53,
+ * {@link TankAccess#waypointMembers}; {@code features.compat.journeymap}, client: JourneyMap, Xaero's Minimap, FTB Chunks);
+ * clearing posts the event again (not active) and closes the
  * waypoint once no other alarm of the tank is on. A tank that is not loaded or out of range keeps its state. A screen
  * that stops watching (off, no power, broken, unloaded) clears all of its alarms; a changed tile counts as a new one.
  */
 public final class MonitorAlarms {
-    public static final int WAYPOINT_RANGE = 128;
     /** Every open waypoint of the server (static: alarms of all levels; cleared when the server stops). */
     static final AlarmWaypointBook BOOK = new AlarmWaypointBook();
     /** Waypoint payloads sent (GameTests). */
@@ -97,9 +99,10 @@ public final class MonitorAlarms {
         String key = key(level, c, tile);
         if (on) {
             if (!Features.enabled(Feature.ALARM_WAYPOINTS)) return;
-            UUID owner = owner(level, w);
+            TankData tank = tank(level, w.tankPos());
+            Set<UUID> members = tank == null ? Set.of() : TankAccess.waypointMembers(tank);
             AlarmWaypointPayload add = new AlarmWaypointPayload(w.tank(), true, level.dimension().location(), w.tankPos(), w.tankName(), w.value());
-            Set<UUID> to = BOOK.open(w.tank(), key, owner, add, () -> recipients(level, w.tankPos(), owner));
+            Set<UUID> to = BOOK.open(w.tank(), key, members, add, () -> online(level, members));
             for (UUID p : to) send(level, p, add);
         } else {
             Set<UUID> to = BOOK.close(w.tank(), key);
@@ -107,22 +110,48 @@ public final class MonitorAlarms {
         }
     }
 
-    private static UUID owner(ServerLevel level, Watch w) {
-        if (!level.isLoaded(w.tankPos())) return null;
-        TankBlockEntity t = org.overengineer.bettacraft.tank.TankMultiblock.getBE(level, w.tankPos());
-        return t != null && t.isController() ? t.getTank().owner() : null;
+    @javax.annotation.Nullable
+    private static TankData tank(ServerLevel level, BlockPos pos) {
+        if (!level.isLoaded(pos)) return null;
+        TankBlockEntity t = org.overengineer.bettacraft.tank.TankMultiblock.getBE(level, pos);
+        return t != null && t.isController() ? t.getTank() : null;
+    }
+
+    private static Set<UUID> online(ServerLevel level, Set<UUID> members) {
+        Set<UUID> out = new LinkedHashSet<>();
+        for (UUID p : members) if (level.getServer().getPlayerList().getPlayer(p) != null) out.add(p);
+        return out;
+    }
+
+    /**
+     * M53: the waypoint switches or the users of a tank changed: the players who should have its open waypoint now get it,
+     * the others lose it.
+     */
+    public static void refreshWaypoints(TankBlockEntity controller) {
+        if (!(controller.getLevel() instanceof ServerLevel level)) return;
+        TankData t = controller.getTank();
+        AlarmWaypointBook.Entry e = BOOK.entry(t.id());
+        if (e == null) return;
+        Set<UUID> members = Features.enabled(Feature.ALARM_WAYPOINTS) ? TankAccess.waypointMembers(t) : Set.of();
+        AlarmWaypointBook.Change c = BOOK.update(t.id(), members, online(level, members));
+        if (e.data instanceof AlarmWaypointPayload add) {
+            for (UUID p : c.added()) send(level, p, add);
+            for (UUID p : c.removed()) send(level, p, new AlarmWaypointPayload(add.tank(), false, add.dimension(), add.pos(), add.name(), add.value()));
+        }
     }
 
     /**
      * M51: an alarm of something else than a monitor (the hired aquarist's warnings): the waypoint at the tank opens for
      * {@code player} only (and again when he comes online) and closes when the last alarm of the tank clears. Off without
-     * {@code features.compat.journeymap}.
+     * {@code features.compat.journeymap}. M53: only when {@code player} is a user of the tank with his waypoint switch on.
      */
     public static void external(ServerLevel level, UUID tank, String key, BlockPos pos, String tankName, String value, boolean on, @javax.annotation.Nullable UUID player) {
         if (on) {
             if (!Features.enabled(Feature.ALARM_WAYPOINTS) || player == null) return;
+            TankData data = tank(level, pos);
+            if (data == null || !TankAccess.waypointMembers(data).contains(player)) return;
             AlarmWaypointPayload add = new AlarmWaypointPayload(tank, true, level.dimension().location(), pos, tankName, value);
-            Set<UUID> to = BOOK.open(tank, key, player, add, () -> {
+            Set<UUID> to = BOOK.open(tank, key, Set.of(player), add, () -> {
                 Set<UUID> s = new LinkedHashSet<>();
                 if (level.getServer().getPlayerList().getPlayer(player) != null) s.add(player);
                 return s;
@@ -137,15 +166,6 @@ public final class MonitorAlarms {
         }
     }
 
-    /** The owner (online, any level) and the players of the tank's level within {@link #WAYPOINT_RANGE} blocks. */
-    static Set<UUID> recipients(ServerLevel level, BlockPos pos, UUID owner) {
-        Set<UUID> out = new LinkedHashSet<>();
-        if (owner != null && level.getServer().getPlayerList().getPlayer(owner) != null) out.add(owner);
-        double r2 = (double) WAYPOINT_RANGE * WAYPOINT_RANGE;
-        for (ServerPlayer p : level.players()) if (p.distanceToSqr(pos.getCenter()) <= r2) out.add(p.getUUID());
-        return out;
-    }
-
     private static void send(ServerLevel level, UUID player, AlarmWaypointPayload p) {
         ServerPlayer sp = level.getServer().getPlayerList().getPlayer(player);
         if (sp == null) return;
@@ -154,6 +174,12 @@ public final class MonitorAlarms {
     }
 
 
+
+    /** M53: the players who have the open waypoint of {@code tank} (GameTests). */
+    public static Set<UUID> waypointHolders(UUID tank) {
+        AlarmWaypointBook.Entry e = BOOK.entry(tank);
+        return e == null ? Set.of() : Set.copyOf(e.players());
+    }
 
     /** The tanks with an open waypoint (GameTests). */
     public static boolean waypointOpen(UUID tank) {

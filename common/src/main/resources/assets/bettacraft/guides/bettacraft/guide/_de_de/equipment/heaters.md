@@ -28,7 +28,7 @@ item_ids:
 
 * **Im Innenraum:** Setze den Heizstab in den [Innenraum](../interior.md) des Aquariums. Er wird zu einem Heizstab aus
   Blöcken (6, 9 oder 12 Blöcke hoch bei Maßstab 16) und erscheint im Aquarium als dünner Stab. Er heizt nur, solange
-  sein unterster Block **unter der Wasseroberfläche** liegt; der Innenraum-Tab zeigt trockene Heizstäbe an.
+  sein unterster Block **unter der Wasseroberfläche** liegt; der Tooltip des Innenraum-Knopfs im Menü zeigt trockene Heizstäbe an.
 * **Im Außenfilter:** Ein [Außenfilter](filters.md) hat zwei Plätze für Heizstäbe beliebiger Größe, zum Beispiel zwei
   große. Sie zählen voll, solange der Filter am Aquarium angeschlossen ist.
 
