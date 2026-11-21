@@ -90,24 +90,97 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
     /** A tuber with long, undulate leaves and a flower spike at the surface. */
     APONOGETON("aponogeton_ulvaceus", Form.BULB, 6, 8, Light.MID, Red.NONE, "wavy", 0x6AA640, 0x88BC52, 0xF2EEDA, 0x6A8A3E, 0x7A6A42),
     /** The green tiger lotus (Nymphaea lotus): green leaves with brown spots. */
-    NYMPHAEA_GREEN("nymphaea_lotus_green", Form.BULB, 6, 8, Light.MID, Red.NONE, "lotus", 0x4E8A34, 0x6AA040, 0, 0x6A7A3A, 0x6A5A32);
+    NYMPHAEA_GREEN("nymphaea_lotus_green", Form.BULB, 6, 8, Light.MID, Red.NONE, "lotus", 0x4E8A34, 0x6AA040, 0, 0x6A7A3A, 0x6A5A32),
+    // M56: the plants of terraria and paludaria (on the land of the interior; appended like M28). Colours: leaf, young leaf /
+    // bract / flower ("top"), red, stem, rhizome
+    // tropical and humid: the rainforest terrarium and the land of a paludarium
+    NEOREGELIA(Habitat.TROPICAL, "neoregelia", Form.ROSETTE, 12, 6, Light.MID, Red.RED, "strap", 0x4E7E36, 0xC2364E, 0xD8203E, 0x56682E, 0x4A5A2A),
+    GUZMANIA(Habitat.TROPICAL, "guzmania", Form.ROSETTE, 14, 6, Light.MID, Red.NONE, "strap", 0x3E7A3A, 0xF2782A, 0, 0x4E6A30, 0x4A5A2A),
+    VRIESEA(Habitat.TROPICAL, "vriesea", Form.ROSETTE, 14, 6, Light.MID, Red.NONE, "banded", 0x4A6E3C, 0xE84630, 0, 0x4E6430, 0x4A5A2A),
+    TILLANDSIA(Habitat.TROPICAL, "tillandsia", Form.EPIPHYTE, 10, 6, Light.HIGH, Red.RED, "spiky", 0x9EB4A0, 0xB8C8B4, 0xC84A78, 0x8A9A84, 0x7A7A60),
+    FITTONIA(Habitat.TROPICAL, "fittonia", Form.STEM, 5, 6, Light.LOW, Red.NONE, "veined", 0x3A6A30, 0x56883E, 0, 0x6A7040, 0x6A7040),
+    POTHOS(Habitat.TROPICAL, "pothos", Form.STEM, 6, 8, Light.LOW, Red.NONE, "heart", 0x4C8A2E, 0x9CBC4A, 0, 0x6A8038, 0x6A8038),
+    MARCGRAVIA(Habitat.TROPICAL, "marcgravia", Form.EPIPHYTE, 18, 6, Light.LOW, Red.NONE, "shingle", 0x3A6A2A, 0x548A36, 0, 0x5A6A30, 0x4E5A2E),
+    BOSTON_FERN(Habitat.TROPICAL, "boston_fern", Form.ROSETTE, 9, 6, Light.LOW, Red.NONE, "fern", 0x4E8E30, 0x6EAE42, 0, 0x5A7A30, 0x4A5A2A),
+    BIRDS_NEST_FERN(Habitat.TROPICAL, "birds_nest_fern", Form.ROSETTE, 16, 6, Light.LOW, Red.NONE, "wavy", 0x5A9A36, 0x7AB84A, 0, 0x3A3A2A, 0x3A3A2A),
+    CUSHION_MOSS(Habitat.TROPICAL, "cushion_moss", Form.MOSS, 12, 6, Light.LOW, Red.NONE, "moss", 0x6E9E4A, 0x8AB45A, 0, 0x6E9E4A, 0x6E9E4A),
+    REINDEER_LICHEN(Habitat.TROPICAL, "reindeer_lichen", Form.MOSS, 20, 6, Light.MID, Red.NONE, "lichen", 0xC2CCB2, 0xDADFCC, 0, 0xB0B8A0, 0xB0B8A0),
+    SELAGINELLA(Habitat.TROPICAL, "selaginella", Form.CARPET, 6, 6, Light.LOW, Red.NONE, "fern", 0x4E9638, 0x6CB04A, 0, 0x4E7A30, 0x4E7A30),
+    MINI_ORCHID(Habitat.TROPICAL, "mini_orchid", Form.EPIPHYTE, 24, 6, Light.MID, Red.NONE, "broad", 0x3E6E30, 0xE27AB8, 0, 0x5A6A3A, 0x6A6A48),
+    BEGONIA(Habitat.TROPICAL, "begonia_rex", Form.ROSETTE, 10, 6, Light.LOW, Red.NONE, "velvet", 0xA0A2AE, 0x8A3E62, 0, 0x7A3E3E, 0x5A3A30),
+    PEPEROMIA(Habitat.TROPICAL, "peperomia", Form.STEM, 8, 6, Light.LOW, Red.NONE, "round", 0x3A6A2C, 0x568A38, 0, 0x8A5A44, 0x8A5A44),
+    // swamp and the shore of a paludarium: carnivorous plants, sedges, rushes and papyrus
+    SUNDEW(Habitat.SWAMP, "sundew", Form.ROSETTE, 8, 6, Light.HIGH, Red.RED, "sundew", 0x8AA040, 0xD03A3A, 0xE0222E, 0x7A8A3A, 0x6A6A3A),
+    SARRACENIA(Habitat.SWAMP, "sarracenia", Form.ROSETTE, 12, 6, Light.HIGH, Red.RED, "pitcher", 0x8AA844, 0xB43630, 0xC8282C, 0x7A8A3A, 0x6A6A3A),
+    NEPENTHES(Habitat.SWAMP, "nepenthes", Form.ROSETTE, 16, 8, Light.MID, Red.RED, "pitcher", 0x5E9A36, 0x9A4A3A, 0xB82E30, 0x6A7A34, 0x5A6030),
+    VENUS_FLYTRAP(Habitat.SWAMP, "venus_flytrap", Form.ROSETTE, 10, 6, Light.HIGH, Red.RED, "trap", 0x6AA840, 0xC84030, 0xE0262C, 0x6A8A34, 0x5A6A30),
+    BUTTERWORT(Habitat.SWAMP, "butterwort", Form.ROSETTE, 8, 6, Light.MID, Red.NONE, "broad", 0x9CC45E, 0xB688D8, 0, 0x8AA850, 0x7A8A44),
+    SWAMP_SEDGE(Habitat.SWAMP, "swamp_sedge", Form.ROSETTE, 5, 6, Light.MID, Red.NONE, "narrow", 0x5E9440, 0x7AAA50, 0, 0x6A7A3A, 0x6A7A3A),
+    SOFT_RUSH(Habitat.SWAMP, "soft_rush", Form.ROSETTE, 6, 6, Light.MID, Red.NONE, "needle", 0x4E8A36, 0x9A8A50, 0, 0x5A7A30, 0x5A7A30),
+    PAPYRUS(Habitat.SWAMP, "papyrus", Form.STEM, 8, 8, Light.HIGH, Red.NONE, "needle", 0x6AA448, 0x8CC05C, 0, 0x5E8E3E, 0x5A6A30),
+    UMBRELLA_SEDGE(Habitat.SWAMP, "umbrella_sedge", Form.STEM, 7, 8, Light.MID, Red.NONE, "narrow", 0x4E8E36, 0x6AAA46, 0, 0x5A8A3A, 0x5A6A30),
+    // dry: the desert terrarium (cacti and succulents grow offsets)
+    BARREL_CACTUS(Habitat.DRY, "golden_barrel_cactus", Form.CACTUS, 40, 6, Light.HIGH, Red.NONE, "cactus", 0x4E8A3E, 0xE8C850, 0, 0x4E8A3E, 0x6A6A40),
+    COLUMN_CACTUS(Habitat.DRY, "column_cactus", Form.CACTUS, 30, 8, Light.HIGH, Red.NONE, "cactus", 0x5A8C70, 0xF0EED8, 0, 0x5A8C70, 0x6A6A40),
+    PRICKLY_PEAR(Habitat.DRY, "prickly_pear", Form.CACTUS, 20, 8, Light.HIGH, Red.NONE, "pad", 0x6A9C42, 0xE8D04A, 0, 0x6A9C42, 0x6A6A40),
+    MAMMILLARIA(Habitat.DRY, "mammillaria", Form.CACTUS, 30, 6, Light.HIGH, Red.NONE, "cactus", 0x5C8E4E, 0xE866A6, 0, 0x5C8E4E, 0x6A6A40),
+    ECHEVERIA(Habitat.DRY, "echeveria", Form.ROSETTE, 14, 6, Light.HIGH, Red.RED, "succulent", 0x8EACB0, 0xA6C0BC, 0xC8607E, 0x7A9A90, 0x6A7A6A),
+    HAWORTHIA(Habitat.DRY, "haworthia", Form.ROSETTE, 18, 6, Light.MID, Red.NONE, "zebra", 0x3E6A3A, 0x548A46, 0, 0x4A6A3A, 0x4A5A3A),
+    ALOE(Habitat.DRY, "aloe_vera", Form.ROSETTE, 14, 6, Light.HIGH, Red.NONE, "spiky", 0x7E9E6C, 0x96B07E, 0, 0x6A8A5A, 0x6A7A5A),
+    AGAVE(Habitat.DRY, "agave", Form.ROSETTE, 30, 8, Light.VERY_HIGH, Red.NONE, "spiky", 0x6E8E8A, 0x86A49E, 0, 0x5E7E78, 0x5E6E60),
+    LITHOPS(Habitat.DRY, "lithops", Form.ROSETTE, 40, 6, Light.HIGH, Red.NONE, "succulent", 0xB2A286, 0xF0D24A, 0, 0x9A8A70, 0x8A7A60),
+    SEDUM(Habitat.DRY, "sedum", Form.CARPET, 6, 6, Light.HIGH, Red.RED, "round", 0x7EA44A, 0x96B85A, 0xC4462E, 0x7A8A44, 0x7A8A44),
+    BLUE_GRAMA(Habitat.DRY, "blue_grama", Form.ROSETTE, 5, 6, Light.HIGH, Red.NONE, "narrow", 0x8C9E6A, 0x7A6A9A, 0, 0x8A9060, 0x8A9060),
+    NEEDLEGRASS(Habitat.DRY, "needlegrass", Form.ROSETTE, 6, 6, Light.HIGH, Red.NONE, "needle", 0xA0A46E, 0xD8CC96, 0, 0x9A9A68, 0x9A9A68);
 
     /** Growth form: decides the shape ({@link PlantShapes}), where it may be planted and how it spreads. */
     public enum Form {
         EPIPHYTE, MOSS, ROSETTE, STEM, RIBBON, CARPET, BULB,
         /** M20: coral forms (on reef rock): a mat of polyps, mushroom discs, a leather toadstool, branches, a dome, an anemone. */
-        POLYPS, DISC, TOADSTOOL, BRANCH, DOME, ANEMONE;
+        POLYPS, DISC, TOADSTOOL, BRANCH, DOME, ANEMONE,
+        /** M56: cacti: a barrel, a column with arms, a chain of pads or a cluster of small balls (terrarium plants only). */
+        CACTUS;
 
         /** Needs substrate (the interior floor with a substrate, sand, gravel, dirt ...). */
         public boolean rooted() {
-            return this == ROSETTE || this == STEM || this == RIBBON || this == CARPET || this == BULB;
+            return this == ROSETTE || this == STEM || this == RIBBON || this == CARPET || this == BULB || this == CACTUS;
         }
 
         /** M20: a coral (or the anemone): glued onto reef rock, lives in salt water. */
         public boolean coral() {
-            return ordinal() >= POLYPS.ordinal();
+            return this == POLYPS || this == DISC || this == TOADSTOOL || this == BRANCH || this == DOME || this == ANEMONE;
         }
     }
+
+    /**
+     * M56: where a plant lives: under water (the aquarium plants and corals) or on the land of a terrarium or paludarium,
+     * with the climate it wants there ({@code TankClimate}: relative humidity in %, air temperature in degrees C).
+     */
+    public enum Habitat {
+        AQUATIC(0, 100, 18, 32),
+        /** The rainforest terrarium and the land of a paludarium: humid and warm. */
+        TROPICAL(65, 100, 20, 30),
+        /** The swamp and the shore of a paludarium: wet, a little cooler; the carnivorous plants want strong light. */
+        SWAMP(55, 100, 15, 30),
+        /** The desert terrarium: dry and hot; too much humidity rots them. */
+        DRY(10, 55, 20, 38);
+
+        public final double humidityMin, humidityMax, tempMin, tempMax;
+
+        Habitat(double humidityMin, double humidityMax, double tempMin, double tempMax) {
+            this.humidityMin = humidityMin;
+            this.humidityMax = humidityMax;
+            this.tempMin = tempMin;
+            this.tempMax = tempMax;
+        }
+
+        public String id() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /** M56: how a terrarium plant is propagated with the shears: a cutting, an offset (pup) or a divided clump. */
+    public enum Propagation { CUTTING, OFFSET, DIVISION }
 
     /** M20: how much water movement a coral wants (relative to the strong flow of {@code TankReef#flow}). */
     public enum Flow {
@@ -160,6 +233,7 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
         WHITE
     }
 
+    private final Habitat habitat;
     private final String id;
     private final Form form;
     private final double daysToFull;
@@ -171,6 +245,12 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
 
     PlantSpecies(String id, Form form, double daysToFull, int stages, Light light, Red red, String leafTexture,
                  int leaf, int top, int redColor, int stem, int rhizome) {
+        this(Habitat.AQUATIC, id, form, daysToFull, stages, light, red, leafTexture, leaf, top, redColor, stem, rhizome);
+    }
+
+    PlantSpecies(Habitat habitat, String id, Form form, double daysToFull, int stages, Light light, Red red, String leafTexture,
+                 int leaf, int top, int redColor, int stem, int rhizome) {
+        this.habitat = habitat;
         this.id = id;
         this.form = form;
         this.daysToFull = daysToFull;
@@ -223,6 +303,10 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
 
     /** Spreads by itself once fully grown: side shoots (stem plants) or runners; M20: polyps and mushrooms over the rock. */
     public boolean spreads() {
+        // M56: the terrarium plants: offsets around the cacti, succulents and bromeliads, runners of the sedges and the grama,
+        // the mosses creep on (the stem plants and carpets of the land like those under water)
+        if (land()) return form == Form.STEM || form == Form.CARPET || form == Form.MOSS || propagation() == Propagation.OFFSET
+                || this == SWAMP_SEDGE || this == SOFT_RUSH || this == BLUE_GRAMA;
         return form == Form.STEM || form == Form.RIBBON || form == Form.CARPET || this == CRYPT_GREEN || this == CRYPT_BROWN
                 || form == Form.POLYPS || form == Form.DISC || this == CRYPT_PARVA || this == SAGITTARIA;
     }
@@ -290,7 +374,7 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
 
     /** M28: the species that came after the plant tables became config lists (M22.4); see {@code PlantTables}. */
     public boolean newerThanConfigLists() {
-        return ordinal() > BUBBLE_TIP_ANEMONE.ordinal();
+        return ordinal() > BUBBLE_TIP_ANEMONE.ordinal() && !land(); // M56: the terrarium plants are in no config list
     }
 
     /** Stages one trim with shears takes off. */
@@ -311,6 +395,96 @@ public enum PlantSpecies implements net.minecraft.util.StringRepresentable {
             case BRANCH -> 1 + stagesCut / 2; // M20: frags of the branch tips
             default -> 1;
         };
+    }
+
+    // ------------------------------------------------------------------ M56: terrarium plants
+
+    /** M56: where it lives (aquatic for the aquarium plants and corals). */
+    public Habitat habitat() { return habitat; }
+
+    /** M56: a terrarium plant: grows on the land of a terrarium or paludarium (not under water). */
+    public boolean land() {
+        return habitat != Habitat.AQUATIC;
+    }
+
+    /** M56: the terrarium plants in their order. */
+    public static java.util.List<PlantSpecies> landSpecies() {
+        java.util.List<PlantSpecies> out = new java.util.ArrayList<>();
+        for (PlantSpecies p : values()) if (p.land()) out.add(p);
+        return out;
+    }
+
+    /** M56: the bromeliads: their leaves form a cup that holds water (dart frogs raise their tadpoles there). */
+    public boolean bromeliad() {
+        return this == NEOREGELIA || this == GUZMANIA || this == VRIESEA;
+    }
+
+    /** M56: how the shears propagate it: offsets of the cacti, succulents and bromeliads, divided mosses, else cuttings. */
+    public Propagation propagation() {
+        if (!land()) return Propagation.CUTTING;
+        if (form == Form.CACTUS || bromeliad()) return Propagation.OFFSET;
+        return switch (this) {
+            case TILLANDSIA, ECHEVERIA, HAWORTHIA, ALOE, AGAVE, LITHOPS -> Propagation.OFFSET;
+            case CUSHION_MOSS, REINDEER_LICHEN, SELAGINELLA -> Propagation.DIVISION;
+            default -> Propagation.CUTTING;
+        };
+    }
+
+    /** M56: lowest relative humidity (%) at which it grows fully (it slows down below and stops 20 % lower). */
+    public double humidityMin() {
+        return switch (this) {
+            case REINDEER_LICHEN -> 40; // a lichen: dries out and waits
+            case BUTTERWORT, SWAMP_SEDGE, SOFT_RUSH -> 50;
+            case TILLANDSIA -> 45; // air plants take their water from the air and the mist
+            default -> habitat.humidityMin;
+        };
+    }
+
+    /** M56: highest relative humidity (%) it grows fully at (above, a dry plant rots; it stops 20 % higher). */
+    public double humidityMax() {
+        return switch (this) {
+            case LITHOPS -> 45;
+            case BLUE_GRAMA, NEEDLEGRASS -> 70; // grasses of the savanna
+            default -> habitat.humidityMax;
+        };
+    }
+
+    /** M56: lowest air temperature (degrees C) it grows fully at (half down to 3 K lower, none below). */
+    public double tempMin() {
+        return switch (this) {
+            case SARRACENIA, VENUS_FLYTRAP, REINDEER_LICHEN -> 10; // temperate bogs and heaths
+            case NEPENTHES -> 16; // highland pitcher plants like it cool
+            default -> habitat.tempMin;
+        };
+    }
+
+    /** M56: highest air temperature (degrees C) it grows fully at (half up to 3 K higher, none above). */
+    public double tempMax() {
+        return switch (this) {
+            case NEPENTHES -> 28;
+            case REINDEER_LICHEN -> 26;
+            default -> habitat.tempMax;
+        };
+    }
+
+    /** M56: tortoises eat it (the opuntia pads, stonecrop and the grasses). */
+    public boolean edible() {
+        return this == PRICKLY_PEAR || this == SEDUM || this == BLUE_GRAMA || this == NEEDLEGRASS;
+    }
+
+    /** M56: snakes and geckos hide in it once it is grown (the dense and leafy terrarium plants). */
+    public boolean shelter() {
+        if (!land()) return false;
+        return switch (this) {
+            case NEOREGELIA, GUZMANIA, VRIESEA, BOSTON_FERN, BIRDS_NEST_FERN, BEGONIA, POTHOS, PEPEROMIA, FITTONIA, SARRACENIA, NEPENTHES,
+                 SWAMP_SEDGE, SOFT_RUSH, PAPYRUS, UMBRELLA_SEDGE, ALOE, AGAVE, BLUE_GRAMA, NEEDLEGRASS, PRICKLY_PEAR -> true;
+            default -> false;
+        };
+    }
+
+    /** M56: how much it adds to the humidity of the land it covers (the cacti and succulents keep their water). */
+    public double transpiration() {
+        return habitat == Habitat.DRY ? 0.3 : 1.0;
     }
 
     public static PlantSpecies byId(String s) {

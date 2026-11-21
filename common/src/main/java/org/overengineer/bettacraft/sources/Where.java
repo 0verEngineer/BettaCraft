@@ -44,5 +44,7 @@ public enum Where {
     /** M31 part c: {@code #bettacraft:arid_lands} (deserts by {@code #c:is_desert}, badlands). */
     ARID,
     /** M31 part c: {@code #bettacraft:snake_lands} (temperate forests and plains). */
-    WOODLAND
+    WOODLAND,
+    /** M56: the land of swamps and mangroves ({@code #bettacraft:swamp_plant_lands}). */
+    SWAMP_LAND
 }

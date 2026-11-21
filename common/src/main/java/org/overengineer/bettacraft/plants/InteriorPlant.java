@@ -36,6 +36,8 @@ public final class InteriorPlant {
      * plants saved before M22.1 have none and keep version 1 (their blocks never change shape).
      */
     public int shapeVersion = PlantShapes.VERSION;
+    /** M56: how far a terrarium plant languishes in a bad climate (at 1 it loses a stage, {@link LandPlants#wilt}). */
+    public double wilt;
 
     public InteriorPlant(int id, PlantSpecies species, int x, int y, int z, long seed, int stage) {
         this.id = id;
@@ -71,6 +73,7 @@ public final class InteriorPlant {
         t.putInt("room", room);
         t.putDouble("redness", redness);
         t.putInt("shape", shapeVersion);
+        if (wilt > 0) t.putDouble("wilt", wilt); // M56
         return t;
     }
 
@@ -90,6 +93,7 @@ public final class InteriorPlant {
         pl.room = t.getIntOr("room", 0);
         pl.redness = t.getDoubleOr("redness", 0d);
         pl.shapeVersion = t.contains("shape") ? t.getIntOr("shape", 0) : 1;
+        pl.wilt = t.getDoubleOr("wilt", 0d);
         return pl;
     }
 

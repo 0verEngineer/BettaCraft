@@ -72,8 +72,10 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="bettacraft:led_panel" /> | ↳ **Sonnenaufgang** | Schalte die Tageslicht-Zeitschaltung der Beckenbeleuchtung ein |
 | <ItemImage id="minecraft:moss_block" /> | ↳ **Halb und halb** | Öffne das Menü eines Paludariums: Wasser und Land in einem Becken |
 | <ItemImage id="bettacraft:terrarium_box" /> | ↳ **Schlüpflinge** | Ein Gelege eines Terrarientiers schlüpft |
+| <ItemImage id="bettacraft:guzmania" /> | ↳ **Kinderstube im Kelch** | Pfeilgiftfrösche tragen ihre Kaulquappen in den Kelch einer Bromelie |
 | <ItemImage id="bettacraft:mudskipper_box" /> | ↳ **Ein Fisch an Land** | Halte einen Schlammspringer in einem Brackwasser-Paludarium |
 | <ItemImage id="minecraft:rabbit_foot" /> | ↳ **Haustier** | Ein friedliches Minecraft-Tier zieht in ein Terrarium oder Paludarium |
+| <ItemImage id="bettacraft:neoregelia" /> | ↳ **Grüner Daumen unter Glas** | Ziehe eine Terrarienpflanze in einem Terrarium oder Paludarium groß |
 | <ItemImage id="minecraft:turtle_egg" /> | ↳ **Warm oder kühl** | Schildkröteneier schlüpfen: Die Nesttemperatur hat ihr Geschlecht bestimmt |
 | <ItemImage id="minecraft:turtle_scute" /> | ↳ **Riese des Ozeans** | Setze eine Meeresschildkröte in ein großes Meerwasser-Paludarium |
 | <ItemImage id="bettacraft:sponge_filter" /> | ↳ **Etwas leiser** | Stelle einen Filter, eine Luftpumpe oder eine Strömungspumpe mit dem Leistungsregler unter 100 % |

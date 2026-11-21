@@ -87,6 +87,9 @@ public final class AquaristTrades {
             FloatingPlantType.WATER_LETTUCE);
     private static final List<PlantSpecies> PLANTS = List.of(PlantSpecies.JAVA_FERN, PlantSpecies.ANUBIAS_NANA, PlantSpecies.JAVA_MOSS,
             PlantSpecies.CRYPT_GREEN, PlantSpecies.VALLISNERIA, PlantSpecies.AMAZON_SWORD, PlantSpecies.ROTALA, PlantSpecies.SAGITTARIA);
+    /** M56: the terrarium plants the apprentice sells. */
+    private static final List<PlantSpecies> TERRA_PLANTS = List.of(PlantSpecies.NEOREGELIA, PlantSpecies.BOSTON_FERN, PlantSpecies.POTHOS,
+            PlantSpecies.FITTONIA, PlantSpecies.CUSHION_MOSS, PlantSpecies.ECHEVERIA, PlantSpecies.ALOE, PlantSpecies.SWAMP_SEDGE);
     private static final List<PlantSpecies> RARE_PLANTS = List.of(PlantSpecies.TIGER_LOTUS, PlantSpecies.CRYPT_FLAMINGO, PlantSpecies.BUCE_BLUE,
             PlantSpecies.LUDWIGIA_SUPER_RED, PlantSpecies.ROTALA_HRA, PlantSpecies.MARIMO, PlantSpecies.ECHINODORUS_RED_DIAMOND);
 
@@ -103,6 +106,10 @@ public final class AquaristTrades {
         List<Product> plants = new ArrayList<>();
         for (PlantSpecies p : PLANTS) plants.add(new Product(Target.plant(p), 2, 2, 1.0 / PLANTS.size(), null));
         out.add(sell("plants", 2, plants, 5, 12));
+        // M56: terrarium plants
+        List<Product> terra = new ArrayList<>();
+        for (PlantSpecies p : TERRA_PLANTS) terra.add(new Product(Target.plant(p), 2, 2, 1.0 / TERRA_PLANTS.size(), null));
+        out.add(sell("terrarium_plants", 2, terra, 5, 12));
         out.add(new Offer("buys_fish_bags", 2, true, List::of, () -> buy(ModItems.FISH_BAG.get(), 2, 15)));
         // ---------------------------------------------------------------- journeyman
         List<Product> animals = List.of(new Product(Target.critter(CritterSpecies.NEOCARIDINA), 2, 4, 0.4, null),

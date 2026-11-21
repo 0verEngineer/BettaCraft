@@ -36,6 +36,10 @@ A pair of the **same species** lays 3-6 eggs onto moss, leaves or soil on the la
 tadpoles to water; in the tank the **tadpoles** hatch straight into the water. They swim, eat pellets or fry food and
 become froglets at 40 % of their growth. See [amphibians and reptiles](herps.md).
 
+**Bromeliads**: grow [bromeliads](plants_tropical.md) on the land, and the frogs carry one tadpole into the water cup of
+every half-grown bromeliad, as in the wild. There it needs no open water and no food (the mother feeds it) and leaves as a
+froglet; a paludarium without water can raise as many young as it has bromeliads (`features.terrariumPlants.bromeliadTadpoles`).
+
 ## Obtaining
 
 * <ItemLink id="bettacraft:dart_frog_box" />: **Wild** on the floor of jungles, in groups of 1–2 (spawn weight 4) (config `features.terrariums.wildHerps`).

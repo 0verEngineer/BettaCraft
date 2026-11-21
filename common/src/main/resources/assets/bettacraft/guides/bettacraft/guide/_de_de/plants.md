@@ -14,6 +14,8 @@ ein Block, und im Lauf der Tage wächst daraus eine Pflanze aus vielen Blöcken:
 Aquarium sieht man sie als Teil der Miniatur hinter dem Glas. Jede Pflanze sieht etwas anders aus.
 Kelp, Seegras, Korallen und die Wasserpflanzen anderer Mods wirken im Innenraum ebenfalls, ohne zu wachsen: siehe
 [Pflanzen anderer Mods](plants/foreign_plants.md).
+Über dem Wasser eines feuchten Paludariums wachsen sie in ihrer **emersen Form**, mit halber Geschwindigkeit; das Land selbst hat
+eigene [Terrarienpflanzen](terrarium/plants.md).
 
 ## Wild in der Welt
 

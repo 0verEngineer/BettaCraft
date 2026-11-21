@@ -41,6 +41,10 @@ Futter-Tag `#bettacraft:turtle_greens` dafür: **Löwenzahn**, **Blütenteppich*
 die Kräuter) und die **Margerite**. Modpacks können eigenes Grünzeug in den Tag aufnehmen. Schmuck- und
 Dreikielschildkröten fressen es auch.
 
+Sie **frisst** auch die essbaren [Terrarienpflanzen](plants_dry.md) ihres Beckens (Feigenkaktus, Mauerpfeffer, Moskitogras und
+Federgras), wenn sie einen halben Tag nichts gefressen hat: die Pflanze verliert eine Stufe und die Schildkröte ist satt. Ein gut
+bepflanztes Wüstenterrarium ernährt sie zum Teil selbst (`features.terrariumPlants.tortoiseGrazing`).
+
 ## Winterstarre
 
 In der Natur verschläft die Landschildkröte den Winter. Im Becken tut sie dasselbe: Fällt die **Luft unter 12 °C**

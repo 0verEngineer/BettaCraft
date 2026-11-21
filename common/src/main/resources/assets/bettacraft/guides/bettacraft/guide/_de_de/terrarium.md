@@ -84,6 +84,12 @@ unter einem leuchtenden Wärmespot viel wärmer (12 K, `terrarium.baskingSpotLif
 | [Sprühanlage](terrarium/mister.md) | auf oder neben dem Becken | sprüht, solange die Luftfeuchte unter ihrer Einstellung liegt; braucht Wasser |
 | [Thermo-Hygrometer](terrarium/thermo_hygrometer.md) | am Glas | zeigt Lufttemperatur und Luftfeuchte |
 
+## Terrarienpflanzen
+
+Das Land eines Terrariums oder Paludariums hat [eigene Pflanzen](terrarium/plants.md): Bromelien, Farne, Moose und Orchideen für
+den Regenwald, fleischfressende Pflanzen und Seggen für das Ufer, Kakteen und Sukkulenten für die Wüste. Sie wachsen nach Licht,
+Luftfeuchte und Lufttemperatur des Beckens, erhöhen die Luftfeuchte und geben den Tieren Futter und Verstecke.
+
 ## Terrarientiere
 
 Ein Terrarientier lebt in der Art von Becken, die es braucht (eine Sumpfschildkröte im Paludarium, eine Landschildkröte

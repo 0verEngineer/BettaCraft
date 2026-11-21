@@ -36,6 +36,11 @@ Ein Paar **derselben Art** legt 3-6 Eier auf Moos, Laub oder Erde auf dem Land. 
 Kaulquappen zum Wasser; im Becken schlüpfen die **Kaulquappen** direkt ins Wasser. Sie schwimmen, fressen Pellets oder
 Jungfischfutter und werden bei 40 % ihres Wachstums zu Fröschchen. Siehe [Amphibien und Reptilien](herps.md).
 
+**Bromelien**: Ziehe [Bromelien](plants_tropical.md) auf dem Land, und die Frösche tragen in den Wasserkelch jeder halb
+gewachsenen Bromelie eine Kaulquappe, wie in der Natur. Dort braucht sie weder offenes Wasser noch Futter (die Mutter füttert sie)
+und kommt als Jungfrosch heraus; ein Paludarium ohne Wasser kann so viele Junge aufziehen, wie es Bromelien hat
+(`features.terrariumPlants.bromeliadTadpoles`).
+
 ## Bezug
 
 * <ItemLink id="bettacraft:dart_frog_box" />: **Wild** auf dem Boden von Dschungeln, in Gruppen von 1–2 (Spawn-Gewicht 4) (Config `features.terrariums.wildHerps`).

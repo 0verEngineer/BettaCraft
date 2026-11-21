@@ -232,6 +232,9 @@ QUESTS = [
     ("aquarist_hired", [adv("aquarist_hired")], ["spawned"], 11.00, 1.10, 150, None),
     # ------------------------------------------------------------ M53: the users of a tank
     ("shared_tank", [adv("shared_tank")], ["first_tank"], 0.25, 1.75, 25, None),
+    # ------------------------------------------------------------ M56: terrarium plants, the dart frog tadpoles in bromeliads
+    ("terrarium_plants", [adv("terrarium_plant_grown")], ["terrarium"], -3.50, -6.00, 50, None),
+    ("bromeliad_tadpoles", [adv("bromeliad_tadpole")], ["herp_clutch", "terrarium_plants"], -7.25, -6.00, 150, None),
 ]
 
 # The feature switches of each quest (Feature constant names; the tags add those of the dependencies). None: the core of
@@ -270,6 +273,7 @@ OWN_FEATURES = {
     "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
     "powered_trip": ["CREATE_TRAVEL_CARE"],
     "aquarist_hired": ["AQUARIST_NPC"], "shared_tank": ["TANK_USERS"],
+    "terrarium_plants": ["TERRARIUM_PLANTS"], "bromeliad_tadpoles": ["BROMELIAD_TADPOLES"],
 }
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
@@ -326,6 +330,7 @@ REWARDS = {
     "clown_larvae": [("rotifer_culture", 2)],
     "calcium_reactor": [("coral_rubble", 16)],
     "amano": [("fish_bag", 4)],
+    "terrarium_plants": [("neoregelia", 1), ("cushion_moss", 1)],
 }
 
 FIRST_CHAPTER = 33  # quests of the chapter of 1.25.0 (ids, tasks, dependencies frozen)

@@ -60,6 +60,10 @@ final class PlantMeshBuilder {
     }
 
     void build() {
+        if (sp.land()) { // M56: the terrarium plants
+            LandPlantMeshes.build(this);
+            return;
+        }
         switch (sp) {
             case ROTALA -> stems(PlantTex.ROUND, 1.0F, 0.68F, 0.5F);
             case LUDWIGIA -> stems(PlantTex.ELLIPTIC, 1.55F, 0.95F, 0.55F);

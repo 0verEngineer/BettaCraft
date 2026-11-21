@@ -133,6 +133,18 @@ public final class TankTerrain implements CritterMovement.Terrain {
         return null;
     }
 
+    /** M56: a spot at the foot of a grown terrarium plant near (x, z) (snakes and geckos hide there), or null. */
+    @Nullable
+    public double[] plantShelter(double x, double z, double reach, java.util.random.RandomGenerator rnd) {
+        if (region == null || server == null) return null;
+        double[] s = org.overengineer.bettacraft.plants.TerrariumPlantLife.shelter(server, t, x, z, reach, rnd);
+        if (s == null) return null;
+        double g = ground(s[0], s[2]);
+        if (Double.isFinite(g) && Math.abs(g - s[1]) < 0.15) s[1] = g; // on the ground (the plant's root sits on it)
+        if (Double.isFinite(surface) && s[1] < surface - 0.01) return null; // not under water
+        return s;
+    }
+
     private double lowestFloor(double x, double z) {
         int ix = (int) Math.floor(x) - minX, iz = (int) Math.floor(z) - minZ;
         if (ix < 0 || iz < 0 || ix >= sx || iz >= sz) return t.min().getY();

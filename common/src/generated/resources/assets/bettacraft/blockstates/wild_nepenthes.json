@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "planted=false,trimmed=false": [
+      {
+        "model": "bettacraft:block/wild_land_nepenthes"
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 270
+      }
+    ],
+    "planted=false,trimmed=true": [
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 270
+      }
+    ],
+    "planted=true,trimmed=false": [
+      {
+        "model": "bettacraft:block/wild_land_nepenthes"
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes",
+        "y": 270
+      }
+    ],
+    "planted=true,trimmed=true": [
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed"
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 90
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 180
+      },
+      {
+        "model": "bettacraft:block/wild_land_nepenthes_trimmed",
+        "y": 270
+      }
+    ]
+  }
+}

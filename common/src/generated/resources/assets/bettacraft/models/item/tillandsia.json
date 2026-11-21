@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/terrarium_airplant",
+    "layer1": "bettacraft:item/terrarium_airplant_detail"
+  }
+}

@@ -27,6 +27,7 @@ public final class TerrariumCare {
         if (t.inhabitants().isEmpty()) return;
         List<Entity> live = TankInhabitants.liveInhabitants(level, t);
         if (live.isEmpty()) return;
+        org.overengineer.bettacraft.plants.TerrariumPlantLife.graze(level, c); // M56: tortoises graze the edible plants
         TerrariumNeeds.Conditions cond = TankClimate.conditions(t);
         long now = level.getGameTime();
         for (Entity e : live) {

@@ -47,6 +47,7 @@ public final class PlantIndex {
         p.surface = o.surface;
         p.room = o.room;
         p.redness = o.redness;
+        p.wilt = o.wilt; // M56
         plants.add(p);
         return p;
     }
