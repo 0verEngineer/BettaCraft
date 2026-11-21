@@ -80,6 +80,7 @@ Aufgaben des [Quest-Kapitels](settings/modpacks.md) für Modpacks.
 | <ItemImage id="minecraft:redstone" /> | ↳ **Am Netz** | Öffne das Menü eines Beckens mit Energie im Speicher, während Geräte Strom brauchen |
 | <ItemImage id="bettacraft:crank" /> | ↳ **Aufgezogen** | Ziehe ein Gerät mit der Kurbel auf |
 | <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **Ein Filter für alle** | Ein Multiblock-Filter reinigt das Wasser von zwei Becken zugleich |
+| <ItemImage id="minecraft:name_tag" /> | ↳ **Tag der offenen Tür** | Trage einen anderen Spieler als Nutzer eines Beckens ein (Nutzer-Tab im Becken-Menü) |
 | <ItemImage id="bettacraft:sump" /> | ↳ **Unter Deck** | Setze ein Technikbecken in einen Unterschrank unter einem Becken |
 | <ItemImage id="bettacraft:calcium_reactor" /> | ↳ **Gelöste Koralle** | Ein Kalkreaktor löst Korallenbruch mit CO2 in ein Riffbecken |
 | <ItemImage id="minecraft:minecart" /> | ↳ **Mobiles Aquarium** | Ein Becken kommt auf einer Contraption heil an einem anderen Ort an |

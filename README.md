@@ -416,6 +416,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.equipment.moreInternalFilters` | Gentle Flow |
 | `features.equipment.multiblockFilter` | Filter Room |
 | `features.equipment.stainlessSteel` | Stainless |
+| `features.equipment.tankUsers` | Open House |
 | `features.fertilizer.dosing` | Automatic Gardener |
 | `features.fertilizer.enabled` | Plant Food |
 | `features.floatingPlants.enabled` | Floating Carpet |

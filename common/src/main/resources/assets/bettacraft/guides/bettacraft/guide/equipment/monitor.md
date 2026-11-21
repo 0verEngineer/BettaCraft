@@ -67,8 +67,10 @@ every block of the screen also gives a **redstone signal of 15** to all sides, a
 triggered alarms (up to 15). Since 1.25.0 every screen with an alarm tile checks its tanks every second even when
 nobody looks. A tank that is not loaded never triggers an alarm.
 
-**Waypoint on the map** (since 1.25.0, with JourneyMap): when an alarm goes off, the owner of the tank and the players
-within 128 blocks get a red waypoint "Tank alarm" at the tank; it goes away when the last alarm of the tank clears.
+**Waypoint on the map** (since 1.25.0; JourneyMap, since 1.43.0 also Xaero's Minimap / World Map and FTB Chunks): when an
+alarm goes off, the owner of the tank and its listed [users](../aquarium/menu.md#users) get a red waypoint "Tank alarm" at
+the tank (each one switches his own in the users tab; on by default only for the owner); it goes away when the last
+alarm of the tank clears.
 Server switch `features.compat.journeymap`, for yourself `map.showAlarmWaypoints` in the client config. Modpack scripts
 get the alarm as an event, see [Modpacks: quests and scripts](../settings/modpacks.md).
 

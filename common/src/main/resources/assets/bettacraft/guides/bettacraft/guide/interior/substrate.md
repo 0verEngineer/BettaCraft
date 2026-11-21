@@ -24,5 +24,5 @@ water soft and acidic, plain soil a little, limestone (calcite, dripstone) makes
 Only full blocks with a normal model and without a block entity can be used (and the mod's own active soil). The block tag
 `#bettacraft:substrate_blacklist` excludes more blocks.
 
-In the aquarium the substrate shows as a thin layer at the bottom. The interior tab of the menu counts the covered
+In the aquarium the substrate shows as a thin layer at the bottom. The tooltip of the interior button in the menu counts the covered
 floor blocks.

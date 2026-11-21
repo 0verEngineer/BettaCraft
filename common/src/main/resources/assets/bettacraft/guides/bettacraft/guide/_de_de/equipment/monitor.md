@@ -72,8 +72,10 @@ Richtungen, und ein Komparator liest die Zahl der ausgelösten Alarme (bis 15). 
 einer Alarm-Kachel seine Becken jede Sekunde, auch wenn niemand hinschaut. Ein nicht geladenes Becken löst nie einen
 Alarm aus.
 
-**Wegpunkt auf der Karte** (seit 1.25.0, mit JourneyMap): Löst ein Alarm aus, bekommen der Besitzer des Beckens und die
-Spieler im Umkreis von 128 Blöcken einen roten Wegpunkt „Becken-Alarm“ am Becken; er verschwindet, wenn der letzte Alarm
+**Wegpunkt auf der Karte** (seit 1.25.0; JourneyMap, seit 1.43.0 auch Xaero's Minimap / World Map und FTB Chunks): Löst ein
+Alarm aus, bekommen der Besitzer des Beckens und seine eingetragenen [Nutzer](../aquarium/menu.md#nutzer) einen roten
+Wegpunkt „Becken-Alarm“ am Becken (jeder schaltet seinen eigenen im Nutzer-Tab; standardmäßig nur beim Besitzer an); er
+verschwindet, wenn der letzte Alarm
 des Beckens aus ist. Server-Schalter `features.compat.journeymap`, für dich selbst `map.showAlarmWaypoints` in der
 Client-Config. Modpack-Skripte bekommen den Alarm als Event, siehe [Modpacks: Quests und Skripte](../settings/modpacks.md).
 

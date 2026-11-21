@@ -116,7 +116,7 @@ the filter sound, the connected glass textures (`render.connectedGlass`) and the
 floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48), how strongly coloured lights tint
 the water (`render.lightTint`, 0 to 1, default 0.6; 0 = the colour only shows at the lamp), the leg movement of mobs and pets
 walking in tanks (`render.walkAnimationBoost`: `auto` matches it to their size, a factor from 0.1 to 10, 0 = vanilla), the leave hint in the
-interior (`hud.interiorLeaveHint`) and the alarm waypoints on your own map (`map.showAlarmWaypoints`).
+interior (`hud.interiorLeaveHint`) and the alarm waypoints of all tanks on your own map (`map.showAlarmWaypoints`, per map mod `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; also behind the gear in the tank menu).
 
 ## Feature switches
 
@@ -283,7 +283,7 @@ loaded in peaceful (like every other monster).
   of other mods (`#c:carbon_dioxide`, for example from Create: The Factory Must Grow) does.
 * **FTB Quests:** a quest chapter "Bettacraft" for modpacks, **KubeJS:** events when animals are born or die and when a
   monitor alarm goes off, see [Modpacks: quests and scripts](settings/modpacks.md).
-* **JourneyMap:** a waypoint at a tank whose [monitor alarm](equipment/monitor.md) went off, until it clears.
+* **JourneyMap, Xaero's Minimap / World Map, FTB Chunks:** a waypoint at a tank whose [monitor alarm](equipment/monitor.md) went off, until it clears (owner and listed users only).
 * **Every other mod with water animals** (Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The
   Undergarden, Shiny, Sushi Go Crafting, DragN's Just Bettas, ...): its small water animals go into aquariums, large
   and hostile ones are refused. See [Animals of other mods](settings/other_animals.md).

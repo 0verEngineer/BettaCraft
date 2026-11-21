@@ -85,6 +85,8 @@ public final class Progress {
     public static final String VARIED_DIET = "varied_diet";
     /** A device was turned below 100 % with its power regulator. */
     public static final String REGULATOR = "regulator";
+    /** M53: a player was added to the users of a tank (users tab). */
+    public static final String SHARED_TANK = "shared_tank";
     /** The daylight timer of a tank's lights was switched on. */
     public static final String LIGHT_TIMER = "light_timer";
     /** The tank menu of a tank with FE in its buffer while a power option is on was opened. */

@@ -35,8 +35,12 @@ public final class ClientConfig {
      * get the new default {@code false} without a migration); the volumes above only apply once a switch is on.
      */
     public static final ModConfigSpec.BooleanValue AIR_PUMP_SOUND, FLOW_PUMP_SOUND;
-    /** M32 part d: waypoints at tanks with a monitor alarm on this player's map (JourneyMap), with features.alarmWaypoints. */
+    /**
+     * M32 part d: waypoints at tanks with a monitor alarm on this player's map, with features.compat.journeymap. M53: the
+     * switch for the alarms of all tanks (each tank has its own in its users tab) and one per map mod.
+     */
     public static final ModConfigSpec.BooleanValue ALARM_WAYPOINTS;
+    public static final ModConfigSpec.BooleanValue MAP_JOURNEYMAP, MAP_XAERO, MAP_FTB_CHUNKS;
     /** M44: the walk animation of mobs in tanks: "auto", a factor, 0 = vanilla ({@code terrarium.WalkAnimation}). */
     public static final ModConfigSpec.ConfigValue<String> WALK_ANIMATION_BOOST;
 
@@ -85,9 +89,13 @@ public final class ClientConfig {
         AIR_PUMP_SOUND = b.comment("Play the hum of the air pumps (off by default; its volume is airPumpVolume)").define("airPumpSound", false);
         FLOW_PUMP_SOUND = b.comment("Play the whir of the flow pumps (off by default; its volume is flowPumpVolume)").define("flowPumpSound", false);
         b.pop();
-        b.comment("Map mods (M32 part d)").push("map");
-        ALARM_WAYPOINTS = b.comment("A waypoint at a tank whose monitor alarm went off, until it clears (JourneyMap; the pack switch",
-                "features.compat.journeymap turns it off for everyone)").define("showAlarmWaypoints", true);
+        b.comment("Map mods (M32 part d, M53)").push("map");
+        ALARM_WAYPOINTS = b.comment("Alarm waypoints of all tanks: a waypoint at a tank of yours (or one you are a user of) whose monitor alarm went off",
+                "or whose hired aquarist warns, until it clears. Off: none from any tank. Each tank also has its own switch in the users tab",
+                "of its menu; the pack switch features.compat.journeymap turns them off for everyone").define("showAlarmWaypoints", true);
+        MAP_JOURNEYMAP = b.comment("Put the alarm waypoints into JourneyMap (when it is installed)").define("journeyMap", true);
+        MAP_XAERO = b.comment("Put the alarm waypoints into Xaero's Minimap / World Map (when it is installed)").define("xaerosMinimap", true);
+        MAP_FTB_CHUNKS = b.comment("Put the alarm waypoints into FTB Chunks (when it is installed)").define("ftbChunks", true);
         b.pop();
         SPEC = b.build();
     }
@@ -117,6 +125,16 @@ public final class ClientConfig {
 
     public static boolean alarmWaypoints() {
         return CommonConfig.getOr(ALARM_WAYPOINTS, true);
+    }
+
+    /** M53: whether the alarm waypoints go into this map mod ({@code journeymap}, {@code xaero}, {@code ftbchunks}). */
+    public static boolean mapMod(String id) {
+        return switch (id) {
+            case "journeymap" -> CommonConfig.getOr(MAP_JOURNEYMAP, true);
+            case "xaero" -> CommonConfig.getOr(MAP_XAERO, true);
+            case "ftbchunks" -> CommonConfig.getOr(MAP_FTB_CHUNKS, true);
+            default -> false;
+        };
     }
 
     private ClientConfig() {}
