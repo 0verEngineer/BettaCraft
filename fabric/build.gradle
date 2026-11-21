@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -118,6 +118,13 @@ loom {
             if (project.hasProperty('smoketestfabric')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
+            }
+            // M54: -Psmoketestm54 [-Pm54parts=world,actions,tank,critters]: the movement of the animals
+            if (project.hasProperty('smoketestm54')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m54only', 'true'
+                if (project.hasProperty('m54parts')) property 'bettacraft.smoketest.m54parts', project.property('m54parts').toString()
             }
             // M53: -Psmoketestm53 [-Pm53parts=users,maps,interior,animals,critters] [-Pmaps] [-Pshaders] [-Pperf]
             if (project.hasProperty('smoketestm53')) {

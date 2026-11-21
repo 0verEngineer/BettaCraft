@@ -39,10 +39,20 @@ import org.overengineer.bettacraft.tank.interior.InteriorPaths;
  *     the ground ({@link Pose#BURIED}).</li>
  * </ul>
  * {@link #pose()} tells the entity what to show (synced by {@link TerrariumAnimalEntity}).
+ * <p>
+ * M54 ({@link Habits}, switch {@code features.visuals.livelyMovement}): an animal of the mod with habits keeps its own hours
+ * (more and longer rests while it is not active), goes at its own tempo with short fast phases ({@link #dashing}), climbs onto
+ * the high spots of the decoration and the plants ({@link Activity#PERCH}: branches, rocks, leaves; up a face straight like the
+ * climber) and hides under the decoration ({@link Activity#HIDE}: caves, overhangs, under leaves). Without habits (the animals
+ * of other mods) nothing changes.
  */
 public final class LandWalker {
     /** What the animal does now. */
-    public enum Activity { REST, LAND, WATER, BASK, CLIMB }
+    public enum Activity { REST, LAND, WATER, BASK, CLIMB,
+        /** M54: up on a high spot of the decoration or the plants (a branch, a rock, a leaf) and sitting there */
+        PERCH,
+        /** M54: under the decoration (a cave, an overhang, leaves) and resting there */
+        HIDE }
 
     /** How a body plan moves. */
     public enum Style { WALK, HOP, CLIMB, SLITHER, SWIM, FLY }
@@ -135,6 +145,10 @@ public final class LandWalker {
     private int hopTick = -1, hopWait, hopPause = 10;
     private double hopLen, lift;
     private int highest;
+    /** M54: the habits of this tick (null: none or the switch off) and the ticks of the fast phase left. */
+    @Nullable
+    private Habits habits;
+    private int dash;
 
     public Activity activity() {
         return activity;
@@ -162,6 +176,21 @@ public final class LandWalker {
     /** On its basking spot now. */
     public boolean basking() {
         return activity == Activity.BASK && atGoal;
+    }
+
+    /** M54: sits still where it wants to be: resting, or arrived at its basking spot, its perch or its hide. */
+    public boolean settled() {
+        return activity == Activity.REST || atGoal && (activity == Activity.BASK || activity == Activity.PERCH || activity == Activity.HIDE);
+    }
+
+    /** M54: in a fast phase now. */
+    public boolean dashing() {
+        return dash > 0;
+    }
+
+    /** M54 (GameTests): a fast phase of this many ticks now. */
+    public void dashForTest(int ticks) {
+        dash = ticks;
     }
 
     private boolean atGoal;
@@ -229,6 +258,13 @@ public final class LandWalker {
 
     /** One tick in the tank. {@code cold}: the air is below the animal's range (it seeks the basking spot). */
     public void tick(Mob mob, ServerLevel level, TankData t, Gait gait, boolean cold) {
+        tick(mob, level, t, gait, cold, null);
+    }
+
+    /** M54: one tick in the tank with the habits of the species (null: none). */
+    public void tick(Mob mob, ServerLevel level, TankData t, Gait gait, boolean cold, @Nullable Habits h) {
+        habits = h != null && Habits.enabled() ? h : null;
+        if (habits == null) dash = 0;
         TankTerrain ter = terrain(level, t);
         double surface = ter.surface();
         boolean water = Double.isFinite(surface);
@@ -250,7 +286,15 @@ public final class LandWalker {
         double flat = Math.sqrt(dx * dx + dz * dz);
         boolean inWater = water && pos.y + gait.height() * 0.5 < surface;
         double speed = inWater && gait.swim() > 0 ? gait.swim() : gait.walk();
+        if (habits != null) { // M54: its own tempo, faster in a fast phase
+            speed *= habits.tempo();
+            if (dash > 0) {
+                dash--;
+                if (gait.style() != Style.HOP) speed *= habits.dashFactor();
+            }
+        }
         if (activity == Activity.REST) speed = 0;
+        double maxStep = climbing(gait) ? Math.max(gait.maxStep(), habits.climb()) : gait.maxStep();
         atGoal = false;
         if (flat < 0.05) {
             if (path != null && pathIndex < path.size() - 1) {
@@ -275,7 +319,7 @@ public final class LandWalker {
                 speed = 0;
                 if (++hopWait >= hopPause) {
                     hopTick = 0;
-                    hopLen = Math.min(flat, gait.walk() * HOP_TICKS * 3);
+                    hopLen = Math.min(flat, gait.walk() * (habits != null ? habits.tempo() : 1) * HOP_TICKS * 3);
                 }
             } else {
                 speed = hopLen / HOP_TICKS;
@@ -284,7 +328,8 @@ public final class LandWalker {
                 if (hopTick >= HOP_TICKS) {
                     hopTick = -1;
                     hopWait = 0;
-                    hopPause = 8 + r.nextInt(gait.burrows() ? 40 : 18);
+                    // M54: a fast phase of a hopper is a quick series of hops
+                    hopPause = dash > 0 && habits != null ? 3 + r.nextInt(5) : 8 + r.nextInt(gait.burrows() ? 40 : 18);
                     newLift = 0;
                 }
             }
@@ -298,7 +343,12 @@ public final class LandWalker {
             nz += dz / flat * step;
         }
         double ny = pos.y;
-        double g = ter.groundAt(nx, pos.y + gait.maxStep() + 0.05, nz);
+        double g = ter.groundAt(nx, pos.y + maxStep + 0.05, nz);
+        if (habits != null && Double.isFinite(g) && g - pos.y > maxStep) {
+            // M54: a ledge lower than its step (a cave, a hide): the floor under it, when its body fits under the ledge
+            double under = ter.groundAt(nx, pos.y + 0.05, nz);
+            if (Double.isFinite(under) && under <= pos.y + 0.05 && Math.abs(ter.groundAt(nx, under + gait.height() + 0.02, nz) - under) < 1e-3) g = under;
+        }
         if (!Double.isFinite(g) || !t.contains(BlockPos.containing(nx, Math.max(t.min().getY(), g + 0.05), nz))) {
             blocked();
             g = ter.groundAt(pos.x, pos.y + 0.1, pos.z);
@@ -320,12 +370,13 @@ public final class LandWalker {
             ny = Math.max(ny, g);
         } else {
             double rise = g - pos.y;
-            if (rise > gait.maxStep() && !(water && pos.y + gait.height() >= surface - 0.05 && g <= surface + gait.maxStep())) {
+            if (rise > maxStep && !(water && pos.y + gait.height() >= surface - 0.05 && g <= surface + maxStep)) {
                 blocked();
                 pose = show;
                 return;
             }
-            if (gait.style() == Style.CLIMB && rise > 0.1) {
+            // M54: on the way to its perch a snake or a lizard climbs the face of the decoration like the climber (a hopper hops up)
+            if ((gait.style() == Style.CLIMB || climbing(gait) && gait.style() != Style.HOP) && rise > 0.1) {
                 // part c: a climber goes straight up the face of the decoration before it walks on
                 nx = pos.x;
                 nz = pos.z;
@@ -468,6 +519,11 @@ public final class LandWalker {
         }
     }
 
+    /** M54: on the way to a perch (it climbs higher faces than its step). */
+    private boolean climbing(Gait gait) {
+        return habits != null && activity == Activity.PERCH && habits.climb() > gait.maxStep();
+    }
+
     private void blocked() {
         if (++stuck > 10) {
             goal = null;
@@ -497,10 +553,20 @@ public final class LandWalker {
             double wet = water && gait.swim() > 0 ? gait.waterTime() : 0;
             double rest = gait.restTime();
             double climb = gait.style() == Style.CLIMB ? gait.special() : 0;
-            double land = Math.max(0.05, 1 - bask - wet - rest - climb);
-            double x = r.nextDouble() * (bask + wet + rest + climb + land);
+            double perch = 0, hide = 0;
+            if (habits != null) { // M54: its hours: rests and hides while it is not active, climbs and hides by its habits
+                long time = level.getOverworldClockTime();
+                boolean day = level.isBrightOutside();
+                rest *= habits.restFactor(time, day);
+                perch = habits.perch() * (habits.active(time, day) ? 1.0 : 0.5);
+                hide = habits.hide() * habits.hideFactor(time, day);
+                if (!day) bask = 0;
+            }
+            double land = Math.max(0.05, 1 - bask - wet - rest - climb - perch - hide);
+            double x = r.nextDouble() * (bask + wet + rest + climb + perch + hide + land);
             a = x < bask ? Activity.BASK : x < bask + wet ? Activity.WATER : x < bask + wet + rest ? Activity.REST
-                    : x < bask + wet + rest + climb ? Activity.CLIMB : Activity.LAND;
+                    : x < bask + wet + rest + climb ? Activity.CLIMB : x < bask + wet + rest + climb + perch ? Activity.PERCH
+                    : x < bask + wet + rest + climb + perch + hide ? Activity.HIDE : Activity.LAND;
         }
         climbWall = null;
         if (gait.style() == Style.FLY) { // M35 part b: a flier: a perch on the land, the air, just over the water
@@ -530,6 +596,8 @@ public final class LandWalker {
             case WATER -> spot(t, ter, r, false, gait);
             case LAND -> spot(t, ter, r, true, gait);
             case CLIMB -> wallSpot(t, ter, r, gait);
+            case PERCH -> perchSpot(t, ter, r, gait);
+            case HIDE -> hideSpot(mob, ter, r, gait);
             case REST -> mob.position().subtract(0, lift, 0);
         };
         if (target == null && a != Activity.LAND && !(gait.style() == Style.SWIM)) {
@@ -546,11 +614,15 @@ public final class LandWalker {
         goal = target;
         buried = a == Activity.REST && gait.burrows() && (forced == Activity.REST || r.nextDouble() < gait.special()); // GameTests: a forced rest is buried
         goalTicks = switch (a) {
-            case REST -> buried ? 400 + r.nextInt(800) : 60 + r.nextInt(120);
+            case REST -> buried ? 400 + r.nextInt(800) : habits != null ? 100 + r.nextInt(260) : 60 + r.nextInt(120);
             case BASK -> 400 + r.nextInt(600);
             case CLIMB -> 400 + r.nextInt(500);
+            case PERCH -> 300 + r.nextInt(500);
+            case HIDE -> 400 + r.nextInt(700);
             default -> 200 + r.nextInt(200);
         };
+        // M54: a fast phase at the start of a walk now and then
+        dash = habits != null && a != Activity.REST && a != Activity.BASK && a != Activity.HIDE && r.nextDouble() < habits.dashChance() ? habits.dashTicks() : 0;
         path = null;
         pathIndex = 0;
         if (a != Activity.REST && wall == null) {
@@ -590,6 +662,36 @@ public final class LandWalker {
             return new Vec3(x, y, z);
         }
         return null;
+    }
+
+    /**
+     * M54: a high spot of the land (a branch, a rock, a leaf of a plant): the highest of eight random land spots, at least a
+     * little above the lowest of them; null when the land is flat.
+     */
+    @Nullable
+    private static Vec3 perchSpot(TankData t, TankTerrain ter, RandomSource r, Gait gait) {
+        Vec3 best = null, low = null;
+        for (int i = 0; i < 8; i++) {
+            Vec3 s = spot1(t, ter, r, true, gait);
+            if (s == null) continue;
+            if (best == null || s.y > best.y) best = s;
+            if (low == null || s.y < low.y) low = s;
+        }
+        return best != null && best.y > low.y + 0.12 ? best : null;
+    }
+
+    /**
+     * M54: a spot under the decoration near the animal (a cave, an overhang, leaves above it; {@link TankTerrain#shelter}); a
+     * land animal only on the land.
+     */
+    @Nullable
+    private static Vec3 hideSpot(Mob mob, TankTerrain ter, RandomSource r, Gait gait) {
+        double[] s = ter.shelter(mob.getX(), mob.getY(), mob.getZ(), 2.5, r::nextLong);
+        if (s == null) return null;
+        double surface = ter.surface();
+        boolean wet = Double.isFinite(surface) && s[1] < surface - 0.01;
+        if (wet && gait.swim() <= 0) return null;
+        return new Vec3(s[0], s[1], s[2]);
     }
 
     /**

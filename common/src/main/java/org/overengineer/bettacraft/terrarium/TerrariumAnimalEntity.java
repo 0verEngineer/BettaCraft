@@ -41,12 +41,19 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
  * tank is fed, and takes its {@link TerrariumNeeds} from the care step: stress from every problem, health loss from a
  * harmful one after {@code terrarium.harmAfterDays}, from hunger after {@link #starveDays}. Outside a tank it is a plain
  * animal with a few vanilla goals (walk around, look around). Subclasses give the species: needs, gait, diet, size.
+ * <p>
+ * M54: an animal with {@link Habits} also shows what it does while it sits still ({@link #action}, synced: a snake raises its
+ * head or lies coiled, a lizard looks around ...) and, outside a tank, keeps its hours there too: it rests (under cover when it
+ * hides by its habits) while it is not active, basks in the sun, walks at a calm pace with short sprints and runs from a player
+ * that comes close ({@link HerpWorldGoals}).
  */
 public abstract class TerrariumAnimalEntity extends Animal implements TerrariumAnimal {
     private static final EntityDataAccessor<Boolean> DATA_BASKING = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_IN_TANK = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BOOLEAN);
     /** M31 part c: the walker's {@link LandWalker.Pose} (buried, clinging to a wall). */
     private static final EntityDataAccessor<Byte> DATA_POSE = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BYTE);
+    /** M54: what it does while it sits still ({@link Habits.Action}). */
+    private static final EntityDataAccessor<Byte> DATA_ACTION = SynchedEntityData.defineId(TerrariumAnimalEntity.class, EntityDataSerializers.BYTE);
     private static final double TICKS_PER_DAY = 24000.0;
     private static final long NEVER = Long.MIN_VALUE;
 
@@ -78,17 +85,91 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         b.define(DATA_BASKING, false);
         b.define(DATA_IN_TANK, false);
         b.define(DATA_POSE, (byte) 0);
+        b.define(DATA_ACTION, (byte) 0);
+    }
+
+    /** M54: the habits of the animal (null: none, or the switch off). */
+    @Nullable
+    public Habits habits() {
+        return null;
+    }
+
+    /** M54: what it does now while it sits still (synced). */
+    public Habits.Action action() {
+        return actionOverride != null ? actionOverride : Habits.Action.of(entityData.get(DATA_ACTION));
+    }
+
+    /** M54 (client): ticks since the action began (the models ease it in). */
+    public float actionTicks(float partialTick) {
+        return tickCount - actionSince + partialTick;
+    }
+
+    private int actionSince;
+    @Nullable
+    private Habits.Action actionOverride;
+    /** M54 (client): the action before the current one (eased out while the new one eases in). */
+    private Habits.Action actionBefore = Habits.Action.NONE, actionSeen = Habits.Action.NONE;
+
+    /**
+     * M54 (client): how much of an action the models show now, 0..1: the current one eases in over {@link #EASE} ticks, the one
+     * before eases out.
+     */
+    public float actionWeight(Habits.Action a, float ageInTicks) {
+        float t = Math.max(0, ageInTicks - actionSince);
+        float in = Math.min(1F, t / EASE);
+        in = in * in * (3 - 2 * in);
+        if (action() == a) return in;
+        return actionBefore == a ? 1F - in : 0F;
+    }
+
+    /** M54: ticks to ease an action in or out. */
+    public static final float EASE = 12F;
+
+    /** M54: the synced action (without the override of the smoke scenes). */
+    protected Habits.Action syncedAction() {
+        return Habits.Action.of(entityData.get(DATA_ACTION));
+    }
+
+    /** M54 (server): starts an action (NONE ends it). */
+    protected void setAction(Habits.Action a) {
+        if (entityData.get(DATA_ACTION) != (byte) a.ordinal()) entityData.set(DATA_ACTION, (byte) a.ordinal());
+    }
+
+    /** M54 smoke scenes: shows this action whatever the animal does; null = its own again (client and server). */
+    public void setActionForTest(@Nullable Habits.Action a) {
+        actionBefore = actionOverride != null ? actionOverride : actionSeen;
+        actionOverride = a;
+        actionSince = tickCount;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (DATA_ACTION.equals(key)) {
+            Habits.Action now = Habits.Action.of(entityData.get(DATA_ACTION));
+            if (now != actionSeen) {
+                actionBefore = actionSeen;
+                actionSeen = now;
+                actionSince = tickCount;
+            }
+        }
+    }
+
+    /** M54: basking in the sun outside a tank (the world goal). */
+    boolean worldBasking;
+    /** M54: resting outside a tank by its hours (the world goal). */
+    boolean worldResting;
+
+    /** M54 (GameTests): resting outside a tank by its hours now. */
+    public boolean restingInWorld() {
+        return worldResting;
     }
 
     @Override
     protected void registerGoals() {
-        // only outside a tank (in the tank the walker moves it)
-        goalSelector.addGoal(5, new RandomStrollGoal(this, 0.8) {
-            @Override
-            public boolean canUse() {
-                return !inTank() && super.canUse();
-            }
-        });
+        // only outside a tank (in the tank the walker moves it); M54: the habits of the species in the world
+        HerpWorldGoals.register(this, goalSelector);
+        goalSelector.addGoal(5, new HerpWorldGoals.Stroll(this));
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 4.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this) {
             @Override
@@ -167,7 +248,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         }
         if (tank != null && !org.overengineer.bettacraft.config.Care.needs()) lastFed = server.getGameTime(); // M33 part c, DECOR: always fed
         if (tank != null && !resting() && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
-        boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null && walker.basking();
+        boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null ? walker.basking() : worldBasking;
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
         LandWalker.Pose p = poseOverride != null ? poseOverride : tank != null && !resting() ? walker.pose() : LandWalker.Pose.NONE;
         if (entityData.get(DATA_POSE) != (byte) p.ordinal()) entityData.set(DATA_POSE, (byte) p.ordinal());
@@ -177,7 +258,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     protected void customServerAiStep(ServerLevel serverLevel) {
         if (tank != null && level() instanceof ServerLevel server) {
             if (resting()) walker.hold();
-            else walker.tick(this, server, tank, gait(), cold);
+            else walker.tick(this, server, tank, gait(), cold, habits());
             return;
         }
         super.customServerAiStep(serverLevel);
