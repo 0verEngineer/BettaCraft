@@ -27,6 +27,34 @@ leeren <ItemLink id="bettacraft:terrarium_box" /> auf das Tier).
 Ihr Futter: [Futterinsekten](feeder_insects.md) (Heimchen und Fruchtfliegen aus Zuchten), weiches Obst für den Kronengecko
 und rohes Kaninchen oder Huhn für die Schlange.
 
+## Wie sie sich bewegen
+
+Sie leben wie die echten Tiere, in der Welt wie im Becken (Schalter `features.visuals.livelyMovement`):
+
+* **Ihre eigenen Zeiten.** Außerhalb davon ruhen sie mehr und länger, und die, die sich verstecken, gehen **in Deckung**: im
+  Becken in eine Höhle oder unter einen Überhang der Deko, in der Welt unter Blätter oder ein Dach.
+* **Ein ruhiges Tempo mit kurzen schnellen Phasen:** die Schlange schnellt vor, die Echsen sprinten los, die Frösche hüpfen in
+  schnellen Folgen.
+* **Die Einrichtung:** die Schlange und die Geckos **klettern** auf Steine, Wurzeln und Äste der Deko (Kanten bis fast einen
+  Block hoch), die Pfeilgiftfrösche sitzen oben auf **Blättern** und Pflanzen, und Schildkröten und Echsen sonnen sich unter
+  dem [Wärmestrahler](basking_lamp.md).
+* **Wenn sie still sitzen**, tun sie etwas: die Kornnatter **stellt den Kopf auf** und **züngelt** (ab und zu auch beim
+  Kriechen) und liegt beim Ruhen **eingerollt**; Echsen sehen sich um, strecken sich hoch und wedeln mit der Schwanzspitze;
+  Frösche sehen sich um und **rufen** (die Kehle pumpt); Schildkröten sehen sich um und strecken den Hals.
+
+| Tier | Aktiv | Tempo | Klettert, versteckt sich |
+|---|---|---|---|
+| Kornnatter | Dämmerung, Nacht | ruhig, schnellt vor | klettert auf Steine und Äste, versteckt sich tagsüber |
+| Leopardgecko | nachts | bedächtig, sprintet | niedrige Steine, versteckt sich tagsüber |
+| Kronengecko | nachts | langsam, sprunghaft | die Scheibe, Äste und Blätter |
+| Pfeilgiftfrösche | tagsüber | schnelle Sprünge | sitzen auf Blättern, nachts unter den Blättern |
+| Schmuckhornfrosch | nachts | sitzt eingegraben, schnellt vor | eingegraben im Boden |
+| Schildkröten | tagsüber (die Moschusschildkröte nachts) | langsam, im Wasser schneller | verstecken sich in Höhlen, sonnen sich |
+
+In der Welt sonnen sie sich außerdem an hellen Tagen, und die kleinen, scheuen laufen vor einem Spieler davon, der zu nah
+kommt. Mit dem Schalter aus bewegen sie sich wie vorher (1.43). Derselbe Schalter lässt **Fische** ab und zu davonflitzen und
+nachts mehr ruhen und **Krebse** tagsüber in ihren Verstecken bleiben.
+
 ## Zucht
 
 Ein ausgewachsenes, gefüttertes Weibchen (zwei Tage), ohne schädliches Problem und mit wenig Stress, und ein ausgewachsenes
