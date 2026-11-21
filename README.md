@@ -98,8 +98,8 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   **fertilizer maker** mixes it from kelp meal, nutrient salt and water and pipes it into the tank; the dosing pump doses
   it too.
 - **Every plant grows wild** in the waters of its origin: Anubias and Bucephalandra on stones in jungle water, stem
-  plants and carpet cushions in swamps, Vallisneria and mosses in rivers, Marimo balls in cold lakes, floating plants on calm
-  water. Shears cut a cutting, the plant grows back.
+  plants and carpets of fine sprigs in swamps, Vallisneria and round moss cushions in rivers, Marimo balls in cold lakes,
+  floating plants on calm water. Shears cut a cutting, the plant grows back.
 - Every plant and coral has **real leaves, polyps and tentacles that sway** in the water, inside and in the miniature
   outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
 
@@ -118,6 +118,8 @@ are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Build
   cool water change sets a pair off (amplexus), the spawn floats at the surface (fish eat it, floating plants hide it),
   the tadpoles need infusoria and become froglets. **Big crayfish** (the
   Florida crayfish in blue and orange, the all-female marbled crayfish) eat plants, dig them up and catch slow fish.
+- **Every animal has its own icon** in its bucket, fish bag or transport tub (and every amphibian and reptile in its box):
+  you see which fish, shrimp, snail or crayfish is inside (the gene-coloured ones in their colour).
 - **Axolotls** (vanilla) get real care in a tank: cool water with a cooler, eggs on the plants, larvae, and the five
   colours inherited by Mendel (blue recessive and rare).
 - **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
