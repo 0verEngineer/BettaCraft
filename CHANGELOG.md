@@ -55,6 +55,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - Test only: the frog breeding test draws the eggs the frogs snap at from a fixed seed (its 60 % hatch check failed about
   once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
   nest by the glass.
+- Test only: the floating plant tank of the test of keeping fish without a generator holds two female bettas (a pair
+  bred there, and its fry, 2 to 23 bettas by chance, set the water quality; it fell below the check once).
 
 ### Changed (Minecraft 26.2 itself)
 - Everything that drew into Minecraft's removed buffer sources (the miniature's plant meshes and sway, filter jets, the
