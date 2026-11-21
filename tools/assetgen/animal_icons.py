@@ -449,7 +449,7 @@ def _load(name):
 
 def composites(fish, crit):
     """Every icon as the game composes it (bucket, bag, tub; the gene-coloured ones in a typical colour): [(name, image)]."""
-    bucket, glass, bag, tub, front = _load("betta_bucket"), _load("betta_bucket_glass"), _load("fish_bag"), _load("transport_tub"), tub_front()
+    bucket, glass, bag, tub, front = _load("betta_bucket"), _load("betta_bucket_glass"), opaque_bag(), _load("transport_tub"), tub_front()
     out = []
     for name, img in fish.items():
         if name.startswith("tub_"):
@@ -481,8 +481,22 @@ def preview(items, path, cols=12, scale=6):
     return path
 
 
+def opaque_bag():
+    """The fish bag with its see-through water made opaque (laid over a pale water colour): the layers of a bag with an
+    animal draw in a fixed order then (1.21.4+ sorts the quads of a translucent item; the animal went behind the water)."""
+    bag = _load("fish_bag")
+    under = np.array(hex_f("#cfe3ee"))
+    out = bag.copy()
+    a = bag[..., 3:4]
+    m = (bag[..., 3] > 0)
+    out[..., :3] = np.where(m[..., None], bag[..., :3] * a + under * (1 - a), 0)
+    out[..., 3] = np.where(m, 1.0, 0.0)
+    return out
+
+
 def write_all() -> list:
     out = []
+    out.append(save_png(opaque_bag(), ANIMAL_TEX / "bag.png"))
     fish = fish_icons()
     crit = critter_icons()
     for name, img in list(fish.items()) + list(crit.items()):
