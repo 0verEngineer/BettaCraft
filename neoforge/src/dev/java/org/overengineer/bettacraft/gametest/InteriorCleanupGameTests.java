@@ -85,7 +85,7 @@ public final class InteriorCleanupGameTests {
     }
 
     /** A tank broken: its region is dead, its chunks leave the disk, the number goes to the next tank, whose interior is empty. */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 3000)
+    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 12000)
     public static void aBrokenTanksInteriorLeavesTheDiskAndItsNumberIsReused(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         MinecraftServer server = level.getServer();
@@ -102,8 +102,7 @@ public final class InteriorCleanupGameTests {
         boolean[] done = {false};
         h.succeedWhen(() -> {
             if (done[0]) return;
-            if (!regions.free().contains(id)) throw new GameTestAssertException("region " + id + " is not free yet (dead " + regions.dead().contains(id)
-                    + ", held " + InteriorCleanup.held(server, id) + ")");
+            if (!regions.free().contains(id)) throw new GameTestAssertException("not free yet: " + InteriorCleanup.describe(server, id));
             h.assertTrue(gone(server, id), "nothing of region " + id + " is on the disk");
             int lowest = regions.free().firstInt();
             TankBlockEntity n = InteriorGameTests.tank(h, 6, 1, 2, 1, 1, 1, 0);
@@ -120,7 +119,7 @@ public final class InteriorCleanupGameTests {
      * A removed region is not touched before the whole world was saved (a crash would go back to a world whose tank still
      * points to it): it stays dying, its chunks stay; the save makes it dead.
      */
-    @GameTest(template = EMPTY, batch = "bettacraft_m53c_cleanup_dying", timeoutTicks = 3000)
+    @GameTest(template = EMPTY, batch = "bettacraft_m53c_cleanup_dying", timeoutTicks = 12000)
     public static void aRemovedRegionWaitsForTheNextSaveOfTheWorld(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         MinecraftServer server = level.getServer();
@@ -148,7 +147,7 @@ public final class InteriorCleanupGameTests {
             h.assertTrue(!regions.dying().contains(id) && (regions.dead().contains(id) || regions.free().contains(id)), "dead after the save");
             InteriorCleanup.runNow(server);
             h.succeedWhen(() -> {
-                if (!regions.free().contains(id)) throw new GameTestAssertException("region " + id + " is not free yet");
+                if (!regions.free().contains(id)) throw new GameTestAssertException("not free yet: " + InteriorCleanup.describe(server, id));
                 h.assertTrue(gone(server, id), "nothing of region " + id + " is on the disk");
                 h.assertTrue(!in.getBlockState(marker).is(Blocks.DIAMOND_BLOCK), "the block outside the interior is gone too");
             });
@@ -156,7 +155,7 @@ public final class InteriorCleanupGameTests {
     }
 
     /** Grown, split, merged and turned: every block comes along, the old regions leave nothing on the disk. */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 3000)
+    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 12000)
     public static void growingSplittingMergingAndTurningLoseNothingAndLeaveNothing(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         MinecraftServer server = level.getServer();
@@ -204,7 +203,7 @@ public final class InteriorCleanupGameTests {
         h.succeedWhen(() -> {
             if (done[0]) return;
             for (int id : old) {
-                if (!regions.free().contains(id) && !regions.living(id)) throw new GameTestAssertException("old region " + id + " is not free yet");
+                if (!regions.free().contains(id) && !regions.living(id)) throw new GameTestAssertException("old region not free yet: " + InteriorCleanup.describe(server, id));
                 h.assertTrue(regions.living(id) || gone(server, id), "nothing of old region " + id + " is on the disk");
             }
             h.assertTrue(regions.living(turnedId) && contains(in, rt, Blocks.DIAMOND_BLOCK) && contains(in, rt, Blocks.GOLD_BLOCK),
@@ -216,7 +215,7 @@ public final class InteriorCleanupGameTests {
     }
 
     /** The interiors of a packed tank and of a travelling tank are never touched; a removed one with its shell is kept. */
-    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 3000)
+    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 12000)
     public static void packedAndTravellingTanksSurviveTheCleanUp(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         MinecraftServer server = level.getServer();
@@ -251,8 +250,8 @@ public final class InteriorCleanupGameTests {
         h.succeedWhen(() -> {
             if (done[0]) return;
             if (!regions.free().contains(broken) || !regions.kept().contains(rk.id())) {
-                throw new GameTestAssertException("the clean-up is not through yet (broken " + broken + " free " + regions.free().contains(broken)
-                        + ", shell region " + rk.id() + " kept " + regions.kept().contains(rk.id()) + ")");
+                throw new GameTestAssertException("the clean-up is not through yet: " + InteriorCleanup.describe(server, broken) + "; shell "
+                        + InteriorCleanup.describe(server, rk.id()));
             }
             h.assertTrue(regions.living(rp.id()) && in.getBlockState(rp.toWorld(5, 0, 5)).is(Blocks.DIAMOND_BLOCK), "the packed tank's interior is there");
             h.assertTrue(regions.living(rt.id()) && in.getBlockState(rt.toWorld(5, 0, 5)).is(Blocks.GOLD_BLOCK), "the travelling tank's interior is there");

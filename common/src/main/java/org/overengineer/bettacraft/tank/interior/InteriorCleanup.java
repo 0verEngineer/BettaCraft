@@ -127,6 +127,18 @@ public final class InteriorCleanup {
     private static void step(MinecraftServer server, ServerLevel in, InteriorRegions regions) throws IOException {
         long now = server.getTickCount();
         IntSet busy = busyCells(in);
+        Stage was = stage;
+        try {
+            stepStage(server, in, regions, now, busy);
+        } finally {
+            if (DEBUG && stage != was) LOGGER.info("clean-up {} -> {}: {}", was, stage, batch);
+        }
+    }
+
+    /** Logs the stages ({@code -Dbettacraft.debugInteriorCleanup=true}). */
+    private static final boolean DEBUG = Boolean.getBoolean("bettacraft.debugInteriorCleanup");
+
+    private static void stepStage(MinecraftServer server, ServerLevel in, InteriorRegions regions, long now, IntSet busy) throws IOException {
         switch (stage) {
             case IDLE -> {
                 for (int id : regions.dead()) {
@@ -254,6 +266,15 @@ public final class InteriorCleanup {
         } catch (RuntimeException e) {
             LOGGER.warn("Could not note the removed interior regions after the save", e);
         }
+    }
+
+    /** What the clean-up knows of a region id (tests, logs). */
+    public static String describe(MinecraftServer server, int id) {
+        InteriorRegions r = InteriorRegions.get(server);
+        return "region " + id + ": living " + r.living(id) + ", dying " + r.dying().contains(id) + ", dead " + r.dead().contains(id)
+                + " (deletable " + r.deletable(id) + "), free " + r.free().contains(id) + ", kept " + r.kept().contains(id) + ", held "
+                + held(server, id) + ", quiet since " + quietSince.getOrDefault(id, -1) + " (now " + server.getTickCount() + "), stage " + stage
+                + " " + batch + ", tries " + tries.get(id) + ", gave up " + gaveUp.contains(id) + ", switch " + enabled() + ", forced " + forced;
     }
 
     /** Whether a round is going on or dead regions wait for one (tests). */
