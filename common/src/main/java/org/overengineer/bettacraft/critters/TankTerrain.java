@@ -141,6 +141,11 @@ public final class TankTerrain implements CritterMovement.Terrain {
     }
 
     @Override
+    public boolean lively() {
+        return Features.enabled(Feature.LIVELY_MOVEMENT); // M54
+    }
+
+    @Override
     public double surface() {
         return surface;
     }

@@ -66,6 +66,11 @@ public final class CritterMovement {
             return null;
         }
 
+        /** M54: lively movement on (crayfish hide by day and come out at night). */
+        default boolean lively() {
+            return false;
+        }
+
         /** M21: a sheltered spot {x, y, z} on the floor (under an overhang, in a cave) within {@code reach}, or null. */
         @javax.annotation.Nullable
         default double[] shelter(double x, double y, double z, double reach, RandomGenerator rnd) {
@@ -211,6 +216,11 @@ public final class CritterMovement {
         if (c.idle > 0) {
             c.idle--;
             if (c.species.isShrimp() && rnd.nextDouble() < 0.4) c.yaw += (float) (rnd.nextGaussian() * 25);
+            return;
+        }
+        // M54 (lively movement): a crayfish in its hide by day mostly stays there (they come out at night)
+        if (t.lively() && c.species.isCrayfish() && t.day() && c.path == null && covered(t, c) && rnd.nextDouble() < 0.6) {
+            c.idle = 5 + rnd.nextInt(10);
             return;
         }
         if (c.path != null) {
@@ -426,7 +436,9 @@ public final class CritterMovement {
         };
         c.path = null;
         // M21: now and then under an overhang or into a cave (a way around the decoration)
-        if (rnd.nextDouble() < shelterChance(c.species)) {
+        double hide = shelterChance(c.species);
+        if (t.lively() && c.species.isCrayfish()) hide *= t.day() ? 1.8 : 0.4; // M54: crayfish hide by day
+        if (rnd.nextDouble() < hide) {
             double[] s = t.shelter(c.x, c.y, c.z, reach * 1.5, rnd);
             java.util.List<double[]> way = s == null ? null : t.walkPath(c.x, c.y, c.z, s[0], s[1], s[2]);
             if (way != null && !way.isEmpty()) {

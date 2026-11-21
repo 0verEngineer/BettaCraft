@@ -50,6 +50,15 @@ public class TerrariumAnimalModel extends EntityModel<MobState<TerrariumAnimalEn
             legBl.yRot = 0.9F;
         }
         tail.yRot = Mth.sin(ageInTicks * 0.05F) * 0.1F;
+        // M54: a turtle that sits still looks around or stretches its neck far out (eased in and out)
+        float look = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.LOOK, ageInTicks);
+        float stretch = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.STRETCH, ageInTicks);
+        if (look > 0) head.yRot += Mth.clamp(Mth.sin(ageInTicks * 0.05F) * 1.5F, -1F, 1F) * 0.6F * look;
+        if (stretch > 0) {
+            head.z -= 1.6F * stretch;
+            head.xRot -= 0.3F * stretch;
+            head.y -= 0.3F * stretch;
+        }
         // M31 part b: brumation: head and legs drawn into the shell, no movement
         if (e instanceof org.overengineer.bettacraft.terrarium.HerpEntity t && t.isBrumating()) {
             head.yRot = 0;
