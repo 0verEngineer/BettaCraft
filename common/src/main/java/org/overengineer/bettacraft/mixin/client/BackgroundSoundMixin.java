@@ -14,10 +14,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(Options.class)
 public abstract class BackgroundSoundMixin {
+    private static boolean logged;
     private static final boolean SILENT = Boolean.getBoolean("bettacraft.background") || Boolean.getBoolean("bettacraft.silent");
 
     @Inject(method = "getSoundSourceVolume", at = @At("HEAD"), cancellable = true, require = 0)
     private void bettacraft$silent(SoundSource source, CallbackInfoReturnable<Float> cir) {
-        if (SILENT) cir.setReturnValue(0F);
+        if (!SILENT) return;
+        if (!logged) { // the smoke runs check this line
+            logged = true;
+            org.slf4j.LoggerFactory.getLogger("bettacraft/background").info("[background] sound muted (dev client)");
+        }
+        cir.setReturnValue(0F);
     }
 }
