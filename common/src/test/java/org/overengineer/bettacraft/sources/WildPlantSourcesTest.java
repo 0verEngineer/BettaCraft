@@ -89,7 +89,9 @@ class WildPlantSourcesTest {
             WildPlantKind k = WildPlantKind.of(s);
             if (k == null || k == WildPlantKind.MOSS) continue;
             String name = k.id() + "_" + WildPlantKind.look(s);
-            for (String suffix : new String[]{"", "_accent", "_top"}) {
+            // M55: the carpets have their own textures per design (WildCarpetModelTest checks them)
+            String[] suffixes = k == WildPlantKind.CARPET ? new String[]{"_sprig", "_blade_ground", "_lawn_ground", "_dome"} : new String[]{"", "_accent", "_top"};
+            for (String suffix : suffixes) {
                 assertTrue(Files.exists(tex.resolve(name + suffix + ".png")), "missing texture " + name + suffix + " for " + s);
             }
         }
