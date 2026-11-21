@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -116,6 +116,13 @@ loom {
             if (project.hasProperty('smoketestfabric')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
+            }
+            // M53: -Psmoketestm53 [-Pm53parts=users,maps,interior,animals,critters] [-Pmaps] [-Pshaders] [-Pperf]
+            if (project.hasProperty('smoketestm53')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m53only', 'true'
+                if (project.hasProperty('m53parts')) property 'bettacraft.smoketest.m53parts', project.property('m53parts').toString()
             }
             programArgs '--width', '1280', '--height', '760'
             // M52e: -Pvulkan starts the client on 26.3's Vulkan backend (launch argument, overrides the video setting)
@@ -266,7 +273,11 @@ dependencies {
     // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams), M52b: -Pshaders
     // (Sodium, Iris; the shader pack in <fabricRunRoot>/shaderpacks)
     def groupJars = [:] // file name -> jar: a library in several groups (Architectury, Cloth Config) only once
-    [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods', shaders: 'shader-mods'].each { flag, dir ->
+    // M53: -Pmaps (JourneyMap, Xaero's Minimap + World Map, FTB Chunks + libraries), -Pshaders (Sodium, Iris, Sodium Extra;
+    // Complementary in the run's shaderpacks), -Pperf (ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant
+    // Horizons, More Culling ...), -Pvulkanmod (VulkanMod, where it exists)
+    [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods', shaders: 'shader-mods',
+     maps: 'map-mods', perf: 'perf-mods', vulkanmod: 'vulkan-mods'].each { flag, dir ->
         if (project.hasProperty(flag)) {
             rootProject.file("${fabricRunRoot}/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') }?.each { groupJars.putIfAbsent(it.name, it) }
         }

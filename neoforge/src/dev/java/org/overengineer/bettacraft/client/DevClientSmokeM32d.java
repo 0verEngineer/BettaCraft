@@ -83,7 +83,7 @@ final class DevClientSmokeM32d {
         l.tiles.add(DashboardTile.alarm(l.nextId++, 0, 0, 8, 5, t.id(), MonitorValue.TEMPERATURE, false, 28F, false));
         monitor.setLayout(l);
         LOGGER.info("[smoketest] M32d tank at {} with an alarm monitor; JourneyMap {}", tank.getBlockPos(),
-                JourneyMapWaypoints.available() ? "found" : "MISSING (-Pmaps)");
+                AlarmWaypoints.available("journeymap") ? "found" : "MISSING (-Pmaps)");
     }
 
     private void checkShown() {

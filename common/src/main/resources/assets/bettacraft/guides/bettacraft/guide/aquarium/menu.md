@@ -18,8 +18,8 @@ navigation:
 * **Name** (up to 32 characters) and the **name sign**: on or off, its position (top or bottom, left, centre or
   right) and the **front** of the aquarium it is drawn on. The sign is black with white text, 0.12 blocks high (each player
   can make it bigger or smaller with the client config `render.signScale`, 0.5 to 2); long names get a smaller font. The name also shows in the menu and in Jade when the sign is off.
-* **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner and operators can
-  change it (water, animals, settings, interior); everyone can still look.
+* **Lock**: the player who placed the aquarium is its owner. When it is locked, only the owner, its
+  caretakers (users tab, below) and operators can change it (water, animals, settings, interior); everyone else can still look.
 * **Break protection** (the button between the name and the lock; owner and operators only, off for a new aquarium):
   while it is on **nobody can break the aquarium**, not even the owner and not in creative mode: the glass, the lid, the
   light and the feeders on it, the clip-on feeder on its glass and the cabinet under it. Trying it shows "Break
@@ -31,7 +31,11 @@ navigation:
   `features.aquaristNpc.enabled` is off.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
 * Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
-  and the button to enter the interior. The last line warns about poor water or missing power.
+  and the button to enter the interior (its tooltip shows the interior: scale and size, blocks in the miniature,
+  substrate, heaters and filters inside). The last line warns about poor water or missing power.
+* The **gear** right of the interior button opens Bettacraft's **client settings** (the same as in the config file
+  `bettacraft-client.toml` and in the mod list): among them **Alarm waypoints of all tanks** (`map.showAlarmWaypoints`) and
+  which map mods show them (`map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`).
 
 ## Animals
 
@@ -82,10 +86,28 @@ The [oxygen](oxygen.md) with a bar (the white mark is saturation), what it tends
 The [floating plants](../plants/floating_plants.md) of the aquarium: number per species, cover, light, growth, waste uptake, the
 warning for a dense cover and the **Thin out** button.
 
-## Interior
+## Users
 
-Scale and size of the interior, how many blocks are shown in the miniature, substrate, heaters and filters inside,
-floating plants, the decoration catalogue and the button to enter.
+The users tab (it replaced the interior tab in 1.43.0) lists who may do what at this aquarium:
+
+| Role | May |
+|---|---|
+| **Owner** | the player who built it: everything, also the users, the lock and the break protection |
+| **Caretaker** | everything the owner may: care, settings, animals, going in, the users and the lock |
+| **Viewer** | open the menu and look; changes nothing and cannot go into the aquarium |
+| **Not listed** | everyone else: may change it while it is open, only look while it is locked |
+
+The owner and the caretakers type the name of an online player, choose **as Caretaker** or **as Viewer** and press
+**Add**; a selected user gets another role or is removed (every user may take himself off the list). Players in the
+owner's FTB Teams party count as caretakers. The button **Others** is the lock. Operators may always do everything.
+Config switch: `features.equipment.tankUsers` (off: the list is ignored, only the owner and the lock count).
+
+**Alarm waypoints:** when a [monitor alarm](../equipment/monitor.md) goes off (or the
+[hired aquarist](../getting_started/hired_aquarist.md) warns), the owner and the listed users get a red waypoint at the
+aquarium in their map mod (JourneyMap, Xaero's Minimap and World Map, FTB Chunks), never players who are merely near.
+**My waypoint** switches your own one for this aquarium (on by default for the owner, off for every other user);
+**Waypoints for all** (owner and caretakers) switches them off for everybody. The gear in the overview switches them
+for all aquariums and per map mod.
 
 ## Log
 
