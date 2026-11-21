@@ -214,6 +214,12 @@ public interface Platform {
     /** The downfall of a biome after the loader's biome changes (NeoForge: the modified climate settings). */
     float biomeDownfall(net.minecraft.world.level.biome.Biome biome);
 
+    /**
+     * M53c: whether a chunk carries data of the loader's attachment system (NeoForge data attachments, Fabric data
+     * attachments): such a chunk is always saved, even when no block is in it.
+     */
+    boolean chunkHasAttachments(net.minecraft.world.level.chunk.ChunkAccess chunk);
+
     /** The light a block state gives at a position (NeoForge: the position-aware light emission). */
     int lightEmission(net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos);
 

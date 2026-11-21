@@ -83,6 +83,7 @@ public final class Schemas {
             .step(1, Schemas::regionsV1toV2)
             .step(2, Schemas::regionsV2toV3)
             .step(3, Schemas::regionsV3toV4)
+            .step(4, Schemas::regionsV4toV5)
             .build();
 
     /** Substrate block entity of an interior floor block (M3). */
@@ -320,6 +321,28 @@ public final class Schemas {
             int cz = size.length == 3 ? Math.max(1, size[2] / scale) : 1;
             r.putByteArray("cells", org.overengineer.bettacraft.tank.TankShape.fullBox(cx, cy, cz));
         }
+        return data;
+    }
+
+    /**
+     * Interior regions v4 -> v5 (M53c): ids are reused now. Every id the counter handed out before that is not in the list
+     * any more was removed (its tank broken, grown, split, merged or turned) before the list was last written, and versions
+     * before M53c wrote it only in complete saves of the world (data first, the chunks right after): it is dead (not dying),
+     * its chunks are deleted by the clean-up (which keeps a dead region whose shell is still there). Ids at or above the
+     * counter are left alone.
+     */
+    static CompoundTag regionsV4toV5(CompoundTag data) {
+        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        java.util.BitSet living = new java.util.BitSet();
+        int next = data.getInt("next_id");
+        for (int i = 0; i < list.size(); i++) {
+            int id = list.getCompound(i).getInt("id");
+            if (id >= 0) living.set(id);
+            next = Math.max(next, id + 1);
+        }
+        it.unimi.dsi.fastutil.ints.IntArrayList dead = new it.unimi.dsi.fastutil.ints.IntArrayList();
+        for (int id = 1; id < next; id++) if (!living.get(id)) dead.add(id);
+        if (!data.contains("dead", Tag.TAG_INT_ARRAY)) data.putIntArray("dead", dead.toIntArray());
         return data;
     }
 

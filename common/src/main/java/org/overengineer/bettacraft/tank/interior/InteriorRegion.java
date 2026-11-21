@@ -38,6 +38,8 @@ public final class InteriorRegion {
     @Nullable
     private UUID owner;
     private boolean built;
+    /** M53c: serial number of this allocation (ids are reused; 0 = a region of an earlier version). */
+    private long serial;
     /** Tank blocks of the shape as a bit set over the cell grid (sizeX / scale ...), see {@link org.overengineer.bettacraft.tank.TankShape#encode}. */
     private byte[] cells;
     /** Equipment and floating plants inside the region (PLAN 7.3), kept up to date by block updates. */
@@ -104,6 +106,8 @@ public final class InteriorRegion {
     @Nullable public UUID tankId() { return tankId; }
     @Nullable public UUID owner() { return owner; }
     public boolean built() { return built; }
+    public long serial() { return serial; }
+    void setSerial(long serial) { this.serial = serial; }
     void setBuilt(boolean built) { this.built = built; }
     public InteriorEquipment equipment() { return equipment; }
     public org.overengineer.bettacraft.plants.PlantIndex plants() { return plants; }
@@ -151,6 +155,21 @@ public final class InteriorRegion {
     public int localY(int worldY) { return worldY - BASE_Y; }
     public int localZ(int worldZ) { return worldZ - originZ(); }
 
+    /** M53c: chunk x range [0] .. [1] and z range [2] .. [3] (inclusive) of the grid cell of a region id (see {@link #idAt}). */
+    public static int[] cellChunks(int id) {
+        int x = originX(id) - 512, z = originZ(id) - 512;
+        return new int[]{x >> 4, (x + SPACING - 1) >> 4, z >> 4, (z + SPACING - 1) >> 4};
+    }
+
+    /**
+     * M53c: region file x range [0] .. [1] and z range [2] .. [3] (inclusive, 512 blocks each) of the grid cell of a region id.
+     * A cell starts 512 blocks before the origin and is 2048 wide, so its 4 x 4 region files hold no chunk of another cell.
+     */
+    public static int[] cellRegionFiles(int id) {
+        int[] c = cellChunks(id);
+        return new int[]{c[0] >> 5, c[1] >> 5, c[2] >> 5, c[3] >> 5};
+    }
+
     /** Region id owning a world position of the interior dimension (grid cell), or -1. */
     public static int idAt(int x, int z) {
         // A cell spans [origin - 512, origin + 1536): enough for the 1024 max interior plus walls.
@@ -170,6 +189,7 @@ public final class InteriorRegion {
         if (tankId != null) NbtCompat.putUUID(t, "tank_id", tankId);
         if (owner != null) NbtCompat.putUUID(t, "owner", owner);
         t.putBoolean("built", built);
+        if (serial != 0) t.putLong("serial", serial);
         t.put("equipment", equipment.save());
         t.putByteArray("cells", cells.clone());
         t.put("plants", plants.saveAll());
@@ -189,6 +209,7 @@ public final class InteriorRegion {
                 NbtCompat.hasUUID(t, "owner") ? NbtCompat.getUUID(t, "owner") : null,
                 NbtCompat.has(t, "cells", net.minecraft.nbt.Tag.TAG_BYTE_ARRAY) ? t.getByteArray("cells").orElse(new byte[0]) : null);
         r.built = t.getBooleanOr("built", false);
+        r.serial = t.getLongOr("serial", 0L);
         r.equipment.load(t.getCompoundOrEmpty("equipment"));
         r.plants.load(t.getCompoundOrEmpty("plants"));
         return r;
