@@ -52,6 +52,10 @@ public final class TankCare {
         }
         if (be.orphanCheck > 0 && --be.orphanCheck == 0 && level instanceof ServerLevel s) TankMultiblock.repairOrphan(s, pos, be);
         if (!(level instanceof ServerLevel server) || !be.isController()) return;
+        if (!be.regionChecked) { // M53c: region ids are reused: one that belongs to another tank now is let go
+            be.regionChecked = true;
+            org.overengineer.bettacraft.tank.interior.InteriorManager.checkRegionOwner(server, be);
+        }
         if (!be.stowed.isEmpty()) TankMoves.unpackLeftovers(server, pos, be);
         // M32 part b: on a moving structure (Sable sub-level) the care is paused and the animals travel packed (M50: unless
         // the care runs on the road, features.compat.create.travelCare)

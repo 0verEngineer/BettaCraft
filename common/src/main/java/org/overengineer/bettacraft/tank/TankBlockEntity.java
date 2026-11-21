@@ -45,6 +45,8 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     /** M50: the water of this travelling tank block is drawn sloshing by its controller's renderer, not by the model or fluid. */
     public static final org.overengineer.bettacraft.platform.model.ModelKey<Boolean> WATER_DYNAMIC = new org.overengineer.bettacraft.platform.model.ModelKey<>("water_dynamic");
 
+    /** M53c: whether the first server tick checked that the interior region still belongs to this tank (not saved). */
+    public boolean regionChecked;
     /** Client-side controllers currently loaded (used by the miniature renderer; never touched on the server). */
     public static final Set<TankBlockEntity> CLIENT_CONTROLLERS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 

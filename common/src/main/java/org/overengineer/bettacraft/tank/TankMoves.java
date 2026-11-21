@@ -175,6 +175,11 @@ public final class TankMoves {
         if (regionId >= 0) TRAVELLING_REGIONS.put(regionId, new TravelSpot(level.dimension(), where));
     }
 
+    /** M53c: whether a tank with this interior region is travelling on a contraption (its region is never cleaned up). */
+    public static boolean isTravellingRegion(int regionId) {
+        return TRAVELLING_REGIONS.containsKey(regionId);
+    }
+
     public static void stoppedTravelling(int regionId) {
         TRAVELLING_REGIONS.remove(regionId);
     }
