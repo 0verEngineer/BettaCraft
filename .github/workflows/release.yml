@@ -124,6 +124,7 @@ jobs:
             tasks=":fabric:assemble :fabric:verifyFabricJar"; report=fabric/build/verifyFabricJar.txt
           fi
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew $tasks releaseNotes curseforgeDescription modpackZip $expected -PdescriptionRef="${DESCRIPTION_REF//+/%2B}" $GRADLE_ARGS
           cat "$report"
           test -f "$JAR"
@@ -167,9 +168,13 @@ jobs:
           # master's NeoForge 1.21.1 release stays the latest release of the repository
           make_latest: false
           fail_on_unmatched_files: true
+          # a re-run (e.g. after a failed CurseForge upload) finds the release of the tag and updates it: notes, and the
+          # assets replaced by name
+          overwrite_files: true
 
-      # CurseForge slugs checked on their project pages (api.cfwidget.com, 2026-11-20; a wrong slug fails the upload): only
-      # mods with a file for this Minecraft version and loader. Required on Fabric: Fabric API and Forge Config API Port.
+      # CurseForge slugs checked on their project pages (api.cfwidget.com, 2026-11-21; a wrong slug fails the upload): every
+      # integrated mod (README "Optional integrations") that has a CurseForge file for this Minecraft version and loader.
+      # Required on Fabric: Fabric API and Forge Config API Port.
       - name: Publish to CurseForge (NeoForge)
         if: env.LOADER == 'neoforge' && env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
@@ -184,6 +189,14 @@ jobs:
             wthit-forge(optional)
             fish-of-thieves(optional)
             aquaculture(optional)
+            living-things(optional)
+            journeymap(optional)
+            biomes-o-plenty(optional)
+            ftb-quests-forge(optional)
+            ftb-teams-forge(optional)
+            oh-the-biomes-weve-gone(optional)
+            sodium(optional)
+            irisshaders(optional)
           files: ${{ needs.tag.outputs.jar }}
           name: Bettacraft ${{ needs.tag.outputs.version }} (NeoForge 1.21.11)
           version: ${{ needs.tag.outputs.version }}+neoforge-1.21.11
@@ -209,6 +222,14 @@ jobs:
             jei(optional)
             roughly-enough-items(optional)
             fish-of-thieves(optional)
+            living-things(optional)
+            journeymap(optional)
+            biomes-o-plenty(optional)
+            sodium(optional)
+            irisshaders(optional)
+            ftb-quests-fabric(optional)
+            ftb-teams-fabric(optional)
+            oh-the-biomes-weve-gone(optional)
           files: ${{ needs.tag.outputs.jar }}
           name: Bettacraft ${{ needs.tag.outputs.version }} (Fabric 1.21.11)
           version: ${{ needs.tag.outputs.version }}+fabric-1.21.11
