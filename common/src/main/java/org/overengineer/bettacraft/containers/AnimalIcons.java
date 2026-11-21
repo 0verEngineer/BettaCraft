@@ -2,7 +2,7 @@ package org.overengineer.bettacraft.containers;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.critters.CritterSpecies;
@@ -20,7 +20,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  */
 public final class AnimalIcons {
     /** The item property of the containers with the animal inside. */
-    public static final ResourceLocation PROPERTY = BettaCraft.id("animal");
+    public static final Identifier PROPERTY = BettaCraft.id("animal");
 
     /**
      * The small animals whose colour comes from their genes: their sprite has a grey body layer (layer 1) that the item

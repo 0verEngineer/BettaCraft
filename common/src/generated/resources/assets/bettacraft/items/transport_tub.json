@@ -1,16 +1,116 @@
 {
   "model": {
     "type": "minecraft:condition",
-    "name": "bettacraft:filled",
+    "name": "bettacraft:animal",
     "on_false": {
-      "type": "minecraft:model",
-      "model": "bettacraft:item/transport_tub"
+      "type": "minecraft:condition",
+      "name": "bettacraft:animal",
+      "on_false": {
+        "type": "minecraft:condition",
+        "name": "bettacraft:animal",
+        "on_false": {
+          "type": "minecraft:condition",
+          "name": "bettacraft:animal",
+          "on_false": {
+            "type": "minecraft:condition",
+            "name": "bettacraft:animal",
+            "on_false": {
+              "type": "minecraft:condition",
+              "name": "bettacraft:animal",
+              "on_false": {
+                "type": "minecraft:condition",
+                "name": "bettacraft:animal",
+                "on_false": {
+                  "type": "minecraft:condition",
+                  "name": "bettacraft:animal",
+                  "on_false": {
+                    "type": "minecraft:condition",
+                    "name": "bettacraft:animal",
+                    "on_false": {
+                      "type": "minecraft:condition",
+                      "name": "bettacraft:animal",
+                      "on_false": {
+                        "type": "minecraft:condition",
+                        "name": "bettacraft:filled",
+                        "on_false": {
+                          "type": "minecraft:model",
+                          "model": "bettacraft:item/transport_tub"
+                        },
+                        "on_true": {
+                          "type": "minecraft:model",
+                          "model": "bettacraft:item/transport_tub_filled"
+                        },
+                        "property": "bettacraft:property",
+                        "threshold": 1.0
+                      },
+                      "on_true": {
+                        "type": "minecraft:model",
+                        "model": "bettacraft:item/transport_tub_pangasius"
+                      },
+                      "property": "bettacraft:property",
+                      "threshold": 0.0555
+                    },
+                    "on_true": {
+                      "type": "minecraft:model",
+                      "model": "bettacraft:item/transport_tub_redtail_catfish"
+                    },
+                    "property": "bettacraft:property",
+                    "threshold": 0.0565
+                  },
+                  "on_true": {
+                    "type": "minecraft:model",
+                    "model": "bettacraft:item/transport_tub_wels_catfish"
+                  },
+                  "property": "bettacraft:property",
+                  "threshold": 0.0575
+                },
+                "on_true": {
+                  "type": "minecraft:model",
+                  "model": "bettacraft:item/transport_tub_arapaima"
+                },
+                "property": "bettacraft:property",
+                "threshold": 0.0585
+              },
+              "on_true": {
+                "type": "minecraft:model",
+                "model": "bettacraft:item/transport_tub_motoro_stingray"
+              },
+              "property": "bettacraft:property",
+              "threshold": 0.0595
+            },
+            "on_true": {
+              "type": "minecraft:model",
+              "model": "bettacraft:item/transport_tub_bamboo_shark"
+            },
+            "property": "bettacraft:property",
+            "threshold": 0.0605
+          },
+          "on_true": {
+            "type": "minecraft:model",
+            "model": "bettacraft:item/transport_tub_blacktip_reef_shark"
+          },
+          "property": "bettacraft:property",
+          "threshold": 0.0615
+        },
+        "on_true": {
+          "type": "minecraft:model",
+          "model": "bettacraft:item/transport_tub_spotted_eagle_ray"
+        },
+        "property": "bettacraft:property",
+        "threshold": 0.0625
+      },
+      "on_true": {
+        "type": "minecraft:model",
+        "model": "bettacraft:item/transport_tub_cownose_ray"
+      },
+      "property": "bettacraft:property",
+      "threshold": 0.0635
     },
     "on_true": {
       "type": "minecraft:model",
-      "model": "bettacraft:item/transport_tub_filled"
+      "model": "bettacraft:item/transport_tub_honeycomb_moray"
     },
     "property": "bettacraft:property",
-    "threshold": 1.0
+    "threshold": 0.0645
   }
 }

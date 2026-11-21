@@ -104,7 +104,7 @@ final class DevClientSmokeM55 {
     }
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         level.setDayTime(6000);
         level.setWeatherParameters(12000, 0, false, false);
         home = p.blockPosition();
@@ -144,7 +144,7 @@ final class DevClientSmokeM55 {
 
     /** A pool 14 x 9 in a river: the four looks grown (3 x 2 each), trimmed behind them, loose patches; a tank on the bank. */
     private void carpetPool(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos b = pool(level, Biomes.RIVER, home, new Block[]{Blocks.SAND, Blocks.GRAVEL, Blocks.SAND, Blocks.DIRT});
         for (int i = 0; i < CARPETS.length; i++) {
             for (int dx = 0; dx < 3; dx++) for (int dz = 0; dz < 2; dz++) {
@@ -162,7 +162,7 @@ final class DevClientSmokeM55 {
 
     /** A 2 x 1 x 2 tank on the bank with the four carpet species planted in strips. */
     private static void comparisonTank(ServerPlayer p, BlockPos min) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         List<BlockPos> blocks = new ArrayList<>();
         for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, 0, z));
         for (BlockPos pos : blocks) level.setBlock(pos, ModBlocks.TANK.get().defaultBlockState(), 2);
@@ -225,7 +225,7 @@ final class DevClientSmokeM55 {
 
     /** A pool 18 x 15 in a swamp: a row per growth form (each look grown and trimmed side by side), a row of wild corals, floating plants. */
     private void plantPool(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos b = pool(level, Biomes.SWAMP, home.offset(600, 0, 0), new Block[]{Blocks.SAND, Blocks.MUD, Blocks.GRAVEL, Blocks.CLAY});
         // rocks for the epiphytes and mosses
         Map<WildPlantKind, Integer> col = new java.util.EnumMap<>(WildPlantKind.class);
@@ -288,7 +288,7 @@ final class DevClientSmokeM55 {
                 level.setBlock(b.offset(x, 0, z), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
             }
         }
-        LOGGER.info("[smoketest] M55 {} at {} (found {})", biome.location(), at, found != null);
+        LOGGER.info("[smoketest] M55 {} at {} (found {})", biome, at, found != null);
         return b;
     }
 
@@ -307,18 +307,18 @@ final class DevClientSmokeM55 {
             out.add(AnimalContainers.critterBucket(bag.get(org.overengineer.bettacraft.registry.ModDataComponents.CRITTERS.get())));
         }
         // the fish bags: a betta, every small tankmate, every small animal
-        Entity betta = ModEntities.BETTA.get().create(level);
+        Entity betta = ModEntities.BETTA.get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
         if (betta != null) out.add(FishBagItem.fillWith(betta));
         for (TankmateSpecies s : TankmateSpecies.values()) {
             if (s.isLarge()) continue;
-            Entity e = ModEntities.TANKMATES.get(s).get().create(level);
+            Entity e = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
             if (e != null) out.add(FishBagItem.fillWith(e));
         }
         for (CritterSpecies s : CritterSpecies.values()) out.add(TankCritters.bagOf(s, 2, () -> CritterGenes.wild(s.loci().length, 0, rnd), rnd, true));
         // the transport tubs: every big animal
         for (TankmateSpecies s : TankmateSpecies.values()) {
             if (!s.isLarge()) continue;
-            Entity e = ModEntities.TANKMATES.get(s).get().create(level);
+            Entity e = ModEntities.TANKMATES.get(s).get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
             if (e != null) out.add(org.overengineer.bettacraft.big.TransportTubItem.fillWith(e));
         }
         return out;
@@ -327,7 +327,7 @@ final class DevClientSmokeM55 {
     private void icons() {
         then(1, () -> server(p -> {
             icons.clear();
-            icons.addAll(iconStacks(p.serverLevel()));
+            icons.addAll(iconStacks(p.level()));
             LOGGER.info("[smoketest] M55 {} icon stacks", icons.size());
         }));
         then(20, () -> {
@@ -367,7 +367,7 @@ final class DevClientSmokeM55 {
 
     private void look(BlockPos b, double dx, double eyeDy, double dz, float yaw, float pitch) {
         if (b == null) return;
-        server(p -> p.teleportTo(p.serverLevel(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -398,7 +398,7 @@ final class DevClientSmokeM55 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m55_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m55_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
