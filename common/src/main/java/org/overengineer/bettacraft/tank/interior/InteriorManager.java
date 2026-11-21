@@ -724,7 +724,7 @@ public final class InteriorManager {
      * reused, so a player who logged out in an interior that was removed meanwhile could stand in another tank's interior.
      */
     public static boolean inOwnRegion(ServerPlayer player) {
-        InteriorRegion r = regionAt(player.server, player.blockPosition());
+        InteriorRegion r = regionAt(player.level().getServer(), player.blockPosition());
         if (r == null) return false;
         InteriorReturn ret = ModAttachments.INTERIOR_RETURN.get(player);
         return !ret.isSet() || ret.belongsTo(r);
