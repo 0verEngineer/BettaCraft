@@ -37,7 +37,6 @@ import net.minecraft.world.level.storage.LevelResource;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.data.schema.Schemas;
-import org.overengineer.bettacraft.mixin.interior.ChunkStorageAccessor;
 import org.overengineer.bettacraft.mixin.interior.EntitySectionsAccessor;
 import org.overengineer.bettacraft.mixin.interior.EntityStorageAccessor;
 import org.overengineer.bettacraft.mixin.interior.ServerLevelEntitiesAccessor;
@@ -187,12 +186,12 @@ public final class InteriorCleanup {
                     }
                     clearing.add(id);
                     for (ChunkPos p : storedChunks(dir.resolve("region"), id)) {
-                        writes.add(in.getChunkSource().chunkMap.write(p, null));
+                        writes.add(in.getChunkSource().chunkMap.write(p, (CompoundTag) null));
                         // the map's note "a full chunk is stored here" goes as well
                         ((InteriorChunkMap) in.getChunkSource().chunkMap).bettacraft$forgetStored(p.toLong());
                         deletedChunks++;
                     }
-                    if (entities != null) for (ChunkPos p : storedChunks(dir.resolve("entities"), id)) writes.add(entities.write(p, null));
+                    if (entities != null) for (ChunkPos p : storedChunks(dir.resolve("entities"), id)) writes.add(entities.write(p, (CompoundTag) null));
                 }
                 origins.clear();
                 batch.clear();
@@ -300,7 +299,7 @@ public final class InteriorCleanup {
 
     /** Both storages have written everything they were given so far. */
     private static CompletableFuture<Void> syncStorages(ServerLevel in) {
-        CompletableFuture<Void> chunks = ((ChunkStorageAccessor) in.getChunkSource().chunkMap).bettacraft$worker().synchronize(true);
+        CompletableFuture<Void> chunks = in.getChunkSource().chunkMap.synchronize(true);
         SimpleRegionStorage entities = entityStorage(in);
         return entities == null ? chunks : CompletableFuture.allOf(chunks, entities.synchronize(true));
     }
@@ -425,10 +424,10 @@ public final class InteriorCleanup {
 
     /** Whether a stored chunk holds a block of the interior shell (floor or invisible wall). */
     static boolean hasShell(CompoundTag chunk) {
-        for (Tag t : chunk.getList("sections", Tag.TAG_COMPOUND)) {
-            ListTag palette = ((CompoundTag) t).getCompound("block_states").getList("palette", Tag.TAG_COMPOUND);
+        for (Tag t : chunk.getListOrEmpty("sections")) {
+            ListTag palette = ((CompoundTag) t).getCompoundOrEmpty("block_states").getListOrEmpty("palette");
             for (Tag b : palette) {
-                String name = ((CompoundTag) b).getString("Name");
+                String name = ((CompoundTag) b).getStringOr("Name", "");
                 if (name.equals(FLOOR) || name.equals(WALL)) return true;
             }
         }
@@ -593,19 +592,19 @@ public final class InteriorCleanup {
     /** The start's clean-up of one world (also for tests on a copy). Returns {files deleted, bytes deleted, regions kept}. */
     public static long[] cleanFolder(Path regionList, Path dim) throws IOException {
         CompoundTag file = NbtIo.readCompressed(regionList, NbtAccounter.unlimitedHeap());
-        CompoundTag data = Schemas.INTERIOR_REGIONS.migrate(file.getCompound("data"));
+        CompoundTag data = Schemas.INTERIOR_REGIONS.migrate(file.getCompoundOrEmpty("data"));
         IntOpenHashSet living = new IntOpenHashSet();
-        int next = data.getInt("next_id");
-        for (Tag t : data.getList("regions", Tag.TAG_COMPOUND)) {
-            int id = ((CompoundTag) t).getInt("id");
+        int next = data.getIntOr("next_id", 0);
+        for (Tag t : data.getListOrEmpty("regions")) {
+            int id = ((CompoundTag) t).getIntOr("id", 0);
             living.add(id);
             next = Math.max(next, id + 1);
         }
-        IntOpenHashSet kept = new IntOpenHashSet(data.getIntArray("kept"));
-        kept.addAll(IntArrayList.wrap(data.getIntArray("dying"))); // removed after the last complete save: not touched
+        IntOpenHashSet kept = new IntOpenHashSet(data.getIntArray("kept").orElse(new int[0]));
+        kept.addAll(IntArrayList.wrap(data.getIntArray("dying").orElse(new int[0]))); // removed after the last complete save: not touched
         IntOpenHashSet dead = new IntOpenHashSet(), free = new IntOpenHashSet();
-        for (int id : data.getIntArray("dead")) if (id > 0 && id < next && !living.contains(id) && !kept.contains(id)) dead.add(id);
-        for (int id : data.getIntArray("free")) if (id > 0 && id < next && !living.contains(id) && !kept.contains(id)) free.add(id);
+        for (int id : data.getIntArray("dead").orElse(new int[0])) if (id > 0 && id < next && !living.contains(id) && !kept.contains(id)) dead.add(id);
+        for (int id : data.getIntArray("free").orElse(new int[0])) if (id > 0 && id < next && !living.contains(id) && !kept.contains(id)) free.add(id);
         CellFiles files = CellFiles.of(dim);
         List<Path> delete = new ArrayList<>();
         IntArrayList shells = new IntArrayList();

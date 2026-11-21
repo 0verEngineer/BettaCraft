@@ -9,7 +9,7 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.storage.ChunkStorage;
+import net.minecraft.world.level.chunk.storage.SimpleRegionStorage;
 import org.overengineer.bettacraft.registry.ModDimensions;
 import org.overengineer.bettacraft.tank.interior.InteriorChunkMap;
 import org.overengineer.bettacraft.tank.interior.InteriorChunks;
@@ -60,9 +60,12 @@ public abstract class ChunkMapMixin implements InteriorChunkMap {
         chunkTypeCache.remove(chunk);
     }
 
-    /** Right before vanilla serializes the chunk (after its own checks, the chunk is marked saved already). */
+    /**
+     * Right before vanilla serializes the chunk (after its own checks, the chunk is marked saved already; before it counts
+     * the write as active).
+     */
     @Inject(method = "save(Lnet/minecraft/world/level/chunk/ChunkAccess;)Z", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/chunk/storage/ChunkSerializer;write(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkAccess;)Lnet/minecraft/nbt/CompoundTag;"),
+            target = "Lnet/minecraft/util/profiling/ProfilerFiller;incrementCounter(Ljava/lang/String;)V", ordinal = 0),
             cancellable = true)
     private void bettacraft$skipEmptyInteriorChunk(ChunkAccess chunk, CallbackInfoReturnable<Boolean> cir) {
         if (level.dimension() != ModDimensions.TANK_INTERIOR || !InteriorChunks.empty(level, chunk)) return;
@@ -70,7 +73,7 @@ public abstract class ChunkMapMixin implements InteriorChunkMap {
         // -1: not on the disk (generated here, deleted before) or an unfinished chunk there (void as well): nothing to write;
         // else (a full chunk read from or written to the disk) its stored copy is deleted
         if (chunkTypeCache.get(pos.toLong()) != (byte) -1) {
-            ((ChunkStorage) (Object) this).write(pos, null).exceptionally(e -> {
+            ((SimpleRegionStorage) (Object) this).write(pos, (net.minecraft.nbt.CompoundTag) null).exceptionally(e -> {
                 InteriorChunks.LOGGER.warn("Could not delete the empty interior chunk {}", pos, e);
                 return null;
             });

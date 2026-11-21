@@ -13,7 +13,6 @@
     "registry.ItemStackVerifyMixin",
     "registry.ItemTooltipMixin",
     "interior.ChunkMapMixin",
-    "interior.ChunkStorageAccessor",
     "interior.EntitySectionsAccessor",
     "interior.EntityStorageAccessor",
     "interior.CoralBlockMixin",
