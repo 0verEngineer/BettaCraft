@@ -84,8 +84,9 @@ final class DevClientSmokeM53 {
         parts = Set.of(p.toLowerCase(Locale.ROOT).split(","));
         LOGGER.info("[smoketest] M53 parts {}", parts);
         logRenderSetup();
+        then(1, () -> language("en_us"));
         then(1, () -> server(this::build));
-        then(20, () -> {});
+        then(40, () -> {});
         if (parts.contains("render")) render();
         if (parts.contains("users")) users();
         if (parts.contains("maps")) maps();
@@ -140,7 +141,7 @@ final class DevClientSmokeM53 {
             if (mc.screen != null) mc.setScreen(null);
             if (mc.player != null && mc.level != null && !mc.level.dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) server(InteriorManager::leave);
         });
-        then(40, () -> look(base.getX() + 1.5, base.getY() + 1.4, base.getZ() - 3.0, 0F, 10F));
+        // the frame rate where the M13 scene ended: in front of its planted tanks with their miniatures
         int[] samples = new int[5];
         for (int i = 0; i < samples.length; i++) {
             int k = i;
