@@ -11,7 +11,7 @@ The same version for **Minecraft 26.2**, on NeoForge and Fabric: `bettacraft-neo
 usual. Every Minecraft version gets every new feature and every fix.
 
 ### Added
-- **Minecraft 26.2**: NeoForge 26.2.0.95+ and Fabric (Fabric Loader 0.18.4+, Fabric API 0.161+, Forge Config API Port
+- **Minecraft 26.2**: NeoForge 26.2.0.95+ and Fabric (Fabric Loader 0.19.2+, Fabric API 0.161+, Forge Config API Port
   26.2). The same content, ids, configs and handbook as on 26.1.2. 26.2 has no patch versions; the jars declare 26.2.
 - **Handbook:** GuideME on NeoForge (GuideME 26.2 is an alpha), a **Modonomicon** book on Fabric, English and German.
 - **Naturalist** is back (it has a 26.2 version on both loaders): its animals get our care and breeding again.
@@ -82,7 +82,7 @@ The same version for **Minecraft 26.1.2**, on NeoForge and Fabric: `bettacraft-n
 as usual.
 
 ### Added
-- **Minecraft 26.1.2**: NeoForge 26.1.2 and Fabric (Fabric Loader 0.18.4+, Fabric API 0.155+, Forge Config API Port 26.1).
+- **Minecraft 26.1.2**: NeoForge 26.1.2 and Fabric (Fabric Loader 0.19.0+, Fabric API 0.155+, Forge Config API Port 26.1).
   The same content, ids, configs and handbook as on 1.21.1. The Fabric jar also runs on **26.1 and 26.1.1**; NeoForge
   needs 26.1.2 (NeoForge for 26.1 and 26.1.1 is beta only and lacks the 26.1.2 API).
 - **Handbook on Fabric 26.1.2** as a **Modonomicon** book (as on 1.21.11), English and German; NeoForge keeps GuideME.
@@ -119,7 +119,7 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 `bettacraft-fabric-1.21.11-<version>.jar`. Worlds do not move between Minecraft versions; within 1.21.11 they load as usual.
 
 ### Added
-- **Minecraft 1.21.11**: NeoForge 21.11 and Fabric (Fabric Loader 0.19+, Fabric API 0.141+, Forge Config API Port 21.11).
+- **Minecraft 1.21.11**: NeoForge 21.11 and Fabric (Fabric Loader 0.18+, Fabric API 0.141+, Forge Config API Port 21.11).
   The same content, ids, data and configs as on 1.21.1.
 - **Handbook on Fabric 1.21.11** as a **Modonomicon** book (optional dependency; Patchouli has no 1.21.11 version), made
   from the same pages as the GuideME handbook, English and German. NeoForge keeps GuideME.
@@ -143,7 +143,7 @@ The same version for **Minecraft 1.21.11**, on NeoForge and Fabric: `bettacraft-
 Bettacraft runs on Fabric too: the first multiloader version, one code base for NeoForge and Fabric 1.21.1.
 
 ### Added
-- **Fabric 1.21.1** (Fabric Loader 0.16+, Fabric API, Forge Config API Port): the whole mod, with the same ids, data,
+- **Fabric 1.21.1** (Fabric Loader 0.16.1+, Fabric API 0.116+, Forge Config API Port): the whole mod, with the same ids, data,
   configs (the same TOML files and keys; Mod Menu shows the config screen) and worlds as on NeoForge. Items, fluids and
   energy go through Fabric's transfer API and Team Reborn Energy (pipes, tanks and cables of Fabric tech mods).
 - **Handbook on Fabric** as a **Patchouli** book (optional dependency), made from the same pages as the GuideME
