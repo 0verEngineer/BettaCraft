@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * M19 part of the dedicated-server smoke test: a 3x2x2 tank with a shoal of six cardinals (from one fish bag), six
  * sterbai corys and a bristlenose, a clutch of cory eggs and a breeding box; a second tank with a guppy pair whose
- * breeding runs a few accelerated days. The real care loop runs for the rest of the test; at the end everybody is alive
+ * breeding runs ten accelerated days (up to 30 until the first young is born). The real care loop runs for the rest of the test; at the end everybody is alive
  * in the tank without shoal stress, the stocking adds up, the overlay lists them, the clutch and the box survive saving
  * (schema 9) and reach the client view, and the guppies have young.
  */
@@ -90,7 +90,9 @@ final class DevSmokeM19 {
         var wg = new org.overengineer.bettacraft.tank.TankWaterVolume(g.getTank());
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), true, wg);
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), false, wg);
-        for (int i = 0; i < 40; i++) {
+        // ten days, longer (up to 30) only while no young was born yet: the birth is random (CI: none in ten days now and then)
+        for (int i = 0; i < 120; i++) {
+            if (i >= 40 && TankmateBreeding.tankmates(level, g.getTank()).stream().anyMatch(m -> m.generation() > 0)) break;
             for (TankmateEntity m : TankmateBreeding.tankmates(level, g.getTank())) {
                 m.health().feed();
                 TankmateCare.advance(level, g, m, 0.25);
@@ -151,7 +153,7 @@ final class DevSmokeM19 {
         long all = g == null ? 0 : TankmateBreeding.tankmates(level, g.getTank()).size();
         long young = g == null ? 0 : TankmateBreeding.tankmates(level, g.getTank()).stream().filter(m -> m.generation() > 0).count();
         LOGGER.info("[smoketest] M19 guppies: {} ({} born in the tank)", all, young);
-        if (young == 0) throw new IllegalStateException("M19: the guppies did not breed in 10 accelerated days");
+        if (young == 0) throw new IllegalStateException("M19: the guppies did not breed in 30 accelerated days");
         for (TankmateEntity m : TankmateBreeding.tankmates(level, g.getTank())) {
             if (!"blue_grass".equals(m.variety())) throw new IllegalStateException("M19: blue grass x blue grass gave " + m.variety());
         }
