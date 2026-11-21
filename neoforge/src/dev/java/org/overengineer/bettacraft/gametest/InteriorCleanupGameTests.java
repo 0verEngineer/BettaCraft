@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -28,8 +29,8 @@ import net.minecraft.world.level.chunk.storage.RegionFile;
 import net.minecraft.world.level.chunk.storage.RegionStorageInfo;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -63,7 +64,7 @@ public final class InteriorCleanupGameTests {
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -102,7 +103,7 @@ public final class InteriorCleanupGameTests {
         boolean[] done = {false};
         h.succeedWhen(() -> {
             if (done[0]) return;
-            if (!regions.free().contains(id)) throw new GameTestAssertException("region " + id + " is not free yet (dead " + regions.dead().contains(id)
+            if (!regions.free().contains(id)) throw new GameTestFailure("region " + id + " is not free yet (dead " + regions.dead().contains(id)
                     + ", held " + InteriorCleanup.held(server, id) + ")");
             h.assertTrue(gone(server, id), "nothing of region " + id + " is on the disk");
             int lowest = regions.free().firstInt();
@@ -132,7 +133,7 @@ public final class InteriorCleanupGameTests {
         // a block in the region's cell but outside the interior (taking the interior down leaves it): a stored chunk to watch
         BlockPos marker = r.toWorld(r.sizeX() + 40, 0, 5);
         in.setBlock(marker, Blocks.DIAMOND_BLOCK.defaultBlockState(), 3);
-        ChunkPos mc = new ChunkPos(marker);
+        ChunkPos mc = ChunkPos.containing(marker);
         breakTank(h, c.getTank());
         int saves = InteriorCleanup.worldSaves;
         h.assertTrue(regions.dying().contains(id) && !regions.dead().contains(id), "dying, not dead");
@@ -148,7 +149,7 @@ public final class InteriorCleanupGameTests {
             h.assertTrue(!regions.dying().contains(id) && (regions.dead().contains(id) || regions.free().contains(id)), "dead after the save");
             InteriorCleanup.runNow(server);
             h.succeedWhen(() -> {
-                if (!regions.free().contains(id)) throw new GameTestAssertException("region " + id + " is not free yet");
+                if (!regions.free().contains(id)) throw new GameTestFailure("region " + id + " is not free yet");
                 h.assertTrue(gone(server, id), "nothing of region " + id + " is on the disk");
                 h.assertTrue(!in.getBlockState(marker).is(Blocks.DIAMOND_BLOCK), "the block outside the interior is gone too");
             });
@@ -204,7 +205,7 @@ public final class InteriorCleanupGameTests {
         h.succeedWhen(() -> {
             if (done[0]) return;
             for (int id : old) {
-                if (!regions.free().contains(id) && !regions.living(id)) throw new GameTestAssertException("old region " + id + " is not free yet");
+                if (!regions.free().contains(id) && !regions.living(id)) throw new GameTestFailure("old region " + id + " is not free yet");
                 h.assertTrue(regions.living(id) || gone(server, id), "nothing of old region " + id + " is on the disk");
             }
             h.assertTrue(regions.living(turnedId) && contains(in, rt, Blocks.DIAMOND_BLOCK) && contains(in, rt, Blocks.GOLD_BLOCK),
@@ -251,7 +252,7 @@ public final class InteriorCleanupGameTests {
         h.succeedWhen(() -> {
             if (done[0]) return;
             if (!regions.free().contains(broken) || !regions.kept().contains(rk.id())) {
-                throw new GameTestAssertException("the clean-up is not through yet (broken " + broken + " free " + regions.free().contains(broken)
+                throw new GameTestFailure("the clean-up is not through yet (broken " + broken + " free " + regions.free().contains(broken)
                         + ", shell region " + rk.id() + " kept " + regions.kept().contains(rk.id()) + ")");
             }
             h.assertTrue(regions.living(rp.id()) && in.getBlockState(rp.toWorld(5, 0, 5)).is(Blocks.DIAMOND_BLOCK), "the packed tank's interior is there");
@@ -288,22 +289,22 @@ public final class InteriorCleanupGameTests {
         boolean[] done = {false};
         h.succeedWhen(() -> {
             if (done[0]) return;
-            if (InteriorCleanup.held(server, id)) throw new GameTestAssertException("the interior chunks are still loaded");
+            if (InteriorCleanup.held(server, id)) throw new GameTestFailure("the interior chunks are still loaded");
             if (sync[0] == null) sync[0] = InteriorCleanup.sync(server);
-            if (!sync[0].isDone()) throw new GameTestAssertException("writing");
+            if (!sync[0].isDone()) throw new GameTestFailure("writing");
             List<ChunkPos> stored = InteriorCleanup.storedChunks(server, id, "region");
             for (ChunkPos p : stored) {
-                if (p.x >= sc[0] && p.x <= sc[1] && p.z >= sc[2] && p.z <= sc[3]) continue;
+                if (p.x() >= sc[0] && p.x() <= sc[1] && p.z() >= sc[2] && p.z() <= sc[3]) continue;
                 String what;
                 try {
                     CompoundTag t = InteriorCleanup.storedChunk(server, p);
-                    what = t == null ? "?" : t.getString("Status") + " " + t.getList("sections", 10).size() + " sections, block entities "
-                            + t.getList("block_entities", 10).size() + ", structures " + t.getCompound("structures") + ", "
-                            + (t.getList("sections", 10).isEmpty() ? "" : t.getList("sections", 10).getCompound(0).toString());
+                    what = t == null ? "?" : t.getStringOr("Status", "") + " " + t.getListOrEmpty("sections").size() + " sections, block entities "
+                            + t.getListOrEmpty("block_entities").size() + ", structures " + t.getCompoundOrEmpty("structures") + ", "
+                            + (t.getListOrEmpty("sections").isEmpty() ? "" : t.getListOrEmpty("sections").getCompoundOrEmpty(0).toString());
                 } catch (java.io.IOException e) {
                     what = e.toString();
                 }
-                throw new GameTestAssertException("only shell chunks " + java.util.Arrays.toString(sc) + " are stored, not " + p + ": " + what);
+                throw new GameTestFailure("only shell chunks " + java.util.Arrays.toString(sc) + " are stored, not " + p + ": " + what);
             }
             h.assertTrue(!stored.isEmpty() && stored.size() <= shell, "the shell's chunks are stored: " + stored.size() + " of " + shell);
             LOGGER.info("M53c: a 2x2x2 tank stores {} interior chunks, {} KB (shell {} chunk columns)", stored.size(),
@@ -320,7 +321,7 @@ public final class InteriorCleanupGameTests {
             Path dim = root.resolve("dimensions/bettacraft/tank_interior");
             Path region = Files.createDirectories(dim.resolve("region")), entities = Files.createDirectories(dim.resolve("entities"));
             // v4 list (before M53c): living 2, counter at 6; 1, 3, 4 and 5 were removed; 9 is not known (the list older than the world)
-            CompoundTag list = TagParser.parseTag("{schema:4,next_id:6,regions:[{id:2,size:[I;16,16,16],scale:16,tank_dim:\"minecraft:overworld\","
+            CompoundTag list = TagParser.parseCompoundFully("{schema:4,next_id:6,regions:[{id:2,size:[I;16,16,16],scale:16,tank_dim:\"minecraft:overworld\","
                     + "tank_min:[I;0,64,0],built:1b,equipment:{},cells:[B;1B],plants:{list:[],next_id:1}}]}");
             CompoundTag file = new CompoundTag();
             file.put("data", list);
@@ -344,10 +345,10 @@ public final class InteriorCleanupGameTests {
             h.assertTrue(res[0] == 3 && res[2] == 1, "3 files deleted, 1 shell kept: " + java.util.Arrays.toString(res));
             // the list loaded by the game: 1, 3, 4, 5 dead (the running clean-up then frees 1, 4, 5 and keeps 3)
             CompoundTag migrated = org.overengineer.bettacraft.data.schema.Schemas.INTERIOR_REGIONS.migrate(list);
-            h.assertTrue(java.util.Arrays.equals(migrated.getIntArray("dead"), new int[]{1, 3, 4, 5}), "dead after the migration: "
-                    + java.util.Arrays.toString(migrated.getIntArray("dead")));
+            h.assertTrue(java.util.Arrays.equals(migrated.getIntArray("dead").orElse(new int[0]), new int[]{1, 3, 4, 5}), "dead after the migration: "
+                    + java.util.Arrays.toString(migrated.getIntArray("dead").orElse(new int[0])));
             // a v5 list: 10 dead, 11 free, 7 dying (removed after the last complete save: a crash may have brought its tank back)
-            CompoundTag v5 = TagParser.parseTag("{schema:5,next_id:12,regions:[],dying:[I;7],dead:[I;10],free:[I;11]}");
+            CompoundTag v5 = TagParser.parseCompoundFully("{schema:5,next_id:12,regions:[],dying:[I;7],dead:[I;10],free:[I;11]}");
             CompoundTag file5 = new CompoundTag();
             file5.put("data", v5);
             NbtIo.writeCompressed(file5, dat);

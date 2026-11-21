@@ -332,17 +332,17 @@ public final class Schemas {
      * counter are left alone.
      */
     static CompoundTag regionsV4toV5(CompoundTag data) {
-        net.minecraft.nbt.ListTag list = data.getList("regions", Tag.TAG_COMPOUND);
+        net.minecraft.nbt.ListTag list = data.getListOrEmpty("regions");
         java.util.BitSet living = new java.util.BitSet();
-        int next = data.getInt("next_id");
+        int next = data.getIntOr("next_id", 0);
         for (int i = 0; i < list.size(); i++) {
-            int id = list.getCompound(i).getInt("id");
+            int id = list.getCompoundOrEmpty(i).getIntOr("id", 0);
             if (id >= 0) living.set(id);
             next = Math.max(next, id + 1);
         }
         it.unimi.dsi.fastutil.ints.IntArrayList dead = new it.unimi.dsi.fastutil.ints.IntArrayList();
         for (int id = 1; id < next; id++) if (!living.get(id)) dead.add(id);
-        if (!data.contains("dead", Tag.TAG_INT_ARRAY)) data.putIntArray("dead", dead.toIntArray());
+        if (!data.contains("dead")) data.putIntArray("dead", dead.toIntArray());
         return data;
     }
 
