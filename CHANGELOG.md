@@ -59,6 +59,8 @@ Bettacraft runs on Fabric too: the first multiloader version, one code base for 
   once in 135 runs) and names the state of the pair when the amplexus check fails; a new test hatches a clutch of 20 at a
   nest by the glass. The Fabric GameTests on Minecraft 1.21.1 write the reason of a failed test into the log
   again (only its name was there).
+- Test only: the floating plant tank of the test of keeping fish without a generator holds two female bettas (a pair
+  bred there, and its fry, 2 to 23 bettas by chance, set the water quality; it fell below the check once).
 
 ### Known gaps on Fabric
 - A glowing pipe cover (glowstone, sea lantern ...) does not light up its surroundings (Fabric has no light by block
