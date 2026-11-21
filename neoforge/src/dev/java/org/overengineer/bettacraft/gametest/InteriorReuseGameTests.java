@@ -39,6 +39,18 @@ public final class InteriorReuseGameTests {
         ServerLevel level = h.getLevel();
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         InteriorRegions regions = InteriorRegions.get(level.getServer());
+        // M53c: no number of a removed region is free during this test (each region gets a new number from the counter)
+        var free = (it.unimi.dsi.fastutil.ints.IntSortedSet) field(regions, "free");
+        int[] wasFree = free.toIntArray();
+        free.clear();
+        try {
+            run(h, level, in, regions);
+        } finally {
+            for (int f : wasFree) if (!regions.living(f)) free.add(f);
+        }
+    }
+
+    private static void run(GameTestHelper h, ServerLevel level, ServerLevel in, InteriorRegions regions) throws ReflectiveOperationException {
         TankBlockEntity old = CritterGameTests.tank(h, 2, 2, 2, 2, 2, 2, 8000);
         InteriorRegion r = InteriorManager.ensureRegion(level, old);
         int id = r.id();
@@ -61,7 +73,7 @@ public final class InteriorReuseGameTests {
         TankBlockEntity third = CritterGameTests.tank(h, 14, 2, 2, 2, 2, 2, 8000);
         InteriorRegion t = InteriorManager.ensureRegion(level, third);
         if (t.id() != before) throw new GameTestAssertException("a never used region was skipped: " + before + " -> " + t.id());
-        map.put(id, r); // the first tank keeps its region for the clean-up of the test area
+        map.put(id, r); // the first tank keeps its region for the clean-up of the test area (M53c: and it stays kept, never deleted)
         h.succeed();
     }
 }

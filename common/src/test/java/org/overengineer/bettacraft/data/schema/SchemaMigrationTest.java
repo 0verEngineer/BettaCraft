@@ -1,5 +1,6 @@
 package org.overengineer.bettacraft.data.schema;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -254,7 +255,7 @@ class SchemaMigrationTest {
         assertEquals(4, Schemas.BETTA.currentVersion());
         assertEquals(1, Schemas.TANK_REF.currentVersion());
         assertEquals(1, Schemas.FEEDER.currentVersion());
-        assertEquals(4, Schemas.INTERIOR_REGIONS.currentVersion());
+        assertEquals(5, Schemas.INTERIOR_REGIONS.currentVersion());
         assertEquals(1, Schemas.INTERIOR_FLOOR.currentVersion());
         assertEquals(1, Schemas.INTERIOR_RETURN.currentVersion());
         assertEquals(2, Schemas.EXTERNAL_FILTER.currentVersion());
@@ -368,13 +369,32 @@ class SchemaMigrationTest {
         assertEquals(3, out.getInt("next_id"));
     }
 
+    /**
+     * Frozen M53 (v4) interior regions SavedData: the ids the counter handed out that are not in the list any more are dead
+     * (their chunks are deleted by the clean-up), the living ones and the ids from the counter on are not.
+     */
+    @Test
+    void interiorRegionsV4ToV5MarksRemovedIdsDead() {
+        CompoundTag v4 = snbt("{schema:4,next_id:7,regions:[{id:2,size:[I;32,16,16],scale:16,tank_dim:\"minecraft:overworld\","
+                + "tank_min:[I;0,64,0],built:1b,equipment:{},cells:[B;3B],plants:{list:[],next_id:1}},{id:8,size:[I;16,16,16],scale:16,"
+                + "tank_dim:\"minecraft:overworld\",tank_min:[I;9,64,0],built:1b,equipment:{},cells:[B;1B],plants:{list:[],next_id:1}}]}");
+        CompoundTag out = Schemas.INTERIOR_REGIONS.migrate(v4);
+        assertEquals(Schemas.INTERIOR_REGIONS.currentVersion(), Schema.read(out));
+        // 2 and 8 live; the counter (7) is behind the list (8): ids 9 and up were never handed out
+        assertArrayEquals(new int[]{1, 3, 4, 5, 6, 7}, out.getIntArray("dead"));
+        assertEquals(2, out.getList("regions", 10).size(), "the regions stay");
+        assertEquals(7, out.getInt("next_id"));
+        CompoundTag empty = Schemas.INTERIOR_REGIONS.migrate(snbt("{schema:4,next_id:0,regions:[]}"));
+        assertEquals(0, empty.getIntArray("dead").length, "a new world has nothing dead");
+    }
+
     /** Frozen M12 (v3) interior regions SavedData: regions get an empty aquarium plant index (M13), the rest stays. */
     @Test
     void interiorRegionsV3ToV4AddsEmptyPlantIndex() {
         CompoundTag v3 = snbt("{schema:3,next_id:2,regions:[{id:1,size:[I;32,16,16],scale:16,tank_dim:\"minecraft:overworld\","
                 + "tank_min:[I;0,64,0],built:1b,equipment:{substrate:2,floating:[L;5L]},cells:[B;3B],custom:\"keep\"}]}");
         CompoundTag out = Schemas.INTERIOR_REGIONS.migrate(v3);
-        assertEquals(4, Schema.read(out));
+        assertEquals(Schemas.INTERIOR_REGIONS.currentVersion(), Schema.read(out));
         CompoundTag r1 = out.getList("regions", 10).getCompound(0);
         assertTrue(r1.contains("plants", 10), "plant index added");
         assertEquals(0, r1.getCompound("plants").getList("list", 10).size(), "no aquarium plants in old regions");
