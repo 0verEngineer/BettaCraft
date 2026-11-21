@@ -11,8 +11,8 @@ final class LangM32d {
 
     static void addAll(BiConsumer<String, String> a) {
         a.accept("bettacraft.configuration.map", "Map mods");
-        a.accept("bettacraft.configuration.showAlarmWaypoints", "Alarm waypoints on my map");
-        a.accept("bettacraft.configuration.showAlarmWaypoints.tooltip", "A waypoint at a tank whose monitor alarm went off, until it clears (JourneyMap; the pack switch features.compat.journeymap turns it off for everyone)");
+        a.accept("bettacraft.configuration.showAlarmWaypoints", "Alarm waypoints of all tanks");
+        a.accept("bettacraft.configuration.showAlarmWaypoints.tooltip", "A waypoint on your map at a tank of yours (or one you are a user of) whose monitor alarm went off or whose hired aquarist warns, until it clears. Off: none from any tank. Each tank also has its own switch in the users tab of its menu; the pack switch features.compat.journeymap turns them off for everyone");
 
         a.accept("waypoint.bettacraft.alarm", "Tank alarm: %s (%s)");
         a.accept("waypoint.bettacraft.tank", "Tank");

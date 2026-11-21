@@ -188,4 +188,15 @@ public final class NeoForgeClientPlatform implements ClientPlatform {
                     mc.gameRenderer.getMainCamera(), RenderFrame.frustum()));
         }
     }
+
+    /** M53: the client section of NeoForge's config screen (the same classes on Fabric through Forge Config API Port). */
+    @Override
+    public net.minecraft.client.gui.screens.Screen clientConfigScreen(net.minecraft.client.gui.screens.Screen parent) {
+        for (net.neoforged.fml.config.ModConfig c : net.neoforged.fml.config.ModConfigs.getConfigSet(net.neoforged.fml.config.ModConfig.Type.CLIENT)) {
+            if (!c.getModId().equals(org.overengineer.bettacraft.BettaCraft.MOD_ID)) continue;
+            return new net.neoforged.neoforge.client.gui.ConfigurationScreen.ConfigurationSectionScreen(parent, net.neoforged.fml.config.ModConfig.Type.CLIENT, c,
+                    net.minecraft.network.chat.Component.translatable("gui.bettacraft.client_config.title"));
+        }
+        return null;
+    }
 }

@@ -168,8 +168,9 @@ public final class TankInhabitants {
         return e instanceof LivingEntity le && le.canBreatheUnderwater();
     }
 
+    /** May change the tank: owner, caretakers, operators, and everyone else while it is not locked (M53: {@link TankAccess}). */
     public static boolean canModify(Player player, TankData tank) {
-        return !tank.locked() || player.getUUID().equals(tank.owner()) || Perms.has(player, 2);
+        return TankAccess.canModify(player, tank);
     }
 
     // ------------------------------------------------------------------ inserting

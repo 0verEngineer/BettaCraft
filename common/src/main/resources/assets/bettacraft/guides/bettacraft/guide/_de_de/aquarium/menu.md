@@ -19,8 +19,8 @@ den [Innenraum](../interior.md).)
   rechts) und die **Vorderseite** des Aquariums, auf der es sitzt. Das Schild ist schwarz mit weißer Schrift und 0,12 Blöcke
   hoch (jeder Spieler kann es mit der Client-Config `render.signScale` größer oder kleiner stellen, 0,5 bis 2); lange
   Namen bekommen eine kleinere Schrift. Der Name steht auch bei ausgeschaltetem Schild im Menü und in Jade.
-* **Sperre**: Wer das Aquarium gesetzt hat, ist sein Besitzer. Ist es gesperrt, dürfen nur Besitzer und Operatoren es
-  ändern (Wasser, Tiere, Einstellungen, Innenraum); ansehen dürfen es alle.
+* **Sperre**: Wer das Aquarium gesetzt hat, ist sein Besitzer. Ist es gesperrt, dürfen nur Besitzer, seine
+  Pfleger (Nutzer-Tab, unten) und Operatoren es ändern (Wasser, Tiere, Einstellungen, Innenraum); ansehen dürfen es alle anderen.
 * **Bruchschutz** (der Knopf zwischen Name und Sperre; nur Besitzer und Operatoren, bei neuen Aquarien aus): solange er an
   ist, kann **niemand das Aquarium abbauen**, auch der Besitzer nicht und auch nicht im Kreativmodus: das Glas, den
   Deckel, das Licht und die Futterautomaten darauf, den Klemm-Futterautomaten an der Scheibe und den Schrank darunter.
@@ -33,7 +33,11 @@ den [Innenraum](../interior.md).)
   Unsichtbar, solange `features.aquaristNpc.enabled` aus ist.
 * Größe, Wassermenge, Wasser- und Umgebungstemperatur, die **Zieltemperatur** (– / +).
 * Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter, die Zahl der Tiere
-  und der Knopf zum Betreten des Innenraums. Die letzte Zeile warnt vor mäßigem Wasser oder fehlendem Strom.
+  und der Knopf zum Betreten des Innenraums (sein Tooltip zeigt den Innenraum: Maßstab und Größe, Blöcke in der Miniatur,
+  Bodengrund, Heizer und Filter darin). Die letzte Zeile warnt vor mäßigem Wasser oder fehlendem Strom.
+* Das **Zahnrad** rechts neben dem Innenraum-Knopf öffnet die **Client-Einstellungen** von Bettacraft (dieselben wie in
+  der Config-Datei `bettacraft-client.toml` und in der Mod-Liste): darunter **Alarm-Wegpunkte aller Becken**
+  (`map.showAlarmWaypoints`) und welche Karten-Mods sie zeigen (`map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`).
 
 ## Tiere
 
@@ -87,10 +91,29 @@ Verbrauch), die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipme
 Die [Schwimmpflanzen](../plants/floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, Abfallaufnahme, die
 Warnung bei dichter Decke und der Knopf **Ausdünnen**.
 
-## Innenraum
+## Nutzer
 
-Maßstab und Größe des Innenraums, wie viele Blöcke die Miniatur zeigt, Bodengrund, Heizstäbe und Filter im Innenraum,
-Schwimmpflanzen, der Deko-Katalog und der Knopf zum Betreten.
+Der Nutzer-Tab (er hat in 1.43.0 den Innenraum-Tab ersetzt) zeigt, wer an diesem Aquarium was darf:
+
+| Rolle | Darf |
+|---|---|
+| **Besitzer** | wer es gebaut hat: alles, auch die Nutzer, die Sperre und den Bruchschutz |
+| **Pfleger** | alles, was der Besitzer darf: Pflege, Einstellungen, Tiere, Betreten, die Nutzer und die Sperre |
+| **Betrachter** | das Menü öffnen und ansehen; ändert nichts und kann nicht ins Aquarium |
+| **Nicht eingetragen** | alle anderen: dürfen es ändern, solange es offen ist, gesperrt nur ansehen |
+
+Besitzer und Pfleger tippen den Namen eines Spielers, der online ist, wählen **als Pfleger** oder **als Betrachter** und
+drücken **Eintragen**; ein ausgewählter Nutzer bekommt eine andere Rolle oder wird entfernt (jeder Nutzer kann sich selbst
+austragen). Spieler in der FTB-Teams-Gruppe des Besitzers zählen als Pfleger. Der Knopf **Andere** ist die Sperre.
+Operatoren dürfen immer alles. Config-Schalter: `features.equipment.tankUsers` (aus: die Liste wird ignoriert, nur
+Besitzer und Sperre zählen).
+
+**Alarm-Wegpunkte:** Löst ein [Monitor-Alarm](../equipment/monitor.md) aus (oder warnt der
+[angestellte Aquarianer](../getting_started/hired_aquarist.md)), bekommen der Besitzer und die eingetragenen Nutzer einen
+roten Wegpunkt am Aquarium in ihrer Karten-Mod (JourneyMap, Xaero's Minimap und World Map, FTB Chunks), nie Spieler, die
+nur in der Nähe sind. **Mein Wegpunkt** schaltet deinen eigenen für dieses Aquarium (für den Besitzer standardmäßig an,
+für alle anderen Nutzer aus); **Wegpunkte für alle** (Besitzer und Pfleger) schaltet sie für alle ab. Das Zahnrad in der
+Übersicht schaltet sie für alle Aquarien und je Karten-Mod.
 
 ## Log
 

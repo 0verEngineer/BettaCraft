@@ -419,6 +419,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm53')) {
+                // gradlew runClient -Psmoketestm53 [-Pm53parts=users,maps,interior,animals,critters] [-Pmaps] [-Pshaders] [-Pperf]:
+                // the M53 scene (users tab en/de, the gear and the client config, the alarm waypoint in every map mod, the
+                // interior from six sides with a brightness check, every animal from six sides, the small animals in a tank)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m53only', 'true'
+                if (project.hasProperty('m53parts')) systemProperty 'bettacraft.smoketest.m53parts', project.property('m53parts').toString()
+            }
             if (project.hasProperty('smoketestm51')) {
                 // gradlew runClient -Psmoketestm51 : the M51 scene (an aquarist comes and offers his work, is hired, finds the
                 // breeding basin and bed, his menu en/de, the tank menu button, at work at the tanks, his four looks, asleep)
@@ -839,7 +847,10 @@ idea {
 //   -Pquests  : run/quest-mods (M32 part d: FTB Quests, FTB Library, FTB Teams, Architectury from ATM10AA) for runClient,
 //               runServer and runGameTestServer; the chapter of modpack/ is copied into the run's config/ftbquests, the
 //               GameTest QuestGameTests then checks that FTB Quests loaded it
-//   -Pmaps    : run/map-mods (M32 part d: JourneyMap from ATM10AA) for runClient: the alarm waypoints
+//   -Pmaps    : run/map-mods (M32 part d: JourneyMap from ATM10AA; M53: Xaero's Minimap + World Map, FTB Chunks + FTB Library,
+//               FTB Teams, Architectury from Modrinth / the FTB maven) for runClient: the alarm waypoints
+//   -Pperf    : run/perf-mods (M53: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons and other render
+//               mods of ATM10/ATM11, see m59 manifest) for runClient: the render matrix
 //   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino from ATM10AA) for runClient, runServer and runGameTestServer;
 //               the example script of modpack/kubejs is copied into the run's kubejs/server_scripts (its lines go to
 //               logs/kubejs/server.log)
@@ -868,6 +879,8 @@ def extraMods = [
         [dir: rootProject.file(runRoot + '/create-mods'), on: withGroup('create'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/quest-mods'), on: withGroup('quests'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/map-mods'), on: withGroup('maps'), tasks: ['runClient']],
+        // M53: the performance mods (ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons, More Culling ...)
+        [dir: rootProject.file(runRoot + '/perf-mods'), on: project.hasProperty('perf'), tasks: ['runClient']],
         [dir: rootProject.file(runRoot + '/kubejs-mods'), on: withGroup('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/facade-mods'), on: withGroup('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
@@ -969,7 +982,7 @@ tasks.register('runMultiplayerTest') {
         // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
         def mpCreate = project.hasProperty('create')
         // M52d: the groups of this branch's run root (run/<minecraft>/...; the list named the 1.21.1 folders under run/)
-        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'kubejs-mods', 'facade-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
+        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'perf-mods', 'kubejs-mods', 'facade-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
             (rootProject.file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j ->
                 ['mods', 'client1/mods', 'client2/mods'].each { m ->
                     def dst = new File(runDir, "${m}/${j.name}")
