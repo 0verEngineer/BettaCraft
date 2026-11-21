@@ -31,6 +31,7 @@ import terrarium
 import terrarium_animals
 import floating_plants
 import wild_plants
+import animal_icons
 import gui
 import icons
 import buckets
@@ -86,6 +87,7 @@ def main() -> int:
     written += terrarium_animals.write_all()
     written += critters.write_all()
     written += tankmates.write_all()
+    written += animal_icons.write_all()  # M55: after the tankmates, the buckets and the tub
     written += cultures.write_all()
     written += aquarist.write_all()  # M47
     written += hired_aquarist.write_all()  # M51

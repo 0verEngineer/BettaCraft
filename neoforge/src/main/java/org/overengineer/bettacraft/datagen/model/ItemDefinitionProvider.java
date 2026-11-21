@@ -59,8 +59,9 @@ public final class ItemDefinitionProvider implements DataProvider {
                     continue;
                 }
                 model = plain(modelId, tinted.contains(item));
-                for (int i = b.overrides.size() - 1; i >= 0; i--) {
-                    // 1.21.1 used the last override that matched: the first one checked here wins, the rest is the fallback
+                for (int i = 0; i < b.overrides.size(); i++) {
+                    // 1.21.1 used the last override that matched: the last one becomes the outermost condition (checked first),
+                    // the earlier ones its fallback (M55: several overrides by rising thresholds, the animal in a container)
                     ItemModelBuilder.OverrideBuilder o = b.overrides.get(i);
                     for (Map.Entry<Identifier, Float> p : o.predicates.entrySet()) {
                         JsonObject c = new JsonObject();

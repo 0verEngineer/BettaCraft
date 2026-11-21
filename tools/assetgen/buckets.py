@@ -61,25 +61,6 @@ B_FISH = [
     "................",
 ]
 B_INSIDE = [(x, y) for y in range(8, 14) for x in range(3, 13)]
-# M21.8: an upright seahorse in the water (snout to the left, the tail curled under it)
-B_SEAHORSE = [
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "................",
-    "......bb........",
-    "....bbbe........",
-    ".......bF.......",
-    "......bbbF......",
-    ".......bb.......",
-    "......bb........",
-    "................",
-    "................",
-]
 # glass in front of the fish: a reflection streak on the left, a faint one on the right, the water line
 B_FRONT = [
     "................",
@@ -200,11 +181,9 @@ def textures() -> dict[str, np.ndarray]:
     turtle = _turtle(base, front, 0, 4)
     slider = _turtle(base, front, 0, 4, shell=(70, 86, 40), dark=(150, 140, 60), skin=(62, 84, 44), stripe=(220, 200, 80), patch=(200, 36, 26))
     reeves = _turtle(base, front, 0, 4, shell=(72, 52, 30), dark=(110, 82, 50), skin=(52, 52, 44), stripe=(170, 186, 80))
-    sea_body, sea_fins = _fish(B_SEAHORSE, B_INSIDE)
     return {"betta_bucket": base, "betta_bucket_fish": body, "betta_bucket_fish_fins": fins,
             "betta_bucket_glass": front, "dwarf_frog_bucket": frog, "musk_turtle_bucket": turtle,
-            "slider_turtle_bucket": slider, "reeves_turtle_bucket": reeves, "hermann_tortoise_box": _box(True), "terrarium_box": _box(False),
-            "seahorse_bucket_fish": sea_body, "seahorse_bucket_fish_fins": sea_fins}
+            "slider_turtle_bucket": slider, "reeves_turtle_bucket": reeves, "hermann_tortoise_box": _box(True), "terrarium_box": _box(False)}
 
 
 def write_all() -> list:
