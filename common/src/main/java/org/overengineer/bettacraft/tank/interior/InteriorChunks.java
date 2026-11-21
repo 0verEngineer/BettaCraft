@@ -48,8 +48,11 @@ public final class InteriorChunks {
             // by key (the generator's holders need not be the chunk's instances)
             Set<Object> biomes = new java.util.HashSet<>();
             for (Holder<Biome> b : level.getChunkSource().getGenerator().getBiomeSource().possibleBiomes()) biomes.add(key(b));
+            // before the biome step a proto chunk holds the default biome, not its own (it gets them when it goes on)
+            boolean ownBiomes = chunk.getPersistedStatus().isOrAfter(net.minecraft.world.level.chunk.status.ChunkStatus.BIOMES);
             for (LevelChunkSection s : chunk.getSections()) {
                 if (!s.hasOnlyAir()) return "blocks";
+                if (!ownBiomes) continue;
                 // a foreign biome (e.g. /fillbiome); the palette may hold entries no longer used (the default before generation)
                 if (s.getBiomes().maybeHas(b -> !biomes.contains(key(b)))) {
                     boolean[] foreign = {false};
