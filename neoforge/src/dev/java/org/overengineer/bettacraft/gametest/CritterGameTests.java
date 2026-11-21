@@ -291,7 +291,8 @@ public final class CritterGameTests {
         TankBlockEntity p = tank(h, 8, 2, 2, 3, 2, 2, 12000);
         add(h, p, CritterSpecies.RAMSHORN, CritterGenes.pure(0, 0.4F), true);
         add(h, p, CritterSpecies.RAMSHORN, CritterGenes.pure(0, 0.4F), true);
-        for (int d = 0; d < 40 && count(p.getTank(), CritterSpecies.RAMSHORN) < 4; d++) days(h, p, 1, true);
+        // M52.5: up to 100 days as above (two snails had no young in 40 days once on CI)
+        for (int d = 0; d < 100 && count(p.getTank(), CritterSpecies.RAMSHORN) < 4; d++) days(h, p, 1, true);
         h.assertTrue(count(p.getTank(), CritterSpecies.RAMSHORN) > 2, "they bred");
         h.assertTrue(p.getTank().critters().stream().allMatch(k -> "pink".equals(k.genes.variety(CritterSpecies.RAMSHORN))), "pink x pink is pink");
         h.succeed();
