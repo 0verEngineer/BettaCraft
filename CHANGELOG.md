@@ -49,6 +49,9 @@ checked from all sides.
 
 ### Known gaps (Minecraft 26.3)
 - FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.3 build; the Vulkan backend of 26.3 itself is tested.
+- Shader packs on NeoForge 26.3: Sodium 0.9.3-beta.5 now runs (the tanks and the miniature draw as usual), but it needs Iris
+  1.12.1 or newer, which is not released for 26.3 yet (Iris 1.11.7 only works with Sodium 0.9.2, which does not start on
+  NeoForge 26.3). Iris with a shader pack is tested on Fabric 26.3.
 
 ## [1.42.0-beta.1] - 2026-11-20 (Minecraft 26.3)
 
