@@ -295,7 +295,7 @@ public final class MovementGameTests {
         h.onEachTick(() -> {
             tick[0]++;
             // M55: a sunny day all along (a rain started by the weather cycle of the shared level kept the slider from basking)
-            if (level.isRaining()) level.setWeatherParameters(6000, 0, false, false);
+            if (level.isRaining()) level.getServer().setWeatherParameters(6000, 0, false, false);
             if (slider.isBasking()) basked[0] = true;
             if (gecko.restingInWorld() && !level.canSeeSky(gecko.blockPosition())) hid[0] = true;
             if (tick[0] % 40 == 1 && frog.getNavigation().isDone()) {
