@@ -27,6 +27,12 @@ public final class VersionGaps {
             "actuallyadditions", "psychadelicchem", "fungidelight", "farmersdelight", "oritechthings", "garnished", // zoo
             "betterfishtanks", "fintastic"); // aquarium mods of the dev runtime
 
+    /**
+     * M53: the map and render mods of the client test groups (maps, shaders, perf, vulkanmod) without a build for this
+     * version (Modrinth, CurseForge and the FTB maven checked on 2026-11-21): ModernFix has no 1.21.11 build; FTB Chunks 1.21.11 is a beta (tested).
+     */
+    public static final Set<String> RENDER_NO_BUILD = Set.of("modernfix");
+
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
         return mods.length > 0 && Arrays.stream(mods).allMatch(NO_BUILD::contains);

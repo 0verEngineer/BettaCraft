@@ -43,7 +43,7 @@ real genetics.
   aquarium shows the result as a live miniature, and several players can build at once.
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, stocking, water quality, oxygen,
   sickness and recovery. A tank menu with tabs (overview, inhabitants and their genes, breeding, water, devices, plants,
-  interior, log), name sign, owner lock and break protection.
+  users, log), name sign, owner lock, break protection and tank users (owner, caretakers, viewers).
 
 ![Inside the planted tank at 16 blocks per tank block, plants swaying](images/bettacraft-tank-interior-swaying.gif)
 
@@ -201,9 +201,9 @@ version; what is missing where is listed after them.
   the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (112 quests, English and German; quests of switched-off features
-  hide themselves), KubeJS events (animal born, animal died, monitor alarm), JourneyMap waypoints at tanks with a monitor
-  alarm, FTB Teams for the hired aquarist, and `/bettacraft foreign list` to see which animals of other mods still need a
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (113 quests, English and German; quests of switched-off features
+  hide themselves), KubeJS events (animal born, animal died, monitor alarm), waypoints at tanks with a monitor
+  alarm (JourneyMap, Xaero's Minimap, FTB Chunks; for the owner and the listed users), FTB Teams for the hired aquarist, and `/bettacraft foreign list` to see which animals of other mods still need a
   profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
   O' Plenty and others get the wild animals, plants and corals (biome tags).
