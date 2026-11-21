@@ -336,6 +336,11 @@ public final class MovementGameTests {
         });
         double[] start = {0};
         h.runAfterDelay(4, () -> start[0] = b.getY());
+        // M55: no goal may come back during the wait (once, in a full run on a busy machine, the betta swam 0.4 down)
+        int[] tick = {0};
+        h.onEachTick(() -> {
+            if (++tick[0] > 4) b.stopGoalsForTest();
+        });
         h.runAfterDelay(124, () -> {
             double rise = b.getY() - start[0];
             com.mojang.logging.LogUtils.getLogger().info("[gametest] M54 betta drift over 120 ticks: {}", f(rise));
