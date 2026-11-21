@@ -315,6 +315,9 @@ final class DevClientSmokeM53 {
         }
         if (!cur.isEmpty()) groups.add(cur);
         LOGGER.info("[smoketest] M53 animals: {} types in {} groups", types.size(), groups.size());
+        // in water (fish out of water lie on their side): a cube of water in barriers around the spot, the camera inside too
+        then(1, () -> server(this::waterCube));
+        then(40, () -> {});
         then(1, () -> {
             hideHud(true);
             mc.options.fov().set(30);
@@ -332,13 +335,13 @@ final class DevClientSmokeM53 {
                 String side = sides[s];
                 then(1, () -> server(p -> turn(yaw)));
                 // the camera south of the row, looking north; the animals face it at yaw 0 (south)
-                then(1, () -> look(centre().x, centre().y + 0.3, centre().z + dist(span[0]), 180F, 8F));
+                then(1, () -> look(centre().x, centre().y, centre().z + dist(span[0]), 180F, 0F));
                 then(25, () -> shot("animals_" + gi + "_" + side));
             }
             then(1, () -> server(p -> turn(0F)));
-            then(1, () -> look(centre().x, centre().y + dist(span[0]) + 0.5, centre().z + 0.01, 180F, 89.9F));
+            then(1, () -> look(centre().x, centre().y + dist(span[0]), centre().z + 0.01, 180F, 89.9F));
             then(25, () -> shot("animals_" + gi + "_top"));
-            then(1, () -> look(centre().x, centre().y - dist(span[0]) - 2.0, centre().z + 0.01, 180F, -89.9F));
+            then(1, () -> look(centre().x, centre().y - dist(span[0]), centre().z + 0.01, 180F, -89.9F));
             then(25, () -> shot("animals_" + gi + "_bottom"));
             then(1, () -> {
                 StringBuilder b = new StringBuilder();
@@ -354,6 +357,17 @@ final class DevClientSmokeM53 {
     }
 
     private Vec3 groupCentre = Vec3.ZERO;
+
+    private void waterCube(ServerPlayer p) {
+        ServerLevel level = p.level();
+        BlockPos c = BlockPos.containing(base.getX() + 0.5, base.getY() + 40, base.getZ() + 40.5);
+        int r = 9;
+        for (int x = -r; x <= r; x++) for (int y = -r; y <= r; y++) for (int z = -r; z <= r; z++) {
+            boolean shell = Math.abs(x) == r || Math.abs(y) == r || Math.abs(z) == r;
+            level.setBlock(c.offset(x, y, z), shell ? Blocks.BARRIER.defaultBlockState() : Blocks.WATER.defaultBlockState(), 2);
+        }
+        LOGGER.info("[smoketest] M53 animals: water cube at {}", c);
+    }
 
     private Vec3 centre() {
         return groupCentre;
@@ -373,7 +387,7 @@ final class DevClientSmokeM53 {
         for (EntityType<?> t : group) total += Math.max(t.getHeight(), t.getWidth()) * 2.0;
         double at = x - total / 2;
         for (EntityType<?> t : group) {
-            double w = Math.max(0.45, t.getWidth() * 1.3);
+            double w = Math.max(t.getHeight(), t.getWidth()) * 2.0;
             Entity e;
             try {
                 e = t.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
