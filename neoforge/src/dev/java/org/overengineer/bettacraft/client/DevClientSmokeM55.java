@@ -93,13 +93,11 @@ final class DevClientSmokeM55 {
         LOGGER.info("[smoketest] M55 parts {} tag '{}'", parts, tag);
         then(1, () -> server(this::setup));
         then(20, () -> {
-            mc.options.hideGui = true;
             mc.options.fov().set(60);
         });
         if (parts.contains("carpets")) carpets();
         if (parts.contains("plants")) plants();
         if (parts.contains("icons")) icons();
-        then(1, () -> mc.options.hideGui = false);
         then(5, () -> LOGGER.info("[smoketest] M55 done"));
     }
 
@@ -330,7 +328,6 @@ final class DevClientSmokeM55 {
             LOGGER.info("[smoketest] M55 {} icon stacks", icons.size());
         }));
         then(20, () -> {
-            mc.options.hideGui = false;
             guiScale = mc.options.guiScale().get();
             mc.options.guiScale().set(4);
             mc.resizeGui();
@@ -378,7 +375,7 @@ final class DevClientSmokeM55 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -397,7 +394,7 @@ final class DevClientSmokeM55 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m55_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m55_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }
