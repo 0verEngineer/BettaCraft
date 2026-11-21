@@ -85,6 +85,10 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew curseforgeDescription                   # build/curseforge/ description (md + html) from docs/description.md
 ```
 
+- M53 client smoke `-Psmoketestm53` (both loaders, `runClient` / `runFabricClient`; `-Pm53parts=render,users,maps,interior,animals,critters`):
+  users tab, gear + client config, waypoints in every map mod, interior brightness check (the 26.x black interior), every
+  animal from six sides, the small animals, M11 + M13 and the frame rate (`render`; with `-Pshaders` / `-Pperf` the render
+  matrix). Contact sheets of the animal shots: `builds/m53-textures/<mc>-<loader>/`.
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
   `run/screenshots/bettacraft_mXX_*.png`; freeze animals with `SmokeFreeze.freeze`. Look at the screenshots.
 - Optional dev mod groups, synced from local folders into the run's mods folder (jars are not in git; copy them from a
@@ -96,7 +100,9 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   (`run/create-mods`: Create 6, Create Aeronautics bundled and Sable from ATM10AA; `CreateGameTests` move tanks on a bearing and a
   Sable sub-level; the travelling tanks are `tank/TankMoves`, `compat/create/`), `-Pquests` (`run/quest-mods`: FTB Quests +
   libraries; the chapter of `modpack/` is copied into the run, `QuestGameTests`), `-Pkubejs` (`run/kubejs-mods`: KubeJS, Rhino;
-  the example script is copied into the run), `-Pmaps` (`run/map-mods`: JourneyMap, client only; alarm waypoints), `-Pfacades`
+  the example script is copied into the run), `-Pmaps` (`run/map-mods`: JourneyMap, Xaero's Minimap + World Map, FTB Chunks + FTB Library/Teams/Architectury, client
+  only; alarm waypoints), `-Pperf` (`run/perf-mods`, M53: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant
+  Horizons, More Culling, LambDynamicLights, Not Enough Animations, EMF/ETF, Polytone, Fusion; client only; the render matrix), `-Pfacades`
   (`run/facade-mods`: Cable Facades; its block tag `cable_facades:supports_facade` is in our data, `PipeCoverGameTests`; Mekanism
   Covers lies in `run/power-mods`). The public
   events for scripts are in `api/event` (posted by `api/ApiEvents`). Leave runtime mods out
@@ -170,7 +176,8 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 ./gradlew runFabricGameTest -Pfabric_loader_version=<min> -Pfabric_api_version=<min> -PexactFabricVersions --no-configuration-cache   # the declared minimums exactly (fabric.mod.json, README)
 ```
 - Fabric dev mod groups (official Fabric jars in `run-fabric/<group>`, not in git; nested libraries are extracted for the
-  dev runtime): `-Poverlays` (Jade, JEI + Mezz Config, WTHIT + Bad Packets, The One Probe), `-Prei` (REI, Architectury,
+  dev runtime): `-Pmaps` (`map-mods`), `-Pshaders` (`shader-mods`: Sodium, Iris, Sodium Extra; Complementary in
+  `run-fabric/shaderpacks`), `-Pperf` (`perf-mods`), `-Pvulkanmod` (`vulkan-mods`: VulkanMod where it exists), `-Poverlays` (Jade, JEI + Mezz Config, WTHIT + Bad Packets, The One Probe), `-Prei` (REI, Architectury,
   Cloth Config), `-Pemi`, `-Pfabricintegration` (Refined Storage, JourneyMap + Common Networking, Better Fish Tanks + MINT
   Lib, Naturalist, Fish of Thieves + YACL, Critters and Companions + GeckoLib, Architectury, MidnightLib, Cloth Config),
   `-Pquests` (FTB Quests, Library, Teams from FTB's maven; the chapter of `modpack/` is copied into the run).
