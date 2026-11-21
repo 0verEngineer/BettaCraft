@@ -167,6 +167,7 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 ./gradlew prodFabricServer -Psmoketest / prodFabricClient -Psmoketestfabric   # production (intermediary) runs with official jars
 ./gradlew fabricMultiplayerTest --no-configuration-cache   # Fabric server + two background clients (Dev1, Dev2)
 ./gradlew fabricSaveLoadTest --no-configuration-cache      # showcase world built on Fabric, reloaded twice, nothing lost
+./gradlew runFabricGameTest -Pfabric_loader_version=<min> -Pfabric_api_version=<min> -PexactFabricVersions --no-configuration-cache   # the declared minimums exactly (fabric.mod.json, README)
 ```
 - Fabric dev mod groups (official Fabric jars in `run-fabric/<group>`, not in git; nested libraries are extracted for the
   dev runtime): `-Poverlays` (Jade, JEI + Mezz Config, WTHIT + Bad Packets, The One Probe), `-Prei` (REI, Architectury,
