@@ -77,16 +77,18 @@ jobs:
       - name: Set up Gradle (cache, wrapper validation)
         uses: gradle/actions/setup-gradle@v6
         with:
-          # only master writes the cache; pull requests and tags read it
-          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+          # the branches (one per Minecraft version) write the cache; pull requests and tags read it
+          cache-read-only: ${{ github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/') }}
 
       - name: Build, unit tests, release jar check, release notes
         run: |
           chmod +x gradlew
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew build releaseNotes $GRADLE_ARGS
 
       - name: Generated resources are up to date (runData)
         run: |
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew runData $GRADLE_ARGS
           if [ -n "$(git status --porcelain -- common/src/generated)" ]; then
             git status --porcelain -- common/src/generated | head -50
@@ -96,7 +98,9 @@ jobs:
 
       - name: GameTests
         if: inputs.loader != 'fabric'
-        run: ./gradlew runGameTestServer $GRADLE_ARGS 2>&1 | tee gametest.log
+        run: |
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
+          ./gradlew runGameTestServer $GRADLE_ARGS 2>&1 | tee gametest.log
 
       # the failed tests with their message as annotations on the run page (no need to search the log)
       - name: Failed GameTests
@@ -109,13 +113,16 @@ jobs:
         run: |
           mkdir -p run/1.21.11
           echo "eula=true" > run/1.21.11/eula.txt
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew runServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-default.log
           grep -q "\[smoketest\] PASSED" smoke-default.log
 
       # M52: the Fabric half (fabric/: the same GameTests where they need nothing of NeoForge, a dedicated server smoke)
       - name: Fabric GameTests
         if: inputs.loader != 'neoforge'
-        run: ./gradlew runFabricGameTest $GRADLE_ARGS 2>&1 | tee gametest-fabric.log
+        run: |
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
+          ./gradlew runFabricGameTest $GRADLE_ARGS 2>&1 | tee gametest-fabric.log
 
       - name: Failed Fabric GameTests
         if: failure() && inputs.loader != 'neoforge' && hashFiles('run/1.21.11/fabric/gametest/report.xml') != ''
@@ -133,6 +140,7 @@ jobs:
         run: |
           mkdir -p run/1.21.11/fabric/server
           echo "eula=true" > run/1.21.11/fabric/server/eula.txt
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew runFabricServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-fabric.log
           grep -q "\[smoketest\] PASSED" smoke-fabric.log
 
@@ -220,9 +228,7 @@ jobs:
         with:
           cache-read-only: true
 
-      - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
-        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && (matrix.fetch)
-        run: python3 tools/ci/fetch_mods.py "${{ matrix.fetch }}"
+      # 1.21.11: no matrix entry fetches optional mods (the power mods of ATM10 have no 1.21.11 version)
 
       - name: ${{ matrix.name }}
         if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
@@ -230,6 +236,7 @@ jobs:
           chmod +x gradlew
           mkdir -p run/1.21.11
           echo "eula=true" > run/1.21.11/eula.txt
+          # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
           if [ "${{ matrix.check }}" = smoke ]; then grep -q "\[smoketest\] PASSED" "${{ matrix.id }}.log"; fi
 
