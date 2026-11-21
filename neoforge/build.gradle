@@ -87,6 +87,8 @@ neoForge {
             if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }) {
                 systemProperty 'bettacraft.background', 'true'
             }
+            // M54: every dev client is silent (BackgroundSoundMixin; the saved options stay as they are); -Psound to hear it
+            if (!project.hasProperty('sound')) systemProperty 'bettacraft.silent', 'true'
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits
