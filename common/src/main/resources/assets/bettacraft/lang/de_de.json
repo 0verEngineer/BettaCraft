@@ -4849,5 +4849,5 @@
   "advancements.bettacraft.shared_tank.title": "Tag der offenen Tür",
   "advancements.bettacraft.shared_tank.description": "Trage einen anderen Spieler als Nutzer eines Beckens ein (Nutzer-Tab im Becken-Menü)",
   "quest.bettacraft.shared_tank.title": "Tag der offenen Tür",
-  "quest.bettacraft.shared_tank.desc": "Im Nutzer-Tab des Becken-Menüs trägt der Besitzer andere Spieler ein: Pfleger dürfen alles, was er darf, Betrachter nur ansehen. Für nicht eingetragene Spieler gilt die Sperre. Trage einen Spieler ein, der online ist."
+  "quest.bettacraft.shared_tank.desc": "Im Nutzer-Tab des Becken-Menüs trägt der Besitzer andere Spieler ein: Pfleger dürfen alles, was der Besitzer darf, Betrachter nur ansehen. Für nicht eingetragene Spieler gilt die Sperre. Trage einen zweiten Spieler ein, solange er online ist: dafür braucht es einen zweiten Spieler auf dem Server (eine freiwillige Quest, sie blockiert nichts)."
 }

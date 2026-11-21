@@ -1510,8 +1510,9 @@
 			dependencies: ["5C6C5D793BB24640"],
 			description: ["{\"translate\":\"quest.bettacraft.shared_tank.desc\"}"],
 			id: "5B30791AA5DE43DC",
+			optional: true,
 			rewards: [{ id: "250FD48DF8898A8F", type: "xp", xp: 25 }],
-			tags: ["bettacraft_feature:equipment.tankUsers"],
+			tags: ["bettacraft_feature:equipment.tankUsers", "bettacraft_optional"],
 			tasks: [
 				{ advancement: "bettacraft:shared_tank", criterion: "", id: "6AAB10D5FC7421E5", type: "advancement" }
 			],

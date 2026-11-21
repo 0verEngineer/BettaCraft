@@ -27,6 +27,11 @@ still, fish dart off now and then, and the small animals in the world crawl head
 - **Fish** (with the same switch): small fish dart off now and then (the shoal follows its leader), bottom fish scoot,
   bettas dart; fish that are active by day rest more at night. **Crayfish** stay in their hides by day and come out at night.
 
+### Changed
+- The quest **Open House** (add a user to a tank) is optional: it needs a second player on the server (only online players
+  can be added), so it blocks nothing in single player; its description says so.
+- Every dev client of the build is silent (smoke, background and multiplayer test clients, `runClient`); `-Psound` to hear one.
+
 ### Fixed
 - Shrimp, snails, crayfish and hermit crabs **in the world crawled backwards** (the apple snails showed it best); they now
   crawl head first like in the tanks.
@@ -35,6 +40,8 @@ still, fish dart off now and then, and the small animals in the world crawl head
   (the tankmates had the same fault until 1.42).
 - Four GameTests that failed now and then (statistics with an unseeded random): the albino bronze cory young, the lizard
   mother that takes her clutch along, the Banggai cardinalfish male, the fish in the water part of a paludarium.
+- Texts: the users tab and the Open House quest no longer call every player "he" ("everything the owner may", "their own
+  switch").
 
 ## [1.43.0-beta.1] - 2026-11-21
 

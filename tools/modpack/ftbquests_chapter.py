@@ -268,8 +268,9 @@ OWN_FEATURES = {
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
 MODS = {"travelling_tank": ["create"], "create_drive": ["create"], "powered_trip": ["create"]}
 NEEDS_POWER = {"powered", "wound_up", "powered_trip"}
-# Optional by design: they never block the chapter (Create, power, the fight).
-OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "fight", "powered_trip"}
+# Optional by design: they never block the chapter (Create, power, the fight, a second player).
+OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "fight", "powered_trip",
+            "shared_tank"}  # M54: needs a second player on the server
 
 # Item rewards besides the xp (C2): small and of the quest's own features (QuestChapterTest checks that).
 REWARDS = {
