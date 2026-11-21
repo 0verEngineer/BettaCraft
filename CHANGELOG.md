@@ -9,7 +9,7 @@ version as release notes.
 Bettacraft runs on Fabric too: the first multiloader version, one code base for NeoForge and Fabric 1.21.1.
 
 ### Added
-- **Fabric 1.21.1** (Fabric Loader 0.16+, Fabric API, Forge Config API Port): the whole mod, with the same ids, data,
+- **Fabric 1.21.1** (Fabric Loader 0.16.1+, Fabric API 0.116+, Forge Config API Port): the whole mod, with the same ids, data,
   configs (the same TOML files and keys; Mod Menu shows the config screen) and worlds as on NeoForge. Items, fluids and
   energy go through Fabric's transfer API and Team Reborn Energy (pipes, tanks and cables of Fabric tech mods).
 - **Handbook on Fabric** as a **Patchouli** book (optional dependency), made from the same pages as the GuideME

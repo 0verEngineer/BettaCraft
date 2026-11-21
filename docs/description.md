@@ -176,11 +176,11 @@ Fabric API and Forge Config API Port (Mod Menu shows the config screen).
 
 | Minecraft | Java | NeoForge | Fabric | Handbook on Fabric |
 |---|---|---|---|---|
-| 1.21.1 | 21 | 21.1.200+ | Loader 0.16+ | Patchouli |
-| 1.21.11 | 21 | 21.11.40+ | Loader 0.17+, Fabric API 0.141+ | Modonomicon |
-| 26.1.2 (Fabric also 26.1, 26.1.1) | 25 | 26.1.2.100+ | Loader 0.18.4+, Fabric API 0.155+ | Modonomicon |
-| 26.2 | 25 | 26.2.0.95+ | Loader 0.18.4+, Fabric API 0.161+ | Modonomicon |
-| 26.3 | 25 | 26.3.0.113+ | Loader 0.18.4+, Fabric API 0.166+ | Modonomicon |
+| 1.21.1 | 21 | 21.1.200+ | Loader 0.16.1+, Fabric API 0.116+ | Patchouli |
+| 1.21.11 | 21 | 21.11.40+ | Loader 0.18+, Fabric API 0.141+ | Modonomicon |
+| 26.1.2 (Fabric also 26.1, 26.1.1) | 25 | 26.1.2.100+ | Loader 0.19.0+, Fabric API 0.155+ | Modonomicon |
+| 26.2 | 25 | 26.2.0.95+ | Loader 0.19.2+, Fabric API 0.161+ | Modonomicon |
+| 26.3 | 25 | 26.3.0.113+ | Loader 0.19.4+, Fabric API 0.166+ | Modonomicon |
 
 ## Compatibility
 
