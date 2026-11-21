@@ -106,6 +106,8 @@ loom {
             if (project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') }) {
                 property 'bettacraft.background', 'true'
             }
+            // M53: a mod resolution error of the Fabric Loader goes to the log, not into a dialog that keeps a background client open
+            if (project.properties.keySet().any { it.startsWith('smoketest') }) vmArg '-Djava.awt.headless=true'
             if (project.hasProperty('smoketest')) property 'bettacraft.smoketest', 'true'
             if (project.hasProperty('smoketestbook')) {
                 property 'bettacraft.smoketest.world', 'true'
