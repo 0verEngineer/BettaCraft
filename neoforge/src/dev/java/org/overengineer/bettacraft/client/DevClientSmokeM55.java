@@ -105,8 +105,7 @@ final class DevClientSmokeM55 {
 
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(12000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         home = p.blockPosition();
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -334,7 +333,7 @@ final class DevClientSmokeM55 {
             mc.options.hideGui = false;
             guiScale = mc.options.guiScale().get();
             mc.options.guiScale().set(4);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
         for (int page = 0; page < 5; page++) {
             int pg = page;
@@ -346,7 +345,7 @@ final class DevClientSmokeM55 {
         }
         then(10, () -> {
             mc.options.guiScale().set(guiScale);
-            mc.resizeDisplay();
+            mc.resizeGui();
         });
     }
 
