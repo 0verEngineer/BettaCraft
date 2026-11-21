@@ -46,6 +46,8 @@ checked from all sides.
 
 ### Known gaps (Minecraft 26.2)
 - FTB Chunks (and FTB Library/Teams), ModernFix and VulkanMod have no 26.2 build; the Vulkan backend of 26.2 itself is tested.
+- Iris + Complementary on NeoForge 26.2: views with a large tank miniature can show black areas (not on Fabric with the same
+  Iris, Sodium and shader pack, not without a shader pack); still being looked into.
 
 ## [1.42.0-beta.1] - 2026-11-19 (Minecraft 26.2)
 
