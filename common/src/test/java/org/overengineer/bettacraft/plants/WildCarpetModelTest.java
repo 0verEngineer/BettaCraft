@@ -18,18 +18,20 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * M46: the wild carpets (fine, mat, clover, needle, each grown and trimmed) are cushions of several heights on a ground layer
- * with a ragged rim instead of one flat plate. Their models must be valid block models: elements inside the allowed space,
- * only the rotations Minecraft accepts, uv inside the texture, every texture variable the template uses given by each carpet
- * model and every texture there; the cushions have several heights and the grown carpet stands higher than the trimmed one;
- * the ground texture has a soft rim (open texels at the block edge) and the cushion tops are closed.
+ * M55 (M46 before): the wild carpets (fine, mat, clover, needle, each grown and trimmed) have three designs, each a template
+ * of its own ({@code template_wild_carpet_<design>}: a dense lawn of leaf layers, loose cushions of leafy discs with runners,
+ * fine sprigs standing apart); the shared templates only name the design in use as their parent. Every design must be a
+ * valid block model (elements inside the allowed space, only the rotations Minecraft accepts, uv inside the texture), the
+ * grown carpet stands higher than the trimmed one, every carpet model gives every texture variable of every design and every
+ * texture exists; the sprigs stand in both bands of their texture, the lawn's ground is closed and the sprigs' ground
+ * leaves the bed showing.
  */
 class WildCarpetModelTest {
     private static final List<String> LOOKS = List.of("fine", "mat", "clover", "needle");
+    private static final List<String> DESIGNS = List.of("lawn", "cushions", "blades");
     private static final Set<Double> ANGLES = Set.of(-45.0, -22.5, 0.0, 22.5, 45.0);
 
     private static Path res(String set) {
@@ -45,15 +47,15 @@ class WildCarpetModelTest {
         return new double[]{a.get(0).getAsDouble(), a.get(1).getAsDouble(), a.get(2).getAsDouble()};
     }
 
-    /** Checks one template; returns the texture variables it uses (without '#') and the top heights of its cushions. */
-    private static double[] checkTemplate(String name, Set<String> vars) throws IOException {
+    /** Checks one template; adds the texture variables it uses (without '#'); returns the highest top of its elements. */
+    private static double checkTemplate(String name, Set<String> vars) throws IOException {
         JsonObject m = json(res("main").resolve("models/block/" + name + ".json"));
         assertEquals("minecraft:cutout", m.get("render_type").getAsString(), name);
-        Set<Double> tops = new HashSet<>();
         double max = 0;
-        int cushions = 0;
+        int elements = 0;
         for (JsonElement el : m.getAsJsonArray("elements")) {
             JsonObject e = el.getAsJsonObject();
+            elements++;
             double[] fr = vec(e.get("from")), to = vec(e.get("to"));
             for (int i = 0; i < 3; i++) {
                 assertTrue(fr[i] >= -16 && to[i] <= 32 && fr[i] <= to[i], name + ": element outside the model space " + e);
@@ -71,31 +73,31 @@ class WildCarpetModelTest {
                     assertTrue(u.getAsDouble() >= 0 && u.getAsDouble() <= 16, name + ": uv outside the texture " + face);
                 }
             }
-            if (e.getAsJsonObject("faces").has("up") && "#cushion".equals(e.getAsJsonObject("faces").getAsJsonObject("up").get("texture").getAsString())) {
-                cushions++;
-                tops.add(to[1]);
-                max = Math.max(max, to[1]);
-            }
+            max = Math.max(max, to[1]);
         }
-        assertTrue(cushions >= 4, name + ": cushions " + cushions);
-        assertTrue(tops.size() >= 4, name + ": the cushions have only " + tops.size() + " heights");
-        return new double[]{max, cushions};
+        assertTrue(elements >= 4, name + ": only " + elements + " elements");
+        return max;
     }
 
     @Test
     void carpetModelsAreValid() throws IOException {
         Set<String> vars = new HashSet<>();
-        double grown = checkTemplate("template_wild_carpet", vars)[0];
-        double trimmed = checkTemplate("template_wild_carpet_short", vars)[0];
-        assertTrue(grown > trimmed && grown >= 2.5 && trimmed > 0.5, "heights grown " + grown + ", trimmed " + trimmed);
-        assertTrue(vars.containsAll(Set.of("cushion", "side", "ground")), "variables " + vars);
+        for (String d : DESIGNS) {
+            double grown = checkTemplate("template_wild_carpet_" + d, vars);
+            double trimmed = checkTemplate("template_wild_carpet_" + d + "_short", vars);
+            assertTrue(grown > trimmed && grown >= 2 && trimmed > 0.5, d + ": heights grown " + grown + ", trimmed " + trimmed);
+        }
+        // the shared templates name one design (both the same)
+        String grown = json(res("main").resolve("models/block/template_wild_carpet.json")).get("parent").getAsString();
+        String trimmed = json(res("main").resolve("models/block/template_wild_carpet_short.json")).get("parent").getAsString();
+        assertTrue(DESIGNS.stream().anyMatch(d -> grown.equals("bettacraft:block/template_wild_carpet_" + d)), grown);
+        assertEquals(grown + "_short", trimmed);
         for (String look : LOOKS) {
             for (String sfx : new String[]{"", "_trimmed"}) {
                 Path p = res("generated").resolve("models/block/wild_carpet_" + look + sfx + ".json");
                 assertTrue(Files.exists(p), "missing " + p);
                 JsonObject m = json(p);
-                String parent = m.get("parent").getAsString();
-                assertEquals("bettacraft:block/template_wild_carpet" + (sfx.isEmpty() ? "" : "_short"), parent, p.toString());
+                assertEquals("bettacraft:block/template_wild_carpet" + (sfx.isEmpty() ? "" : "_short"), m.get("parent").getAsString(), p.toString());
                 JsonObject t = m.getAsJsonObject("textures");
                 for (String v : vars) {
                     assertTrue(t.has(v), p.getFileName() + " does not give #" + v);
@@ -107,28 +109,30 @@ class WildCarpetModelTest {
         }
     }
 
+    private static double cover(BufferedImage img, int y0, int y1) {
+        int n = 0, open = 0;
+        for (int y = y0; y < y1; y++) for (int x = 0; x < img.getWidth(); x++) {
+            n++;
+            if ((img.getRGB(x, y) >>> 24) != 0) open++;
+        }
+        return open / (double) n;
+    }
+
     @Test
-    void groundHasASoftRimAndCushionsAreClosed() throws IOException {
+    void sprigsStandAndTheGroundShows() throws IOException {
         for (String look : LOOKS) {
-            BufferedImage ground = ImageIO.read(res("main").resolve("textures/block/wild_carpet_" + look + "_ground.png").toFile());
-            BufferedImage cushion = ImageIO.read(res("main").resolve("textures/block/wild_carpet_" + look + "_cushion.png").toFile());
-            assertNotNull(ground);
-            int open = 0, edge = 0;
-            for (int i = 0; i < 16; i++) {
-                for (int[] p : new int[][]{{i, 0}, {i, 15}, {0, i}, {15, i}}) {
-                    edge++;
-                    if ((ground.getRGB(p[0], p[1]) >>> 24) == 0) open++;
+            BufferedImage sprig = ImageIO.read(res("main").resolve("textures/block/wild_carpet_" + look + "_sprig.png").toFile());
+            for (int col = 0; col < 4; col++) {
+                for (int bottom : new int[]{7, 15}) {
+                    boolean foot = false;
+                    for (int x = col * 4; x < col * 4 + 4; x++) foot |= (sprig.getRGB(x, bottom) >>> 24) != 0;
+                    assertTrue(foot, look + ": the sprig in column " + col + " does not stand on row " + bottom);
                 }
             }
-            assertTrue(open > edge / 5 && open < edge * 4 / 5, look + ": ragged rim " + open + " of " + edge);
-            int min = 255, max = 0;
-            for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) {
-                int argb = cushion.getRGB(x, y);
-                assertTrue((argb >>> 24) == 255, look + ": cushion top not closed at " + x + "," + y);
-                min = Math.min(min, argb & 0xFF);
-                max = Math.max(max, argb & 0xFF);
-            }
-            assertTrue(max - min > 60, look + ": the cushion top has no leaf pattern " + min + ".." + max);
+            double ground = cover(ImageIO.read(res("main").resolve("textures/block/wild_carpet_" + look + "_blade_ground.png").toFile()), 0, 16);
+            assertTrue(ground > 0.2 && ground < 0.8, look + ": the ground between the sprigs covers " + ground);
+            double lawn = cover(ImageIO.read(res("main").resolve("textures/block/wild_carpet_" + look + "_lawn_ground.png").toFile()), 0, 16);
+            assertEquals(1.0, lawn, 1e-9, look + ": the lawn's ground is not closed");
         }
     }
 }

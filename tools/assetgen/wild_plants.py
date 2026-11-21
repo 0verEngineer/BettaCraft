@@ -268,47 +268,6 @@ def stem_lobed():
     return c
 
 
-def carpet_mat():
-    c = Canvas(28131)
-    for i in range(22):
-        x = c.r.uniform(3, N - 3)
-        h = c.r.uniform(10, 34)
-        c.line(ACCENT, [(x, BY), (x + c.r.uniform(-3, 3), BY - h)], 2, 0.7)
-        c.ellipse(TOP if c.r.random() < 0.3 else LEAF, x, BY - h - 2, 5, 3.5, 0.85)
-    return c
-
-
-def carpet_clover():
-    c = Canvas(28132)
-    for i in range(12):
-        x = c.r.uniform(5, N - 5)
-        h = c.r.uniform(18, 44)
-        c.line(ACCENT, [(x, BY), (x + c.r.uniform(-2, 2), BY - h)], 2, 0.72)
-        layer = TOP if i % 4 == 0 else LEAF
-        for dx, dy in ((-3.5, 0), (3.5, 0), (0, -2.5), (0, 2.0)):
-            c.ellipse(layer, x + dx, BY - h + dy, 3.6, 2.6, 0.84)
-    return c
-
-
-def carpet_needle():
-    c = Canvas(28133)
-    for i in range(30):
-        x = c.r.uniform(2, N - 2)
-        h = c.r.uniform(30, 60)
-        ang = c.r.uniform(-0.25, 0.25)
-        layer = TOP if c.r.random() < 0.25 else LEAF
-        c.line(layer, [(x, BY), (x + math.sin(ang) * h, BY - h)], 2, c.r.uniform(0.75, 0.9))
-        c.line(ACCENT, [(x, BY), (x + math.sin(ang) * 5, BY - 5)], 2, 0.6)
-    return c
-
-
-def carpet_fine():
-    c = Canvas(28134)
-    for x, h in [(10, 34), (24, 44), (38, 38), (52, 30)]:
-        _stem(c, x, h, 4, "fine")
-    return c
-
-
 CROSSES = {
     "wild_epiphyte_broad": epiphyte_broad,
     "wild_epiphyte_wavy": epiphyte_wavy,
@@ -322,10 +281,6 @@ CROSSES = {
     "wild_stem_fine": stem_fine,
     "wild_stem_feathery": stem_feathery,
     "wild_stem_lobed": stem_lobed,
-    "wild_carpet_mat": carpet_mat,
-    "wild_carpet_clover": carpet_clover,
-    "wild_carpet_needle": carpet_needle,
-    "wild_carpet_fine": carpet_fine,
 }
 
 
@@ -425,59 +380,11 @@ def templates():
         "template_wild_plant_short": _model(_cross_layers(4.4, 11.6, 8)),
         "template_wild_epiphyte": _model([rhizome] + _cross_layers(1.6, 14.4, 13, 0.5)),
         "template_wild_epiphyte_short": _model([rhizome] + _cross_layers(4.8, 11.2, 6.5, 0.5)),
-        "template_wild_moss": _model([_box([1, 0, 1], [15, 2.5, 15], "#moss", 0), _box([3, 2.5, 4], [12, 4, 12], "#moss", 0),
-                                      _box([9, 2.5, 2], [14, 3.5, 7], "#moss", 0)], "#moss"),
-        "template_wild_moss_short": _model([_box([2, 0, 2], [14, 1, 14], "#moss", 0)], "#moss"),
-        "template_wild_marimo": _model([_box([2, 0, 3], [8, 6, 9], "#moss", 0), _box([9, 0, 8], [14, 5, 13], "#moss", 0),
-                                        _box([8, 0, 2], [12, 4, 6], "#moss", 0)], "#moss"),
-        "template_wild_marimo_short": _model([_box([5, 0, 5], [10, 5, 10], "#moss", 0)], "#moss"),
         "template_wild_floating": {"ambientocclusion": False, "render_type": "minecraft:cutout", "textures": {"particle": "#tex"},
                                    "elements": [{"from": [0, 0.25, 0], "to": [16, 0.25, 16],
                                                  "faces": {"up": {"uv": [0, 0, 16, 16], "texture": "#tex"},
                                                            "down": {"uv": [0, 16, 16, 0], "texture": "#tex"}}}]},
     }
-
-
-# ------------------------------------------------------------------ M46: the wild carpets as cushions
-
-CARPET_LOOKS = ("mat", "clover", "needle", "fine")
-# M46: which carpet model the templates get (B1: three were built and compared in the smoke screenshots, see M46.md):
-# "a" cushions only, "b" a ground layer with many small tufts, "c" cushions with small tufts on them
-CARPET_VARIANT = __import__("os").environ.get("BETTACRAFT_CARPET_VARIANT", "c")
-
-
-def _leafy(look: str, seed: int, size: int = S) -> np.ndarray:
-    """A dense leaf pattern seen from above, grey 0..1 (tinted in the game): small leaves of the look on darker gaps."""
-    r = np.random.default_rng(seed)
-    g = np.full((size, size), 0.66) + r.random((size, size)) * 0.06
-    if look == "mat":  # Hemianthus / Monte Carlo: small round leaves, two by two pixels
-        for y in range(0, size, 2):
-            for x in range((y // 2) % 2, size, 2):
-                v = r.uniform(0.78, 1.0)
-                for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1)):
-                    if r.random() < 0.85:
-                        g[(y + dy) % size, (x + dx) % size] = v - (0.08 if dy else 0)
-    elif look == "clover":  # Marsilea: four leaflets around a dark middle
-        for cy in range(1, size, 4):
-            for cx in range((cy // 4) % 2 * 2, size, 4):
-                v = r.uniform(0.82, 1.0)
-                for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1)):
-                    g[(cy + dy) % size, (cx + dx) % size] = v - r.uniform(0, 0.08)
-                g[cy % size, cx % size] = 0.6
-    elif look == "needle":  # Eleocharis: the tips of many needles
-        for _ in range(size * size // 3):
-            x, y = r.integers(0, size), r.integers(0, size)
-            g[y, x] = r.uniform(0.8, 1.0)
-            if r.random() < 0.5:
-                g[(y + 1) % size, x] = r.uniform(0.7, 0.85)
-    else:  # Staurogyne: small oval leaf pairs, a bit larger
-        for y in range(0, size, 3):
-            for x in range((y // 3) % 2 * 2, size, 4):
-                v = r.uniform(0.8, 1.0)
-                for dy, dx in ((0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)):
-                    if not (dy == 1 and dx in (0, 2) and r.random() < 0.5):
-                        g[(y + dy) % size, (x + dx) % size] = v - 0.06 * dy
-    return np.clip(g, 0, 1)
 
 
 def _rgba(grey: np.ndarray, alpha: np.ndarray) -> np.ndarray:
@@ -487,120 +394,387 @@ def _rgba(grey: np.ndarray, alpha: np.ndarray) -> np.ndarray:
     return out
 
 
-def carpet_cushion(look: str, seed: int) -> np.ndarray:
-    """The top of a cushion: closed, the leaf pattern of the look."""
-    return _rgba(_leafy(look, seed), np.ones((S, S)))
+
+# ------------------------------------------------------------------ M55: the wild carpets (three designs)
+
+CARPET_LOOKS = ("mat", "clover", "needle", "fine")
+# M55: the design the wild carpets use. All three templates are written (``template_wild_carpet_<design>``); the shared
+# ``template_wild_carpet`` only names one of them as its parent, so switching is this one line (then run this script):
+#   "lawn"     a dense lawn: a closed ground of leaves, loose leaf layers over it and a few sprigs,
+#   "cushions" loose round cushions (stacked leafy discs) joined by runners over open ground,
+#   "blades"   fine sprigs standing apart, the ground showing between them.
+CARPET_DESIGNS = ("lawn", "cushions", "blades")
+CARPET_DESIGN = __import__("os").environ.get("BETTACRAFT_CARPET_DESIGN", "blades")
 
 
-def carpet_side(look: str, seed: int) -> np.ndarray:
-    """The sides of a cushion: leaves stacked over each other, darker towards the ground (the rows near the bottom are used,
-    a box of height h takes the lowest h rows), the top row ragged."""
+def _stamp(g, a, x, y, pix, v, r):
+    """Pixels ``pix`` (dx, dy, shade) of one leaf at (x, y), wrapped round the tile; grey ``v`` times the shade."""
+    for dx, dy, sh in pix:
+        xx, yy = (x + dx) % S, (y + dy) % S
+        g[yy, xx] = np.clip(v * sh + r.uniform(-0.03, 0.03), 0, 1)
+        a[yy, xx] = 1
+
+
+# top views of one leaf (dx, dy, shade) per look, light from the upper left; shade 0 = a gap (the clover's notches)
+_LEAVES = {
+    "mat": [[(0, 0, 1.0), (1, 0, 0.92), (0, 1, 0.9), (1, 1, 0.8)], [(0, 0, 1.0), (1, 0, 0.88)], [(0, 0, 0.95), (0, 1, 0.82)]],
+    "clover": [[(0, 0, 1.0), (1, 0, 0.92), (0, 1, 0.9), (1, 1, 0.55), (2, 1, 0.9), (1, 2, 0.85), (2, 2, 0.8), (2, 0, 0.0), (0, 2, 0.0)]],
+    "fine": [[(0, 0, 1.0), (1, 0, 0.9), (2, 1, 0.95), (3, 1, 0.85)], [(0, 1, 0.95), (1, 1, 0.88), (2, 0, 1.0), (3, 0, 0.9)],
+             [(0, 0, 1.0), (0, 1, 0.9), (1, 2, 0.95), (1, 3, 0.85)]],
+    "needle": [[(0, 0, 1.0)], [(0, 0, 1.0), (1, 1, 0.85)], [(1, 0, 0.95), (0, 1, 0.85)]],
+}
+
+
+def _leaf_layer(look: str, seed: int, cover: float, base=0.82) -> tuple:
+    """Grey and alpha of a tile of loose leaves of the look seen from above (tileable), about ``cover`` of it covered."""
     r = np.random.default_rng(seed)
-    g = _leafy(look, seed + 1)
-    shade = np.linspace(1.0, 0.8, S)[:, None]
-    shade[-6:] *= np.linspace(1.0, 0.85, 6)[:, None]
-    a = np.ones((S, S))
-    # ragged tops: every height a box may have (rows 10 .. 15) gets a few notches in its first row
-    for row in range(10, S - 1):
-        for x in range(S):
-            if r.random() < 0.18:
-                a[row, x] = 0
-    a[S - 1] = 1
-    return _rgba(g * shade, a)
+    g = np.zeros((S, S))
+    a = np.zeros((S, S))
+    tries = 0
+    while a.mean() < cover and tries < 4000:
+        tries += 1
+        x, y = int(r.integers(0, S)), int(r.integers(0, S))
+        pix = _LEAVES[look][int(r.integers(0, len(_LEAVES[look])))]
+        v = base + r.uniform(-0.1, 0.18)
+        _stamp(g, a, x, y, [p for p in pix if p[2] > 0], v, r)
+        for dx, dy, sh in pix:
+            if sh == 0:
+                a[(y + dy) % S, (x + dx) % S] = 0
+    return g, a
 
 
-def carpet_ground(look: str, seed: int) -> np.ndarray:
-    """The low ground layer: the leaf pattern, darker, with a soft, ragged rim (0 to 2 pixels from the block edge open)."""
+def lawn_ground(look, seed):
+    """Closed ground of the lawn: dense dark leaves, every texel covered (darker between the leaves)."""
+    g, a = _leaf_layer(look, seed, 0.75, base=0.7)
+    g = np.where(a > 0, g, 0.48 + np.random.default_rng(seed + 1).random((S, S)) * 0.06)
+    return _rgba(g, np.ones((S, S)))
+
+
+def lawn_layer(look, seed, cover):
+    g, a = _leaf_layer(look, seed, cover, base=0.86)
+    return _rgba(g, a)
+
+
+def _disc_mask(d, r):
+    """A round mask of diameter ``d`` with a ragged edge."""
+    m = np.zeros((d, d))
+    c = (d - 1) / 2
+    for y in range(d):
+        for x in range(d):
+            q = math.hypot(x - c, y - c) / (d / 2)
+            m[y, x] = 1 if q < 0.78 or (q < 1.02 and r.random() < 0.55) else 0
+    return m
+
+
+# the discs of the cushion texture: diameter -> (u, v); a cushion of diameter d stacks d, d - 2, d - 4 ...
+DOME_DISCS = {9: (0, 0), 7: (9, 0), 5: (9, 7), 3: (0, 9)}
+
+
+def dome_texture(look, seed):
+    """Leafy discs of diameter 9, 7, 5 and 3 (an atlas, 1:1 texels in the model) with ragged rims, the leaves of the look."""
     r = np.random.default_rng(seed)
-    g = _leafy(look, seed + 2) * 0.9
-    a = np.ones((S, S))
-    for side in range(4):
-        depth = 0
-        for i in range(S):
-            depth = int(np.clip(depth + r.integers(-1, 2), 0, 2))
-            for d in range(depth):
-                y, x = {0: (d, i), 1: (S - 1 - d, i), 2: (i, d), 3: (i, S - 1 - d)}[side]
-                a[y, x] = 0
-    # a few holes inside
-    for _ in range(5):
-        a[r.integers(2, S - 2), r.integers(2, S - 2)] = 0
+    g, a = _leaf_layer(look, seed + 1, 0.9, base=0.88)
+    g = np.where(a > 0, g, 0.62)
+    out_a = np.zeros((S, S))
+    for d, (u, v) in DOME_DISCS.items():
+        out_a[v:v + d, u:u + d] = np.maximum(out_a[v:v + d, u:u + d], _disc_mask(d, r))
+    return _rgba(np.clip(g, 0, 1), out_a)
+
+
+# cushions: (centre x, centre z, diameter); runners between them and out to the block edges
+CUSHIONS = [(4.5, 4.5, 9), (11.5, 10.5, 9), (12.5, 3.5, 7), (3.5, 12.5, 7)]
+CUSHION_RUNNERS = [((4, 4), (12, 3)), ((4, 4), (4, 12)), ((12, 3), (11, 10)), ((4, 12), (11, 10)), ((11, 10), (15, 15)),
+                   ((12, 3), (15, 0)), ((4, 12), (0, 15)), ((4, 4), (0, 1)), ((11, 10), (15, 8)), ((4, 12), (7, 15))]
+
+
+def runner_texture(look, seed):
+    """The runners between the cushions over open ground: thin dark stems with a leaf of the look here and there."""
+    r = np.random.default_rng(seed)
+    g = np.zeros((S, S))
+    a = np.zeros((S, S))
+    for (x0, y0), (x1, y1) in CUSHION_RUNNERS:
+        n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
+        for i in range(n):
+            t = i / max(1, n - 1)
+            x = int(round(x0 + (x1 - x0) * t + math.sin(t * 6 + seed) * 0.6))
+            y = int(round(y0 + (y1 - y0) * t + math.cos(t * 5 + seed) * 0.6))
+            if 0 <= x < S and 0 <= y < S:
+                g[y, x], a[y, x] = 0.62, 1
+                if i % 3 == 1:
+                    _stamp(g, a, x, y, [p for p in _LEAVES[look][0] if p[2] > 0], 0.86, r)
+    return _rgba(g, a)
+
+
+def blade_ground(look, seed):
+    """Loose leaves at the feet of the sprigs, the ground showing between them (about 40 % covered)."""
+    g, a = _leaf_layer(look, seed, 0.4, base=0.72)
+    return _rgba(g, a)
+
+
+# the sprigs: four columns (4 texels wide) in two bands, the lower band (rows 8..15) for the grown carpet, the upper band
+# (rows 0..7) for the trimmed one; each sprig stands on the bottom row of its band
+SPRIG_HEIGHT = {"mat": (4, 2), "clover": (5, 3), "fine": (6, 3), "needle": (8, 4)}
+
+
+def sprig_texture(look, seed):
+    r = np.random.default_rng(seed)
+    g = np.zeros((S, S))
+    a = np.zeros((S, S))
+
+    def px(x, y, v):
+        if 0 <= x < S and 0 <= y < S:
+            g[y, x], a[y, x] = np.clip(v + r.uniform(-0.03, 0.03), 0, 1), 1
+
+    for bottom, full in ((15, SPRIG_HEIGHT[look][0]), (7, SPRIG_HEIGHT[look][1])):
+        for col in range(4):
+            x0 = col * 4
+            h = max(2, full - int(r.integers(0, 2)))
+            top = bottom - h + 1
+            if look == "needle":  # Eleocharis: three or four thin needles fanning out
+                for k, (bx, lean) in enumerate(((1, -1), (2, 1), (1, 0), (2, 0))[: 3 + col % 2]):
+                    hh = h - (k % 2)
+                    for i in range(hh):
+                        x = x0 + bx + (lean if i > hh * 0.6 else 0)
+                        px(x, bottom - i, 0.72 + 0.25 * i / hh)
+            elif look == "clover":  # Marsilea: a stalk with a four-leafed head
+                sx = x0 + 1 + col % 2
+                for i in range(h - 2):
+                    px(sx, bottom - i, 0.6)
+                for dx, dy, sh in ((-1, 0, 0.95), (1, 0, 0.95), (0, -1, 1.0), (0, 0, 0.7), (2, 0, 0.85), (-1, 1, 0.8), (1, 1, 0.8)):
+                    if x0 <= sx + dx < x0 + 4:
+                        px(sx + dx, top + 1 + dy, 0.9 * sh)
+            elif look == "fine":  # Staurogyne: a short stem with pairs of oval leaves
+                sx = x0 + 1 + col % 2
+                for i in range(h):
+                    px(sx, bottom - i, 0.62)
+                for i in range(1, h, 2):
+                    y = bottom - i
+                    px(sx - 1, y, 0.9)
+                    px(sx + 1, y - 1 if i > 1 else y, 0.95)
+                    if sx + 2 < x0 + 4:
+                        px(sx + 2, y - 1, 0.85)
+                px(sx, top, 1.0)
+            else:  # mat (Hemianthus, Monte Carlo): a tiny clump of round leaves
+                for i in range(h):
+                    y = bottom - i
+                    for x in range(x0 + (i % 2), x0 + 4 - (1 - i % 2)):
+                        if r.random() < 0.75:
+                            px(x, y, 0.78 + 0.18 * i / h)
     return _rgba(g, a)
 
 
 def carpet_textures() -> dict:
     out = {}
     for i, look in enumerate(CARPET_LOOKS):
-        out[f"wild_carpet_{look}_cushion"] = carpet_cushion(look, 46100 + i)
-        out[f"wild_carpet_{look}_side"] = carpet_side(look, 46110 + i)
-        out[f"wild_carpet_{look}_ground"] = carpet_ground(look, 46120 + i)
+        out[f"wild_carpet_{look}_lawn_ground"] = lawn_ground(look, 55100 + i)
+        out[f"wild_carpet_{look}_lawn_low"] = lawn_layer(look, 55110 + i, 0.62)
+        out[f"wild_carpet_{look}_lawn_high"] = lawn_layer(look, 55120 + i, 0.3)
+        out[f"wild_carpet_{look}_dome"] = dome_texture(look, 55130 + i)
+        out[f"wild_carpet_{look}_runners"] = runner_texture(look, 55140 + i)
+        out[f"wild_carpet_{look}_blade_ground"] = blade_ground(look, 55150 + i)
+        out[f"wild_carpet_{look}_sprig"] = sprig_texture(look, 55160 + i)
     return out
 
 
-def _cushion(fr, to, tint_top=0):
-    """A cushion: top and four sides (no bottom), cut to the block's bottom, shaded like a block."""
-    faces = {}
-    h = to[1] - fr[1]
-    for f in ("north", "south", "east", "west"):
-        a, b = (fr[0], to[0]) if f in ("north", "south") else (fr[2], to[2])
-        a, b = max(0.0, min(16.0, a)), max(0.0, min(16.0, b))
-        faces[f] = {"uv": [a, 16 - h, max(a + 0.5, b), 16], "texture": "#side", "tintindex": 0}
-    faces["up"] = {"uv": [max(0.0, fr[0]), max(0.0, fr[2]), min(16.0, to[0]), min(16.0, to[2])], "texture": "#cushion", "tintindex": tint_top}
-    return {"from": list(fr), "to": list(to), "faces": faces}
+# the texture variables the carpet templates use (the datagen gives all of them to every carpet model)
+CARPET_VARIABLES = ("lawn_ground", "lawn_low", "lawn_high", "dome", "runners", "blade_ground", "sprig")
 
 
-def _tuft(x, z, w, h, y0, angle):
-    """A small tuft: two crossed planes of the look's cross texture (``w`` wide, ``h`` high) standing at (x, z), turned by
-    ``angle`` (block models allow -45, -22.5, 0, 22.5, 45)."""
+def _plane(y, tex, tint, fr=(0, 0), to=(16, 16), uv=(0, 0, 16, 16), rot=0):
+    """A horizontal leaf layer at height ``y``, seen from above."""
+    face = {"uv": list(uv), "texture": tex, "tintindex": tint}
+    if rot:
+        face["rotation"] = rot
+    return {"from": [fr[0], y, fr[1]], "to": [to[0], y, to[1]], "shade": False, "faces": {"up": face}}
+
+
+def _sprig(x, z, h, col, band, angle, tint=0):
+    """A sprig: two crossed planes 4 texels wide and ``h`` high at (x, z), column ``col`` of the sprig texture, turned."""
+    v1 = 16 if band == 0 else 8
+    uv = [col * 4, v1 - h, col * 4 + 4, v1]
     els = []
     for along_x in (True, False):
-        for tex, tint in (("#leaf", 0), ("#accent", 1), ("#top", 2)):
-            face = {"uv": [0, 0, 16, 16], "texture": tex, "tintindex": tint}
-            fr = [x - w / 2, y0, z] if along_x else [x, y0, z - w / 2]
-            to = [x + w / 2, y0 + h, z] if along_x else [x, y0 + h, z + w / 2]
-            faces = {"north": dict(face), "south": dict(face)} if along_x else {"east": dict(face), "west": dict(face)}
-            els.append({"from": [round(c, 3) for c in fr], "to": [round(c, 3) for c in to],
-                        "rotation": {"origin": [x, y0, z], "axis": "y", "angle": angle, "rescale": False},
-                        "shade": False, "faces": faces})
+        face = {"uv": uv, "texture": "#sprig", "tintindex": tint}
+        fr = [x - 2, 0, z] if along_x else [x, 0, z - 2]
+        to = [x + 2, h, z] if along_x else [x, h, z + 2]
+        faces = {"north": dict(face), "south": dict(face)} if along_x else {"east": dict(face), "west": dict(face)}
+        els.append({"from": [round(c, 3) for c in fr], "to": [round(c, 3) for c in to],
+                    "rotation": {"origin": [x, 0, z], "axis": "y", "angle": angle, "rescale": False},
+                    "shade": False, "faces": faces})
     return els
 
 
-def _ground():
-    return {"from": [0, 0, 0], "to": [16, 0.4, 16], "faces": {"up": {"uv": [0, 0, 16, 16], "texture": "#ground", "tintindex": 0}}}
+_ANGLES = (22.5, -22.5, 45, 0, -45)
 
 
-# cushions of a grown carpet: (from, to, tint of the top); heights and edges all differ (no two faces in one plane); some
-# reach a little over the block edge (into the neighbour's gap) so a lawn of them shows no straight block edges
-_CUSHIONS = [
-    ((0.6, 0, 1.1), (7.1, 3.4, 7.4), 0),
-    ((6.3, 0, -0.4), (13.7, 2.3, 5.8), 2),
-    ((-0.5, 0, 6.8), (6.6, 2.8, 13.9), 0),
-    ((7.6, 0, 6.3), (15.4, 3.9, 12.6), 0),
-    ((9.4, 0, 11.7), (16.6, 1.9, 16.4), 2),
-    ((3.9, 0, 4.2), (9.2, 4.6, 9.7), 2),
-    ((1.2, 0, 13.2), (5.4, 1.5, 15.6), 2),
-]
+def _cushion_discs(cx, cz, d, heights):
+    els = []
+    for k, y in enumerate(heights):
+        dd = d - 2 * k
+        if dd < 3:
+            break
+        u, v = DOME_DISCS[dd]
+        h = dd / 2
+        els.append(_plane(y, "#dome", 2 if k == len(heights) - 1 or dd == 3 else 0, (cx - h, cz - h), (cx + h, cz + h), (u, v, u + dd, v + dd)))
+    return els
 
 
-def _scaled(cushions, f):
-    return [((a[0], 0, a[2]), (b[0], round(max(0.6, b[1] * f), 2), b[2]), t) for a, b, t in cushions]
+def carpet_template(trimmed: bool, design: str) -> dict:
+    els = []
+    if design == "lawn":
+        els.append(_plane(0.2, "#lawn_ground", 0))
+        els.append(_plane(0.9 if not trimmed else 0.6, "#lawn_low", 0, rot=90))
+        if not trimmed:
+            els.append(_plane(1.6, "#lawn_high", 2, rot=180))
+            els.append(_plane(2.2, "#lawn_high", 0, rot=270))
+        spots = [(3, 3), (10, 5), (6, 11), (13, 13), (8, 8), (14, 2)]
+        for i, (x, z) in enumerate(spots[: 6 if not trimmed else 3]):
+            h = (4, 3, 4)[i % 3] if not trimmed else 2
+            els += _sprig(x, z, h, i % 4, 0 if not trimmed else 1, _ANGLES[i % 5], 2 if i % 2 else 0)
+    elif design == "cushions":
+        els.append(_plane(0.15, "#runners", 1))
+        heights = (0.5, 1.3, 2.0, 2.6) if not trimmed else (0.4, 0.9)
+        for cx, cz, d in CUSHIONS:
+            els += _cushion_discs(cx, cz, d if not trimmed else d - 2, heights)
+        for i, (x, z) in enumerate([(4.5, 4.5), (11.5, 10.5), (8, 8), (12.5, 3.5)][: 4 if not trimmed else 2]):
+            els += _sprig(x, z, 3 if not trimmed else 2, i, 0 if not trimmed else 1, _ANGLES[i], 2 if i % 2 else 0)
+    else:  # blades
+        els.append(_plane(0.2, "#blade_ground", 0))
+        r = np.random.default_rng(5501)
+        n = 0
+        for gz in range(4):
+            for gx in range(4):
+                if trimmed and (gx + gz) % 2:
+                    continue
+                x = round(2 + gx * 4 + r.uniform(-1.2, 1.2), 2)
+                z = round(2 + gz * 4 + r.uniform(-1.2, 1.2), 2)
+                h = 8 - int(r.integers(0, 3)) if not trimmed else 4 - int(r.integers(0, 2))
+                els += _sprig(x, z, h, (gx + 2 * gz) % 4, 0 if not trimmed else 1, _ANGLES[n % 5], 2 if n % 3 == 0 else 0)
+                n += 1
+    particle = {"lawn": "#lawn_low", "cushions": "#dome", "blades": "#sprig"}[design]
+    return {"ambientocclusion": False, "render_type": "minecraft:cutout", "textures": {"particle": particle}, "elements": els}
 
 
-def carpet_template(trimmed: bool, variant: str = None) -> dict:
-    v = variant or CARPET_VARIANT
-    f = 0.45 if trimmed else 1.0
-    els = [_ground()]
-    if v in ("a", "c"):
-        els += [_cushion(a, b, t) for a, b, t in _scaled(_CUSHIONS, f if v == "a" else f * 0.8)]
-    if v in ("b", "c"):
-        tufts = [(3.5, 3.0, 22.5), (11.0, 3.5, -22.5), (5.5, 10.5, 45), (12.5, 11.0, 0), (8.5, 7.0, -45), (2.5, 13.5, 22.5), (14.0, 6.0, -22.5)]
-        heights = [4.5, 5.5, 4.0, 5.0, 6.0, 3.5, 4.2]
-        for (x, z, ang), hh in zip(tufts, heights):
-            if v == "c":
-                top = max((b[1] for a, b, t in _scaled(_CUSHIONS, f * 0.8) if a[0] <= x <= b[0] and a[2] <= z <= b[2]), default=0.4)
-                els += _tuft(x, z, 4.5 if not trimmed else 3.0, (hh * 0.55 if not trimmed else 1.6), top - 0.3, ang)
-            else:
-                els += _tuft(x, z, 6.0 if not trimmed else 4.0, hh if not trimmed else hh * 0.45, 0.2, ang)
-    return {"ambientocclusion": False, "render_type": "minecraft:cutout", "textures": {"particle": "#cushion"}, "elements": els}
+def carpet_templates() -> dict:
+    out = {}
+    for d in CARPET_DESIGNS:
+        out[f"template_wild_carpet_{d}"] = carpet_template(False, d)
+        out[f"template_wild_carpet_{d}_short"] = carpet_template(True, d)
+    # the shared templates the carpet models name: only a parent (the design in use)
+    out["template_wild_carpet"] = {"parent": f"bettacraft:block/template_wild_carpet_{CARPET_DESIGN}"}
+    out["template_wild_carpet_short"] = {"parent": f"bettacraft:block/template_wild_carpet_{CARPET_DESIGN}_short"}
+    return out
+
+
+# ------------------------------------------------------------------ M55: round moss cushions and Marimo balls (B1)
+
+# the discs of the moss cushions, 1:1 texels: texture -> {diameter: (u, v)}
+MOSS_DISCS = {"wild_moss_disc": {13: (0, 0), 3: (13, 0)}, "wild_moss_disc_small": {10: (0, 0), 6: (10, 0), 4: (10, 6)}}
+# the Marimo: discs of diameter 6, 5 and 4 and 3 (balls of three sizes, each from crossed discs)
+MARIMO_DISCS = {6: (0, 0), 5: (6, 0), 4: (11, 0), 3: (0, 6)}
+
+
+def _fuzzy_disc(d, r, rim=0.55):
+    m = np.zeros((d, d))
+    c = (d - 1) / 2
+    for y in range(d):
+        for x in range(d):
+            q = math.hypot(x - c, y - c) / (d / 2)
+            m[y, x] = 1 if q < 0.72 or (q < 1.05 and r.random() < rim) else 0
+    return m
+
+
+def _moss_grey(seed):
+    """The interior moss texture (fine fronds) as grey 0..1, its holes filled darker."""
+    moss = np.asarray(Image.open(BLOCK_TEX / "plant_moss.png").convert("RGBA")).astype(np.float64) / 255
+    g = moss[..., :3].mean(axis=2)
+    g = np.where(moss[..., 3] > 0, g, g.mean() * 0.62)
+    r = np.random.default_rng(seed)
+    return np.clip(g + r.uniform(-0.04, 0.04, g.shape), 0, 1)
+
+
+def moss_disc_textures():
+    out = {}
+    for k, (name, discs) in enumerate(MOSS_DISCS.items()):
+        r = np.random.default_rng(55300 + k)
+        g = _moss_grey(55310 + k)
+        a = np.zeros((S, S))
+        for d, (u, v) in discs.items():
+            a[v:v + d, u:u + d] = np.maximum(a[v:v + d, u:u + d], _fuzzy_disc(d, r))
+        out[name] = _rgba(g, a)
+    return out
+
+
+def marimo_texture():
+    """Discs of the Marimo ball: fine green filaments, lighter in the middle, darker to the fuzzy rim (a ball's shading)."""
+    r = np.random.default_rng(55320)
+    g = np.zeros((S, S))
+    a = np.zeros((S, S))
+    base = _moss_grey(55321)
+    for d, (u, v) in MARIMO_DISCS.items():
+        m = _fuzzy_disc(d, r, rim=0.7)
+        c = (d - 1) / 2
+        for y in range(d):
+            for x in range(d):
+                q = math.hypot(x - c + 0.4, y - c + 0.4) / (d / 2)
+                g[v + y, u + x] = np.clip(base[v + y, u + x] * (1.12 - 0.35 * q * q), 0, 1)
+        a[v:v + d, u:u + d] = np.maximum(a[v:v + d, u:u + d], m)
+    return _rgba(g, a)
+
+
+def _disc(cx, y, cz, d, uv, tex, tint=0, both=False):
+    u, v = uv
+    face = {"uv": [u, v, u + d, v + d], "texture": tex, "tintindex": tint}
+    faces = {"up": dict(face)}
+    if both:
+        faces["down"] = dict(face)
+    h = d / 2
+    return {"from": [cx - h, y, cz - h], "to": [cx + h, y, cz + h], "shade": False, "faces": faces}
+
+
+def _upright(cx, y0, cz, d, uv, tex, angle, along_x=True):
+    """A round disc standing upright (both sides) through (cx, cz), turned by ``angle``."""
+    u, v = uv
+    face = {"uv": [u, v, u + d, v + d], "texture": tex, "tintindex": 0}
+    h = d / 2
+    if along_x:
+        fr, to, faces = [cx - h, y0, cz], [cx + h, y0 + d, cz], {"north": dict(face), "south": dict(face)}
+    else:
+        fr, to, faces = [cx, y0, cz - h], [cx, y0 + d, cz + h], {"east": dict(face), "west": dict(face)}
+    return {"from": fr, "to": to, "shade": False, "faces": faces,
+            "rotation": {"origin": [cx, y0, cz], "axis": "y", "angle": angle, "rescale": False}}
+
+
+def _cushion_stack(cx, cz, sizes, heights):
+    """A moss cushion: discs of the given diameters stacked at the given heights (the top one lighter: tint 0 still)."""
+    els = []
+    for d, y in zip(sizes, heights):
+        tex = "#moss_disc" if d in MOSS_DISCS["wild_moss_disc"] else "#moss_disc_small"
+        uv = MOSS_DISCS["wild_" + tex[1:]][d]
+        els.append(_disc(cx, y, cz, d, uv, tex))
+    return els
+
+
+def _ball(cx, cz, d, lift=0.0):
+    """A Marimo ball of diameter ``d``: two upright discs crossed, two diagonal, a horizontal one at its middle."""
+    uv = MARIMO_DISCS[d]
+    els = [_upright(cx, lift, cz, d, uv, "#marimo", 0, True), _upright(cx, lift, cz, d, uv, "#marimo", 0, False),
+           _upright(cx, lift, cz, d, uv, "#marimo", 45, True), _upright(cx, lift, cz, d, uv, "#marimo", 45, False),
+           _disc(cx, lift + d / 2, cz, d, uv, "#marimo", both=True)]
+    if d - 2 in MARIMO_DISCS:  # a smaller disc near the top rounds it seen from above
+        els.append(_disc(cx, lift + d * 0.85, cz, d - 2, MARIMO_DISCS[d - 2], "#marimo"))
+    return els
+
+
+def moss_templates():
+    m = lambda els, particle: {"ambientocclusion": False, "render_type": "minecraft:cutout", "textures": {"particle": particle}, "elements": els}
+    moss = _cushion_stack(7.0, 8.5, (13, 10, 6, 3), (0.4, 1.3, 2.2, 2.9)) + _cushion_stack(12.5, 3.5, (6, 4), (0.6, 1.5)) \
+        + _cushion_stack(3.0, 13.0, (4,), (0.5,))
+    moss_short = _cushion_stack(8.0, 8.0, (10, 6), (0.3, 0.9))
+    marimo = _ball(5.0, 6.0, 6) + _ball(11.5, 10.5, 5) + _ball(10.0, 4.0, 4)
+    marimo_short = _ball(7.5, 7.5, 5)
+    return {"template_wild_moss": m(moss, "#moss_disc"), "template_wild_moss_short": m(moss_short, "#moss_disc"),
+            "template_wild_marimo": m(marimo, "#marimo"), "template_wild_marimo_short": m(marimo_short, "#marimo")}
 
 
 def write_all() -> list:
@@ -610,19 +784,17 @@ def write_all() -> list:
         out.append(save_png(c.texture(LEAF), BLOCK_TEX / f"{name}.png"))
         out.append(save_png(c.texture(ACCENT), BLOCK_TEX / f"{name}_accent.png"))
         out.append(save_png(c.texture(TOP), BLOCK_TEX / f"{name}_top.png"))
-    # the moss cushions and Marimo balls: the interior moss texture with its holes filled darker (closed boxes)
-    moss = np.asarray(Image.open(BLOCK_TEX / "plant_moss.png").convert("RGBA")).astype(np.float64)
-    hole = moss[..., 3] == 0
-    moss[hole, :3] = 0.5 * 255
-    moss[..., 3] = 255
-    out.append(save_png(moss.astype(np.uint8), BLOCK_TEX / "wild_moss.png"))
+    # M55: the moss cushions (stacked round discs) and the Marimo balls (crossed round discs) instead of boxes
+    for name, arr in moss_disc_textures().items():
+        out.append(save_png(arr, BLOCK_TEX / f"{name}.png"))
+    out.append(save_png(marimo_texture(), BLOCK_TEX / "wild_marimo.png"))
     for name, arr in floating().items():
         out.append(save_png(arr, BLOCK_TEX / f"{name}.png"))
-    for name, arr in carpet_textures().items():  # M46
+    for name, arr in carpet_textures().items():  # M55
         out.append(save_png(arr, BLOCK_TEX / f"{name}.png"))
     tmpl = dict(templates())
-    tmpl["template_wild_carpet"] = carpet_template(False)  # M46: cushions instead of a flat plate
-    tmpl["template_wild_carpet_short"] = carpet_template(True)
+    tmpl.update(carpet_templates())  # M55: three designs, the shared template names the one in use
+    tmpl.update(moss_templates())  # M55: round cushions and balls
     for name, m in tmpl.items():
         p = MODELS / f"{name}.json"
         p.parent.mkdir(parents=True, exist_ok=True)
