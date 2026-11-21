@@ -6,6 +6,66 @@
       "predicate": {
         "bettacraft:filled": 1.0
       }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_pangasius",
+      "predicate": {
+        "bettacraft:animal": 0.0555
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_redtail_catfish",
+      "predicate": {
+        "bettacraft:animal": 0.0565
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_wels_catfish",
+      "predicate": {
+        "bettacraft:animal": 0.0575
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_arapaima",
+      "predicate": {
+        "bettacraft:animal": 0.0585
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_motoro_stingray",
+      "predicate": {
+        "bettacraft:animal": 0.0595
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_bamboo_shark",
+      "predicate": {
+        "bettacraft:animal": 0.0605
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_blacktip_reef_shark",
+      "predicate": {
+        "bettacraft:animal": 0.0615
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_spotted_eagle_ray",
+      "predicate": {
+        "bettacraft:animal": 0.0625
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_cownose_ray",
+      "predicate": {
+        "bettacraft:animal": 0.0635
+      }
+    },
+    {
+      "model": "bettacraft:item/transport_tub_honeycomb_moray",
+      "predicate": {
+        "bettacraft:animal": 0.0645
+      }
     }
   ],
   "textures": {

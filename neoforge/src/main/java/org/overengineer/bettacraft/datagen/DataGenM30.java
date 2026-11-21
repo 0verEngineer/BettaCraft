@@ -22,8 +22,9 @@ final class DataGenM30 {
     static void itemModels(ItemModelProvider p) {
         p.withExistingParent("large_net", p.mcLoc("item/handheld")).texture("layer0", p.modLoc("item/large_net"));
         ModelFile filled = p.withExistingParent("transport_tub_filled", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/transport_tub_filled"));
-        p.withExistingParent("transport_tub", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/transport_tub"))
+        var tub = p.withExistingParent("transport_tub", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/transport_tub"))
                 .override().predicate(BettaCraft.id("filled"), 1.0F).model(filled).end();
+        DataGenM55.tubOverrides(p, tub); // M55: the big animal inside
         p.withExistingParent("steel_leader", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/steel_leader"));
     }
 

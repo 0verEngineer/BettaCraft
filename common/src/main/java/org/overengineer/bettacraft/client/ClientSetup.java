@@ -75,6 +75,9 @@ public final class ClientSetup {
     public static void itemColors(ItemColors event) {
         event.register((stack, tint) -> {
             if (tint == 0 || tint >= 3) return 0xFFFFFFFF; // container and (M21) the glass in front of the fish
+            // M55: a bag with an animal of its own icon: its sprite has its colours (a gene-coloured small animal: the body tinted)
+            int own = critterIconTint(stack, tint);
+            if (own != 0) return own;
             // M14: a bag of shrimp, crayfish or snails shows the colour of the first one
             var critters = stack.get(ModDataComponents.CRITTERS.get());
             if (critters != null && !critters.isEmpty()) {
@@ -90,20 +93,18 @@ public final class ClientSetup {
             if (d == null) return tint == 1 ? OTHER_FISH_BODY : OTHER_FISH_FINS;
             return tint == 1 ? BettaTints.body(d.genome(), d.female(), false) : BettaTints.fins(d.genome(), d.female(), false);
         }, ModItems.BETTA_BUCKET.get(), ModItems.FISH_BAG.get());
-        // M22.3: the critter bucket shows the first animal's colour (layer 1 body, layer 2 legs and feelers)
+        // M22.3: the critter bucket shows the first animal's colour (layer 1 body, layer 2 legs and feelers); M55: its own sprite
         event.register((stack, tint) -> {
             if (tint == 0 || tint >= 3) return 0xFFFFFFFF;
+            int own = critterIconTint(stack, tint);
+            if (own != 0) return own;
             var critters = stack.get(ModDataComponents.CRITTERS.get());
             var k = critters == null || critters.isEmpty() ? null : org.overengineer.bettacraft.critters.Critter.loadAnimal(critters.getFirst(), 0, 0, 0, 0);
             int rgb = k == null ? 0xC8A070 : k.genes.rgb(k.species);
             if (k != null && (k.species.nerite() || k.species == org.overengineer.bettacraft.critters.CritterSpecies.ASSASSIN_SNAIL)) rgb = k.species.wildColor();
             return 0xFF000000 | (tint == 1 ? rgb : org.overengineer.bettacraft.critters.CritterGenes.mix(rgb, 0xFFFFFF, 0.35F));
         }, ModItems.CRITTER_BUCKET.get());
-        // M19: tankmate buckets in the species' colours
-        for (var e : ModItems.TANKMATE_BUCKETS.entrySet()) {
-            var sp = e.getKey();
-            event.register((stack, tint) -> tint == 0 || tint >= 3 ? 0xFFFFFFFF : 0xFF000000 | (tint == 1 ? sp.eggColor1() : sp.eggColor2()), e.getValue().get());
-        }
+        // M19: tankmate buckets in the species' colours; M55: every species has its own coloured sprite (no tint)
         event.register((stack, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, ModItems.LARVA_TUB.get());
         // M13: aquarium plants: leaves (layer 0) and rhizome / stem (layer 1) in the colours of the species (red ones as in good light)
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
@@ -262,8 +263,25 @@ public final class ClientSetup {
                 org.overengineer.bettacraft.client.particle.AirBubbleParticle.Provider::new);
     }
 
-    /** The item models that change with the item's state ("filled"). */
+    /**
+     * M55: the tint of a container showing a small animal's own sprite (layer 1 its body: the colour of its genes for the
+     * gene-coloured species, else untinted; layer 2 the details, untinted), 0 when the container shows no own sprite.
+     */
+    private static int critterIconTint(net.minecraft.world.item.ItemStack stack, int tint) {
+        if (org.overengineer.bettacraft.containers.AnimalIcons.number(stack) <= 0) return 0;
+        var c = org.overengineer.bettacraft.containers.AnimalIcons.critter(stack);
+        if (c == null || tint != 1 || !org.overengineer.bettacraft.containers.AnimalIcons.tintedBody(c)) return 0xFFFFFFFF;
+        var k = org.overengineer.bettacraft.critters.Critter.loadAnimal(stack.get(ModDataComponents.CRITTERS.get()).getFirst(), 0, 0, 0, 0);
+        return 0xFF000000 | (k == null ? c.wildColor() : k.genes.rgb(k.species));
+    }
+
+    /** The item models that change with the item's state ("filled"; M55: the animal inside). */
     public static void itemProperties(ItemProperties event) {
+        for (var item : java.util.List.of(org.overengineer.bettacraft.registry.ModItems.CRITTER_BUCKET.get(), org.overengineer.bettacraft.registry.ModItems.FISH_BAG.get(),
+                org.overengineer.bettacraft.registry.ModItems.TRANSPORT_TUB.get())) {
+            event.register(item, org.overengineer.bettacraft.containers.AnimalIcons.PROPERTY,
+                    (stack, level, entity, seed) -> org.overengineer.bettacraft.containers.AnimalIcons.value(stack));
+        }
         event.register(org.overengineer.bettacraft.registry.ModItems.FISH_BAG.get(), org.overengineer.bettacraft.BettaCraft.id("filled"),
                 (stack, level, entity, seed) -> org.overengineer.bettacraft.entity.betta.FishBagItem.isFilled(stack) ? 1.0F : 0.0F);
         event.register(org.overengineer.bettacraft.registry.ModItems.TRANSPORT_TUB.get(), org.overengineer.bettacraft.BettaCraft.id("filled"), // M30

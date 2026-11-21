@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/betta_bucket",
+    "layer1": "bettacraft:item/animal/apple_snail_body",
+    "layer2": "bettacraft:item/animal/apple_snail",
+    "layer3": "bettacraft:item/betta_bucket_glass"
+  }
+}

@@ -231,7 +231,7 @@ public final class ModItems {
 
     // ------------------------------------------------------------------ M19 tankmates
 
-    /** A tankmate in a bucket of water, one per species (vanilla mob bucket; the fish overlay tinted per species). */
+    /** A tankmate in a bucket of water, one per species (vanilla mob bucket; M55: the species' own sprite in the water). */
     public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies,
             DeferredItem<org.overengineer.bettacraft.tankmates.TankmateBucketItem>> TANKMATE_BUCKETS = tankmateBuckets();
     public static final java.util.Map<org.overengineer.bettacraft.tankmates.TankmateSpecies, DeferredItem<net.minecraft.world.item.SpawnEggItem>> TANKMATE_SPAWN_EGGS = tankmateEggs();
