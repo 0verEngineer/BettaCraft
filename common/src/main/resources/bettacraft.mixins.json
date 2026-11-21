@@ -37,6 +37,7 @@
   ],
   "client": [
     "client.BackgroundMouseMixin",
+    "client.BackgroundSoundMixin",
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
