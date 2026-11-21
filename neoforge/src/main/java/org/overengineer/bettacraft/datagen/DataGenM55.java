@@ -13,6 +13,9 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * last one that matches wins).
  */
 final class DataGenM55 {
+    /** The fish bag with opaque water under an animal (the layers keep their order on 1.21.4+, see animal_icons.py). */
+    static final String BAG = "item/animal/bag";
+
     private DataGenM55() {}
 
     /** A bucket of water with the sprite (layer 1) and the glass in front (layer 2). */
@@ -35,12 +38,12 @@ final class DataGenM55 {
     static void bagOverrides(ItemModelProvider p, ItemModelBuilder bag) {
         for (TankmateSpecies s : TankmateSpecies.values()) {
             if (s.isLarge()) continue;
-            var m = p.withExistingParent("fish_bag_" + s.id(), p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/fish_bag"))
+            var m = p.withExistingParent("fish_bag_" + s.id(), p.mcLoc("item/generated")).texture("layer0", p.modLoc(BAG))
                     .texture("layer1", p.modLoc(AnimalIcons.sprite(s)));
             bag.override().predicate(AnimalIcons.PROPERTY, AnimalIcons.threshold(AnimalIcons.index(s))).model(m).end();
         }
         for (CritterSpecies s : CritterSpecies.values()) {
-            var m = p.withExistingParent("fish_bag_" + s.id(), p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/fish_bag"))
+            var m = p.withExistingParent("fish_bag_" + s.id(), p.mcLoc("item/generated")).texture("layer0", p.modLoc(BAG))
                     .texture("layer1", p.modLoc(AnimalIcons.body(s))).texture("layer2", p.modLoc(AnimalIcons.sprite(s)));
             bag.override().predicate(AnimalIcons.PROPERTY, AnimalIcons.threshold(AnimalIcons.index(s))).model(m).end();
         }
