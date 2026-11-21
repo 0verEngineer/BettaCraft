@@ -35,6 +35,8 @@ usual. 26.2 gets this release and afterwards fixes for severe bugs only.
 - The young of foreign animals (the tortoises, box turtles and alligators of other mods, sea turtles) hatch inside the
   tank: a nest by the glass put a hatchling just past the wall now and then, outside the tank, and the next check of the
   inhabitants let it go into the world.
+- An animal reaching a little over the top of its tank stays in it: a dwarf frog male riding his female at the surface
+  was let go as if the tank were gone now and then, which ended the amplexus before she laid her spawn.
 - Test only: background test clients no longer take the focus or the mouse on 26.x (the window is created elsewhere now).
 - The sky and fog inside the tank interior are the overworld's again (they were dark when looking down from above).
 - Fabric: mud gives mosquito larvae and tubifex only in swamps, as on NeoForge (the biome condition of the loot was left
