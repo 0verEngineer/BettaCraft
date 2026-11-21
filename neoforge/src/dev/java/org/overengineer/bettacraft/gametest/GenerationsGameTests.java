@@ -700,6 +700,15 @@ public final class GenerationsGameTests {
         k.z = mid.getZ() + 0.5;
         k.idle = 10000;
         k.face = Critter.FLOOR;
+        // the others out of the net's line (the front block before it): left and right in the back row, held still (a
+        // red-brown snail in front of the pink one was caught instead now and then)
+        for (Critter o : alive(c, s, x -> x != k)) {
+            o.x = t.min().getX() + (o.id % 2 == 0 ? 0.3 : 2.7);
+            o.y = mid.getY() + 0.04;
+            o.z = mid.getZ() + 0.5;
+            o.idle = 10000;
+            o.face = Critter.FLOOR;
+        }
         sp.getInventory().clearContent();
         sp.getInventory().setItem(5, new ItemStack(ModItems.FISH_BAG.get())); // the net puts the catch into a bag
         sp.teleportTo(h.getLevel(), mid.getX() + 0.5, mid.getY() + 0.6 - sp.getEyeHeight() + 1.0, mid.getZ() - 3.0, java.util.Set.of(), 0F, 0F, false);
