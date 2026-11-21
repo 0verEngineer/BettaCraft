@@ -450,5 +450,9 @@
   "quest.4B6906DE47FD1153.title": "{\"translate\":\"quest.bettacraft.aquarist_hired.title\"}",
   "quest.4B6906DE47FD1153.quest_desc": [
     "{\"translate\":\"quest.bettacraft.aquarist_hired.desc\"}"
+  ],
+  "quest.5B30791AA5DE43DC.title": "{\"translate\":\"quest.bettacraft.shared_tank.title\"}",
+  "quest.5B30791AA5DE43DC.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.shared_tank.desc\"}"
   ]
 }
