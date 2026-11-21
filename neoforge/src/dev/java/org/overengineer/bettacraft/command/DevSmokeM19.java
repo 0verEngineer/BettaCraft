@@ -64,7 +64,7 @@ final class DevSmokeM19 {
 
     static void setup(ServerLevel level, BlockPos base) {
         BlockPos p = tankPos(base);
-        idsFrom = net.minecraft.world.entity.EntityType.MARKER.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND).getId();
+        idsFrom = net.minecraft.world.entity.EntityType.ARMOR_STAND.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND).getId();
         // beyond the spawn chunks: keep the chunks ticking (the animals live only in ticking chunks)
         for (int cx = (p.getX() - 2) >> 4; cx <= (p.getX() + 9) >> 4; cx++) for (int cz = (p.getZ() - 2) >> 4; cz <= (p.getZ() + 4) >> 4; cz++) level.setChunkForced(cx, cz, true);
         TankBlockEntity c = tank(level, p, 3, 2, 2, 27F);
@@ -93,7 +93,7 @@ final class DevSmokeM19 {
         spawn(level, g, TankmateSpecies.GUPPY, TankmateGenes.pure(TankmateSpecies.GUPPY, "blue_grass"), false, wg);
         LOGGER.info("[smoketest] M19 tanks at {}: 6 cardinals, 6 sterbai corys, an albino bristlenose, a clutch, a breeding box; guppies {}", p,
                 TankmateBreeding.tankmates(level, g.getTank()).size());
-        idsTo = net.minecraft.world.entity.EntityType.MARKER.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND).getId();
+        idsTo = net.minecraft.world.entity.EntityType.ARMOR_STAND.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND).getId();
     }
 
     /**
