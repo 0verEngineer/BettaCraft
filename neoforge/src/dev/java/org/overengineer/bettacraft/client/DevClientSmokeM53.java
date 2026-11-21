@@ -270,11 +270,12 @@ final class DevClientSmokeM53 {
 
     private void analyse(String name, com.mojang.blaze3d.platform.NativeImage img) {
         int w = img.getWidth(), h = img.getHeight();
-        double[] sums = new double[3];
-        int[] counts = new int[3];
-        for (int y = h / 10; y < h * 7 / 10; y += 2) {
+        double[] sums = new double[4];
+        int[] counts = new int[4];
+        for (int y = h / 10; y < h * 85 / 100; y += 2) {
             for (int x = 0; x < w; x += 2) {
-                int band = x < w / 8 ? 0 : x >= w * 7 / 8 ? 1 : y < h / 5 ? 2 : -1;
+                // left, right, top edge, and the floor below the horizon (the 26.2 "black interior" was a black floor)
+                int band = y >= h * 6 / 10 ? (x > w / 4 && x < w * 3 / 4 ? 3 : -1) : x < w / 8 ? 0 : x >= w * 7 / 8 ? 1 : y < h / 5 ? 2 : -1;
                 if (band < 0) continue;
                 int c = img.getPixel(x, y); // ARGB
                 double lum = 0.299 * ((c >> 16) & 0xFF) + 0.587 * ((c >> 8) & 0xFF) + 0.114 * (c & 0xFF);
@@ -282,12 +283,13 @@ final class DevClientSmokeM53 {
                 counts[band]++;
             }
         }
-        double left = sums[0] / Math.max(1, counts[0]), right = sums[1] / Math.max(1, counts[1]), top = sums[2] / Math.max(1, counts[2]);
-        boolean ok = Math.min(left, Math.min(right, top)) > 40;
+        double left = sums[0] / Math.max(1, counts[0]), right = sums[1] / Math.max(1, counts[1]), top = sums[2] / Math.max(1, counts[2]),
+                floor = sums[3] / Math.max(1, counts[3]);
+        boolean ok = Math.min(left, Math.min(right, top)) > 40 && (name.equals("up") || floor > 40);
         interiorShots++;
         if (!ok) interiorFails++;
-        LOGGER.info("[smoketest] M53 interior {} {}: edges left {} right {} top {}", name, ok ? "PASS" : "FAIL",
-                Math.round(left), Math.round(right), Math.round(top));
+        LOGGER.info("[smoketest] M53 interior {} {}: edges left {} right {} top {}, floor {}", name, ok ? "PASS" : "FAIL",
+                Math.round(left), Math.round(right), Math.round(top), Math.round(floor));
     }
 
     // ------------------------------------------------------------------ every mob from six sides
