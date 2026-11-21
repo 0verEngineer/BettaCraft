@@ -419,7 +419,9 @@ M22_2_TALL = {"java_fern", "amazon_sword", "rotala_rotundifolia", "ludwigia_repe
               "ludwigia_super_red", "rotala_hra", "rotala_wallichii", "hygrophila_pinnatifida", "limnophila_sessiliflora", "myriophyllum_red",
               "bacopa_caroliniana",
               # M28 part b: the tubers reach the surface
-              "aponogeton_ulvaceus", "nymphaea_lotus_green"}
+              "aponogeton_ulvaceus", "nymphaea_lotus_green",
+              # M56: the tall terrarium plants
+              "column_cactus", "papyrus", "umbrella_sedge", "pothos", "soft_rush", "swamp_sedge", "needlegrass", "sarracenia", "prickly_pear"}
 
 
 def m22_2(out_en: Path) -> None:
@@ -1135,6 +1137,22 @@ def m55(out_en: Path) -> None:
     tiles(["bettacraft_m55_icons_0", "bettacraft_m55_icons_2"], (300, 100, 990, 540), (460, 293), 2, "animal_icons.png")
 
 
+def m56(out_en: Path) -> None:
+    """M56 (-Psmoketestm56): the three tanks of terrarium plants from inside (one picture per habitat page) and the rainforest
+    terrarium from outside (the chapter page). The species pictures come from the M22.2 gallery (-Pgallery=<ids>, m22_2)."""
+    for hab in ("tropical", "swamp", "dry"):
+        src = SHOTS / f"bettacraft_m56_inside_{hab}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        save(Image.open(src).convert("RGB").crop((0, 90, 1280, 810)).resize((960, 540), Image.LANCZOS), out_en / f"terra_plants_{hab}.png")
+    src = SHOTS / "bettacraft_m56_tank_tropical.png"
+    if src.exists():
+        save(Image.open(src).convert("RGB").crop((140, 120, 1140, 745)).resize((960, 600), Image.LANCZOS), out_en / "terra_plants.png")
+    else:
+        print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1149,6 +1167,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m56"]:
+        m56(out_en)
+        return 0
     if sys.argv[1:] == ["m55"]:
         m55(out_en)
         return 0

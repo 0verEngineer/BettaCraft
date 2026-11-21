@@ -34,7 +34,7 @@ A sedge of the shore: a tuft of narrow, arching blades that spreads by runners. 
 ## Obtaining
 
 * **Shears** on a wild plant on the land of swamps and mangroves: 100 % per cut (config `features.terrariumPlants.wildPlants`).
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Cuttings**: shears on a grown plant give 1 cutting(s) per trim; it also spreads by itself (runners).
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).

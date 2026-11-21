@@ -166,7 +166,7 @@ public final class ClientSetup {
                     case 1 -> org.overengineer.bettacraft.plants.PlantPart.STEM;
                     default -> org.overengineer.bettacraft.plants.PlantPart.TOP;
                 };
-                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(w.species(), part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT + 1);
+                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(w.species(), part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT);
             }, b.get());
         }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());

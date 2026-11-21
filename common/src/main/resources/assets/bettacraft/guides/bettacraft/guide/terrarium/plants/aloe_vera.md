@@ -34,7 +34,7 @@ A succulent with thick, grey-green leaves with soft teeth on their rims.
 ## Obtaining
 
 * **Shears** on a wild plant in savannas and dry shrublands: 100 % per cut (config `features.terrariumPlants.wildPlants`).
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Offsets**: shears on a grown plant take an offset (a small rooted plant); it also spreads by itself (offsets around it).
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).

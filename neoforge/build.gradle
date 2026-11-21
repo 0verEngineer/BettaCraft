@@ -421,6 +421,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm56')) {
+                // gradlew runClient -Psmoketestm56 [-Pm56parts=tanks,world,menu]: the M56 scene (a rainforest terrarium, a swamp
+                // paludarium and a desert terrarium with their plants outside and inside, every terrarium plant in the world, every
+                // tab of the tank menu in English and German at two GUI scales with the text fit check)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m56only', 'true'
+                if (project.hasProperty('m56parts')) systemProperty 'bettacraft.smoketest.m56parts', project.property('m56parts').toString()
+            }
             if (project.hasProperty('smoketestm55')) {
                 // gradlew runClient -Psmoketestm55 [-Pm55parts=carpets,plants,icons] [-Pm55tag=<name>]: the M55 scene (the wild
                 // carpets in a river pool and the same species in a tank, every wild plant of the world, the container icons of

@@ -300,7 +300,7 @@ final class LandPlantMeshes {
     /** Lithops: two fat half-domes split by a cleft, a flower out of the cleft when grown. */
     static void lithops(PlantMeshBuilder b) {
         int n = b.blocks.size();
-        float r = Math.min(0.75F, 0.3F + 0.06F * n);
+        float r = Math.min(2.2F, 0.8F + 0.3F * n); // fat leaves wider than their blocks (a pebble of about 2 cm)
         int col = b.colorOf(0, 0, 0, PlantPart.LEAF);
         b.use(0, 0, 0, PlantPart.LEAF);
         for (int side = -1; side <= 1; side += 2) {

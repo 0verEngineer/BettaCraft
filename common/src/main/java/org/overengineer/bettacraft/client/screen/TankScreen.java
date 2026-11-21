@@ -815,6 +815,45 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         } else {
             renderTooltip(g, mouseX, mouseY);
         }
+        if (nameTooltipForTest && nameBox.visible) {
+            g.renderTooltip(font, font.split(Component.translatable("gui.bettacraft.tank.name_tooltip"), 170), nameBox.getX() + 4, nameBox.getY() + 26);
+        }
+    }
+
+    /** M56 dev smoke test only: shows the tooltip of the name field as if the mouse were on it. */
+    private boolean nameTooltipForTest;
+
+    public void hoverNameForTest() {
+        nameTooltipForTest = true;
+    }
+
+    /**
+     * M56 dev smoke test only: the visible buttons and text fields of the current tab whose label (or empty field's hint) is wider
+     * than their room; a {@link FitButton} shrinks its label to fit, so it only counts below 75 % of its size.
+     */
+    public List<String> overflowForTest() {
+        List<String> out = new java.util.ArrayList<>();
+        for (var r : children()) {
+            if (!(r instanceof net.minecraft.client.gui.components.AbstractWidget w) || !w.visible) continue;
+            if (w instanceof EditBox e) {
+                Component hint = e == nameBox ? Component.translatable("gui.bettacraft.tank.name_hint")
+                        : e == addUserBox ? Component.translatable("gui.bettacraft.users.name_hint") : null;
+                if (hint != null && e.getValue().isEmpty() && font.width(hint) > e.getInnerWidth()) {
+                    out.add("hint '" + hint.getString() + "' " + font.width(hint) + " > " + e.getInnerWidth());
+                }
+                continue;
+            }
+            int room = w.getWidth() - 4, tw = font.width(w.getMessage());
+            if (w instanceof TabButton) { // drawn smaller, cut off with "..." when too long
+                int tabRoom = (int) ((w.getWidth() - 3) / TAB_LABEL_SCALE);
+                if (tw > tabRoom) out.add("tab '" + w.getMessage().getString() + "' " + tw + " > " + tabRoom + " (cut off)");
+                continue;
+            }
+            if (tw <= room) continue;
+            if (w instanceof FitButton && room / (float) tw >= 0.75F) continue; // a little smaller stays readable
+            out.add("'" + w.getMessage().getString() + "' " + tw + " > " + room + (w instanceof FitButton ? " (shrunk to " + Math.round(100F * room / tw) + " %)" : ""));
+        }
+        return out;
     }
 
     /** M21.6 dev smoke test only: shows the gene tooltip of the selected tankmate as if the mouse were on its name. */
