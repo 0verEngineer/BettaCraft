@@ -233,7 +233,7 @@ public final class CritterRenderer {
             pose.rotate(Axis.XP.rotationDegrees(-90F));
             pose.rotate(Axis.YP.rotationDegrees(yaw));
         } else {
-            pose.rotate(Axis.YP.rotationDegrees(-yaw));
+            pose.rotate(Axis.YP.rotationDegrees(org.overengineer.bettacraft.critters.CritterFacing.modelTurn(yaw)));
         }
     }
 
