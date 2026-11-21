@@ -347,6 +347,12 @@ public class BettaEntity extends AbstractFish {
         this.pursueUntil = until;
     }
 
+    /** M54 (GameTests): drops every goal (the fish then only drifts by its move control). */
+    public void stopGoalsForTest() {
+        goalSelector.removeAllGoals(g -> true);
+        getMoveControl().setWantedPosition(getX(), getY(), getZ(), 0);
+    }
+
     public void flee(Entity from, long until) {
         this.fleeFrom = from;
         this.fleeUntil = until;

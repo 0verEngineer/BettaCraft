@@ -12,7 +12,7 @@ import org.overengineer.bettacraft.entity.critter.WildCritterEntity;
 
 /**
  * M22.3: a shrimp, crayfish, snail or hermit crab in the world, drawn with the same models, colours and looks as the
- * animals of a tank ({@link CritterRenderer}); the legs walk while it crawls.
+ * animals of a tank ({@link CritterRenderer}); the legs walk while it crawls. M54: head first (they crawled backwards).
  */
 public class WildCritterRenderer extends EntityRenderer<WildCritterEntity> {
     public WildCritterRenderer(EntityRendererProvider.Context ctx) {
@@ -27,7 +27,9 @@ public class WildCritterRenderer extends EntityRenderer<WildCritterEntity> {
         k.moving = dx * dx + dz * dz > 1e-7;
         float body = Mth.rotLerp(partialTick, e.yBodyRotO, e.yBodyRot);
         pose.pushPose();
-        pose.mulPose(Axis.YP.rotationDegrees(180F - body));
+        // M54: the models face -z and the critter scale flips z (as in the tank, CritterRenderer#orient): the entity's yaw
+        // turns them as it is (180 - yaw, the vanilla turn for the mob models, made them crawl backwards)
+        pose.mulPose(Axis.YP.rotationDegrees(org.overengineer.bettacraft.critters.CritterFacing.modelTurn(body)));
         CritterRenderer.drawOne(pose, buffers, k, e.level().getGameTime() + partialTick, light, e.hurtTime > 0);
         pose.popPose();
         super.render(e, yaw, partialTick, pose, buffers, light);
