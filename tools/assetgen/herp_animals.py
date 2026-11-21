@@ -416,8 +416,11 @@ def _corn(morph: str):
         if cu.pattern == "eye":
             return eye
         if face == "bottom":
-            # the checkered belly (no black in the amelanistic one)
-            check = (int(math.floor(pz / 1.2)) + int(math.floor(px / 1.0))) % 2 == 0
+            # the checkered belly (no black in the amelanistic one): one row per texel row of the segments (their 3.8 px
+            # are 4 texels of 0.95 px), the dark checks on alternate sides of the pale middle (M53: the old 1.2 x 1 px
+            # grid beat against the texels, rows and columns doubled at random and the belly looked broken)
+            row = math.floor(pz / 0.95)
+            check = (px < -0.3 and row % 2 == 0) or (px > 0.3 and row % 2 == 1)
             dark = np.array([0.08, 0.08, 0.08]) if morph != "amelanistic" else np.array([0.95, 0.70, 0.55])
             col = dark if check else np.array([0.95, 0.94, 0.90])
             return np.clip(col * _shade(face) + (rng.random() - 0.5) * 0.03, 0, 1)
