@@ -99,6 +99,7 @@ class FeatureTreeTest {
         try (Stream<Path> s = Files.list(models)) {
             for (Path p : s.toList()) {
                 String id = p.getFileName().toString().replace(".json", "");
+                if (animalIconModel(id)) continue; // M55: a model of a container with an animal inside, no item of its own
                 if (FeatureContent.ofItem(id).isEmpty()) core.add(id);
             }
         }
@@ -131,5 +132,16 @@ class FeatureTreeTest {
         }
         assertFalse(Features.remote());
         assertTrue(Features.enabled(Feature.CICHLIDS));
+    }
+
+    /** M55: {@code critter_bucket_<animal>}, {@code fish_bag_<animal>}, {@code transport_tub_<animal>} (override models). */
+    private static boolean animalIconModel(String id) {
+        for (String prefix : new String[]{"critter_bucket_", "fish_bag_", "transport_tub_"}) {
+            if (!id.startsWith(prefix)) continue;
+            String rest = id.substring(prefix.length());
+            for (var t : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) if (t.id().equals(rest)) return true;
+            for (var c : org.overengineer.bettacraft.critters.CritterSpecies.values()) if (c.id().equals(rest)) return true;
+        }
+        return false;
     }
 }

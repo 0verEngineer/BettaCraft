@@ -1,5 +1,511 @@
 {
   "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "bettacraft:item/fish_bag_filled",
+      "predicate": {
+        "bettacraft:filled": 1.0
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_neon_tetra",
+      "predicate": {
+        "bettacraft:animal": 5.0E-4
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_cardinal_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0015
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_green_neon_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0025
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_ember_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0035
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_glowlight_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0045
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_harlequin_rasbora",
+      "predicate": {
+        "bettacraft:animal": 0.0055
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_mosquito_rasbora",
+      "predicate": {
+        "bettacraft:animal": 0.0065
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_pygmy_cory",
+      "predicate": {
+        "bettacraft:animal": 0.0075
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_panda_cory",
+      "predicate": {
+        "bettacraft:animal": 0.0085
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_sterbai_cory",
+      "predicate": {
+        "bettacraft:animal": 0.0095
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_green_gold_cory",
+      "predicate": {
+        "bettacraft:animal": 0.0105
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_leopard_frog_pleco",
+      "predicate": {
+        "bettacraft:animal": 0.0115
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_zebra_pleco",
+      "predicate": {
+        "bettacraft:animal": 0.0125
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_bristlenose_pleco",
+      "predicate": {
+        "bettacraft:animal": 0.0135
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_otocinclus",
+      "predicate": {
+        "bettacraft:animal": 0.0145
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_kuhli_loach",
+      "predicate": {
+        "bettacraft:animal": 0.0155
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_clown_loach",
+      "predicate": {
+        "bettacraft:animal": 0.0165
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_guppy",
+      "predicate": {
+        "bettacraft:animal": 0.0175
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_endler_guppy",
+      "predicate": {
+        "bettacraft:animal": 0.0185
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_platy",
+      "predicate": {
+        "bettacraft:animal": 0.0195
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_dwarf_gourami",
+      "predicate": {
+        "bettacraft:animal": 0.0205
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_ocellaris_clownfish",
+      "predicate": {
+        "bettacraft:animal": 0.0215
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_yellow_tang",
+      "predicate": {
+        "bettacraft:animal": 0.0225
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_yellow_watchman_goby",
+      "predicate": {
+        "bettacraft:animal": 0.0235
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_green_chromis",
+      "predicate": {
+        "bettacraft:animal": 0.0245
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_yellowtail_damsel",
+      "predicate": {
+        "bettacraft:animal": 0.0255
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_lined_seahorse",
+      "predicate": {
+        "bettacraft:animal": 0.0265
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_dwarf_seahorse",
+      "predicate": {
+        "bettacraft:animal": 0.0275
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_ram_cichlid",
+      "predicate": {
+        "bettacraft:animal": 0.0285
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_bolivian_ram",
+      "predicate": {
+        "bettacraft:animal": 0.0295
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_cockatoo_cichlid",
+      "predicate": {
+        "bettacraft:animal": 0.0305
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_agassiz_dwarf_cichlid",
+      "predicate": {
+        "bettacraft:animal": 0.0315
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_angelfish",
+      "predicate": {
+        "bettacraft:animal": 0.0325
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_discus",
+      "predicate": {
+        "bettacraft:animal": 0.0335
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_dwarf_puffer",
+      "predicate": {
+        "bettacraft:animal": 0.0345
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_red_eye_puffer",
+      "predicate": {
+        "bettacraft:animal": 0.0355
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_green_spotted_puffer",
+      "predicate": {
+        "bettacraft:animal": 0.0365
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_tiger_barb",
+      "predicate": {
+        "bettacraft:animal": 0.0375
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_odessa_barb",
+      "predicate": {
+        "bettacraft:animal": 0.0385
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_cherry_barb",
+      "predicate": {
+        "bettacraft:animal": 0.0395
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_dwarf_chain_loach",
+      "predicate": {
+        "bettacraft:animal": 0.0405
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_reticulated_loach",
+      "predicate": {
+        "bettacraft:animal": 0.0415
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_garra_rufa",
+      "predicate": {
+        "bettacraft:animal": 0.0425
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_zebra_danio",
+      "predicate": {
+        "bettacraft:animal": 0.0435
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_celestial_pearl_danio",
+      "predicate": {
+        "bettacraft:animal": 0.0445
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_forktail_rainbow",
+      "predicate": {
+        "bettacraft:animal": 0.0455
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_neon_dwarf_rainbow",
+      "predicate": {
+        "bettacraft:animal": 0.0465
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_honey_gourami",
+      "predicate": {
+        "bettacraft:animal": 0.0475
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_chocolate_gourami",
+      "predicate": {
+        "bettacraft:animal": 0.0485
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_pearl_gourami",
+      "predicate": {
+        "bettacraft:animal": 0.0495
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_emperor_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0505
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_rummy_nose_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0515
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_black_phantom_tetra",
+      "predicate": {
+        "bettacraft:animal": 0.0525
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_black_molly",
+      "predicate": {
+        "bettacraft:animal": 0.0535
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_swordtail",
+      "predicate": {
+        "bettacraft:animal": 0.0545
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_bronze_cory",
+      "predicate": {
+        "bettacraft:animal": 0.0655
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_panda_garra",
+      "predicate": {
+        "bettacraft:animal": 0.0665
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_mandarinfish",
+      "predicate": {
+        "bettacraft:animal": 0.0675
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_banggai_cardinal",
+      "predicate": {
+        "bettacraft:animal": 0.0685
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_lyretail_anthias",
+      "predicate": {
+        "bettacraft:animal": 0.0695
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_archerfish",
+      "predicate": {
+        "bettacraft:animal": 0.0705
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_neocaridina",
+      "predicate": {
+        "bettacraft:animal": 0.0715
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_dwarf_crayfish",
+      "predicate": {
+        "bettacraft:animal": 0.0725
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_zebra_nerite",
+      "predicate": {
+        "bettacraft:animal": 0.0735
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_horned_nerite",
+      "predicate": {
+        "bettacraft:animal": 0.0745
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_olive_nerite",
+      "predicate": {
+        "bettacraft:animal": 0.0755
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_red_nerite",
+      "predicate": {
+        "bettacraft:animal": 0.0765
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_yellow_nerite",
+      "predicate": {
+        "bettacraft:animal": 0.0775
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_apple_snail",
+      "predicate": {
+        "bettacraft:animal": 0.0785
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_ramshorn",
+      "predicate": {
+        "bettacraft:animal": 0.0795
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_bladder_snail",
+      "predicate": {
+        "bettacraft:animal": 0.0805
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_trumpet_snail",
+      "predicate": {
+        "bettacraft:animal": 0.0815
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_assassin_snail",
+      "predicate": {
+        "bettacraft:animal": 0.0825
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_cleaner_shrimp",
+      "predicate": {
+        "bettacraft:animal": 0.0835
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_hermit_crab",
+      "predicate": {
+        "bettacraft:animal": 0.0845
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_turbo_snail",
+      "predicate": {
+        "bettacraft:animal": 0.0855
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_caridina",
+      "predicate": {
+        "bettacraft:animal": 0.0865
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_sulawesi_shrimp",
+      "predicate": {
+        "bettacraft:animal": 0.0875
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_tylomelania",
+      "predicate": {
+        "bettacraft:animal": 0.0885
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_florida_crayfish",
+      "predicate": {
+        "bettacraft:animal": 0.0895
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_marbled_crayfish",
+      "predicate": {
+        "bettacraft:animal": 0.0905
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_fire_shrimp",
+      "predicate": {
+        "bettacraft:animal": 0.0915
+      }
+    },
+    {
+      "model": "bettacraft:item/fish_bag_amano_shrimp",
+      "predicate": {
+        "bettacraft:animal": 0.0925
+      }
+    }
+  ],
   "textures": {
     "layer0": "bettacraft:item/fish_bag"
   }

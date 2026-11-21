@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bettacraft:item/fish_bag",
+    "layer1": "bettacraft:item/animal/lined_seahorse"
+  }
+}
