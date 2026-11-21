@@ -268,11 +268,11 @@ final class DevClientSmokeM55 {
     }
 
     /**
-     * A pool (2 blocks of water, 18 x 15) at sea level next to {@code from} (near the start: its chunks are loaded on the client
+     * A pool (2 blocks of water, 18 x 15) over the start, next to {@code from} (near the start: its chunks are loaded on the client
      * at once; a pool in a far biome showed empty chunks), its bed of the given blocks; returns its corner.
      */
     private static BlockPos pool(ServerLevel level, BlockPos from, Block[] bed) {
-        BlockPos b = new BlockPos(from.getX() - 9, level.getSeaLevel() - 1, from.getZ() + 10);
+        BlockPos b = new BlockPos(from.getX() - 9, from.getY() + 3, from.getZ() + 10); // above the start (a flat world's sea level is below its floor)
         for (int x = -4; x < 24; x++) for (int z = -6; z < 20; z++) {
             for (int y = -4; y < 32; y++) level.setBlock(b.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
             boolean water = x >= 0 && x < 18 && z >= 1 && z < 16;
