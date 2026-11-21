@@ -609,7 +609,8 @@ tasks.register('fabricMultiplayerTest') {
         def logs = rootProject.file('build/mptest-fabric')
         logs.deleteDir(); logs.mkdirs()
         def cmd = { t, List extraJvm, List extraArgs ->
-            [java] + t.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') } + extraJvm + ['-cp', t.classpath.asPath, t.mainClass.get()] + t.args + extraArgs
+            // M52.5: without Loom's @argfile (the run task writes it only when it runs; a fresh checkout has none): the classpath is -cp
+            [java] + t.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + extraJvm + ['-cp', t.classpath.asPath, t.mainClass.get()] + t.args + extraArgs
         }
         def sdir = rootProject.file("${fabricRunRoot}/mp-server")
         new File(sdir, 'world').deleteDir()
@@ -667,7 +668,8 @@ tasks.register('fabricSaveLoadTest') {
                 'spawn-monsters=false', 'spawn-animals=true', 'generate-structures=false', 'server-port=25596', 'spawn-protection=0',
                 'level-seed=21', 'allow-flight=true', 'max-tick-time=-1', 'white-list=false'].join(System.lineSeparator()) + System.lineSeparator()
         def run = { String name, List props, String expect ->
-            def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') } + props + ['-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
+            // M52.5: without Loom's @argfile (the run task writes it only when it runs; a fresh checkout has none): the classpath is -cp
+            def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + props + ['-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
             def log = new File(logs, name + '.log')
             def p = new ProcessBuilder(cmd).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
             if (!p.waitFor(20, java.util.concurrent.TimeUnit.MINUTES)) { p.destroyForcibly(); throw new GradleException("${name}: timeout") }
