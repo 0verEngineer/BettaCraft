@@ -937,7 +937,8 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
 tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestServer'] }.configureEach { t ->
     def target = t.name == 'runGameTestServer' ? gameTestModsDir : runModsDir
     def plan = extraMods.collect { g -> [jars: (g.dir.listFiles() ?: []).findAll { it.name.endsWith('.jar') }, add: g.on && t.name in g.tasks,
-            skip: t.name == 'runClient' ? (g.notOnClient ?: []) : []] }
+            // M53: -PmodsExclude=iris,distanthorizons leaves the jars starting with these names out (the render matrix: Sodium without Iris)
+            skip: (t.name == 'runClient' ? (g.notOnClient ?: []) : []) + (project.findProperty('modsExclude') ?: '').toString().tokenize(',')] }
     t.doFirst {
         target.mkdirs()
         // a library in two groups (TerraBlender, GeckoLib) stays when one of them is on
