@@ -271,6 +271,11 @@ public final class NeoForgePlatform implements Platform {
     }
 
     @Override
+    public boolean chunkHasAttachments(net.minecraft.world.level.chunk.ChunkAccess chunk) {
+        return chunk.hasAttachments();
+    }
+
+    @Override
     public float biomeDownfall(net.minecraft.world.level.biome.Biome biome) {
         return biome.getModifiedClimateSettings().downfall();
     }

@@ -73,8 +73,15 @@ public final class InteriorSync {
 
     private InteriorSync() {}
 
+    /** M53c: the last version of a forgotten region (its id is handed out again: the clients' old copy must not count). */
+    private static final it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap LAST_VERSION = new it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap();
+
     private static State state(int regionId) {
-        return STATES.computeIfAbsent(regionId, k -> new State());
+        return STATES.computeIfAbsent(regionId, k -> {
+            State st = new State();
+            st.version = LAST_VERSION.getOrDefault(regionId, 0) + 1;
+            return st;
+        });
     }
 
     /** Whole region changed (merge, split, bulk writes, commands). */
@@ -92,13 +99,15 @@ public final class InteriorSync {
     }
 
     public static void forget(int regionId) {
-        STATES.remove(regionId);
+        State old = STATES.remove(regionId);
+        if (old != null) LAST_VERSION.put(regionId, Math.max(old.version, LAST_VERSION.getOrDefault(regionId, 0)));
         InteriorObstacles.forget(regionId);
         InteriorGround.forget(regionId);
     }
 
     public static void clearAll() {
         STATES.clear();
+        LAST_VERSION.clear();
     }
 
     /** M17: a player logged out: forget their request times. */

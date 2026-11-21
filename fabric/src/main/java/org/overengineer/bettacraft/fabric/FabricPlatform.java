@@ -364,6 +364,15 @@ public final class FabricPlatform implements Platform {
     }
 
     @Override
+    public boolean chunkHasAttachments(net.minecraft.world.level.chunk.ChunkAccess chunk) {
+        try {
+            return chunk instanceof net.fabricmc.fabric.impl.attachment.AttachmentTargetImpl t && t.fabric_hasPersistentAttachments();
+        } catch (Throwable e) { // in doubt the chunk is saved
+            return true;
+        }
+    }
+
+    @Override
     public float biomeDownfall(Biome biome) {
         return biome.climateSettings.downfall();
     }

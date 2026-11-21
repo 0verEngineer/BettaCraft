@@ -49,8 +49,7 @@ public final class InteriorEventsHandlers {
             return;
         }
         // Players outside every valid region (e.g. teleported in by command, region deleted) are sent back.
-        if (player.tickCount % 40 == 0 && InteriorManager.regionAt(player.server, player.blockPosition()) == null
-                && !player.hasPermissions(2)) {
+        if (player.tickCount % 40 == 0 && !InteriorManager.inOwnRegion(player) && !player.hasPermissions(2)) {
             InteriorManager.leave(player);
             player.displayClientMessage(Component.translatable("message.bettacraft.interior.invalid"), true);
             return;
@@ -170,12 +169,20 @@ public final class InteriorEventsHandlers {
             InteriorSync.flush(event.getServer());
         }
         if (event.getServer().getTickCount() % 10 == 0) InteriorManager.updateOccupants(event.getServer()); // M15
+        InteriorCleanup.tick(event.getServer()); // M53c
+    }
+
+    /** M53c: before the dimensions are loaded: the region files of removed interiors go. */
+    @SubscribeEvent
+    public static void onServerStarting(org.overengineer.bettacraft.platform.event.ServerAboutToStartEvent event) {
+        InteriorCleanup.clearAll();
+        InteriorCleanup.onServerStarting(event.getServer());
     }
 
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && InteriorManager.isInterior(player.level())
-                && InteriorManager.regionAt(player.server, player.blockPosition()) == null) {
+                && !InteriorManager.inOwnRegion(player)) {
             InteriorManager.leave(player);
         }
     }
@@ -183,6 +190,7 @@ public final class InteriorEventsHandlers {
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         InteriorSync.clearAll();
+        InteriorCleanup.clearAll();
         InteriorPreparation.clearAll();
         InteriorObstacles.clearAll();
         InteriorGround.clearAll();

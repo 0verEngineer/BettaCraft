@@ -176,6 +176,13 @@ public final class InteriorPlumbing {
         }
     }
 
+    /** M53c: one region (removed; its id is handed out again later). */
+    public static void forget(int regionId) {
+        ACTIVE.remove(regionId);
+        CACHE.remove(regionId);
+        SHOWN.remove(regionId);
+    }
+
     /** Forgets the activity (tests). */
     public static void forget() {
         ACTIVE.clear();
