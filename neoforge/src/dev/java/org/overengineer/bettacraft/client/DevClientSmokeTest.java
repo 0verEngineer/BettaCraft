@@ -171,6 +171,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM49 m49;
     /** -Pcreate -Psmoketestm50: tanks on a turning bearing, a minecart contraption in a curve and an airship (M50). */
     private static final boolean M50_ONLY = Boolean.getBoolean("bettacraft.smoketest.m50only");
+    /** -Psmoketestm55: the wild carpets, every wild plant and the container icons of every animal (M55). */
+    private static final boolean M55_ONLY = Boolean.getBoolean("bettacraft.smoketest.m55only");
+    private static DevClientSmokeM55 m55;
     /** -Psmoketestm54: the movement of the animals (M54). */
     private static final boolean M54_ONLY = Boolean.getBoolean("bettacraft.smoketest.m54only");
     private static DevClientSmokeM54 m54;
@@ -443,6 +446,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M55_ONLY) {
+                if (ticks == 60) m55 = new DevClientSmokeM55();
+                if (m55 != null && m55.tick()) {
+                    m55 = null;
+                    LOGGER.info("[smoketest] client world test finished (M55 only)");
                     mc.stop();
                 }
                 return;

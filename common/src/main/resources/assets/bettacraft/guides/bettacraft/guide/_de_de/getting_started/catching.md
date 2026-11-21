@@ -45,6 +45,15 @@ Die meisten Wildtiere sind wildfarben, manche tragen eine Zuchtfarbe verdeckt, u
 (Config `wildlife.beautifulWildChance`). Was ein neues Tier verdeckt trägt, zeigt die [Lupe](../equipment/magnifier.md).
 Alle Spawns mit Gewicht: [Was gibt es wo](sources.md).
 
+## Im Eimer, in der Tüte und in der Wanne
+
+Jedes Tier zeigt sich in seinem Behälter: Der Eimer eines Beifisches zeigt seine Art, der Eimer mit Kleintieren und eine volle
+Fischtüte die Garnele, den Krebs, die Schnecke, den Einsiedlerkrebs oder den Fisch darin, die Transportwanne das große
+Tier. Neocaridina, Bienengarnelen, Krebse, Apfelschnecken und Posthornschnecken zeigen die Farbe ihrer Gene. Ein Betta und
+die Tiere anderer Mods zeigen sich als Fisch in ihren Farben.
+
+![Eimer, Fischtüten und Transportwannen mit ihren Tieren in einer Truhe](../images/animal_icons.png)
+
 ## Andere Wege
 
 * Eine **Schaufel an Schlamm** im Sumpf findet ab und zu eine Turmdeckelschnecke.

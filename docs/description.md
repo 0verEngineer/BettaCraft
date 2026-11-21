@@ -57,8 +57,8 @@ real genetics.
 - **Liquid fertilizer** from the fertilizer maker makes them grow faster; too much feeds the algae.
 - **Plants of Minecraft and other mods work too:** kelp, seagrass, corals and the water plants of other mods lower the
   nitrate and count for breeding, without growing or needs.
-- **Every plant grows wild** in the waters it comes from (jungle, swamp, river, mangrove, cold lakes, lush caves):
-  shears cut a cutting, floating plants lie on calm water like lily pads.
+- **Every plant grows wild** in the waters it comes from (jungle, swamp, river, mangrove, cold lakes, lush caves): carpets
+  of fine sprigs, round moss cushions, Marimo balls; shears cut a cutting, floating plants lie on calm water like lily pads.
 - Every plant and coral has real leaves, polyps and tentacles that **sway in the water**, inside and in the miniature;
   zoanthids and star polyps close when a fish swims by.
 
@@ -72,6 +72,8 @@ real genetics.
 - **Dwarf clawed frogs** breed like in nature: a cool water change sets a pair off, the spawn floats at the surface
   (fish eat it, floating plants hide it), and the tadpoles need infusoria before they become froglets.
 - **Big crayfish** (blue and orange Florida crayfish, the all-female marbled crayfish) eat plants and catch slow fish.
+- **Every animal has its own icon** in its bucket, fish bag or transport tub: you see which fish, shrimp, snail or
+  crayfish is inside.
 - **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
 
 ![A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish on moss and wood](images/bettacraft-shrimp-tank-crawling.gif)

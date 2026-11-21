@@ -1115,6 +1115,26 @@ def m54(out_en: Path) -> None:
     save(out, out_en / "herps_moves.png")
 
 
+def m55(out_en: Path) -> None:
+    """M55 (-Psmoketestm55 -Pm55tag=final): the wild carpets (the four looks, 2 x 2), the wild mosses and Marimo from above,
+    the containers with their animals (two chest pages side by side)."""
+    def tiles(names, box, size, cols, out_name):
+        out = Image.new("RGB", (size[0] * cols, size[1] * ((len(names) + cols - 1) // cols)))
+        for i, shot in enumerate(names):
+            src = SHOTS / f"{shot}.png"
+            if not src.exists():
+                print("missing", src)
+                return
+            out.paste(Image.open(src).convert("RGB").crop(box).resize(size, Image.LANCZOS), ((i % cols) * size[0], (i // cols) * size[1]))
+        save(out, out_en / out_name)
+
+    tiles([f"bettacraft_m55_carpet_look_{k}_final" for k in ("mat", "clover", "fine", "needle")], (0, 160, 1280, 800), (480, 240), 2,
+          "wild_carpets.png")
+    tiles(["bettacraft_m55_plants_close_wild_moss_0", "bettacraft_m55_plants_close_wild_moss_1"], (0, 160, 1280, 800), (480, 240), 2,
+          "wild_mosses.png")
+    tiles(["bettacraft_m55_icons_0", "bettacraft_m55_icons_2"], (300, 100, 990, 540), (460, 293), 2, "animal_icons.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1129,6 +1149,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m55"]:
+        m55(out_en)
+        return 0
     if sys.argv[1:] == ["m54"]:
         m54(out_en)
         return 0

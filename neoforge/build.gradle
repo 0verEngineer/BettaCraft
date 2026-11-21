@@ -421,6 +421,15 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm55')) {
+                // gradlew runClient -Psmoketestm55 [-Pm55parts=carpets,plants,icons] [-Pm55tag=<name>]: the M55 scene (the wild
+                // carpets in a river pool and the same species in a tank, every wild plant of the world, the container icons of
+                // every animal on chest pages)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m55only', 'true'
+                if (project.hasProperty('m55parts')) systemProperty 'bettacraft.smoketest.m55parts', project.property('m55parts').toString()
+                if (project.hasProperty('m55tag')) systemProperty 'bettacraft.smoketest.m55tag', project.property('m55tag').toString()
+            }
             if (project.hasProperty('smoketestm54')) {
                 // gradlew runClient -Psmoketestm54 [-Pm54parts=world,actions,tank,critters]: the M54 scene (the movement of the
                 // animals: small animals head first in a pond and a tank, amphibians and reptiles on a meadow, in a terrarium and a
