@@ -159,6 +159,7 @@ public final class PlantSourceGameTests {
     public static void noPlantOnlyAtTheTrader(GameTestHelper h) {
         java.util.List<String> problems = new java.util.ArrayList<>();
         for (PlantSpecies p : PlantSpecies.values()) {
+            if (p.land()) continue; // M56: the terrarium plants grow wild on the land (shears), see TerrariumPlantGameTests
             boolean wild = WildTables.NET_REEF_FRAGS.contains(p);
             for (NetCatching.Water w : NetCatching.Water.values()) wild |= PlantTables.net(w).contains(p);
             for (AquaticPlantFishing.Water w : AquaticPlantFishing.Water.values()) wild |= PlantTables.fishing(w).contains(p);

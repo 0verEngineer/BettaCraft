@@ -115,6 +115,9 @@ real genetics.
 
 - A tank without water is a **terrarium**, one with water and land a **paludarium**, with air temperature, humidity and
   UV from heat mats, basking lamps and misters. Fix the tank type in the menu and a terrarium is never flooded by mistake.
+- **36 terrarium plants**: bromeliads, ferns, mosses and orchids for the rainforest, carnivorous plants and sedges for the
+  shore, cacti and succulents for the desert. They grow by the climate of the tank, give cuttings and offsets, grow wild in
+  their biomes and can be planted as decoration. Tortoises graze them, dart frogs raise their tadpoles in the bromeliads.
 - **Turtles** (musk turtle, sliders, Hermann's tortoise, Reeves' turtle) lay eggs in the sand, and the nest temperature
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**; grown sea turtles go into big sea water paludaria with a beach.

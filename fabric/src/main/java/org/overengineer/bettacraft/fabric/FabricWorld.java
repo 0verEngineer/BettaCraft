@@ -74,6 +74,13 @@ public final class FabricWorld {
                 .or(BiomeSelectors.tag(tag("c:is_cold/overworld")));
         BiomeModifications.addFeature(plants, GenerationStep.Decoration.VEGETAL_DECORATION, placed("wild_plants"));
         BiomeModifications.addFeature(plants, GenerationStep.Decoration.VEGETAL_DECORATION, placed("wild_cave_plants"));
+        // M56: the wild terrarium plants on the land of their biomes and on the moss of the lush caves
+        var land = BiomeSelectors.tag(tag("bettacraft:jungle_plant_lands")).or(BiomeSelectors.tag(tag("bettacraft:swamp_plant_lands")))
+                .or(BiomeSelectors.tag(tag("bettacraft:desert_plant_lands"))).or(BiomeSelectors.tag(tag("bettacraft:savanna_plant_lands")))
+                .or(BiomeSelectors.tag(tag("bettacraft:lush_cave_plant_lands")))
+                .or(BiomeSelectors.tag(tag("c:is_lush")).and(BiomeSelectors.tag(tag("c:is_cave"))));
+        BiomeModifications.addFeature(land, GenerationStep.Decoration.VEGETAL_DECORATION, placed("wild_land_plants"));
+        BiomeModifications.addFeature(land, GenerationStep.Decoration.VEGETAL_DECORATION, placed("wild_cave_land_plants"));
     }
 
     private static ResourceKey<PlacedFeature> placed(String path) {

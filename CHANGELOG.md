@@ -4,6 +4,41 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.46.0-beta.1] - 2026-11-22
+
+Terraria and paludaria get plants of their own.
+
+### Added
+- **36 terrarium plants** in three habitats (switch `features.terrariumPlants.enabled`):
+  - **tropical and humid:** three bromeliads (Neoregelia, Guzmania, Vriesea), the air plant, Fittonia, Pothos, Marcgravia,
+    Boston and bird's nest fern, cushion moss, reindeer lichen, Selaginella, a miniature orchid, the rex begonia, Peperomia;
+  - **swamp and shore:** sundew, trumpet pitcher, tropical pitcher plant (Nepenthes), Venus flytrap, butterwort, swamp
+    sedge, soft rush, papyrus, umbrella sedge;
+  - **dry and hot:** golden barrel, column cactus, prickly pear, Mammillaria, Echeveria, Haworthia, aloe, agave, living
+    stones, stonecrop, blue grama, needlegrass.
+- They grow on the **land** of a terrarium or paludarium by its **light, humidity and air temperature** (each species its
+  own ranges, shown in its tooltip); in the wrong climate or under water they **languish** and lose stages. Grown, they
+  spread (side shoots, runners, offsets) and their cover raises the humidity (cacti and succulents hardly). The plants
+  tab counts the languishing ones.
+- **Propagation** with the shears: cuttings, **offsets** of the cacti, succulents, bromeliads and the air plant (a small
+  rooted plant), **division** of the mosses (half the clump; breaking a piece of moss divides it too).
+- **Wild** in their biomes (`#bettacraft:*_plant_lands`: jungles, lush caves, swamps and mangroves, deserts and badlands,
+  savannas; `features.terrariumPlants.wildPlants`): shears cut a cutting off and the plant grows back.
+- **Decoration in the world:** used outside a tank, a terrarium plant is planted on soil or sand (it does not grow there;
+  broken, it gives its plant back).
+- **The animals:** tortoises **graze** the prickly pear, stonecrop and the grasses (`tortoiseGrazing`); dart frogs carry
+  their **tadpoles into the cups of grown bromeliads**, where they need no water and no food (`bromeliadTadpoles`);
+  snakes and geckos **hide** among the plants (`hiding`).
+- **Emersed growth:** aquarium plants above the water of a humid paludarium grow at half speed.
+- From the wandering trader and the aquarist; a few from vanilla plants (cactus, fern, large fern, moss block, dead bush,
+  short grass). Two advancements and two quests ("Green Thumb Under Glass", "A Nursery in a Cup"), handbook chapter
+  "Terrarium plants" with a page per species.
+
+### Changed
+- The name field of the tank overview says just **"Name"**; that it shows on the sign is its tooltip (the long hint ran
+  under the protection button). The other buttons of the tank menu were checked in English and German: "Analyse" in
+  German is "Prüfen", the small animals button lost its brackets.
+
 ## [1.45.0-beta.1] - 2026-11-21
 
 Every animal shows in its own icon, and the wild carpets and mosses look like plants.

@@ -35,7 +35,7 @@ Ein hellgrünes Moos, das auf jedem Untergrund zu runden, weichen Polstern wäch
 * **Schere** an einem wilden Pflanzenbestand in üppigen Höhlen: 100 % pro Schnitt (Config `features.terrariumPlants.wildPlants`).
 * **Schere** an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven: 100 % pro Schnitt (Config `features.terrariumPlants.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 2 für 2 Smaragde; eins von 9 in diesem Angebot.
-* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 24 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Teilung**: eine Schere teilt das Polster (die Hälfte als Pflanze); ein abgebautes Stück teilt es auch; sie breitet sich auch selbst aus (wächst weiter).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../../settings.md)).

@@ -2266,7 +2266,7 @@
   "message.bettacraft.critters.released_world": "%s Tiere krabbeln davon",
   "message.bettacraft.wild_coral.trimmed": "Von dieser Kolonie wurde gerade geschnitten; sie muss erst nachwachsen",
   "log.bettacraft.analysed": "%s hat %s Tiere mit der Lupe analysiert",
-  "gui.bettacraft.magnifier.analyse": "Analysieren",
+  "gui.bettacraft.magnifier.analyse": "Prüfen",
   "gui.bettacraft.magnifier.tooltip": "Die verdeckten Gene des ausgewählten Tiers mit deiner Lupe analysieren (eine Anwendung)",
   "gui.bettacraft.magnifier.nothing": "Wähle ein Tier, das noch nicht analysiert ist",
   "gui.bettacraft.critters.sex.any": "Jedes Geschlecht",

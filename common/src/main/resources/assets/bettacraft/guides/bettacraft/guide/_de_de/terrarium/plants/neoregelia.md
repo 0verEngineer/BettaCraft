@@ -37,7 +37,7 @@ Eine Bromelie mit einem Kelch aus breiten Riemenblättern; ihr Herz färbt sich 
 
 * **Schere** an einem wilden Pflanzenbestand auf dem Boden von Dschungeln: 100 % pro Schnitt (Config `features.terrariumPlants.wildPlants`).
 * **Fahrender Händler** (übliche Angebote): 2 für 2 Smaragde; eins von 9 in diesem Angebot.
-* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 8 in diesem Angebot (Config `features.sources.aquaristVillager`).
+* **[Aquarianer](../../getting_started/aquarist.md)** (Lehrling): 2 für 2 Smaragde; eins von etwa 24 in diesem Angebot (Config `features.sources.aquaristVillager`).
 * **Ableger**: eine Schere an einer gewachsenen Pflanze nimmt einen Ableger ab (eine kleine bewurzelte Pflanze); sie breitet sich auch selbst aus (Ableger rundherum).
 
 Die Biome von Biome-Mods zählen mit ([Biom-Tags](../../settings.md)).

@@ -35,7 +35,7 @@ A pale green moss that grows into round, soft cushions on any surface.
 * **Shears** on a wild plant in lush caves: 100 % per cut (config `features.terrariumPlants.wildPlants`).
 * **Shears** on a wild plant on the land of swamps and mangroves: 100 % per cut (config `features.terrariumPlants.wildPlants`).
 * **Wandering trader** (usual offers): 2 for 2 emeralds; one of 9 in this offer.
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Division**: shears divide the clump (half of it as a plant); breaking a piece of it divides it too; it also spreads by itself (it creeps on).
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).

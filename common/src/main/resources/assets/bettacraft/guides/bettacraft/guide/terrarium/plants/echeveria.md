@@ -35,7 +35,7 @@ A succulent rosette of plump, blue-grey leaves whose tips blush pink in strong l
 
 * **Shears** on a wild plant in deserts and badlands: 100 % per cut (config `features.terrariumPlants.wildPlants`).
 * **Wandering trader** (usual offers): 2 for 2 emeralds; one of 9 in this offer.
-* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 8 in this offer (config `features.sources.aquaristVillager`).
+* **[Aquarist villager](../../getting_started/aquarist.md)** (Apprentice): 2 for 2 emeralds; one of about 24 in this offer (config `features.sources.aquaristVillager`).
 * **Offsets**: shears on a grown plant take an offset (a small rooted plant); it also spreads by itself (offsets around it).
 
 The biomes of biome mods count too ([biome tags](../../settings.md)).
