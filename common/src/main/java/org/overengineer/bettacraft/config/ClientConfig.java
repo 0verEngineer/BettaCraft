@@ -89,7 +89,7 @@ public final class ClientConfig {
         AIR_PUMP_SOUND = b.comment("Play the hum of the air pumps (off by default; its volume is airPumpVolume)").define("airPumpSound", false);
         FLOW_PUMP_SOUND = b.comment("Play the whir of the flow pumps (off by default; its volume is flowPumpVolume)").define("flowPumpSound", false);
         b.pop();
-        b.comment("Map mods (M32 part d, M53)").push("map");
+        b.comment("Map mods: the alarm waypoints in JourneyMap, Xaero's Minimap and FTB Chunks").push("map");
         ALARM_WAYPOINTS = b.comment("Alarm waypoints of all tanks: a waypoint at a tank of yours (or one you are a user of) whose monitor alarm went off",
                 "or whose hired aquarist warns, until it clears. Off: none from any tank. Each tank also has its own switch in the users tab",
                 "of its menu; the pack switch features.compat.journeymap turns them off for everyone").define("showAlarmWaypoints", true);
