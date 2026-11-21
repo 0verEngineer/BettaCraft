@@ -51,6 +51,8 @@ Sie leben wie die echten Tiere, in der Welt wie im Becken (Schalter `features.vi
 | Schmuckhornfrosch | nachts | sitzt eingegraben, schnellt vor | eingegraben im Boden |
 | Schildkröten | tagsüber (die Moschusschildkröte nachts) | langsam, im Wasser schneller | verstecken sich in Höhlen, sonnen sich |
 
+![Die Kornnatter mit aufgestelltem Kopf und eingerollt, ein Leopardgecko, der sich streckt, ein Terrarium mit Stein und Überhang](../images/herps_moves.png)
+
 In der Welt sonnen sie sich außerdem an hellen Tagen, und die kleinen, scheuen laufen vor einem Spieler davon, der zu nah
 kommt. Mit dem Schalter aus bewegen sie sich wie vorher (1.43). Derselbe Schalter lässt **Fische** ab und zu davonflitzen und
 nachts mehr ruhen und **Krebse** tagsüber in ihren Verstecken bleiben.

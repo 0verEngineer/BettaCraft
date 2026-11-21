@@ -1098,6 +1098,23 @@ def m51(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+def m54(out_en: Path) -> None:
+    """M54 (-Psmoketestm54): how the amphibians and reptiles move: the corn snake raised and coiled, the leopard gecko
+    stretched, the snake coiled and the geckos in a terrarium with a rock and a ledge (a 2 x 2 picture)."""
+    tiles = [("bettacraft_m54_actions_snake_head_up_side", (0, 280, 800, 680)),
+             ("bettacraft_m54_actions_snake_coil_side", (240, 330, 1040, 730)),
+             ("bettacraft_m54_actions_gecko_stretch_side", (240, 330, 1040, 730)),
+             ("bettacraft_m54_tank_actions_coiled", (0, 120, 1280, 760))]
+    out = Image.new("RGB", (800, 400))
+    for i, (shot, box) in enumerate(tiles):
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            return
+        out.paste(Image.open(src).convert("RGB").crop(box).resize((400, 200), Image.LANCZOS), ((i % 2) * 400, (i // 2) * 200))
+    save(out, out_en / "herps_moves.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1112,6 +1129,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m54"]:
+        m54(out_en)
+        return 0
     if sys.argv[1:] == ["m51"]:
         m51(out_en, out_de)
         return 0

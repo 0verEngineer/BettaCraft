@@ -50,6 +50,8 @@ They live like the real animals, in the world as in the tank (switch `features.v
 | Horned frog | night | sits buried, lunges | buried in the ground |
 | Turtles | day (the musk turtle at night) | slow, faster in the water | hide in caves, bask |
 
+![The corn snake with its head raised and coiled up, a leopard gecko stretching, a terrarium with a rock and a ledge](../images/herps_moves.png)
+
 In the world they also bask in the sun on bright days and the small and shy ones run from a player who comes close.
 With the switch off they move as before (1.43). The same switch makes **fish** dart off now and then and rest more at night,
 and lets **crayfish** stay in their hides by day.
