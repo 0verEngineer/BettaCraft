@@ -192,9 +192,13 @@ Fabric Loom 1.19.4; the game still targets Java 21):
   `platform/`. A new NeoForge-only API use needs its Fabric counterpart in the same milestone (or a documented gap).
 - Work on `master` first (1.21.1, both loaders). Green means: the NeoForge suites as before **and** `:fabric:build`,
   `runFabricGameTest`, `runFabricServer -Psmoketest` (client smoke when rendering changed).
-- Then forward to all four port branches (`1.21.11`, `26.1.2`, `26.2`, `26.3`) by cherry-pick: every branch is fully
-  maintained and gets every feature and every fix. MC-free parts apply cleanly, GUI / rendering by hand. Each port branch builds, tests and
-  releases on its own (its own reference world for `smoketestUpgrade`, its own CHANGELOG section).
+- Then, in the same milestone, forward to all four port branches (`1.21.11`, `26.1.2`, `26.2`, `26.3`) by cherry-pick:
+  every branch is fully maintained and gets every feature and every fix. MC-free parts apply cleanly, GUI / rendering by
+  hand. Each port branch builds, tests and releases on its own (its own reference world for `smoketestUpgrade`, its own
+  CHANGELOG section).
+- **A milestone is done only when all 10 combinations (5 Minecraft versions x NeoForge + Fabric) are green** (the
+  checks above, on every branch). Something that cannot exist on a version or loader (the foreign mod has no build
+  there; checked on Modrinth, CurseForge and the mod's maven) is a documented gap (CHANGELOG, `VersionGaps`).
 - Push, tag and release of any branch only with the user's OK.
 - **Release tags** (M52): `v<mod_version>+<loader>-<mc>`, e.g. `v1.42.0-beta.1+neoforge-1.21.1`,
   `v1.42.0-beta.1+fabric-26.1.2`; one tag per loader, on the branch of that Minecraft version. `release.yml` (parsing in
