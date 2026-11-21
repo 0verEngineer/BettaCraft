@@ -218,7 +218,7 @@ configurations {
 // gradlew runFabricGameTest -Pfabric_loader_version=0.18.4 -Pfabric_api_version=0.166.0+26.3 -PexactFabricVersions
 if (project.hasProperty('exactFabricVersions')) {
     dependencies {
-        modImplementation enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${fabric_api_version}")
+        implementation enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${fabric_api_version}")
     }
     configurations.configureEach { resolutionStrategy.force "net.fabricmc:fabric-loader:${fabric_loader_version}" }
 }
