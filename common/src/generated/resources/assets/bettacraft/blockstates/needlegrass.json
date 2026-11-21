@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "part=cutting,tint=0": {
+      "model": "bettacraft:block/needlegrass_cutting"
+    },
+    "part=cutting,tint=1": {
+      "model": "bettacraft:block/needlegrass_cutting"
+    },
+    "part=cutting,tint=2": {
+      "model": "bettacraft:block/needlegrass_cutting"
+    },
+    "part=cutting,tint=3": {
+      "model": "bettacraft:block/needlegrass_cutting"
+    },
+    "part=leaf,tint=0": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=leaf,tint=1": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=leaf,tint=2": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=leaf,tint=3": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=mat,tint=0": {
+      "model": "bettacraft:block/needlegrass_mat"
+    },
+    "part=mat,tint=1": {
+      "model": "bettacraft:block/needlegrass_mat"
+    },
+    "part=mat,tint=2": {
+      "model": "bettacraft:block/needlegrass_mat"
+    },
+    "part=mat,tint=3": {
+      "model": "bettacraft:block/needlegrass_mat"
+    },
+    "part=moss,tint=0": {
+      "model": "bettacraft:block/needlegrass_moss"
+    },
+    "part=moss,tint=1": {
+      "model": "bettacraft:block/needlegrass_moss"
+    },
+    "part=moss,tint=2": {
+      "model": "bettacraft:block/needlegrass_moss"
+    },
+    "part=moss,tint=3": {
+      "model": "bettacraft:block/needlegrass_moss"
+    },
+    "part=pad,tint=0": {
+      "model": "bettacraft:block/needlegrass_pad"
+    },
+    "part=pad,tint=1": {
+      "model": "bettacraft:block/needlegrass_pad"
+    },
+    "part=pad,tint=2": {
+      "model": "bettacraft:block/needlegrass_pad"
+    },
+    "part=pad,tint=3": {
+      "model": "bettacraft:block/needlegrass_pad"
+    },
+    "part=rhizome,tint=0": {
+      "model": "bettacraft:block/needlegrass_rhizome"
+    },
+    "part=rhizome,tint=1": {
+      "model": "bettacraft:block/needlegrass_rhizome"
+    },
+    "part=rhizome,tint=2": {
+      "model": "bettacraft:block/needlegrass_rhizome"
+    },
+    "part=rhizome,tint=3": {
+      "model": "bettacraft:block/needlegrass_rhizome"
+    },
+    "part=ribbon,tint=0": {
+      "model": "bettacraft:block/needlegrass_ribbon"
+    },
+    "part=ribbon,tint=1": {
+      "model": "bettacraft:block/needlegrass_ribbon"
+    },
+    "part=ribbon,tint=2": {
+      "model": "bettacraft:block/needlegrass_ribbon"
+    },
+    "part=ribbon,tint=3": {
+      "model": "bettacraft:block/needlegrass_ribbon"
+    },
+    "part=root,tint=0": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=root,tint=1": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=root,tint=2": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=root,tint=3": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=stem,tint=0": {
+      "model": "bettacraft:block/needlegrass_stem"
+    },
+    "part=stem,tint=1": {
+      "model": "bettacraft:block/needlegrass_stem"
+    },
+    "part=stem,tint=2": {
+      "model": "bettacraft:block/needlegrass_stem"
+    },
+    "part=stem,tint=3": {
+      "model": "bettacraft:block/needlegrass_stem"
+    },
+    "part=top,tint=0": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=top,tint=1": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=top,tint=2": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    },
+    "part=top,tint=3": {
+      "model": "bettacraft:block/needlegrass_leaf"
+    }
+  }
+}

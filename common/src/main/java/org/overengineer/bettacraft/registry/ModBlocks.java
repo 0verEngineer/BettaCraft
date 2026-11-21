@@ -212,6 +212,32 @@ public final class ModBlocks {
         return java.util.Collections.unmodifiableMap(m);
     }
 
+    /**
+     * M56: the terrarium plants in the world, one block per species: wild in their biomes or planted as decoration (no item:
+     * the plant item plants it outside a tank; shears cut a cutting, it grows back).
+     */
+    public static final java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies,
+            DeferredBlock<org.overengineer.bettacraft.plants.wild.WildLandPlantBlock>> WILD_LAND_PLANTS = wildLandPlants();
+
+    private static java.util.Map<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.plants.wild.WildLandPlantBlock>> wildLandPlants() {
+        var m = new java.util.EnumMap<org.overengineer.bettacraft.plants.PlantSpecies, DeferredBlock<org.overengineer.bettacraft.plants.wild.WildLandPlantBlock>>(
+                org.overengineer.bettacraft.plants.PlantSpecies.class);
+        for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
+            if (!sp.land()) continue;
+            var look = org.overengineer.bettacraft.plants.wild.LandLook.of(sp);
+            m.put(sp, BLOCKS.register("wild_" + sp.id(), () -> {
+                var p = BlockBehaviour.Properties.of().mapColor(sp.form() == org.overengineer.bettacraft.plants.PlantSpecies.Form.CACTUS ? MapColor.COLOR_GREEN : MapColor.PLANT)
+                        .noCollission().instabreak().randomTicks().sound(sp.form() == org.overengineer.bettacraft.plants.PlantSpecies.Form.MOSS ? SoundType.MOSS : SoundType.GRASS)
+                        .pushReaction(PushReaction.DESTROY).noLootTable();
+                if (look.model != org.overengineer.bettacraft.plants.wild.LandLook.Model.MOSS && look.model != org.overengineer.bettacraft.plants.wild.LandLook.Model.CARPET) {
+                    p = p.offsetType(BlockBehaviour.OffsetType.XZ);
+                }
+                return new org.overengineer.bettacraft.plants.wild.WildLandPlantBlock(sp, p);
+            }));
+        }
+        return java.util.Collections.unmodifiableMap(m);
+    }
+
     /** M28.1: a patch of a floating plant on calm water (like a lily pad; the type as state, no item). */
     public static final DeferredBlock<org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock> WILD_FLOATING_PLANT = BLOCKS.register(
             "wild_floating_plant", () -> new org.overengineer.bettacraft.plants.wild.WildFloatingPlantBlock(BlockBehaviour.Properties.of()

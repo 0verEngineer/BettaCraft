@@ -56,6 +56,7 @@ class LangCompletenessTest {
             "block.bettacraft.monitor", "monitor.bettacraft.value.co2",
             "gui.bettacraft.terrarium.mode.aquarium", "gui.bettacraft.terrarium.mode.paludarium", "gui.bettacraft.terrarium.mode.terrarium", // M31
             "bettacraft.configuration.size.normal", // M36
+            "gui.bettacraft.tank.name_hint", // M56: "Name"
             "gui.bettacraft.tank_mode.aquarium", "gui.bettacraft.tank_mode.paludarium", "gui.bettacraft.tank_mode.terrarium", // M33.1
             "block.bettacraft.thermo_hygrometer", "monitor.bettacraft.value.uv",
             "bettacraft.configuration.features.sump.refugium", "gui.bettacraft.sump.refugium", "gui.bettacraft.tab.sump", "item.bettacraft.chaetomorpha", // M49

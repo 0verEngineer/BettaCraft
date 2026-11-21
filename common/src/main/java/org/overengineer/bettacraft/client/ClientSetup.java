@@ -111,6 +111,7 @@ public final class ClientSetup {
             var s = e.getKey();
             event.register((stack, tint) -> 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s,
                     tint == 0 ? org.overengineer.bettacraft.plants.PlantPart.LEAF
+                            : s.land() ? org.overengineer.bettacraft.plants.PlantPart.TOP // M56: the flowers, bracts, spines of the terrarium plants
                             : org.overengineer.bettacraft.plants.PlantColors.rootLooksLike(s.form()) == org.overengineer.bettacraft.plants.PlantPart.STEM
                             ? org.overengineer.bettacraft.plants.PlantPart.STEM : org.overengineer.bettacraft.plants.PlantPart.RHIZOME, 2), e.getValue().get());
         }
@@ -155,6 +156,18 @@ public final class ClientSetup {
                     default -> org.overengineer.bettacraft.plants.PlantPart.TOP;
                 };
                 return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(s, part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT);
+            }, b.get());
+        }
+        // M56: the terrarium plants in the world: leaves (0), stalks (1), flowers / bracts / spines (2) in the colours of the species
+        for (var b : org.overengineer.bettacraft.registry.ModBlocks.WILD_LAND_PLANTS.values()) {
+            event.register((state, level, pos, tint) -> {
+                if (!(state.getBlock() instanceof org.overengineer.bettacraft.plants.wild.WildLandPlantBlock w)) return 0xFFFFFFFF;
+                var part = switch (tint) {
+                    case 0 -> org.overengineer.bettacraft.plants.PlantPart.LEAF;
+                    case 1 -> org.overengineer.bettacraft.plants.PlantPart.STEM;
+                    default -> org.overengineer.bettacraft.plants.PlantPart.TOP;
+                };
+                return 0xFF000000 | org.overengineer.bettacraft.plants.PlantColors.color(w.species(), part, org.overengineer.bettacraft.plants.wild.WildPlantBlock.WILD_TINT + 1);
             }, b.get());
         }
         event.register((state, level, pos, tint) -> tint == 0 ? HATCHERY_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.ARTEMIA_HATCHERY.get());

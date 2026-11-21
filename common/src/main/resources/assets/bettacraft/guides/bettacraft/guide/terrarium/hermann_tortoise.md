@@ -39,6 +39,10 @@ Real Hermann's tortoises eat wild herbs, dandelion and clover. Minecraft has no 
 `#bettacraft:turtle_greens` stands in: **dandelion**, **pink petals** (for the clover), **short grass** and **fern** (for
 the herbs) and the **oxeye daisy**. Modpacks can add their own greens to the tag. Sliders and Reeves' turtles eat them too.
 
+It also **grazes** the edible [terrarium plants](plants_dry.md) of its tank (prickly pear, stonecrop, blue grama and
+needlegrass) when it has not eaten for half a day: the plant loses a stage and the tortoise is fed. A well planted desert
+terrarium feeds it partly by itself (`features.terrariumPlants.tortoiseGrazing`).
+
 ## Brumation
 
 In the wild the tortoise sleeps through the winter. In the tank it does the same: when the **air falls below 12 °C**

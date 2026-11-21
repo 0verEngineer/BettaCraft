@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bettacraft:feature",
+      "feature": "terrariumPlants.enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:fern"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bettacraft:boston_fern"
+  }
+}

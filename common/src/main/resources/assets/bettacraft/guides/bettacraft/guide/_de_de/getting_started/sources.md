@@ -324,6 +324,47 @@ die [Biom-Tags](../settings.md)).
 * [Javamoos](../plants/java_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
 * [Christmas-Moos](../plants/christmas_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
 * [Flame-Moos](../plants/flame_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Neoregelie (Errötende Bromelie)](../terrarium/plants/neoregelia.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Guzmanie](../terrarium/plants/guzmania.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Vriesea (Flammendes Schwert)](../terrarium/plants/vriesea.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Tillandsie (Luftpflanze)](../terrarium/plants/tillandsia.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Schwertfarn](../terrarium/plants/boston_fern.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Nestfarn](../terrarium/plants/birds_nest_fern.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Efeutute](../terrarium/plants/pothos.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Fittonie (Silbernetzblatt)](../terrarium/plants/fittonia.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Zwergpfeffer](../terrarium/plants/peperomia.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Königsbegonie](../terrarium/plants/begonia_rex.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Mini-Orchidee](../terrarium/plants/mini_orchid.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Marcgravia (Schindelpflanze)](../terrarium/plants/marcgravia.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Kannenpflanze (Nepenthes)](../terrarium/plants/nepenthes.md): Schere an einem wilden Pflanzenbestand auf dem Boden von Dschungeln (immer).
+* [Kissenmoos](../terrarium/plants/cushion_moss.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Selaginella (Moosfarn)](../terrarium/plants/selaginella.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Rentierflechte](../terrarium/plants/reindeer_lichen.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Schwertfarn](../terrarium/plants/boston_fern.md): Schere an einem wilden Pflanzenbestand in üppigen Höhlen (immer).
+* [Sumpf-Segge](../terrarium/plants/swamp_sedge.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Flatter-Binse](../terrarium/plants/soft_rush.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Sonnentau](../terrarium/plants/sundew.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Schlauchpflanze (Sarracenia)](../terrarium/plants/sarracenia.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Venusfliegenfalle](../terrarium/plants/venus_flytrap.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Fettkraut](../terrarium/plants/butterwort.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Papyrusstaude](../terrarium/plants/papyrus.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Zyperngras](../terrarium/plants/umbrella_sedge.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Kissenmoos](../terrarium/plants/cushion_moss.md): Schere an einem wilden Pflanzenbestand auf dem Land von Sümpfen und Mangroven (immer).
+* [Goldkugelkaktus](../terrarium/plants/golden_barrel_cactus.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Säulenkaktus](../terrarium/plants/column_cactus.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Feigenkaktus](../terrarium/plants/prickly_pear.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Warzenkaktus](../terrarium/plants/mammillaria.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Echeverie](../terrarium/plants/echeveria.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Zebra-Haworthie](../terrarium/plants/haworthia.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Amerikanische Agave](../terrarium/plants/agave.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Lebende Steine (Lithops)](../terrarium/plants/lithops.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Mauerpfeffer](../terrarium/plants/sedum.md): Schere an einem wilden Pflanzenbestand in Wüsten und Tafelbergen (immer).
+* [Moskitogras](../terrarium/plants/blue_grama.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
+* [Federgras](../terrarium/plants/needlegrass.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
+* [Echte Aloe](../terrarium/plants/aloe_vera.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
+* [Feigenkaktus](../terrarium/plants/prickly_pear.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
+* [Amerikanische Agave](../terrarium/plants/agave.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
+* [Mauerpfeffer](../terrarium/plants/sedum.md): Schere an einem wilden Pflanzenbestand in Savannen und trockenem Buschland (immer).
 
 ## Fahrender Händler: übliche Angebote
 
@@ -374,6 +415,15 @@ die [Biom-Tags](../settings.md)).
 | [Vallisneria](../plants/vallisneria.md) | 2 | 1 |
 | [Monte Carlo](../plants/monte_carlo.md) | 2 | 1 |
 | [Alternanthera reineckii](../plants/alternanthera_reineckii.md) | 1 | 2 |
+| [Neoregelie (Errötende Bromelie)](../terrarium/plants/neoregelia.md) | 2 | 2 |
+| [Guzmanie](../terrarium/plants/guzmania.md) | 2 | 2 |
+| [Tillandsie (Luftpflanze)](../terrarium/plants/tillandsia.md) | 2 | 2 |
+| [Efeutute](../terrarium/plants/pothos.md) | 2 | 2 |
+| [Fittonie (Silbernetzblatt)](../terrarium/plants/fittonia.md) | 2 | 2 |
+| [Echeverie](../terrarium/plants/echeveria.md) | 2 | 2 |
+| [Zebra-Haworthie](../terrarium/plants/haworthia.md) | 2 | 2 |
+| [Sonnentau](../terrarium/plants/sundew.md) | 2 | 2 |
+| [Kissenmoos](../terrarium/plants/cushion_moss.md) | 2 | 2 |
 | [Amazonas-Froschbiss](../plants/amazon_frogbit.md) | 2 | 1 |
 | [Schwimmfarn](../plants/salvinia.md) | 3 | 1 |
 | [Meersalz](../saltwater/water.md) | 8 | 2 |
@@ -419,6 +469,12 @@ die [Biom-Tags](../settings.md)).
 | [Schützenfisch](../brackish/archerfish.md) | 6 | 15 |
 | [Roter Tigerlotus](../plants/red_tiger_lotus.md) | 1 | 4 |
 | [Cryptocoryne „Flamingo“](../plants/cryptocoryne_flamingo.md) | 1 | 5 |
+| [Kannenpflanze (Nepenthes)](../terrarium/plants/nepenthes.md) | 1 | 4 |
+| [Venusfliegenfalle](../terrarium/plants/venus_flytrap.md) | 1 | 4 |
+| [Mini-Orchidee](../terrarium/plants/mini_orchid.md) | 1 | 4 |
+| [Lebende Steine (Lithops)](../terrarium/plants/lithops.md) | 1 | 4 |
+| [Vriesea (Flammendes Schwert)](../terrarium/plants/vriesea.md) | 1 | 4 |
+| [Königsbegonie](../terrarium/plants/begonia_rex.md) | 1 | 4 |
 | [Rote Wurzelflosse](../plants/red_root_floater.md) | 2 | 3 |
 | [Gelber Segelflossendoktor](../saltwater/yellow_tang.md) | 2 | 9 |
 | [Gestreiftes Seepferdchen](../saltwater/lined_seahorse.md) | 2 | 7 |
@@ -449,6 +505,14 @@ die [Biom-Tags](../settings.md)).
 | Lehrling | [Amazonas-Schwertpflanze](../plants/amazon_sword.md) | 2 | 2 |
 | Lehrling | [Rotala rotundifolia](../plants/rotala_rotundifolia.md) | 2 | 2 |
 | Lehrling | [Pfeilkraut (Sagittaria subulata)](../plants/sagittaria_subulata.md) | 2 | 2 |
+| Lehrling | [Neoregelie (Errötende Bromelie)](../terrarium/plants/neoregelia.md) | 2 | 2 |
+| Lehrling | [Schwertfarn](../terrarium/plants/boston_fern.md) | 2 | 2 |
+| Lehrling | [Efeutute](../terrarium/plants/pothos.md) | 2 | 2 |
+| Lehrling | [Fittonie (Silbernetzblatt)](../terrarium/plants/fittonia.md) | 2 | 2 |
+| Lehrling | [Kissenmoos](../terrarium/plants/cushion_moss.md) | 2 | 2 |
+| Lehrling | [Echeverie](../terrarium/plants/echeveria.md) | 2 | 2 |
+| Lehrling | [Echte Aloe](../terrarium/plants/aloe_vera.md) | 2 | 2 |
+| Lehrling | [Sumpf-Segge](../terrarium/plants/swamp_sedge.md) | 2 | 2 |
 | Geselle | [Neocaridina-Garnele](../invertebrates/neocaridina.md) | 2 | 4 |
 | Geselle | [Posthornschnecke](../invertebrates/ramshorn.md) | 2 | 3 |
 | Geselle | [Zebra-Rennschnecke](../invertebrates/zebra_nerite.md) | 1 | 3 |

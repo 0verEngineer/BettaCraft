@@ -210,6 +210,9 @@ public final class TraderOffers {
         out.add(plant(Slot.USUAL, PlantSpecies.ALTERNANTHERA, 1, 2, 6));
         out.add(plant(Slot.RARE, PlantSpecies.TIGER_LOTUS, 1, 4, 3));
         out.add(plant(Slot.RARE, PlantSpecies.CRYPT_FLAMINGO, 1, 5, 3));
+        // ---------------------------------------------------------------- M56 terrarium plants: one of a few, usual and rare
+        out.add(plantPool("terrarium_plants", Slot.USUAL, TERRARIUM_PLANTS, 2, 2, 6));
+        out.add(plantPool("terrarium_plants_rare", Slot.RARE, RARE_TERRARIUM_PLANTS, 1, 4, 3));
         // ---------------------------------------------------------------- M12 floating plants
         out.add(floating(Slot.USUAL, FloatingPlantType.FROGBIT, 2, 1, 8));
         out.add(floating(Slot.USUAL, FloatingPlantType.SALVINIA, 3, 1, 8));
@@ -265,6 +268,26 @@ public final class TraderOffers {
                     s.seahorse() ? Feature.SEAHORSES.key() : null));
         }
         return out;
+    }
+
+    /** M56: the terrarium plants of the usual offer and of the rare one (all equally likely). */
+    public static final List<PlantSpecies> TERRARIUM_PLANTS = List.of(PlantSpecies.NEOREGELIA, PlantSpecies.GUZMANIA, PlantSpecies.TILLANDSIA,
+            PlantSpecies.POTHOS, PlantSpecies.FITTONIA, PlantSpecies.ECHEVERIA, PlantSpecies.HAWORTHIA, PlantSpecies.SUNDEW, PlantSpecies.CUSHION_MOSS);
+    public static final List<PlantSpecies> RARE_TERRARIUM_PLANTS = List.of(PlantSpecies.NEPENTHES, PlantSpecies.VENUS_FLYTRAP, PlantSpecies.MINI_ORCHID,
+            PlantSpecies.LITHOPS, PlantSpecies.VRIESEA, PlantSpecies.BEGONIA);
+
+    /** M56: one plant of a list (all equally likely), {@code count} for {@code emeralds}. */
+    private static Offer plantPool(String id, Slot slot, List<PlantSpecies> pool, int count, int emeralds, int uses) {
+        return new Offer(id, slot, uses, () -> {
+            List<Product> p = new ArrayList<>();
+            for (PlantSpecies sp : pool) p.add(new Product(Target.plant(sp), count, emeralds, 1.0 / pool.size(), false, null));
+            return p;
+        }, (trader, random) -> {
+            RandomGenerator rnd = random::nextLong;
+            ItemStack plant = InteriorPlants.item(pool.get(rnd.nextInt(pool.size())), 0);
+            plant.setCount(count);
+            return new MerchantOffer(new ItemCost(Items.EMERALD, emeralds), Optional.empty(), plant, uses, 1, 0.05F);
+        });
     }
 
     private static Offer plant(Slot slot, PlantSpecies sp, int count, int emeralds, int uses) {

@@ -450,6 +450,8 @@ public final class TankView {
         /** Highest tint level per species (red species: the colour they show). */
         public int[] tints = new int[org.overengineer.bettacraft.plants.PlantSpecies.values().length];
         public int total, maxPlants, blocks, light, growing, fullGrown, dark, dry;
+        /** M56: terrarium plants of the tank, and of them those languishing in a bad climate. */
+        public int land, wilting;
         /** M38: plants of Minecraft and other mods that count, and their plant mass (interior blocks). */
         public int foreign, foreignMass;
         public float share, surfaceCover, growthSpeed, hiding, temp;
@@ -460,7 +462,7 @@ public final class TankView {
             CompoundTag t = new CompoundTag();
             t.putIntArray("counts", counts);
             t.putIntArray("tints", tints);
-            t.putIntArray("n", new int[]{total, maxPlants, blocks, light, growing, fullGrown, dark, dry});
+            t.putIntArray("n", new int[]{total, maxPlants, blocks, light, growing, fullGrown, dark, dry, land, wilting});
             t.putFloat("share", share);
             t.putFloat("surface", surfaceCover);
             t.putFloat("speed", growthSpeed);
@@ -485,7 +487,7 @@ public final class TankView {
             int[] ti = t.getIntArray("tints");
             if (ti.length == tints.length) tints = ti;
             int[] n = t.getIntArray("n");
-            if (n.length == 8) {
+            if (n.length >= 8) {
                 total = n[0];
                 maxPlants = n[1];
                 blocks = n[2];
@@ -494,6 +496,10 @@ public final class TankView {
                 fullGrown = n[5];
                 dark = n[6];
                 dry = n[7];
+                if (n.length >= 10) {
+                    land = n[8];
+                    wilting = n[9];
+                }
             }
             share = t.getFloat("share");
             surfaceCover = t.getFloat("surface");
@@ -519,10 +525,20 @@ public final class TankView {
         a.built = true;
         var env = org.overengineer.bettacraft.plants.InteriorPlants.env(level, c, r);
         a.light = env.light();
+        org.overengineer.bettacraft.plants.LandPlants.Env landEnv = null;
         for (var p : r.plants().all()) {
             a.counts[p.species.ordinal()]++;
             a.tints[p.species.ordinal()] = Math.max(a.tints[p.species.ordinal()], p.tint);
             a.blocks += p.blocks;
+            if (p.species.land()) {
+                // M56: a terrarium plant: growing, grown or languishing by the climate of the land
+                a.land++;
+                if (landEnv == null) landEnv = org.overengineer.bettacraft.plants.LandPlants.env(level, c);
+                if (org.overengineer.bettacraft.plants.LandPlants.languishing(p)) a.wilting++;
+                else if (p.fullGrown()) a.fullGrown++;
+                else if (org.overengineer.bettacraft.plants.LandPlants.rate(p.species, landEnv, p.y + 0.5 < env.waterLocal()) > 0) a.growing++;
+                continue;
+            }
             if (p.y + 0.5 >= env.waterLocal()) a.dry++;
             else if (org.overengineer.bettacraft.plants.InteriorPlants.lightFactor(env.effectiveLight(), org.overengineer.bettacraft.plants.PlantSpecies.Light.need(p.species.light())) <= 0) a.dark++;
             else if (p.fullGrown()) a.fullGrown++;

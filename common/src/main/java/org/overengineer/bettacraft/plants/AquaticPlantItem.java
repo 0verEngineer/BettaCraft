@@ -37,6 +37,15 @@ public class AquaticPlantItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         if (!(ctx.getLevel() instanceof ServerLevel server)) return InteractionResult.SUCCESS;
+        if (species.land() && !org.overengineer.bettacraft.tank.interior.InteriorManager.isInterior(server)) {
+            // M56: a terrarium plant outside a tank: planted in the world as decoration (it grows only in a terrarium)
+            if (!LandPlants.enabled()) return InteractionResult.FAIL;
+            if (!org.overengineer.bettacraft.plants.wild.WildLandPlantBlock.plantInWorld(server, ctx.getClickedPos(), ctx.getClickedFace(), species, ctx.getPlayer())) {
+                return InteractionResult.FAIL;
+            }
+            if (ctx.getPlayer() == null || !ctx.getPlayer().getAbilities().instabuild) ctx.getItemInHand().shrink(1);
+            return InteractionResult.CONSUME;
+        }
         return InteriorPlants.plant(server, ctx, species, stage(ctx.getItemInHand())) ? InteractionResult.CONSUME : InteractionResult.FAIL;
     }
 
@@ -51,5 +60,14 @@ public class AquaticPlantItem extends Item {
         }
         lines.add(Component.translatable("item.bettacraft.aquatic_plant.form." + species.form().name().toLowerCase(java.util.Locale.ROOT))
                 .withStyle(ChatFormatting.DARK_AQUA));
+        if (species.land()) {
+            // M56: where it lives and what it wants
+            lines.add(Component.translatable("item.bettacraft.terrarium_plant.habitat." + species.habitat().id()).withStyle(ChatFormatting.GOLD));
+            lines.add(Component.translatable("item.bettacraft.terrarium_plant.needs", Math.round(species.humidityMin()), Math.round(species.humidityMax()),
+                    Math.round(species.tempMin()), Math.round(species.tempMax()), Component.translatable("item.bettacraft.terrarium_plant.light."
+                            + species.light().name().toLowerCase(java.util.Locale.ROOT))).withStyle(ChatFormatting.GRAY));
+            lines.add(Component.translatable("item.bettacraft.terrarium_plant.propagation." + species.propagation().name().toLowerCase(java.util.Locale.ROOT))
+                    .withStyle(ChatFormatting.DARK_GREEN));
+        }
     }
 }

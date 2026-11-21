@@ -92,7 +92,7 @@ class BlockItemModelTest {
             // allowed flat: the aquarium plants and every crossed model (like vanilla saplings and seagrass)
             String layer0 = item.has("textures") && item.getAsJsonObject("textures").has("layer0")
                     ? item.getAsJsonObject("textures").get("layer0").getAsString() : "";
-            boolean plant = layer0.startsWith("bettacraft:item/plant_");
+            boolean plant = layer0.startsWith("bettacraft:item/plant_") || layer0.startsWith("bettacraft:item/terrarium_"); // M56: the terrarium plants
             boolean cross = !DEVICES.contains(n) && parent(blockModel(n)).equals("minecraft:block/cross");
             if (plant || cross) flat++;
             else bad.add(n + ": flat icon (" + p + ") but neither a plant nor a crossed model");

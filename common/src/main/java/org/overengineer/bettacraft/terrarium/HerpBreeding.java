@@ -249,10 +249,14 @@ public final class HerpBreeding {
         int females = 0, males = 0;
         // part c: dart frog tadpoles go into the water (no water: they die)
         TankTerrain terrain = s.tadpoles() ? new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), level.isDay()) : null;
-        if (terrain != null && !Double.isFinite(terrain.surface())) {
+        // M56: the grown bromeliads take one tadpole each into their water cup (features.terrariumPlants.bromeliadTadpoles)
+        List<Vec3> cups = s.tadpoles() ? new java.util.ArrayList<>(org.overengineer.bettacraft.plants.TerrariumPlantLife.freeCups(level, t)) : List.of();
+        boolean water = terrain == null || Double.isFinite(terrain.surface());
+        if (!water && cups.isEmpty()) {
             TankCare.log(level, c, "log.bettacraft.herp.no_tadpole_water", "@" + s.translationKey());
             return 0;
         }
+        int inCups = 0;
         for (int i = 0; i < k.eggs; i++) {
             boolean isFemale = r.nextDouble() < female;
             int variety = s.pureVarieties() ? k.motherVariety : r.nextBoolean() ? k.motherVariety : k.fatherVariety;
@@ -260,14 +264,19 @@ public final class HerpBreeding {
             if (morph) variety = s.wildVarieties() + r.nextInt(s.varieties().size() - s.wildVarieties()); // part c: a new morph
             double weight = s.stock() * 0.1;
             if (live.size() + females + males >= maxEntities || stock + weight > cap + 1e-6) continue;
+            if (!water && inCups >= cups.size()) continue; // M56: no water and every cup taken: the rest dry up
             HerpEntity y = ModEntities.herp(s).create(level);
             if (y == null) continue;
             y.makeHatchling();
             y.setFemale(isFemale);
             y.setVariety(variety);
             y.setGeneration(k.generation);
-            Vec3 at = terrain != null ? waterSpot(t, terrain, r) : null;
-            if (at != null) y.moveTo(at.x, at.y, at.z, r.nextFloat() * 360F, 0F);
+            Vec3 cup = inCups < cups.size() ? cups.get(inCups) : null;
+            Vec3 at = cup == null && terrain != null ? waterSpot(t, terrain, r) : null;
+            if (cup != null) {
+                y.putInNursery(cup); // M56: into the bromeliad
+                inCups++;
+            } else if (at != null) y.moveTo(at.x, at.y, at.z, r.nextFloat() * 360F, 0F);
             else y.moveTo(k.x + (r.nextDouble() - 0.5) * 0.12, k.y + 0.01, k.z + (r.nextDouble() - 0.5) * 0.12, r.nextFloat() * 360F, 0F);
             TankInhabitants.adopt(y, c);
             if (!level.addFreshEntity(y)) continue;
@@ -280,6 +289,7 @@ public final class HerpBreeding {
         }
         int lost = k.eggs - females - males;
         if (s.tadpoles()) TankCare.log(level, c, "log.bettacraft.herp.tadpoles", "@" + s.translationKey(), String.valueOf(females + males));
+        if (inCups > 0) TankCare.log(level, c, "log.bettacraft.terrarium_plant.tadpoles_in_bromeliads", String.valueOf(inCups)); // M56
         else TankCare.log(level, c, "log.bettacraft.turtle.hatched", "@" + s.translationKey(), String.valueOf(females + males), String.valueOf(females),
                 String.valueOf(males));
         if (lost > 0) TankCare.log(level, c, "log.bettacraft.turtle.hatch_crowded", String.valueOf(lost));

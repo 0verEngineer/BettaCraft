@@ -686,6 +686,11 @@ public final class LandWalker {
      */
     @Nullable
     private static Vec3 hideSpot(Mob mob, TankTerrain ter, RandomSource r, Gait gait) {
+        // M56: snakes and geckos hide among the grown terrarium plants too (more often than under the decoration)
+        if (org.overengineer.bettacraft.plants.TerrariumPlantLife.hides(mob) && r.nextInt(5) < 3) {
+            double[] p = ter.plantShelter(mob.getX(), mob.getZ(), 2.5, r::nextLong);
+            if (p != null) return new Vec3(p[0], p[1], p[2]);
+        }
         double[] s = ter.shelter(mob.getX(), mob.getY(), mob.getZ(), 2.5, r::nextLong);
         if (s == null) return null;
         double surface = ter.surface();

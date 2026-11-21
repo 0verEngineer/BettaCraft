@@ -26,6 +26,8 @@ gelber, schwarz gefleckter Bodengecko mit dickem Schwanz (sein Fettspeicher) und
 | Futter | [Heimchen](feeder_insects.md) |
 | Besatz | 2 Bettas |
 
+* Tagsüber versteckt er sich unter der Deko und zwischen großen [Terrarienpflanzen](plants.md) (`features.terrariumPlants.hiding`).
+
 ## Zucht
 
 Ein Paar legt **zwei Eier** in Sand oder Erde. Die **Nesttemperatur bestimmt das Geschlecht** (Muster FMF): 26-29 °C gibt

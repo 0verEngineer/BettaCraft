@@ -122,6 +122,12 @@ public final class ModTags {
     public static final TagKey<Block> FROG_NEST_GROUND = TagKey.create(Registries.BLOCK, BettaCraft.id("frog_nest_ground"));
     /** M31 part c: the leopard gecko lives wild here (deserts and badlands). */
     public static final TagKey<Biome> ARID_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("arid_lands"));
+    /** M56: the land where the terrarium plants grow wild ({@code WildTables.LandPlace}). */
+    public static final TagKey<Biome> JUNGLE_PLANT_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("jungle_plant_lands"));
+    public static final TagKey<Biome> LUSH_CAVE_PLANT_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("lush_cave_plant_lands"));
+    public static final TagKey<Biome> SWAMP_PLANT_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("swamp_plant_lands"));
+    public static final TagKey<Biome> DESERT_PLANT_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("desert_plant_lands"));
+    public static final TagKey<Biome> SAVANNA_PLANT_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("savanna_plant_lands"));
     /** M31 part c: the corn snake lives wild here (temperate forests and plains). */
     public static final TagKey<Biome> SNAKE_LANDS = TagKey.create(Registries.BIOME, BettaCraft.id("snake_lands"));
 
@@ -150,6 +156,10 @@ public final class ModTags {
     public static final TagKey<Block> EPIPHYTE_SURFACES = TagKey.create(Registries.BLOCK, BettaCraft.id("epiphyte_surfaces"));
     /** M13: blocks rooted aquarium plants grow in besides the interior floor with a substrate: sand, gravel, dirt ... */
     public static final TagKey<Block> PLANT_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("plant_substrate"));
+    /** M56: what the terrarium plants grow on in the world (the plant substrate, terracotta, moss). */
+    public static final TagKey<Block> LAND_PLANT_SOIL = TagKey.create(Registries.BLOCK, BettaCraft.id("land_plant_soil"));
+    /** M56: the terrarium plants as items (the tortoises' plants, JEI, scripts). */
+    public static final TagKey<net.minecraft.world.item.Item> TERRARIUM_PLANT_ITEMS = TagKey.create(Registries.ITEM, BettaCraft.id("terrarium_plants"));
     /** M25: substrate that lowers the pH and softens the water (soil, mud). */
     public static final TagKey<Block> ACID_SUBSTRATE = TagKey.create(Registries.BLOCK, BettaCraft.id("acid_substrate"));
     /** M25 part d: active soil: as substrate it lowers the pH and the hardness at full strength (the soil tag counts half). */

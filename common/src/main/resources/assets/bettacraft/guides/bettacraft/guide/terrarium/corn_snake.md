@@ -25,6 +25,7 @@ shorter than in life.
 | Stocking | a hatchling 0.4 bettas, growing to 4 |
 
 * It slithers over the land in S-curves and rests long.
+* It hides under the decoration and among grown [terrarium plants](plants.md) (`features.terrariumPlants.hiding`).
 * **Brumation**: like Hermann's tortoise it rests through the cold (air below 12 °C, `terrarium.brumationBelow`): no food,
   no harm (only frost).
 

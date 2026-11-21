@@ -124,7 +124,10 @@ public final class PlantShapes {
             case EPIPHYTE -> b.epiphyte();
             case MOSS -> b.moss();
             case ROSETTE -> b.rosette();
-            case STEM -> b.stems();
+            case STEM -> {
+                if (s.land()) b.landStems(); // M56
+                else b.stems();
+            }
             case RIBBON -> b.ribbons();
             case CARPET -> b.carpet();
             case BULB -> b.bulb();
@@ -134,6 +137,7 @@ public final class PlantShapes {
             case BRANCH -> b.branches();
             case DOME -> b.dome();
             case ANEMONE -> b.anemone();
+            case CACTUS -> b.cactus(); // M56
         }
         return new Shape(new ArrayList<>(b.map.values()), s.stages());
     }
@@ -286,6 +290,20 @@ public final class PlantShapes {
                     rhiz = between(2, 3); leaves = between(8, 12); stalkA = 1; stalkB = 1; bladeA = 3; bladeB = 5; halfW = 0;
                     stalkElevA = 50; stalkElevB = 80; e0A = 45; e0B = 75; droop = 15; nominal = 6;
                 }
+                // M56: the air plant (a spiky rosette on the wood), the miniature orchid (a few broad leaves and a flower spike) and
+                // the shingling Marcgravia (small round leaves pressed to the stone)
+                case TILLANDSIA -> {
+                    rhiz = 1; leaves = between(12, 16); stalkA = 1; stalkB = 1; bladeA = 4; bladeB = 6; halfW = 0;
+                    stalkElevA = 30; stalkElevB = 85; e0A = 20; e0B = 70; droop = 25; nominal = 6;
+                }
+                case MINI_ORCHID -> {
+                    rhiz = between(2, 3); leaves = between(4, 6); stalkA = 1; stalkB = 1; bladeA = 4; bladeB = 6; halfW = 1;
+                    stalkElevA = 40; stalkElevB = 70; e0A = 20; e0B = 45; droop = 18; nominal = 7;
+                }
+                case MARCGRAVIA -> {
+                    rhiz = between(5, 7); leaves = between(10, 14); stalkA = 1; stalkB = 1; bladeA = 2; bladeB = 3; halfW = 1;
+                    stalkElevA = 70; stalkElevB = 88; e0A = 70; e0B = 88; droop = 5; nominal = 10;
+                }
                 default -> { // the wavy bucephalandras
                     rhiz = between(2, 3); leaves = between(7, 11); stalkA = 1; stalkB = 2; bladeA = 3; bladeB = 5; halfW = 1;
                     stalkElevA = 40; stalkElevB = 75; e0A = 25; e0B = 55; droop = 15; nominal = 7;
@@ -305,6 +323,14 @@ public final class PlantShapes {
                 leaf(dir[0] * at, 0, dir[1] * at, yaw, Math.max(1, (int) Math.round(len(between(stalkA, stalkB)) * f)),
                         betweenD(stalkElevA, stalkElevB), Math.max(2, (int) Math.round(len(between(bladeA, bladeB)) * f)),
                         e0A + r.nextDouble() * (e0B - e0A), e0A - droop, halfW > 1 && u < 0.75 ? 1 : (u < 0.5 ? 0 : halfW), b0, b1, wavy);
+            }
+            if (s == PlantSpecies.MINI_ORCHID) {
+                // M56: the flower spike arches out of the leaves, the flowers at its end
+                int h = Math.max(2, (int) Math.round(len(between(6, 8)) * f));
+                int[] d = DIRS[r.nextInt(4)];
+                for (int y = 1; y <= h; y++) add(y > h * 2 / 3 ? d[0] : 0, y, y > h * 2 / 3 ? d[1] : 0, PlantPart.RIBBON, stages - 1); // the spike
+                add(d[0], h + 1, d[1], PlantPart.TOP, stages);
+                add(d[0] * 2, h, d[1] * 2, PlantPart.TOP, stages);
             }
         }
 
@@ -336,10 +362,24 @@ public final class PlantShapes {
                     maxUp = Math.max(1, len(3));
                     horizontal = 10;
                 }
+                // M56: the cushion moss in domes, the reindeer lichen in branched upright tufts
+                case CUSHION_MOSS -> {
+                    amount = 150;
+                    maxR = Math.max(2, len(5));
+                    maxUp = Math.max(1, len(5));
+                    horizontal = 9;
+                    up = 13;
+                }
+                case REINDEER_LICHEN -> {
+                    amount = 120;
+                    maxR = Math.max(2, len(5));
+                    maxUp = Math.max(1, len(6));
+                    horizontal = 7;
+                }
                 default -> {}
             }
             int n = Math.max(6, (int) Math.round(amount * u * u));
-            boolean tufts = s == PlantSpecies.FLAME_MOSS;
+            boolean tufts = s == PlantSpecies.FLAME_MOSS || s == PlantSpecies.REINDEER_LICHEN;
             List<int[]> cells = new ArrayList<>();
             cells.add(new int[]{0, 0, 0});
             int tries = 0;
@@ -412,6 +452,79 @@ public final class PlantShapes {
                     leaves = between(7, 11); stalkA = 1; stalkB = 1; bladeA = 6; bladeB = 10; halfW = 0;
                     stalkElev = 86; e0 = 80; e1 = 50; nominal = 12;
                 }
+                // M56: the terrarium rosettes: bromeliad cups, ferns, carnivorous plants, sedges, succulents and grasses
+                case NEOREGELIA, GUZMANIA, VRIESEA -> {
+                    leaves = between(11, 15); stalkA = 1; stalkB = 2; bladeA = 7; bladeB = 10; halfW = 1;
+                    stalkElev = 72; e0 = 48; e1 = 8; nominal = 10;
+                }
+                case BOSTON_FERN -> {
+                    leaves = between(14, 18); stalkA = 1; stalkB = 2; bladeA = 10; bladeB = 14; halfW = 1;
+                    stalkElev = 72; e0 = 45; e1 = -30; nominal = 10;
+                }
+                case BIRDS_NEST_FERN -> {
+                    leaves = between(9, 12); stalkA = 1; stalkB = 1; bladeA = 9; bladeB = 12; halfW = 2;
+                    stalkElev = 80; e0 = 66; e1 = 30; nominal = 13;
+                }
+                case BEGONIA -> {
+                    leaves = between(6, 8); stalkA = 3; stalkB = 5; bladeA = 4; bladeB = 6; halfW = 2;
+                    stalkElev = 66; e0 = 25; e1 = 0; nominal = 9;
+                }
+                case SUNDEW -> {
+                    leaves = between(8, 12); stalkA = 2; stalkB = 3; bladeA = 1; bladeB = 2; halfW = 0;
+                    stalkElev = 15; e0 = 12; e1 = 0; nominal = 3;
+                }
+                case SARRACENIA -> {
+                    leaves = between(5, 8); stalkA = 1; stalkB = 1; bladeA = 10; bladeB = 14; halfW = 0;
+                    stalkElev = 88; e0 = 86; e1 = 80; nominal = 16;
+                }
+                case NEPENTHES -> {
+                    leaves = between(6, 9); stalkA = 1; stalkB = 2; bladeA = 5; bladeB = 7; halfW = 1;
+                    stalkElev = 60; e0 = 38; e1 = 0; nominal = 10;
+                }
+                case VENUS_FLYTRAP -> {
+                    leaves = between(6, 9); stalkA = 2; stalkB = 3; bladeA = 2; bladeB = 3; halfW = 1;
+                    stalkElev = 25; e0 = 22; e1 = 12; nominal = 4;
+                }
+                case BUTTERWORT -> {
+                    leaves = between(6, 9); stalkA = 1; stalkB = 1; bladeA = 3; bladeB = 4; halfW = 1;
+                    stalkElev = 12; e0 = 8; e1 = 0; nominal = 3;
+                }
+                case SWAMP_SEDGE -> {
+                    leaves = between(12, 18); stalkA = 1; stalkB = 1; bladeA = 10; bladeB = 16; halfW = 0;
+                    stalkElev = 86; e0 = 78; e1 = 38; nominal = 16;
+                }
+                case SOFT_RUSH -> {
+                    leaves = between(14, 20); stalkA = 1; stalkB = 1; bladeA = 12; bladeB = 18; halfW = 0;
+                    stalkElev = 88; e0 = 86; e1 = 72; nominal = 18;
+                }
+                case ECHEVERIA -> {
+                    leaves = between(14, 18); stalkA = 1; stalkB = 1; bladeA = 3; bladeB = 5; halfW = 1;
+                    stalkElev = 40; e0 = 36; e1 = 22; nominal = 5;
+                }
+                case HAWORTHIA -> {
+                    leaves = between(10, 14); stalkA = 1; stalkB = 1; bladeA = 3; bladeB = 5; halfW = 0;
+                    stalkElev = 72; e0 = 62; e1 = 45; nominal = 5;
+                }
+                case ALOE -> {
+                    leaves = between(10, 14); stalkA = 1; stalkB = 1; bladeA = 8; bladeB = 12; halfW = 1;
+                    stalkElev = 72; e0 = 60; e1 = 28; nominal = 12;
+                }
+                case AGAVE -> {
+                    leaves = between(14, 20); stalkA = 1; stalkB = 1; bladeA = 8; bladeB = 12; halfW = 1;
+                    stalkElev = 62; e0 = 46; e1 = 24; nominal = 10;
+                }
+                case LITHOPS -> {
+                    leaves = 2; stalkA = 1; stalkB = 1; bladeA = 1; bladeB = 2; halfW = 1;
+                    stalkElev = 82; e0 = 70; e1 = 60; nominal = 3;
+                }
+                case BLUE_GRAMA -> {
+                    leaves = between(12, 16); stalkA = 1; stalkB = 1; bladeA = 6; bladeB = 9; halfW = 0;
+                    stalkElev = 85; e0 = 70; e1 = 15; nominal = 9;
+                }
+                case NEEDLEGRASS -> {
+                    leaves = between(14, 20); stalkA = 1; stalkB = 1; bladeA = 10; bladeB = 14; halfW = 0;
+                    stalkElev = 86; e0 = 76; e1 = 28; nominal = 14;
+                }
                 default -> {
                     leaves = between(7, 12); stalkA = 2; stalkB = 4; bladeA = 4; bladeB = 7; halfW = 1;
                     stalkElev = 80; e0 = 62; e1 = 30; nominal = 12;
@@ -425,8 +538,243 @@ public final class PlantShapes {
                 int b1 = Math.min(stages, b0 + 2);
                 double yaw = yaw0 + k * 2.39996 + (r.nextDouble() - 0.5) * 0.4; // golden angle: leaves all around
                 leaf(0, 0, 0, yaw, Math.max(1, (int) Math.round(len(between(stalkA, stalkB)) * f)), stalkElev - r.nextDouble() * 8,
-                        Math.max(2, (int) Math.round(len(between(bladeA, bladeB)) * f)), e0 + (r.nextDouble() - 0.5) * 16, e1,
-                        u < 0.75 ? Math.min(1, halfW) : halfW, b0, b1, wavy);
+                        Math.max(s == PlantSpecies.LITHOPS || s == PlantSpecies.SUNDEW ? 1 : 2, (int) Math.round(len(between(bladeA, bladeB)) * f)),
+                        e0 + (r.nextDouble() - 0.5) * 16, e1, u < 0.75 ? Math.min(1, halfW) : halfW, b0, b1, wavy);
+            }
+            if (s.land()) landRosetteExtras(f);
+        }
+
+        /**
+         * M56: what the terrarium rosettes carry in the middle or on top: the red heart of the Neoregelia, the bract spike of the
+         * Guzmania and the Vriesea, the flower stalks of the butterwort, the Lithops flower, the pitchers of the Nepenthes on their
+         * tendrils.
+         */
+        void landRosetteExtras(double f) {
+            switch (s) {
+                case NEOREGELIA -> {
+                    // the short inner leaves around the cup turn red
+                    for (int[] d : NEIGHBOURS) add(d[0], 1, d[1], PlantPart.TOP, Math.max(1, stages - 1));
+                    add(0, 1, 0, PlantPart.TOP, stages);
+                }
+                case GUZMANIA, VRIESEA -> {
+                    int h = Math.max(2, (int) Math.round(len(s == PlantSpecies.VRIESEA ? between(9, 12) : between(5, 7)) * f));
+                    for (int y = 1; y <= h; y++) {
+                        add(0, y, 0, PlantPart.TOP, Math.max(1, stages - 1));
+                        if (s == PlantSpecies.GUZMANIA && y >= h - 2) for (int[] d : DIRS) add(d[0], y, d[1], PlantPart.TOP, stages);
+                    }
+                }
+                case BUTTERWORT, SUNDEW -> {
+                    int h = Math.max(2, (int) Math.round(len(between(4, 6)) * f));
+                    int[] d = DIRS[r.nextInt(4)];
+                    for (int y = 1; y <= h; y++) add(y > h / 2 ? d[0] : 0, y, y > h / 2 ? d[1] : 0, y == h ? PlantPart.TOP : PlantPart.RIBBON, stages); // the stalk
+                }
+                case LITHOPS -> add(0, Math.max(1, len(2)), 0, PlantPart.TOP, stages);
+                case NEPENTHES -> {
+                    int pitchers = between(2, 4);
+                    for (int k = 0; k < pitchers; k++) {
+                        double a = r.nextDouble() * Math.PI * 2;
+                        double d = Math.max(2, len(betweenD(5, 7)) * f);
+                        int x = (int) Math.round(Math.cos(a) * d), z = (int) Math.round(Math.sin(a) * d);
+                        int born = Math.max(2, stages - pitchers + k + 1);
+                        int hang = Math.max(2, len(4));
+                        int y0 = Math.max(1, len(2));
+                        // the tendril (ribbon blocks) from the crown out to the pitcher, the pitcher hanging under its end
+                        int steps = Math.max(Math.abs(x), Math.abs(z));
+                        for (int i = 1; i <= steps; i++) {
+                            add((int) Math.round(x * i / (double) steps), i == steps ? y0 : Math.max(1, Math.min(y0 + 1, 1 + i * y0 / steps)),
+                                    (int) Math.round(z * i / (double) steps), PlantPart.RIBBON, born);
+                        }
+                        for (int y = y0 - 1; y >= 0 && y > y0 - hang; y--) add(x, y, z, PlantPart.TOP, born);
+                    }
+                }
+                default -> {}
+            }
+        }
+
+        /**
+         * M56: the stem plants of the land: low bushes (Fittonia, Peperomia), the climbing Pothos (up a stake towards the lid, its
+         * tips trailing) and the culms of papyrus and the umbrella sedge with their umbrellas of rays or bracts on top.
+         */
+        void landStems() {
+            boolean umbrella = s == PlantSpecies.PAPYRUS || s == PlantSpecies.UMBRELLA_SEDGE;
+            boolean vine = s == PlantSpecies.POTHOS;
+            double nominal = switch (s) {
+                case PAPYRUS -> 28;
+                case UMBRELLA_SEDGE -> 18;
+                case POTHOS -> 26;
+                case PEPEROMIA -> 7;
+                default -> 5; // Fittonia
+            };
+            int top = Math.max(2, Math.min(headroom - 1, (int) Math.round(len(nominal) * fit(nominal))));
+            int count = umbrella ? between(4, 6) : vine ? between(2, 3) : between(3, 4);
+            int nodeEvery = umbrella ? Integer.MAX_VALUE : vine || s == PlantSpecies.PEPEROMIA ? 2 : 1;
+            List<int[]> bases = new ArrayList<>();
+            bases.add(new int[]{0, 0});
+            List<int[]> around = new ArrayList<>(List.of(NEIGHBOURS));
+            Collections.shuffle(around, r);
+            for (int i = 1; i < count && i <= around.size(); i++) bases.add(around.get(i - 1));
+            for (int si = 0; si < bases.size(); si++) {
+                int[] base = bases.get(si);
+                int b0 = 1 + Math.min(si, 2);
+                int height = Math.max(2, top - (si == 0 ? 0 : r.nextInt(Math.max(1, top / 3) + 1)));
+                int[] lean = umbrella ? DIRS[si % 4] : DIRS[r.nextInt(4)];
+                int leanEvery = umbrella ? between(6, 10) : vine ? between(3, 5) : between(2, 3);
+                int x = base[0], z = base[1];
+                int axis = r.nextInt(2);
+                int last = stages - (si < 2 ? 1 : 0);
+                for (int h = 0; h <= height; h++) {
+                    if (h > 0 && h % leanEvery == 0) {
+                        x += lean[0];
+                        z += lean[1];
+                    }
+                    int born = birth(b0, last, h / (double) (height + 1));
+                    boolean tip = !umbrella && h >= height - 1;
+                    if (h > 0 || si > 0) add(x, h, z, tip ? PlantPart.TOP : PlantPart.STEM, born);
+                    if (h >= 1 && h % nodeEvery == 0) {
+                        int[] side = (axis + h / nodeEvery) % 2 == 0 ? new int[]{1, 0} : new int[]{0, 1};
+                        PlantPart leafPart = h >= height - 1 ? PlantPart.TOP : PlantPart.LEAF;
+                        add(x + side[0], h, z + side[1], leafPart, born);
+                        add(x - side[0], h, z - side[1], leafPart, born);
+                        if (vine && u >= 0.75) add(x + side[0] * 2, h - 1, z + side[1] * 2, leafPart, born); // the heart leaves hang
+                    }
+                }
+                if (umbrella) {
+                    // the umbrella: rays (papyrus) or leaf-like bracts (umbrella sedge) all around the top of the culm
+                    int rays = s == PlantSpecies.PAPYRUS ? between(10, 14) : between(7, 10);
+                    int len = Math.max(1, len(s == PlantSpecies.PAPYRUS ? betweenD(3, 5) : betweenD(4, 6)));
+                    for (int k = 0; k < rays; k++) {
+                        double a = k * Math.PI * 2 / rays + r.nextDouble() * 0.3;
+                        for (int j = 1; j <= len; j++) {
+                            int y = height + (s == PlantSpecies.PAPYRUS ? (j <= len / 2 ? 1 : 0) : (j > len * 2 / 3 ? -1 : 0));
+                            add(x + (int) Math.round(Math.cos(a) * j), y, z + (int) Math.round(Math.sin(a) * j),
+                                    s == PlantSpecies.PAPYRUS ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, last + (j > len / 2 ? 1 : 0)));
+                        }
+                    }
+                }
+                if (vine && si < 2 && height >= top - 1) {
+                    // at the top of its stake the vine trails down again
+                    int[] d = DIRS[r.nextInt(4)];
+                    int run = Math.max(1, len(between(3, 5)));
+                    for (int k = 1; k <= run; k++) add(x + d[0] * k, height - k / 2, z + d[1] * k, PlantPart.TOP, stages);
+                }
+            }
+        }
+
+        /**
+         * M56: the cacti (body blocks are leaf parts: a full block of the ribbed cactus texture; spines, crown and flowers are tops):
+         * the golden barrel a squat ball with its yellow crown, the column a ribbed column with one or two arms and a white tip,
+         * the prickly pear a chain of flat pads with yellow flowers on the rim, the Mammillaria a cluster of small balls with a ring
+         * of pink flowers.
+         */
+        void cactus() {
+            switch (s) {
+                case COLUMN_CACTUS -> column();
+                case PRICKLY_PEAR -> pads();
+                case MAMMILLARIA -> {
+                    int heads = between(3, 5);
+                    double rad = Math.max(1.0, betweenD(2.0, 2.6) * u);
+                    for (int k = 0; k < heads; k++) {
+                        double a = k * 2.39996 + r.nextDouble() * 0.5;
+                        double d = k == 0 ? 0 : rad * 1.6;
+                        int born0 = 1 + k * Math.max(1, stages - 2) / heads;
+                        if (k > 0) { // a neck from the first head out to this one (the offsets sprout from its base)
+                            int steps = (int) Math.ceil(d) + 1;
+                            for (int i = 0; i <= steps; i++) add((int) Math.round(Math.cos(a) * d * i / steps), 0, (int) Math.round(Math.sin(a) * d * i / steps), PlantPart.LEAF, born0);
+                        }
+                        knob(Math.cos(a) * d, rad, Math.sin(a) * d, rad, rad * 0.9, born0, true);
+                    }
+                }
+                default -> knob(0, Math.max(1.5, betweenD(4.5, 5.5) * u) * 0.85, 0, Math.max(1.5, betweenD(4.5, 5.5) * u), 0.85, 1, true);
+            }
+        }
+
+        /**
+         * A ball of cactus body around (cx, cy, cz) growing from stage {@code born0} to full size {@code rad} (squashed by
+         * {@code squash} in height); the crown on top (golden spines or a ring of flowers) in the last stage.
+         */
+        void knob(double cx, double cy, double cz, double rad, double squash, int born0, boolean crown) {
+            int ri = (int) Math.ceil(rad) + 1;
+            int span = Math.max(1, stages - born0);
+            double sq = squash <= 0 ? 1 : squash;
+            for (int dx = -ri; dx <= ri; dx++)
+                for (int dz = -ri; dz <= ri; dz++)
+                    for (int dy = 0; dy <= 2 * ri; dy++) {
+                        for (int st = born0; st <= stages; st++) {
+                            double rs = 0.8 + (rad - 0.8) * (st - born0 + 1) / (span + 1);
+                            double ex = dx - cx, ey = (dy - cy * (st - born0 + 1) / (span + 1)) / sq, ez = dz - cz;
+                            if (ex * ex + ey * ey + ez * ez <= rs * rs + 0.3) {
+                                add((int) Math.round(dx), dy, (int) Math.round(dz), PlantPart.LEAF, st);
+                                break;
+                            }
+                        }
+                    }
+            if (!crown) return;
+            int topY = (int) Math.round(cy + rad * sq);
+            int cxi = (int) Math.round(cx), czi = (int) Math.round(cz);
+            if (s == PlantSpecies.MAMMILLARIA) {
+                // a ring of flowers around the top
+                int rr = Math.max(1, (int) Math.round(rad * 0.6));
+                for (int[] d : NEIGHBOURS) if (Math.abs(d[0]) + Math.abs(d[1]) <= 2) add(cxi + d[0] * rr / Math.max(1, rr), topY, czi + d[1] * rr / Math.max(1, rr), PlantPart.TOP, stages);
+            } else {
+                add(cxi, topY, czi, PlantPart.TOP, stages);
+                for (int[] d : DIRS) add(cxi + d[0], topY - (rad > 2 ? 0 : 1), czi + d[1], PlantPart.TOP, stages);
+            }
+        }
+
+        /** The column cactus: a ribbed column (a cross of five blocks per layer) up to its height, one or two arms bending upwards. */
+        void column() {
+            double f = fit(26);
+            int height = Math.max(3, (int) Math.round(len(between(20, 26)) * f));
+            boolean thick = u >= 0.75;
+            for (int y = 0; y <= height; y++) {
+                int born = birth(1, stages, y / (double) (height + 1));
+                PlantPart part = y >= height - 1 ? PlantPart.TOP : PlantPart.LEAF;
+                if (y > 0) add(0, y, 0, part, born);
+                if (thick) for (int[] d : DIRS) add(d[0], y, d[1], part, born);
+            }
+            int arms = between(1, 2);
+            int[] first = DIRS[r.nextInt(4)];
+            for (int a = 0; a < arms; a++) {
+                int[] d = a == 0 ? first : new int[]{-first[0], -first[1]};
+                int y0 = Math.max(2, (int) Math.round(height * betweenD(0.35, 0.55)));
+                int out = Math.max(2, len(between(3, 4)));
+                int up = Math.max(2, (int) Math.round(height * betweenD(0.3, 0.45)));
+                int born0 = Math.max(2, stages - 2 + a);
+                for (int k = 1; k <= out; k++) add(d[0] * (k + (thick ? 1 : 0)), y0, d[1] * (k + (thick ? 1 : 0)), PlantPart.LEAF, born0);
+                int ax = d[0] * (out + (thick ? 1 : 0)), az = d[1] * (out + (thick ? 1 : 0));
+                for (int y = 1; y <= up; y++) add(ax, y0 + y, az, y >= up - 1 ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born0 + y * 2 / Math.max(1, up)));
+            }
+        }
+
+        /** The prickly pear: flat oval pads standing on each other's rims, yellow flowers on the rim of the newest. */
+        void pads() {
+            double f = fit(18);
+            int ph = Math.max(2, (int) Math.round(len(6) * f)), pw = Math.max(1, (int) Math.round(len(2.4) * f));
+            int count = between(4, 6);
+            List<double[]> pads = new ArrayList<>(); // x, y, z, axis (0 = in x, 1 = in z)
+            pads.add(new double[]{0, 0, 0, r.nextInt(2)});
+            for (int i = 1; i < count; i++) {
+                double[] parent = pads.get(r.nextInt(pads.size()));
+                double side = r.nextBoolean() ? 1 : -1;
+                double axis = parent[3];
+                double px = parent[0] + (axis == 0 ? side * pw * 0.9 : 0), pz = parent[2] + (axis == 1 ? side * pw * 0.9 : 0);
+                pads.add(new double[]{px, parent[1] + ph * 0.75, pz, r.nextInt(3) == 0 ? 1 - axis : axis});
+            }
+            for (int i = 0; i < pads.size(); i++) {
+                double[] pd = pads.get(i);
+                int born0 = 1 + i * Math.max(1, stages - 2) / pads.size();
+                for (int dy = 0; dy <= ph; dy++)
+                    for (int dw = -pw; dw <= pw; dw++) {
+                        double ey = (dy - ph / 2.0) / (ph / 2.0 + 0.5), ew = dw / (pw + 0.5);
+                        if (ey * ey + ew * ew > 1.0) continue;
+                        int x = (int) Math.round(pd[0] + (pd[3] == 0 ? dw : 0)), z = (int) Math.round(pd[2] + (pd[3] == 1 ? dw : 0));
+                        int y = (int) Math.round(pd[1]) + dy;
+                        add(x, y, z, PlantPart.LEAF, Math.min(stages, born0 + (dy > ph / 2 ? 1 : 0)));
+                    }
+                if (i >= pads.size() - 2) {
+                    int topY = (int) Math.round(pd[1]) + ph + 1;
+                    add((int) Math.round(pd[0]), topY, (int) Math.round(pd[2]), PlantPart.TOP, stages);
+                }
             }
         }
 
@@ -589,6 +937,8 @@ public final class PlantShapes {
                 case HC_CUBA -> 56;
                 case ELEOCHARIS -> 30;
                 case STAUROGYNE -> 34;
+                case SELAGINELLA -> 40; // M56
+                case SEDUM -> 36;
                 default -> 42;
             };
             int n = Math.max(4, (int) Math.round(amount * u * u));
@@ -623,6 +973,17 @@ public final class PlantShapes {
                     }
                     case MARSILEA -> {
                         if (r.nextInt(4) == 0) add(c[0], 1, c[1], PlantPart.LEAF, born);
+                    }
+                    // M56: the spikemoss in low feathery shoots, the stonecrop a dense cushion with a few flowers
+                    case SELAGINELLA -> {
+                        if (r.nextInt(3) == 0) continue;
+                        int h = Math.max(1, (int) Math.round(len(between(2, 3)) * f));
+                        for (int y = 1; y <= h; y++) add(c[0], y, c[1], y == h ? PlantPart.TOP : PlantPart.LEAF, Math.min(stages, born + y - 1));
+                    }
+                    case SEDUM -> {
+                        if (r.nextInt(2) != 0) continue;
+                        add(c[0], 1, c[1], PlantPart.LEAF, born);
+                        if (r.nextInt(4) == 0) add(c[0], 2, c[1], PlantPart.TOP, stages);
                     }
                     default -> {}
                 }

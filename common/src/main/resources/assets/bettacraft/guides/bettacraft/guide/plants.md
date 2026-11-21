@@ -14,6 +14,8 @@ and over the days it grows into a plant of many blocks: fronds, leaves, stems, r
 part of the miniature behind the glass. Every plant looks a little different.
 Kelp, seagrass, corals and the water plants of other mods work in the interior as well, without growing: see
 [Plants of other mods](plants/foreign_plants.md).
+Above the water of a humid paludarium they grow in their **emersed form**, at half speed; the land itself has its own
+[terrarium plants](terrarium/plants.md).
 
 ## Wild in the world
 

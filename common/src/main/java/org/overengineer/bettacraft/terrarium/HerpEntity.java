@@ -250,6 +250,39 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
 
     // ------------------------------------------------------------------ needs, food
 
+    // ------------------------------------------------------------------ M56: the tadpole in a bromeliad
+
+    /** M56: the water cup of a bromeliad this tadpole lives in (tank position), or null (it swims in the tank's water). */
+    @Nullable
+    private Vec3 nursery;
+
+    @Nullable
+    public Vec3 nursery() {
+        return nursery;
+    }
+
+    /** M56: puts a tadpole into the water cup of a bromeliad (it stays there until it is a froglet). */
+    public void putInNursery(Vec3 cup) {
+        nursery = cup;
+        moveTo(cup.x, cup.y, cup.z, getYRot(), 0F);
+    }
+
+    /** M56: a tadpole in a bromeliad's cup right now. */
+    public boolean inNursery() {
+        return nursery != null && isTadpole();
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        if (inNursery() && inTank()) {
+            // it stays in its cup (the bromeliad holds it; the walker waits)
+            if (position().distanceToSqr(nursery) > 1e-5) setPos(nursery.x, nursery.y, nursery.z);
+            walker.hold();
+            return;
+        }
+        super.customServerAiStep();
+    }
+
     /** Part c: a dart frog tadpole (in the water until {@link #METAMORPHOSIS}). */
     public boolean isTadpole() {
         return species.tadpoles() && isBaby() && growth() < METAMORPHOSIS;
@@ -342,6 +375,12 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             setBrumating(false);
         }
         frost = t.hasClimate() && t.airTemp() < FROST;
+        if (nursery != null && !isTadpole()) {
+            // M56: a froglet now: it leaves the bromeliad
+            nursery = null;
+            org.overengineer.bettacraft.tank.TankCare.log(level, c, "log.bettacraft.terrarium_plant.froglet", org.overengineer.bettacraft.tank.TankCare.nameArg(this));
+        }
+        if (inNursery()) feed(); // M56: the mother feeds the tadpoles in the bromeliads (unfertilized eggs)
         fresh = species.brackish() && org.overengineer.bettacraft.terrarium.Mudskippers.fresh(t); // M49
         if (isBrumating()) pauseHunger(days);
         super.onTerrariumCare(level, c, adjust(a), days);
@@ -350,6 +389,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     /** A brumating tortoise does not mind the cold, the missing basking spot or UV; frost and the wrong tank still count. */
     @Override
     public TerrariumNeeds.Assessment adjust(TerrariumNeeds.Assessment a) {
+        if (inNursery()) return TerrariumNeeds.Assessment.FINE; // M56: the cup of a bromeliad is all it needs
         if (fresh) { // M49: the mudskipper in fresh water
             EnumSet<TerrariumNeeds.Problem> p = EnumSet.noneOf(TerrariumNeeds.Problem.class);
             p.addAll(a.problems());
@@ -496,6 +536,11 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
         tag.putInt("Generation", generation);
         tag.putLong("NextLay", nextLay);
         tag.putBoolean("Brumating", isBrumating());
+        if (nursery != null) { // M56
+            tag.putDouble("NurseryX", nursery.x);
+            tag.putDouble("NurseryY", nursery.y);
+            tag.putDouble("NurseryZ", nursery.z);
+        }
     }
 
     @Override
@@ -507,6 +552,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
         generation = tag.getInt("Generation");
         nextLay = tag.getLong("NextLay");
         setBrumating(tag.getBoolean("Brumating"));
+        nursery = tag.contains("NurseryX") ? new Vec3(tag.getDouble("NurseryX"), tag.getDouble("NurseryY"), tag.getDouble("NurseryZ")) : null; // M56
         if (isBaby()) entityData.set(DATA_GROWTH, growth());
     }
 

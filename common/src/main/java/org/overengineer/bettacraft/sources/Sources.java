@@ -179,6 +179,7 @@ public final class Sources {
                 org.overengineer.bettacraft.world.Wildlife.SMARAGDINA_SHARE, min, max, 0, false, Feature.WILD_BETTAS.key(), null));
         wildlife(out);
         wildPlants(out);
+        wildLandPlants(out); // M56
     }
 
     /**
@@ -198,6 +199,18 @@ public final class Sources {
                 String target = t.plantItem() ? Target.plant(PlantSpecies.byId(t.id())) : Target.floating(t);
                 out.add(new Source(Source.Kind.BLOCK_DROP, target, w.where(), 1.0, 1.0, 1, 1, 0, false,
                         (t.plantItem() ? Feature.AQUATIC_WILD : Feature.FLOATING_WILD).key(), WILD_FLOATING_BLOCK));
+            }
+        }
+    }
+
+    /** M56: the wild terrarium plants on the land (shears cut a cutting, an offset or a piece of moss off the plant). */
+    private static void wildLandPlants(List<Source> out) {
+        for (WildTables.LandPlace w : WildTables.LandPlace.values()) {
+            for (var e : WildTables.wildLandPlants(w).entries()) {
+                PlantSpecies s = e.value();
+                int n = s.propagation() == PlantSpecies.Propagation.CUTTING && s.form() == PlantSpecies.Form.STEM ? 2 : 1;
+                out.add(new Source(Source.Kind.SHEARS, Target.plant(s), w.where(), 1.0, 1.0, n, n, 0, false, Feature.TERRARIUM_PLANTS_WILD.key(),
+                        "bettacraft:wild_" + s.id()));
             }
         }
     }
