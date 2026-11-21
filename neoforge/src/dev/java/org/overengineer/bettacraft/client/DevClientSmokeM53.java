@@ -76,6 +76,8 @@ final class DevClientSmokeM53 {
     private final UUID alice = UUID.nameUUIDFromBytes("m53-alice".getBytes()), bob = UUID.nameUUIDFromBytes("m53-bob".getBytes());
     private final List<Entity> shown = new ArrayList<>();
     private int interiorFails, interiorShots;
+    /** A scene of an earlier milestone running inside this one (render part: M11, M13). */
+    private java.util.function.BooleanSupplier sub;
 
     DevClientSmokeM53() {
         String p = System.getProperty("bettacraft.smoketest.m53parts", "users,maps,interior,animals,critters");
@@ -84,6 +86,7 @@ final class DevClientSmokeM53 {
         logRenderSetup();
         then(1, () -> server(this::build));
         then(20, () -> {});
+        if (parts.contains("render")) render();
         if (parts.contains("users")) users();
         if (parts.contains("maps")) maps();
         if (parts.contains("interior")) interior();
@@ -120,12 +123,45 @@ final class DevClientSmokeM53 {
         LOGGER.info("[smoketest] M53 tank at {}", tank.getBlockPos());
     }
 
+    // ------------------------------------------------------------------ render matrix: M11 (styles, glass, water, menus), M13 (plants, interior, miniature), frame rate
+
+    private void render() {
+        then(1, () -> {
+            LOGGER.info("[smoketest] M53 render: M11 scene");
+            DevClientSmokeM11 s11 = new DevClientSmokeM11();
+            sub = s11::tick;
+        });
+        then(1, () -> {
+            LOGGER.info("[smoketest] M53 render: M13 scene");
+            DevClientSmokeM13 s13 = new DevClientSmokeM13();
+            sub = s13::tick;
+        });
+        then(1, () -> {
+            if (mc.screen != null) mc.setScreen(null);
+            if (mc.player != null && mc.level != null && !mc.level.dimension().equals(net.minecraft.world.level.Level.OVERWORLD)) server(InteriorManager::leave);
+        });
+        then(40, () -> look(base.getX() + 1.5, base.getY() + 1.4, base.getZ() - 3.0, 0F, 10F));
+        int[] samples = new int[5];
+        for (int i = 0; i < samples.length; i++) {
+            int k = i;
+            then(i == 0 ? 60 : 20, () -> samples[k] = mc.getFps());
+        }
+        then(1, () -> {
+            double sum = 0;
+            for (int f : samples) sum += f;
+            LOGGER.info("[smoketest] M53 fps at the tank: {} (samples {})", Math.round(sum / samples.length), java.util.Arrays.toString(samples));
+            shot("render_fps_view");
+        });
+    }
+
     // ------------------------------------------------------------------ users tab, gear, client config
 
     private void users() {
         for (String lang : new String[]{"en_us", "de_de"}) {
             then(1, () -> language(lang));
-            then(40, () -> openMenu());
+            // the menu stays open only near the tank (stillValid)
+            then(40, () -> look(base.getX() + 1.5, base.getY() + 1.2, base.getZ() - 2.5, 0F, 10F));
+            then(5, () -> openMenu());
             then(30, () -> {
                 if (mc.screen instanceof TankScreen ts) ts.selectTabForTest(0);
             });
@@ -258,8 +294,8 @@ final class DevClientSmokeM53 {
         List<EntityType<?>> cur = new ArrayList<>();
         double width = 0;
         for (EntityType<?> t : types) {
-            double w = Math.max(0.6, t.getWidth() * 1.6);
-            if (!cur.isEmpty() && (cur.size() >= 6 || width + w > 9)) {
+            double w = Math.max(0.45, t.getWidth() * 1.3);
+            if (!cur.isEmpty()) { // one animal per picture: the small ones fill it
                 groups.add(cur);
                 cur = new ArrayList<>();
                 width = 0;
@@ -269,13 +305,17 @@ final class DevClientSmokeM53 {
         }
         if (!cur.isEmpty()) groups.add(cur);
         LOGGER.info("[smoketest] M53 animals: {} types in {} groups", types.size(), groups.size());
+        then(1, () -> {
+            mc.options.hideGui = true;
+            mc.options.fov().set(30);
+        });
         for (int g = 0; g < groups.size(); g++) {
             List<EntityType<?>> group = groups.get(g);
             int gi = g;
             double[] span = new double[1];
             then(1, () -> server(p -> span[0] = spawnGroup(p, group, gi)));
             then(30, () -> {});
-            String[] sides = {"front", "left", "back", "right"};
+            String[] sides = {"yaw0", "yaw90", "yaw180", "yaw270"};
             float[] yaws = {0F, 90F, 180F, 270F};
             for (int s = 0; s < 4; s++) {
                 float yaw = yaws[s];
@@ -297,6 +337,10 @@ final class DevClientSmokeM53 {
             });
             then(1, () -> server(p -> clearShown()));
         }
+        then(1, () -> {
+            mc.options.hideGui = false;
+            mc.options.fov().set(70);
+        });
     }
 
     private Vec3 groupCentre = Vec3.ZERO;
@@ -306,7 +350,8 @@ final class DevClientSmokeM53 {
     }
 
     private static double dist(double span) {
-        return Math.max(2.5, span * 0.85 + 1.0);
+        // field of view 30 while the animals are shown: the picture is 0.71 times the distance wide
+        return Math.max(0.55, span * 1.1 / 0.71 + 0.2);
     }
 
     private double spawnGroup(ServerPlayer p, List<EntityType<?>> group, int index) {
@@ -315,10 +360,10 @@ final class DevClientSmokeM53 {
         double y = base.getY() + 40;
         double x = base.getX() + 0.5, z = base.getZ() + 0.5 + 40;
         double total = 0;
-        for (EntityType<?> t : group) total += Math.max(0.6, t.getWidth() * 1.6);
+        for (EntityType<?> t : group) total += Math.max(t.getHeight(), t.getWidth()) * 2.0;
         double at = x - total / 2;
         for (EntityType<?> t : group) {
-            double w = Math.max(0.6, t.getWidth() * 1.6);
+            double w = Math.max(0.45, t.getWidth() * 1.3);
             Entity e;
             try {
                 e = t.create(level);
@@ -382,17 +427,16 @@ final class DevClientSmokeM53 {
             TankCritters.sync(level, tank);
             LOGGER.info("[smoketest] M53 critters: {} species", i);
         }));
-        double cx = base.getX() + 1.5, cz = base.getZ() + 1.0, cy = base.getY() + 0.6;
-        then(30, () -> look(cx, cy, cz - 2.3, 0F, 15F));
-        then(30, () -> shot("critters_front"));
-        then(1, () -> look(cx, cy, cz + 2.3, 180F, 15F));
-        then(30, () -> shot("critters_back"));
-        then(1, () -> look(cx - 2.8, cy, cz, 270F, 15F));
-        then(30, () -> shot("critters_left"));
-        then(1, () -> look(cx + 2.8, cy, cz, 90F, 15F));
-        then(30, () -> shot("critters_right"));
-        then(1, () -> look(cx, cy + 2.6, cz + 0.01, 180F, 89.9F));
-        then(30, () -> shot("critters_top"));
+        then(1, () -> mc.options.hideGui = true);
+        String[] names = {"front", "back", "left", "right", "top"};
+        double[][] at = {{0, 0, -2.3, 0, 15}, {0, 0, 2.3, 180, 15}, {-2.8, 0, 0, 270, 15}, {2.8, 0, 0, 90, 15}, {0, 2.0, 0.01, 180, 89.9}};
+        for (int i = 0; i < names.length; i++) {
+            double[] a = at[i];
+            String n = names[i];
+            then(i == 0 ? 30 : 1, () -> look(base.getX() + 1.5 + a[0], base.getY() + 0.6 + a[1], base.getZ() + 1.0 + a[2], (float) a[3], (float) a[4]));
+            then(30, () -> shot("critters_" + n));
+        }
+        then(1, () -> mc.options.hideGui = false);
     }
 
     // ------------------------------------------------------------------ helpers
@@ -437,6 +481,10 @@ final class DevClientSmokeM53 {
         }
         // a map mod may open a screen of its own on the first start
         if (mc.screen != null && mc.screen.getClass().getName().toLowerCase(Locale.ROOT).matches(".*(journeymap|xaero|ftb).*")) mc.setScreen(null);
+        if (sub != null) {
+            if (sub.getAsBoolean()) sub = null;
+            return false;
+        }
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
