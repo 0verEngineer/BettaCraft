@@ -140,6 +140,7 @@ Zucht-Schalter `breeding.enabled`, Schildkröten die Terrarien). Aus heißt:
 | `bettas.enabled` | die Pflege der Bettas (Hunger, Krankheit, Wachstum), Nester und Kämpfe |
 | `breeding.enabled` | jede Zucht: Nester, Laichen, Trächtigkeit, Gelege, Junge der Garnelen und Schnecken |
 | `interior.enabled` | niemand kann in ein Becken (wer drin ist, kann hinaus); die Pflanzen drinnen wachsen nicht |
+| `interior.cleanup` | entfernte Innenräume bleiben auf der Platte und leere Innenraum-Chunks werden gespeichert, wie vor 1.43 ([Speicherplatz](interior.md)) |
 | `floatingPlants.enabled`, `aquaticPlants.enabled`, `corals.enabled` | diese Pflanzen wachsen, wuchern und zehren nicht |
 | `invertebrates.enabled` | Garnelen, Schnecken und Krebse stehen still (kein Fressen, Altern, Vermehren, Sterben) |
 | `algae.enabled` | Algen wachsen nicht und werden nicht abgeweidet |
@@ -340,7 +341,9 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
 ## Befehle
 
 * `/bettacraft interior leave`: einen Innenraum verlassen.
-* Operatoren: `/bettacraft interior resync` (alle Miniaturen neu senden), `/bettacraft interior bench` (Messung),
+* Operatoren: `/bettacraft interior cleanup` (was die entfernten Innenräume auf der Platte belegen; `... cleanup run`
+  speichert die Welt und löscht es sofort, siehe [Speicherplatz](interior.md)), `/bettacraft interior resync` (alle Miniaturen
+  neu senden), `/bettacraft interior bench` (Messung),
   `/bettacraft wateranimals` (jedes Wassertier der geladenen Mods und ob Aquarien es nehmen, als Tabelle in
   `bettacraft-water-animals.tsv`).
 * Operatoren: `/bettacraft wildlife` zeigt für deine Position das Biom, seine Gewässerart, die Tiere der Mod, die dort

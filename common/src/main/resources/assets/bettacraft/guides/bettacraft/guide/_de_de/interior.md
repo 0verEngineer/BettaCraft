@@ -59,6 +59,17 @@ Die Miniatur wird im Hintergrund gebaut und Block für Block aktualisiert. Block
 nicht gezeigt. Sehr große Bauten enden an einem Limit (`interior.maxRenderedBlocks`); der Tooltip des Innenraum-Knopfs im Menü meldet
 dann „Render-Limit erreicht“.
 
+## Speicherplatz
+
+Jeder Innenraum liegt in einem eigenen Bereich der Innenraum-Dimension. Wird ein Becken abgebaut, vergrößert, geteilt,
+zusammengelegt oder gedreht, wird sein alter Innenraum entfernt: nach dem nächsten Speichern der Welt werden seine Chunks im
+laufenden Spiel von der Platte gelöscht (der Platz in den Region-Dateien wird wieder benutzt), seine Region-Dateien beim
+nächsten Start, und seine Nummer bekommt das nächste neue Becken. Leere Chunks des Innenraums (nur Luft) werden gar nicht erst
+gespeichert. Die Innenräume stehender, in ein Item eingepackter und auf einem Fahrzeug reisender Becken werden nie angefasst;
+ein alter Innenraum, dessen Wände noch stehen, bleibt erhalten. Operatoren sehen mit `/bettacraft interior cleanup`, wie viel
+die entfernten Innenräume belegen, und starten das Aufräumen mit `/bettacraft interior cleanup run` sofort. Schalter:
+`features.interior.cleanup` (aus: alles bleibt wie bisher auf der Platte).
+
 ## In diesem Kapitel
 
 <SubPages icons={true} />

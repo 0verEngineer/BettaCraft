@@ -139,6 +139,7 @@ another group (reef fish and seahorses need the tankmates, corals need salt wate
 | `bettas.enabled` | betta care (hunger, illness, growth), nests and fights |
 | `breeding.enabled` | every breeding: nests, spawning, pregnancies, clutches, shrimp and snail young |
 | `interior.enabled` | nobody can go into a tank (who is inside can leave); the plants inside do not grow |
+| `interior.cleanup` | removed interiors stay on the disk and empty interior chunks are stored, as before 1.43 ([disk space](interior.md)) |
 | `floatingPlants.enabled`, `aquaticPlants.enabled`, `corals.enabled` | these plants neither grow, spread nor take up waste |
 | `invertebrates.enabled` | shrimp, snails and crayfish stand still (no eating, ageing, breeding, dying) |
 | `algae.enabled` | algae neither grow nor get grazed |
@@ -326,7 +327,9 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
 ## Commands
 
 * `/bettacraft interior leave`: leave an interior.
-* Operators: `/bettacraft interior resync` (send all miniatures again), `/bettacraft interior bench` (measure),
+* Operators: `/bettacraft interior cleanup` (what the removed interiors leave on the disk; `... cleanup run` saves the world
+  and deletes it now, see [disk space](interior.md)), `/bettacraft interior resync` (send all miniatures again),
+  `/bettacraft interior bench` (measure),
   `/bettacraft wateranimals` (every water animal of the loaded mods and whether aquariums take it, as a table in
   `bettacraft-water-animals.tsv`).
 * Operators: `/bettacraft wildlife` shows for your position the biome, its kind of water, the animals of the mod that
