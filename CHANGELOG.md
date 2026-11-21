@@ -8,7 +8,7 @@ version as release notes.
 
 The same version for **Minecraft 26.3**, on NeoForge and Fabric: `bettacraft-neoforge-26.3-<version>.jar` and
 `bettacraft-fabric-26.3-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.3 they load as
-usual. 26.3 is fully maintained while it is the newest Minecraft version.
+usual. Every Minecraft version gets every new feature and every fix.
 
 ### Added
 - **Minecraft 26.3**: NeoForge 26.3.0.113+ and Fabric (Fabric Loader 0.18.4+, Fabric API 0.166+, Forge Config API Port
@@ -79,7 +79,7 @@ usual. 26.3 is fully maintained while it is the newest Minecraft version.
 
 The same version for **Minecraft 26.2**, on NeoForge and Fabric: `bettacraft-neoforge-26.2-<version>.jar` and
 `bettacraft-fabric-26.2-<version>.jar`. Java 25. Worlds do not move between Minecraft versions; within 26.2 they load as
-usual. 26.2 gets this release and afterwards fixes for severe bugs only.
+usual. Every Minecraft version gets every new feature and every fix.
 
 ### Added
 - **Minecraft 26.2**: NeoForge 26.2.0.95+ and Fabric (Fabric Loader 0.18.4+, Fabric API 0.161+, Forge Config API Port
