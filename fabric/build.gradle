@@ -213,6 +213,16 @@ def nestedJars = { String dirName, Collection<File> sources, Closure<Boolean> ac
 configurations {
     patchouliJar { transitive = false }
 }
+// M52.5: -PexactFabricVersions runs the dev and production tasks with exactly fabric_loader_version and the Fabric API modules
+// of fabric_api_version (the dependencies of other mods would pull newer ones), to test the declared minimums, e.g.
+// gradlew runFabricGameTest -Pfabric_loader_version=0.18.4 -Pfabric_api_version=0.161.0+26.2 -PexactFabricVersions
+if (project.hasProperty('exactFabricVersions')) {
+    dependencies {
+        modImplementation enforcedPlatform("net.fabricmc.fabric-api:fabric-api-bom:${fabric_api_version}")
+    }
+    configurations.configureEach { resolutionStrategy.force "net.fabricmc:fabric-loader:${fabric_loader_version}" }
+}
+
 dependencies {
     patchouliJar "maven.modrinth:modonomicon:${modonomicon_fabric_version}"
 }
