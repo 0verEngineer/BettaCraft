@@ -51,6 +51,23 @@ public class GeckoModel extends EntityModel<MobState<TerrariumAnimalEntity>> {
         tail.yRot = -wave * 1.5F + idle * 0.5F;
         tip.yRot = tail.yRot * 1.6F + idle;
         tip.x += Mth.sin(tail.yRot) * 4.5F;
+        // M54: the actions of a lizard while it sits still (eased in and out)
+        float look = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.LOOK, ageInTicks);
+        float wag = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.TAIL, ageInTicks);
+        float stretch = e.actionWeight(org.overengineer.bettacraft.terrarium.Habits.Action.STRETCH, ageInTicks);
+        if (look > 0) { // turns its head to one side, holds, then the other
+            float side = Mth.clamp(Mth.sin(ageInTicks * 0.07F) * 1.8F, -1F, 1F);
+            head.yRot += side * 0.55F * look;
+            head.xRot -= 0.12F * look;
+        }
+        if (wag > 0) tip.yRot += Mth.sin(ageInTicks * 0.9F) * 0.7F * wag; // the tail tip waves fast (a hunting gecko)
+        if (stretch > 0) { // up on its front legs, head raised
+            body.xRot -= 0.14F * stretch;
+            head.xRot -= 0.4F * stretch;
+            head.y -= 0.7F * stretch;
+            legFr.y += 0.4F * stretch;
+            legFl.y += 0.4F * stretch;
+        }
         if (e.herpPose().wall() != null) {
             // clinging to the glass: legs out wide
             legFr.yRot -= 0.5F;
