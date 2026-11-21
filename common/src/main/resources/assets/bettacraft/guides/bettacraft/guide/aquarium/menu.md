@@ -88,6 +88,8 @@ warning for a dense cover and the **Thin out** button.
 
 ## Users
 
+![The users tab](../images/menu_users.png)
+
 The users tab (it replaced the interior tab in 1.43.0) lists who may do what at this aquarium:
 
 | Role | May |
