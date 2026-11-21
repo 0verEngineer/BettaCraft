@@ -212,6 +212,7 @@ final class DevClientSmokeM53 {
             l.auto = false;
             l.tiles.add(DashboardTile.alarm(l.nextId++, 0, 0, 8, 5, tank.getTank().id(), MonitorValue.TEMPERATURE, false, 28F, false));
             monitor.setLayout(l);
+            tank.getTank().setWaterTemp(30F); // the water cooled to the room since the set-up (no heater)
             MonitorSync.cycle(p.serverLevel(), monitor);
         }));
         then(40, () -> look(base.getX() + 0.5, base.getY() + 4, base.getZ() - 25, 0F, 6F));
@@ -289,7 +290,10 @@ final class DevClientSmokeM53 {
     private void animals() {
         List<EntityType<?>> types = new ArrayList<>();
         for (EntityType<?> t : BuiltInRegistries.ENTITY_TYPE) {
-            if (BuiltInRegistries.ENTITY_TYPE.getKey(t).getNamespace().equals(BettaCraft.MOD_ID)) types.add(t);
+            String only = System.getProperty("bettacraft.smoketest.m53animals", "");
+            String path = BuiltInRegistries.ENTITY_TYPE.getKey(t).getPath();
+            if (!BettaCraft.MOD_ID.equals(BuiltInRegistries.ENTITY_TYPE.getKey(t).getNamespace())) continue;
+            if (only.isEmpty() || java.util.Arrays.stream(only.split(",")).anyMatch(path::contains)) types.add(t);
         }
         types.sort(Comparator.comparingDouble((EntityType<?> t) -> t.getWidth()).thenComparing(t -> BuiltInRegistries.ENTITY_TYPE.getKey(t).getPath()));
         List<List<EntityType<?>>> groups = new ArrayList<>();
@@ -350,6 +354,15 @@ final class DevClientSmokeM53 {
 
     private Vec3 groupCentre = Vec3.ZERO;
 
+    /** The width a picture needs for this animal: its models are longer than the hit box, the big ones much longer. */
+    private static double frame(EntityType<?> t) {
+        String path = BuiltInRegistries.ENTITY_TYPE.getKey(t).getPath();
+        double s = Math.max(t.getHeight(), t.getWidth());
+        boolean longBody = path.contains("moray") || path.contains("shark") || path.contains("catfish") || path.contains("arapaima")
+                || path.contains("pangasius") || path.contains("ray") || path.contains("horned_frog");
+        return s * (longBody ? 4.5 : s >= 0.5 ? 3.0 : 2.0);
+    }
+
     private void waterCube(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
         BlockPos c = BlockPos.containing(base.getX() + 0.5, base.getY() + 40, base.getZ() + 40.5);
@@ -376,10 +389,10 @@ final class DevClientSmokeM53 {
         double y = base.getY() + 40;
         double x = base.getX() + 0.5, z = base.getZ() + 0.5 + 40;
         double total = 0;
-        for (EntityType<?> t : group) total += Math.max(t.getHeight(), t.getWidth()) * 2.0;
+        for (EntityType<?> t : group) total += frame(t);
         double at = x - total / 2;
         for (EntityType<?> t : group) {
-            double w = Math.max(t.getHeight(), t.getWidth()) * 2.0;
+            double w = frame(t);
             Entity e;
             try {
                 e = t.create(level);
