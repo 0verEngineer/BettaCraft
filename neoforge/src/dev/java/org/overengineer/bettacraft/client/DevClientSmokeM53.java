@@ -87,12 +87,13 @@ final class DevClientSmokeM53 {
         then(1, () -> language("en_us"));
         then(1, () -> server(this::build));
         then(40, () -> {});
-        if (parts.contains("render")) render();
+        // the checks of this milestone first, then the earlier scenes (M11, M13 leave menus, languages and players behind)
         if (parts.contains("users")) users();
         if (parts.contains("maps")) maps();
-        if (parts.contains("interior")) interior();
-        if (parts.contains("animals")) animals();
         if (parts.contains("critters")) critters();
+        if (parts.contains("interior")) interior();
+        if (parts.contains("render")) render();
+        if (parts.contains("animals")) animals();
         then(5, () -> LOGGER.info("[smoketest] M53 done: interior {} of {} pictures too dark", interiorFails, interiorShots));
     }
 
