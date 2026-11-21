@@ -277,7 +277,9 @@ dependencies {
     [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods', shaders: 'shader-mods',
      maps: 'map-mods', perf: 'perf-mods', vulkanmod: 'vulkan-mods'].each { flag, dir ->
         if (project.hasProperty(flag)) {
-            rootProject.file("${fabricRunRoot}/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') }?.each { groupJars.putIfAbsent(it.name, it) }
+            // M53: -PmodsExclude=iris,... leaves the jars starting with these names out (the render matrix: Sodium without Iris)
+            def exclude = (project.findProperty('modsExclude') ?: '').toString().tokenize(',')
+            rootProject.file("${fabricRunRoot}/${dir}").listFiles()?.findAll { it.name.endsWith('.jar') && !exclude.any { e -> it.name.startsWith(e) } }?.each { groupJars.putIfAbsent(it.name, it) }
         }
     }
     if (!groupJars.isEmpty()) {
