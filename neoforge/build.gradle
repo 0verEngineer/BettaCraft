@@ -131,6 +131,8 @@ neoForge {
             // M52d: the dev runtime validates every draw (26.2); Iris 1.11.4's shadow pipelines trip a bounds bug of that validation
             // (index past the pipeline's vertex bindings), production has no validation: off for shader runs
             if (project.hasProperty('shaders')) systemProperty 'neoforge.disableGlValidation', 'true'
+            // M54: every dev client is silent (BackgroundSoundMixin; the saved options stay as they are); -Psound to hear it
+            if (!project.hasProperty('sound')) systemProperty 'bettacraft.silent', 'true'
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits
