@@ -4,6 +4,38 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.44.0-beta.1] - 2026-11-21
+
+The animals move like the real ones: amphibians and reptiles keep their hours, climb, hide and do things while they sit
+still, fish dart off now and then, and the small animals in the world crawl head first again.
+
+### Added
+- **Lively movement** of the amphibians and reptiles, the same in the world, in tanks and in the miniature (switch
+  `features.visuals.livelyMovement`, on by default; off: the movement of 1.43):
+  - **their own hours:** dart frogs, the mudskipper and the turtles by day; the geckos, the horned frog and the musk turtle at
+    night; the corn snake at dusk and dawn. Outside their hours they rest more and longer.
+  - **a pace like the real animal:** mostly calm, with **short fast phases** (a snake shoots forward, a lizard sprints off, a
+    frog hops in quick series). The corn snake crawls 1.6 times as fast as before, the leopard gecko 1.4 times.
+  - **the furnishing:** snakes and geckos **climb** onto branches, roots and rocks (faces up to almost a block), dart frogs
+    sit on **leaves**, geckos, the snake and the turtles **hide** in caves and under overhangs (geckos by day), turtles and
+    lizards bask under the basking lamp as before.
+  - **things they do while they sit still:** the corn snake **raises its head**, **flicks its tongue** (also now and then
+    while it crawls) and lies **coiled** while it rests; lizards look around, stretch up and wave the tail tip; frogs look
+    around and call (the throat pumps); turtles look around and stretch their necks.
+  - **in the world:** they rest by their hours (a gecko goes under cover by day), bask in the sun on bright days, walk at a
+    calm pace with sprints and run from a player who comes close (not the turtles).
+- **Fish** (with the same switch): small fish dart off now and then (the shoal follows its leader), bottom fish scoot,
+  bettas dart; fish that are active by day rest more at night. **Crayfish** stay in their hides by day and come out at night.
+
+### Fixed
+- Shrimp, snails, crayfish and hermit crabs **in the world crawled backwards** (the apple snails showed it best); they now
+  crawl head first like in the tanks.
+- Frogs and the mudskipper **outside a tank glided** over the ground with their legs still; they hop now.
+- A **betta that waited rose slowly to the surface**: its swimming lifted it every tick, also when nothing pulled it down
+  (the tankmates had the same fault until 1.42).
+- Four GameTests that failed now and then (statistics with an unseeded random): the albino bronze cory young, the lizard
+  mother that takes her clutch along, the Banggai cardinalfish male, the fish in the water part of a paludarium.
+
 ## [1.43.0-beta.1] - 2026-11-21 (Minecraft 26.1.2)
 
 Tank users and alarm waypoints you can switch in the menu, waypoints in Xaero's Minimap and FTB Chunks, and every animal texture
