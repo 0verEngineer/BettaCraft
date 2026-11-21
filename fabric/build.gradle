@@ -667,7 +667,8 @@ tasks.register('fabricSaveLoadTest') {
                 'level-seed=21', 'allow-flight=true', 'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
         def run = { String name, List props, String expect ->
             // M52.5: without Loom's @argfile (the run task writes it only when it runs; a fresh checkout has none): the classpath is -cp
-            def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + props + ['-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
+            // the showcase world (455 tanks) needs more than the default heap of a 16 GB CI runner (a quarter: 4 GB ran out)
+            def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + ['-Xmx6G'] + props + ['-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
             def log = new File(logs, name + '.log')
             def p = new ProcessBuilder(cmd).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
             if (!p.waitFor(20, java.util.concurrent.TimeUnit.MINUTES)) { p.destroyForcibly(); throw new GradleException("${name}: timeout") }
