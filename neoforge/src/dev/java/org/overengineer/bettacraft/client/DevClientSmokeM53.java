@@ -160,6 +160,8 @@ final class DevClientSmokeM53 {
     private void users() {
         for (String lang : new String[]{"en_us", "de_de"}) {
             then(1, () -> language(lang));
+            // a resource reload still running (a language switch of an earlier scene) would close the menu again
+            then(1, () -> sub = () -> mc.getOverlay() == null);
             // the menu stays open only near the tank (stillValid)
             then(40, () -> look(base.getX() + 1.5, base.getY() + 1.2, base.getZ() - 2.5, 0F, 10F));
             then(5, () -> openMenu());
