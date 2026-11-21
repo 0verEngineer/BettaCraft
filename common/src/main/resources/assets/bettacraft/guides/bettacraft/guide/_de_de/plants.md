@@ -37,7 +37,12 @@ halb ausgewachsen. Schwimmpflanzen liegen wie Seerosenblätter auf ruhigem Wasse
 oder mit dem [Kescher](equipment/tank_net.md) abschöpfen. Starklicht-Pflanzen wachsen nur in flachem Wasser und sind, wie
 die Weichwasser-Pflanzen, selten. Config: `features.aquaticPlants.wildPlants`, `spawn.wildPlantFrequency`.
 
-![Wilde Bodendecker in einem Sumpftümpel: Polster aus HC Cuba, Marsilea, Staurogyne und Nadelsimse, gewachsen und geschnitten](images/wild_carpets.png)
+![Wilde Bodendecker in einem Tümpel: feine Triebe von HC Cuba, Marsilea, Staurogyne und Nadelsimse, gewachsen und geschnitten](images/wild_carpets.png)
+
+Wilde Bodendecker wachsen als feine Triebe mit Lücken dazwischen, jede Art in ihrer Blattform; wilde Moose bilden runde
+Polster auf Stein und Holz, die Mooskugeln liegen als runde Kugeln am Grund.
+
+![Wilde Moose: runde Polster aus Javamoos, Weihnachtsmoos und Riccia, Mooskugeln, gewachsen und geschnitten](images/wild_mosses.png)
 
 ## Alle Pflanzen
 
