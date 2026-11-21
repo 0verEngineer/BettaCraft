@@ -714,8 +714,8 @@ public final class ModDataGen {
             withExistingParent("betta_bucket", mcLoc("item/generated"))
                     .texture("layer0", modLoc("item/betta_bucket")).texture("layer1", modLoc("item/betta_bucket_fish")).texture("layer2", modLoc("item/betta_bucket_fish_fins"))
                     .texture("layer3", modLoc("item/betta_bucket_glass")); // M21: the glass in front of the fish
-            ModelFile filledBag = withExistingParent("fish_bag_filled", mcLoc("item/generated"))
-                    .texture("layer0", modLoc("item/fish_bag")).texture("layer1", modLoc("item/fish_bag_fish")).texture("layer2", modLoc("item/fish_bag_fish_fins"));
+            ModelFile filledBag = withExistingParent("fish_bag_filled", mcLoc("item/generated")) // M55: opaque water under the fish
+                    .texture("layer0", modLoc(DataGenM55.BAG)).texture("layer1", modLoc("item/fish_bag_fish")).texture("layer2", modLoc("item/fish_bag_fish_fins"));
             var bag = withExistingParent("fish_bag", mcLoc("item/generated")).texture("layer0", modLoc("item/fish_bag"))
                     .override().predicate(BettaCraft.id("filled"), 1.0F).model(filledBag).end();
             DataGenM55.bagOverrides(this, bag);
