@@ -111,7 +111,12 @@ public abstract class WildPlantBlock extends Block implements SimpleWaterloggedB
             case MOSS -> sp == PlantSpecies.MARIMO ? 7 : 4;
             case ROSETTE -> "ribbon".equals(WildPlantKind.look(sp)) ? 16 : "grass".equals(WildPlantKind.look(sp)) ? 9 : 13;
             case STEM -> 16;
-            case CARPET -> "needle".equals(WildPlantKind.look(sp)) ? 7 : 3;
+            case CARPET -> switch (WildPlantKind.look(sp)) { // M55: the sprigs of the look
+                case "needle" -> 8;
+                case "fine" -> 6;
+                case "clover" -> 5;
+                default -> 4;
+            };
         };
         return s.getValue(TRIMMED) ? Math.max(2, h / 2) : h;
     }
