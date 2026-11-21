@@ -2,8 +2,7 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "bettacraft:item/betta_bucket",
-    "layer1": "bettacraft:item/betta_bucket_fish",
-    "layer2": "bettacraft:item/betta_bucket_fish_fins",
-    "layer3": "bettacraft:item/betta_bucket_glass"
+    "layer1": "bettacraft:item/animal/archerfish",
+    "layer2": "bettacraft:item/betta_bucket_glass"
   }
 }
