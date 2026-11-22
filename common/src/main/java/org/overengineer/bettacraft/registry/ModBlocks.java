@@ -228,7 +228,7 @@ public final class ModBlocks {
             m.put(sp, BLOCKS.register("wild_" + sp.id(), () -> {
                 var p = BlockBehaviour.Properties.of().mapColor(sp.form() == org.overengineer.bettacraft.plants.PlantSpecies.Form.CACTUS ? MapColor.COLOR_GREEN : MapColor.PLANT)
                         .noCollision().instabreak().randomTicks().sound(sp.form() == org.overengineer.bettacraft.plants.PlantSpecies.Form.MOSS ? SoundType.MOSS : SoundType.GRASS)
-                        .pushReaction(PushReaction.DESTROY).noLootTable();
+                        .pushReaction(PushReaction.POPPED).noLootTable();
                 if (look.model != org.overengineer.bettacraft.plants.wild.LandLook.Model.MOSS && look.model != org.overengineer.bettacraft.plants.wild.LandLook.Model.CARPET) {
                     p = p.offsetType(BlockBehaviour.OffsetType.XZ);
                 }

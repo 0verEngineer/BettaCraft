@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:terrarium_plant_from_large_fern"
+        "recipes": "bettacraft:terrarium_plant_from_large_fern"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

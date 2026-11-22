@@ -1,10 +1,8 @@
 {
-  "given_item_modifiers": [
-    {
-      "function": "bettacraft:trade",
-      "offer": "wandering_trader/terrarium_plants"
-    }
-  ],
+  "given_item_modifier": {
+    "type": "bettacraft:trade",
+    "offer": "wandering_trader/terrarium_plants"
+  },
   "gives": {
     "id": "bettacraft:neoregelia"
   },

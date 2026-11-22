@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:terrarium_plant_from_short_grass"
+        "recipes": "bettacraft:terrarium_plant_from_short_grass"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

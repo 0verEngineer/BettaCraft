@@ -8,8 +8,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.plants.PlantSpecies;
@@ -25,12 +23,21 @@ import org.overengineer.bettacraft.world.BiomeWaters;
  * grasses and aloes in savannas. At most one try per chunk (three in the lush caves) with a chance per place
  * ({@link #chance}) times {@code spawn.wildPlantFrequency}; nothing with {@code features.terrariumPlants.wildPlants} off.
  */
-public class WildLandPlantFeature extends Feature<NoneFeatureConfiguration> {
+public class WildLandPlantFeature implements Feature {
+    /** 26.3: features are datapack objects; the two kinds are registered as unit codecs of their instance. */
+    public static final WildLandPlantFeature LAND = new WildLandPlantFeature(false), CAVES = new WildLandPlantFeature(true);
+    public static final com.mojang.serialization.MapCodec<WildLandPlantFeature> CODEC = com.mojang.serialization.MapCodec.unit(LAND);
+    public static final com.mojang.serialization.MapCodec<WildLandPlantFeature> CAVE_CODEC = com.mojang.serialization.MapCodec.unit(CAVES);
+
     private final boolean cave;
 
-    public WildLandPlantFeature(boolean cave) {
-        super(NoneFeatureConfiguration.CODEC);
+    private WildLandPlantFeature(boolean cave) {
         this.cave = cave;
+    }
+
+    @Override
+    public com.mojang.serialization.MapCodec<WildLandPlantFeature> codec() {
+        return cave ? CAVE_CODEC : CODEC;
     }
 
     /** Chance of a try per chunk (per try of the cave feature) before {@code spawn.wildPlantFrequency}. */
@@ -44,14 +51,12 @@ public class WildLandPlantFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+    public boolean place(WorldGenLevel level, net.minecraft.world.level.chunk.ChunkGenerator generator, RandomSource r, BlockPos origin) {
         if (!Features.enabled(org.overengineer.bettacraft.config.Feature.TERRARIUM_PLANTS_WILD)) return false;
-        WorldGenLevel level = ctx.level();
-        LandPlace p = BiomeWaters.landPlace(level.getBiome(ctx.origin()));
+        LandPlace p = BiomeWaters.landPlace(level.getBiome(origin));
         if (p == null || (p == LandPlace.LUSH_CAVES) != cave) return false;
-        RandomSource r = ctx.random();
         if (r.nextDouble() >= chance(p) * CommonConfig.wildPlantFrequency()) return false;
-        return place(level, ctx.origin(), r, p, cave);
+        return place(level, origin, r, p, cave);
     }
 
     /** One group near {@code origin} (no chance roll, no biome check: the GameTests call it). */

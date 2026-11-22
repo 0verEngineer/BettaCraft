@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bettacraft:terrarium_plant_from_dead_bush"
+        "recipes": "bettacraft:terrarium_plant_from_dead_bush"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
