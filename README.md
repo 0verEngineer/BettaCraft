@@ -70,13 +70,15 @@ Every feature in detail, with a picture for each kind of tank and animal: **[FEA
 - **Aquariums:** multiblock tanks of any glass and connected shape up to 16x16x16 (big tanks 32x16x32) with real water and
   real entities; step **inside** into a pocket dimension at 16 blocks per tank block and aquascape with any block and 29
   decorations, shown outside as a live miniature; care (temperature, hunger, water quality, oxygen, sickness), a tank menu
-  with genes, Punnett squares, water, devices, plants, **users** (caretakers and viewers) and log.
+  that grows with your screen, with genes, Punnett squares, water, devices, plants, **users** (caretakers and viewers) and
+  log; a shoal that is too small is named with its count ("Neon Tetra: 3 of 6").
 - **Plants and corals:** 49 aquarium plants that grow from cuttings into many blocks, redden in strong light, need CO2 or
   soft water and sway in the water; floating plants, liquid fertilizer, every plant **wild** in its waters (carpets of
   fine sprigs, moss cushions, Marimo balls); the plants of Minecraft and other mods count too.
 - **Tankmates and small animals:** 50 freshwater fish (tetras, rasboras, corydoras, plecos, loaches, barbs, guppies with
-  28 strains, gouramis, cichlids, puffers) with shoals, predators and their own breeding; shrimp in many colours and grades,
-  snails, crayfish, dwarf clawed frogs, axolotls; every animal shows in its bucket's icon.
+  28 strains, gouramis, cichlids, puffers) with shoals that swim as schools in the wild too, predators and their own
+  breeding; shrimp in many colours and grades, snails, crayfish, dwarf clawed frogs, axolotls; every animal shows in its
+  bucket's icon, every plant has an icon of its own.
 - **Reef, brackish water and seahorses:** corals that need calcium, alkalinity and magnesium, clownfish larvae on rotifers,
   the Banggai cardinalfish and the mandarinfish, a sump with refugium and calcium reactor; seahorses with a brood pouch;
   archerfish that spit at insects, mudskippers and a mangrove that grows over the water.
@@ -84,16 +86,17 @@ Every feature in detail, with a picture for each kind of tank and animal: **[FEA
   vanilla dolphins, caught with the large net or a steel leader into a transport tub.
 - **Terraria and paludaria:** air temperature, humidity and UV, 36 terrarium plants (rainforest, swamp, desert) that grow
   by the climate; turtles with temperature-dependent sex, dart frogs that raise tadpoles in bromeliads, geckos, the corn
-  snake and sea turtles, all **moving like the real animals** with their own hours; Minecraft pets, land animals of other
-  mods and harmless mobs in glass.
-- **Technology:** filters, cabinets, feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
+  snake and sea turtles, all **moving like the real animals** with their own hours (in the world they climb steps, the
+  crested gecko whole walls); Minecraft pets, land animals of other mods and harmless mobs in glass.
+- **Technology:** filters (the external one also up to two blocks below its tank), cabinets under the whole tank with one
+  shared spring, feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
   water changes; water chemistry (TDS, pH, hardness, CO2, RO water); live food cultures and a food maker; optional power
   (FE, a crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
   waypoints in JourneyMap, Xaero's Minimap and FTB Chunks.
 - **Aquarists:** an aquarist villager trades plants, animals and food and buys your bred animals; a hired aquarist walks
   to your tanks every day and feeds, changes water, scrapes algae and moves the young.
 - **For players and packs:** 368 handbook pages in English and German, 72 advancements, JEI / REI / EMI pages, an FTB
-  Quests chapter of 115 quests, 144 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
+  Quests chapter of 115 quests, 150 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
   reports.
 
 </details>
