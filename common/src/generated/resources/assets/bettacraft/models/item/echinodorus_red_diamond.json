@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_rosette",
-    "layer1": "bettacraft:item/plant_rosette_detail"
+    "layer0": "bettacraft:item/plant_echinodorus_red_diamond",
+    "layer1": "bettacraft:item/plant_echinodorus_red_diamond_detail"
   }
 }

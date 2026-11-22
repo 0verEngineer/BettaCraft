@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/terrarium_begonia",
-    "layer1": "bettacraft:item/terrarium_begonia_detail"
+    "layer0": "bettacraft:item/terrarium_butterwort",
+    "layer1": "bettacraft:item/terrarium_butterwort_detail"
   }
 }

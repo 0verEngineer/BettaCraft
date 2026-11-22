@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_ribbon",
-    "layer1": "bettacraft:item/plant_ribbon_detail"
+    "layer0": "bettacraft:item/plant_vallisneria",
+    "layer1": "bettacraft:item/plant_vallisneria_detail"
   }
 }

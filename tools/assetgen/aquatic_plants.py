@@ -1,9 +1,8 @@
 """M13 assets: aquarium plants of the tank interior.
 
 Grey block textures (``textures/block/plant_*``, 16x16, binary alpha for the cutout layer) that the game tints per
-species, part and redness (block colour handler, see ``PlantColors.java``), and two-layer grey item icons per growth
-form (``textures/item/plant_<form>``: layer 0 = leaves, tinted with the leaf colour; ``_detail`` = layer 1, tinted with
-the stem / rhizome colour). The leaves are kept dense (few holes): a plant block is one pixel in the miniature of the
+species, part and redness (block colour handler, see ``PlantColors.java``), (M62: the item icons
+per species are made by ``plant_icons.py``). The leaves are kept dense (few holes): a plant block is one pixel in the miniature of the
 tank, and the mipmaps of a sparse cutout texture would make it vanish there.
 
 Run from the repo root:  py tools/assetgen/aquatic_plants.py
@@ -279,10 +278,6 @@ def cutting(seed=1313):
 # ------------------------------------------------------------------ item icons
 
 
-def _icon_pair():
-    return _img(), _img()
-
-
 def _outline(img, v=0.22):
     a = img[..., 3] > 0.5
     n = np.zeros_like(a)
@@ -307,102 +302,7 @@ def _leaf_line(img, x0, y0, ang, length, width):
             _grey(img, px, py, 0.9 if k <= 0 else 0.75)
 
 
-def icon_epiphyte():
-    leaves, base = _icon_pair()
-    for x in range(3, 13):
-        _grey(base, x, 13, 0.75)
-        _grey(base, x, 14, 0.6)
-    for x0, ang, ln, w in [(4, 1.9, 7, 1.3), (6, 1.55, 9, 1.4), (9, 1.25, 8, 1.3), (11, 0.9, 6, 1.1), (7, 2.4, 5, 1.0)]:
-        _leaf_line(leaves, x0, 12, ang, ln, w)
-    _outline(leaves)
-    _outline(base, 0.3)
-    return leaves, base
-
-
-def icon_moss():
-    leaves, base = _icon_pair()
-    r = _rng(1320)
-    for y in range(S):
-        for x in range(S):
-            d = math.hypot(x - 7.5, (y - 9) * 1.3)
-            if d < 6.2 - r.random() * 1.2:
-                _grey(leaves, x, y, 0.6 + 0.38 * r.random())
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_rosette():
-    leaves, base = _icon_pair()
-    for x in range(6, 10):
-        _grey(base, x, 14, 0.7)
-    for ang, ln, w in [(2.6, 7, 1.2), (2.0, 9, 1.3), (1.57, 10, 1.3), (1.15, 9, 1.3), (0.55, 7, 1.2)]:
-        _leaf_line(leaves, 7.5, 13.5, ang, ln, w)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_stem():
-    leaves, base = _icon_pair()
-    for x0 in (6, 10):
-        for y in range(2 if x0 == 6 else 4, 15):
-            _grey(base, x0, y, 0.75)
-        for y in range(3 if x0 == 6 else 5, 14, 2):
-            _grey(leaves, x0 - 1, y, 0.9)
-            _grey(leaves, x0 - 2, y, 0.8)
-            _grey(leaves, x0 + 1, y + 1, 0.85)
-            _grey(leaves, x0 + 2, y + 1, 0.75)
-    _outline(leaves)
-    _outline(base, 0.3)
-    return leaves, base
-
-
-def icon_ribbon():
-    leaves, base = _icon_pair()
-    for x0, lean in [(4, -0.3), (6, 0.1), (8, 0.25), (10, 0.5), (12, 0.2)]:
-        for y in range(1 + abs(int(lean * 6)), 15):
-            x = int(round(x0 + lean * (14 - y) * 0.4))
-            _grey(leaves, x, y, 0.85)
-    for x in range(4, 13):
-        _grey(base, x, 15, 0.6)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_carpet():
-    leaves, base = _icon_pair()
-    r = _rng(1321)
-    for cy in range(7, 15, 2):
-        for cx in range(2 + (cy % 4) // 2, 15, 2):
-            if math.hypot(cx - 8, (cy - 11) * 1.6) > 7:
-                continue
-            _grey(leaves, cx, cy, 0.9 - 0.15 * r.random())
-            _grey(leaves, cx + 1, cy, 0.75)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_bulb():
-    leaves, base = _icon_pair()
-    for y in range(11, 15):
-        for x in range(6, 10):
-            if (x - 7.5) ** 2 + (y - 12.8) ** 2 <= 4.5:
-                _grey(base, x, y, 0.85 if x < 8 else 0.65)
-    for x0, y0, ang, ln, w in [(7, 11, 2.3, 7, 2.0), (8, 11, 0.8, 7, 2.0), (8, 11, 1.55, 9, 1.6)]:
-        _leaf_line(leaves, x0, y0, ang, ln, w)
-    _outline(leaves)
-    _outline(base, 0.3)
-    return leaves, base
-
-
-ICONS = {
-    "epiphyte": icon_epiphyte,
-    "moss": icon_moss,
-    "rosette": icon_rosette,
-    "stem": icon_stem,
-    "ribbon": icon_ribbon,
-    "carpet": icon_carpet,
-    "bulb": icon_bulb,
-}
+# M62: the item icons are per species now (plant_icons.py)
 
 BLOCKS = {
     "plant_leaf_broad": leaf_broad,
@@ -428,10 +328,6 @@ def write_all():
     out = []
     for name, fn in BLOCKS.items():
         out.append(save_png(fn(), BLOCK_TEX / f"{name}.png"))
-    for form, fn in ICONS.items():
-        leaves, base = fn()
-        out.append(save_png(_finish(leaves), ITEM_TEX / f"plant_{form}.png"))
-        out.append(save_png(_finish(base), ITEM_TEX / f"plant_{form}_detail.png"))
     return out
 
 

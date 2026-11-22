@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_stem",
-    "layer1": "bettacraft:item/plant_stem_detail"
+    "layer0": "bettacraft:item/plant_rotala_rotundifolia",
+    "layer1": "bettacraft:item/plant_rotala_rotundifolia_detail"
   }
 }

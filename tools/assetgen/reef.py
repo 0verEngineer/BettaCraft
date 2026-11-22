@@ -13,7 +13,7 @@ import math
 
 import numpy as np
 
-from aquatic_plants import _finish, _grey, _icon_pair, _img, _outline, _rng
+from aquatic_plants import _finish, _grey, _img, _rng
 from common import BLOCK_TEX, ITEM_TEX, save_png
 
 S = 16
@@ -96,96 +96,7 @@ def coral_branch(seed=2005):
 
 # ---------------------------------------------------------------------------------------------- frag icons (2 grey layers)
 
-def _plug(base):
-    """The frag plug (a little disc of rock / ceramic) at the bottom of the icon."""
-    for x in range(4, 12):
-        _grey(base, x, 14, 0.78)
-        _grey(base, x, 15, 0.6)
-    for x in range(5, 11):
-        _grey(base, x, 13, 0.85)
-
-
-def icon_polyps():
-    leaves, base = _icon_pair()
-    _plug(base)
-    r = _rng(2101)
-    for cx, cy in ((5, 11), (8, 10), (11, 11), (6, 8), (10, 8), (8, 7)):
-        for dy in range(-1, 2):
-            for dx in range(-1, 2):
-                _grey(leaves, cx + dx, cy + dy, 0.95 if dx == 0 and dy == 0 else 0.7 + 0.1 * r.random())
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_disc():
-    leaves, base = _icon_pair()
-    _plug(base)
-    for x in range(7, 9):
-        _grey(base, x, 12, 0.7)
-    for y in range(6, 12):
-        for x in range(2, 14):
-            if ((x - 7.5) / 6) ** 2 + ((y - 9) / 3) ** 2 <= 1:
-                _grey(leaves, x, y, 0.95 if abs(x - 7.5) < 1 and y < 9 else 0.78)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_toadstool():
-    leaves, base = _icon_pair()
-    _plug(base)
-    for y in range(8, 13):
-        for x in range(6, 10):
-            _grey(base, x, y, 0.82)
-    for y in range(3, 8):
-        for x in range(1, 15):
-            if ((x - 7.5) / 7) ** 2 + ((y - 7.5) / 4.5) ** 2 <= 1:
-                _grey(leaves, x, y, 0.9 if (x + y) % 3 else 0.7)
-    _outline(leaves)
-    _outline(base, 0.3)
-    return leaves, base
-
-
-def icon_branch():
-    leaves, base = _icon_pair()
-    _plug(base)
-    for x0, ang, ln in ((8, 1.57, 10), (8, 1.1, 7), (8, 2.0, 7), (6, 1.35, 5), (10, 1.8, 5)):
-        for i in range(ln * 2):
-            t = i / 2
-            x = int(round(x0 + math.cos(ang) * t))
-            y = int(round(12 - math.sin(ang) * t))
-            _grey(leaves, x, y, 0.95 if t > ln - 1.5 else 0.75)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_dome():
-    leaves, base = _icon_pair()
-    _plug(base)
-    for y in range(4, 13):
-        for x in range(2, 14):
-            if ((x - 7.5) / 6) ** 2 + ((y - 12.5) / 8) ** 2 <= 1:
-                _grey(leaves, x, y, 0.95 if math.sin(x * 1.1 + math.sin(y) * 2) > 0.5 else 0.72)
-    _outline(leaves)
-    return leaves, base
-
-
-def icon_anemone():
-    leaves, base = _icon_pair()
-    _plug(base)
-    for i, x in enumerate(range(3, 14, 2)):
-        h = 5 + (i % 3)
-        for y in range(12 - h, 12):
-            _grey(leaves, x, y, 0.75)
-        _grey(leaves, x, 12 - h - 1, 0.97)
-        _grey(leaves, x - 1, 12 - h, 0.9)
-    for x in range(3, 13):
-        _grey(leaves, x, 12, 0.8)
-    _outline(leaves)
-    return leaves, base
-
-
-ICONS = {"polyps": icon_polyps, "disc": icon_disc, "toadstool": icon_toadstool, "branch": icon_branch, "dome": icon_dome,
-         "anemone": icon_anemone}
+# M62: the item icons of the corals are per species now (plant_icons.py)
 BLOCKS = {"plant_leaf_polyp": coral_polyp, "plant_leaf_disc": coral_disc, "plant_leaf_tentacle": coral_tentacle,
           "plant_leaf_brain": coral_brain, "plant_leaf_branch": coral_branch}
 
@@ -395,10 +306,6 @@ def write_all():
     out = []
     for name, fn in BLOCKS.items():
         out.append(save_png(fn(), BLOCK_TEX / f"{name}.png"))
-    for form, fn in ICONS.items():
-        leaves, base = fn()
-        out.append(save_png(_finish(leaves), ITEM_TEX / f"plant_{form}.png"))
-        out.append(save_png(_finish(base), ITEM_TEX / f"plant_{form}_detail.png"))
     for name, fn in {"reef_rock": reef_rock, "live_rock": live_rock, "protein_skimmer_side": skimmer_side,
                      "protein_skimmer_top": skimmer_top, "flow_pump_segment_side": pump_side,
                      "flow_pump_segment_outlet": pump_outlet}.items():
