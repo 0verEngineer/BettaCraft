@@ -240,7 +240,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
             tank = c == null ? null : c.getTank();
             if (tank != null && lastFed == NEVER) lastFed = server.getGameTime();
             if (entityData.get(DATA_IN_TANK) != (tank != null)) entityData.set(DATA_IN_TANK, tank != null);
-            setNoGravity(tank != null);
+            setNoGravity(tank != null || holdsOnInWorld()); // M62: also on a face in the world
             if (tank != null) {
                 TerrariumNeeds n = terrariumNeeds();
                 cold = tank.hasClimate() && n.air().below(tank.airTemp());
@@ -250,7 +250,7 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
         if (tank != null && !resting() && daysSinceFed() > starveDays() && tickCount % 600 == 0) hurt(damageSources().starve(), 1.0F);
         boolean bask = baskOverride >= 0 ? baskOverride == 1 : tank != null ? walker.basking() : worldBasking;
         if (entityData.get(DATA_BASKING) != bask) entityData.set(DATA_BASKING, bask);
-        LandWalker.Pose p = poseOverride != null ? poseOverride : tank != null && !resting() ? walker.pose() : LandWalker.Pose.NONE;
+        LandWalker.Pose p = poseOverride != null ? poseOverride : tank != null ? (resting() ? LandWalker.Pose.NONE : walker.pose()) : worldPose();
         if (entityData.get(DATA_POSE) != (byte) p.ordinal()) entityData.set(DATA_POSE, (byte) p.ordinal());
     }
 
@@ -273,6 +273,22 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
             return;
         }
         super.travel(input);
+    }
+
+    /** M62: holding on to a face outside a tank (no gravity then). */
+    protected boolean holdsOnInWorld() {
+        return false;
+    }
+
+    /** M62: what it shows outside a tank (on a face it climbs: the wall pose). */
+    protected LandWalker.Pose worldPose() {
+        return LandWalker.Pose.NONE;
+    }
+
+    /** M62: on a face (wall pose) the legs move with the climb as well. */
+    @Override
+    public void calculateEntityAnimation(boolean includeHeight) {
+        super.calculateEntityAnimation(includeHeight || herpPose().wall() != null);
     }
 
     @Override
@@ -448,6 +464,11 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     /** Smoke scenes: shows it basking (true / false) whatever the walker does; null = the walker again. */
     public void setBaskingForTest(@Nullable Boolean b) {
         baskOverride = b == null ? -1 : b ? 1 : 0;
+    }
+
+    /** M62 GameTests and smoke scenes: no vanilla goals any more (the test moves it). */
+    public void stopGoalsForTest() {
+        goalSelector.removeAllGoals(g -> true);
     }
 
     /** GameTests: when it last ate. */

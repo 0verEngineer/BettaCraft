@@ -321,6 +321,6 @@ final class DevClientSmokeM62b {
 
     private void shot(String name) {
         mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m62b_" + name + ".png", mc.getMainRenderTarget(), 1, 1, c -> {});
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m62b_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }

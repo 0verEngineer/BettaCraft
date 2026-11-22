@@ -6,6 +6,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import java.util.EnumSet;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -237,8 +238,9 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
      */
     @Override
     public void aiStep() {
+        if (!level().isClientSide()) climbTick();
         super.aiStep();
-        if (level().isClientSide() || inTank() || isTadpole() || isInWater()) return;
+        if (level().isClientSide() || inTank() || isTadpole() || isInWater() || climbPhase != 0) return;
         if (species.body() != HerpSpecies.Body.FROG && species.body() != HerpSpecies.Body.MUDSKIPPER) return;
         if (hopWait > 0) hopWait--;
         Vec3 v = getDeltaMovement();
@@ -248,6 +250,160 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
             setDeltaMovement(v.x * 1.6, up, v.z * 1.6);
             hopWait = 8 + random.nextInt(8);
         }
+    }
+
+    // ------------------------------------------------------------------ M62: climbing in the world
+
+    /** M62: the face it climbs (direction from the animal to the face), while {@link #climbPhase} is not 0. */
+    @Nullable
+    private Direction climbFace;
+    /** M62: the height its feet climb to. */
+    private double climbTop;
+    /** M62: 0 = not climbing, 1 = up, 2 = holding on, 3 = down. */
+    private int climbPhase;
+    /** M62: walks on over the edge at the top (else it holds on there and comes down again). */
+    private boolean climbOver;
+    private int climbTicks, climbHold, climbRest;
+    /** M62: the next climb stops this many blocks up and holds on for {@link #climbLimitHold} ticks (0: to the top and over). */
+    private int climbLimit, climbLimitHold;
+
+    /** M62: how it climbs outside a tank ({@link WorldClimbing}). */
+    public WorldClimbing.Style worldClimb() {
+        return isTadpole() ? WorldClimbing.Style.NONE : WorldClimbing.style(species);
+    }
+
+    /** M62: on a face in the world now (server). */
+    public boolean climbingInWorld() {
+        return climbPhase != 0;
+    }
+
+    /** M62: holding on high up a wall (server). */
+    public boolean clingingInWorld() {
+        return climbPhase == 2;
+    }
+
+    /** M62 (the wall goal): the next climb goes only {@code blocks} up and holds on there for {@code hold} ticks. */
+    public void climbPart(int blocks, int hold) {
+        climbLimit = Math.max(0, blocks);
+        climbLimitHold = Math.max(1, hold);
+    }
+
+    @Override
+    protected boolean holdsOnInWorld() {
+        return climbPhase != 0;
+    }
+
+    @Override
+    protected LandWalker.Pose worldPose() {
+        return climbPhase != 0 && climbFace != null ? LandWalker.Pose.wall(climbFace) : LandWalker.Pose.NONE;
+    }
+
+    /** M62: a climber does not jump up a step outside the water (it climbs it); the frogs and the mudskipper still do. */
+    @Override
+    public void jumpFromGround() {
+        WorldClimbing.Style st = worldClimb();
+        if (!inTank() && !isInWater() && (st == WorldClimbing.Style.STEP || st == WorldClimbing.Style.WALL)) return;
+        super.jumpFromGround();
+    }
+
+    @Override
+    public void travel(Vec3 input) {
+        // M62: on a face it does not walk (the climb moves it)
+        super.travel(climbPhase != 0 && !inTank() ? Vec3.ZERO : input);
+    }
+
+    /** M62: the face it is about to walk into: towards where its move control wants to go, else its heading. */
+    private Direction aim() {
+        var mc = getMoveControl();
+        if (mc.hasWanted()) {
+            double dx = mc.getWantedX() - getX(), dz = mc.getWantedZ() - getZ();
+            if (dx * dx + dz * dz > 1e-4) return Direction.getApproximateNearest(dx, 0, dz);
+        }
+        return Direction.fromYRot(getYRot());
+    }
+
+    /**
+     * M62 (server, every tick before the vanilla AI): starts a climb when it walks into a face it can climb and moves it along
+     * the face: up at its climbing speed, over the edge at the top (or holding on and down again), with no gravity on the way.
+     */
+    private void climbTick() {
+        WorldClimbing.Style style = worldClimb();
+        if (style == WorldClimbing.Style.NONE || inTank() || isInWater() || isBrumating() || isPassenger() || !isAlive()) {
+            if (climbPhase != 0) endClimb(0);
+            return;
+        }
+        if (climbRest > 0) climbRest--;
+        if (climbPhase == 0) {
+            if (climbRest > 0 || !horizontalCollision || !onGround()) return;
+            Direction d = aim();
+            BlockPos feet = BlockPos.containing(getX(), getY() + 0.05, getZ());
+            int h = WorldClimbing.climbable(level(), feet, d, style);
+            if (h <= 0) return;
+            BlockPos front = feet.relative(d);
+            climbOver = WorldClimbing.free(level(), front.above(h)) && WorldClimbing.free(level(), feet.above(h));
+            int rise = h;
+            climbHold = 200 + random.nextInt(400);
+            if (climbLimit > 0 && climbLimit < h) {
+                rise = climbLimit;
+                climbOver = false;
+                climbHold = climbLimitHold;
+            }
+            climbLimit = 0;
+            climbFace = d;
+            climbTop = feet.getY() + rise;
+            climbPhase = 1;
+            climbTicks = 0;
+            setNoGravity(true);
+            // (a step climber keeps its path: it walks on along it over the edge; the wall goal stops it at the top)
+        }
+        Direction d = climbFace;
+        double v = WorldClimbing.speed(species);
+        double px = d.getStepX(), pz = d.getStepZ();
+        setYRot(d.toYRot());
+        yBodyRot = getYRot();
+        yHeadRot = getYRot();
+        climbTicks++;
+        switch (climbPhase) {
+            case 1 -> {
+                if (getY() >= climbTop - 1e-4) {
+                    if (climbOver) {
+                        // over the edge onto the top
+                        setPos(getX(), climbTop + 0.001, getZ());
+                        endClimb(10);
+                        setDeltaMovement(px * 0.12, 0.0, pz * 0.12);
+                        return;
+                    }
+                    climbPhase = 2;
+                    setDeltaMovement(px * 0.01, 0, pz * 0.01);
+                    return;
+                }
+                if (climbTicks > 400 || verticalCollision && !onGround() && climbTicks > 2) {
+                    endClimb(80); // stuck: it lets go
+                    return;
+                }
+                setDeltaMovement(px * 0.03, v, pz * 0.03);
+            }
+            case 2 -> {
+                setDeltaMovement(px * 0.01, 0, pz * 0.01);
+                getNavigation().stop();
+                if (--climbHold <= 0) climbPhase = 3;
+            }
+            default -> {
+                if (onGround() || climbTicks > 600) {
+                    endClimb(100);
+                    return;
+                }
+                setDeltaMovement(px * 0.01, -v, pz * 0.01);
+                getNavigation().stop();
+            }
+        }
+    }
+
+    private void endClimb(int rest) {
+        climbPhase = 0;
+        climbFace = null;
+        climbRest = rest;
+        setNoGravity(inTank());
     }
 
     // ------------------------------------------------------------------ needs, food
