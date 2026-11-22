@@ -53,6 +53,8 @@ class QuestChapterTest {
         NO_QUEST.put(Feature.STONE_CABINETS, "a look of the cabinet (its quest names them); the item is the cabinet itself");
         NO_QUEST.put(Feature.CABINET_OUTLET_SIDE, "a setting in the cabinet menu, no task to check");
         NO_QUEST.put(Feature.CABINET_FRONTS, "an automatic look of cabinet rows (the cabinet quest names it), no task to check");
+        NO_QUEST.put(Feature.CABINET_AREA, "M62: cabinets joining to the back, an automatic look and placement (the cabinet quest names it), no task to check");
+        NO_QUEST.put(Feature.FILTER_BELOW_TANK, "M62: where the external filter may stand, no new item or advancement (the external filter quest covers the filter)");
         NO_QUEST.put(Feature.BIG_CONTAINERS, "a rule for buckets and bags, nothing to do");
         NO_QUEST.put(Feature.FILTER_MEDIA_AUTOMATION, "hoppers and buses feeding the multiblock filter, no own item or event");
         NO_QUEST.put(Feature.PLANT_MESHES, "a visual option");

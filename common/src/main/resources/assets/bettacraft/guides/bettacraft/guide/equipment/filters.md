@@ -35,10 +35,28 @@ water (under water it is a short current).
   right-click it with a heater. While the filter is attached, its heaters heat and its coolers cool the aquarium.
 * Broken, it keeps its heaters in the item (the tooltip lists them).
 * It can also go into an [aquarium cabinet](cabinet.md) under the aquarium.
+* It may also stand **one or two blocks lower** than the tank, beside the cabinet or without one (see below).
 * It is the small variant: a [multiblock external filter](multiblock_filter.md) of any size, with filter media and
   pipes, cleans much more.
 
 The tank menu shows "Filters: 1 outside (heaters: 2), 1 inside".
+
+### Below the tank
+
+![External filters one and two blocks below their tanks, and the chosen tank outlined](../images/filter_below.png)
+
+Next to a tank the filter connects by itself. **One or two blocks lower** (beside the cabinet, or on the ground next to a
+stand) it does not guess, because several tanks side by side would make a guess wrong: the overlay says "Not attached to a
+tank" and so does a message when you place it.
+
+![The choice of the tank](../images/filter_choice.png)
+
+**Sneak + right-click the filter with an empty hand**: a list shows every tank in reach with its name, position, side and
+how far below it the filter stands. The tank under the mouse is **outlined** in the world (cyan, the wall block the hose
+goes up in yellow). Click one: the filter turns to it, and the hose runs the longer way up the cabinet and the glass. The
+same click also lets a filter between two tanks change its tank. Filters of older worlds right at their tank stay
+connected. The setting `features.equipment.filterBelowTank` allows only filters beside a tank again (a chosen tank below is
+kept for later).
 
 ## More internal filters, fry and the power regulator
 
