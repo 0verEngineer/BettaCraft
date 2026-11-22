@@ -1,5 +1,0 @@
-{
-  "comment": "Optional dev mods of the -Ppower group of Minecraft 1.21.11 for CI (tools/ci/fetch_mods.py): the official Modrinth files of the jars of the local group with an open licence (and their required dependencies), downloaded from cdn.modrinth.com and checked by SHA-512. Licences as stated on Modrinth. Empty: no power mod of the group has an open-licence 1.21.11 build.",
-  "target": "run/1.21.11/power-mods",
-  "mods": []
-}

@@ -6,8 +6,9 @@
 # Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
 # calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
 # WTHIT (no -Ppower GameTests on 1.21.11: none of the power mods has a 1.21.11 version).
-# Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (not all jars have a pinned official
-# download, several licences forbid redistribution), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
+# Not here: client smoke tests (need a window / GPU), the multiplayer test, buildShowcase and smoketestUpgrade (slow: it builds
+# its reference world from an old commit). The mod groups (integration, zoo, Fabric groups) run in the manual workflow
+# integration.yml (M59: every foreign mod downloaded from its official source by dev-mods.json).
 name: Build
 
 on:

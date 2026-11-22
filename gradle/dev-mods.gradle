@@ -1,0 +1,172 @@
+// M59: the optional dev mod groups come from their official sources, not from hand-filled folders. The same file on every
+// branch; dev-mods.json (one per branch, written by tools/devmods/update_manifest.py) lists per loader and group folder the
+// official file of every jar (Modrinth Maven, CurseMaven, FTB Maven coordinates) with its size, SHA-1 and SHA-256.
+//
+// Every group a run switches on (the same flags as before: -Ppower ... -Pintegration / integrationTests, -Pzoo / zooTests,
+// the Fabric groups -Poverlays ... -Pfabricintegration) is resolved through Gradle (downloaded once into the Gradle cache,
+// so --offline works afterwards), checked against both hashes (a mismatch stops the build) and copied under its original
+// file name into the folder the loader builds read:
+//   NeoForge: <runRoot>/<group>        (1.21.1: run/, ports: run/<minecraft_version>/; -PrunDir=...)
+//   Fabric:   <fabricRunRoot>/<group>  (1.21.1: run-fabric/, ports: run/<minecraft_version>/fabric/; -PfabricRunDir=...)
+// The group folders belong to the manifest: a jar in them that the manifest does not list is moved (never deleted) to
+// <runRoot>/local-mods-backup/<date>/<loader>-<group>/. Mods to try out before they go into the manifest: <runRoot>/local-mods
+// (Fabric: <fabricRunRoot>/local-mods), loaded with -Plocal. A run without a group flag (gradlew build ...) reads nothing and
+// downloads nothing. Runs at configuration time of the root project, before the loader projects read the folders.
+import groovy.json.JsonSlurper
+
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
+def devModsManifest = file('dev-mods.json')
+def devTasks = gradle.startParameter.taskNames.collect { it.toLowerCase() }
+def devHas = { String p -> project.hasProperty(p) }
+def devIntegration = devHas('integration') || devTasks.any { it.endsWith('integrationtests') }
+def devZoo = devHas('zoo') || devTasks.any { it.endsWith('zootests') }
+
+// the groups of each loader and the flags that switch them on (keep in step with the loader build.gradle files; the JUnit
+// test DevModsManifestTest checks that every group folder they read is in dev-mods.json or listed there as a gap)
+def neoFlags = [shaders: 'shader-mods', power: 'power-mods', aquatic: 'aquatic-mods', biomes: 'biome-mods', storage: 'storage-mods',
+                create: 'create-mods', quests: 'quest-mods', maps: 'map-mods', perf: 'perf-mods', kubejs: 'kubejs-mods',
+                facades: 'facade-mods', pipes: 'pipe-mods', compare: 'compare-mods']
+def neoIntegration = ['power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'kubejs-mods',
+                      'facade-mods', 'pipe-mods', 'integration-mods']
+def neoZoo = ['aquatic-mods', 'biome-mods', 'create-mods', 'zoo-mods']
+def fabricFlags = [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods',
+                   maps: 'map-mods', shaders: 'shader-mods', perf: 'perf-mods', vulkanmod: 'vulkan-mods']
+
+// the loaders the requested tasks belong to (runFabric*, :fabric:..., prodFabric*, fabric*Test -> Fabric; the rest NeoForge)
+def fabricTasks = devTasks.findAll { it.contains('fabric') }
+def wantNeo = devTasks.isEmpty() || fabricTasks.size() < devTasks.size()
+def wantFabric = !fabricTasks.isEmpty()
+
+def devWanted = [] as Set // "<loader>/<group folder>"
+if (wantNeo) {
+    neoFlags.each { flag, dir -> if (devHas(flag)) devWanted << "neoforge/${dir}".toString() }
+    if (devIntegration) neoIntegration.each { devWanted << "neoforge/${it}".toString() }
+    if (devZoo) neoZoo.each { devWanted << "neoforge/${it}".toString() }
+}
+if (wantFabric) fabricFlags.each { flag, dir -> if (devHas(flag)) devWanted << "fabric/${dir}".toString() }
+def devShaderpacks = devHas('shaders')
+
+if (!devWanted.isEmpty() || devShaderpacks) {
+    repositories {
+        exclusiveContent {
+            forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+            filter { includeGroup 'maven.modrinth' }
+        }
+        exclusiveContent {
+            forRepository { maven { name = 'CurseMaven'; url = 'https://cursemaven.com' } }
+            filter { includeGroup 'curse.maven' }
+        }
+        exclusiveContent {
+            forRepository { maven { name = 'FTB'; url = 'https://maven.ftb.dev/releases' } }
+            filter { includeGroup 'dev.ftb.mods' }
+        }
+    }
+    if (!devModsManifest.exists()) throw new GradleException("dev mods: ${devModsManifest} is missing (the manifest of the optional dev mod groups)")
+    def spec = new JsonSlurper().parse(devModsManifest)
+    def mc = project.property('minecraft_version').toString()
+    def neoRoot = file((project.findProperty('runDir') ?: (mc == '1.21.1' ? 'run' : "run/${mc}")).toString())
+    def fabricRoot = file((project.findProperty('fabricRunDir') ?: (mc == '1.21.1' ? 'run-fabric' : "run/${mc}/fabric")).toString())
+    def today = new Date().format('yyyy-MM-dd')
+    def sourceOf = { String maven ->
+        maven.startsWith('maven.modrinth:') ? 'Modrinth Maven (https://api.modrinth.com/maven)' :
+                maven.startsWith('curse.maven:') ? 'CurseMaven (https://cursemaven.com)' :
+                        maven.startsWith('dev.ftb.mods:') ? 'FTB Maven (https://maven.ftb.dev/releases)' : 'unknown source'
+    }
+    def hashes = { File f ->
+        def sha1 = MessageDigest.getInstance('SHA-1'), sha256 = MessageDigest.getInstance('SHA-256')
+        f.withInputStream { ins ->
+            byte[] buf = new byte[1 << 20]
+            int n
+            while ((n = ins.read(buf)) > 0) { sha1.update(buf, 0, n); sha256.update(buf, 0, n) }
+        }
+        [sha1.digest().encodeHex().toString(), sha256.digest().encodeHex().toString()]
+    }
+    // resolves the entries through Gradle (into its cache) -> {maven coordinate: file}; a clear error names group, files, sources
+    def resolve = { String what, List entries ->
+        def deps = entries.collect { e ->
+            def ext = e.file.toString().toLowerCase().endsWith('.zip') ? '@zip' : ''
+            dependencies.create(e.maven + ext) { transitive = false }
+        }
+        try {
+            def conf = configurations.detachedConfiguration(deps as Dependency[])
+            conf.resolvedConfiguration.rethrowFailure()
+            conf.resolvedConfiguration.resolvedArtifacts.collectEntries { a ->
+                def id = a.moduleVersion.id
+                ["${id.group}:${id.name}:${id.version}".toString(), a.file]
+            }
+        } catch (Exception ex) {
+            throw new GradleException("dev mods: the files of ${what} could not be downloaded (offline, or a source is down?). " +
+                    'With a filled Gradle cache --offline works; otherwise run once online.\n  ' +
+                    entries.collect { e -> "${e.file} = ${e.maven} from ${sourceOf(e.maven)}" }.join('\n  ') +
+                    "\n  cause: ${ex.message}" + (ex.cause ? "\n  ${ex.cause.message}" : ''))
+        }
+    }
+    // copies the verified files into folder; a stamp file remembers what was checked (no hashing on the next run)
+    def sync = { String what, File folder, List entries, File backupDir, List modsDirs ->
+        folder.mkdirs()
+        def stampFile = new File(folder, '.dev-mods-verified.json')
+        def stamp = stampFile.exists() ? new JsonSlurper().parse(stampFile) as Map : [:]
+        def fresh = { e ->
+            def dst = new File(folder, e.file)
+            def s = stamp[e.file]
+            dst.isFile() && s && s.sha256 == e.sha256 && s.size == dst.length() && s.modified == dst.lastModified()
+        }
+        int copied = 0
+        def stale = entries.findAll { !fresh(it) }
+        if (!stale.isEmpty()) {
+            def files = resolve(what, stale)
+            stale.each { e ->
+                def src = files[e.maven]
+                if (src == null) throw new GradleException("dev mods: ${e.maven} (${e.file}, ${what}) did not resolve from ${sourceOf(e.maven)}")
+                def (s1, s256) = hashes(src)
+                if (s1 != e.sha1 || s256 != e.sha256) {
+                    throw new GradleException("dev mods: ${e.file} from ${e.maven} (${sourceOf(e.maven)}) has SHA-1 ${s1} / SHA-256 ${s256}, " +
+                            "dev-mods.json expects ${e.sha1} / ${e.sha256}: not the pinned file, stopped")
+                }
+                def dst = new File(folder, e.file)
+                Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                stamp[e.file] = [sha256: e.sha256, size: dst.length(), modified: dst.lastModified()]
+                copied++
+            }
+        }
+        // a jar the manifest does not list: moved to the backup folder (and out of the run's mods folders)
+        int moved = 0
+        if (backupDir != null) {
+            def names = entries*.file as Set
+            (folder.listFiles() ?: []).findAll { it.isFile() && it.name.endsWith('.jar') && !(it.name in names) }.each { jar ->
+                def dir = backupDir
+                dir.mkdirs()
+                Files.move(jar.toPath(), new File(dir, jar.name).toPath(), StandardCopyOption.REPLACE_EXISTING)
+                modsDirs.each { new File(it, jar.name).delete() }
+                stamp.remove(jar.name)
+                logger.warn("dev mods: ${jar.name} is not in dev-mods.json (${what}): moved to ${dir} (try mods out in local-mods with -Plocal, " +
+                        'or add them to the manifest with tools/devmods/update_manifest.py)')
+                moved++
+            }
+        }
+        stampFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(stamp))
+        logger.lifecycle("dev mods ${what}: ${entries.size()} file(s) from the manifest in ${folder} (${copied} downloaded/copied${moved ? ", ${moved} foreign moved" : ''})")
+    }
+    def neoModsDirs = [new File(neoRoot, 'mods')] + ((neoRoot.listFiles() ?: []).findAll { it.isDirectory() }.collect { new File(it, 'mods') }.findAll { it.isDirectory() })
+    devWanted.sort().each { String key ->
+        def (loader, group) = key.split('/', 2)
+        def entries = spec[loader]?.get(group)
+        if (!entries) {
+            def gap = spec.gaps?.get(loader)?.get(group)
+            if (gap) logger.lifecycle("dev mods ${key}: none on Minecraft ${mc} (${gap})")
+            else logger.warn("dev mods ${key}: not in dev-mods.json, the group stays empty")
+            return
+        }
+        def root = loader == 'fabric' ? fabricRoot : neoRoot
+        sync(key, new File(root, group), entries, new File(neoRoot, "local-mods-backup/${today}/${loader}-${group}"), loader == 'fabric' ? [] : neoModsDirs)
+    }
+    // the shader packs of -Pshaders (Complementary): into <root>/shaderpacks of the loaders of the run; other packs stay
+    if (devShaderpacks && spec.shaderpacks) {
+        (wantNeo ? [neoRoot] : []).plus(wantFabric ? [fabricRoot] : []).each { root ->
+            sync('shaderpacks', new File(root, 'shaderpacks'), spec.shaderpacks as List, null, [])
+        }
+    }
+}

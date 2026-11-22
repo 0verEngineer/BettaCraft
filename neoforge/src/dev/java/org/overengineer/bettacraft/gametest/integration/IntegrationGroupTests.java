@@ -54,8 +54,7 @@ public final class IntegrationGroupTests {
         // M52: without the mods that have no build for this Minecraft version
         List<String> missing = GROUP.stream().filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m))
                 .filter(m -> !org.overengineer.bettacraft.gametest.framework.VersionGaps.NO_BUILD.contains(m)).toList();
-        if (!missing.isEmpty() && IntegrationSuite.PARTIAL) IntegrationSuite.LOGGER.warn("[integration] partial run without {}", missing);
-        else if (!missing.isEmpty()) throw new GameTestFailure("the integration group lacks " + missing);
+        if (!missing.isEmpty()) throw new GameTestFailure("the integration group lacks " + missing);
         h.succeed();
     }
 
