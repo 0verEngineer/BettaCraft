@@ -15,6 +15,7 @@ import decor_icons
 import equipment
 import aquatic_plants
 import reef
+import plant_icons
 import aeration
 import plumbing
 import filter_lines
@@ -70,6 +71,7 @@ def main() -> int:
     written += wild_plants.write_all()  # M28.1: after the floating plants (it composes their textures)
     written += aquatic_plants.write_all()
     written += reef.write_all()  # M20
+    written += plant_icons.write_all()  # M62: an own icon per aquarium plant and coral
     written += aeration.write_all()  # M23
     written += plumbing.write_all()  # M24
     written += filter_lines.write_all()  # M40
