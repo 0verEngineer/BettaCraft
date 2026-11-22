@@ -101,7 +101,8 @@ navigation:
 The **common config** sets the spawn weight and group size of wild bettas and the fish bag recipe (`recipes.fishBag`:
 AUTO, KELP or PLASTIC), which overlay mod shows the Bettacraft lines (`compat.overlayProvider`: AUTO = only the first
 installed one of Jade, WTHIT and The One Probe, so two overlay mods do not show every aquarium twice; JADE, TOP, WTHIT or
-ALL) and the feature switches (`features.*`, see Feature switches below). The common config
+ALL), the feature switches (`features.*`, see Feature switches below) and the debug log (`debug.logLevel`, `debug.areas`,
+see [Reporting bugs](settings/bug_reports.md)). The common config
 `sounds.useVanilla` switches the device sounds back to Minecraft's own; the client config has a volume per kind of
 device (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`); the hum of the air pumps
 and the whir of the flow pumps are off until `sound.airPumpSound` or `sound.flowPumpSound` is switched on. The client
@@ -365,6 +366,8 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
 * `/bettacraft aquarist hire` / `decline`: the answer to an aquarist's offer (the buttons in the chat);
   `/bettacraft aquarist status`: why no [hired aquarist](getting_started/hired_aquarist.md) has come yet. Operators:
   `/bettacraft aquarist arrive [player]` lets one come now.
+* Operators and the owner of a single player world: `/bettacraft debug <area|all> <on|off|trace>` switches the debug log,
+  `/bettacraft report` writes a bug report with the tank you look at ([Reporting bugs](settings/bug_reports.md)).
 
 ## In this chapter
 

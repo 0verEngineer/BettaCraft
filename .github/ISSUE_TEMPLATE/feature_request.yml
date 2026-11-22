@@ -1,0 +1,22 @@
+name: Idea or wish
+description: A new animal, plant, device, integration or a change you would like to see.
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Nothing here is required: write as much or as little as you like.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: What would you like to have, and what for?
+    validations:
+      required: false
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Real-world background (species, care, equipment), other mods it concerns, pictures or sketches.
+    validations:
+      required: false
