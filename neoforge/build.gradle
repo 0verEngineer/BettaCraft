@@ -979,6 +979,11 @@ def seedOptions = { File dir ->
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     t.doFirst {
         seedOptions(t.hasProperty('gameDirectory') ? t.gameDirectory.get().asFile : t.workingDir)
+        // M59: a fresh run dir has no fml.toml yet: seed it, or the first background client opens the focused early window
+        if (!fmlToml.exists() && background) {
+            fmlToml.parentFile.mkdirs()
+            fmlToml.setText('earlyWindowControl = false\n', 'UTF-8')
+        }
         if (fmlToml.exists()) {
             def text = fmlToml.getText('UTF-8')
             def want = "earlyWindowControl = ${!background}"
@@ -988,6 +993,11 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
         // M52d: NeoForge 26.2 warns about the deprecated logoFile of other mods (YACL) on a screen that waits for a click;
         // background runs have nobody to click it
         def neoClient = rootProject.file(runRoot + '/config/neoforge-client.toml')
+        // M59: a fresh run dir has no neoforge-client.toml yet: seed it with the warnings off
+        if (background && !neoClient.exists()) {
+            neoClient.parentFile.mkdirs()
+            neoClient.setText('showLoadWarnings = false\n', 'UTF-8')
+        }
         if (background && neoClient.exists()) {
             def text = neoClient.getText('UTF-8')
             def updated = text.replaceAll(/showLoadWarnings = true/, 'showLoadWarnings = false')
@@ -1201,6 +1211,11 @@ tasks.register('runMultiplayerTest') {
             }
             // background client: no FML early window (it would take the focus before any mod code runs)
             def fml = new File(dir, 'config/fml.toml')
+            if (!fml.exists()) { fml.parentFile.mkdirs(); fml.setText('earlyWindowControl = false\n', 'UTF-8') } // M59: fresh run dir
+            // M59: no load-warning screen (NeoForge 26.2+ waits there for a click: the deprecated logoFile of YACL)
+            def neoCfg = new File(dir, 'config/neoforge-client.toml')
+            if (!neoCfg.exists()) neoCfg.setText('showLoadWarnings = false\n', 'UTF-8')
+            else neoCfg.setText(neoCfg.getText('UTF-8').replaceAll(/showLoadWarnings = true/, 'showLoadWarnings = false'), 'UTF-8')
             if (fml.exists()) fml.setText(fml.getText('UTF-8').replaceAll(/earlyWindowControl = (true|false)/, 'earlyWindowControl = false'), 'UTF-8')
             def set = [lang: 'en_us', maxFps: '30', renderDistance: '6', simulationDistance: '5', soundCategory_master: '0.0',
                        pauseOnLostFocus: 'false', onboardAccessibility: 'false', guiScale: '3', skipMultiplayerWarning: 'true',
