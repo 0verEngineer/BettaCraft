@@ -32,6 +32,11 @@ public abstract class ClientLevelMixin {
         return original.call(level, pos);
     }
 
+    /**
+     * M61: the two states come from whoever calls {@code sendBlockUpdated} and may be null (Modern Dynamics passes null for
+     * both while the client loads a pipe's block entity data); vanilla never reads them on the client.
+     * {@link PlantMeshRenderer#onBlockChanged} treats a missing state as "no plant", so they are passed on unchanged.
+     */
     @Inject(method = "sendBlockUpdated", at = @At("HEAD"))
     private void bettacraft$plantMeshBlockChanged(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
         PlantMeshRenderer.onBlockChanged((ClientLevel) (Object) this, pos, oldState, newState);

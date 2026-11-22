@@ -180,7 +180,7 @@ public final class MiniatureRenderer {
         }
         if (!opaque) TRAVELLING.clear();
         if (opaque) MiniaturePlants.endFrame(org.overengineer.bettacraft.client.render.ImmediateBuffers.shared());
-        if (opaque && MiniatureSway.lastQuads > 0) org.overengineer.bettacraft.client.render.ImmediateBuffers.shared().endBatch(PlantMeshRenderer.MINI);
+        if (opaque && MiniatureSway.lastQuads > 0) org.overengineer.bettacraft.client.render.ImmediateBuffers.shared().endBatch(PlantMeshRenderer.Mini.TYPE);
         long dt = System.nanoTime() - t0;
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;
     }
