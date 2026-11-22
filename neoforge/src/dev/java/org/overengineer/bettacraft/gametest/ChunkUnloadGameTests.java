@@ -93,28 +93,52 @@ public final class ChunkUnloadGameTests {
         for (int x = a.x; x <= b.x; x++) for (int z = a.z; z <= b.z; z++) level.setChunkForced(x, z, on);
     }
 
-    /** Waits (tick by tick, at most {@code max}) until {@code done}, then runs {@code then}; fails with {@code what} after that. */
-    private static void await(GameTestHelper h, int max, java.util.function.BooleanSupplier done, String what, Runnable then) {
+    /**
+     * M63b: real time a wait gets at least before it fails. The chunk and entity storages load and save on their own threads in
+     * real time, while an idle GameTest server ticks as fast as it can (26.x: a few hundred ticks a second): the 600 ticks for
+     * the animals to come back were half a second on a CI runner (26.3 -Ppower), less than the entity storage needed.
+     */
+    private static final long MIN_WAIT_NANOS = 60_000_000_000L;
+    /** M63b: once a wait has used its ticks, each further tick sleeps this long (the storage threads catch up; the test's tick limit holds). */
+    private static final long SLOW_TICK_MILLIS = 20;
+
+    /**
+     * Waits (tick by tick, at least {@code max} ticks and {@link #MIN_WAIT_NANOS} of real time) until {@code done}, then runs
+     * {@code then}; fails with {@code what} (read when it fails) after that.
+     */
+    private static void await(GameTestHelper h, int max, java.util.function.BooleanSupplier done, java.util.function.Supplier<String> what, Runnable then) {
+        await(h, max, System.nanoTime(), done, what, then);
+    }
+
+    private static void await(GameTestHelper h, int max, long start, java.util.function.BooleanSupplier done, java.util.function.Supplier<String> what,
+                              Runnable then) {
         if (done.getAsBoolean()) {
             then.run();
             return;
         }
-        if (max <= 0) throw new GameTestAssertException("timed out: " + what);
-        h.runAfterDelay(1, () -> await(h, max - 1, done, what, then));
+        if (max <= 0) {
+            if (System.nanoTime() - start >= MIN_WAIT_NANOS) throw new GameTestAssertException("timed out: " + what.get());
+            try {
+                Thread.sleep(SLOW_TICK_MILLIS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        h.runAfterDelay(1, () -> await(h, max - 1, start, done, what, then));
     }
 
     /**
      * Three unloads: one after a while, one in the tick right after a care step (the controller's care tick), and one that comes back
      * one tick after it unloaded.
      */
-    @GameTest(template = "empty_32x10x32", batch = "bettacraft_m42_chunk_unload", timeoutTicks = 6000)
+    @GameTest(template = "empty_32x10x32", batch = "bettacraft_m42_chunk_unload", timeoutTicks = 20000)
     public static void aStockedTankSurvivesItsChunkUnloadingAndLoading(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         BlockPos min = h.absolutePos(new BlockPos(2, 2, 2)).offset(3000, 0, 0);
         force(level, min, true);
         // M52e: 1000 ticks for the far chunks: with the biome mods of the integration suite generating them can take 20+ s;
         // M52.5: 2400, a CI runner with the power mods needed more than 50 s
-        await(h, 2400, () -> level.isPositionEntityTicking(min) && level.isPositionEntityTicking(min.offset(3, 0, 2)), "the far chunks load", () -> {
+        await(h, 2400, () -> level.isPositionEntityTicking(min) && level.isPositionEntityTicking(min.offset(3, 0, 2)), () -> "the far chunks load", () -> {
             TankBlockEntity c = build(h, min);
             stock(h, c);
             Snapshot first = snapshot(level, c.getTank());
@@ -142,13 +166,13 @@ public final class ChunkUnloadGameTests {
             check(round + " (before)", expect, before);
             force(level, min, false);
             await(h, 1200, () -> !level.hasChunk(cp.x, cp.z) && level.getEntity(expect.animals().keySet().iterator().next()) == null,
-                    "round " + round + ": the chunk did not unload", () -> {
+                    () -> "round " + round + ": the chunk did not unload", () -> {
                         force(level, min, true);
                         int back = round == 2 ? 1 : 10;
                         h.runAfterDelay(back, () -> await(h, 600, () -> {
                             TankBlockEntity cc = TankMultiblock.getController(level, min);
                             return cc != null && expect.animals().keySet().stream().allMatch(u -> level.getEntity(u) != null);
-                        }, "round " + round + ": the animals did not come back " + what(level, min, expect), () -> {
+                        }, () -> "round " + round + ": the animals did not come back " + what(level, min, expect), () -> {
                             // a few care steps with everything loaded again (the inhabitant list reconciles every few seconds)
                             h.runAfterDelay(120, () -> {
                                 TankBlockEntity cc = TankMultiblock.getController(level, min);
