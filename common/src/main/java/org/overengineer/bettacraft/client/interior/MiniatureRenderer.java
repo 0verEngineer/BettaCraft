@@ -78,6 +78,8 @@ public final class MiniatureRenderer {
     private static int inFlight;
     /** Render-thread time spent on miniatures in the last frame (scheduling + uploads + draws), for the bench. */
     public static volatile long lastFrameNanos;
+    /** M63b: a dev scene hides the miniatures for a picture without them (the check that none is drawn outside its tank). */
+    public static volatile boolean hiddenForTest;
 
     private record Result(int regionId, long cell, int generation, Map<ChunkSectionLayer, MeshData> data, Map<ChunkSectionLayer, MeshData> plantData,
                           Map<ChunkSectionLayer, MeshData> swayData, MiniatureSway.Data sway,
@@ -117,7 +119,7 @@ public final class MiniatureRenderer {
         if (!opaque && stage != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
         if (!opaque && IrisCompat.renderingShadowPass()) return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
+        if (mc.level == null || hiddenForTest) return;
         long t0 = System.nanoTime();
         Vec3 cam = event.getCamera().position();
         double maxDist = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
@@ -564,6 +566,17 @@ public final class MiniatureRenderer {
         var atlas = mc.getTextureManager().getTexture(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).getTextureView();
         var section = RenderSystem.getDynamicUniforms().writeChunkSections(new net.minecraft.client.renderer.DynamicUniforms.ChunkSectionInfo(
                 mv, chunkX, chunkY, chunkZ, 1.0F, atlas.getWidth(0), atlas.getHeight(0)))[0];
+        // M63b: Iris draws the terrain pipelines with a shader pack's programs, which take the model-view matrix and the chunk
+        // offset from DynamicTransforms (ModelViewMat, ModelOffset) and ignore ChunkSection: with the default transforms the
+        // interior was drawn at full size at the camera (a castle in the sky) and nothing in the tank. The same transform as
+        // ChunkSection's, for the plain positions: mv with the camera fraction (chunk position - camera) taken back out.
+        com.mojang.blaze3d.buffers.GpuBufferSlice irisTransforms = null;
+        if (IrisCompat.shaderPackInUse()) {
+            Vec3 cam = mc.gameRenderer.getMainCamera().position();
+            Matrix4f full = new Matrix4f(mv).translate((float) (chunkX - cam.x), (float) (chunkY - cam.y), (float) (chunkZ - cam.z));
+            irisTransforms = RenderSystem.getDynamicUniforms().writeTransform(full, new org.joml.Vector4f(1F, 1F, 1F, 1F), new org.joml.Vector3f(),
+                    new Matrix4f());
+        }
         int maxIndices = 0;
         for (List<MiniatureMesh.Buffer> l : byLayer.values()) for (MiniatureMesh.Buffer b : l) maxIndices = Math.max(maxIndices, b.indexCount());
         RenderSystem.AutoStorageIndexBuffer quads = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
@@ -573,6 +586,7 @@ public final class MiniatureRenderer {
                 () -> "Bettacraft miniature", target.getColorTextureView(), java.util.OptionalInt.empty(),
                 target.getDepthTextureView(), java.util.OptionalDouble.empty())) {
             RenderSystem.bindDefaultUniforms(pass);
+            if (irisTransforms != null) pass.setUniform("DynamicTransforms", irisTransforms);
             pass.bindTexture("Sampler2", mc.gameRenderer.lightmap(),
                     RenderSystem.getSamplerCache().getClampToEdge(com.mojang.blaze3d.textures.FilterMode.LINEAR));
             pass.setUniform("ChunkSection", section);
