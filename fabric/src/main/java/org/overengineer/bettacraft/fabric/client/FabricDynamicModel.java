@@ -49,8 +49,8 @@ public final class FabricDynamicModel implements BlockStateModel {
         boolean noBlock = state.isAir();
         ModelValues data = noBlock ? ModelValues.EMPTY : values(level, pos, state);
         if (noBlock) state = null;
-        TriState partAo = dynamic.ambientOcclusion() ? TriState.DEFAULT : TriState.FALSE;
         for (ChunkSectionLayer layer : dynamic.layers(state, random, data)) {
+            TriState partAo = dynamic.ambientOcclusion(layer, data) ? TriState.DEFAULT : TriState.FALSE; // M63: per layer
             for (Direction side : SIDES) {
                 if (side != null && cullTest.test(side)) continue;
                 for (BakedQuad q : dynamic.quads(state, side, random, data, layer)) emit(emitter, q, side, layer, partAo);
