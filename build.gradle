@@ -164,3 +164,7 @@ tasks.register('curseforgeDescription') {
                 '(paste by hand; the images load only from a public repository)')
     }
 }
+
+// M59: the optional dev mod groups (-Ppower ... integrationTests, zooTests, the Fabric groups) are downloaded from their
+// official sources by the manifest dev-mods.json (hashes checked) into the group folders the loader builds read
+apply from: 'gradle/dev-mods.gradle'
