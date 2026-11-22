@@ -274,6 +274,10 @@ final class DevClientSmokeM61 {
         ctx.updateLoggers();
     }
 
+    int problems() {
+        return problems;
+    }
+
     private void problem(String what) {
         problems++;
         LOGGER.error("[smoketest] M61 FAIL: {}", what);
