@@ -1028,6 +1028,8 @@ def seedServerFiles = { File dir, boolean offline ->
     boolean changed = !sp.exists()
     if (get('server-port') in [null, '', '25565']) { set('server-port', devServerPort); changed = true }
     if (offline && get('online-mode') != 'false') { set('online-mode', 'false'); changed = true }
+    // the dev clients Dev1 / Dev2 are on no list (26.3 writes a new server.properties with white-list=true)
+    if (offline && get('white-list') != 'false') { set('white-list', 'false'); changed = true }
     if (!sp.exists() && !offline) set('online-mode', 'false')
     if (changed) {
         sp.write(lines.join('\n') + '\n', 'UTF-8')
