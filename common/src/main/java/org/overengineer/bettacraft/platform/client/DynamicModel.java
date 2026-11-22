@@ -39,6 +39,11 @@ public interface DynamicModel {
         return true;
     }
 
+    /** M63: whether the part of one render layer uses ambient occlusion and smooth light (default: {@link #ambientOcclusion()}). */
+    default boolean ambientOcclusion(ChunkSectionLayer layer, ModelValues data) {
+        return ambientOcclusion();
+    }
+
     /** The model this one wraps, or null. */
     default @Nullable BlockStateModel original() {
         return null;
