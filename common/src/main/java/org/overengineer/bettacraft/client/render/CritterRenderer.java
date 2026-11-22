@@ -222,19 +222,23 @@ public final class CritterRenderer {
     /** Turns the pose so that the model stands on the floor (heading {@code yaw}) or lies with its belly on the glass. */
     private static void orient(PoseStack pose, byte face, float yaw) {
         if (face >= Critter.GLASS_SOUTH && face <= Critter.GLASS_EAST) {
-            int dir = face - Critter.GLASS_SOUTH;
-            float a = switch (dir) {
-                case 0 -> 0F;
-                case 1 -> -90F;
-                case 2 -> 180F;
-                default -> 90F;
-            };
-            pose.rotate(Axis.YP.rotationDegrees(a));
-            pose.rotate(Axis.XP.rotationDegrees(-90F));
-            pose.rotate(Axis.YP.rotationDegrees(yaw));
+            orientOnGlass(pose, face - Critter.GLASS_SOUTH, yaw);
         } else {
             pose.rotate(Axis.YP.rotationDegrees(org.overengineer.bettacraft.critters.CritterFacing.modelTurn(yaw)));
         }
+    }
+
+    /** The belly on the glass (or, M62, a wall in the world) that lies in direction {@code dir} (2D data value), heading {@code yaw} on it. */
+    public static void orientOnGlass(PoseStack pose, int dir, float yaw) {
+        float a = switch (dir) {
+            case 0 -> 0F;
+            case 1 -> -90F;
+            case 2 -> 180F;
+            default -> 90F;
+        };
+        pose.rotate(Axis.YP.rotationDegrees(a));
+        pose.rotate(Axis.XP.rotationDegrees(-90F));
+        pose.rotate(Axis.YP.rotationDegrees(yaw));
     }
 
     @Nullable
