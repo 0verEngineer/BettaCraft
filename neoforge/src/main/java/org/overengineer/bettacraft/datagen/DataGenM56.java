@@ -31,11 +31,10 @@ import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.HeightmapPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.ConfiguredModel;
+import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
+import org.overengineer.bettacraft.datagen.model.ModelFile;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -92,27 +91,27 @@ final class DataGenM56 {
     }
 
     /** The biome tags (vanilla, the common tags and the known biome mods). */
-    static void biomeTags(Function<TagKey<Biome>, net.minecraft.data.tags.TagsProvider.TagAppender<Biome>> tag) {
+    static void biomeTags(Function<TagKey<Biome>, net.minecraft.data.tags.TagAppender<Biome>> tag) {
         var jungle = tag.apply(ModTags.JUNGLE_PLANT_LANDS).addTag(BiomeTags.IS_JUNGLE);
-        Compat.JUNGLE_BIOMES.forEach(jungle::addOptional);
+        Compat.JUNGLE_BIOMES.forEach(id -> jungle.add(net.minecraft.tags.TagEntry.optionalElement(id)));
         tag.apply(ModTags.LUSH_CAVE_PLANT_LANDS).add(Biomes.LUSH_CAVES);
         var swamp = tag.apply(ModTags.SWAMP_PLANT_LANDS).add(Biomes.SWAMP, Biomes.MANGROVE_SWAMP).addTag(Tags.Biomes.IS_SWAMP);
-        Compat.SWAMP_BIOMES.forEach(swamp::addOptional);
-        Compat.MANGROVE_BIOMES.forEach(swamp::addOptional);
+        Compat.SWAMP_BIOMES.forEach(id -> swamp.add(net.minecraft.tags.TagEntry.optionalElement(id)));
+        Compat.MANGROVE_BIOMES.forEach(id -> swamp.add(net.minecraft.tags.TagEntry.optionalElement(id)));
         tag.apply(ModTags.DESERT_PLANT_LANDS).addTag(Tags.Biomes.IS_DESERT).addTag(BiomeTags.IS_BADLANDS);
         var savanna = tag.apply(ModTags.SAVANNA_PLANT_LANDS).addTag(Tags.Biomes.IS_SAVANNA);
-        Compat.TORTOISE_BIOMES.forEach(savanna::addOptional);
+        Compat.TORTOISE_BIOMES.forEach(id -> savanna.add(net.minecraft.tags.TagEntry.optionalElement(id)));
     }
 
     /** The soil of the plants in the world: the plant substrate (sand, soil, gravel), terracotta, the moss block. */
-    static void blockTags(Function<TagKey<Block>, net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block>> tag) {
+    static void blockTags(Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
         tag.apply(ModTags.LAND_PLANT_SOIL).addTag(ModTags.PLANT_SUBSTRATE).addTag(BlockTags.TERRACOTTA)
                 .add(net.minecraft.world.level.block.Blocks.MOSS_BLOCK, net.minecraft.world.level.block.Blocks.PACKED_MUD);
         var sword = tag.apply(BlockTags.SWORD_EFFICIENT);
         for (var b : ModBlocks.WILD_LAND_PLANTS.values()) sword.add(b.get());
     }
 
-    static void itemTags(Function<TagKey<Item>, net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item>> tag) {
+    static void itemTags(Function<TagKey<Item>, ObjTags.Appender<Item>> tag) {
         var t = tag.apply(ModTags.TERRARIUM_PLANT_ITEMS);
         for (var e : ModItems.AQUATIC_PLANTS.entrySet()) if (e.getKey().land()) t.add(e.getValue().get());
     }
@@ -182,10 +181,10 @@ final class DataGenM56 {
         map.put(Items.SHORT_GRASS, PlantSpecies.SWAMP_SEDGE);
         for (var e : map.entrySet()) {
             String id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(e.getKey()).getPath();
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.AQUATIC_PLANTS.get(e.getValue()).get())
+            ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.AQUATIC_PLANTS.get(e.getValue()).get())
                     .requires(e.getKey())
-                    .unlockedBy("has_" + id, net.minecraft.advancements.critereon.InventoryChangeTrigger.TriggerInstance.hasItems(e.getKey()))
-                    .save(output, BettaCraft.id("terrarium_plant_from_" + id));
+                    .unlockedBy("has_" + id, net.minecraft.advancements.triggers.InventoryChangeTrigger.TriggerInstance.hasItems(e.getKey()))
+                    .save(output, RecipeCompat.key(BettaCraft.id("terrarium_plant_from_" + id)));
         }
     }
 }

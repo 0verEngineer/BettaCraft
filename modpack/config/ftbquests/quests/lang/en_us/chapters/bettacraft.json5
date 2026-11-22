@@ -454,5 +454,13 @@
   "quest.5B30791AA5DE43DC.title": "{\"translate\":\"quest.bettacraft.shared_tank.title\"}",
   "quest.5B30791AA5DE43DC.quest_desc": [
     "{\"translate\":\"quest.bettacraft.shared_tank.desc\"}"
+  ],
+  "quest.5F299579B4101F89.title": "{\"translate\":\"quest.bettacraft.terrarium_plants.title\"}",
+  "quest.5F299579B4101F89.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.terrarium_plants.desc\"}"
+  ],
+  "quest.5135E1A1C0036424.title": "{\"translate\":\"quest.bettacraft.bromeliad_tadpoles.title\"}",
+  "quest.5135E1A1C0036424.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.bromeliad_tadpoles.desc\"}"
   ]
 }

@@ -813,7 +813,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         } else {
         }
         if (nameTooltipForTest && nameBox.visible) {
-            g.renderTooltip(font, font.split(Component.translatable("gui.bettacraft.tank.name_tooltip"), 170), nameBox.getX() + 4, nameBox.getY() + 26);
+            g.setTooltipForNextFrame(font, font.split(Component.translatable("gui.bettacraft.tank.name_tooltip"), 170), nameBox.getX() + 4, nameBox.getY() + 26);
         }
     }
 

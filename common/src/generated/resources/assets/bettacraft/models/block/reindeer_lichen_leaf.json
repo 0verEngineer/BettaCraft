@@ -1,6 +1,6 @@
 {
   "parent": "bettacraft:block/template_plant_leaf",
-  "render_type": "minecraft:cutout_mipped",
+  "render_type": "minecraft:cutout",
   "textures": {
     "tex": "bettacraft:block/plant_leaf_lichen"
   }
