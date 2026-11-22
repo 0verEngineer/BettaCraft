@@ -181,7 +181,7 @@ public final class MiniatureRenderer {
         }
         if (!opaque) TRAVELLING.clear();
         if (opaque) MiniaturePlants.endFrame(mc.renderBuffers().bufferSource());
-        if (opaque && MiniatureSway.lastQuads > 0) mc.renderBuffers().bufferSource().endBatch(PlantMeshRenderer.MINI);
+        if (opaque && MiniatureSway.lastQuads > 0) mc.renderBuffers().bufferSource().endBatch(PlantMeshRenderer.Mini.TYPE);
         long dt = System.nanoTime() - t0;
         lastFrameNanos = opaque ? dt : lastFrameNanos + dt;
     }
