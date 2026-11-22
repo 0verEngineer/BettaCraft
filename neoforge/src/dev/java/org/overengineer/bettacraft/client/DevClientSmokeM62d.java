@@ -88,8 +88,8 @@ final class DevClientSmokeM62d {
 
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setDayTime(6000);
-        level.setWeatherParameters(12000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getServer().setWeatherParameters(12000, 0, false, false);
         home = p.blockPosition();
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -178,7 +178,7 @@ final class DevClientSmokeM62d {
             if (x >= 0 && x < 6 && z >= 0 && z < 4) continue;
             for (int y = 0; y < 2; y++) level.setBlock(b.offset(x, y, z), Blocks.GLASS.defaultBlockState(), 2);
         }
-        WildCritterEntity w = ModEntities.WILD_CRITTER.get().create(level);
+        WildCritterEntity w = ModEntities.WILD_CRITTER.get().create(level, net.minecraft.world.entity.EntitySpawnReason.LOAD);
         if (w != null) {
             Critter k = new Critter(0, CritterSpecies.TYLOMELANIA, true, CritterGenes.WILD, 0, 0, 0);
             k.age = CritterSpecies.TYLOMELANIA.juvenileDays() + 2;
@@ -252,13 +252,13 @@ final class DevClientSmokeM62d {
         mc.options.hideGui = false;
         if (guiScale == 0) guiScale = mc.options.guiScale().get() == 0 ? -1 : mc.options.guiScale().get();
         mc.options.guiScale().set(s);
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     private void restoreScale() {
         mc.options.guiScale().set(Math.max(0, guiScale));
         guiScale = 0;
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     private void openPage(ServerPlayer p, String what, int page) {
@@ -278,7 +278,7 @@ final class DevClientSmokeM62d {
 
     private void look(BlockPos b, double dx, double eyeDy, double dz, float yaw, float pitch) {
         if (b == null) return;
-        server(p -> p.teleportTo(p.level(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -310,7 +310,7 @@ final class DevClientSmokeM62d {
 
     /** Moves the mouse into the top left corner (no tooltip over the slots). */
     private void mouseAway() {
-        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().getWindow(), 1, 1);
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), 1, 1);
         try {
             for (String f : new String[]{"xpos", "ypos"}) {
                 java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
@@ -323,7 +323,7 @@ final class DevClientSmokeM62d {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m62d_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m62d_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
