@@ -11,7 +11,7 @@ import org.overengineer.bettacraft.tank.interior.InteriorSync;
 import org.overengineer.bettacraft.tank.menu.TankActions;
 
 public final class ModNetwork {
-    public static final String VERSION = "19"; // M51: the menu of the hired aquarist (M50: travelling tanks; M37: fertilizer in water values)
+    public static final String VERSION = "20"; // M62: the tank of an external filter (M51: the hired aquarist; M50: travelling tanks; M37: fertilizer in water values)
 
     private ModNetwork() {}
 
@@ -47,6 +47,10 @@ public final class ModNetwork {
             if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.aquarist.AquaristMenu.handle(sp, p);
         })); // M51
         r.playBidirectional(DecorTemplatePayload.TYPE, DecorTemplatePayload.STREAM_CODEC, ModNetwork::onDecorTemplate);
+        r.playBidirectional(FilterLinkPayload.TYPE, FilterLinkPayload.STREAM_CODEC, (p, ctx) -> ctx.enqueueWork(() -> { // M62
+            if (ctx.player() instanceof ServerPlayer sp) org.overengineer.bettacraft.equipment.FilterLinks.choose(sp, p);
+            else if (org.overengineer.bettacraft.platform.Platform.get().isClient()) org.overengineer.bettacraft.client.screen.FilterLinkScreen.accept(p);
+        }));
     }
 
     private static void onAquaristView(AquaristViewPayload payload, IPayloadContext ctx) {

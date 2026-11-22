@@ -443,10 +443,27 @@ public final class ModDataGen {
                 front(m, front, joints);
                 variants[front.ordinal()][j][i] = m;
             }
+            // M62: a cabinet with another one in front of it (the back rows and the inside of an under-cabinet area): a plain
+            // carcass without a front and plinth, the counter top without the front overhang (the sides still overhang)
+            ModelFile[] covered = new ModelFile[4];
+            for (int i = 0; i < 4; i++) {
+                boolean left = (i & 1) != 0, right = (i & 2) != 0;
+                String name = "cabinet_back" + (left && right ? "_both" : left ? "_left" : right ? "_right" : "");
+                BlockModelBuilder m = models().getBuilder(name).parent(models().getExistingFile(mcLoc("block/block")))
+                        .texture("wood", modLoc("block/cabinet_wood")).texture("trim", modLoc("block/cabinet_trim"))
+                        .texture("particle", modLoc("block/cabinet_wood"));
+                box(m, 0, 0, 0, 16, 14, 16, "#wood", d -> d != Direction.UP);
+                float x0 = right ? 0 : -0.5F, x1 = left ? 16 : 16.5F;
+                box(m, x0, 14, 0, x1, 16, 16, "#wood", d -> d == Direction.UP || d == Direction.SOUTH || d == Direction.NORTH
+                        || (d == Direction.EAST && left) || (d == Direction.WEST && right));
+                covered[i] = m;
+            }
             getVariantBuilder(ModBlocks.CABINET.get()).forAllStates(state -> {
                 int i = (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.LEFT) ? 1 : 0)
                         | (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.RIGHT) ? 2 : 0);
                 int j = state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.JOINTS) ? 1 : 0;
+                if (state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.COVERED)) return ConfiguredModel.builder().modelFile(covered[i])
+                        .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING).toYRot() + 180) % 360).build();
                 return ConfiguredModel.builder().modelFile(variants[state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FRONT).ordinal()][j][i])
                         .rotationY(((int) state.getValue(org.overengineer.bettacraft.equipment.CabinetBlock.FACING).toYRot() + 180) % 360).build();
             });

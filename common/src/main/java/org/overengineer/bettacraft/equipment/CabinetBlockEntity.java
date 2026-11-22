@@ -140,6 +140,12 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
         return org.overengineer.bettacraft.winding.Winding.Device.CABINET;
     }
 
+    /** M62: the store this cabinet shares with the whole under-cabinet ({@link CabinetSprings}); its own spring alone. */
+    @Override
+    public org.overengineer.bettacraft.winding.WindSpring windStore() {
+        return CabinetSprings.of(this);
+    }
+
     /** Storage slots only (capability for hoppers and pipes). */
     public RangedWrapper storage() {
         return storage;

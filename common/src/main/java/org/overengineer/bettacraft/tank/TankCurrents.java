@@ -88,7 +88,7 @@ public final class TankCurrents {
     public static FilterFlow.Path path(TankData t, FilterHost f) {
         if (f instanceof ExternalFilterBlockEntity e) {
             BlockState s = e.getBlockState();
-            return s.getBlock() instanceof ExternalFilterBlock ? FilterFlow.forFilterBlock(t, e.getBlockPos(), s.getValue(ExternalFilterBlock.FACING)) : null;
+            return s.getBlock() instanceof ExternalFilterBlock ? FilterFlow.forFilter(t, e) : null; // M62
         }
         if (f instanceof CabinetBlockEntity cab) return FilterFlow.forCabinet(t, cab);
         return null;
