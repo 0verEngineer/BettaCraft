@@ -229,7 +229,7 @@ public final class MiniaturePlants {
             long k = e.getLongKey();
             ps.pushPose();
             ps.translate(BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k));
-            PlantMeshRenderer.drawAt(e.getValue(), ps, buffers, time, PlantMeshRenderer.MINI);
+            PlantMeshRenderer.drawAt(e.getValue(), ps, buffers, time, PlantMeshRenderer.Mini.TYPE);
             ps.popPose();
             n++;
         }
@@ -250,7 +250,7 @@ public final class MiniaturePlants {
 
     /** Flushes the meshes drawn this frame (one render type for all of them). */
     static void endFrame(MultiBufferSource.BufferSource buffers) {
-        if (lastDrawn > 0) buffers.endBatch(PlantMeshRenderer.MINI);
+        if (lastDrawn > 0) buffers.endBatch(PlantMeshRenderer.Mini.TYPE);
     }
 
     /** Meshes known for a region (smoke tests): plants with a mesh, or -1 without any state. */
