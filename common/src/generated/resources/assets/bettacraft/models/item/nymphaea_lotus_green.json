@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_bulb",
-    "layer1": "bettacraft:item/plant_bulb_detail"
+    "layer0": "bettacraft:item/plant_nymphaea_lotus_green",
+    "layer1": "bettacraft:item/plant_nymphaea_lotus_green_detail"
   }
 }

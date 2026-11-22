@@ -789,15 +789,15 @@ public final class ModDataGen {
                     withExistingParent(id, modLoc("block/" + id));
                 }
             }
-            // M13: aquarium plants: two grey layers per growth form, tinted per species (ItemColor)
+            // M13: aquarium plants: two grey layers, tinted per species (ItemColor); M62: an own icon per species
             for (var e : ModItems.AQUATIC_PLANTS.entrySet()) {
                 if (e.getKey().land()) { // M56: the terrarium plants have an icon per look
                     DataGenM56.itemModel(this, e.getKey());
                     continue;
                 }
-                String form = e.getKey().form().name().toLowerCase(java.util.Locale.ROOT);
-                withExistingParent(e.getKey().id(), mcLoc("item/generated")).texture("layer0", modLoc("item/plant_" + form))
-                        .texture("layer1", modLoc("item/plant_" + form + "_detail"));
+                String id = e.getKey().id();
+                withExistingParent(id, mcLoc("item/generated")).texture("layer0", modLoc("item/plant_" + id))
+                        .texture("layer1", modLoc("item/plant_" + id + "_detail"));
             }
             DataGenM291.blockDisplays(this, generatedModels); // M29.1: block items in 3D
         }
