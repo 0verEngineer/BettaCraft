@@ -42,6 +42,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM62c m62c;
     /** M61: -Psmoketestm61 (block changes without states, leaving and joining the world). */
     private static DevClientSmokeM61 m61;
+    /** M63: -Psmoketestm63 (the tank water with every shader pack). */
+    private static DevClientSmokeM63 m63;
     private static DevClientSmokeM62b m62b;
     private static int stage;
     private static BookTour book;
@@ -188,6 +190,20 @@ public final class FabricClientSmoke implements ClientModInitializer {
             }
             if (stage == 624) {
                 if (m62d.tick()) stage = 4;
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m63only")) {
+                LOGGER.info("[smoketest] fabric client in world: M63 scene");
+                m63 = new DevClientSmokeM63();
+                stage = 63;
+            }
+            if (stage == 63) {
+                if (m63.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
+                    LOGGER.info(m63.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M63");
+                    mc.stop();
+                }
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m61only")) {
