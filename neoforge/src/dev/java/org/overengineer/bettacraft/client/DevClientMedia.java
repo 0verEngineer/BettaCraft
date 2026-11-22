@@ -22,7 +22,9 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientMedia {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    static final String SOURCE = "Bettacraft Schaukasten", COPY = "Bettacraft Medien";
+    /** M58: {@code -PmediaSource} / {@code -PmediaWorld} pick other worlds (a showcase built under another name, a copy that is not the user's). */
+    static final String SOURCE = System.getProperty("bettacraft.media.source", "Bettacraft Schaukasten"),
+            COPY = System.getProperty("bettacraft.media.world", "Bettacraft Medien");
     private static boolean opened;
     private static int ticks;
     private static DevClientSmokeReadme scene;

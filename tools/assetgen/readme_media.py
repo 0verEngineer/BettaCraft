@@ -44,6 +44,24 @@ STILLS = {
     'readme_fresh_giants': ('bettacraft-freshwater-giants', None, 1280),
     'readme_filter_lines': ('bettacraft-filter-lines', None, 1280),
     'readme_showcase_overview': ('bettacraft-showcase-overview', None, 1280),
+    # M58: the tanks, animals and devices that were missing (part m58 of the media run; part create with -Pcreate)
+    'readme_m58_paludarium': ('bettacraft-paludarium-frogs', None, 1280),
+    'readme_m58_mangrove': ('bettacraft-mangrove-archerfish', None, 1280),
+    'readme_m58_desert': ('bettacraft-desert-terrarium', None, 1280),
+    'readme_m58_seahorses': ('bettacraft-seahorse-tank', None, 1280),
+    'readme_m58_swamp': ('bettacraft-swamp-frogs', None, 1280),
+    'readme_m58_terrarium_plants': ('bettacraft-terrarium-plants', None, 1280),
+    'readme_m58_terrarium_inside': ('bettacraft-terrarium-plants-inside', None, 1280),
+    'readme_m58_sea_turtle': ('bettacraft-sea-turtle', None, 1280),
+    'readme_m58_dolphin': ('bettacraft-giant-dolphin', None, 1280),
+    'readme_m58_shark': ('bettacraft-giant-shark', None, 1280),
+    'readme_m58_eagle_ray': ('bettacraft-giant-eagle-ray', None, 1280),
+    'readme_m58_wels': ('bettacraft-giant-wels', None, 1280),
+    'readme_m58_aquarist_villager': ('bettacraft-aquarist-villager', (0.08, 0.12, 0.92, 0.75), 1280),
+    'readme_m58_hired_aquarist': ('bettacraft-hired-aquarist', None, 1280),
+    'readme_m58_monitors': ('bettacraft-monitors', None, 1280),
+    'readme_m58_wild_plants': ('bettacraft-wild-plants', None, 1280),
+    'readme_m58_create_cart': ('bettacraft-create-cart', (0.15, 0.05, 0.85, 0.75), 1280),
 }
 # M43: every still of the room and the showcase also with Complementary Reimagined (suffix _shaders)
 for _k, (_n, _b, _w) in list(STILLS.items()):
@@ -59,6 +77,16 @@ ANIMS = {
     'flare': ('bettacraft-betta-flaring', None, 560, 20, 0, 100),
     'grow': ('bettacraft-plant-growth', None, 600, 12, 0, 96),
     'shrimp': ('bettacraft-shrimp-tank-crawling', (0.0, 0.0, 1.0, 0.82), 600, 20, 0, 80),
+    # M58
+    'm58_paludarium': ('bettacraft-paludarium-frogs', None, 600, 20, 0, 90),
+    'm58_mangrove': ('bettacraft-mangrove-archerfish', None, 600, 20, 0, 100),
+    'm58_desert': ('bettacraft-desert-terrarium-walking', None, 600, 20, 0, 100),
+    'm58_seahorses': ('bettacraft-seahorse-tank-swimming', None, 600, 20, 0, 100),
+}
+# M58: GUI pictures (PNG): the users tab of the tank menu (the window without the inventory), a chest of animal containers
+GUI = {
+    'readme_m58_menu_users': ('bettacraft-menu-users', (0.344, 0.243, 0.656, 0.558), 800),
+    'readme_m58_icons': ('bettacraft-animal-icons', None, 800),
 }
 
 
@@ -111,6 +139,28 @@ def menus():
     print(f'{out}: {os.path.getsize(out) // 1024} KB')
 
 
+def gui():
+    for key, (name, box, width) in GUI.items():
+        path = os.path.join(SRC, key + '.png')
+        if not os.path.exists(path):
+            continue
+        img = Image.open(path).convert('RGB')
+        if box is None:
+            box = chest_box(img)
+        img = scaled(crop(img, box), width)
+        out = os.path.join(DST, name + '.png')
+        img.quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(out, optimize=True)
+        print(f'{out}: {os.path.getsize(out) // 1024} KB')
+
+
+def chest_box(img):
+    """The six rows of slots of a chest window in the middle of the shot (the GUI scale found from the window's size)."""
+    w, h = img.size
+    scale = max(1, min(w // 320, h // 240))
+    left, top = (w - 176 * scale) // 2, (h - 222 * scale) // 2
+    return ((left + 5 * scale) / w, (top + 15 * scale) / h, (left + 171 * scale) / w, (top + 128 * scale) / h)
+
+
 def frames_of(seq, box, width, first, count):
     files = sorted(glob.glob(os.path.join(SRC, f'readme_anim_{seq}_*.png')))[first:first + count]
     return [scaled(crop(Image.open(f).convert('RGB'), box), width) for f in files]
@@ -158,4 +208,5 @@ if __name__ == '__main__':
     os.makedirs(DST, exist_ok=True)
     stills()
     menus()
+    gui()
     anims()
