@@ -8,12 +8,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:fern"
-    }
+    "minecraft:fern"
   ],
   "result": {
-    "count": 1,
     "id": "bettacraft:boston_fern"
   }
 }

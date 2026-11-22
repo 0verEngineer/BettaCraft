@@ -70,7 +70,7 @@ public final class TerrariumPlantLife {
             h.feed();
             n++;
             if (c.logDue("graze:" + food.species.id(), level.getGameTime(), 24000)) {
-                TankCare.log(level, c, "log.bettacraft.terrarium_plant.grazed", TankCare.nameArg(h), "@" + InteriorPlants.item(food.species, 0).getDescriptionId());
+                TankCare.log(level, c, "log.bettacraft.terrarium_plant.grazed", TankCare.nameArg(h), "@" + InteriorPlants.item(food.species, 0).getItem().getDescriptionId());
             }
         }
         if (n > 0) org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).setDirty();

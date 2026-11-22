@@ -94,9 +94,8 @@ final class DevClientSmokeM56 {
     }
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
-        level.setDayTime(6000);
-        level.setWeatherParameters(12000, 0, false, false);
+        ServerLevel level = p.level();
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         home = p.blockPosition();
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -106,7 +105,7 @@ final class DevClientSmokeM56 {
 
     /** A 3 x 2 x 2 tank (interior 48 x 32 x 32) at {@code min} facing north, a lit light bar on its back top row. */
     private static TankBlockEntity tank(ServerPlayer p, BlockPos min) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         List<BlockPos> blocks = new ArrayList<>();
         for (int x = 0; x < 3; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) blocks.add(min.offset(x, y, z));
         for (int x = -2; x < 5; x++) for (int z = -4; z < 4; z++) {
@@ -150,7 +149,7 @@ final class DevClientSmokeM56 {
     }
 
     private void buildTanks(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         BlockPos base = home.offset(-6, 0, 8);
         for (int i = 0; i < 3; i++) tanks[i] = base.offset(i * 7, 0, 0);
@@ -214,7 +213,7 @@ final class DevClientSmokeM56 {
 
     /** A dart frog pair and a tadpole in a bromeliad's cup; a tortoise and a corn snake at the agave. */
     private static void animals(ServerPlayer p, TankBlockEntity rain, TankBlockEntity desert) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         if (rain != null) {
             for (int i = 0; i < 2; i++) put(level, rain, HerpSpecies.DART_FROG, i == 0, false);
             var cups = TerrariumPlantLife.cups(level.getServer(), rain.getTank());
@@ -229,12 +228,12 @@ final class DevClientSmokeM56 {
     }
 
     private static HerpEntity put(ServerLevel level, TankBlockEntity c, HerpSpecies s, boolean female, boolean baby) {
-        HerpEntity e = ModEntities.herp(s).create(level);
+        HerpEntity e = ModEntities.herp(s).create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
         if (e == null) return null;
         if (baby) e.makeHatchling();
         e.setFemale(female);
         TankData t = c.getTank();
-        e.moveTo(t.min().getX() + 1.5, t.min().getY() + 0.4, t.min().getZ() + 0.8, 0F, 0F);
+        e.snapTo(t.min().getX() + 1.5, t.min().getY() + 0.4, t.min().getZ() + 0.8, 0F, 0F);
         TankInhabitants.adopt(e, c);
         if (!level.addFreshEntity(e)) return null;
         t.inhabitants().add(e.getUUID());
@@ -272,11 +271,11 @@ final class DevClientSmokeM56 {
     /** The camera inside a tank's interior at local (x, eyeY, z). */
     private void inside(int k, double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            ServerLevel in = InteriorManager.interiorLevel(p.server);
-            TankBlockEntity c = TankMultiblock.getController(p.server.overworld(), tanks[k]);
+            ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
+            TankBlockEntity c = TankMultiblock.getController(p.level().getServer().overworld(), tanks[k]);
             if (in == null || c == null) return;
-            InteriorRegion r = InteriorManager.ensureRegion(p.server.overworld(), c);
-            p.teleportTo(in, r.originX() + x, InteriorRegion.BASE_Y + eyeY - p.getEyeHeight(), r.originZ() + z, yaw, pitch);
+            InteriorRegion r = InteriorManager.ensureRegion(p.level().getServer().overworld(), c);
+            p.teleportTo(in, r.originX() + x, InteriorRegion.BASE_Y + eyeY - p.getEyeHeight(), r.originZ() + z, java.util.Set.of(), yaw, pitch, true);
         });
     }
 
@@ -298,7 +297,7 @@ final class DevClientSmokeM56 {
 
     /** Three rows (by habitat) of every terrarium plant in the world on its ground, the trimmed look one block behind. */
     private void garden(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos g = home.offset(-12, 0, 40);
         for (int x = -2; x < 28; x++) for (int z = -6; z < 16; z++) {
             for (int y = 0; y < 8; y++) level.setBlock(g.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
@@ -333,7 +332,7 @@ final class DevClientSmokeM56 {
                     mc.options.hideGui = false;
                     guiScale = mc.options.guiScale().get();
                     mc.options.guiScale().set(scale);
-                    mc.resizeDisplay();
+                    mc.resizeGui();
                 });
                 then(20, () -> look(tanks[0], 1.5, 1.1, -2.6, 0F, 6F));
                 then(20, this::openMenu);
@@ -373,7 +372,7 @@ final class DevClientSmokeM56 {
                 then(5, () -> mc.setScreen(null));
                 then(1, () -> {
                     mc.options.guiScale().set(guiScale);
-                    mc.resizeDisplay();
+                    mc.resizeGui();
                     mc.options.hideGui = true;
                 });
             }
@@ -398,7 +397,7 @@ final class DevClientSmokeM56 {
 
     private void openMenu() {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tanks[0]);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tanks[0]);
             if (c == null) return;
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p,
                     new SimpleMenuProvider((id, inv, pl) -> new TankMenu(id, inv, c), Component.translatable("gui.bettacraft.tank.title")),
@@ -417,7 +416,7 @@ final class DevClientSmokeM56 {
 
     private void look(BlockPos b, double dx, double eyeDy, double dz, float yaw, float pitch) {
         if (b == null) return;
-        server(p -> p.teleportTo(p.server.overworld(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, yaw, pitch));
+        server(p -> p.teleportTo(p.level().getServer().overworld(), b.getX() + dx, b.getY() + eyeDy - p.getEyeHeight(), b.getZ() + dz, java.util.Set.of(), yaw, pitch, true));
     }
 
     private void then(int delay, Runnable action) {
@@ -452,7 +451,7 @@ final class DevClientSmokeM56 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m56_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m56_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }

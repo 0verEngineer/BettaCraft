@@ -1519,6 +1519,32 @@
 			title: "{\"translate\":\"quest.bettacraft.shared_tank.title\"}",
 			x: 0.2,
 			y: 1.8
+		},
+		{
+			dependencies: ["0F6FB9FD16071253"],
+			description: ["{\"translate\":\"quest.bettacraft.terrarium_plants.desc\"}"],
+			id: "5F299579B4101F89",
+			rewards: [{ id: "4D850757BBB2F0C7", type: "xp", xp: 50 }, { count: 1, id: "079F3A1440AB64A9", item: { count: 1, id: "bettacraft:neoregelia" }, type: "item" }, { count: 1, id: "431FDA0BE68475D5", item: { count: 1, id: "bettacraft:cushion_moss" }, type: "item" }],
+			tags: ["bettacraft_feature_terrariumplants__enabled", "bettacraft_feature_terrariums__herps"],
+			tasks: [
+				{ advancement: "bettacraft:terrarium_plant_grown", criterion: "", id: "19341D736576753E", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.terrarium_plants.title\"}",
+			x: -3.5,
+			y: -6.0
+		},
+		{
+			dependencies: ["327AF685E7AA88BD", "5F299579B4101F89"],
+			description: ["{\"translate\":\"quest.bettacraft.bromeliad_tadpoles.desc\"}"],
+			id: "5135E1A1C0036424",
+			rewards: [{ id: "396E9228F2FD3692", type: "xp", xp: 150 }],
+			tags: ["bettacraft_feature_terrariumplants__bromeliadtadpoles", "bettacraft_feature_terrariums__devices"],
+			tasks: [
+				{ advancement: "bettacraft:bromeliad_tadpole", criterion: "", id: "60D67869D1CD344B", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.bromeliad_tadpoles.title\"}",
+			x: -7.2,
+			y: -6.0
 		}
 	],
 	subtitle: ["{\"translate\":\"quest.bettacraft.chapter.subtitle\"}"],

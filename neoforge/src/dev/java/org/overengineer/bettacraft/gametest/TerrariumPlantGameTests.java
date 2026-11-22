@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
@@ -29,8 +29,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -80,12 +80,12 @@ public final class TerrariumPlantGameTests {
     // ------------------------------------------------------------------ helpers
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure(what);
     }
 
     private static ServerLevel interior(GameTestHelper h) {
         ServerLevel in = InteriorManager.interiorLevel(h.getLevel().getServer());
-        if (in == null) throw new GameTestAssertException("no interior dimension");
+        if (in == null) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure("no interior dimension");
         return in;
     }
 
@@ -114,7 +114,7 @@ public final class TerrariumPlantGameTests {
     private static InteriorPlant plant(GameTestHelper h, TankBlockEntity c, PlantSpecies s, int lx, int lz, int stage) {
         InteriorRegion r = region(h, c);
         InteriorPlant p = InteriorPlants.plantAt(interior(h), r, s, lx, 0, lz, stage, 5600L + lx * 31L + lz);
-        if (p == null) throw new GameTestAssertException(s.id() + " not planted");
+        if (p == null) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure(s.id() + " not planted");
         return p;
     }
 
@@ -198,12 +198,12 @@ public final class TerrariumPlantGameTests {
         sp.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
         sp.getInventory().clearContent();
         InteriorPlants.trim(in, r, cactus, sp, null, null);
-        ItemStack offset = sp.getInventory().items.stream().filter(s -> s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.PRICKLY_PEAR).get())).findFirst().orElse(ItemStack.EMPTY);
+        ItemStack offset = sp.getInventory().getNonEquipmentItems().stream().filter(s -> s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.PRICKLY_PEAR).get())).findFirst().orElse(ItemStack.EMPTY);
         check(offset.getCount() == 1 && AquaticPlantItem.stage(offset) == 1, "an offset (stage 1): " + offset + " stage " + AquaticPlantItem.stage(offset));
         check(cactus.stage == PlantSpecies.PRICKLY_PEAR.stages() - 1, "the cactus lost a stage: " + cactus.stage);
         int full = PlantSpecies.CUSHION_MOSS.stages();
         InteriorPlants.trim(in, r, moss, sp, null, null);
-        ItemStack half = sp.getInventory().items.stream().filter(s -> s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.CUSHION_MOSS).get())).findFirst().orElse(ItemStack.EMPTY);
+        ItemStack half = sp.getInventory().getNonEquipmentItems().stream().filter(s -> s.is(ModItems.AQUATIC_PLANTS.get(PlantSpecies.CUSHION_MOSS).get())).findFirst().orElse(ItemStack.EMPTY);
         check(AquaticPlantItem.stage(half) == full / 2 && moss.stage == full - full / 2, "the moss divided in halves: " + AquaticPlantItem.stage(half) + " / " + moss.stage);
         sp.discard();
         h.succeed();
@@ -212,12 +212,12 @@ public final class TerrariumPlantGameTests {
     // ------------------------------------------------------------------ in the world
 
     private static Holder<Biome> biome(ServerLevel level, ResourceKey<Biome> key) {
-        return level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(key);
+        return level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(key);
     }
 
     private static boolean hasFeature(Holder<Biome> b, String id) {
         return b.value().getGenerationSettings().features().stream().anyMatch(set -> set.stream()
-                .anyMatch(f -> f.unwrapKey().map(k -> k.location().equals(BettaCraft.id(id))).orElse(false)));
+                .anyMatch(f -> f.unwrapKey().map(k -> k.identifier().equals(BettaCraft.id(id))).orElse(false)));
     }
 
     /** The wild terrarium plants are in their biomes (the tags) and their feature puts a group of one species on the ground. */
@@ -230,11 +230,11 @@ public final class TerrariumPlantGameTests {
                 new Want(Biomes.BADLANDS, WildTables.LandPlace.DESERT), new Want(Biomes.SAVANNA, WildTables.LandPlace.SAVANNA),
                 new Want(Biomes.LUSH_CAVES, WildTables.LandPlace.LUSH_CAVES))) {
             Holder<Biome> b = biome(level, w.biome());
-            check(BiomeWaters.landPlace(b) == w.place(), w.biome().location() + " is " + BiomeWaters.landPlace(b) + ", not " + w.place());
-            check(hasFeature(b, "wild_land_plants") && hasFeature(b, "wild_cave_land_plants"), "the wild terrarium plants are not in " + w.biome().location());
+            check(BiomeWaters.landPlace(b) == w.place(), w.biome().identifier() + " is " + BiomeWaters.landPlace(b) + ", not " + w.place());
+            check(hasFeature(b, "wild_land_plants") && hasFeature(b, "wild_cave_land_plants"), "the wild terrarium plants are not in " + w.biome().identifier());
         }
         for (ResourceKey<Biome> k : List.of(Biomes.PLAINS, Biomes.OCEAN, Biomes.TAIGA, Biomes.SNOWY_PLAINS)) {
-            check(BiomeWaters.landPlace(biome(level, k)) == null, "terrarium plants would grow in " + k.location());
+            check(BiomeWaters.landPlace(biome(level, k)) == null, "terrarium plants would grow in " + k.identifier());
         }
         check(biome(level, Biomes.DESERT).is(ModTags.DESERT_PLANT_LANDS), "the desert is not in #bettacraft:desert_plant_lands");
         // a group on sand: cacti only on the soil
