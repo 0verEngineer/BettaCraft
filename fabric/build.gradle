@@ -301,7 +301,7 @@ dependencies {
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
     if (project.hasProperty('rei')) localRuntime 'me.shedaniel.cloth:basic-math:0.6.1'
 
-    // optional mod groups of the Fabric dev runs (official jars copied into <fabricRunRoot>/<group>, never committed):
+    // optional mod groups of the Fabric dev runs (M59: official jars downloaded by the manifest dev-mods.json into <fabricRunRoot>/<group>, hashes checked, never committed; -Plocal: <run dir>/local-mods, mods to try out, not in the manifest):
     // -Poverlays (Jade, JEI, WTHIT, TOP), -Prei, -Pemi, -Pfabricintegration (Refined Storage, JourneyMap, Better Fish Tanks,
     // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams), M52b: -Pshaders
     // (Sodium, Iris; the shader pack in <fabricRunRoot>/shaderpacks)
@@ -310,7 +310,7 @@ dependencies {
     // Complementary in the run's shaderpacks), -Pperf (ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant
     // Horizons, More Culling ...), -Pvulkanmod (VulkanMod, where it exists)
     [overlays: 'overlay-mods', rei: 'rei-mods', emi: 'emi-mods', fabricintegration: 'integration-mods', quests: 'quest-mods', shaders: 'shader-mods',
-     maps: 'map-mods', perf: 'perf-mods', vulkanmod: 'vulkan-mods'].each { flag, dir ->
+     maps: 'map-mods', perf: 'perf-mods', vulkanmod: 'vulkan-mods', local: 'local-mods'].each { flag, dir ->
         if (project.hasProperty(flag)) {
             // M53: -PmodsExclude=iris,... leaves the jars starting with these names out (the render matrix: Sodium without Iris)
             def exclude = (project.findProperty('modsExclude') ?: '').toString().tokenize(',')
@@ -652,6 +652,51 @@ tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGam
     }
 }
 
+// ---- M59: server files and test worlds (a fresh clone runs every test without manual work)
+// the dev servers never take the default port 25565 (a real server may hold it): dev_fabric_server_port of gradle.properties
+def fabricDevPort = (project.findProperty('dev_fabric_server_port') ?: '25594').toString()
+def fabricServerFiles = { File dir ->
+    dir.mkdirs()
+    def eula = new File(dir, 'eula.txt')
+    if (!eula.exists()) eula.text = 'eula=true\n'
+    def sp = new File(dir, 'server.properties')
+    def lines = sp.exists() ? sp.readLines('UTF-8') : ['online-mode=false']
+    def port = lines.find { it.startsWith('server-port=') }?.substring(12)
+    if (!sp.exists() || port in [null, '', '25565']) {
+        sp.write((lines.findAll { !it.startsWith('server-port=') } + ["server-port=${fabricDevPort}".toString()]).join('\n') + '\n', 'UTF-8')
+        logger.lifecycle("server files: ${sp} (port ${fabricDevPort})")
+    }
+}
+// every world a test run makes is deleted before the run and after a successful one (-PkeepWorld keeps it); only the fixed
+// names the runs make themselves (never the user's worlds)
+def fabricKeepWorld = project.hasProperty('keepWorld')
+def fabricSmoke = project.properties.keySet().any { it.startsWith('smoketest') }
+def fabricDeleteWorlds = { String when, List<File> dirs ->
+    dirs.each { d ->
+        if (d.exists()) {
+            if (!d.deleteDir()) throw new GradleException("cannot delete the test world ${d}")
+            logger.lifecycle("test world deleted ${when}: ${d}")
+        }
+    }
+}
+def fabricTestWorlds = { Task t, Closure<List<File>> dirs ->
+    t.doFirst { fabricDeleteWorlds('before the run', dirs()) }
+    t.doLast { if (fabricKeepWorld) logger.lifecycle("-PkeepWorld: kept ${dirs()}") else fabricDeleteWorlds('after the run', dirs()) }
+}
+def fabricSmokeSaves = { File saves -> (saves.listFiles() ?: []).findAll { it.isDirectory() && (it.name.startsWith('bettacraft_fabric_smoketest_') || it.name.startsWith('bettacraft_smoketest_')) } }
+tasks.matching { it.name in ['runFabricServer', 'prodFabricServer'] }.configureEach { t ->
+    def dir = rootProject.file(fabricRunRoot + (t.name == 'runFabricServer' ? '/server' : '/prod-server'))
+    t.doFirst { fabricServerFiles(dir) }
+    if (fabricSmoke) fabricTestWorlds(t) { [new File(dir, 'world')] }
+}
+tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
+    def saves = rootProject.file(fabricRunRoot + (t.name == 'runFabricClient' ? '/saves' : '/prod-client/saves'))
+    if (fabricSmoke) fabricTestWorlds(t) { fabricSmokeSaves(saves) }
+}
+tasks.matching { it.name == 'runFabricGameTest' }.configureEach { t ->
+    t.doLast { if (fabricKeepWorld) logger.lifecycle('-PkeepWorld: kept the GameTest world') else fabricDeleteWorlds('after the run', [rootProject.file(fabricRunRoot + '/gametest/world')]) }
+}
+
 // gradlew fabricMultiplayerTest : the Fabric multiplayer test. A dedicated Fabric server (<fabricRunRoot>/mp-server, port 25595,
 // offline mode, the stage of FabricMpSmoke) and, once it is up, two background clients Dev1 and Dev2 (<fabricRunRoot>/mp-client1|2,
 // FabricMpClient) that join, check what they got synced and report in the chat. The game processes are started from the java
@@ -702,6 +747,7 @@ tasks.register('fabricMultiplayerTest') {
         }
         def log = new File(logs, 'server.log').text
         if (!log.contains('MP PASSED')) throw new GradleException('Fabric multiplayer test FAILED, see build/mptest-fabric/server.log')
+        if (!fabricKeepWorld) fabricDeleteWorlds('after the run', [new File(sdir, 'world')]) // M59
         logger.lifecycle('fabricMultiplayerTest PASSED (logs in build/mptest-fabric)')
     }
 }
@@ -742,6 +788,7 @@ tasks.register('fabricSaveLoadTest') {
         if (!new File(dir, 'world/bettacraft_reference.json').exists()) throw new GradleException('fabricSaveLoadTest: no manifest written')
         run('stage1', ['-Dbettacraft.smoketest.upgrade=1'], 'UPGRADE STAGE 1 PASSED')
         run('stage2', ['-Dbettacraft.smoketest.upgrade=2'], 'UPGRADE STAGE 2 PASSED')
+        if (!fabricKeepWorld) fabricDeleteWorlds('after the run', [new File(dir, 'world')]) // M59
         logger.lifecycle('fabricSaveLoadTest PASSED')
     }
 }

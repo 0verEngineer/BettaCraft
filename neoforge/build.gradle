@@ -85,24 +85,23 @@ configurations {
 // M42: the optional integration suite. gradlew integrationTests (or any run task with -Pintegration) switches on every dev
 // group of mods we integrate (power, aquatic, biomes, storage, create, quests, kubejs, facades, maps for the client) plus
 // run/integration-mods (the pipe and capture mods that have no group of their own: Integrated Dynamics + Tunnels, XNet,
-// LaserIO, Modular Routers, Industrial Foregoing and their libraries, from ATM10AA). The GameTest server then runs in a
+// LaserIO, Modular Routers, Industrial Foregoing and their libraries, of ATM10AA). The GameTest server then runs in a
 // directory of its own (run/gametest-integration) and also registers the integration-only GameTests of
 // gametest/integration (system property bettacraft.integration); the normal suite never contains them.
-// -PintegrationPartial (CI, .github/workflows/integration.yml): only the jars with a pinned official download are there
-// (tools/ci/integration-mods.json); the integration-only tests whose mods are missing then pass with a log line.
-def integration = project.hasProperty('integration') || project.hasProperty('integrationPartial') ||
-        gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
+// M59: every jar of the groups is downloaded from its official source by the manifest dev-mods.json (gradle/dev-mods.gradle),
+// locally and in CI alike; the partial CI run (-PintegrationPartial, tools/ci) is gone.
+def integration = project.hasProperty('integration') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
 // M42 part b: the zoo, the other half of the optional suite. gradlew zooTests (or any run task with -Pzoo) puts run/zoo-mods
 // (mods of the ATM10 pack with animals and water plants that we do NOT integrate: Aether, Ars Nouveau + Elemental, Productive
 // Bees, Occultism, Thaumaturge, EvilCraft, Actually Additions, Mahou Tsukai, Psychadelic Chemistry, Fungi Delight, Oritech
-// Things, Garnished and their libraries, from ATM10AA) on the run together with the groups aquatic, biomes and create (their
+// Things, Garnished and their libraries, of ATM10AA) on the run together with the groups aquatic, biomes and create (their
 // animals without a profile count too). The GameTest server runs in run/gametest-zoo and registers the zoo tests of
 // gametest/zoo (system property bettacraft.zoo), which record how those animals and plants behave in our tanks.
 def zoo = project.hasProperty('zoo') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('zootests') }
 def zooGroups = ['aquatic', 'biomes', 'create']
 def withGroup = { String name -> project.hasProperty(name) || integration || (zoo && name in zooGroups) }
-// a group whose mods the run requires (biomes, aquatic: some tests then insist on them); not in a partial CI run
-def requireGroup = { String name -> project.hasProperty(name) || (integration && !project.hasProperty('integrationPartial')) || (zoo && name in zooGroups) }
+// a group whose mods the run requires (biomes, aquatic: some tests then insist on them)
+def requireGroup = { String name -> project.hasProperty(name) || integration || (zoo && name in zooGroups) }
 // M52b/M52c: every run of this branch (Minecraft 26.1.2) has its game directories under runRoot (default run/26.1.2, -PrunDir=...),
 // never in run/ itself: the worlds, configs and mods folders there are the 1.21.1 ones of master. The folders of the optional
 // mod groups are under runRoot too (run/26.1.2/shader-mods ...: jars for Minecraft 26.1.2; run/power-mods ... hold 1.21.1 ones).
@@ -696,7 +695,6 @@ neoForge {
             if (requireGroup('aquatic')) systemProperty 'bettacraft.aquaticmods', 'true' // M38: the ForeignPlantGameTests then need Alex's Caves
             // M42: the integration-only GameTests (gametest/integration) are registered, every mod of the group is required
             if (integration) systemProperty 'bettacraft.integration', 'true'
-            if (project.hasProperty('integrationPartial')) systemProperty 'bettacraft.integration.partial', 'true'
             // M42 part b: the zoo tests (gametest/zoo): animals and plants of mods we do not integrate
             if (zoo) systemProperty 'bettacraft.zoo', 'true'
             // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case), method or batch starts with a prefix
@@ -814,6 +812,9 @@ test {
     systemProperty 'bettacraft.rootDir', rootProject.projectDir.absolutePath
     inputs.files(commonProject.fileTree('src/main/resources/assets'), commonProject.fileTree('src/generated/resources'))
         .withPropertyName('langSources')
+    // M59: DevModsManifestTest reads the manifest of the dev mod groups and the build files
+    inputs.files(rootProject.file('dev-mods.json'), rootProject.file('gradle/dev-mods.gradle'), rootProject.file('neoforge/build.gradle'),
+            rootProject.file('fabric/build.gradle')).withPropertyName('devModsManifest')
     testLogging {
         events 'failed', 'skipped'
         exceptionFormat 'full'
@@ -874,36 +875,40 @@ idea {
     }
 }
 
-// Optional extra mods from local folders (not in git, e.g. copied from an ATM10 instance), synced into the mods folder
-// of each run before it starts and removed again from runs without the flag:
+// Optional extra mods, synced into the mods folder of each run before it starts and removed again from runs without the flag.
+// M59: the group folders are filled by Gradle from the manifest dev-mods.json (gradle/dev-mods.gradle: official sources -
+// Modrinth Maven, CurseMaven, FTB Maven -, SHA-1 and SHA-256 checked, never in git). A new test mod goes into the manifest
+// (tools/devmods/update_manifest.py); a group without a build for this version is listed there under "gaps".
+//   -Plocal   : <runRoot>/local-mods, not managed by the manifest: mods to try out before they go into it (runClient,
+//               runServer, runGameTestServer)
 //   -Pshaders : run/shader-mods (Sodium, Iris ...)                    for runClient
 //   -Ppower   : run/power-mods  (EnderIO, Mekanism, Powah, Flux ...)  for runClient, runServer and runGameTestServer
 //   -Paquatic : run/aquatic-mods (M16: every mod of the ATM10 pack with water animals that is not already on the run
 //               classpath as an aquarium mod, plus their libraries)  for runClient, runServer and runGameTestServer;
 //               needs the aquarium mods (not with -PnoCompat: Critters and Companions uses their YACL)
-//   -Pbiomes  : run/biome-mods (M25.1: Regions Unexplored + Lithostitched + TerraBlender from ATM10AA, Oh The Biomes
-//               We've Gone + Oh The Trees You'll Grow + CorgiLib + GeckoLib from ATM10) for runClient, runServer and
+//   -Pbiomes  : run/biome-mods (M25.1: Regions Unexplored + Lithostitched + TerraBlender of ATM10AA, Oh The Biomes
+//               We've Gone + Oh The Trees You'll Grow + CorgiLib + GeckoLib of ATM10) for runClient, runServer and
 //               runGameTestServer; the GameTest biomeModBiomesMapToTheirWaters and the server smoke then require them;
-//               M38: Twilight Forest from ATM10AA too (its lily pads; ForeignPlantGameTests check the plants of both)
-//   -Pstorage : run/storage-mods (M26 part b: Applied Energistics 2 and Refined Storage 2 from ATM10AA) for runClient,
+//               M38: Twilight Forest of ATM10AA too (its lily pads; ForeignPlantGameTests check the plants of both)
+//   -Pstorage : run/storage-mods (M26 part b: Applied Energistics 2 and Refined Storage 2 of ATM10AA) for runClient,
 //               runServer and runGameTestServer; the GameTests of StorageGameTests then move items with their buses
 //   -Pcreate  : run/create-mods (M32 part b: Create 6 (Flywheel, Ponder and Registrate inside), Create Aeronautics (bundled:
-//               Simulated, Aeronautics, Offroad) and Sable from ATM10AA) for runClient, runServer and runGameTestServer;
+//               Simulated, Aeronautics, Offroad) and Sable of ATM10AA) for runClient, runServer and runGameTestServer;
 //               the GameTests of CreateGameTests then move tanks on pistons, bearings and Sable sub-levels
-//   -Pquests  : run/quest-mods (M32 part d: FTB Quests, FTB Library, FTB Teams, Architectury from ATM10AA) for runClient,
+//   -Pquests  : run/quest-mods (M32 part d: FTB Quests, FTB Library, FTB Teams, Architectury of ATM10AA) for runClient,
 //               runServer and runGameTestServer; the chapter of modpack/ is copied into the run's config/ftbquests, the
 //               GameTest QuestGameTests then checks that FTB Quests loaded it
-//   -Pmaps    : run/map-mods (M32 part d: JourneyMap from ATM10AA; M53: Xaero's Minimap + World Map, FTB Chunks + FTB Library,
+//   -Pmaps    : run/map-mods (M32 part d: JourneyMap of ATM10AA; M53: Xaero's Minimap + World Map, FTB Chunks + FTB Library,
 //               FTB Teams, Architectury from Modrinth / the FTB maven) for runClient: the alarm waypoints
 //   -Pperf    : run/perf-mods (M53: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant Horizons and other render
 //               mods of ATM10/ATM11, see m59 manifest) for runClient: the render matrix
-//   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino from ATM10AA) for runClient, runServer and runGameTestServer;
+//   -Pkubejs  : run/kubejs-mods (M32 part d: KubeJS and Rhino of ATM10AA) for runClient, runServer and runGameTestServer;
 //               the example script of modpack/kubejs is copied into the run's kubejs/server_scripts (its lines go to
 //               logs/kubejs/server.log)
-//   -Pfacades : run/facade-mods (M40 part c: Cable Facades from ATM10AA) for runClient, runServer and runGameTestServer; the
+//   -Pfacades : run/facade-mods (M40 part c: Cable Facades of ATM10AA) for runClient, runServer and runGameTestServer; the
 //               GameTest cableFacadesOnAFilterPipe puts its facade on our filter pipes (its block tag is in our data). Mekanism
 //               Covers (a Mekanism addon) lies in run/power-mods
-//   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender from ATM10AA) for runClient and runServer:
+//   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender of ATM10AA) for runClient and runServer:
 //               only to compare the size of our bettas with theirs (the M36 client smoke puts one of theirs next to ours);
 //               never in the jar, the repo or the README
 //   -Ppipes   : <runRoot>/pipe-mods (M61: Modern Dynamics from Modrinth, pinned in m59's list) for runClient, runServer and
@@ -913,7 +918,7 @@ idea {
 //               create, quests, kubejs, facades; maps for runClient) plus run/integration-mods (M42: Integrated Dynamics,
 //               Integrated Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
 //               Industrial Foregoing, and Athena and Farmer's Delight which EnderIO's models and Ice and Fire's recipes look for,
-//               from ATM10AA) for runClient, runServer and runGameTestServer
+//               of ATM10AA) for runClient, runServer and runGameTestServer
 //   -Pzoo (or the task zooTests): run/zoo-mods (M42 part b: mods of the pack with animals and water plants we do not integrate,
 //               see above) plus the groups aquatic, biomes and create, for runClient, runServer and runGameTestServer; not with
 //               -Pintegration (that group holds exactly the integrated mods)
@@ -937,6 +942,8 @@ def extraMods = [
         [dir: rootProject.file(runRoot + '/integration-mods'), on: integration, tasks: ['runClient', 'runServer', 'runGameTestServer']],
         // the Aether stays out of the dev client: the mixin of Accessories (in its jar) finds no target there and the client crashes
         [dir: rootProject.file(runRoot + '/zoo-mods'), on: zoo, tasks: ['runClient', 'runServer', 'runGameTestServer'], notOnClient: ['aether-']],
+        // M59: mods to try out, not in the manifest
+        [dir: rootProject.file(runRoot + '/local-mods'), on: project.hasProperty('local'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
 ]
 // -Pquests / -Pkubejs: the FTB Quests chapter and the KubeJS example script of modpack/ into the run (replaced every run,
 // removed without the flag)
@@ -1007,13 +1014,108 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestSe
     }
 }
 
-// -PsmoketestOldWorld: a fresh copy of the old world for every run (the original in run/saves stays untouched)
-def oldWorldName = project.findProperty('oldWorld') ?: 'Bettacraft Testwelt M11'
+// ---- M59: server files, test worlds and reference worlds, so that a fresh clone runs every test without manual work
+// The dev servers never take the default port 25565 (a real server may hold it): dev_server_port of gradle.properties.
+def devServerPort = (project.findProperty('dev_server_port') ?: '25599').toString()
+def seedServerFiles = { File dir, boolean offline ->
+    dir.mkdirs()
+    def eula = new File(dir, 'eula.txt')
+    if (!eula.exists()) eula.text = 'eula=true\n'
+    def sp = new File(dir, 'server.properties')
+    def lines = sp.exists() ? sp.readLines('UTF-8') : []
+    def set = { String k, String v -> lines = lines.findAll { !it.startsWith(k + '=') } + ["${k}=${v}".toString()] }
+    def get = { String k -> lines.find { it.startsWith(k + '=') }?.substring(k.length() + 1) }
+    boolean changed = !sp.exists()
+    if (get('server-port') in [null, '', '25565']) { set('server-port', devServerPort); changed = true }
+    if (offline && get('online-mode') != 'false') { set('online-mode', 'false'); changed = true }
+    if (!sp.exists() && !offline) set('online-mode', 'false')
+    if (changed) {
+        sp.write(lines.join('\n') + '\n', 'UTF-8')
+        logger.lifecycle("server files: ${sp} (port ${get('server-port')}, online-mode ${get('online-mode')})")
+    }
+}
+// Every world a test run makes is deleted before the run and after a successful one (-PkeepWorld keeps it for debugging; a
+// failed run keeps it until the next run). Only fixed names the runs make themselves, never the showcase or a world of the user.
+def keepWorld = project.hasProperty('keepWorld')
+def smokeRun = project.properties.keySet().any { it.startsWith('smoketest') }
+def deleteWorlds = { String when, List<File> dirs ->
+    dirs.each { d ->
+        if (d.exists()) {
+            if (!d.deleteDir()) throw new GradleException("cannot delete the test world ${d}")
+            logger.lifecycle("test world deleted ${when}: ${d}")
+        }
+    }
+}
+def testWorlds = { Task t, Closure<List<File>> dirs ->
+    t.doFirst { deleteWorlds('before the run', dirs()) }
+    t.doLast { if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${dirs()}") else deleteWorlds('after the run', dirs()) }
+}
+def smokeSaves = { File saves -> (saves.listFiles() ?: []).findAll { it.isDirectory() && it.name.startsWith('bettacraft_smoketest_') } }
+tasks.matching { it.name == 'runServer' }.configureEach { t ->
+    t.doFirst { seedServerFiles(rootProject.file(runRoot), false) }
+    // the world of the server smoke (run/world, with -Pbiomes run/world_biomes) and the copy of -PsmoketestOldWorld
+    if (smokeRun) testWorlds(t) { [rootProject.file(runRoot + '/world'), rootProject.file(runRoot + '/world_biomes'), rootProject.file(runRoot + '/oldworld_check')] }
+}
+tasks.matching { it.name == 'runClient' }.configureEach { t ->
+    // the worlds the client smoke scenes create (bettacraft_smoketest_<time>); the showcase and the user's worlds stay
+    if (smokeRun) testWorlds(t) { smokeSaves(rootProject.file(runRoot + '/saves')) }
+}
+
+// M59: the upgrade reference worlds are built, not stored: tools/upgrade/references.json names the commit (and script) of
+// each world; a missing one is built by tools/upgrade/build_reference.sh / chain.sh (a git worktree of that commit next to
+// this checkout, its own buildShowcase; several minutes).
+def referencesFile = rootProject.file('tools/upgrade/references.json')
+def bashExe = {
+    if (!System.getProperty('os.name').toLowerCase().contains('windows')) return 'bash'
+    // Git for Windows' bash (System32\bash.exe would be WSL): <git>/mingw64/libexec/git-core -> <git>/bin/bash.exe
+    try {
+        def p = new ProcessBuilder('git', '--exec-path').redirectErrorStream(true).start()
+        def out = p.inputStream.text.trim()
+        p.waitFor()
+        def b = new File(new File(out).parentFile?.parentFile?.parentFile, 'bin/bash.exe')
+        if (b.isFile()) return b.absolutePath
+    } catch (Exception ignored) {
+    }
+    'bash'
+}
+def ensureReferenceWorld
+ensureReferenceWorld = { String name, File saves ->
+    if (new File(saves, "${name}/bettacraft_reference.json").exists()) return
+    def w = referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).worlds?.get(name) : null
+    if (w == null) throw new GradleException("reference world missing: ${new File(saves, name)}; tools/upgrade/references.json does not say how to build it")
+    if (w.from) ensureReferenceWorld(w.from.toString(), saves)
+    def chain = w.script == 'chain.sh'
+    def args = chain ? [w.commit, w.from, name] : [w.commit, name]
+    def log = rootProject.file("build/upgrade-reference/${name.replaceAll(/[^A-Za-z0-9._-]/, '_')}.log")
+    log.parentFile.mkdirs()
+    logger.lifecycle("building the reference world '${name}' with commit ${w.commit} (tools/upgrade/${w.script}, several minutes), log ${log}")
+    def pb = new ProcessBuilder([bashExe(), "tools/upgrade/${w.script}".toString()] + args.collect { it.toString() })
+            .directory(rootProject.projectDir).redirectErrorStream(true).redirectOutput(log)
+    // a worktree of its own per checkout (several clones side by side must not share one)
+    pb.environment().put('UPGRADE_WORKTREE', new File(rootProject.projectDir.parentFile, "${rootProject.projectDir.name}-upgrade-${chain ? 'chain' : 'ref'}").absolutePath)
+    def p = pb.start()
+    if (!p.waitFor(60, java.util.concurrent.TimeUnit.MINUTES)) {
+        p.destroyForcibly()
+        throw new GradleException("building the reference world '${name}' took over an hour, see ${log}")
+    }
+    if (p.exitValue() != 0 || !new File(saves, "${name}/bettacraft_reference.json").exists()) {
+        throw new GradleException("building the reference world '${name}' failed (exit ${p.exitValue()}), see ${log}")
+    }
+    logger.lifecycle("reference world built: ${new File(saves, name)}")
+}
+def defaultReference = {
+    referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).default?.toString() : null
+}
+
+// -PsmoketestOldWorld: a fresh copy of the old world for every run (the original in run/saves stays untouched). M59: by default
+// the upgrade reference world of this branch (built if missing); -PoldWorld="Bettacraft Testwelt M11" for another one
+def oldWorldName = (project.findProperty('oldWorld') ?: defaultReference() ?: 'Bettacraft Testwelt M11').toString()
 tasks.matching { it.name == 'runServer' }.configureEach { t ->
     if (project.hasProperty('smoketestOldWorld')) {
         def src = rootProject.file("${runRoot}/saves/${oldWorldName}")
         def dst = rootProject.file(runRoot + '/oldworld_check')
         t.doFirst {
+            if (!src.isDirectory() && !project.hasProperty('oldWorld')) ensureReferenceWorld(oldWorldName, src.parentFile)
             if (!src.isDirectory()) throw new GradleException("old world not found: ${src}")
             dst.deleteDir()
             java.nio.file.Files.walk(src.toPath()).forEach { from ->
@@ -1050,7 +1152,7 @@ tasks.register('runMultiplayerTest') {
         // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
         def mpCreate = project.hasProperty('create')
         // M52d: the groups of this branch's run root (run/<minecraft>/...; the list named the 1.21.1 folders under run/)
-        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'perf-mods', 'kubejs-mods', 'facade-mods', 'pipe-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
+        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'perf-mods', 'kubejs-mods', 'facade-mods', 'pipe-mods', 'compare-mods', 'integration-mods', 'zoo-mods', 'local-mods'].collect { runRoot + '/' + it }.each { d ->
             (rootProject.file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j ->
                 ['mods', 'client1/mods', 'client2/mods'].each { m ->
                     def dst = new File(runDir, "${m}/${j.name}")
@@ -1061,11 +1163,13 @@ tasks.register('runMultiplayerTest') {
                 }
             }
         }
+        // M59: the server files are written here (offline mode: the dev clients have no account; not the default port)
+        seedServerFiles(runDir, true)
         def props = new Properties()
         def sp = new File(runDir, 'server.properties')
-        if (sp.exists()) sp.withInputStream { props.load(it) }
-        if (props.getProperty('online-mode', 'true') != 'false') throw new GradleException('run/server.properties needs online-mode=false (dev clients have no account)')
-        def port = props.getProperty('server-port', '25565')
+        sp.withInputStream { props.load(it) }
+        def port = props.getProperty('server-port', devServerPort)
+        deleteWorlds('before the run', [new File(runDir, 'world')])
         def cmd = { t, String name, List extraJvm, List extraArgs ->
             // the class path goes into an argument file (the Windows command line is limited to 32k characters)
             def cp = new File(logs, "${name}.classpath.txt")
@@ -1140,6 +1244,7 @@ tasks.register('runMultiplayerTest') {
         }
         [1, 2].each { n -> (new File(runDir, "client${n}/screenshots").listFiles() ?: []).findAll { it.name.startsWith('mp_') }.sort { it.name }.each { logger.lifecycle("screenshot ${it}") } }
         if (!problems.isEmpty()) throw new GradleException('runMultiplayerTest failed:\n  ' + problems.join('\n  ') + "\nlogs in ${logs}")
+        if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${new File(runDir, 'world')}") else deleteWorlds('after the run', [new File(runDir, 'world')])
         logger.lifecycle("runMultiplayerTest PASSED (logs in ${logs})")
     }
 }
@@ -1207,11 +1312,10 @@ tasks.register('smoketestUpgrade') {
     dependsOn 'prepareServerRun'
     dependsOn { tasks.named('runServer').get().classpathProvider }
     doLast {
-        def worldName = project.findProperty('upgradeWorld') ?: 'Bettacraft Referenz 26.2' // M52b/M52c: the reference of this branch (tools/upgrade, built with its first version)
+        // M59: the default reference of this branch is named in tools/upgrade/references.json and built when missing
+        def worldName = (project.findProperty('upgradeWorld') ?: defaultReference() ?: 'Bettacraft Referenz 26.2').toString()
         def src = rootProject.file("${runRoot}/saves/${worldName}")
-        if (!new File(src, 'bettacraft_reference.json').exists()) {
-            throw new GradleException("reference world missing: ${src} (build it with: bash tools/upgrade/build_reference.sh)")
-        }
+        ensureReferenceWorld(worldName, src.parentFile)
         def srv = tasks.named('runServer').get()
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
         def logs = rootProject.file('build/upgrade')
@@ -1251,7 +1355,56 @@ tasks.register('smoketestUpgrade') {
             if (!text.contains("UPGRADE STAGE ${stage} PASSED")) throw new GradleException("smoketestUpgrade: stage ${stage} failed, see ${log}")
             if (!errors.isEmpty()) throw new GradleException("smoketestUpgrade: ${errors.size()} error line(s) in ${log}")
         }
+        if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${world}") else deleteWorlds('after the run', [world])
         logger.lifecycle("UPGRADE TEST PASSED (${worldName})")
+    }
+}
+
+// gradlew smoketestWorldCleanup : M59 proof that the server smoke cleans up after itself. Runs the smoke server twice in a row
+// (the java command line of runServer with -Dbettacraft.smoketest=true, no window), measures its world after each run and
+// deletes it the way runServer -Psmoketest does. Fails when a world is left over or the second run's world is bigger than the
+// first's plus half (the interior regions of every smoke used to pile up in run/world: 18 GB). Logs: build/worldcleanup/.
+tasks.register('smoketestWorldCleanup') {
+    group = 'verification'
+    description = 'Two server smokes in a row: the world is deleted after each and does not grow (M59)'
+    notCompatibleWithConfigurationCache('starts the game process of runServer')
+    dependsOn 'prepareServerRun'
+    dependsOn { tasks.named('runServer').get().classpathProvider }
+    doLast {
+        def srv = tasks.named('runServer').get()
+        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+        def dir = rootProject.file(runRoot)
+        seedServerFiles(dir, false)
+        def world = new File(dir, 'world')
+        def logs = rootProject.file('build/worldcleanup')
+        logs.deleteDir()
+        logs.mkdirs()
+        def cp = new File(logs, 'classpath.txt')
+        cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
+        def size = { File d ->
+            d.exists() ? java.nio.file.Files.walk(d.toPath()).filter { java.nio.file.Files.isRegularFile(it) }.mapToLong { java.nio.file.Files.size(it) }.sum() : 0L
+        }
+        deleteWorlds('before the run', [world])
+        def sizes = []
+        for (n in [1, 2]) {
+            def log = new File(logs, "run${n}.log")
+            def command = ([java] + srv.allJvmArgs + ['-Dbettacraft.smoketest=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()]
+                    + srv.args.findAll { !(it in ['--world', 'world_biomes', 'oldworld_check']) }).collect { it.toString() }
+            def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
+            logger.lifecycle("smoke ${n}: server started (pid ${p.pid()}), log ${log}")
+            if (!p.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)) {
+                p.destroyForcibly()
+                throw new GradleException("smoketestWorldCleanup: smoke ${n} did not finish in 15 minutes, see ${log}")
+            }
+            if (!log.getText('UTF-8').contains('[smoketest] PASSED')) throw new GradleException("smoketestWorldCleanup: smoke ${n} did not pass, see ${log}")
+            sizes << size(world)
+            logger.lifecycle("smoke ${n}: the world has ${String.format('%.1f', sizes[-1] / 1048576d)} MB")
+            deleteWorlds('after the run', [world])
+            if (world.exists()) throw new GradleException("smoketestWorldCleanup: ${world} is still there after smoke ${n}")
+        }
+        if (sizes[0] == 0L) throw new GradleException('smoketestWorldCleanup: the first smoke made no world (wrong directory?)')
+        if (sizes[1] > sizes[0] * 1.5) throw new GradleException("smoketestWorldCleanup: the world grew from ${sizes[0]} to ${sizes[1]} bytes")
+        logger.lifecycle("WORLD CLEANUP PASSED: smoke 1 left ${sizes[0]} bytes, smoke 2 ${sizes[1]} bytes, both deleted")
     }
 }
 
@@ -1368,7 +1521,7 @@ tasks.named('check').configure { dependsOn 'verifyReleaseJar' }
 // M42: the optional integration suite, not part of build or check and not of the normal runGameTestServer: the whole GameTest
 // suite plus the integration-only tests (gametest/integration) with every integrated mod (see -Pintegration above), in
 // run/gametest-integration. Run by hand (gradlew integrationTests --no-configuration-cache) or in CI only from the manual
-// workflow integration.yml. The groups' jars come from local folders (copied from an ATM10 instance), see the README.
+// workflow integration.yml. The groups' jars are downloaded by the manifest dev-mods.json (M59), see the README.
 // M42: a GameTest server that fails to start (a mod missing a dependency, a crash while loading) ends with exit code 0, and
 // the task looked green; the run counts only when the server reported its result line
 // M42 part b: the GameTest server never deleted its world, so every run added the region files of its new random test positions
@@ -1385,6 +1538,8 @@ tasks.matching { it.name == 'runGameTestServer' }.configureEach { t ->
         if (!(text =~ /All \d+ required tests passed/)) {
             throw new GradleException("the GameTest server reported no result (did it start? see ${log})")
         }
+        // M59: the world of a run that passed goes too (-PkeepWorld keeps it)
+        if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${world}") else deleteWorlds('after the run', [world])
     }
 }
 
