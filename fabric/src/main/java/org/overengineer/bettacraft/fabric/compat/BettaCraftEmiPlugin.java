@@ -27,6 +27,11 @@ import org.overengineer.bettacraft.registry.ModRecipes;
 public final class BettaCraftEmiPlugin implements EmiPlugin {
     @Override
     public void register(EmiRegistry registry) {
+        // M62: the tank menu grows with the screen beyond its slot frame: EMI keeps clear of the whole panel
+        registry.addExclusionArea(org.overengineer.bettacraft.client.screen.TankScreen.class, (screen, out) -> {
+            int[] p = screen.panelBounds();
+            out.accept(new dev.emi.emi.api.widget.Bounds(p[0], p[1], p[2], p[3]));
+        });
         EmiRecipeCategory crucible = category("crucible", ModItems.CRUCIBLE.get().getDefaultInstance(), "block.bettacraft.crucible");
         EmiRecipeCategory foodMaker = category("food_maker", ModItems.FOOD_MAKER.get().getDefaultInstance(), "block.bettacraft.food_maker");
         registry.addCategory(crucible);

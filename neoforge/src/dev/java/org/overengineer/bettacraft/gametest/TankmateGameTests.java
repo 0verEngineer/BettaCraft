@@ -562,7 +562,7 @@ public final class TankmateGameTests {
         h.assertTrue(neon.name().getString().equals(net.minecraft.network.chat.Component.translatable(TankmateSpecies.NEON_TETRA.translationKey()).getString()),
                 "named by the species: " + neon.name().getString());
         var info = org.overengineer.bettacraft.compat.info.InfoData.tank(h.getLevel(), c.getBlockPos());
-        h.assertTrue(info.getList("shoals", 8).size() == 2, "the info overlays get the same list: " + info.getList("shoals", 8));
+        h.assertTrue(info.getListOrEmpty("shoals").size() == 2, "the info overlays get the same list: " + info.getListOrEmpty("shoals"));
         // the neons grow to their minimum: they leave the list
         for (int i = 2; i < TankmateSpecies.NEON_TETRA.shoal(); i++) add(h, c, TankmateSpecies.NEON_TETRA, i % 2 == 0);
         v = TankView.read(TankView.build(sp, c));
