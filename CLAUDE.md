@@ -111,6 +111,15 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   and Unbound, BSL, MakeUp) and none (Fabric 1.21.1: `prodFabricClient -Psmoketestm63 -Pshaders` after one `runFabricClient -Pshaders`;
   Iris does not apply in the Fabric dev runtime of 1.21.1). `-Pgametestrepeat=<n>` (GameTests, both loaders) runs every test of the run n times side by
   side in its batch, for hunting flaky tests (with `-Pgametests=<prefix>`).
+  `-Pm63parts=water,decor`: `decor` is a decorated open tank whose miniature must not show outside the tank (with and without it).
+- **Real-world tour** (M63b, rule of `AGENT-RULES.md` for every rendering change) `runClient -Psmoketestworldtour -Pshaders` (Fabric:
+  `runFabricClient`, 1.21.1 `prodFabricClient`): a fresh copy `Bettacraft Rundgang` of the showcase (`-PtourSource=<world>`; default
+  the showcase, else the branch's upgrade reference world), every tank from the front, the side, above and just below the surface,
+  360 degree sweeps with the sky, for every pack of `-PtourPacks` (default none, Complementary Reimagined, BSL); guards: no miniature
+  geometry outside the tank boxes (each sweep view again without miniatures), no glass on open tops (`summary.txt`). Pictures
+  `run/<mc>/tour/<tag>/screenshots/<pack>/` (`-PtourTag`, `-PtourViews`, `-PtourLimit`, `-PtourRadius`); for the last release the same
+  tour in a worktree of its tag with `-PtourBaseline`, then `py tools/tour/compare.py <old run> <new run> <out>` (pairs, diff list,
+  contact sheets of every picture).
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
   `run/screenshots/bettacraft_mXX_*.png`; freeze animals with `SmokeFreeze.freeze`. Look at the screenshots.
 - **Foreign test mods come from `dev-mods.json`** (M59): a group flag makes Gradle download the group's jars from their
