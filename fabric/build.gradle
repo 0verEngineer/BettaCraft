@@ -651,6 +651,19 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
     programArgs.addAll(['--width', '1280', '--height', '760'])
 }
 
+// M56: a fresh run dir opens the accessibility onboarding (narrator) first: seed an options.txt that skips it (muted unless
+// -Psound; FabricClientSmoke also skips the screen)
+tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
+    t.doFirst {
+        def dir = t.name == 'prodFabricClient' ? rootProject.file('run-fabric/prod-client') : rootProject.file('run-fabric')
+        def f = new File(dir, 'options.txt')
+        if (!f.exists()) {
+            dir.mkdirs()
+            f.setText(['onboardAccessibility:false', 'narrator:0'].plus(project.hasProperty('sound') ? [] : ['soundCategory_master:0.0']).join(System.lineSeparator()), 'UTF-8')
+        }
+    }
+}
+
 // every Fabric GameTest run starts with a fresh world (like the NeoForge runs)
 tasks.matching { it.name == 'runFabricGameTest' }.configureEach {
     doFirst { rootProject.file("${fabricRunRoot}/gametest/world").deleteDir() }

@@ -949,8 +949,17 @@ tasks.matching { it.name == 'runClient' }.configureEach { t ->
 // background client runs need the FML early loading window off (it would be created, focused, before any mod code)
 def fmlToml = rootProject.file(runRoot + '/config/fml.toml')
 def background = project.hasProperty('background') || project.properties.keySet().any { it.startsWith('smoketest') || it == 'showcasetour' || it == 'showcasebench' }
+// M56: a fresh run dir has no options.txt and the client would open the accessibility onboarding (narrator) first:
+// seed one that skips it (muted unless -Psound; the dev clients mute through BackgroundSoundMixin anyway)
+def seedOptions = { File dir ->
+    def f = new File(dir, 'options.txt')
+    if (f.exists()) return
+    dir.mkdirs()
+    f.setText(['onboardAccessibility:false', 'narrator:0'].plus(project.hasProperty('sound') ? [] : ['soundCategory_master:0.0']).join(System.lineSeparator()), 'UTF-8')
+}
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     t.doFirst {
+        seedOptions(t.hasProperty('gameDirectory') ? t.gameDirectory.get().asFile : t.workingDir)
         if (fmlToml.exists()) {
             def text = fmlToml.getText('UTF-8')
             def want = "earlyWindowControl = ${!background}"
