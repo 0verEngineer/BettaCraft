@@ -25,7 +25,8 @@ public final class VersionGaps {
             "kubejs", "rhino", "cable_facades", // kubejs, facades
             "aether", "ars_nouveau", "ars_elemental", "productivebees", "occultism", "thaumaturge", "mahoutsukai",
             "actuallyadditions", "psychadelicchem", "fungidelight", "farmersdelight", "oritechthings", "garnished", // zoo
-            "betterfishtanks", "fintastic"); // aquarium mods of the dev runtime
+            "betterfishtanks", "fintastic", // aquarium mods of the dev runtime
+            "moderndynamics"); // M61 pipes (Modern Dynamics: NeoForge 1.21.1 and 26.x only, checked 2026-11-22)
 
     /**
      * M53: the map and render mods of the client test groups (maps, shaders, perf, vulkanmod) without a build for this
