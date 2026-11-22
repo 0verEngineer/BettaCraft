@@ -108,7 +108,9 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   only; alarm waypoints), `-Pperf` (`run/perf-mods`, M53: ImmediatelyFast, Entity Culling, ModernFix, FerriteCore, Distant
   Horizons, More Culling, LambDynamicLights, Not Enough Animations, EMF/ETF, Polytone, Fusion; client only; the render matrix), `-Pfacades`
   (`run/facade-mods`: Cable Facades; its block tag `cable_facades:supports_facade` is in our data, `PipeCoverGameTests`; Mekanism
-  Covers lies in `run/power-mods`). The public
+  Covers lies in `run/power-mods`), `-Ppipes` (`run/pipe-mods`, M61: Modern Dynamics, NeoForge only; part of `-Pintegration`;
+  `runClient -Ppipes -Psmoketestm61` puts its fluid pipes next to our blocks and rejoins the world: Modern Dynamics calls
+  `sendBlockUpdated(pos, null, null, 0)` on the client, so client hooks must never read those states). The public
   events for scripts are in `api/event` (posted by `api/ApiEvents`). Leave runtime mods out
   with `-PnoJade`, `-PnoJei`, `-PnoGuideme`, `-PnoCompat`; add `-Ptop`, `-Pwthit`. `-Pbackground` makes a plain
   `runClient` a background window.
