@@ -78,8 +78,9 @@ public final class ClientInteriorCache {
             }
             old.close();
         }
-        if (ClientConfig.LOG_MINIATURE_STATS.get()) {
-            MiniatureRenderer.LOGGER.info("Received interior region {} v{}: {} bytes, {} sections, {} blocks, decoded in {} ms",
+        boolean stats = ClientConfig.LOG_MINIATURE_STATS.get();
+        if (stats || org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) { // M57: also with the network area of the debug log
+            MiniatureRenderer.logStats(stats, "Received interior region {} v{}: {} bytes, {} sections, {} blocks, decoded in {} ms",
                     p.regionId(), p.version(), bytes, sections.size(), region.nonAir, (System.nanoTime() - t0) / 1_000_000.0);
         }
     }

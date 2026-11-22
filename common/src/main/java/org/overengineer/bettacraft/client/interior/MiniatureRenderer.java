@@ -287,7 +287,7 @@ public final class MiniatureRenderer {
                 try {
                     DONE.add(build(id, cell, gen, map, getter, out));
                 } catch (Throwable e) {
-                    LOGGER.error("Miniature mesh job failed for region {} cell {}", id, cell, e);
+                    org.overengineer.bettacraft.debug.LogArea.RENDER.errorThrottled("mesh_job", "Miniature mesh job failed for region {} cell {}", id, cell, e); // M57
                     DONE.add(new Result(id, cell, gen, Map.of(), Map.of(), Map.of(), null, out.memory(), 0, 0, 0, 0, 0, 0));
                 }
             });
@@ -477,18 +477,25 @@ public final class MiniatureRenderer {
     }
 
     private static void logWave(ClientRegion region) {
-        if (!ClientConfig.LOG_MINIATURE_STATS.get()) return;
+        boolean stats = ClientConfig.LOG_MINIATURE_STATS.get();
+        if (!stats && !org.overengineer.bettacraft.debug.LogArea.RENDER.debug) return; // M57: also with the render area of the debug log
         long quads = 0, bytes = 0;
         for (MiniatureMesh m : region.meshes.values()) {
             quads += m.quads;
             bytes += m.vertexBytes;
         }
-        LOGGER.info("Miniature region {} ({}x{}x{}, scale {}) v{}: {} cell(s) rebuilt in {} ms (worker threads {} ms, render thread uploads {} ms); "
+        logStats(stats, "Miniature region {} ({}x{}x{}, scale {}) v{}: {} cell(s) rebuilt in {} ms (worker threads {} ms, render thread uploads {} ms); "
                         + "{} cells, {} blocks, {} quads, {} KiB VRAM{}",
                 region.id, region.sizeX, region.sizeY, region.sizeZ, region.scale, region.version, region.waveCells,
                 fmt((System.nanoTime() - region.waveStart) / 1e6), fmt(region.waveWorkerNanos / 1e6), fmt(region.waveUploadNanos / 1e6),
                 region.meshes.size(), region.nonAir, quads, bytes / 1024, region.limitReached ? " (render limit reached)" : "");
         region.waveCells = 0;
+    }
+
+    /** M57: the statistics into the normal log ({@code logMiniatureStats}) or the debug log (render area). */
+    static void logStats(boolean stats, String message, Object... args) {
+        if (stats) LOGGER.info(message, args);
+        else if (org.overengineer.bettacraft.debug.LogArea.RENDER.debug) org.overengineer.bettacraft.debug.LogArea.RENDER.debug(message, args);
     }
 
     private static String fmt(double d) {

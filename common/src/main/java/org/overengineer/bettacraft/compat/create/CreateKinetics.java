@@ -77,7 +77,7 @@ public final class CreateKinetics {
                 if ((Boolean) isOverStressed.invoke(be)) continue;
                 best = Math.max(best, Math.abs((Float) getSpeed.invoke(be)));
             } catch (ReflectiveOperationException | RuntimeException e) {
-                LOGGER.debug("Create speed at {}", n, e);
+                if (org.overengineer.bettacraft.debug.LogArea.COMPAT.debug) org.overengineer.bettacraft.debug.LogArea.COMPAT.debug("Create speed at {}", n, e);
             }
         }
         return best;
