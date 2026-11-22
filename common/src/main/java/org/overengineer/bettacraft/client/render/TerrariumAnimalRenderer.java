@@ -5,6 +5,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.client.model.TerrariumAnimalModel;
 import org.overengineer.bettacraft.terrarium.TerrariumAnimalEntity;
@@ -37,6 +38,27 @@ public class TerrariumAnimalRenderer extends MobRenderer<TerrariumAnimalEntity, 
     }
 
     private static final java.util.Map<String, ResourceLocation> VARIETIES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * M62: a turtle climbing a step in the world (wall pose) scrambles up it nose first: turned to the face, its front raised
+     * (about 60 degrees), lifted so that its rear stays on the ground.
+     */
+    @Override
+    protected void setupRotations(TerrariumAnimalEntity e, PoseStack pose, float bob, float bodyRot, float partialTick, float scale) {
+        net.minecraft.core.Direction wall = e.inTank() ? null : e.herpPose().wall();
+        if (wall == null) {
+            super.setupRotations(e, pose, bob, bodyRot, partialTick, scale);
+            return;
+        }
+        float len = this.scale * e.getAgeScale();
+        float off = e.getBbWidth() * 0.5F - 0.02F;
+        pose.translate(wall.getStepX() * off, len * 0.5F * Mth.sin(CLIMB * Mth.DEG_TO_RAD), wall.getStepZ() * off);
+        super.setupRotations(e, pose, bob, wall.toYRot(), partialTick, scale);
+        pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(CLIMB));
+    }
+
+    /** M62: how far a climbing turtle raises its front (degrees). */
+    private static final float CLIMB = 60F;
 
     @Override
     protected void scale(TerrariumAnimalEntity e, PoseStack pose, float partialTick) {

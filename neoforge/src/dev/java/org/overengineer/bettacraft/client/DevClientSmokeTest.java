@@ -180,6 +180,9 @@ final class DevClientSmokeTest {
     private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
     private static DevClientSmokeM61 m61;
     private static DevClientSmokeM56 m56;
+    /** M62 part 1: -Psmoketestm62a [-Pm62aparts=school,step,wall,water] (schools, steps, walls, under water in the world). */
+    private static final boolean M62A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62aonly");
+    private static DevClientSmokeM62a m62a;
     /** -Psmoketestm54: the movement of the animals (M54). */
     private static final boolean M54_ONLY = Boolean.getBoolean("bettacraft.smoketest.m54only");
     private static DevClientSmokeM54 m54;
@@ -479,6 +482,15 @@ final class DevClientSmokeTest {
                 if (m55 != null && m55.tick()) {
                     m55 = null;
                     LOGGER.info("[smoketest] client world test finished (M55 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M62A_ONLY) {
+                if (ticks == 60) m62a = new DevClientSmokeM62a();
+                if (m62a != null && m62a.tick()) {
+                    m62a = null;
+                    LOGGER.info("[smoketest] client world test finished (M62a only)");
                     mc.stop();
                 }
                 return;

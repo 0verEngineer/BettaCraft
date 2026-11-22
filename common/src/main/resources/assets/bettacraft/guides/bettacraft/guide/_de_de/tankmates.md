@@ -21,6 +21,8 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
   Rechtsklick auf das Becken setzt sie ein; das Menü nimmt sie einzeln wieder heraus.
 * Ein Schwarmfisch allein oder in zu kleiner Gruppe ist **gestresst** und wird nach einer Weile krank: Halte mindestens
   die Mindestzahl.
+* Auch außerhalb eines Beckens (wilde und freigelassene Fische) schwimmt eine Schwarmart als **Schwarm**: Die Fische folgen
+  wie im Becken einem Leitfisch ihrer Art (Schalter `features.tankmates.wildSchools`).
 * Jede Art hat ihren **Temperaturbereich**; das klassische Betta-Becken (26-28 °C) passt für Roten Neon, Feuersalmler,
   Keilfleckbärbling, Moskitobärbling, Sterbai-Panzerwels, Dornauge und die L-Welse, nicht für Neonsalmler,
   Panda-Panzerwels oder Platy.

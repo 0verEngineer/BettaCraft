@@ -1153,6 +1153,23 @@ def m56(out_en: Path) -> None:
         print("missing", src)
 
 
+def m62a(out_en: Path) -> None:
+    """M62 part 1 (-Psmoketestm62a): animals climbing in the world (a 2 x 2 picture): a slider scrambling up a step, the leopard
+    gecko and the snake on the step, a crested gecko high up a wall, shrimp and a nerite on a stone wall under water."""
+    tiles = [("bettacraft_m62a_step_side_f08", (180, 120, 820, 440)),
+             ("bettacraft_m62a_step_side_f19", (0, 120, 800, 520)),
+             ("bettacraft_m62a_wall_side_f17", (200, 0, 1100, 450)),
+             ("bettacraft_m62a_water_wall_f10", (0, 120, 1280, 760))]
+    out = Image.new("RGB", (800, 400))
+    for i, (shot, box) in enumerate(tiles):
+        src = SHOTS / f"{shot}.png"
+        if not src.exists():
+            print("missing", src)
+            return
+        out.paste(Image.open(src).convert("RGB").crop(box).resize((400, 200), Image.LANCZOS), ((i % 2) * 400, (i // 2) * 200))
+    save(out, out_en / "world_climbing.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1167,6 +1184,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m62a"]:
+        m62a(out_en)
+        return 0
     if sys.argv[1:] == ["m56"]:
         m56(out_en)
         return 0

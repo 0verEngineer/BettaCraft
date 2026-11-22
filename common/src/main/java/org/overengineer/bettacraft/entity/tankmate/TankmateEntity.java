@@ -423,6 +423,12 @@ public class TankmateEntity extends AbstractFish {
         return behaviour.target;
     }
 
+    /** M62 GameTests: the leader of its school outside a tank (itself when it leads or swims alone; null: not shoaling or the switch off). */
+    @Nullable
+    public TankmateEntity wildSchoolLeader() {
+        return behaviour.wildLeaderNow();
+    }
+
     /** Behaviour tests and smoke scenes: stop and stay where it is. */
     public void freezeBehaviour() {
         behaviour.freeze();

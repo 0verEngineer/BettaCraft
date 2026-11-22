@@ -10,7 +10,9 @@ feature: invertebrates.enabled
 
 Besides the bettas an aquarium can hold a whole community of small animals: **shrimp**, **dwarf crayfish** and
 **snails** crawl over the floor, the decoration, the plants and up the glass, and **dwarf clawed frogs** paddle along the
-bottom. The snails and shrimp are your **cleaning crew**: they keep the glass free of [algae](aquarium/algae.md).
+bottom. The snails and shrimp are your **cleaning crew**: they keep the glass free of [algae](aquarium/algae.md). In the wild the
+snails and shrimp that climb the glass in a tank climb walls under water too (a river bank, a stone) and graze there for a
+while (switch `features.visuals.worldClimbing`).
 
 The **big crayfish** ([Florida crayfish](invertebrates/florida_crayfish.md), [marbled crayfish](invertebrates/marbled_crayfish.md))
 are no clean-up crew: they eat plants and small animals and catch slow fish. The vanilla **[axolotl](invertebrates/axolotl.md)**

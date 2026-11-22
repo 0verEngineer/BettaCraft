@@ -56,6 +56,14 @@ In the world they also bask in the sun on bright days and the small and shy ones
 With the switch off they move as before (1.43). The same switch makes **fish** dart off now and then and rest more at night,
 and lets **crayfish** stay in their hides by day.
 
+**Climbing in the world** (switch `features.visuals.worldClimbing`): the turtles, the leopard gecko and the corn snake climb
+up a one-block step instead of jumping (a turtle scrambles up with its front raised, the lizards and the snake lie flat on the
+face), the **crested gecko** climbs whole walls (trunks, cliffs, house walls) to the top and over, now and then only part of
+the way to hold on there for a while and come down again, and the **mudskipper** climbs roots and trunks (logs, mangrove
+roots) the same way. The frogs still hop up.
+
+![A slider and a leopard gecko climbing a step, a crested gecko high up a wall, a shrimp on a stone under water](../images/world_climbing.png)
+
 ## Breeding
 
 A grown, fed female (two days), without a harmful problem and with little stress, and a grown male of the same species

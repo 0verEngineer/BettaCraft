@@ -56,6 +56,8 @@ public class WildCritterEntity extends WaterAnimal {
     /** Colour index ({@link CritterGenes#color}) in the low byte, grade * 255 in the next, flags above. */
     private static final EntityDataAccessor<Integer> DATA_LOOK = SynchedEntityData.defineId(WildCritterEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_SHELL = SynchedEntityData.defineId(WildCritterEntity.class, EntityDataSerializers.INT);
+    /** M62: the wall it climbs: 0 = none, else 1 + the 2D data value of the direction of the wall. */
+    private static final EntityDataAccessor<Byte> DATA_WALL = SynchedEntityData.defineId(WildCritterEntity.class, EntityDataSerializers.BYTE);
 
     private Critter animal;
     private boolean wild;
@@ -82,6 +84,7 @@ public class WildCritterEntity extends WaterAnimal {
         b.define(DATA_SPECIES, 0);
         b.define(DATA_LOOK, 0xFF);
         b.define(DATA_SHELL, 0);
+        b.define(DATA_WALL, (byte) 0);
     }
 
     @Override
@@ -249,9 +252,130 @@ public class WildCritterEntity extends WaterAnimal {
 
     // ------------------------------------------------------------------ crawling
 
+    // ------------------------------------------------------------------ M62: climbing walls
+
+    /** M62: the wall it climbs (direction from the animal to the wall), or null. */
+    @Nullable
+    private Direction wall;
+    /** M62: how high its feet go up the wall. */
+    private double wallTop;
+    /** M62: 1 = up, 2 = holding on, 3 = down. */
+    private int wallPhase, wallTicks, wallHold, wallRest;
+
+    /** M62 (client and server): the wall it is on, or null. */
+    @Nullable
+    public Direction climbWall() {
+        int w = entityData.get(DATA_WALL);
+        return w <= 0 ? null : Direction.from2DDataValue(w - 1);
+    }
+
+    /** M62: a species that climbs the glass in a tank climbs walls in the wild (switch {@code visuals.worldClimbing}). */
+    public boolean climbsWalls() {
+        return species().climbsGlass() && Features.enabled(Feature.WORLD_CLIMBING);
+    }
+
+    /**
+     * M62: a snail or a shrimp that climbs the glass in a tank climbs a wall it crawls into under water (a cliff, a stone, a
+     * river bank): up to a random height, at most to the water surface (a snail a little above it), holds on there a while
+     * (grazing) and comes back down. True while it is on the wall (the crawling then waits).
+     */
+    private boolean wallTick() {
+        if (wall == null) {
+            if (wallRest > 0) wallRest--;
+            if (wallRest > 0 || target == null || !horizontalCollision || !onGround() || !isInWater() || !climbsWalls()) return false;
+            double dx = target.x - getX(), dz = target.z - getZ();
+            Direction d = Direction.getNearest(dx, 0, dz);
+            BlockPos feet = BlockPos.containing(getX(), getY() + 0.05, getZ());
+            // up the face while the water (snails: or air right above it) lasts, at most 6 blocks
+            int k = 0;
+            double top = feet.getY();
+            boolean snail = species().group() == CritterSpecies.Group.SNAIL;
+            while (k < 6 && org.overengineer.bettacraft.terrarium.WorldClimbing.wall(level(), feet.relative(d).above(k), d)) {
+                BlockPos here = feet.above(k);
+                if (!org.overengineer.bettacraft.terrarium.WorldClimbing.free(level(), here)) break;
+                if (level().getFluidState(here).is(FluidTags.WATER)) {
+                    boolean waterAbove = level().getFluidState(here.above()).is(FluidTags.WATER);
+                    top = here.getY() + (waterAbove ? 1.0 : snail ? 0.85 : 0.6);
+                } else {
+                    break;
+                }
+                k++;
+            }
+            double rise = top - getY();
+            if (rise < 0.6 || random.nextInt(3) == 0) {
+                wallRest = 40;
+                return false;
+            }
+            wall = d;
+            wallTop = getY() + Math.max(0.6, rise * (0.5 + random.nextDouble() * 0.5));
+            wallPhase = 1;
+            wallTicks = 0;
+            wallHold = 200 + random.nextInt(600);
+            setNoGravity(true);
+            entityData.set(DATA_WALL, (byte) (1 + d.get2DDataValue()));
+        }
+        double v = species().speed() / 20.0 * 1.5;
+        double px = wall.getStepX(), pz = wall.getStepZ();
+        wallTicks++;
+        float yaw = wall.toYRot();
+        setYRot(yaw);
+        yBodyRot = yaw;
+        switch (wallPhase) {
+            case 1 -> {
+                if (getY() >= wallTop || verticalCollision && !onGround() && wallTicks > 2 || wallTicks > 1200) {
+                    wallPhase = 2;
+                    setDeltaMovement(px * 0.005, 0, pz * 0.005);
+                } else {
+                    setDeltaMovement(px * 0.01, v, pz * 0.01);
+                }
+            }
+            case 2 -> {
+                setDeltaMovement(px * 0.005, 0, pz * 0.005);
+                if (--wallHold <= 0) wallPhase = 3;
+            }
+            default -> {
+                if (onGround() || wallTicks > 2400) {
+                    endWall(100 + random.nextInt(200));
+                    return false;
+                }
+                setDeltaMovement(px * 0.005, -v, pz * 0.005);
+            }
+        }
+        // pushed off the wall: it lets go
+        BlockPos at = BlockPos.containing(getX(), getY() + 0.05, getZ());
+        if (!org.overengineer.bettacraft.terrarium.WorldClimbing.wall(level(), at.relative(wall), wall)
+                && !org.overengineer.bettacraft.terrarium.WorldClimbing.wall(level(), at.below().relative(wall), wall)) {
+            endWall(60);
+            return false;
+        }
+        return true;
+    }
+
+    private void endWall(int rest) {
+        wall = null;
+        wallPhase = 0;
+        wallRest = rest;
+        target = null;
+        setNoGravity(false);
+        entityData.set(DATA_WALL, (byte) 0);
+    }
+
+    /** M62 GameTests and smoke scenes: crawl towards this spot now (for a while). */
+    public void crawlTo(Vec3 to) {
+        target = to;
+        idle = 600;
+    }
+
+    /** M62 GameTests: climbing a wall now (server). */
+    public boolean onWall() {
+        return wall != null;
+    }
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        if (wall != null && !climbsWalls()) endWall(0);
+        if (wallTick()) return;
         if (!isInWater()) return;
         if (target == null || --idle <= 0) {
             target = null;
@@ -279,7 +403,7 @@ public class WildCritterEntity extends WaterAnimal {
             float yaw = (float) (Math.atan2(dz, dx) * 180 / Math.PI) - 90F;
             setYRot(net.minecraft.util.Mth.approachDegrees(getYRot(), yaw, 8F));
             yBodyRot = getYRot();
-            if (horizontalCollision && onGround()) setDeltaMovement(getDeltaMovement().add(0, 0.12, 0));
+            if (horizontalCollision && onGround() && (wallRest > 0 || !climbsWalls())) setDeltaMovement(getDeltaMovement().add(0, 0.12, 0));
         }
     }
 

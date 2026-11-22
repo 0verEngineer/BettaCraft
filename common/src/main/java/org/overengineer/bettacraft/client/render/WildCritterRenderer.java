@@ -27,6 +27,18 @@ public class WildCritterRenderer extends EntityRenderer<WildCritterEntity> {
         k.moving = dx * dx + dz * dz > 1e-7;
         float body = Mth.rotLerp(partialTick, e.yBodyRotO, e.yBodyRot);
         pose.pushPose();
+        net.minecraft.core.Direction wall = e.climbWall();
+        if (wall != null) {
+            // M62: on a wall: the belly against it (as on the glass of a tank, CritterRenderer#orient), head up (down on the way down)
+            k.moving = true;
+            float off = e.getBbWidth() * 0.5F - 0.01F;
+            pose.translate(wall.getStepX() * off, e.getBbHeight() * 0.3F, wall.getStepZ() * off);
+            CritterRenderer.orientOnGlass(pose, wall.get2DDataValue(), e.getY() < e.yo - 1e-4 ? 180F : 0F);
+            CritterRenderer.drawOne(pose, buffers, k, e.level().getGameTime() + partialTick, light, e.hurtTime > 0);
+            pose.popPose();
+            super.render(e, yaw, partialTick, pose, buffers, light);
+            return;
+        }
         // M54: the models face -z and the critter scale flips z (as in the tank, CritterRenderer#orient): the entity's yaw
         // turns them as it is (180 - yaw, the vanilla turn for the mob models, made them crawl backwards)
         pose.mulPose(Axis.YP.rotationDegrees(org.overengineer.bettacraft.critters.CritterFacing.modelTurn(body)));
