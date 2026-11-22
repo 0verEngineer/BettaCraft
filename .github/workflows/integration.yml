@@ -1,15 +1,23 @@
-# Optional integration suite (M42), only by hand: Actions > Integration tests > Run workflow.
+# Optional mod suites (M42, M59), only by hand: Actions > Integration tests > Run workflow.
 #
-# Runs gradlew integrationTests -PintegrationPartial: the whole GameTest suite plus the integration-only GameTests
-# (gametest/integration) with the integrated mods that have an open licence and a pinned Modrinth download
-# (tools/ci/integration-mods.json, fetched and SHA-512 checked by tools/ci/fetch_mods.py). The other mods of the local
-# integration group (CurseForge-only or closed licences) are missing here, so their integration-only tests pass with a log
-# line; the complete run (every mod, about 6 minutes) is local: gradlew integrationTests --no-configuration-cache with the
-# run/*-mods folders filled from an ATM10 instance (see the README, "Building from source").
+# M59: every foreign mod comes from the manifest dev-mods.json: Gradle downloads each jar from its official source (Modrinth
+# Maven, CurseMaven, FTB Maven) and checks its SHA-1 and SHA-256. Nothing of them is committed, uploaded as an artifact or
+# released: on failure only the logs are uploaded, and the Gradle cache is read-only here (the jars are never saved into it).
+#   integration: gradlew integrationTests  - the whole GameTest suite plus the integration-only GameTests with every mod we
+#                integrate (power, aquatic, biomes, storage, create, quests, kubejs, facades, pipes, integration-mods)
+#   zoo:         gradlew zooTests          - the whole suite plus the zoo tests (mods we do not integrate) with aquatic,
+#                biomes and create
+#   fabric:      gradlew runFabricGameTest -Pfabricintegration -Pquests - the Fabric GameTests with the Fabric mod groups
 name: Integration tests
 
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: "Suite to run"
+        type: choice
+        options: [all, integration, zoo, fabric]
+        default: all
 
 permissions:
   contents: read
@@ -27,52 +35,72 @@ env:
   GRADLE_ARGS: --no-configuration-cache --stacktrace --console=plain
 
 jobs:
-  integration:
-    name: GameTests with the integrated mods (partial)
+  suite:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Integration suite (every integrated mod)
+            id: integration
+            run: ./gradlew integrationTests
+            logs: run/26.2/gametest-integration/logs/
+          - name: Zoo suite (mods we do not integrate)
+            id: zoo
+            run: ./gradlew zooTests
+            logs: run/26.2/gametest-zoo/logs/
+          - name: Fabric GameTests with the Fabric mod groups
+            id: fabric
+            run: ./gradlew runFabricGameTest -Pfabricintegration -Pquests
+            logs: run/26.2/fabric/gametest/logs/
     steps:
       - name: Checkout
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
         uses: actions/checkout@v7
 
-      - name: Set up Java 25
+      - name: Set up Java 21
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # M52c: 26.1 runs on Java 25 (the Gradle daemon and the game)
-          java-version: 25
+          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
+          java-version: |
+            25
+            21
 
       - name: Set up Gradle
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: true
 
-      - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
-        run: python3 tools/ci/fetch_mods.py tools/ci/integration-mods.json
+      - name: Free disk space (the mod jars and the GameTest worlds need a few GB)
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h .
 
-      - name: Integration GameTests
+      - name: ${{ matrix.name }}
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
         run: |
           chmod +x gradlew
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
-          ./gradlew integrationTests -PintegrationPartial $GRADLE_ARGS 2>&1 | tee integration.log
+          ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
 
       - name: Failed GameTests
-        if: failure() && hashFiles('integration.log') != ''
+        if: failure() && (inputs.suite == 'all' || inputs.suite == matrix.id) && hashFiles(format('{0}.log', matrix.id)) != ''
         run: |
-          grep -E "LogTestReporter\]: .* failed at " integration.log | sed -E 's/^.*LogTestReporter\]: /::error title=GameTest failed::/' || true
+          grep -E "LogTestReporter\]: .* failed at |FAILED|failed with" "${{ matrix.id }}.log" | sed -E 's/^.*LogTestReporter\]: /::error title=GameTest failed::/' | head -50 || true
 
-      - name: Skipped integration tests (mods not in CI)
-        if: always() && hashFiles('integration.log') != ''
-        run: |
-          grep -E "\[integration\] partial run" integration.log | sed -E 's/^.*\[integration\] /::notice title=Integration test skipped::/' | sort | uniq -c || true
-
-      - name: Upload logs
-        if: always()
+      - name: Upload logs (never the mods)
+        if: always() && (inputs.suite == 'all' || inputs.suite == matrix.id)
         uses: actions/upload-artifact@v7
         with:
-          name: logs-integration
+          name: logs-${{ matrix.id }}
           path: |
-            run/26.2/gametest-integration/logs/
-            integration.log
+            ${{ matrix.logs }}
+            ${{ matrix.id }}.log
           retention-days: 7
           if-no-files-found: ignore

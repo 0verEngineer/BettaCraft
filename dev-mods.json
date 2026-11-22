@@ -1,0 +1,651 @@
+{
+ "comment": "Optional dev mods of Minecraft 26.2 (gradle/dev-mods.gradle): per loader and group folder the official file (Modrinth Maven, CurseMaven, FTB Maven) with its SHA-1 and SHA-256. Written by tools/devmods/update_manifest.py; the jars are downloaded by Gradle and never committed.",
+ "minecraft": "26.2",
+ "neoforge": {
+  "aquatic-mods": [
+   {
+    "file": "livingthings-neoforge-26.2-2.3.2.jar",
+    "maven": "maven.modrinth:living-things:szI6M627",
+    "size": 1018074,
+    "sha1": "7598e747b9b4f4ea41e9b9d6203d1ac088caa3e5",
+    "sha256": "e36d9555b2d0704b9e3bf4f8cdd833bb0c926e5c5408ee36178961e6ec6c6d5f"
+   },
+   {
+    "file": "naturalist-2.0.7-neoforge-26.2.jar",
+    "maven": "maven.modrinth:naturalist:HCQ2u5Tt",
+    "size": 11362116,
+    "sha1": "3b73031dfdc61a32863146f2fd513258e8bdfd80",
+    "sha256": "27b098dd6603a1df41b10feaf74f696467177e8ecc4f8f3b37cd178948e2b400"
+   }
+  ],
+  "biome-mods": [
+   {
+    "file": "BiomesOPlenty-neoforge-26.2-26.2.0.0.28.jar",
+    "maven": "maven.modrinth:biomes-o-plenty:Kpuzuokl",
+    "size": 23013005,
+    "sha1": "86f540d07cb53136ff4f01633e39b4169b602222",
+    "sha256": "7e609751018648b80156065522e4350856ccae0be6b56660898ac2cc48ccefb5"
+   },
+   {
+    "file": "GlitchCore-neoforge-26.2-26.2.0.0.0.jar",
+    "maven": "maven.modrinth:glitchcore:POAebwFo",
+    "size": 97831,
+    "sha1": "ed6a68cb80febcb5d03a76e5231f2aeaa372538a",
+    "sha256": "03c99db2b40d8f982c5b8d99435f74541c100065843bd2c7443b41366c211b33"
+   },
+   {
+    "file": "lithostitched-1.8.0-neoforge-26.2.jar",
+    "maven": "maven.modrinth:lithostitched:UPpXQQpg",
+    "size": 1026534,
+    "sha1": "5dd2b303401445711105ec697e32ef6423bfa65f",
+    "sha256": "9e6c09f24272eda313c0aa1862f16a35915dc8e8e9b9aa034bdcca97ba312b66"
+   },
+   {
+    "file": "TerraBlender-neoforge-26.2-26.2.0.0.2.jar",
+    "maven": "maven.modrinth:terrablender:TzDe72Nr",
+    "size": 141227,
+    "sha1": "82ab30bc5cf0177e4ca1a0e5aad14d0e79e2aa13",
+    "sha256": "bffac68485df253195b4f9a24241bfa07459962e2f2437de7b7b3fb37986d0b0"
+   },
+   {
+    "file": "Terralith_26.2_v2.6.4_Neoforge.jar",
+    "maven": "maven.modrinth:terralith:lqrGyTjO",
+    "size": 2975530,
+    "sha1": "23231002eac964fec4939dcde30c976d906d7c9f",
+    "sha256": "a9339c82a77a15cac5ba8d7b53b34332b73242f5579e6a33ce31b528f0c18666"
+   }
+  ],
+  "integration-mods": [
+   {
+    "file": "commoncapabilities-26.2-neoforge-2.11.8-379.jar",
+    "maven": "maven.modrinth:common-capabilities:KOcIalPo",
+    "size": 292209,
+    "sha1": "1da8f64c1d5cb6aa0fb558c637542fd6621d4f3a",
+    "sha256": "0616673041364d7993bd645fa38731585c448fc978c4a210f2555fb385bf6691"
+   },
+   {
+    "file": "cyclopscore-26.2-neoforge-1.30.0-1143.jar",
+    "maven": "maven.modrinth:cyclops-core:bD7eR4iR",
+    "size": 1068990,
+    "sha1": "5b20b854d0a68458412097e7b50889f4ebcbfc0c",
+    "sha256": "853e2a093487601e36e3a0a1cbb9419eb7f6df6b56350dd9bfbc5cc6bc3be89e"
+   },
+   {
+    "file": "integrateddynamics-26.2-neoforge-1.33.4-2132.jar",
+    "maven": "maven.modrinth:integrated-dynamics:YU76Q1lX",
+    "size": 4898365,
+    "sha1": "dc06e843b1a3362eb22eab92bc06307e2761577f",
+    "sha256": "faeddbe59b02d78220af8e1011dd6832fcfbb96abb67e14216de68ff00cc6b83"
+   },
+   {
+    "file": "integratedtunnels-26.2-neoforge-1.9.6-776.jar",
+    "maven": "maven.modrinth:integrated-tunnels:8OraiiBt",
+    "size": 774945,
+    "sha1": "5ec93baa7a22800e66172d63d63813d91de9b5b8",
+    "sha256": "75efda9b79e678071cec583975669be68911a68a8cb3a23c6891a38a8a419cc0"
+   },
+   {
+    "file": "mcjtylib-26.2-10.0.4.jar",
+    "maven": "maven.modrinth:mcjtylib:pZKZvxxB",
+    "size": 725734,
+    "sha1": "b46bf67227c75187aad7198567c44ab3ad742ac5",
+    "sha256": "b1a8ddb4d983e002f69b4ab2e3d1bf3d3e680255cb1a987af0eab9c55c5d98ba"
+   },
+   {
+    "file": "modular-routers-26.2.0.1.jar",
+    "maven": "maven.modrinth:modular-routers:No2ZCBbI",
+    "size": 1343450,
+    "sha1": "2cf5a30fb3bc03a4975cc9a6df6afcf4b8c0b905",
+    "sha256": "0be25b21a587a2cc22efcc2099f7d5c95672e47fad95a68b2780a5958bfa28be"
+   },
+   {
+    "file": "rftoolsbase-26.2-8.0.2.jar",
+    "maven": "maven.modrinth:rftools-base:2CVTObgO",
+    "size": 484247,
+    "sha1": "6cf8f98ee92be9e00f702faa0e9e4ff208fd49b2",
+    "sha256": "2acc7ac4d8c21d6ec9dc4058ce70ee2d20314dd63b96165a8f36004688b6e5c8"
+   },
+   {
+    "file": "xnet-26.2-9.0.1.jar",
+    "maven": "maven.modrinth:xnet:JlLiv6Ej",
+    "size": 624314,
+    "sha1": "b7a536c98e2e9b1734609f61b36a6338bbe58ac4",
+    "sha256": "91d39cd993ca456c0d576387be578f40b31c51d80241d013c544b2255599b9e6"
+   }
+  ],
+  "map-mods": [
+   {
+    "file": "journeymap-neoforge-26.2-6.0.10.jar",
+    "maven": "maven.modrinth:journeymap:S0bNIQSq",
+    "size": 4349252,
+    "sha1": "42e8564ab22fb4c11cdb391b7d4c4041e8076f8f",
+    "sha256": "55aee71f8bbd5246cba6d7a1a4a22f1922e4cf2076ce9717c888e1290d6fc1d5"
+   },
+   {
+    "file": "xaerominimap-neoforge-26.2-26.6.2.jar",
+    "maven": "maven.modrinth:xaeros-minimap:ja3RzZIV",
+    "size": 2173900,
+    "sha1": "925649cc36ff56bad4c0032941ce39b61d7e6c0b",
+    "sha256": "a8667ec6c2f3df0dea82cce831f564f30373b83b6d78dc67d0ef0c262780d8c9"
+   },
+   {
+    "file": "xaeroworldmap-neoforge-26.2-1.47.2.jar",
+    "maven": "maven.modrinth:xaeros-world-map:ECCmjmlu",
+    "size": 1452344,
+    "sha1": "055484909bf7b44376f081ecda53cee02ea26d96",
+    "sha256": "3680814f232ec7b09138d187ee3526781e7d0515268835b03d3b1c8d46316e60"
+   }
+  ],
+  "perf-mods": [
+   {
+    "file": "cloth-config-26.2.155.jar",
+    "maven": "maven.modrinth:cloth-config:zErG1kOw",
+    "size": 1135847,
+    "sha1": "6ea13f34b0fcdcc9299b766efa199dcc7cb73878",
+    "sha256": "650cdc79fcb3332dd08d75634443b93b012dba49b748359a4a97f0975bc55c31"
+   },
+   {
+    "file": "DistantHorizons-3.3.3-26.2-fabric-neoforge.jar",
+    "maven": "maven.modrinth:distanthorizons:aAow4a9f",
+    "size": 27766022,
+    "sha1": "22fa56cc57d6ed045ef3c4a3758ea5207ca5bcff",
+    "sha256": "abd4b8504c703d6a4517c154fdcef8c9a9da12599a653b3bedcfb100788cd2be"
+   },
+   {
+    "file": "entity_model_features-3.3.12-26.2-neoforge.jar",
+    "maven": "maven.modrinth:entity-model-features:EKpDms0X",
+    "size": 665666,
+    "sha1": "2e235728ec790524dca2d2f815cb477de1d99667",
+    "sha256": "e692d0a955bf4f5496c3ffaf85e19ca553a32da367d9184b0690ef97b8f269a7"
+   },
+   {
+    "file": "entity_texture_features-7.2.7-26.2-neoforge.jar",
+    "maven": "maven.modrinth:entitytexturefeatures:K5OVIPSz",
+    "size": 799002,
+    "sha1": "e168b90f08f44f1a45847342f9478a58b1ffb98d",
+    "sha256": "f78d8bfd5891184b4e15d82955bbcc6f2f6b6fd9023a02f77733a51c7653f552"
+   },
+   {
+    "file": "entityculling-neoforge-1.12.1-mc26.2.jar",
+    "maven": "maven.modrinth:entityculling:zJ5FqzTn",
+    "size": 1512107,
+    "sha1": "babfb06fd235459c28538c6fddf1d5fa6ee961e7",
+    "sha256": "ecba81a2cff4b9876ffd8208bafb220366078e5548930bb9aab23fd7f048ac19"
+   },
+   {
+    "file": "ferritecore-9.0.0-neoforge.jar",
+    "maven": "maven.modrinth:ferrite-core:LtVvw4uS",
+    "size": 71947,
+    "sha1": "b8bfb14ba6ce7068aae08c3a132ca40bda6bd143",
+    "sha256": "a3292dadb1caf7ad220d3a4b68abff2ad58592ddd372160f9cf66c57d159b539"
+   },
+   {
+    "file": "fusion-1.3.16-neoforge-mc26.2.jar",
+    "maven": "maven.modrinth:fusion-connected-textures:arZXY7Pj",
+    "size": 939141,
+    "sha1": "65591e12849b12eea550d3ff6f252eed49507c92",
+    "sha256": "31c22dc9132df78a9e73956685d60061925b16c4e6dcb96e1ce04cf8311de3a3"
+   },
+   {
+    "file": "ImmediatelyFast-NeoForge-1.16.5+26.2.jar",
+    "maven": "maven.modrinth:immediatelyfast:4C8Vb9ab",
+    "size": 110491,
+    "sha1": "60c34a439f8ac6153b0820a23fa1004d8820025b",
+    "sha256": "3261318ad48e888fa4abcab2dcf332717a43886c26107e21bf2ce0f527d4fb2c"
+   },
+   {
+    "file": "lambdynamiclights-4.12.4+26.2.jar",
+    "maven": "maven.modrinth:lambdynamiclights:XVsaQXSm",
+    "size": 1344429,
+    "sha1": "c842011792dbaf95bb6243df1ad7f39c576f944d",
+    "sha256": "fdb3971cd628e7da0a9ca222c2ad501cf2f59df1b73e7f04cbc7e03194689a52"
+   },
+   {
+    "file": "moreculling-neoforge-26.2-1.8.2.jar",
+    "maven": "maven.modrinth:moreculling:jpqwGkKH",
+    "size": 350093,
+    "sha1": "86b9d60eaa77965d22de6162a569c7c63ba5152c",
+    "sha256": "84df123d1a57bf005f78c93bceadee6034f0d369fc42a980387ba0f9ee67eef5"
+   },
+   {
+    "file": "notenoughanimations-neoforge-1.12.7-mc26.2.jar",
+    "maven": "maven.modrinth:not-enough-animations:zm52iCD4",
+    "size": 1856893,
+    "sha1": "f2a9b1f94bb420c31f4764f793003f72a7157cdd",
+    "sha256": "f3732e891217f9e78351026214917d139059b4651f0c9d6af1c066d7876a5c37"
+   },
+   {
+    "file": "polytone-26.2-6.11.0-neoforge.jar",
+    "maven": "maven.modrinth:polytone:TICW4871",
+    "size": 1855973,
+    "sha1": "1097ac145ca16c0f7b0774e7e5b4e30378bb19ce",
+    "sha256": "51883fe5f0a07b48bc2b20ec079e65c7e988161535f4985fa6e697b4b3335c03"
+   }
+  ],
+  "pipe-mods": [
+   {
+    "file": "Modern-Dynamics-26.2.0.jar",
+    "maven": "maven.modrinth:modern-dynamics:8jLbT9Sk",
+    "size": 701931,
+    "sha1": "7ba1c25e8655cdad21ad8735e7e14b1ad0177845",
+    "sha256": "c85da7a1797671dcede9e2b0c570c766f60772142ccd740195c4a5a37ea8cd79"
+   }
+  ],
+  "power-mods": [
+   {
+    "file": "cloth-config-26.2.155.jar",
+    "maven": "maven.modrinth:cloth-config:zErG1kOw",
+    "size": 1135847,
+    "sha1": "6ea13f34b0fcdcc9299b766efa199dcc7cb73878",
+    "sha256": "650cdc79fcb3332dd08d75634443b93b012dba49b748359a4a97f0975bc55c31"
+   },
+   {
+    "file": "pipez-neoforge-1.2.32+26.2.jar",
+    "maven": "maven.modrinth:pipez:dqAZDndt",
+    "size": 450569,
+    "sha1": "c2f112a8f4928c7e6723abbfee2e50d5a64c3767",
+    "sha256": "b57183e9e66144a0773e4fd89cce85b0827fc300d76dca3cc4c727fb9532ffc3"
+   },
+   {
+    "file": "Powah-8.0.1-alpha.jar",
+    "maven": "maven.modrinth:powah:brtD7Pyx",
+    "size": 2703536,
+    "sha1": "6f934f74f6fa33ff5fe60619b2d65ca304523a54",
+    "sha256": "97018faae57da97201512cb7c08044e206b9b160de828e83141ec2a5f2163bfe"
+   }
+  ],
+  "shader-mods": [
+   {
+    "file": "iris-neoforge-1.11.4+mc26.2.jar",
+    "maven": "maven.modrinth:iris:k55HdONq",
+    "size": 2775477,
+    "sha1": "decfbe06505849620da8f1381c88af1e122ecdd3",
+    "sha256": "5faeb646ff117bfc29e636baa9085f6fff6d048a328618749a991fd01c70019d"
+   },
+   {
+    "file": "sodium-extra-neoforge-0.9.5+mc26.2.jar",
+    "maven": "maven.modrinth:sodium-extra:cjm84uVp",
+    "size": 502127,
+    "sha1": "1c66398bd4c222b9ef67f98cf856325b787ef99a",
+    "sha256": "9970dc29f4e70f2a8cc84e9dcfc2144d1503fa31bf03f5a72ffca872bbb1fe02"
+   },
+   {
+    "file": "sodium-neoforge-0.9.2+mc26.2.jar",
+    "maven": "maven.modrinth:sodium:DmnNKsfS",
+    "size": 1209565,
+    "sha1": "e0a7838c8f733fecf0f2cb729e3439f70c21809f",
+    "sha256": "8364f21b122ffe975392dea12eba0b3bc90609c982113e92dc2e30df2c335805"
+   }
+  ],
+  "storage-mods": [
+   {
+    "file": "appliedenergistics2-26.2.1-alpha.jar",
+    "maven": "maven.modrinth:ae2:XC5aMAdH",
+    "size": 8396211,
+    "sha1": "bcba0f25c379503fa3fe3dcfc7a0f7a733c47a7b",
+    "sha256": "2345ed127f4ffb8bbd4643c93de3443fe29d89f27a220576b31c858d54357689"
+   }
+  ],
+  "zoo-mods": [
+   {
+    "file": "curios-neoforge-16.0.0+26.2.jar",
+    "maven": "maven.modrinth:curios:BI7D0sbK",
+    "size": 441696,
+    "sha1": "fc8b4596dbeca2a9f516eeb632d8a5ad039e540a",
+    "sha256": "5cb4a8b45301c5c32279ad80c24d4da8ebcd9879b140ffdb3057fc7c331b8500"
+   },
+   {
+    "file": "cyclopscore-26.2-neoforge-1.30.0-1143.jar",
+    "maven": "maven.modrinth:cyclops-core:bD7eR4iR",
+    "size": 1068990,
+    "sha1": "5b20b854d0a68458412097e7b50889f4ebcbfc0c",
+    "sha256": "853e2a093487601e36e3a0a1cbb9419eb7f6df6b56350dd9bfbc5cc6bc3be89e"
+   },
+   {
+    "file": "evilcraft-26.2-neoforge-1.2.98-1108.jar",
+    "maven": "maven.modrinth:evilcraft:7z7VPzeq",
+    "size": 3038553,
+    "sha1": "eb62d658a47dd3d9df2bb7aa4a8b88b3dfd6268c",
+    "sha256": "ccf150ce932836b63359b07f212198ff5ffd99a86c883a3dc73a685e51f071f0"
+   },
+   {
+    "file": "geckolib-neoforge-26.2-5.5.6.jar",
+    "maven": "maven.modrinth:geckolib:IEGPh4CJ",
+    "size": 1154336,
+    "sha1": "980aba8415e4d9593c03403e955e96a8b11117c6",
+    "sha256": "32f91b9e6d5f62dab0740a0cec1a1f5619aaa07a0249c250df2f7918eb0c30e2"
+   },
+   {
+    "file": "modonomicon-26.2-neoforge-2.5.0.jar",
+    "maven": "maven.modrinth:modonomicon:nYeh8m3L",
+    "size": 2966788,
+    "sha1": "e32151984b68a8696049301c0d09637d829cfe81",
+    "sha256": "ba481e3c3ae2afbcfadd8002d27521a6a4336e913596d6d826099733350a394e"
+   },
+   {
+    "file": "occultism-26.2-neoforge-1.256.1.jar",
+    "maven": "maven.modrinth:occultism:bTXjaivx",
+    "size": 9459882,
+    "sha1": "1cfa480bdecc02fce8d833bcabfd9e9ec30bc887",
+    "sha256": "e2ddb411347ffb1620069f52e4071ec6024848de1b9e2bae0440b8b5126f7077"
+   }
+  ]
+ },
+ "fabric": {
+  "integration-mods": [
+   {
+    "file": "betterfishtanks-1.4.2-26.2-fabric.jar",
+    "maven": "maven.modrinth:better-fishtanks:HAlXIgF4",
+    "size": 1368453,
+    "sha1": "657e329317990bfa7f158952c91b12ad2d27412f",
+    "sha256": "484b641b7cbdd44a0ebbabbf2dc193dedcd5d1e535f7c0b46d96579a8058bdd7"
+   },
+   {
+    "file": "BiomesOPlenty-fabric-26.2-26.2.0.0.28.jar",
+    "maven": "maven.modrinth:biomes-o-plenty:MNZPk6V0",
+    "size": 23252511,
+    "sha1": "bf43109e92b00d81b98e28121dc75c513caff6d0",
+    "sha256": "e3a5571eb77225e800f8fc4334d452904705e945c26767bfb091f42889ae14b4"
+   },
+   {
+    "file": "fish_of_thieves-mc26.2-v26.2.2.0-fabric.jar",
+    "maven": "maven.modrinth:fish-of-thieves:6fEXEow9",
+    "size": 2003870,
+    "sha1": "8dcba5218a3befb25ee3d18ca04dccd47f42ca48",
+    "sha256": "f8a7da180423b789d1c1af946cb697c1ce2c0e21d715a972419cc7bb27367634"
+   },
+   {
+    "file": "GlitchCore-fabric-26.2-26.2.0.0.0.jar",
+    "maven": "maven.modrinth:glitchcore:SDUCBYRU",
+    "size": 334860,
+    "sha1": "5e7b26c4cced1cce7784d811dfc91e69a54679c5",
+    "sha256": "f6c31bd291d1d19322dd0a7ec344df2c88e2d516d1985f09ffe50ef33a34afdc"
+   },
+   {
+    "file": "journeymap-fabric-26.2-6.0.10.jar",
+    "maven": "maven.modrinth:journeymap:C6LURNke",
+    "size": 4365525,
+    "sha1": "1a65d3771d3eed1afc9aa1ae468f58fdd6138420",
+    "sha256": "828d2df02f84e9ba56804d64b3b1078e6d583032223e31cedd29f173820912b9"
+   },
+   {
+    "file": "lithostitched-1.8.0-fabric-26.2.jar",
+    "maven": "maven.modrinth:lithostitched:sGGUpIGT",
+    "size": 1022295,
+    "sha1": "9de54ca37ead8701e533a1b6ae17c529a5322d0b",
+    "sha256": "4d74a8ec2023657352ae051f1a6270bff474bf3cc46013100eff5f9ddbbdd024"
+   },
+   {
+    "file": "livingthings-fabric-26.2-2.3.2.jar",
+    "maven": "maven.modrinth:living-things:kxfy7Z4e",
+    "size": 1002467,
+    "sha1": "67b15d4a441b2eb7e80a8425fe2bea6813097fcf",
+    "sha256": "70edc9a920c9b7b16db78dd9478ea5c381ad2495154a35c7ffafcfd10128729f"
+   },
+   {
+    "file": "mint_lib-0.5.2-26.2-fabric.jar",
+    "maven": "maven.modrinth:mint-lib:nZbmA87F",
+    "size": 1207201,
+    "sha1": "8133f03f6117cab25b75ee4a48c57ddc48813e2d",
+    "sha256": "02b27b426ac031f72cad07bc5ee81353a11eb46c225f0e9339a6ba1ebd351cbb"
+   },
+   {
+    "file": "naturalist-2.0.7-fabric-26.2.jar",
+    "maven": "maven.modrinth:naturalist:oWpVJeBG",
+    "size": 11406867,
+    "sha1": "4071295cd3fa39b10d084bc6237a22122f8afdc9",
+    "sha256": "532be7510e55133534fd063783d52b6335c5348fd0fbef492e3c5e7d16c0e091"
+   },
+   {
+    "file": "TerraBlender-fabric-26.2-26.2.0.0.2.jar",
+    "maven": "maven.modrinth:terrablender:KQix25Qc",
+    "size": 357527,
+    "sha1": "e0c8ebc305b9ca37feb0321bb2fbc909570424bd",
+    "sha256": "e4c54e7490cf6716ccc287f5ef674562666a13c6a4afabdc344d5cb62e9cb584"
+   },
+   {
+    "file": "Terralith_26.2_v2.6.4.jar",
+    "maven": "maven.modrinth:terralith:OxfI2n80",
+    "size": 2974843,
+    "sha1": "8cc631f84f5f38e96448892791d282ad5bb1f083",
+    "sha256": "d867c6f348e869c19e8a5979e9dd2c46ed058c1edb47090f6863c32cce484917"
+   },
+   {
+    "file": "yet_another_config_lib_v3-3.9.7+26.2-fabric.jar",
+    "maven": "maven.modrinth:yacl:DoR7RYgi",
+    "size": 1125271,
+    "sha1": "79c8ee7f8a0e775190dfff59be1e505e2f432998",
+    "sha256": "69ab51b2475332d1d26ef4f3b3a2b7e5c47dfc904a76730462f83a9c38780e39"
+   }
+  ],
+  "map-mods": [
+   {
+    "file": "journeymap-fabric-26.2-6.0.10.jar",
+    "maven": "maven.modrinth:journeymap:C6LURNke",
+    "size": 4365525,
+    "sha1": "1a65d3771d3eed1afc9aa1ae468f58fdd6138420",
+    "sha256": "828d2df02f84e9ba56804d64b3b1078e6d583032223e31cedd29f173820912b9"
+   },
+   {
+    "file": "xaerominimap-fabric-26.2-26.6.2.jar",
+    "maven": "maven.modrinth:xaeros-minimap:kYWdcLLn",
+    "size": 2225160,
+    "sha1": "6b3cb6ee2752e0bd318c46055c865be73163db0a",
+    "sha256": "ca40787f59fd0a8f04c17d97b0c89b0b100642f9954b0876ad070ea9051fb05c"
+   },
+   {
+    "file": "xaeroworldmap-fabric-26.2-1.47.2.jar",
+    "maven": "maven.modrinth:xaeros-world-map:W8qSt5Gs",
+    "size": 1484601,
+    "sha1": "259b747c39c61df1ad96f6c4caefa9934cb6aaa5",
+    "sha256": "e2d352426f8cea6887205a68e4d23a27da55e4cfb0e98125c7d3c57dc66543fa"
+   }
+  ],
+  "overlay-mods": [
+   {
+    "file": "badpackets-fabric-0.12.3.jar",
+    "maven": "maven.modrinth:badpackets:1Gg68vyY",
+    "size": 54465,
+    "sha1": "0275e9842f60e844e3f6d845fa17f0b2034ef7aa",
+    "sha256": "5fdd802e3cb2120395db47e0730cadb6de0338b4cdf9684ac03e1680df8fd363"
+   },
+   {
+    "file": "Jade-mc26.2-Fabric-26.2.11.jar",
+    "maven": "maven.modrinth:jade:ue8CO97w",
+    "size": 1043764,
+    "sha1": "101668371882c3413531025373f5d91b63e26dd0",
+    "sha256": "ffe5d2e83a531c3fbe75ad54095e6a9eafc73a38d5827b4c90bedb4b03618b87"
+   },
+   {
+    "file": "jei-26.2-fabric-30.48.0.244.jar",
+    "maven": "maven.modrinth:jei:j62WSkzi",
+    "size": 4767560,
+    "sha1": "ab2c982647d1ac94770c235d10d6b10a4f98a3ed",
+    "sha256": "0f4adcbd1cfc69288d62cee490ce2a28a7794e28d694f21dbd24596c76a15a96"
+   },
+   {
+    "file": "mezz_config-26.2-fabric-0.7.1.jar",
+    "maven": "maven.modrinth:mezzconfig:635tQHQK",
+    "size": 390530,
+    "sha1": "555aa3845647eb655b767e031803876f4d0dcac3",
+    "sha256": "c02e1fed1db0b1a7b1a703850938c13ee0bc4a84c9a9390f3921846518cdeb9f"
+   },
+   {
+    "file": "theoneprobe-26.2-15.0.2-fabric.jar",
+    "maven": "maven.modrinth:the-one-probe:lntJMO2p",
+    "size": 351609,
+    "sha1": "02505819a4571f7d6260aa61275ce7d0c01b2725",
+    "sha256": "119e27e4ad352e2587332aefaa25fae5f3834780a255e7885d018d34bfc8ed3e"
+   },
+   {
+    "file": "wthit-26.2-fabric-20.0.1.jar",
+    "maven": "maven.modrinth:wthit:MLPL0eiP",
+    "size": 923170,
+    "sha1": "9fb0d5adc6a72880e3c50f085eab25f44087a086",
+    "sha256": "ad9131acb0fd4c482aaaaee4d0f7a109e8ec9591a2020c333afbaccebdea147a"
+   }
+  ],
+  "perf-mods": [
+   {
+    "file": "cloth-config-26.2.155.jar",
+    "maven": "maven.modrinth:cloth-config:Nv3xnWXd",
+    "size": 1135186,
+    "sha1": "babcf16dbd15e09d326e21ffe85ab3f7d843ef9e",
+    "sha256": "def4be7639cd66704f7e304d658ea0f6bf490fb4a6eaa2dbf18ec2c3999d6349"
+   },
+   {
+    "file": "continuity-3.0.1+26.2.jar",
+    "maven": "maven.modrinth:continuity:mgUN5Xz2",
+    "size": 1040013,
+    "sha1": "8fa8bc108e84158b0828a4aa59bf906d31676eec",
+    "sha256": "2094a52b98e247f664ef2ecdbb41d7dcad7779cc7a8fb87f0ed8a4f8196c0446"
+   },
+   {
+    "file": "DistantHorizons-3.3.3-26.2-fabric-neoforge.jar",
+    "maven": "maven.modrinth:distanthorizons:aAow4a9f",
+    "size": 27766022,
+    "sha1": "22fa56cc57d6ed045ef3c4a3758ea5207ca5bcff",
+    "sha256": "abd4b8504c703d6a4517c154fdcef8c9a9da12599a653b3bedcfb100788cd2be"
+   },
+   {
+    "file": "entity_model_features-3.3.12-26.2-fabric.jar",
+    "maven": "maven.modrinth:entity-model-features:hyDf8pNd",
+    "size": 665507,
+    "sha1": "34747e7aaf3b0b9f5b9edc3b9fd57fa0b545b531",
+    "sha256": "3a45fb9b028f6e2303438c74e91410223e8af503637956d876a75dd4f9af4af5"
+   },
+   {
+    "file": "entity_texture_features-7.2.7-26.2-fabric.jar",
+    "maven": "maven.modrinth:entitytexturefeatures:nJCXY7Tp",
+    "size": 798587,
+    "sha1": "b58fd0d4ab88fdd2f2a4fa76783c54d8a9233a88",
+    "sha256": "d1bcefe0f71325583b8dd522534d8c110b06fb75700670fa4ee7cd39f758b3f4"
+   },
+   {
+    "file": "entityculling-fabric-1.12.1-mc26.2.jar",
+    "maven": "maven.modrinth:entityculling:kHxKicVG",
+    "size": 1522257,
+    "sha1": "d79658b6e729a4d22981342a5524ec9e6c420f3a",
+    "sha256": "80e64d0ba95bab27bdf6c13918ad8a553317ce5011a67fed5e8495d72a64258d"
+   },
+   {
+    "file": "ferritecore-9.0.0-fabric.jar",
+    "maven": "maven.modrinth:ferrite-core:d5ddUdiB",
+    "size": 72677,
+    "sha1": "eac76ff0f3753422c61b2c44487d0d195d88d4bc",
+    "sha256": "213966c72ed967acc7392beb28a866fba301ff56b9976c2e7801c2db7de6bf22"
+   },
+   {
+    "file": "fusion-1.3.16-fabric-mc26.2.jar",
+    "maven": "maven.modrinth:fusion-connected-textures:bc67hCHk",
+    "size": 952789,
+    "sha1": "d23e4215e9df824c1deaae0508f893a4e21249ac",
+    "sha256": "ee5baa380f4da4eed1d628d2840db5e50f16393c680b0f25f0594999a7867da7"
+   },
+   {
+    "file": "ImmediatelyFast-Fabric-1.16.5+26.2.jar",
+    "maven": "maven.modrinth:immediatelyfast:pMWERcSu",
+    "size": 100500,
+    "sha1": "0286260261591fe77ba0d332d5d5a2d2e868c2c6",
+    "sha256": "85cd8d19bc97b9f2af339897f84ac26af16ab31baa0602689edcfa19dfc1b3e9"
+   },
+   {
+    "file": "lambdynamiclights-4.12.4+26.2.jar",
+    "maven": "maven.modrinth:lambdynamiclights:XVsaQXSm",
+    "size": 1344429,
+    "sha1": "c842011792dbaf95bb6243df1ad7f39c576f944d",
+    "sha256": "fdb3971cd628e7da0a9ca222c2ad501cf2f59df1b73e7f04cbc7e03194689a52"
+   },
+   {
+    "file": "moreculling-fabric-26.2-1.8.2.jar",
+    "maven": "maven.modrinth:moreculling:Qc7V2eKG",
+    "size": 364112,
+    "sha1": "0c84eb55036d82e34b329658c481fd8b84c6f0e1",
+    "sha256": "eb345dc2ac3785b146e98ac3ef7b3893561ba110c7d7888d52d1bf65d5109d8f"
+   },
+   {
+    "file": "notenoughanimations-fabric-1.12.7-mc26.2.jar",
+    "maven": "maven.modrinth:not-enough-animations:PtkLygDD",
+    "size": 1867051,
+    "sha1": "d7769138a91c9d8a9437457539c1acd3b334787f",
+    "sha256": "993a98ab6a02f7545a7bc3f0f8b10bdddf60ce559d9d69f4867dcdc574a28856"
+   },
+   {
+    "file": "polytone-26.2-6.11.0-fabric.jar",
+    "maven": "maven.modrinth:polytone:7umVUVy9",
+    "size": 1857575,
+    "sha1": "4fb29ec398a662b1d88f5e38504103ce233c8281",
+    "sha256": "19e808f1b26c2e42c84845c1a3aa11d8ef5f365a73a443187326111fe55ceaba"
+   }
+  ],
+  "rei-mods": [
+   {
+    "file": "architectury-fabric-21.1.13.jar",
+    "maven": "maven.modrinth:architectury-api:Qnq8I4rX",
+    "size": 624173,
+    "sha1": "1a6c88dd2d372f6aa60d27eef855bccaf8443c74",
+    "sha256": "002edd3643a35a30dcbc14f6b8870b14c855c411ac7cc70f774848cd709f8363"
+   },
+   {
+    "file": "cloth-config-26.2.155.jar",
+    "maven": "maven.modrinth:cloth-config:Nv3xnWXd",
+    "size": 1135186,
+    "sha1": "babcf16dbd15e09d326e21ffe85ab3f7d843ef9e",
+    "sha256": "def4be7639cd66704f7e304d658ea0f6bf490fb4a6eaa2dbf18ec2c3999d6349"
+   },
+   {
+    "file": "RoughlyEnoughItems-26.2.820.jar",
+    "maven": "maven.modrinth:rei:4o0NSIMj",
+    "size": 2419949,
+    "sha1": "a57f1180a72e5f5541ad3cf63a799e95140882e6",
+    "sha256": "9ba9d2a31531759549924064f33d3d45af342e7246f877efb8cee9f75f6ddaa9"
+   }
+  ],
+  "shader-mods": [
+   {
+    "file": "iris-fabric-1.11.4+mc26.2.jar",
+    "maven": "maven.modrinth:iris:gxZWWnKH",
+    "size": 2821616,
+    "sha1": "bd0b24731a94b8fe164531e6345718d30ab08ed2",
+    "sha256": "f1f7ab57c974d193ba33aa285864a0ded949216f402116fceaf4dc7739b4dd7c"
+   },
+   {
+    "file": "sodium-extra-fabric-0.9.5+mc26.2.jar",
+    "maven": "maven.modrinth:sodium-extra:GJjGKm2A",
+    "size": 502161,
+    "sha1": "ac099861fd861f5de2b62501f9c3c07ee81c5046",
+    "sha256": "f1967b4117afff8becc3abc613e9638adb5c376051e09d61e945efb594df810c"
+   },
+   {
+    "file": "sodium-fabric-0.9.2+mc26.2.jar",
+    "maven": "maven.modrinth:sodium:xJZxADzI",
+    "size": 1885572,
+    "sha1": "62a70961a5b3e06938e06ab5f2dc4c5a51cf3323",
+    "sha256": "16a5e91db49750f8c046ecca3b8f2af5a28ea6f9b6581b42f123ca8fda20864f"
+   }
+  ]
+ },
+ "shaderpacks": [
+  {
+   "file": "ComplementaryReimagined_r5.10.zip",
+   "maven": "maven.modrinth:complementary-reimagined:RKfUB9VC",
+   "size": 567387,
+   "sha1": "ce5f303920c12f858c6b4c27a521fe7a1ba70aea",
+   "sha256": "4a61c33c87a7febe7ce898c51ca233683cd1d9854dd8fb7b0d039c88dec2fca2"
+  }
+ ],
+ "gaps": {
+  "neoforge": {
+   "compare-mods": "the size comparison with DragN's Just Bettas (M36) is set up on 1.21.1 only",
+   "create-mods": "Create and Sable have no 26.2 build (VersionGaps)",
+   "facade-mods": "Cable Facades has no 26.2 build (VersionGaps)",
+   "kubejs-mods": "KubeJS and Rhino have no 26.2 build (VersionGaps)",
+   "quest-mods": "FTB Quests, Library and Teams have no 26.2 build (VersionGaps)"
+  },
+  "fabric": {
+   "emi-mods": "EMI has no build after Minecraft 1.21.1 (Modrinth emi, CurseForge 580555, maven.terraformersmc.com checked 2026-11-22)",
+   "quest-mods": "FTB Quests, Library and Teams have no 26.2 build (VersionGaps)",
+   "vulkan-mods": "VulkanMod has no 26.2 build (VersionGaps.RENDER_NO_BUILD)"
+  }
+ }
+}

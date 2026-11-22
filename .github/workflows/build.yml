@@ -5,9 +5,11 @@
 #   one dedicated-server smoke test (aquarium mods, Jade, JEI, GuideME on the server).
 # Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
 # calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
-# WTHIT, and the GameTests with the power mods of -Ppower (pinned Modrinth jars, tools/ci/power-mods.json).
-# Not in CI: client smoke tests (need a window / GPU), -Paquatic and -Pshaders (not all jars have a pinned official
-# download, several licences forbid redistribution), the multiplayer test, buildShowcase and smoketestUpgrade (need local worlds). Run them locally.
+# WTHIT, and the GameTests with the power mods of -Ppower (M59: downloaded by Gradle from their official sources, pinned
+# and hash-checked in dev-mods.json; only the download cache keeps them, never an artifact).
+# Not here: client smoke tests (need a window / GPU), the multiplayer test, buildShowcase and smoketestUpgrade (slow: it builds
+# its reference world from an old commit). The mod groups (integration, zoo, Fabric groups) run in the manual workflow
+# integration.yml.
 name: Build
 
 on:
@@ -209,7 +211,6 @@ jobs:
           - name: GameTests with the power mods (-Ppower)
             id: gametest-power
             loader: neoforge
-            fetch: tools/ci/power-mods.json
             run: ./gradlew runGameTestServer -Ppower
             check: exit
     steps:
@@ -230,10 +231,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: true
-
-      - name: Fetch pinned optional mods (Modrinth, SHA-512 checked)
-        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && (matrix.fetch)
-        run: python3 tools/ci/fetch_mods.py "${{ matrix.fetch }}"
 
       - name: ${{ matrix.name }}
         if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
