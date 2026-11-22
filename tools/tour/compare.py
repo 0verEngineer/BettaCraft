@@ -7,7 +7,7 @@ pixels whose colour differs clearly (any channel by more than 32). Writes into <
   diff.csv                      pack, picture, share in % (sorted, largest first)
   pairs-<pack>-<n>.png          A | B | difference (red) side by side, the pictures above the threshold (default 1 %) first
   sheet-<run>-<pack>-<n>.png    contact sheets of every picture of each run (48 per sheet, named), to look at all of them
-Pictures of the miniature guard (*_nomini) are left out of the pairs and sheets.
+Pictures of the miniature guard (*_nomini, *_again) are left out of the pairs and sheets.
 """
 import csv
 import os
@@ -34,7 +34,7 @@ def pictures(run):
         if not os.path.isdir(d):
             continue
         for f in sorted(os.listdir(d)):
-            if f.endswith('.png') and not f.endswith('_nomini.png'):
+            if f.endswith('.png') and not f.endswith('_nomini.png') and not f.endswith('_again.png'):
                 out[(pack, f[:-4])] = os.path.join(d, f)
     return out
 

@@ -54,8 +54,10 @@ final class DevClientWorldTour {
     private static final int LIMIT = Integer.getInteger("bettacraft.tour.limit", Integer.MAX_VALUE);
     private static final boolean BASELINE = Boolean.getBoolean("bettacraft.tour.baseline");
     /** Ticks after a teleport before the picture (the client follows the server position, the frame is drawn). */
-    private static final int SETTLE = Integer.getInteger("bettacraft.tour.settle", 6);
+    private static final int SETTLE = Integer.getInteger("bettacraft.tour.settle", 4);
     private static final int WIDTH = 960, HEIGHT = 540;
+    /** The world's ticks stand still during the tour ({@code bettacraft.tour.freeze}, default on): the animals do not move. */
+    private static final boolean FREEZE = !"false".equals(System.getProperty("bettacraft.tour.freeze"));
 
     private record Step(int delay, Runnable action) {}
 
@@ -195,6 +197,8 @@ final class DevClientWorldTour {
             gameRules(level);
             p.getAbilities().flying = true;
             p.onUpdateAbilities();
+            // the animals stand still (the same picture in every run; and the server has less to do)
+            if (FREEZE) p.level().getServer().tickRateManager().setFrozen(true);
         }));
         then(1, () -> tanks = findTanks());
         then(1, this::rememberIris);
@@ -233,7 +237,7 @@ final class DevClientWorldTour {
             for (Tank t : list) {
                 for (String v : VIEWS.split(",")) {
                     String view = v.trim();
-                    double[] cam = camera(t, view);
+                    double[] cam = clear(camera(t, view), list, t);
                     if (cam == null) continue;
                     then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
                     then(SETTLE, () -> shot(pn, t.id() + "_" + view));
@@ -249,12 +253,15 @@ final class DevClientWorldTour {
                     for (float pitch : new float[]{-20F, 25F}) {
                         String view = "sweep" + s + "_y" + yaw + "_p" + (int) pitch;
                         float fy = yaw;
+                        boolean firstAtSpot = yaw == 0 && pitch < 0;
                         then(1, () -> look(sp[0], sp[1], sp[2], fy, pitch));
-                        then(SETTLE + 4, () -> shot(pn, view));
+                        // a new spot: the chunks around it load and fade in first
+                        then(firstAtSpot ? 100 : SETTLE + 6, () -> shot(pn, view));
                         if (hideMiniatures(true, true)) {
                             then(1, () -> hideMiniatures(true, false));
                             then(SETTLE, () -> shot(pn, view + "_nomini"));
                             then(1, () -> hideMiniatures(false, false));
+                            then(SETTLE, () -> shot(pn, view + "_again"));
                             then(4, () -> miniatureGuard(pn, view, sp[0], sp[1], sp[2], fy, pitch));
                         }
                     }
@@ -281,7 +288,8 @@ final class DevClientWorldTour {
                 return new double[]{fx + f.getStepX() * d, cy + 0.4, fz + f.getStepZ() * d, cx, cy, cz};
             }
             case "side" -> {
-                double d = Math.max(depth * 0.95, t.sy() * 1.6) + 1.5;
+                // close to the side face (the showcase tanks stand a few blocks apart: farther away the camera is in the next one)
+                double d = Math.min(Math.max(depth * 0.9, t.sy() * 1.2) + 1.0, 2.6);
                 return new double[]{cx + side.getStepX() * (sideHalf + d), cy + 0.4, cz + side.getStepZ() * (sideHalf + d), cx, cy, cz};
             }
             case "top" -> {
@@ -298,6 +306,24 @@ final class DevClientWorldTour {
                 return null;
             }
         }
+    }
+
+    /** A camera inside another tank (its water would fill the picture) goes up to just above that tank's top. */
+    static double[] clear(double[] cam, List<Tank> all, Tank own) {
+        if (cam == null) return null;
+        for (int pass = 0; pass < 3; pass++) {
+            boolean moved = false;
+            for (Tank o : all) {
+                if (o == own) continue;
+                if (cam[0] > o.min().getX() - 0.3 && cam[0] < o.min().getX() + o.sx() + 0.3 && cam[2] > o.min().getZ() - 0.3
+                        && cam[2] < o.min().getZ() + o.sz() + 0.3 && cam[1] > o.min().getY() - 0.3 && cam[1] < o.top() + 0.3) {
+                    cam[1] = o.top() + 0.6;
+                    moved = true;
+                }
+            }
+            if (!moved) break;
+        }
+        return cam;
     }
 
     /** The tank controllers in the chunks within {@link #RADIUS} of the spawn (loaded on the server), sorted by position. */
@@ -408,14 +434,17 @@ final class DevClientWorldTour {
     }
 
     /**
-     * Guard: the view with and without the miniatures; outside the screen boxes of the tanks (with a margin) at most 0.3 % of
-     * the pixels may differ clearly.
+     * Guard: the view with the miniatures, without them and with them again; outside the screen boxes of the tanks (with a margin),
+     * where the first and the third picture agree (no chunk loading in between), at most 0.3 % of the pixels may differ clearly
+     * without the miniatures.
      */
     private void miniatureGuard(String pack, String view, double x, double eyeY, double z, float yaw, float pitch) {
         File dir = new File(out, "screenshots/" + pack);
         try {
-            java.awt.image.BufferedImage a = javax.imageio.ImageIO.read(new File(dir, view + ".png")), b = javax.imageio.ImageIO.read(new File(dir, view + "_nomini.png"));
-            if (a == null || b == null || a.getWidth() != b.getWidth() || a.getHeight() != b.getHeight()) {
+            java.awt.image.BufferedImage a = javax.imageio.ImageIO.read(new File(dir, view + ".png")), b = javax.imageio.ImageIO.read(new File(dir, view + "_nomini.png")),
+                    c = javax.imageio.ImageIO.read(new File(dir, view + "_again.png"));
+            if (a == null || b == null || c == null || a.getWidth() != b.getWidth() || a.getHeight() != b.getHeight() || a.getWidth() != c.getWidth()
+                    || a.getHeight() != c.getHeight()) {
                 guard(false, "miniature " + pack + " " + view + ": pictures missing");
                 return;
             }
@@ -434,9 +463,10 @@ final class DevClientWorldTour {
                 for (int px = 0; px < w; px++) {
                     if (mask[py * w + px]) continue;
                     total++;
-                    int pa = a.getRGB(px, py), pb = b.getRGB(px, py);
-                    int d = Math.max(Math.abs((pa >> 16 & 255) - (pb >> 16 & 255)), Math.max(Math.abs((pa >> 8 & 255) - (pb >> 8 & 255)), Math.abs((pa & 255) - (pb & 255))));
-                    if (d > 48) differ++;
+                    int pa = a.getRGB(px, py), pb = b.getRGB(px, py), pc = c.getRGB(px, py);
+                    // only where the picture is steady (the same before and after: no chunk loading or fading in between)
+                    if (delta(pa, pc) > 24) continue;
+                    if (delta(pa, pb) > 48) differ++;
                 }
             double share = total == 0 ? 0 : differ * 100.0 / total;
             guard(share <= 0.3, String.format(Locale.ROOT, "miniature %s %s: %d of %d pixels outside the %d tank boxes differ (%.2f %%)", pack, view, differ,
@@ -444,6 +474,10 @@ final class DevClientWorldTour {
         } catch (IOException e) {
             guard(false, "miniature " + pack + " " + view + ": " + e);
         }
+    }
+
+    private static int delta(int pa, int pb) {
+        return Math.max(Math.abs((pa >> 16 & 255) - (pb >> 16 & 255)), Math.max(Math.abs((pa >> 8 & 255) - (pb >> 8 & 255)), Math.abs((pa & 255) - (pb & 255))));
     }
 
     /** Marks the screen box of a tank (inflated by half a block, 12 px margin); a tank partly behind the camera masks all. */
