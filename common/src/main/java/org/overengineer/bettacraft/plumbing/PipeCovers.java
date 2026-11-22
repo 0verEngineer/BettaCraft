@@ -71,9 +71,13 @@ public final class PipeCovers {
 
     // ------------------------------------------------------------------ what a pipe looks like
 
-    /** The cover of the filter pipe or bundle at {@code pos}, or null. */
+    /**
+     * The cover of the filter pipe or bundle at {@code pos}, or null. M61: also null without a level or position (other mods
+     * ask the sound or the appearance of a block state with nulls where vanilla ignores them).
+     */
     @Nullable
-    public static BlockState coverAt(BlockGetter level, BlockPos pos) {
+    public static BlockState coverAt(@Nullable BlockGetter level, @Nullable BlockPos pos) {
+        if (level == null || pos == null) return null;
         return level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be ? be.cover() : null;
     }
 
