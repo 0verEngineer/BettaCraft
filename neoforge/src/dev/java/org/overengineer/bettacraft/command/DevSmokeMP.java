@@ -1666,6 +1666,9 @@ public final class DevSmokeMP {
             for (java.util.UUID u : List.of(p1.getUUID(), p2.getUUID())) org.overengineer.bettacraft.aquarist.AquaristRecords.get(server).reset(u);
             aq1 = aquarist(level, p1, aqBase);
             aq2 = aquarist(level, p2, aqBase.offset(0, 0, 8));
+            // M59: names of their own (two random names can be the same, then the log cannot tell whose aquarist worked)
+            aq1.setCustomName(net.minecraft.network.chat.Component.literal("Ada"));
+            aq2.setCustomName(net.minecraft.network.chat.Component.literal("Bea"));
             aqTanks.clear();
             aqTanks.put("dev1", aqTank(level, aqBase.offset(8, 0, 0), p1.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER, false));
             aqTanks.put("dev2", aqTank(level, aqBase.offset(8, 0, 6), p2.getUUID(), org.overengineer.bettacraft.aquarist.AquaristAccess.OWNER, false));
