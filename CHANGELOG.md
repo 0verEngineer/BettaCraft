@@ -45,6 +45,10 @@ The whole test suite runs from a fresh clone without manual work. No change to t
   reference world).
 - `runServer -PsmoketestOldWorld` lost its fresh copy of the old world to the new cleanup; it now loads the reference world
   of the branch by default and passes.
+- Multiplayer test from a fresh run directory: the background clients get their `fml.toml` (no early window) and, where
+  NeoForge shows load warnings on a screen that waits for a click (26.2, 26.3), `neoforge-client.toml` with the warnings off;
+  the seeded `server.properties` switches the white list off; the two hired aquarists get names of their own (two equal
+  random names failed a check).
 
 ### Removed
 - `tools/ci/fetch_mods.py`, `power-mods.json`, `integration-mods.json` and the partial integration run
