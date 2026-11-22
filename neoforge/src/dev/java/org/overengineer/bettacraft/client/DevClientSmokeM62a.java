@@ -177,7 +177,7 @@ final class DevClientSmokeM62a {
         }));
         then(10, () -> server(p -> {
             for (UUID id : spawned) {
-                if (p.level().getEntity(id) instanceof HerpEntity e) e.getNavigation().snapTo(base.getX() + 6.5, base.getY() + 1, e.getZ(), 1.0);
+                if (p.level().getEntity(id) instanceof HerpEntity e) e.getNavigation().moveTo(base.getX() + 6.5, base.getY() + 1, e.getZ(), 1.0);
             }
         }));
         then(1, () -> look(base.getX() + 1.0, base.getY() + 1.3, base.getZ() + 0.0, 0F, 15F));
@@ -187,7 +187,7 @@ final class DevClientSmokeM62a {
             then(0, () -> server(p -> {
                 for (UUID id : spawned) {
                     if (p.level().getEntity(id) instanceof HerpEntity e && !e.climbingInWorld() && e.getNavigation().isDone() && e.getY() < base.getY() + 0.9) {
-                        e.getNavigation().snapTo(base.getX() + 6.5, base.getY() + 1, e.getZ(), 1.0);
+                        e.getNavigation().moveTo(base.getX() + 6.5, base.getY() + 1, e.getZ(), 1.0);
                     }
                 }
             }));

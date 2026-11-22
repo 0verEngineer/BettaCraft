@@ -189,7 +189,7 @@ public final class WorldAnimalsGameTests {
                 seen.get(i).look(e, ground);
                 if (!e.climbingInWorld() && e.getNavigation().isDone() && e.getY() < ground + 0.9) {
                     BlockPos to = h.absolutePos(new BlockPos(15, 3, (int) (e.getZ() - h.absolutePos(BlockPos.ZERO).getZ())));
-                    e.getNavigation().snapTo(to.getX() + 0.5, to.getY(), to.getZ() + 0.5, 1.0);
+                    e.getNavigation().moveTo(to.getX() + 0.5, to.getY(), to.getZ() + 0.5, 1.0);
                 }
             }
         });
@@ -283,7 +283,7 @@ public final class WorldAnimalsGameTests {
             BlockPos base = h.absolutePos(BlockPos.ZERO);
             h.onEachTick(() -> {
                 s.look(e, ground);
-                if (e.getNavigation().isDone() && e.getY() < ground + 0.9) e.getNavigation().snapTo(base.getX() + 15.5, base.getY() + 3, base.getZ() + 6.5, 1.0);
+                if (e.getNavigation().isDone() && e.getY() < ground + 0.9) e.getNavigation().moveTo(base.getX() + 15.5, base.getY() + 3, base.getZ() + 6.5, 1.0);
             });
             h.runAtTickTime(300, () -> {
                 try {
