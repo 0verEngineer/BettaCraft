@@ -81,6 +81,8 @@ public final class MiniatureRenderer {
     private static int inFlight;
     /** Render-thread time spent on miniatures in the last frame (scheduling + uploads + draws), for the bench. */
     public static volatile long lastFrameNanos;
+    /** M63b: a dev scene hides the miniatures for a picture without them (the check that none is drawn outside its tank). */
+    public static volatile boolean hiddenForTest;
 
     private record Result(int regionId, long cell, int generation, Map<RenderType, MeshData> data, Map<RenderType, MeshData> plantData,
                           Map<RenderType, MeshData> swayData, MiniatureSway.Data sway,
@@ -120,7 +122,7 @@ public final class MiniatureRenderer {
         if (!opaque && stage != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
         if (!opaque && IrisCompat.renderingShadowPass()) return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
+        if (mc.level == null || hiddenForTest) return;
         long t0 = System.nanoTime();
         Vec3 cam = event.getCamera().getPosition();
         double maxDist = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
