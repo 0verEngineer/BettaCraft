@@ -144,7 +144,7 @@ public final class BettaGameTests {
                 for (int i = 2; i <= repeat; i++) {
                     String name = f.testName() + "_r" + i;
                     TestFunction copy = new TestFunction(f.batchName(), name, f.structureName(), f.rotation(), f.maxTicks(), f.setupTicks(),
-                            f.required(), f.manualOnly(), f.maxAttempts(), f.requiredSuccesses(), f.skyAccess(), f.function());
+                            f.required(), f.manualOnly(), f.maxAttempts(), f.requiredSuccesses(), f.skyAccess(), h -> f.function().accept(h)); // a function of its own (the registry takes every value once)
                     Entry c = new Entry(Identifier.fromNamespaceAndPath(NAMESPACE, sanitize(name)), e.method() + "_r" + i, copy);
                     out.put(c.id(), c);
                 }
