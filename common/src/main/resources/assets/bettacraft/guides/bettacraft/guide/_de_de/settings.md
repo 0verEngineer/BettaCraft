@@ -101,7 +101,8 @@ navigation:
 Die **Common-Config** legt Spawn-Gewicht und Gruppengröße der wilden Bettas fest, das Rezept der Fischtüte
 (`recipes.fishBag`: AUTO, KELP oder PLASTIC), welche Overlay-Mod die Bettacraft-Zeilen zeigt (`compat.overlayProvider`:
 AUTO = nur die erste vorhandene von Jade, WTHIT und The One Probe, damit zwei Overlay-Mods nicht jedes Aquarium doppelt
-zeigen; JADE, TOP, WTHIT oder ALL) und die Feature-Schalter (`features.*`, siehe Feature-Schalter unten).
+zeigen; JADE, TOP, WTHIT oder ALL), die Feature-Schalter (`features.*`, siehe Feature-Schalter unten) und das Debug-Log
+(`debug.logLevel`, `debug.areas`, siehe [Fehler melden](settings/bug_reports.md)).
 Die Common-Config `sounds.useVanilla` schaltet die Gerätesounds auf Minecrafts eigene zurück; die Client-Config hat eine
 Lautstärke je Geräteart (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume`, `feederVolume`); das Summen
 der Luftpumpen und das Surren der Strömungspumpen sind aus, bis `sound.airPumpSound` bzw. `sound.flowPumpSound` eingeschaltet
@@ -353,6 +354,8 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
 * `/bettacraft aquarist hire` / `decline`: die Antwort auf das Angebot eines Aquaristen (die Knöpfe im Chat);
   `/bettacraft aquarist status`: warum noch kein [angestellter Aquarist](getting_started/hired_aquarist.md) gekommen ist.
   Operatoren: `/bettacraft aquarist arrive [Spieler]` lässt sofort einen kommen.
+* Operatoren und der Besitzer einer Einzelspielerwelt: `/bettacraft debug <Bereich|all> <on|off|trace>` schaltet das
+  Debug-Log, `/bettacraft report` schreibt einen Fehlerbericht mit dem angeschauten Becken ([Fehler melden](settings/bug_reports.md)).
 
 ## In diesem Kapitel
 
