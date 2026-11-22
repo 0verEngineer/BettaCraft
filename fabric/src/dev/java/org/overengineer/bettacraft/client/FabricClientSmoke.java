@@ -33,6 +33,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM54 m54;
     /** M62 parts 5 and 6: -Psmoketestm62d (the Tylomelania shell, every plant icon, the clear glass tank icon). */
     private static DevClientSmokeM62d m62d;
+    /** M62 part 1: -Psmoketestm62a (schools and climbing animals in the world). */
+    private static DevClientSmokeM62a m62a;
     /** M55: -Psmoketestm55 (wild carpets, wild plants, container icons). */
     private static DevClientSmokeM55 m55;
     private static DevClientSmokeM56 m56;
@@ -264,6 +266,15 @@ public final class FabricClientSmoke implements ClientModInitializer {
             }
             if (stage == 22) {
                 if (m55.tick()) stage = 4;
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62aonly")) {
+                LOGGER.info("[smoketest] fabric client in world: M62a scene");
+                m62a = new DevClientSmokeM62a();
+                stage = 620;
+            }
+            if (stage == 620) {
+                if (m62a.tick()) stage = 4;
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m54only")) {
