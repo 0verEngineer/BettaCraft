@@ -217,15 +217,15 @@ def tylomelania() -> list[Group]:
     shell = Group("shell", cubes=tylo_shell())
     foot, tent = snail_foot(9.0, 3.8, -4.6, 3.6, -5.6, thick=1.0)
     # the mantle under the body whorl (the shell sits on it, no gap above the foot)
-    foot.cubes.append(c("mantle", (0, -1.55, 0.9), (3.0, 1.1, 4.4), (0, 0, 0), "skin"))
+    foot.cubes.append(c("mantle", (0, -1.8, 1.4), (3.2, 1.6, 5.0), (0, 0, 0), "skin"))
     eyes = Group("eyes", cubes=pairs(c("eye", (0.7, -1.5, -5.6), (0.4, 0.4, 0.4)), "eye"))
     return [shell, foot, tent, eyes]
 
 
-TYLO_ANGLE = 30.0  # the shell axis above the horizontal (apex up and back)
-TYLO_SIZES = [3.6, 3.2, 2.8, 2.4, 2.0, 1.6, 1.2]
-TYLO_STEP = 1.5  # whorl to whorl along the axis
-TYLO_LENGTH = 2.1  # length of a whorl along the axis (they overlap)
+TYLO_ANGLE = 34.0  # the shell axis above the horizontal (apex up and back)
+TYLO_SIZES = [3.7, 3.25, 2.8, 2.3, 1.8, 1.3]
+TYLO_STEP = 1.35  # whorl to whorl along the axis
+TYLO_LENGTH = 2.2  # length of a whorl along the axis (they overlap)
 TYLO_BOTTOM = -0.95  # the lowest point of the shell (the top of the foot is at -1.0)
 
 
@@ -236,7 +236,7 @@ def tylo_shell() -> list[Cube]:
     s0 = TYLO_SIZES[0]
     # the body whorl's lowest point (half length along the axis, half width across it) on TYLO_BOTTOM
     low = TYLO_LENGTH / 2 * math.sin(a) + s0 / 2 * math.cos(a)
-    y0, z0 = TYLO_BOTTOM - low, 1.2
+    y0, z0 = TYLO_BOTTOM - low, 1.6
     out = []
     for i, s in enumerate(TYLO_SIZES):
         y, z = y0 + dy * TYLO_STEP * i, z0 + dz * TYLO_STEP * i
