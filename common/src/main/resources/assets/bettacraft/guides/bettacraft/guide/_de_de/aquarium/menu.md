@@ -11,6 +11,11 @@ navigation:
 **Rechtsklicke** ein Aquarium mit leerer Hand, um sein Menü zu öffnen. (**Schleichen + Rechtsklick** betritt stattdessen
 den [Innenraum](../interior.md).)
 
+Das Menü **wächst mit dem Bildschirm**: Wo die GUI-Skalierung Platz drumherum lässt (ein großes Fenster oder eine kleinere
+GUI-Skalierung), wird es breiter und höher, mit Tab-Beschriftungen in voller Größe, längeren Listen und längeren Zeilen; ohne
+Platz drumherum (GUI-Skalierung 4 bei 1280 × 960) bleibt es kompakt. Rezept-Anzeigen (JEI, REI, EMI) halten Abstand. Text, der trotzdem nicht passt,
+endet mit „...“ und steht vollständig da, wenn die Maus darauf liegt.
+
 ## Übersicht
 
 ![Der Übersicht-Tab](../images/menu_overview.png)
@@ -34,14 +39,17 @@ den [Innenraum](../interior.md).)
 * Größe, Wassermenge, Wasser- und Umgebungstemperatur, die **Zieltemperatur** (– / +).
 * Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter, die Zahl der Tiere
   und der Knopf zum Betreten des Innenraums (sein Tooltip zeigt den Innenraum: Maßstab und Größe, Blöcke in der Miniatur,
-  Bodengrund, Heizer und Filter darin). Die letzte Zeile warnt vor mäßigem Wasser oder fehlendem Strom.
+  Bodengrund, Heizer und Filter darin). Die letzten Zeilen warnen vor mäßigem Wasser, fehlendem Strom oder einem **zu
+  kleinen Schwarm**: „Schwarm zu klein: Neonsalmler: 3 von 6“ nennt die Fische und wie viele es sein sollten (mit der Maus
+  darauf alle zu kleinen Schwärme). Ein höheres Menü zeigt jede Warnung, eine pro Zeile.
 * Das **Zahnrad** rechts neben dem Innenraum-Knopf öffnet die **Client-Einstellungen** von Bettacraft (dieselben wie in
   der Config-Datei `bettacraft-client.toml` und in der Mod-Liste): darunter **Alarm-Wegpunkte aller Becken**
   (`map.showAlarmWaypoints`) und welche Karten-Mods sie zeigen (`map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`).
 
 ## Tiere
 
-Die Liste aller Tiere mit Name, Typ, Geschlecht und Stufe. Zum ausgewählten Fisch: Gesundheits- und Satt-Balken,
+Die Liste aller Tiere mit Name, Typ, Geschlecht und Stufe (kranke rot, Fische eines zu kleinen Schwarms orange; ein Name,
+der nicht passt, steht unter der Maus vollständig da). Zum ausgewählten Fisch: Gesundheits- und Satt-Balken,
 Fortschritt der Stufe, der Genotyp (Schwanzform, Körper, Flossen, Muster; alle neun Loci im Tooltip), sobald er mit der
 [Lupe](../equipment/magnifier.md) analysiert ist (Knopf **Analysieren**), die Generation, ein Namensfeld und die Knöpfe
 zum Entnehmen mit Eimer oder Fischtüte. Ein Zwergkrallenfrosch zeigt Gesundheit,
@@ -62,7 +70,8 @@ nimmt die Gelege der Apfelschnecken vom Glas.
 
 ## Zucht
 
-Warnungen, das Schaumnest, die Zuchtbedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die erwarteten Nachkommen.
+Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solche Schwarm mit seinen Fischen und der Mindestzahl, z. B.
+„Neonsalmler: 3 von 6“), das Schaumnest, die Zuchtbedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die erwarteten Nachkommen.
 Siehe [Zucht](../bettas/breeding.md).
 
 ## Wasser
