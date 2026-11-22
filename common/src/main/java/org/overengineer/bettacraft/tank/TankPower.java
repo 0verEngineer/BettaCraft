@@ -138,7 +138,10 @@ public final class TankPower {
     static void springs(ServerLevel level, TankBlockEntity c, long n, int filterFe, int airFe, int heatFe, int lightFe, int mistFe) {
         java.util.List<org.overengineer.bettacraft.equipment.CabinetBlockEntity> cabs = new java.util.ArrayList<>();
         if (org.overengineer.bettacraft.winding.Winding.Device.CABINET.windable()) {
-            for (var cab : TankEquipment.cabinets(level, c)) if (!cab.windSpring().empty()) cabs.add(cab);
+            // M62: with the shared store also the cabinets joined to them (beyond the tank), all kept evenly wound
+            for (var cab : org.overengineer.bettacraft.equipment.CabinetSprings.union(level, TankEquipment.cabinets(level, c))) {
+                if (!cab.windSpring().empty()) cabs.add(cab);
+            }
         }
         if (!cabs.isEmpty()) {
             if (filterFe > 0 && !c.filterPowered) c.filterPowered = fromCabinets(c, cabs, TankWater.filterLoad(level, c), n);
@@ -149,6 +152,7 @@ public final class TankPower {
             if (heatFe > 0 && !c.heatPowered) c.heatPowered = fromCabinets(c, cabs, heatUnits(level, c), n);
             if (lightFe > 0 && !c.lightPowered) c.lightPowered = fromCabinets(c, cabs, lightsWanting(level, c.getTank()), n);
             if (mistFe > 0 && !c.misterPowered) c.misterPowered = fromCabinets(c, cabs, c.climateMistWant, n);
+            if (org.overengineer.bettacraft.equipment.CabinetSprings.shared()) org.overengineer.bettacraft.equipment.CabinetSprings.level(cabs);
         }
         boolean filters = filterFe > 0 && !c.filterPowered, heat = heatFe > 0 && !c.heatPowered;
         if (!filters && !heat || !org.overengineer.bettacraft.winding.Winding.Device.EXTERNAL_FILTER.windable()) return;
