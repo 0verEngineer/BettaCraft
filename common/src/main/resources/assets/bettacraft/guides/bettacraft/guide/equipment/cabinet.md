@@ -15,7 +15,8 @@ item_ids:
 The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **any wood**: five planks of one kind
 (also from other mods), three wooden slabs and a wooden chest. The cabinet takes the look of its planks.
 
-* Cabinets next to each other that face the same way join into one long cabinet with a continuous top.
+* Cabinets next to each other that face the same way join into one long cabinet with a continuous top, and also to the
+  back: a whole area under a big tank becomes one under-cabinet (see below).
 * **Filter slot:** put an [external filter](filters.md) in. A cabinet directly under the aquarium then counts as an
   attached external filter; the hose runs up the wall of its **outlet side** (see below; the back wall unless you
   choose another). The two heater slots of the cabinet menu are the heater slots of that filter.
@@ -24,6 +25,29 @@ The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **
 * **Nine storage slots** for food and other things. Hoppers can use them, and the [feeder](feeder.md) on the aquarium
   takes food from the cabinets under it.
 * Broken, the cabinet drops its contents like a chest and keeps its wood, its outlet side and its front.
+
+## Under the whole tank
+
+![A 10 x 5 tank on a full area of cabinets from the front and the back, and a ring of cabinets around stone](../images/cabinet_area.png)
+
+Cabinets join **to the back** as well, so even a 10 x 5 tank stands on one continuous under-cabinet:
+
+* The **front row** shows the fronts (drawers at the ends, doors between them), the sides of the outer cabinets the plain
+  side panels. Every cabinet with another one **in front of it** (the back rows and the inside of the area) is a plain
+  carcass: no doors, the counter top and the sides run through.
+* You may also build the whole area of cabinets (a 4 x 4 with the four inside ones) or only a **ring** of cabinets with
+  **normal blocks in the middle** (cheaper): from outside it still looks like one piece.
+* A cabinet placed against the side, back or front of another one takes **its facing**, so you can build the area from
+  any side. Placed on the ground it faces you as before.
+* The setting `features.equipment.cabinetArea` switches this off: cabinets then join only left and right and every one
+  shows its front.
+
+**One spring for the whole under-cabinet.** With power and winding on (see [Crank](crank.md)) all cabinets under a tank
+and all cabinets joined to them form **one spring store**: also two cabinets that do not touch, for example one at each
+end of a long tank. The store grows with every cabinet block; one click of the crank at any of them winds the whole store
+(by one cabinet's step), and every cabinet's window and the overlay show the store ("Shared by 4 cabinets"). A broken
+cabinet hands its share to the others as far as they have room. Cabinets of older worlds keep their winding: their springs
+simply form the store. The setting `features.power.cabinetSharedSpring` gives every cabinet its own spring again.
 
 ## Fronts
 

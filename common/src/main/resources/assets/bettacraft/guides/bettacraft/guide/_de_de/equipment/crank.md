@@ -41,7 +41,9 @@ Innen- und Eckfilter, Lichter, Futterautomat, Dosierer, Sprühanlagen und Heizma
 **Unterschrank** unter dem Aquarium auf. Er speichert das Aufziehen und gibt es an alle Geräte seines Aquariums, die FE
 brauchen: seinen Filter und seine Luftpumpe, Außen- und Innenfilter, Heizer und Kühler, Heizmatten, Sprühanlagen, Lichter
 und Luftpumpen. Jedes arbeitende Gerät verbraucht pro Tick einen Geräte-Tick, also **je mehr Geräte, desto schneller ist
-er leer**: ein Filter läuft mit einem vollen Schrank sechs Tage, sechs Geräte einen Tag.
+er leer**: ein Filter läuft mit einem vollen Schrank sechs Tage, sechs Geräte einen Tag. Mehrere Schränke unter einem
+Becken teilen sich **einen Speicher**, der mit jedem Schrankblock wächst, und ein Klick an einem beliebigen zieht ihn auf
+(siehe [Schrank](cabinet.md)).
 
 * **FE geht immer vor.** Die Feder läuft nur, solange FE fehlt; Akku und Feder ergänzen sich.
 * Eine Feder läuft nur, solange ihr Chunk geladen ist; Zeit in nicht geladenen Chunks zählt nicht.

@@ -63,7 +63,7 @@ final class LangM45 {
         q(a, "fight", "A Lesson Learned", "Two adult male bettas in one tank fight. Optional: better learn this one from the handbook.");
         q(a, "fish_bag", "Travel Bag", "Fish, shrimp and frogs travel in a bucket or a fish bag. Right-click a tank with it to put the animal in, the tank menu takes them out again.");
         q(a, "cooler", "Cool Down", "Some fish want cooler water than the room: a cooler beside the tank brings the temperature down.");
-        q(a, "cabinet", "Under the Tank", "A cabinet under the tank holds devices and gives it a stand. Cabinets in a row get a common front with doors and drawers; stone cabinets match your build.");
+        q(a, "cabinet", "Under the Tank", "A cabinet under the tank holds devices and gives it a stand. Cabinets in a row get a common front with doors and drawers, cabinets behind them make the stand of a big tank, and all cabinets under a tank share one spring; stone cabinets match your build.");
         q(a, "aeration", "Bubbles", "An air pump with air stones in the interior makes bubble columns and brings oxygen into the water.");
         q(a, "sponge_filter", "Gentle Flow", "Sponge and corner filters clean gently: safe for fry and shrimp.");
         q(a, "led_lights", "Strong Light", "The LED panel and the high-power LED light big tanks: red plants turn redder and the strong-light plants grow, but algae like it too.");
