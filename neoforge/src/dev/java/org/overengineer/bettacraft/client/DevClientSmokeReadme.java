@@ -81,14 +81,14 @@ final class DevClientSmokeReadme {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final Identifier WOOD = Identifier.withDefaultNamespace("spruce_planks");
 
-    private record Step(int delay, Runnable action) {}
+    record Step(int delay, Runnable action) {}
 
-    private final Minecraft mc = Minecraft.getInstance();
-    private final Deque<Step> steps = new ArrayDeque<>();
+    final Minecraft mc = Minecraft.getInstance();
+    final Deque<Step> steps = new ArrayDeque<>();
     private final String lang = mc.options.languageCode;
-    private BlockPos base, gallery;
+    BlockPos base, gallery;
     private int wait;
-    private boolean shaders;
+    boolean shaders;
 
     // frame capture: one picture per game tick of the client level, taken after the frame is drawn
     private static DevClientSmokeReadme active;
@@ -109,6 +109,9 @@ final class DevClientSmokeReadme {
      */
     DevClientSmokeReadme(boolean media) {
         this.media = media;
+        parts = java.util.Set.of(System.getProperty("bettacraft.media.parts", media ? "room,extras,showcase,m58" : "room")
+                .toLowerCase(java.util.Locale.ROOT).split(","));
+        LOGGER.info("[smoketest] README parts {}", parts);
         active = this;
         if (!listening) {
             listening = true;
@@ -125,6 +128,8 @@ final class DevClientSmokeReadme {
             mc.options.framerateLimit().set(120);
             mc.options.fov().set(70);
         });
+        // M58: the pictures are for English pages (the menus, the chest titles): English while recording
+        if (media) then(1, () -> language("en_us"));
         if (media) then(1, () -> server(this::prepareShowcase));
         then(1, () -> {
             building = true;
@@ -135,6 +140,30 @@ final class DevClientSmokeReadme {
             reach(p, false);
         }));
         // the room: let the chunks, miniatures and plant meshes build
+        if (parts.contains("room")) room();
+        if (media) mediaScenes();
+        // with the M58 scenes their steps come after this one: they switch the language back at their end
+        if (media) then(1, () -> {
+            if (m58 == null) languageBack();
+        });
+        else then(1, () -> mc.options.languageCode = lang);
+    }
+
+    /** M58: back to the language the client had. */
+    void languageBack() {
+        language(lang);
+    }
+
+    /** M58: switches the game language (the resources reload; the steps wait for it). */
+    private void language(String code) {
+        if (code.equals(mc.options.languageCode)) return;
+        mc.options.languageCode = code;
+        mc.getLanguageManager().setSelected(code);
+        mc.reloadResourcePacks();
+    }
+
+    /** The README room pictures, the betta varieties, the interior and the menus. */
+    private void room() {
         then(1, () -> look(base.getX() + 4.0, base.getY() + 2.5, base.getZ() - 7.6, 0F, 2F));
         then(240, () -> shot("room"));
         then(1, () -> look(base.getX() + 2.0, base.getY() + 3.0, base.getZ() - 6.0, -10F, 10F));
@@ -194,9 +223,7 @@ final class DevClientSmokeReadme {
             then(60, () -> shot("guide"));
             then(5, () -> mc.gui.setScreen(null));
             then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
-            if (media) mediaScenes();
         }
-        then(1, () -> mc.options.languageCode = lang);
     }
 
     // ------------------------------------------------------------------ building
@@ -287,6 +314,10 @@ final class DevClientSmokeReadme {
         for (String v : varieties) betta(level, gal, v, false);
         server(pl -> arrangeGallery(pl.level(), varieties.length));
         if (this.media) buildExtras(level, in);
+        if (this.media && (parts.contains("m58") || parts.contains("create"))) {
+            m58 = new DevClientMediaM58(this);
+            m58.build(p);
+        }
         built = true;
         LOGGER.info("[smoketest] README scene at {}, varieties at {}", base, gallery);
     }
@@ -294,6 +325,9 @@ final class DevClientSmokeReadme {
     // ------------------------------------------------------------------ M43: media in the showcase world
 
     private final boolean media;
+    /** M58: which parts of the media run ({@code -Pmediaparts}): room, extras, showcase, m58, create. */
+    final java.util.Set<String> parts;
+    private DevClientMediaM58 m58;
     /** The build runs on the server thread (after the showcase scan in the media run): the steps wait for it. */
     private volatile boolean building, built;
     /** The extra tanks of the media run: an Amazon tank, a flaring male, a growth time lapse (min corners). */
@@ -301,15 +335,15 @@ final class DevClientSmokeReadme {
     private TankBlockEntity growTank;
     private final List<InteriorPlant> growing = new ArrayList<>();
     /** Per frame of a sequence, on the server: what changes in the scene (flaring on and off, the plants growing). */
-    private java.util.function.BiConsumer<ServerPlayer, Integer> seqHook;
-    private record Box(String name, BlockPos min, BlockPos max) {
+    java.util.function.BiConsumer<ServerPlayer, Integer> seqHook;
+    record Box(String name, BlockPos min, BlockPos max) {
         Box union(Box o) {
             return new Box(name + "+" + o.name, new BlockPos(Math.min(min.getX(), o.min.getX()), Math.min(min.getY(), o.min.getY()), Math.min(min.getZ(), o.min.getZ())),
                     new BlockPos(Math.max(max.getX(), o.max.getX()), Math.max(max.getY(), o.max.getY()), Math.max(max.getZ(), o.max.getZ())));
         }
     }
     /** The named tanks of the showcase (their German name plates, read before they are hidden), filled on the server. */
-    private final Map<String, Box> named = new java.util.concurrent.ConcurrentHashMap<>();
+    final Map<String, Box> named = new java.util.concurrent.ConcurrentHashMap<>();
     private final List<Box> allTanks = java.util.Collections.synchronizedList(new ArrayList<>());
     private volatile BlockPos showcaseOrigin;
     private volatile int showcaseGround;
@@ -462,6 +496,15 @@ final class DevClientSmokeReadme {
 
     /** The media scenes after the README pictures: the extra tanks, then the showcase rows. */
     private void mediaScenes() {
+        if (parts.contains("extras")) extraScenes();
+        if (parts.contains("showcase")) showcaseScenes();
+        // M58: the new scenes (built with the room, so their steps are added once the build is done)
+        if (parts.contains("m58") || parts.contains("create")) then(1, () -> {
+            if (m58 != null) m58.scenes();
+        });
+    }
+
+    private void extraScenes() {
         // the Amazon tank
         then(1, () -> lookAt(new Box("amazon", amazonAt.below(), amazonAt.offset(4, 2, 1)), 0F, 6F, 0.85));
         then(120, () -> shot("amazon"));
@@ -503,7 +546,9 @@ final class DevClientSmokeReadme {
         then(120, () -> shot("shrimp"));
         then(1, () -> { if (!shaders) sequence("shrimp", 80); });
         then(20, () -> mc.options.fov().set(70));
-        // the showcase
+    }
+
+    private void showcaseScenes() {
         then(1, () -> showcaseShot("terraria", 0F, 12F, 0.85, "Paludarium: Schmuckschildkröten", "Terrarium: Leopardgeckos"));
         then(1, () -> showcaseShot("paludarium", 0F, 10F, 0.8, "Paludarium: Schmuckschildkröten"));
         then(1, () -> showcaseShot("pets", 0F, 12F, 0.85, "Minecraft-Haustiere"));
@@ -586,7 +631,7 @@ final class DevClientSmokeReadme {
      * The camera on a box of blocks (min and max inclusive): looking along {@code yaw} / {@code pitch} at its centre, far
      * enough that the box fills about four fifths of the 16:9 picture at the field of view of 70 ({@code dist} scales it).
      */
-    private void lookAt(Box b, float yaw, float pitch, double dist) {
+    void lookAt(Box b, float yaw, float pitch, double dist) {
         double w = b.max().getX() - b.min().getX() + 1, h = b.max().getY() - b.min().getY() + 1, d = b.max().getZ() - b.min().getZ() + 1;
         double cx = b.min().getX() + w / 2, cy = b.min().getY() + h / 2, cz = b.min().getZ() + d / 2;
         double tanV = Math.tan(Math.toRadians(35)), tanH = tanV * 16 / 9;
@@ -695,13 +740,13 @@ final class DevClientSmokeReadme {
 
     // ------------------------------------------------------------------ helpers
 
-    private static void cabinet(ServerLevel level, BlockPos at) {
+    static void cabinet(ServerLevel level, BlockPos at) {
         level.setBlockAndUpdate(at, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         if (level.getBlockEntity(at) instanceof CabinetBlockEntity cab) cab.setWood(WOOD);
         level.setBlockAndUpdate(at, Block.updateFromNeighbourShapes(level.getBlockState(at), level, at));
     }
 
-    private static TankBlockEntity tank(ServerLevel level, BlockPos min, int sx, int sy, int sz, float salt) {
+    static TankBlockEntity tank(ServerLevel level, BlockPos min, int sx, int sy, int sz, float salt) {
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < sy; y++) for (int z = 0; z < sz; z++) for (int x = 0; x < sx; x++) blocks.add(min.offset(x, y, z));
         for (BlockPos pos : blocks) {
@@ -726,7 +771,7 @@ final class DevClientSmokeReadme {
         return c;
     }
 
-    private static InteriorRegion region(ServerLevel level, TankBlockEntity c, BlockState floor) {
+    static InteriorRegion region(ServerLevel level, TankBlockEntity c, BlockState floor) {
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
         for (int x = 0; x < r.sizeX(); x++)
@@ -734,7 +779,7 @@ final class DevClientSmokeReadme {
         return r;
     }
 
-    private static void rock(ServerLevel in, InteriorRegion r, int cx, int cz, int rad, int h, BlockState s) {
+    static void rock(ServerLevel in, InteriorRegion r, int cx, int cz, int rad, int h, BlockState s) {
         for (int x = -rad; x <= rad; x++)
             for (int z = -rad; z <= rad; z++) {
                 double d = Math.sqrt(x * x + z * z) / rad;
@@ -744,19 +789,19 @@ final class DevClientSmokeReadme {
             }
     }
 
-    private static int topAt(ServerLevel in, InteriorRegion r, int x, int z) {
+    static int topAt(ServerLevel in, InteriorRegion r, int x, int z) {
         int y = 0;
         while (y < r.sizeY() && !in.getBlockState(r.toWorld(x, y, z)).isAir()) y++;
         return y;
     }
 
     /** Plants {@code s} fully grown at (x, z); y < 0: on top of whatever stands there. */
-    private static void plant(ServerLevel in, InteriorRegion r, PlantSpecies s, int x, int y, int z, long seed) {
+    static void plant(ServerLevel in, InteriorRegion r, PlantSpecies s, int x, int y, int z, long seed) {
         int py = y < 0 ? topAt(in, r, x, z) : y;
         if (InteriorPlants.plantAt(in, r, s, x, py, z, s.stages(), seed) == null) LOGGER.warn("[smoketest] README {} not planted at {} {} {}", s.id(), x, py, z);
     }
 
-    private static void coral(ServerLevel in, InteriorRegion r, PlantSpecies s, int x, int z, long seed) {
+    static void coral(ServerLevel in, InteriorRegion r, PlantSpecies s, int x, int z, long seed) {
         InteriorPlant p = InteriorPlants.plantAt(in, r, s, x, topAt(in, r, x, z), z, s.stages(), seed);
         if (p == null) {
             LOGGER.warn("[smoketest] README {} not placed", s.id());
@@ -772,14 +817,14 @@ final class DevClientSmokeReadme {
         throw new IllegalArgumentException(variety);
     }
 
-    private static void betta(ServerLevel level, TankBlockEntity c, String variety, boolean female) {
+    static void betta(ServerLevel level, TankBlockEntity c, String variety, boolean female) {
         BettaData d = BettaData.create(BettaGenome.of(example(variety), BettaGenome.DEFAULT), female, level.getGameTime());
         Component err = TankInhabitants.insert(level, c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d),
                 ModEntities.BETTA.get(), null, 0L);
         if (err != null) LOGGER.error("[smoketest] README betta {}: {}", variety, err.getString());
     }
 
-    private static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, RandomSource r) {
+    static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, RandomSource r) {
         TankWaterVolume w = new TankWaterVolume(c.getTank());
         Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.3 + r.nextDouble() * 0.6,
                 w.box().minZ + r.nextDouble() * (w.box().maxZ - w.box().minZ)), 0.35, 0.1, 0.2);
@@ -789,14 +834,14 @@ final class DevClientSmokeReadme {
     }
 
     /** No info overlay (Jade) in the pictures. */
-    private static void reach(ServerPlayer p, boolean normal) {
+    static void reach(ServerPlayer p, boolean normal) {
         var b = p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_INTERACTION_RANGE);
         var e = p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE);
         if (b != null) b.setBaseValue(normal ? 4.5 : 0.0);
         if (e != null) e.setBaseValue(normal ? 3.0 : 0.0);
     }
 
-    private void openMenu(BlockPos at) {
+    void openMenu(BlockPos at) {
         server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             if (c == null) return;
@@ -805,14 +850,14 @@ final class DevClientSmokeReadme {
         });
     }
 
-    private void look(double x, double eyeY, double z, float yaw, float pitch) {
+    void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
             if (InteriorManager.isInterior(p.level())) p.teleportTo(p.level().getServer().overworld(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, true);
             else p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 
-    private void then(int delay, Runnable action) {
+    void then(int delay, Runnable action) {
         steps.add(new Step(delay, action));
     }
 
@@ -822,6 +867,8 @@ final class DevClientSmokeReadme {
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
         if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
+        if (m58 != null) m58.tickHolds();
+        if (mc.gui.overlay() != null) return false; // a resource reload (the language)
         if (seqLeft > 0) return false;
         if (building && !built) return false;
         if (steps.isEmpty()) {
@@ -839,19 +886,19 @@ final class DevClientSmokeReadme {
         return false;
     }
 
-    private void server(java.util.function.Consumer<ServerPlayer> action) {
+    void server(java.util.function.Consumer<ServerPlayer> action) {
         var server = mc.getSingleplayerServer();
         server.execute(() -> action.accept(server.getPlayerList().getPlayers().getFirst()));
     }
 
-    private void shot(String name) {
+    void shot(String name) {
         mc.gui.toastManager().clear();
         String file = "readme_" + name + (shaders ? "_shaders" : "") + ".png";
         Screenshot.grab(mc.gameDirectory, file, mc.gameRenderer.mainRenderTarget(), 1, c -> LOGGER.info("[smoketest] {}", c.getString()));
     }
 
     /** Starts a frame sequence of {@code frames} pictures, one per game tick. */
-    private void sequence(String name, int frames) {
+    void sequence(String name, int frames) {
         // quarter speed while recording: four times as many drawn frames per game tick, so every picture is close to its
         // tick (the animations of the mod run on game time); the steps wait until the sequence is complete
         server(p -> p.level().getServer().tickRateManager().setTickRate(5F));

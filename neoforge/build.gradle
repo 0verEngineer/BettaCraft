@@ -539,6 +539,11 @@ neoForge {
                 // run/screenshots/readme_*.png and readme_anim_*; add -Pshaders for Complementary (stills only, suffix _shaders);
                 // then py tools/assetgen/readme_media.py
                 systemProperty 'bettacraft.media', 'true'
+                // M58: -PmediaSource=<world> (default "Bettacraft Schaukasten"), -PmediaWorld=<copy> (default "Bettacraft Medien"),
+                // -Pmediaparts=room,extras,showcase,m58,create (default all but create; create needs -Pcreate)
+                if (project.hasProperty('mediaSource')) systemProperty 'bettacraft.media.source', project.property('mediaSource').toString()
+                if (project.hasProperty('mediaWorld')) systemProperty 'bettacraft.media.world', project.property('mediaWorld').toString()
+                if (project.hasProperty('mediaparts')) systemProperty 'bettacraft.media.parts', project.property('mediaparts').toString()
             }
             if (project.hasProperty('smoketestm42')) {
                 // gradlew runClient -Pintegration -Psmoketestm42 : only the M42 scene (JEI recipe screens of the food maker and the
@@ -1172,7 +1177,9 @@ tasks.register('buildShowcase') {
         dir.mkdirs()
         def saves = rootProject.file(runRoot + '/saves')
         saves.mkdirs()
-        def world = new File(saves, 'Bettacraft Schaukasten')
+        // M58: -PshowcaseWorld=<name> builds the showcase under another name (the default one stays untouched)
+        def worldName = project.hasProperty('showcaseWorld') ? project.property('showcaseWorld').toString() : 'Bettacraft Schaukasten'
+        def world = new File(saves, worldName)
         world.deleteDir()
         new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
         new File(dir, 'server.properties').write([
@@ -1186,7 +1193,7 @@ tasks.register('buildShowcase') {
         def cp = new File(logs, 'classpath.txt')
         cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
         def command = ([java] + srv.allJvmArgs + ['-Dbettacraft.showcase=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()] + srv.args
-                + ['--universe', saves.absolutePath, '--world', 'Bettacraft Schaukasten']).collect { it.toString() }
+                + ['--universe', saves.absolutePath, '--world', worldName]).collect { it.toString() }
         def log = new File(logs, 'server.log')
         def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
         logger.lifecycle("showcase server started (pid ${p.pid()}), log ${log}")
