@@ -1459,6 +1459,27 @@ public final class TankmateBreeding {
         return out;
     }
 
+    /**
+     * M62: the shoals that are too small, for the menu and the overlays: one entry {@code "<species id>|<fish>|<minimum>"} per
+     * shoaling species with fewer fish (juveniles and older, as for the stress and the warning) than it needs, the smallest share
+     * of its minimum first.
+     */
+    public static ListTag smallShoals(ServerLevel level, TankBlockEntity c) {
+        record Row(TankmateSpecies s, int n) {}
+        List<Row> rows = new ArrayList<>();
+        for (var e : bySpecies(tankmates(level, c.getTank())).entrySet()) {
+            TankmateSpecies s = e.getKey();
+            if (!s.shoaling()) continue;
+            int n = 0;
+            for (TankmateEntity m : e.getValue()) if (m.lifeStage().ordinal() >= LifeStage.JUVENILE.ordinal()) n++;
+            if (n > 0 && n < s.shoal()) rows.add(new Row(s, n));
+        }
+        rows.sort(Comparator.comparingDouble((Row r) -> r.n() / (double) r.s().shoal()).thenComparing(r -> r.s().id()));
+        ListTag out = new ListTag();
+        for (Row r : rows) out.add(net.minecraft.nbt.StringTag.valueOf(r.s().id() + "|" + r.n() + "|" + r.s().shoal()));
+        return out;
+    }
+
     /** Warnings for the menu and the overlays: shoals that are too small, temperatures, bettas chasing tankmates. */
     public static List<String> warnings(ServerLevel level, TankBlockEntity c) {
         List<String> out = new ArrayList<>();

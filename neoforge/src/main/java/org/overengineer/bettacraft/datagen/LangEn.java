@@ -58,6 +58,7 @@ final class LangEn {
         LangM51.addAll(a); // M51: the hired aquarist
         LangM53.addAll(a); // M53: tank users, alarm waypoint switches, map mods
         LangM56.addAll(a); // M56: terrarium plants
+        LangM62Menu.addAll(a); // M62 part 4: the tank menu (small shoals)
         LangM33c.addAll(a); // M33 part c
         LangM33d.addAll(a); // M33 part d
         LangM331.addAll(a); // M33.1

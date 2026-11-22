@@ -135,6 +135,19 @@ public final class BettaCraftJeiPlugin implements IModPlugin {
         return BettaCraft.id("jei");
     }
 
+    /** M62: the tank menu grows with the screen beyond its slot frame: JEI keeps clear of the whole panel. */
+    @Override
+    public void registerGuiHandlers(mezz.jei.api.registration.IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(org.overengineer.bettacraft.client.screen.TankScreen.class,
+                new mezz.jei.api.gui.handlers.IGuiContainerHandler<org.overengineer.bettacraft.client.screen.TankScreen>() {
+                    @Override
+                    public List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(org.overengineer.bettacraft.client.screen.TankScreen screen) {
+                        int[] p = screen.panelBounds();
+                        return List.of(new net.minecraft.client.renderer.Rect2i(p[0], p[1], p[2], p[3]));
+                    }
+                });
+    }
+
     /** M21.7: the stone cabinet recipe with matching stones, slabs and cabinets. */
     @Override
     public void registerVanillaCategoryExtensions(mezz.jei.api.registration.IVanillaCategoryExtensionRegistration registration) {

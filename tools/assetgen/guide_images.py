@@ -1100,6 +1100,35 @@ def m51(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M62 part 4 scene (DevClientSmokeM62c, -Psmoketestm62c, 1920 x 1080 window): the tank menu at GUI scale 4, which now grows with
+# the screen (480 x 270 GUI pixels: wider and taller than the smallest menu). The upper part of the panel (tabs and content)
+# replaces the menu pictures of the handbook. ``py guide_images.py m62``.
+M62_MENUS = {"menu_overview": "01_overview", "menu_inhabitants": "02_animals_betta", "menu_critters": "04_animals_small",
+             "menu_breeding": "06_breeding", "menu_water": "07_water", "menu_devices": "08_devices",
+             "menu_plants": "10_plants_floating", "menu_users": "12_users"}
+
+
+def m62_panel(w: int, h: int, scale: int) -> tuple:
+    """The crop box of the tabs and the content of the tank menu (TankScreen#layout) in a screenshot w x h at this GUI scale."""
+    gw, gh = w // scale, h // scale
+    cw = max(234, min(380, min(gw - 48, round(gw * 0.68)) - 14))
+    ch = max(123, min(214, gh - 20 - 107))
+    pw, ph = cw + 14, ch + 107
+    px, py = (gw - pw) // 2, (gh - ph) // 2
+    return (px * scale, py * scale, (px + pw) * scale, (py + 17 + ch + 6) * scale)
+
+
+def m62(out_en: Path, out_de: Path) -> None:
+    for name, view in M62_MENUS.items():
+        for lang, out in (("en_us", out_en), ("de_de", out_de)):
+            src = SHOTS / f"bettacraft_m62c_{lang}_s4_{view}.png"
+            if not src.exists():
+                print("missing", src)
+                continue
+            im = Image.open(src).convert("RGB")
+            save(im.crop(m62_panel(im.width, im.height, 4)), out / f"{name}.png")
+
+
 def m54(out_en: Path) -> None:
     """M54 (-Psmoketestm54): how the amphibians and reptiles move: the corn snake raised and coiled, the leopard gecko
     stretched, the snake coiled and the geckos in a terrarium with a rock and a ledge (a 2 x 2 picture)."""
@@ -1178,6 +1207,9 @@ def main() -> int:
         return 0
     if sys.argv[1:] == ["m51"]:
         m51(out_en, out_de)
+        return 0
+    if sys.argv[1:] == ["m62"]:
+        m62(out_en, out_de)
         return 0
     if sys.argv[1:] == ["m50"]:
         m50(out_en)
