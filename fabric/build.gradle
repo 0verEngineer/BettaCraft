@@ -655,7 +655,7 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
 // -Psound; FabricClientSmoke also skips the screen)
 tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
     t.doFirst {
-        def dir = t.name == 'prodFabricClient' ? rootProject.file('run-fabric/prod-client') : rootProject.file('run-fabric')
+        def dir = t.name == 'prodFabricClient' ? rootProject.file("${fabricRunRoot}/prod-client") : rootProject.file(fabricRunRoot)
         def f = new File(dir, 'options.txt')
         if (!f.exists()) {
             dir.mkdirs()
