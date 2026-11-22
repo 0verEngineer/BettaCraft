@@ -25,6 +25,13 @@ class DebugLogTest {
         DebugLog.configure(DebugLog.Level.INFO, List.of("all"));
         LogThrottle.clock = System::currentTimeMillis;
         LogThrottle.reset();
+        // M58: the background writer closes the file once its queue is empty; wait for it, or Windows cannot delete the
+        // temp folder (a flaky "Failed to delete temp directory")
+        try {
+            DebugLog.file().flush(5000);
+        } catch (RuntimeException noFileInThisTest) {
+            // no file in use (no game directory in JUnit): nothing to wait for
+        }
     }
 
     @Test
