@@ -50,6 +50,10 @@ The whole test suite runs from a fresh clone without manual work. No change to t
   of the branch by default. On this branch that world already has the current schema (the branch starts with 1.42.0), so
   the check reports "not an old world": there is no older world for this Minecraft version; `smoketestUpgrade` covers the
   upgrade from 1.42.0.
+- Multiplayer test from a fresh run directory: the background clients get their `fml.toml` (no early window) and, where
+  NeoForge shows load warnings on a screen that waits for a click (26.2, 26.3), `neoforge-client.toml` with the warnings off;
+  the seeded `server.properties` switches the white list off; the two hired aquarists get names of their own (two equal
+  random names failed a check).
 
 ### Removed
 - `tools/ci/fetch_mods.py`, `power-mods.json`, `integration-mods.json` and the partial integration run
