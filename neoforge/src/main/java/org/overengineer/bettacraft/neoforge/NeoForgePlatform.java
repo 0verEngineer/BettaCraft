@@ -204,6 +204,7 @@ public final class NeoForgePlatform implements Platform {
 
     @Override
     public int auxLight(net.minecraft.world.level.BlockGetter level, BlockPos pos) {
+        if (level == null || pos == null) return 0; // M61: a foreign caller asking the light emission without a position
         var aux = level.getAuxLightManager(pos);
         return aux == null ? 0 : aux.getLightAt(pos);
     }
