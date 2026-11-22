@@ -4,6 +4,27 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.47.0-beta.1] - 2026-11-22
+
+A fix for servers with Modern Dynamics.
+
+### Fixed
+- **Players could not join a server with Modern Dynamics pipes** (or were thrown out a few seconds later): Modern Dynamics
+  reports the re-meshing of its pipes on the client with `sendBlockUpdated(pos, null, null, 0)`, and the plant mesh hook
+  of Bettacraft read those missing block states ("Failed to handle packet ... NullPointerException in
+  PlantMeshRenderer.onBlockChanged"). A block change without its states now counts as "no plant". The bug was there since
+  1.42 (the first version with that hook on every block change).
+- Stone cabinets and covered filter pipes no longer throw when another mod asks their map colour, destroy progress, sound,
+  blast resistance, right tool or light without a level or position (vanilla ignores both there, so mods pass null).
+
+### Changed
+- Test only: a JUnit test calls the plant mesh hook as Modern Dynamics does; a GameTest asks the positional blocks with
+  null arguments; the client smoke `-Psmoketestm61` calls `sendBlockUpdated` with null states next to stone and a plant
+  and leaves and joins the world again; with the new dev mod group `-Ppipes` (Modern Dynamics 0.9.6 from Modrinth, NeoForge)
+  it puts fluid pipes between our blocks first and fails on any "Failed to handle packet".
+- Gap: Modern Dynamics has no Fabric build (NeoForge only since Minecraft 1.20.4; checked on Modrinth and CurseForge, it is
+  not on a maven): on Fabric the client smoke runs without the pipes.
+
 ## [1.46.0-beta.1] - 2026-11-22
 
 Terraria and paludaria get plants of their own.
