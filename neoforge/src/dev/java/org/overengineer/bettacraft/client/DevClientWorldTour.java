@@ -59,7 +59,7 @@ final class DevClientWorldTour {
     /** The world's ticks stand still during the tour ({@code bettacraft.tour.freeze}, default on): the animals do not move. */
     private static final boolean FREEZE = !"false".equals(System.getProperty("bettacraft.tour.freeze"));
 
-    /** {@code atTarget}: the step waits until the client's camera stands where the last {@link #look} put it (at most 200 ticks). */
+    /** {@code atTarget}: the step waits until the client's camera stands where the last {@link #look} put it (at most 60 ticks). */
     private record Step(int delay, Runnable action, boolean atTarget) {
         Step(int delay, Runnable action) {
             this(delay, action, false);
@@ -209,6 +209,7 @@ final class DevClientWorldTour {
             level.setWeatherParameters(6000, 0, false, false);
             level.setDayTime(6000);
             gameRules(level);
+            clearWeather(level);
             p.getAbilities().flying = true;
             p.onUpdateAbilities();
             // the animals stand still (the same picture in every run; and the server has less to do)
@@ -669,11 +670,11 @@ final class DevClientWorldTour {
             // the picture only once the camera is there (a busy server answers a teleport late: the picture showed the last place)
             if (arrived()) arrivedFor++;
             else arrivedFor = 0;
-            if (arrivedFor < s.delay() && wait < 200) {
+            if (arrivedFor < s.delay() && wait < 60) {
                 wait++;
                 return false;
             }
-            if (arrivedFor < s.delay()) LOGGER.warn("[smoketest] world tour: the camera did not reach {} in 200 ticks", java.util.Arrays.toString(target));
+            if (arrivedFor < s.delay()) LOGGER.warn("[smoketest] world tour: the camera did not reach {} in 60 ticks (pushed out of a block?)", java.util.Arrays.toString(target));
         } else if (wait < s.delay()) {
             wait++;
             return false;
@@ -708,6 +709,12 @@ final class DevClientWorldTour {
 
     private static void teleport(ServerPlayer p, double x, double y, double z, float yaw, float pitch) {
         p.teleportTo(p.level(), x, y, z, java.util.Set.of(), yaw, pitch, false);
+    }
+
+    /** Clear weather for long (a copied world may have rain; the frozen ticks keep it so). */
+    static void clearWeather(ServerLevel level) {
+        var server = level.getServer();
+        server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), "weather clear 1000000");
     }
 
     private static void gameRules(ServerLevel level) {
