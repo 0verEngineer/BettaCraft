@@ -1,12 +1,12 @@
 package org.overengineer.bettacraft.gametest;
 
 import java.util.List;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.platform.Platform;
 import org.overengineer.bettacraft.registry.ModBlocks;
