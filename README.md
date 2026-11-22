@@ -172,7 +172,7 @@ CHANGELOG section):
 | Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the filter pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
 | Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water`, `bettacraft:sea_water` and `bettacraft:live_food` (Mekanism tanks too); CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Biome mods (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Twilight Forest, ...) | their swamps, rivers, mangroves, lush caves and warm oceans get the wild animals, net catches, fishing loot and corals of their vanilla counterparts (biome tags `#bettacraft:*_waters`, `#bettacraft:coral_reef_biomes`) |
-| Sodium, Iris | supported (water and miniatures render correctly, also with shaders) |
+| Sodium, Iris | supported (water and miniatures render correctly, also with shaders; the tank water is lit smoothly, tested with Complementary Reimagined and Unbound, BSL and MakeUp) |
 
 Without a handbook mod every Bettacraft item explains itself in its tooltip (hold Shift). See "What is missing where"
 above for the integrations of each loader and Minecraft version.
