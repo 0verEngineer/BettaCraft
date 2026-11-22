@@ -88,7 +88,7 @@ final class XaeroWaypoints implements MapWaypoints {
             lists.put(tank, l);
             return true;
         } catch (Throwable t) {
-            LOGGER.warn("Xaero's Minimap: could not add the alarm waypoint ({})", t.toString());
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("xaero_add", "Xaero's Minimap: could not add the alarm waypoint ({})", t.toString());
             return false;
         }
     }
@@ -100,7 +100,7 @@ final class XaeroWaypoints implements MapWaypoints {
         try {
             Reflect.call(l, "remove", tank.toString());
         } catch (Throwable t) {
-            LOGGER.warn("Xaero's Minimap: could not remove the alarm waypoint ({})", t.toString());
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("xaero_remove", "Xaero's Minimap: could not remove the alarm waypoint ({})", t.toString());
         }
     }
 }

@@ -228,6 +228,20 @@ public final class TankInhabitants {
     @Nullable
     public static Component insert(ServerLevel level, TankBlockEntity controller, ItemStack stack, EntityType<?> type,
                                    @Nullable Player player, long addMb) {
+        Component refused = insertOrRefuse(level, controller, stack, type, player, addMb);
+        if (org.overengineer.bettacraft.debug.LogArea.TANK.debug) { // M57: why an animal was not taken
+            if (refused != null) org.overengineer.bettacraft.debug.LogArea.TANK.debug("tank {} at {} refused {} from {}{}: {}", controller.getTank().id(), controller.getBlockPos(),
+                    net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type), net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()), player == null ? "" : " of " + player.getScoreboardName(),
+                    refused.getString());
+            else org.overengineer.bettacraft.debug.LogArea.TANK.debug("tank {} at {} took {} from {}", controller.getTank().id(), controller.getBlockPos(), net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type),
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        }
+        return refused;
+    }
+
+    @Nullable
+    private static Component insertOrRefuse(ServerLevel level, TankBlockEntity controller, ItemStack stack, EntityType<?> type,
+                                            @Nullable Player player, long addMb) {
         TankData tank = controller.getTank();
         if (player != null && !canModify(player, tank)) return Component.translatable("message.bettacraft.tank.locked");
         // M39 (question E1): an unsuitable animal (deep sea, too big, a fungus ...) is refused with its reason before anything else

@@ -250,7 +250,7 @@ public final class InteriorSync {
         lastDeltaBytes = data.length;
         InteriorDeltaPayload payload = new InteriorDeltaPayload(r.id(), from, st.version, data);
         for (ServerPlayer p : viewers) PacketDistributor.sendToPlayer(p, payload);
-        LOGGER.debug("Delta region {} v{}->v{}: {} sections, {} bytes, {} viewers", r.id(), from, st.version, newCounts.size(), data.length, viewers.size());
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.LogArea.NETWORK.debug("Delta region {} v{}->v{}: {} sections, {} bytes, {} viewers", r.id(), from, st.version, newCounts.size(), data.length, viewers.size());
         return true;
     }
 
@@ -305,7 +305,7 @@ public final class InteriorSync {
             e = new Encoded(st.version, snap.toParts(InteriorDataPayload.MAX_PART_BYTES), snap.stats(), truncated);
             st.cache = e;
             lastFullBytes = e.stats.bytes();
-            LOGGER.debug("Encoded interior region {} ({}x{}x{}) v{}: {} non-air blocks in {} sections -> {} bytes in {} part(s), {} ms{}",
+            if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.LogArea.NETWORK.debug("Encoded interior region {} ({}x{}x{}) v{}: {} non-air blocks in {} sections -> {} bytes in {} part(s), {} ms{}",
                     r.id(), r.sizeX(), r.sizeY(), r.sizeZ(), st.version, e.stats.nonAir(), e.stats.sections(), e.stats.bytes(), e.parts.size(),
                     e.stats.encodeNanos() / 1_000_000.0, truncated ? " (TRUNCATED by maxRenderedBlocks)" : "");
         }

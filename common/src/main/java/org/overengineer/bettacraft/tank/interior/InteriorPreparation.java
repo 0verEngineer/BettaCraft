@@ -89,7 +89,7 @@ public final class InteriorPreparation {
 
     static void cancel(int regionId) {
         Job j = JOBS.remove(regionId);
-        if (j != null) LOGGER.debug("Cancelled preparation of region {}", regionId);
+        if (j != null) if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Cancelled preparation of region {}", regionId);
     }
 
     public static void clearAll() {

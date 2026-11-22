@@ -61,7 +61,7 @@ final class FtbChunksWaypoints implements MapWaypoints {
             waypoints.put(tank, new Object[]{manager, w});
             return true;
         } catch (Throwable t) {
-            LOGGER.warn("FTB Chunks: could not add the alarm waypoint ({})", t.toString());
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("ftbchunks_add", "FTB Chunks: could not add the alarm waypoint ({})", t.toString());
             return false;
         }
     }
@@ -73,7 +73,7 @@ final class FtbChunksWaypoints implements MapWaypoints {
         try {
             Reflect.call(e[0], "removeWaypoint", e[1]);
         } catch (Throwable t) {
-            LOGGER.warn("FTB Chunks: could not remove the alarm waypoint ({})", t.toString());
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("ftbchunks_remove", "FTB Chunks: could not remove the alarm waypoint ({})", t.toString());
         }
     }
 }

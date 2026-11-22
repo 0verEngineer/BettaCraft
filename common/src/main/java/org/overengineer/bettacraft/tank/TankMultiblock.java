@@ -121,7 +121,7 @@ public final class TankMultiblock {
                 TankBlockEntity c = getBE(level, cp);
                 if (c != null && c.isController() && c.getTank().contains(pos)) return false;
             }
-            LOGGER.warn("Tank block at {} pointed to controller {} that does not know it: forming it again", pos, cp);
+            org.overengineer.bettacraft.debug.LogArea.TANK.warnThrottled("controller_unknown", "Tank block at {} pointed to controller {} that does not know it: forming it again", pos, cp);
             be.setController(null, null);
             be.setChanged();
         }
@@ -292,7 +292,7 @@ public final class TankMultiblock {
         }
         InteriorManager.onTanksMerged(level, olds, merged);
         install(level, merged);
-        LOGGER.debug("Merged {} tank(s) into {}", olds.size(), merged);
+        if (org.overengineer.bettacraft.debug.LogArea.TANK.debug) org.overengineer.bettacraft.debug.LogArea.TANK.debug("Merged {} tank(s) into {}", olds.size(), merged);
     }
 
     /**
@@ -348,7 +348,7 @@ public final class TankMultiblock {
             t = c != null && c.isController() ? c.getTank() : null;
         }
         if (t == null || !t.contains(pos)) {
-            LOGGER.warn("Tank block at {} removed but its controller {} is not available", pos, cp);
+            org.overengineer.bettacraft.debug.LogArea.TANK.warnThrottled("controller_missing", "Tank block at {} removed but its controller {} is not available", pos, cp);
             return;
         }
         removeBlocks(level, t, List.of(pos));

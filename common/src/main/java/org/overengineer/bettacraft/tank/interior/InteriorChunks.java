@@ -68,7 +68,7 @@ public final class InteriorChunks {
                     && (!p.getBlockEntityNbts().isEmpty() || !p.getEntities().isEmpty())) return "proto block entities / entities";
             return org.overengineer.bettacraft.platform.Platform.get().chunkHasAttachments(chunk) ? "attachments" : null;
         } catch (RuntimeException e) { // in doubt it is written as before
-            LOGGER.debug("Could not check the interior chunk {}", chunk.getPos(), e);
+            if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Could not check the interior chunk {}", chunk.getPos(), e);
             return "error " + e;
         }
     }

@@ -255,7 +255,7 @@ public final class CreateCompat {
                 TankMoves.lifted(level, abs, cp, false, here.getTank().id(), List.of(), List.of());
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
-            LOGGER.error("Could not pack a tank for a contraption", e);
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.errorThrottled("create_pack", "Could not pack a tank for a contraption", e);
         }
     }
 
@@ -280,7 +280,7 @@ public final class CreateCompat {
             if (!(contraptionEntity.get(contraption) instanceof Entity e)) return;
             TankMoves.travellingRegion(region, level, () -> e.isAlive() ? e.position() : null);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            LOGGER.debug("Contraption tick", e);
+            if (org.overengineer.bettacraft.debug.LogArea.COMPAT.debug) org.overengineer.bettacraft.debug.LogArea.COMPAT.debug("Contraption tick", e);
         }
     }
 
@@ -297,7 +297,7 @@ public final class CreateCompat {
                         (net.minecraft.world.phys.Vec3) ctxPosition.get(context), (BlockPos) ctxLocalPos.get(context));
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
-            LOGGER.debug("Contraption stop", e);
+            if (org.overengineer.bettacraft.debug.LogArea.COMPAT.debug) org.overengineer.bettacraft.debug.LogArea.COMPAT.debug("Contraption stop", e);
         }
     }
 
@@ -323,7 +323,7 @@ public final class CreateCompat {
             if (makeTransform == null || !makeTransform.getDeclaringClass().isInstance(contraption)) return null;
             return (BlockPos) transformApply.invoke(makeTransform.invoke(contraption), local);
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
-            LOGGER.debug("Contraption transform", e);
+            if (org.overengineer.bettacraft.debug.LogArea.COMPAT.debug) org.overengineer.bettacraft.debug.LogArea.COMPAT.debug("Contraption transform", e);
             return null;
         }
     }
@@ -339,7 +339,7 @@ public final class CreateCompat {
             t.markMoved(TankMoveMap.fromColumns(x, y, z));
             CreateLandings.placed(t);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            LOGGER.error("Could not read the rotation of a contraption", e);
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.errorThrottled("create_rotation", "Could not read the rotation of a contraption", e);
             t.markMoved(null);
             CreateLandings.placed(t);
         }

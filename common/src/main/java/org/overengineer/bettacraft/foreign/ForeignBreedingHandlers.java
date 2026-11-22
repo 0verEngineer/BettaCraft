@@ -93,7 +93,7 @@ public final class ForeignBreedingHandlers {
             if (c == null || !TankInhabitants.inside(c.getTank(), e)) continue;
             event.setCanceled(true);
             if (c.logDue("foreign_suppressed:" + e.getType().getDescriptionId(), level.getGameTime(), LOG_TICKS)) {
-                LOGGER.debug("suppressed a young {} of its mod's own breeding in tank {}", BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()), c.getTank().id());
+                if (org.overengineer.bettacraft.debug.LogArea.BREEDING.debug) org.overengineer.bettacraft.debug.LogArea.BREEDING.debug("suppressed a young {} of its mod's own breeding in tank {}", BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()), c.getTank().id());
             }
             return;
         }

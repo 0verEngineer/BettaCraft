@@ -221,6 +221,12 @@ public final class AquaristWork {
 
     /** The next round of jobs (empty: nothing to do now). */
     public static List<Job> plan(ServerLevel level, AquaristEntity npc) {
+        List<Job> jobs = planJobs(level, npc);
+        if (org.overengineer.bettacraft.debug.LogArea.AQUARIST.trace) org.overengineer.bettacraft.debug.LogArea.AQUARIST.trace("aquarist {} plans {}", npc.getUUID(), jobs); // M57
+        return jobs;
+    }
+
+    private static List<Job> planJobs(ServerLevel level, AquaristEntity npc) {
         List<Job> jobs = new ArrayList<>();
         // things he still carries come first
         if (!npc.carriedAnimals().isEmpty()) {
@@ -294,6 +300,7 @@ public final class AquaristWork {
 
     /** Does the job (he is there). Returns follow-up jobs to put in front of the queue (usually none). */
     public static List<Job> perform(ServerLevel level, AquaristEntity npc, Job job) {
+        if (org.overengineer.bettacraft.debug.LogArea.AQUARIST.debug) org.overengineer.bettacraft.debug.LogArea.AQUARIST.debug("aquarist {} at {}: {} (tank {})", npc.getUUID(), npc.blockPosition(), job.kind(), job.tank()); // M57
         List<Job> next = new ArrayList<>();
         switch (job.kind()) {
             case FETCH_FOOD -> fetchFood(level, npc);

@@ -41,7 +41,7 @@ public final class DecorPreview {
 
     public static void accept(DecorTemplatePayload p) {
         p.template().ifPresent(t -> TEMPLATES.put(p.id(), t));
-        LOGGER.debug("Received decor template {} ({} blocks)", p.id(), p.template().map(t -> t.blocks().size()).orElse(0));
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.LogArea.NETWORK.debug("Received decor template {} ({} blocks)", p.id(), p.template().map(t -> t.blocks().size()).orElse(0));
     }
 
     public static void clear() {
@@ -59,7 +59,7 @@ public final class DecorPreview {
         DecorTemplate t = TEMPLATES.get(id);
         if (t == null) {
             if (REQUESTED.add(id)) {
-                LOGGER.debug("Requesting decor template {}", id);
+                if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.LogArea.NETWORK.debug("Requesting decor template {}", id);
                 PacketDistributor.sendToServer(new DecorTemplatePayload(id, java.util.Optional.empty()));
             }
             return;
@@ -106,7 +106,7 @@ public final class DecorPreview {
         }
         if (!drawnLogged) {
             drawnLogged = true;
-            LOGGER.debug("Decor hologram {}: {} blocks at {}", id, blocks.size(), base);
+            if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.LogArea.NETWORK.debug("Decor hologram {}: {} blocks at {}", id, blocks.size(), base);
         }
     }
 
