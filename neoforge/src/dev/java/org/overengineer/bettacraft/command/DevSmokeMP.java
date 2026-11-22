@@ -782,12 +782,21 @@ public final class DevSmokeMP {
         }, () -> stepTicks >= 80, 100));
         steps.add(new Step("cuttings seen", () -> say("aqua", "all", "1," + tankArg()),
                 () -> reports.containsKey(P1 + ":aqua1") && reports.containsKey(P2 + ":aqua1"), 20 * 30));
-        steps.add(new Step("plants grow", () -> {
-            TankBlockEntity c = main();
-            var r = org.overengineer.bettacraft.plants.InteriorPlants.region(server, c.getTank());
-            for (int i = 0; i < 8; i++) org.overengineer.bettacraft.plants.InteriorPlants.grow(server.overworld(), c, r, 0.5);
-            LOGGER.info("[smoketest] MP aquarium plants grown: {}", r.plants().all());
-        }, () -> stepTicks >= 60, 100));
+        // M62: the plants grow only once the light at the surface is there (under load the sky light of the fresh stage
+        // lagged behind on 26.2 / 26.3: light 0, no plant grew, "3 -> 3 blocks")
+        final int[] grownAt = {-1};
+        steps.add(new Step("plants grow", () -> grownAt[0] = -1, () -> {
+            if (grownAt[0] < 0) {
+                TankBlockEntity c = main();
+                double light = org.overengineer.bettacraft.tank.plants.TankPlants.strongLight(server.overworld(), c);
+                if (light < 12 && stepTicks < 200) return false;
+                var r = org.overengineer.bettacraft.plants.InteriorPlants.region(server, c.getTank());
+                for (int i = 0; i < 8; i++) org.overengineer.bettacraft.plants.InteriorPlants.grow(server.overworld(), c, r, 0.5);
+                LOGGER.info("[smoketest] MP aquarium plants grown at light {} after {} ticks: {}", light, stepTicks, r.plants().all());
+                grownAt[0] = stepTicks;
+            }
+            return stepTicks >= grownAt[0] + 60;
+        }, 300));
         steps.add(new Step("grown plants seen", () -> say("aqua", "all", "2," + tankArg()),
                 () -> reports.containsKey(P1 + ":aqua2") && reports.containsKey(P2 + ":aqua2"), 20 * 30));
         // M14: shrimp, snails and algae in the stage tank: both clients see the same animals in the same places, walking
