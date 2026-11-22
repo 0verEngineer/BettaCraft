@@ -38,6 +38,15 @@ public final class BettaCraftReiPlugin implements REIClientPlugin {
         registry.addWorkstations(FOOD_MAKER, EntryStacks.of(ModItems.FOOD_MAKER.get()));
     }
 
+    /** M62: the tank menu grows with the screen beyond its slot frame: REI keeps clear of the whole panel. */
+    @Override
+    public void registerExclusionZones(me.shedaniel.rei.api.client.registry.screen.ExclusionZones zones) {
+        zones.register(org.overengineer.bettacraft.client.screen.TankScreen.class, screen -> {
+            int[] p = screen.panelBounds();
+            return List.of(new Rectangle(p[0], p[1], p[2], p[3]));
+        });
+    }
+
     @Override
     public void registerDisplays(DisplayRegistry registry) {
         // M52b: clients have no recipe manager since 1.21.2: the recipes our recipe sync sent (crafting.RecipeSync)
