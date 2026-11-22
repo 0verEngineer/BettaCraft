@@ -355,6 +355,7 @@ public final class LandWalker {
             nx = pos.x;
             nz = pos.z;
             if (!Double.isFinite(g)) return;
+            if (goal == null) return; // stuck too often: the goal was dropped, the next tick picks another (M58: this crashed)
         }
         boolean deep = water && g < surface - gait.height();
         boolean wantSurface = goal.y > surface - 0.05;
