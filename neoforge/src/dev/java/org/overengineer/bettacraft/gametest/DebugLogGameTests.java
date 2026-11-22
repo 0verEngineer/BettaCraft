@@ -5,15 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertException;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.debug.BugReport;
@@ -44,11 +44,11 @@ public final class DebugLogGameTests {
 
     private static int run(GameTestHelper h, String command) {
         ServerLevel level = h.getLevel();
-        CommandSourceStack src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level).withPermission(4);
+        CommandSourceStack src = level.getServer().createCommandSourceStack().withSuppressedOutput().withLevel(level).withPermission(net.minecraft.server.permissions.LevelBasedPermissionSet.OWNER);
         try {
             return level.getServer().getCommands().getDispatcher().execute(command, src);
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
-            throw new GameTestAssertException("/" + command + ": " + e.getMessage());
+            throw new GameTestFailure("/" + command + ": " + e.getMessage());
         }
     }
 
@@ -58,11 +58,11 @@ public final class DebugLogGameTests {
     }
 
     private static String debugFile() {
-        if (!DebugLog.file().flush(5000)) throw new GameTestAssertException("the debug log was not written in 5 s");
+        if (!DebugLog.file().flush(5000)) throw new GameTestFailure("the debug log was not written in 5 s");
         try {
             return Files.readString(DebugLog.file().file(), StandardCharsets.UTF_8);
         } catch (java.io.IOException e) {
-            throw new GameTestAssertException("cannot read the debug log: " + e);
+            throw new GameTestFailure("cannot read the debug log: " + e);
         }
     }
 
@@ -85,7 +85,7 @@ public final class DebugLogGameTests {
             h.assertTrue(TankInhabitants.insert(level, c, bucket(58), ModEntities.BETTA.get(), null, false) == null, "taken in a full tank");
             List<Entity> live = TankInhabitants.liveInhabitants(level, c.getTank());
             h.assertTrue(live.size() == 1, "one betta: " + live.size());
-            live.get(0).kill();
+            live.get(0).kill(level);
 
             String text = debugFile();
             String id = c.getTank().id().toString();
@@ -148,7 +148,7 @@ public final class DebugLogGameTests {
             h.assertTrue(Files.size(file) > 1000, "the report file is written");
             Files.delete(file);
         } catch (java.io.IOException e) {
-            throw new GameTestAssertException("cannot write the report: " + e);
+            throw new GameTestFailure("cannot write the report: " + e);
         }
         // the command from the console (no player, no tank) writes one too
         Path logs = org.overengineer.bettacraft.platform.Platform.get().gameDir().resolve("logs");
@@ -156,7 +156,7 @@ public final class DebugLogGameTests {
         try (var files = Files.list(logs)) {
             for (Path p : files.filter(p -> p.getFileName().toString().startsWith("bettacraft-report-")).toList()) Files.delete(p);
         } catch (java.io.IOException e) {
-            throw new GameTestAssertException("cannot clean up the reports: " + e);
+            throw new GameTestFailure("cannot clean up the reports: " + e);
         }
         h.succeed();
     }

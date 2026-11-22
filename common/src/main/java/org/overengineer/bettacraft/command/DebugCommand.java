@@ -26,8 +26,8 @@ public final class DebugCommand {
     private DebugCommand() {}
 
     static boolean allowed(CommandSourceStack s) {
-        if (s.hasPermission(2)) return true;
-        return s.getEntity() instanceof ServerPlayer p && s.getServer().isSingleplayerOwner(p.getGameProfile());
+        if (org.overengineer.bettacraft.util.Perms.has(s, 2)) return true;
+        return s.getEntity() instanceof ServerPlayer p && s.getServer().isSingleplayerOwner(p.nameAndId());
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> debug() {
@@ -74,15 +74,15 @@ public final class DebugCommand {
     static Component path(Path p) {
         String s = p.toAbsolutePath().normalize().toString();
         return Component.literal(s).withStyle(st -> st.withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, s))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("command.bettacraft.report.copy"))));
+                .withClickEvent(new ClickEvent.CopyToClipboard(s))
+                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("command.bettacraft.report.copy"))));
     }
 
     static Component link() {
         MutableComponent c = Component.translatable("command.bettacraft.report.link");
         return c.withStyle(st -> st.withColor(ChatFormatting.AQUA).withUnderlined(true)
-                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, BugReport.ISSUE_URL))
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(BugReport.ISSUE_URL))));
+                .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(BugReport.ISSUE_URL)))
+                .withHoverEvent(new HoverEvent.ShowText(Component.literal(BugReport.ISSUE_URL))));
     }
 
     public static LiteralArgumentBuilder<CommandSourceStack> report() {
