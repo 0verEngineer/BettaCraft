@@ -83,6 +83,8 @@ public final class PlantMeshRenderer {
     /** Meshes built in total, and the most frames between a block change of a plant and its new mesh (smoke tests). */
     public static int builds;
     public static long maxRebuildDelay;
+    /** Block changes reported without their states (M61: a foreign caller such as Modern Dynamics' pipes; smoke tests). */
+    public static int statelessChanges;
 
     private PlantMeshRenderer() {}
 
@@ -106,12 +108,22 @@ public final class PlantMeshRenderer {
 
     // ------------------------------------------------------------------ invalidation (client thread)
 
-    private static boolean meshed(BlockState s) {
-        return s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshed();
+    /**
+     * Whether {@code s} is a block of a meshed plant. M61: null is none: other mods call {@code sendBlockUpdated} without the
+     * states (Modern Dynamics, {@code level.sendBlockUpdated(pos, null, null, 0)} while the client reads a pipe's block
+     * entity data); vanilla never reads them there, so neither may we. The guard is here and not in the mixin so that every
+     * caller of {@link #onBlockChanged} is covered; the early return below then comes before anything else is touched.
+     */
+    static boolean meshed(@javax.annotation.Nullable BlockState s) {
+        return s != null && s.getBlock() instanceof AquaticPlantBlock pb && pb.species().meshed();
     }
 
-    /** {@code ClientLevel.sendBlockUpdated}: every block change on the client (packets, prediction, shears, growth). */
+    /**
+     * {@code ClientLevel.sendBlockUpdated}: every block change on the client (packets, prediction, shears, growth). Either
+     * state may be null (M61, a foreign caller): then that side is no plant.
+     */
     public static void onBlockChanged(ClientLevel level, BlockPos pos, BlockState old, BlockState now) {
+        if (old == null || now == null) statelessChanges++;
         boolean was = meshed(old), is = meshed(now);
         if (!was && !is) return;
         if (level != meshLevel && meshLevel != null) return;
@@ -174,7 +186,7 @@ public final class PlantMeshRenderer {
 
     /**
      * How a mesh is built. Inside: the leaf textures of their own. Outside (M21.1, the miniature at 1/16): the "mini"
-     * leaf textures from the block atlas (mipmapped like terrain, see {@link #MINI}), leaves a little longer and wider,
+     * leaf textures from the block atlas (mipmapped like terrain, see {@link Mini#TYPE}), leaves a little longer and wider,
      * stems thicker and the colours a little stronger, so the tiny leaves do not flicker or vanish.
      */
     record Style(float leafLong, float leafWide, float stem, float ribbon, float saturate, boolean atlas, float detail) {
@@ -358,16 +370,21 @@ public final class PlantMeshRenderer {
      * Outside (the miniature): the block atlas with its mipmaps (the "mini" leaf textures are in it, being under
      * textures/block), drawn with the entity cut-out shader like the meshes inside (so shader packs treat both the same).
      */
-    static final RenderType MINI = RenderType.create("bettacraft_plant_mesh_mini", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
-            com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1 << 18, true, false,
-            RenderType.CompositeState.builder()
-                    .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
-                    .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS, false, true))
-                    .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY)
-                    .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
-                    .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
-                    .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
-                    .createCompositeState(true));
+    // a holder: the render type is made on first use (the class itself loads without the render system, JUnit M61)
+    static final class Mini {
+        private Mini() {}
+
+        static final RenderType TYPE = RenderType.create("bettacraft_plant_mesh_mini", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
+                com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1 << 18, true, false,
+                RenderType.CompositeState.builder()
+                        .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
+                        .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS, false, true))
+                        .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY)
+                        .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
+                        .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
+                        .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
+                        .createCompositeState(true));
+    }
 
     // ------------------------------------------------------------------ drawing
 
