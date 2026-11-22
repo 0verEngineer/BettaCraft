@@ -170,7 +170,7 @@ public final class InteriorCleanup {
                     }
                 }
                 freedRegions += freedNow;
-                if (freedNow > 0) LOGGER.debug("Freed {} removed interior region(s) without chunks on the disk", freedNow);
+                if (freedNow > 0) if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Freed {} removed interior region(s) without chunks on the disk", freedNow);
                 batch.clear();
                 batch.addAll(withFiles);
                 origins.clear();
@@ -212,7 +212,7 @@ public final class InteriorCleanup {
                     stage = Stage.IDLE;
                     return;
                 }
-                LOGGER.debug("Deleting the chunks of removed interior regions {}", batch);
+                if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Deleting the chunks of removed interior regions {}", batch);
                 pending = CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new)).thenCompose(v -> syncStorages(in));
                 stage = Stage.CLEAR;
             }
@@ -432,7 +432,7 @@ public final class InteriorCleanup {
                 // read the whole header
             }
         } catch (IOException e) {
-            LOGGER.debug("Cannot read {}", mca, e);
+            if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Cannot read {}", mca, e);
             return out;
         }
         header.flip();

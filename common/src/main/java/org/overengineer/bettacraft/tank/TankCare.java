@@ -94,6 +94,8 @@ public final class TankCare {
     /** One care step of {@code dt} game ticks: every system of the tank in its order (also used by GameTests). */
     public static void care(ServerLevel server, TankBlockEntity be, long dt) {
         TankData tank = be.getTank();
+        if (org.overengineer.bettacraft.debug.LogArea.CARE.trace) org.overengineer.bettacraft.debug.LogArea.CARE.trace("care of tank {} at {}: {} ticks, {} animals, water {} mB, quality {}", tank.id(), be.getBlockPos(), dt,
+                tank.inhabitants().size(), tank.waterMb(), tank.waterQuality()); // M57
         if (tank.hasLegacyHeaters()) TankEquipment.moveLegacyHeaters(server, be);
         TankPower.step(server, be, dt);
         TankDrive.step(server, be, dt); // M41: Create's rotation refills the buffer with what the devices took
@@ -477,6 +479,7 @@ public final class TankCare {
     }
 
     public static void log(ServerLevel level, TankBlockEntity controller, String key, String... args) {
+        if (org.overengineer.bettacraft.debug.LogArea.CARE.debug) org.overengineer.bettacraft.debug.LogArea.CARE.debug("tank {} log: {} {}", controller.getTank().id(), key, java.util.Arrays.toString(args)); // M57
         controller.getTank().addLog(level.getGameTime(), key, args);
         controller.setChanged();
         org.overengineer.bettacraft.progression.Progress.onTankLog(level, controller, key);

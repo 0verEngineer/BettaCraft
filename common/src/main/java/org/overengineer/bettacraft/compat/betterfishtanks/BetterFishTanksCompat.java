@@ -141,7 +141,7 @@ public final class BetterFishTanksCompat {
         try {
             released = (boolean) be.getClass().getMethod("releaseEntityInside", Entity.class).invoke(be, e);
         } catch (ReflectiveOperationException | RuntimeException ex) {
-            LOGGER.warn("Better Fish Tanks: releaseEntityInside failed", ex);
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("bft_release", "Better Fish Tanks: releaseEntityInside failed", ex);
             released = false;
         }
         if (!released) {
@@ -189,7 +189,7 @@ public final class BetterFishTanksCompat {
             Method fill = cls.getMethod("fill", net.minecraft.world.level.material.Fluid.class, int.class, boolean.class);
             return (int) fill.invoke(tank, net.minecraft.world.level.material.Fluids.WATER, mb, false);
         } catch (ReflectiveOperationException | RuntimeException ex) {
-            LOGGER.warn("Better Fish Tanks: filling water failed: {}", ex.toString());
+            org.overengineer.bettacraft.debug.LogArea.COMPAT.warnThrottled("bft_water", "Better Fish Tanks: filling water failed: {}", ex.toString());
             return 0;
         }
     }

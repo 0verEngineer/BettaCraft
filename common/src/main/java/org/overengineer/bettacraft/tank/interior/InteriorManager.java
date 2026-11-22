@@ -258,7 +258,7 @@ public final class InteriorManager {
         try {
             return in.getChunkSource().chunkMap.read(cp).join().isPresent();
         } catch (RuntimeException e) {
-            LOGGER.debug("Could not read the interior chunk {} of region {}", cp, r.id(), e);
+            if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Could not read the interior chunk {} of region {}", cp, r.id(), e);
             return false;
         }
     }
@@ -285,7 +285,7 @@ public final class InteriorManager {
         r.setBuilt(true);
         r.equipment().markNeedsScan(); // M25: count the floor of the new shell (water chemistry)
         InteriorRegions.get(server).setDirty();
-        LOGGER.debug("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
+        if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Built interior region {} ({}x{}x{}, scale {}) {} in {} ms main thread, {} chunks", r.id(), r.sizeX(), r.sizeY(),
                 r.sizeZ(), r.scale(), mode, String.format(java.util.Locale.ROOT, "%.1f", ms), touched.size());
     }
 
@@ -747,7 +747,7 @@ public final class InteriorManager {
                 long t0 = System.nanoTime();
                 r.equipment().rescan(interior, r);
                 InteriorRegions.get(server).setDirty();
-                LOGGER.debug("Rescanned equipment of region {} in {} ms", r.id(), (System.nanoTime() - t0) / 1e6);
+                if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Rescanned equipment of region {} in {} ms", r.id(), (System.nanoTime() - t0) / 1e6);
             }
         }
         return r.equipment();

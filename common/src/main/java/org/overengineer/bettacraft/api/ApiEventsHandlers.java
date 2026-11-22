@@ -30,7 +30,7 @@ public final class ApiEventsHandlers {
     /** Every tank inhabitant that dies by damage (fights, predators, players, drowning, ...). */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onLivingDeath(LivingDeathEvent event) {
-        if (event.isCanceled() || !on()) return;
+        if (event.isCanceled() || !on() && !org.overengineer.bettacraft.debug.LogArea.CARE.debug) return; // M57: the debug log also without the events
         Entity e = event.getEntity();
         if (!(e.level() instanceof ServerLevel level) || !TankInhabitants.hasTankRef(e)) return;
         TankBlockEntity c = TankInhabitants.resolveController(level, e);
