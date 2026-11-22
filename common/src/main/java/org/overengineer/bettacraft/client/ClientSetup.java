@@ -302,6 +302,7 @@ public final class ClientSetup {
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.interior.MiniatureRenderer::onRenderStage);
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.decor.DecorPreview::onRenderStage);
+        org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.screen.FilterLinkScreen::onRenderStage); // M62
         org.overengineer.bettacraft.platform.client.ClientEvents.ITEM_TOOLTIP.add((stack, ctx, lines, flag) -> ItemHintTooltips.onTooltip(stack, lines));
     }
 

@@ -65,6 +65,7 @@ public final class TankEquipment {
                 if (level.isLoaded(p) && isMat(level.getBlockState(p), d.getOpposite())) mats.add(p.immutable());
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.terrarium.MisterBlock) misters.add(p.immutable());
                 check(level, t, p, d.getOpposite(), filters, skimmers);
+                checkBelow(level, t, p, d.getOpposite(), filters); // M62
                 // M23: an air pump beside the tank (it serves the first tank it touches)
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.equipment.AirPumpBlock) pumps.add(p.immutable());
                 if (level.isLoaded(p) && level.getBlockState(p).getBlock() instanceof org.overengineer.bettacraft.co2.Co2SourceBlock) co2.add(p.immutable()); // M25
@@ -154,11 +155,36 @@ public final class TankEquipment {
     private static void check(Level level, TankData t, BlockPos p, Direction towardsTank, List<BlockPos> out, List<BlockPos> skimmers) {
         if (!level.isLoaded(p)) return;
         BlockState s = level.getBlockState(p);
-        if (s.getBlock() instanceof ExternalFilterBlock && s.getValue(ExternalFilterBlock.FACING) == towardsTank && t.contains(p.relative(towardsTank))) {
+        if (s.getBlock() instanceof ExternalFilterBlock && feeds(level, p, s, towardsTank, t)) {
             out.add(p.immutable());
         } else if (s.getBlock() instanceof org.overengineer.bettacraft.reef.ProteinSkimmerBlock
                 && s.getValue(org.overengineer.bettacraft.reef.ProteinSkimmerBlock.FACING) == towardsTank && t.contains(p.relative(towardsTank))) {
             skimmers.add(p.immutable()); // M20
+        }
+    }
+
+    /**
+     * Whether the external filter at {@code p} (state {@code s}) feeds tank {@code t} through the wall block in direction
+     * {@code towardsTank} at its own height: the tank in front of it, or (M62) the tank chosen for it.
+     */
+    private static boolean feeds(Level level, BlockPos p, BlockState s, Direction towardsTank, TankData t) {
+        BlockPos wall = p.relative(towardsTank);
+        if (level.getBlockEntity(p) instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity f && f.link() != null) {
+            return f.link().equals(wall) && t.contains(wall);
+        }
+        return s.getValue(ExternalFilterBlock.FACING) == towardsTank && t.contains(wall);
+    }
+
+    /** M62: an external filter one or two blocks below the wall face {@code p} that was chosen for this tank. */
+    private static void checkBelow(Level level, TankData t, BlockPos p, Direction towardsTank, List<BlockPos> out) {
+        if (!org.overengineer.bettacraft.equipment.FilterLinks.belowAllowed()) return;
+        BlockPos wall = p.relative(towardsTank);
+        for (int dy = 1; dy <= org.overengineer.bettacraft.equipment.FilterLinks.MAX_BELOW; dy++) {
+            BlockPos q = p.below(dy);
+            if (!level.isLoaded(q) || !(level.getBlockState(q).getBlock() instanceof ExternalFilterBlock)) continue;
+            if (level.getBlockEntity(q) instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity f && wall.equals(f.link()) && t.contains(wall)) {
+                out.add(q.immutable());
+            }
         }
     }
 

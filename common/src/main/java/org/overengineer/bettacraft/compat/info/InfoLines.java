@@ -206,9 +206,11 @@ public final class InfoLines {
             String name = d.getStringOr("tank", "");
             out.add(name.isEmpty() ? Component.translatable("jade.bettacraft.filter.tank_unnamed").withStyle(ChatFormatting.AQUA)
                     : Component.translatable("jade.bettacraft.filter.tank", name).withStyle(ChatFormatting.AQUA));
+            if (d.getIntOr("below", 0) > 0) out.add(Component.translatable("jade.bettacraft.filter.below", d.getIntOr("below", 0)).withStyle(ChatFormatting.GRAY)); // M62
             if (d.getBooleanOr("unpowered", false)) out.add(Component.translatable("jade.bettacraft.no_power").withStyle(ChatFormatting.RED));
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.no_tank").withStyle(ChatFormatting.GOLD));
+            if (d.getBooleanOr("filter_block", false)) out.add(Component.translatable("jade.bettacraft.filter.link_hint").withStyle(ChatFormatting.GRAY)); // M62
         }
         return out;
     }
@@ -220,6 +222,7 @@ public final class InfoLines {
         int pct = d.getIntOr("spring", 0);
         out.add(Component.translatable("jade.bettacraft.spring", pct, d.getStringOr("spring_hours", ""))
                 .withStyle(pct <= 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
+        if (d.getIntOr("spring_shared", 0) > 1) out.add(Component.translatable("jade.bettacraft.spring.shared", d.getIntOr("spring_shared", 0)).withStyle(ChatFormatting.GRAY)); // M62
         return out;
     }
 

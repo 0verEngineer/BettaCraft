@@ -53,16 +53,21 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
     public static final EnumProperty<CabinetFront> FRONT = EnumProperty.create("front", CabinetFront.class);
     /** M44: thin dark joints between the leaves and drawers (menu setting; off with the feature). */
     public static final BooleanProperty JOINTS = BooleanProperty.create("joints");
+    /**
+     * M62: another cabinet facing the same way stands right in front of this one (the back rows and the inside of an
+     * under-cabinet area, {@code features.equipment.cabinetArea}): the block shows a plain carcass, no front.
+     */
+    public static final BooleanProperty COVERED = BooleanProperty.create("covered");
 
     public CabinetBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LEFT, false).setValue(RIGHT, false)
-                .setValue(FRONT, CabinetFront.TWO).setValue(JOINTS, false));
+                .setValue(FRONT, CabinetFront.TWO).setValue(JOINTS, false).setValue(COVERED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, LEFT, RIGHT, FRONT, JOINTS);
+        builder.add(FACING, LEFT, RIGHT, FRONT, JOINTS, COVERED);
     }
 
     @Override
@@ -82,7 +87,8 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
     static BlockState connect(BlockState state, BlockGetter level, BlockPos pos) {
         Direction f = state.getValue(FACING);
         return withFront(state.setValue(LEFT, joins(state, level.getBlockState(pos.relative(left(f)))))
-                .setValue(RIGHT, joins(state, level.getBlockState(pos.relative(left(f).getOpposite())))), level, pos);
+                .setValue(RIGHT, joins(state, level.getBlockState(pos.relative(left(f).getOpposite()))))
+                .setValue(COVERED, Features.enabled(Feature.CABINET_AREA) && joins(state, level.getBlockState(pos.relative(f)))), level, pos);
     }
 
     // ------------------------------------------------------------------ M44 fronts
@@ -173,8 +179,19 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockState s = defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+        BlockState s = defaultBlockState().setValue(FACING, placedFacing(ctx));
         return connect(s, ctx.getLevel(), ctx.getClickedPos());
+    }
+
+    /**
+     * The facing of a new cabinet: towards the player; M62 ({@code features.equipment.cabinetArea}): placed against the side,
+     * back or front of another cabinet it takes that cabinet's facing, so an area grows as one under-cabinet from any side.
+     */
+    public static Direction placedFacing(BlockPlaceContext ctx) {
+        Direction own = ctx.getHorizontalDirection().getOpposite();
+        if (!Features.enabled(Feature.CABINET_AREA) || !ctx.getClickedFace().getAxis().isHorizontal()) return own;
+        BlockState against = ctx.getLevel().getBlockState(ctx.getClickedPos().relative(ctx.getClickedFace().getOpposite()));
+        return against.getBlock() instanceof CabinetBlock ? against.getValue(FACING) : own;
     }
 
     @Override
@@ -211,6 +228,7 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
+            CabinetSprings.handOver(be); // M62: its share of the shared spring stays with the other cabinets
             for (int i = 0; i < be.items().getSlots(); i++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
             }
