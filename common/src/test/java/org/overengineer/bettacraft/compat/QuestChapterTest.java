@@ -49,6 +49,7 @@ class QuestChapterTest {
 
     static {
         NO_QUEST.put(Feature.BREAK_PROTECTION, "a safety rule (tanks with animals resist breaking), nothing to do");
+        NO_QUEST.put(Feature.CATCH_GUARD, "M62: a safety rule (no release right after a catch), nothing to do");
         NO_QUEST.put(Feature.CLIP_FEEDER, "a smaller variant of the feeder, which has its quest");
         NO_QUEST.put(Feature.STONE_CABINETS, "a look of the cabinet (its quest names them); the item is the cabinet itself");
         NO_QUEST.put(Feature.CABINET_OUTLET_SIDE, "a setting in the cabinet menu, no task to check");
