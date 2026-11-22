@@ -56,6 +56,8 @@ tank menu, new icons and a catch guard.
   when it is busy): the old version's server of the upgrade reference builder (it ran on the port written into that old
   commit, shared by every branch, or on 25565), the showcase, the upgrade smoke, the multiplayer and the Fabric
   save/load tests; the builder takes a free port when the branch's one is busy (`DevServerPortsTest`).
+- Tests: the multiplayer test lets the aquarium plants grow only once the light at the surface is there (in two runs on
+  26.2 / 26.3 under load no plant grew).
 
 ## [1.50.0-beta.1] - 2026-11-22
 
