@@ -90,8 +90,9 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   rasboras and danios, rainbowfish, corydoras (albino and longfin pandas, the bronze cory), plecos, loaches and garras, barbs, guppies and endlers (with their own genetics and 28 strains), platys, mollies, swordtails,
   gouramis, **cichlids** (rams in six forms with Black and German Blue, Apistogramma, angelfish, discus) and **puffers**
   that eat snails.
-- Shoals, water ranges, predators and prey, fin nippers, and a breeding style for every species: open and cave brooders
-  guard their young.
+- Shoals (they swim as a school in the wild too, and the tank menu names a shoal that is too small: "Neon Tetra: 3 of
+  6"), water ranges, predators and prey, fin nippers, and a breeding style for every species: open and cave brooders guard
+  their young.
 - **Water animals of other mods** live in the aquariums too; whales, bosses and hostile mobs are refused with a reason.
 
 ![An Amazon tank: discus, angelfish, rummy nose and cardinal tetras over sand and roots between sword plants and Vallisneria](images/bettacraft-amazon-tank-swimming.gif)
@@ -140,7 +141,8 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   decides whether males or females hatch. **Poison dart frogs** with tadpoles, a horned frog that sits buried, **geckos**
   that climb the glass and a **corn snake**; grown sea turtles go into big sea water paludaria with a beach.
 - They **move like the real animals**, in the world as in the tank: their own hours, a calm pace with short sprints,
-  climbing onto branches and leaves, hiding in caves; the snake raises its head, flicks its tongue and lies coiled.
+  climbing onto branches and leaves, hiding in caves; the snake raises its head, flicks its tongue and lies coiled. In the
+  world turtles, geckos and the snake climb steps instead of jumping, and the crested gecko climbs whole walls.
 - **Land animals of other mods** (insects, small mammals, birds and reptiles of Naturalist, Critters and Companions and
   Living Things) live in terraria with our care and breeding; catch them with the terrarium box.
 - **Minecraft animals as pets:** chickens with chicks from eggs in the sand, rabbits on grass, bees with flowers and a
@@ -164,8 +166,9 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
 
 ## Technology
 
-- **Equipment:** internal, external, sponge and corner filters, cabinets of any wood or stone (a row of cabinets gets one
-  front with drawers and double doors), automatic and clip-on feeders, air pumps with air stones, light bars and LED
+- **Equipment:** internal, external, sponge and corner filters (the external one also one or two blocks below its tank,
+  the tank chosen by sneak-click), cabinets of any wood or stone (a row of cabinets gets one front with drawers and double
+  doors; cabinets join to the back too, so even a 10 x 5 tank stands on one under-cabinet with one shared spring), automatic and clip-on feeders, air pumps with air stones, light bars and LED
   panels in 16 colours with dimmer and daylight timer.
 - **Pipes and the multiblock filter:** glass and stainless steel pipes and pumps carry water with all its values. A
   multiblock filter of any size with media that clog serves several aquariums: filter pipes with T-pieces dock on any side

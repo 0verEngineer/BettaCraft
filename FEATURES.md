@@ -61,6 +61,9 @@ feature is on every Minecraft version and loader unless the README's "What is mi
 - **Care:** temperature from biome and time of day, heaters and coolers, hunger, overcrowding, water quality, oxygen,
   sickness and recovery; a tank log tells you what happened. Tank menu with overview, inhabitants and their genotype,
   breeding tab with Punnett squares, water, devices, plants, users and log; name sign, owner lock and a break protection.
+  The menu grows with the screen where the GUI scale leaves room (longer lists, full-size labels, all warnings at once,
+  long names in full under the mouse); a shoal that is too small is named with its fish and minimum ("Neon Tetra: 3 of
+  6") in the overview, the breeding tab and the info overlays.
 - **Tank users:** the users tab lists other players as **caretakers** (they may do everything the owner may) or
   **viewers** (they see the menu and change nothing); everybody else is ruled by the lock, the owner's FTB Teams party
   counts as caretakers. Every user switches his own alarm waypoint of the tank there. A gear button in the overview opens
@@ -110,7 +113,8 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   Black and German Blue, Apistogramma, angelfish, discus) and **puffers**. Shoals, water ranges, predators and prey, fin
   nippers, snail eaters, and a breeding style per species (glued eggs, caves, egg scatterers, livebearers, foam nests,
   open and cave brooders that guard their young, a mouthbrooder). Small fish dart off now and then and the shoal follows
-  its leader, bottom fish scoot, fish that are active by day rest more at night.
+  its leader, bottom fish scoot, fish that are active by day rest more at night. **In the wild** (and once you let them
+  go) a shoal swims as a school behind its leader too.
 - **Small animals:** Neocaridina in eleven colours with selection grades, bee shrimp (Crystal Red/Black S to SSS, Blue
   Bolt, Wine Red, Tiger), Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and more crawl
   over floor, plants and glass; algae grow and the cleaning crew eats them. Crayfish stay in their hides by day and come
@@ -226,7 +230,9 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   calm pace with short sprints, climbs branches, roots and rocks, sits on leaves, hides in caves and under overhangs, and
   does things while it sits still: the snake raises its head, flicks its tongue and lies coiled, lizards look around and
   wave the tail tip, frogs call with a pumping throat, turtles stretch their necks. In the world they bask in the sun and
-  run from a player who comes close.
+  run from a player who comes close. **Climbing in the world:** turtles, the tortoise, the leopard gecko and the corn
+  snake climb one-block steps instead of jumping, the crested gecko climbs whole walls (to the top and over, or part of
+  the way to hold on), the mudskipper climbs logs and mangrove roots; snails and shrimp climb walls under water.
 
 ![A desert terrarium in motion: the leopard geckos walk and look around, the corn snake crawls](docs/images/bettacraft-desert-terrarium-walking.gif)
 
@@ -257,8 +263,10 @@ feature is on every Minecraft version and loader unless the README's "What is mi
 
 ## Equipment and water
 
-- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside; a
-  row of cabinets gets one front with drawers at both ends and double doors between them, or a front of your choice),
+- Internal, external, sponge and corner filters (the external filter may stand beside its tank or one or two blocks lower;
+  sneak-click it to choose the tank from a list), cabinets of any wood or stone (with the filter and an air pump inside; a
+  row of cabinets gets one front with drawers at both ends and double doors between them, or a front of your choice;
+  cabinets join to the back as well, so a 10 x 5 tank stands on one under-cabinet, the middle may be normal blocks),
   automatic and clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16
   colours with dimmer and daylight timer.
 - **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
@@ -272,7 +280,8 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - **Power, your choice:** by default nothing needs energy. Optional Forge Energy (Team Reborn Energy on Fabric) for the
   equipment, a power regulator, own procedural sounds. No generator? A **crank** winds the filters, the water devices and
-  the cabinet under a tank, which then powers every device of its tank. With **Create** a drive adapter on the tank (or a
+  the cabinet under a tank, which then powers every device of its tank; all cabinets under a tank share one spring store
+  (also two that do not touch), one crank at any of them winds it. With **Create** a drive adapter on the tank (or a
   shaft on its cabinet) powers every device of the tank from rotation, with real stress.
 - **Tanks on the road** (Create, NeoForge 1.21.1): on Create contraptions, carts and trains the care goes on with the
   tank's data (hunger, temperature, water quality, the filters and heaters that travel along, powered by the tank's buffer,
@@ -326,6 +335,8 @@ feature is on every Minecraft version and loader unless the README's "What is mi
 
 ## Handbook, progression, switches
 
+- Every catcher (buckets, bags, terrarium boxes, transport tubs, mob jars) asks before it lets an animal go into the world,
+  and none lets go for half a second after a catch, so a double click never releases what you just caught.
 - 368 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
   (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
   Modonomicon book (1.21.11 and 26.x), converted at build time. 72 advancements, information pages in JEI (and REI and
