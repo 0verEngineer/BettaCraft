@@ -21,9 +21,11 @@ git -C "$REPO" worktree add --detach "$WT" "$COMMIT"
 mkdir -p "$WT/run/saves"
 cp -r "$SRC" "$WT/run/saves/chain_in"
 rm -f "$WT/run/saves/chain_in/session.lock"
-printf 'eula=true\n' > "$WT/run/eula.txt"
-printf 'online-mode=false\nserver-port=25597\nspawn-protection=0\nmax-players=1\n' > "$WT/run/server.properties"
+# M62: the old version's server takes this branch's port (never 25565, never the port hard-coded in that commit)
+. "$REPO/tools/upgrade/server_port.sh"
+pin_server_port "$WT"
 (cd "$WT" && ./gradlew runServer -PsmoketestOldWorld -PoldWorld=chain_in -PkeepWorld --no-configuration-cache -q > "$WT/chain-server.log" 2>&1) || true
+check_server_log "$WT/chain-server.log"
 grep -q "OLD WORLD PASSED" "$WT/chain-server.log" || { echo "the intermediate version did not pass the old world, see $WT/chain-server.log"; exit 1; }
 rm -rf "$REPO/run/saves/$NAME"
 cp -r "$WT/run/oldworld_check" "$REPO/run/saves/$NAME"

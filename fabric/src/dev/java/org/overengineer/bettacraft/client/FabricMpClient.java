@@ -40,8 +40,11 @@ public final class FabricMpClient implements ClientModInitializer {
             } else if (!joining && screen instanceof TitleScreen) {
                 joining = true;
                 Minecraft mc = Minecraft.getInstance();
-                mc.execute(() -> net.minecraft.client.gui.screens.ConnectScreen.startConnecting(screen, mc, ServerAddress.parseString("localhost:25595"),
-                        new ServerData("mptest", "localhost:25595", ServerData.Type.OTHER), false, null));
+                // M62: the server of fabricMultiplayerTest is on this branch's dev_fabric_server_port (never the default port)
+                String addr = System.getProperty("bettacraft.smoketest.mp.address");
+                if (addr == null) throw new IllegalStateException("bettacraft.smoketest.mp.address is not set (gradlew fabricMultiplayerTest sets it)");
+                mc.execute(() -> net.minecraft.client.gui.screens.ConnectScreen.startConnecting(screen, mc, ServerAddress.parseString(addr),
+                        new ServerData("mptest", addr, ServerData.Type.OTHER), false, null));
             }
         });
         ClientReceiveMessageEvents.GAME.register((msg, overlay) -> {

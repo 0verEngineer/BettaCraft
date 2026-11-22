@@ -1063,6 +1063,24 @@ tasks.matching { it.name in ['runClient', 'runServer', 'runData', 'runGameTestSe
 // ---- M59: server files, test worlds and reference worlds, so that a fresh clone runs every test without manual work
 // The dev servers never take the default port 25565 (a real server may hold it): dev_server_port of gradle.properties.
 def devServerPort = (project.findProperty('dev_server_port') ?: '25599').toString()
+// M62: right before a dev server starts: its server.properties names a port that is not 25565 and is free (a clear message
+// instead of the server's bind error, and never a real server's port)
+def portFree = { int port ->
+    try {
+        new java.net.ServerSocket(port).close()
+        true
+    } catch (IOException ignored) {
+        false
+    }
+}
+def checkServerPort = { File dir, String what ->
+    def sp = new File(dir, 'server.properties')
+    def props = new Properties()
+    if (sp.exists()) sp.withInputStream { props.load(it) }
+    def port = props.getProperty('server-port', '25565').trim()
+    if (port == '25565') throw new GradleException("${what}: ${sp} would put the server on the default port 25565 (a real server may hold it); the dev servers use dev_server_port (${devServerPort})")
+    if (!portFree(port.toInteger())) throw new GradleException("${what}: port ${port} (${sp}) is busy: is another dev server of this branch still running? Stop it or choose a port with -Pdev_server_port=<port>")
+}
 def seedServerFiles = { File dir, boolean offline ->
     dir.mkdirs()
     def eula = new File(dir, 'eula.txt')
@@ -1072,7 +1090,8 @@ def seedServerFiles = { File dir, boolean offline ->
     def set = { String k, String v -> lines = lines.findAll { !it.startsWith(k + '=') } + ["${k}=${v}".toString()] }
     def get = { String k -> lines.find { it.startsWith(k + '=') }?.substring(k.length() + 1) }
     boolean changed = !sp.exists()
-    if (get('server-port') in [null, '', '25565']) { set('server-port', devServerPort); changed = true }
+    // M62: always this branch's own port (the run folders of an older checkout may name another branch's port or 25565)
+    if (get('server-port') != devServerPort) { set('server-port', devServerPort); changed = true }
     if (offline && get('online-mode') != 'false') { set('online-mode', 'false'); changed = true }
     // the dev clients Dev1 / Dev2 are on no list (26.3 writes a new server.properties with white-list=true)
     if (offline && get('white-list') != 'false') { set('white-list', 'false'); changed = true }
@@ -1100,7 +1119,10 @@ def testWorlds = { Task t, Closure<List<File>> dirs ->
 }
 def smokeSaves = { File saves -> (saves.listFiles() ?: []).findAll { it.isDirectory() && it.name.startsWith('bettacraft_smoketest_') } }
 tasks.matching { it.name == 'runServer' }.configureEach { t ->
-    t.doFirst { seedServerFiles(rootProject.file(runRoot), false) }
+    t.doFirst {
+        seedServerFiles(rootProject.file(runRoot), false)
+        checkServerPort(rootProject.file(runRoot), 'runServer')
+    }
     // the world of the server smoke (run/world, with -Pbiomes run/world_biomes) and the copy of -PsmoketestOldWorld
     if (smokeRun) {
         testWorlds(t) { [rootProject.file(runRoot + '/world'), rootProject.file(runRoot + '/world_biomes')] }
@@ -1144,6 +1166,16 @@ ensureReferenceWorld = { String name, File saves ->
     def pb = new ProcessBuilder([bashExe(), "tools/upgrade/${w.script}".toString()] + args.collect { it.toString() })
             .directory(rootProject.projectDir).redirectErrorStream(true).redirectOutput(log)
     // a worktree of its own per checkout (several clones side by side must not share one)
+    // M62: the old version's server runs on this branch's port, or on a free one the system hands out when that one is busy
+    // (never 25565; tools/upgrade/server_port.sh patches the old build scripts and checks the port the server bound)
+    def refPort = devServerPort.toInteger()
+    if (!portFree(refPort)) {
+        def probe = new java.net.ServerSocket(0)
+        refPort = probe.localPort
+        probe.close()
+        logger.lifecycle("port ${devServerPort} is busy: the server of the old version takes the free port ${refPort}")
+    }
+    pb.environment().put('UPGRADE_SERVER_PORT', refPort.toString())
     pb.environment().put('UPGRADE_WORKTREE', new File(rootProject.projectDir.parentFile, "${rootProject.projectDir.name}-upgrade-${chain ? 'chain' : 'ref'}").absolutePath)
     def p = pb.start()
     if (!p.waitFor(60, java.util.concurrent.TimeUnit.MINUTES)) {
@@ -1151,7 +1183,8 @@ ensureReferenceWorld = { String name, File saves ->
         throw new GradleException("building the reference world '${name}' took over an hour, see ${log}")
     }
     if (p.exitValue() != 0 || !new File(saves, "${name}/bettacraft_reference.json").exists()) {
-        throw new GradleException("building the reference world '${name}' failed (exit ${p.exitValue()}), see ${log}")
+        def why = log.exists() ? log.readLines('UTF-8').findAll { it.startsWith('PORT: ') }.collect { it.substring(6) } : []
+        throw new GradleException("building the reference world '${name}' failed (exit ${p.exitValue()})${why ? ': ' + why.join('; ') : ''}, see ${log}")
     }
     logger.lifecycle("reference world built: ${new File(saves, name)}")
 }
@@ -1217,6 +1250,7 @@ tasks.register('runMultiplayerTest') {
         }
         // M59: the server files are written here (offline mode: the dev clients have no account; not the default port)
         seedServerFiles(runDir, true)
+        checkServerPort(runDir, 'runMultiplayerTest')
         def props = new Properties()
         def sp = new File(runDir, 'server.properties')
         sp.withInputStream { props.load(it) }
@@ -1338,12 +1372,13 @@ tasks.register('buildShowcase') {
         new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
         new File(dir, 'server.properties').write([
                 'online-mode=false', 'level-type=minecraft:flat', 'gamemode=creative', 'difficulty=peaceful', 'spawn-monsters=false',
-                'spawn-animals=true', 'spawn-npcs=true', 'generate-structures=false', 'server-port=25599', 'spawn-protection=0',
+                'spawn-animals=true', 'spawn-npcs=true', 'generate-structures=false', "server-port=${devServerPort}".toString(), 'spawn-protection=0',
                 // spawn-animals must stay true: without it the server discards every water animal (our fish too); the gamerule
                 // doMobSpawning is off instead
                 'max-players=1', 'level-seed=21', 'allow-flight=true', 'enable-command-block=true', 'white-list=false',
                 // M21.6: saving the big world can take longer than the watchdog's minute on a busy disk
                 'max-tick-time=-1'].join('\n') + '\n', 'UTF-8')
+        checkServerPort(dir, 'buildShowcase')
         def cp = new File(logs, 'classpath.txt')
         cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
         def command = ([java] + srv.allJvmArgs + ['-Dbettacraft.showcase=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()] + srv.args
@@ -1394,8 +1429,9 @@ tasks.register('smoketestUpgrade') {
             else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
         }
         new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
-        new File(dir, 'server.properties').write(['online-mode=false', 'server-port=25598', 'spawn-protection=0', 'spawn-animals=true',
+        new File(dir, 'server.properties').write(['online-mode=false', "server-port=${devServerPort}".toString(), 'spawn-protection=0', 'spawn-animals=true',
                 'spawn-npcs=true', 'max-players=1', 'white-list=false'].join('\n') + '\n', 'UTF-8')
+        checkServerPort(dir, 'smoketestUpgrade')
         def cp = new File(logs, 'classpath.txt')
         cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
         // vanilla noise of the dev runtime (translations of other mods' blocks) is not an error of the upgrade
@@ -1437,6 +1473,7 @@ tasks.register('smoketestWorldCleanup') {
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
         def dir = rootProject.file(runRoot)
         seedServerFiles(dir, false)
+        checkServerPort(dir, 'smoketestWorldCleanup')
         def world = new File(dir, 'world')
         def logs = rootProject.file('build/worldcleanup')
         logs.deleteDir()
