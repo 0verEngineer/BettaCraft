@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
  * M59: the optional dev mod groups come from the manifest dev-mods.json (gradle/dev-mods.gradle downloads them from their
  * official source and checks the hashes). Every group folder the loader builds read (NeoForge extraMods, the Fabric flag
  * map) must be in the manifest of this branch or listed there as a gap, every entry needs an official source and its hashes,
- * and one file name never stands for two different files. A new test mod therefore cannot be used without its manifest entry.
+ * and one file name never stands for two different files of a loader. A new test mod therefore cannot be used without its manifest entry.
  */
 class DevModsManifestTest {
     private static final Set<String> NOT_MANAGED = Set.of("local-mods", "nested-mods");
@@ -99,12 +99,14 @@ class DevModsManifestTest {
 
     @Test
     void oneFileNameIsOneFile() throws IOException {
+        // per loader: the run folders of NeoForge and Fabric are apart (Cloth Config names both of its builds the same way)
         Map<String, String> hashOf = new HashMap<>();
         List<String> problems = new ArrayList<>();
         for (Map.Entry<String, List<JsonObject>> g : entries(manifest()).entrySet()) {
+            String loader = g.getKey().contains("/") ? g.getKey().substring(0, g.getKey().indexOf('/')) : g.getKey();
             for (JsonObject e : g.getValue()) {
                 String file = e.get("file").getAsString(), sha = e.get("sha256").getAsString();
-                String before = hashOf.putIfAbsent(file, sha);
+                String before = hashOf.putIfAbsent(loader + "/" + file, sha);
                 if (before != null && !before.equals(sha)) problems.add(file + " (" + g.getKey() + ")");
             }
         }
