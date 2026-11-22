@@ -144,6 +144,14 @@ public final class InfoLines {
         ListTag warn = d.getListOrEmpty("warnings");
         for (int i = 0; i < warn.size(); i++) {
             out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getStringOr(i, "")).withStyle(ChatFormatting.RED));
+            if (warn.getStringOr(i, "").equals("tm_shoal")) { // M62: which fish, how many of how many
+                ListTag sh = d.getListOrEmpty("shoals");
+                for (int k = 0; k < sh.size(); k++) {
+                    var s = org.overengineer.bettacraft.tank.menu.TankView.Shoal.parse(sh.getStringOr(k, ""));
+                    if (s != null) out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.shoal.line", s.name(), s.count(), s.need()))
+                            .withStyle(ChatFormatting.GOLD));
+                }
+            }
         }
         ListTag fw = d.getListOrEmpty("filter_warn");
         for (int i = 0; i < fw.size(); i++) {
