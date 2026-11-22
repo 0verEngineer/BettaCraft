@@ -390,8 +390,12 @@ public final class CrankGameTests {
     public static void keepingFishWithoutAGenerator(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         Power saved = Power.current();
+        long savedTime = level.getDayTime();
         try {
             Power.all(true, true);
+            // the room temperature follows the time of day the batch happens to start at (at night 23 °C chilled tank A's bettas
+            // to death on Fabric 1.21.11): the test runs at noon
+            level.setDayTime(6000);
             TankBlockEntity a = tank(h, 2, 1, 2, 3, 2, 2), b = tank(h, 2, 1, 10, 3, 2, 2), p = tank(h, 2, 1, 18, 3, 2, 2);
             ExternalFilterBlockEntity f = filter(h, new BlockPos(5, 1, 10), Direction.WEST);
             f.insertHeater(new ItemStack(ModItems.HEATER_MEDIUM.get()));
@@ -450,6 +454,7 @@ public final class CrankGameTests {
             h.assertTrue(aliveA, "A: water changes alone keep them alive (ambient " + ambient + " °C)");
             h.assertTrue(aliveP && fp.stream().noneMatch(x -> x.health().isSick()) && minQp > 0.4, "P: dense floating plants alone keep the water: " + minQp);
         } finally {
+            level.setDayTime(savedTime);
             saved.apply();
         }
         h.succeed();
