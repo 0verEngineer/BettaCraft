@@ -265,11 +265,22 @@ final class DevClientSmokeM62b {
         if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (s.getItem().is(ModItems.EXTERNAL_FILTER.get())) {
-                mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
+                mouseTo(guiPos(scr, "leftPos") + s.x + 8, guiPos(scr, "topPos") + s.y + 8);
                 return;
             }
         }
         problem("the filter item to hover was not found");
+    }
+
+    /** The screen's leftPos / topPos (no NeoForge getter on Fabric). */
+    private static int guiPos(net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr, String field) {
+        try {
+            java.lang.reflect.Field f = net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.class.getDeclaredField(field);
+            f.setAccessible(true);
+            return f.getInt(scr);
+        } catch (ReflectiveOperationException e) {
+            return 0;
+        }
     }
 
     private void mouseTo(int x, int y) {
