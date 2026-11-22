@@ -50,8 +50,7 @@ public final class IntegrationGroupTests {
     @GameTest(template = IntegrationSuite.EMPTY, templateNamespace = BettaCraft.MOD_ID, batch = "bettacraft_integration_group")
     public static void everyIntegratedModIsLoaded(GameTestHelper h) {
         List<String> missing = GROUP.stream().filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)).toList();
-        if (!missing.isEmpty() && IntegrationSuite.PARTIAL) IntegrationSuite.LOGGER.warn("[integration] partial run without {}", missing);
-        else if (!missing.isEmpty()) throw new GameTestAssertException("the integration group lacks " + missing);
+        if (!missing.isEmpty()) throw new GameTestAssertException("the integration group lacks " + missing);
         h.succeed();
     }
 
