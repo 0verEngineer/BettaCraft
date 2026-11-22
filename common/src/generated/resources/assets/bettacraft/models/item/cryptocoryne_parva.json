@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_rosette",
-    "layer1": "bettacraft:item/plant_rosette_detail"
+    "layer0": "bettacraft:item/plant_cryptocoryne_parva",
+    "layer1": "bettacraft:item/plant_cryptocoryne_parva_detail"
   }
 }

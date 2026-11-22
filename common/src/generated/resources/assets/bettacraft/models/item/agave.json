@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/terrarium_spiky",
-    "layer1": "bettacraft:item/terrarium_spiky_detail"
+    "layer0": "bettacraft:item/terrarium_agave",
+    "layer1": "bettacraft:item/terrarium_agave_detail"
   }
 }

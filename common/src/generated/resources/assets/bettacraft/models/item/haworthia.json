@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/terrarium_succulent",
-    "layer1": "bettacraft:item/terrarium_succulent_detail"
+    "layer0": "bettacraft:item/terrarium_zebra",
+    "layer1": "bettacraft:item/terrarium_zebra_detail"
   }
 }
