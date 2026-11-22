@@ -1182,6 +1182,32 @@ def m56(out_en: Path) -> None:
         print("missing", src)
 
 
+def m62b(out_en: Path, out_de: Path) -> None:
+    """M62 parts 2 and 3 (-Psmoketestm62b): the under-cabinet over the whole area (a 10 x 5 tank from the front and the back,
+    a ring of cabinets around stone), the external filter one and two blocks below the tank and the chosen tank outlined,
+    the choice of the tank (en and de)."""
+    def tiles(names, size, cols, path):
+        out = Image.new("RGB", (size[0] * cols, size[1] * ((len(names) + cols - 1) // cols)))
+        for i, (shot, box) in enumerate(names):
+            src = SHOTS / f"{shot}.png"
+            if not src.exists():
+                print("missing", src)
+                return
+            out.paste(Image.open(src).convert("RGB").crop(box).resize(size, Image.LANCZOS), ((i % cols) * size[0], (i // cols) * size[1]))
+        save(out, path)
+
+    tiles([("bettacraft_m62b_cabinet_area_10x5", (330, 330, 1010, 750)), ("bettacraft_m62b_cabinet_area_10x5_back", (440, 300, 1020, 658)),
+           ("bettacraft_m62b_cabinet_ring", (380, 330, 1060, 750))], (400, 247), 3, out_en / "cabinet_area.png")
+    tiles([("bettacraft_m62b_filter_one_below", (330, 180, 930, 720)), ("bettacraft_m62b_filter_two_below", (330, 160, 930, 700)),
+           ("bettacraft_m62b_filter_chosen", (330, 400, 950, 958))], (360, 324), 3, out_en / "filter_below.png")
+    for lang, out in (("en", out_en), ("de", out_de)):
+        src = SHOTS / f"bettacraft_m62b_filter_choice_{lang}.png"
+        if not src.exists():
+            print("missing", src)
+            continue
+        save(Image.open(src).convert("RGB").crop((100, 60, 1180, 900)).resize((720, 560), Image.LANCZOS), out / "filter_choice.png")
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1196,6 +1222,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m62b"]:
+        m62b(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m56"]:
         m56(out_en)
         return 0
