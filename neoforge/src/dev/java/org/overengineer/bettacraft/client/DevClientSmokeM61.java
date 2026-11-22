@@ -8,12 +8,11 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
@@ -52,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientSmokeM61 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final ResourceLocation FLUID_PIPE = ResourceLocation.fromNamespaceAndPath("moderndynamics", "fluid_pipe");
+    private static final Identifier FLUID_PIPE = Identifier.fromNamespaceAndPath("moderndynamics", "fluid_pipe");
     /** Set by {@code -Ppipes}: Modern Dynamics must be loaded. */
     private static final boolean PIPES_REQUIRED = Boolean.getBoolean("bettacraft.smoketest.m61pipes");
 
@@ -124,9 +123,8 @@ final class DevClientSmokeM61 {
     // ------------------------------------------------------------------ the scene
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
-        level.setDayTime(6000);
-        level.setWeatherParameters(12000, 0, false, false);
+        ServerLevel level = p.level();
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         home = p.blockPosition();
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
@@ -173,7 +171,7 @@ final class DevClientSmokeM61 {
 
     /** Modern Dynamics fluid pipes from a reservoir of ours to a tank block of ours (both have a fluid handler). */
     private void buildPipes(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         Optional<Block> pipe = BuiltInRegistries.BLOCK.getOptional(FLUID_PIPE);
         if (pipe.isEmpty()) return;
         BlockPos start = home.offset(-2, 0, 6);
@@ -218,8 +216,7 @@ final class DevClientSmokeM61 {
         worldId = server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().getFileName().toString();
         LOGGER.info("[smoketest] M61 leaving the world {} to join it again", worldId);
         rejoining = true;
-        mc.level.disconnect();
-        mc.disconnect(new GenericMessageScreen(Component.literal("M61: saving")));
+        mc.disconnectFromWorld(net.minecraft.client.multiplayer.ClientLevel.DEFAULT_QUIT_MESSAGE);
         mc.setScreen(new TitleScreen());
         mc.createWorldOpenFlows().openWorld(worldId, () -> {
             problem("rejoin: the world " + worldId + " did not open again");
@@ -251,7 +248,7 @@ final class DevClientSmokeM61 {
         }
         if (pick != null) {
             LOGGER.info("[smoketest] M61 {}: pressing {}", mc.screen.getClass().getSimpleName(), pick.getMessage().getString());
-            pick.onPress();
+            pick.onPress(new net.minecraft.client.input.MouseButtonInfo(0, 0));
         }
     }
 
@@ -320,7 +317,7 @@ final class DevClientSmokeM61 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m61_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m61_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }

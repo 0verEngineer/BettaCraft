@@ -26,6 +26,13 @@ public final class VersionGaps {
      */
     public static final Set<String> RENDER_NO_BUILD = Set.of("modernfix-fabric");
 
+    /**
+     * M61: mods of our test groups with builds for this version on NeoForge only (Modrinth and CurseForge checked on
+     * 2026-11-22): Modern Dynamics (-Ppipes) has had no Fabric build since Minecraft 1.20.4, so the Fabric client smoke M61
+     * runs without its pipes.
+     */
+    public static final Set<String> FABRIC_NO_BUILD = Set.of("moderndynamics");
+
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
         return mods.length > 0 && Arrays.stream(mods).allMatch(NO_BUILD::contains);
