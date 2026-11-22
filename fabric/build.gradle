@@ -671,6 +671,13 @@ def prodProps = { boolean client ->
         if (!project.hasProperty('sound')) l << '-Dbettacraft.silent=true'
         if (project.hasProperty('smoketestfabric')) l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true']
         if (project.hasProperty('smoketestbook')) l << '-Dbettacraft.smoketest.book=true'
+        // M63: the shader water scene in production (Iris does not apply in the dev runtime of Fabric 1.21.1: a mixin of
+        // its LevelRenderer fails while remapped to named)
+        if (project.hasProperty('smoketestm63')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m63only=true']
+            if (project.hasProperty('m63packs')) l << "-Dbettacraft.smoketest.m63packs=${project.property('m63packs')}".toString()
+            if (project.hasProperty('m63tag')) l << "-Dbettacraft.smoketest.m63tag=${project.property('m63tag')}".toString()
+        }
     }
     l
 }
@@ -696,6 +703,14 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
     mods.from(configurations.prodMods)
     runDir = rootProject.layout.projectDirectory.dir('run-fabric/prod-client')
     jvmArgs.addAll(prodProps(true))
+    // M63: -Pshaders: the shader mods of the manifest (run-fabric/shader-mods, filled by runFabricClient -Pshaders) and its packs
+    if (project.hasProperty('shaders')) {
+        mods.from(rootProject.fileTree('run-fabric/shader-mods') { include '*.jar' })
+        doFirst {
+            def packs = rootProject.file('run-fabric/prod-client/shaderpacks'); packs.mkdirs()
+            rootProject.fileTree('run-fabric/shaderpacks') { include '*.zip' }.each { java.nio.file.Files.copy(it.toPath(), new File(packs, it.name).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING) }
+        }
+    }
     programArgs.addAll(['--width', '1280', '--height', '760'])
 }
 

@@ -108,7 +108,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   matrix). Contact sheets of the animal shots: `builds/m53-textures/<mc>-<loader>/`.
 - M63 client smoke `-Psmoketestm63 -Pshaders` (both loaders; `-Pm63packs=none,<pack.zip>,...`, `-Pm63tag=before|after`): the tank
   water in an unevenly lit room and outside, the scene switches Iris through every pack of the manifest (Complementary Reimagined
-  and Unbound, BSL, MakeUp) and none. `-Pgametestrepeat=<n>` (GameTests, both loaders) runs every test of the run n times side by
+  and Unbound, BSL, MakeUp) and none (Fabric 1.21.1: `prodFabricClient -Psmoketestm63 -Pshaders` after one `runFabricClient -Pshaders`;
+  Iris does not apply in the Fabric dev runtime of 1.21.1). `-Pgametestrepeat=<n>` (GameTests, both loaders) runs every test of the run n times side by
   side in its batch, for hunting flaky tests (with `-Pgametests=<prefix>`).
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
   `run/screenshots/bettacraft_mXX_*.png`; freeze animals with `SmokeFreeze.freeze`. Look at the screenshots.
