@@ -426,6 +426,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm61')) {
+                // gradlew runClient -Psmoketestm61 [-Ppipes]: the M61 scene (ClientLevel.sendBlockUpdated with null states next to
+                // stone and a plant; with -Ppipes Modern Dynamics fluid pipes between a reservoir and a tank, then the player leaves
+                // the world and joins it again; fails on any "Failed to handle packet")
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m61only', 'true'
+                if (requireGroup('pipes')) systemProperty 'bettacraft.smoketest.m61pipes', 'true'
+            }
             if (project.hasProperty('smoketestm56')) {
                 // gradlew runClient -Psmoketestm56 [-Pm56parts=tanks,world,menu]: the M56 scene (a rainforest terrarium, a swamp
                 // paludarium and a desert terrarium with their plants outside and inside, every terrarium plant in the world, every
@@ -896,6 +904,9 @@ idea {
 //   -Pcompare : run/compare-mods (M36: DragN's Just Bettas + GeckoLib + TerraBlender from ATM10AA) for runClient and runServer:
 //               only to compare the size of our bettas with theirs (the M36 client smoke puts one of theirs next to ours);
 //               never in the jar, the repo or the README
+//   -Ppipes   : <runRoot>/pipe-mods (M61: Modern Dynamics from Modrinth, pinned in m59's list) for runClient, runServer and
+//               runGameTestServer; the client smoke -Psmoketestm61 then puts its fluid pipes next to our blocks and joins the world
+//               again (Modern Dynamics calls sendBlockUpdated with null states on the client, the NPE of 1.43)
 //   -Pintegration (or the task integrationTests): every group above that we integrate (power, aquatic, biomes, storage,
 //               create, quests, kubejs, facades; maps for runClient) plus run/integration-mods (M42: Integrated Dynamics,
 //               Integrated Tunnels, Cyclops Core, Common Capabilities, XNet, McJtyLib, RFTools Base, LaserIO, Modular Routers,
@@ -919,6 +930,7 @@ def extraMods = [
         [dir: rootProject.file(runRoot + '/perf-mods'), on: project.hasProperty('perf'), tasks: ['runClient']],
         [dir: rootProject.file(runRoot + '/kubejs-mods'), on: withGroup('kubejs'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/facade-mods'), on: withGroup('facades'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
+        [dir: rootProject.file(runRoot + '/pipe-mods'), on: withGroup('pipes'), tasks: ['runClient', 'runServer', 'runGameTestServer']],
         [dir: rootProject.file(runRoot + '/compare-mods'), on: project.hasProperty('compare'), tasks: ['runClient', 'runServer']],
         [dir: rootProject.file(runRoot + '/integration-mods'), on: integration, tasks: ['runClient', 'runServer', 'runGameTestServer']],
         // the Aether stays out of the dev client: the mixin of Accessories (in its jar) finds no target there and the client crashes
@@ -1041,7 +1053,7 @@ tasks.register('runMultiplayerTest') {
         // Create, Create Aeronautics and Sable on the server and both clients (a tank turns on a bearing, DevSmokeMP)
         def mpCreate = project.hasProperty('create')
         // M52d: the groups of this branch's run root (run/<minecraft>/...; the list named the 1.21.1 folders under run/)
-        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'perf-mods', 'kubejs-mods', 'facade-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
+        ['shader-mods', 'power-mods', 'aquatic-mods', 'biome-mods', 'storage-mods', 'create-mods', 'quest-mods', 'map-mods', 'perf-mods', 'kubejs-mods', 'facade-mods', 'pipe-mods', 'compare-mods', 'integration-mods', 'zoo-mods'].collect { runRoot + '/' + it }.each { d ->
             (rootProject.file(d).listFiles() ?: []).findAll { it.name.endsWith('.jar') }.each { j ->
                 ['mods', 'client1/mods', 'client2/mods'].each { m ->
                     def dst = new File(runDir, "${m}/${j.name}")
