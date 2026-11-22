@@ -4,6 +4,36 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.49.0-beta.1] - 2026-11-22
+
+Pictures of every kind of tank, a short README and every feature in detail in FEATURES.md.
+
+### Added
+- **New pictures and animations** in `docs/images` (each still also with Complementary Reimagined shaders): a rainforest
+  paludarium with dart frogs (animated), a brackish mangrove paludarium where the archerfish spit at the leaves (animated), a
+  seahorse tank (animated), a desert terrarium whose geckos and corn snake walk (animated), a swamp paludarium with frogs, a
+  rainforest terrarium full of terrarium plants (also from inside), a sea turtle in a sea water paludarium with a beach, the
+  shark, the eagle ray, the wels catfish and the dolphins one by one, the aquarist villager, the hired aquarists at work,
+  a monitor wall, a pond with the wild water and terrarium plants, the users tab of the tank menu, the animal icons of
+  the containers and a tank on a Create minecart contraption. The pictures of before were taken again with this version.
+- **`FEATURES.md`**: every feature in detail with its pictures (the old feature list of the README, brought up to date
+  with the users tab, the map waypoints, the lively movement, the wild plants, the icons, the terrarium plants and the
+  debug log).
+
+### Changed
+- **README:** the feature list is short and folded (click to open); it links to `FEATURES.md`. The picture table has the
+  new tanks.
+- **Mod page** (`docs/description.md`): the new pictures in their sections, a link to `FEATURES.md`, the map waypoints
+  and a FAQ entry on bug reports; the counts are current (115 quests, 72 advancements, 144 feature switches).
+- Development: `gradlew buildShowcase -PshowcaseWorld=<name>` builds the showcase world under another name, and the media
+  run takes `-PmediaSource=<world>`, `-PmediaWorld=<copy>` and `-Pmediaparts=room,extras,showcase,m58,create` (the new
+  scenes are part `m58`, the Create picture part `create` with `-Pcreate`).
+
+### Fixed
+- **A crash of the server** ("Ticking entity", `NullPointerException` in `LandWalker.tick`): a land animal in a terrarium
+  or paludarium that got stuck more than ten times in a row dropped its goal and then read it again. Seen with Minecraft
+  frogs on the bank of a paludarium; the animal now picks a new goal on the next tick.
+
 ## [1.48.0-beta.1] - 2026-11-22
 
 A debug log and a bug report for finding problems.
