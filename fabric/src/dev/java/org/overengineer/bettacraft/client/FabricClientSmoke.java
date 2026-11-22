@@ -36,6 +36,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM56 m56;
     /** M61: -Psmoketestm61 (block changes without states, leaving and joining the world). */
     private static DevClientSmokeM61 m61;
+    private static DevClientSmokeM62b m62b;
     private static int stage;
     private static BookTour book;
 
@@ -158,6 +159,20 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 LOGGER.info("[smoketest] fabric client book test finished");
                 LOGGER.info("[smoketest] PASSED");
                 mc.stop();
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62bonly")) {
+                LOGGER.info("[smoketest] fabric client in world: M62b scene");
+                m62b = new DevClientSmokeM62b();
+                stage = 25;
+            }
+            if (stage == 25) {
+                if (m62b.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
+                    LOGGER.info(m62b.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M62b");
+                    mc.stop();
+                }
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m61only")) {

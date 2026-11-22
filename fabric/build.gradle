@@ -73,7 +73,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM62b'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -120,6 +120,11 @@ loom {
             }
             // M61: -Psmoketestm61: sendBlockUpdated with null states, leaving and joining the world (Modern Dynamics has no Fabric
             // build for 1.21.1: the pipe part is a documented gap here)
+            if (project.hasProperty('smoketestm62b')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m62bonly', 'true'
+            }
             if (project.hasProperty('smoketestm61')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'

@@ -54,10 +54,15 @@ public final class FilterLinkScreen extends Screen {
         return 44 + data.options().size() * ROW + 28;
     }
 
+    /** In the upper part of the window: the tanks in the middle of the view stay visible with their outline. */
+    private int top() {
+        return Math.max(4, Math.min(height / 12, height - height() - 4));
+    }
+
     @Override
     protected void init() {
         rows.clear();
-        int left = (width - W) / 2, top = (height - height()) / 2;
+        int left = (width - W) / 2, top = top();
         for (int i = 0; i < data.options().size(); i++) {
             int idx = i;
             Button b = Button.builder(label(i), x -> choose(idx)).bounds(left + 10, top + 36 + i * ROW, W - 20, 20).build();
@@ -121,7 +126,7 @@ public final class FilterLinkScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        int left = (width - W) / 2, top = (height - height()) / 2;
+        int left = (width - W) / 2, top = top();
         g.fill(left, top, left + W, top + height(), 0xD0101820);
         g.renderOutline(left, top, W, height(), 0xFF6A8CA8);
         g.drawCenteredString(font, title, width / 2, top + 8, 0xFFFFFF);
