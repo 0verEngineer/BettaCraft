@@ -40,6 +40,13 @@ final class BreedingLines {
         for (String w : v.warnings) {
             out.add(Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.breeding.warn." + w))
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
+            // M62: which shoals are too small and how many fish they need
+            if (w.equals("tm_shoal")) {
+                for (TankView.Shoal s : v.shoals) {
+                    out.add(Component.literal("    ").append(Component.translatable("gui.bettacraft.shoal.line", s.name(), s.count(), s.need()))
+                            .withStyle(ChatFormatting.GOLD));
+                }
+            }
         }
         // M19: a tank without bettas but with tankmates shows their breeding only
         int[] bs = b.getIntArray("stages");
