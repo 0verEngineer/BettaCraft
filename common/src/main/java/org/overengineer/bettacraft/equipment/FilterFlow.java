@@ -129,7 +129,8 @@ public final class FilterFlow {
             default -> { wallOut = x1 + GAP; wallIn = x1 - REACH; }
         }
         double rim = yTop + 0.1;
-        double sy = Math.max(yBottom - 0.5, Math.min(rim - 0.2, startY));
+        // M62: an external filter may stand up to two blocks below the tank: the hose starts down there
+        double sy = Math.max(yBottom - 0.5 - FilterLinks.MAX_BELOW, Math.min(rim - 0.2, startY));
         Vec3 bottom = alongX ? new Vec3(lat, sy, wallOut) : new Vec3(wallOut, sy, lat);
         Vec3 top = alongX ? new Vec3(lat, rim, wallOut) : new Vec3(wallOut, rim, lat);
         Vec3 inside = alongX ? new Vec3(lat, rim, wallIn) : new Vec3(wallIn, rim, lat);
@@ -141,8 +142,23 @@ public final class FilterFlow {
     /** Path of the filter block at {@code pos} facing the tank ({@code facing} = direction to the tank). */
     @Nullable
     public static Path forFilterBlock(TankData t, BlockPos pos, Direction facing) {
+        return forFilterBlock(t, pos, facing, pos.relative(facing));
+    }
+
+    /** M62: the path of a filter that feeds the wall block {@code wall} (beside it or one or two blocks above that). */
+    @Nullable
+    public static Path forFilterBlock(TankData t, BlockPos pos, Direction facing, BlockPos wall) {
         double lateral = facing.getAxis() == Direction.Axis.Z ? pos.getX() + 0.5 : pos.getZ() + 0.5;
-        return compute(t, pos.relative(facing), facing.getOpposite(), lateral, pos.getY() + 14 / 16.0);
+        return compute(t, wall, facing.getOpposite(), lateral, pos.getY() + 14 / 16.0);
+    }
+
+    /** M62: the path of an external filter block to the tank it feeds (the chosen one or the one in front of it). */
+    @Nullable
+    public static Path forFilter(TankData t, ExternalFilterBlockEntity f) {
+        net.minecraft.world.level.block.state.BlockState s = f.getBlockState();
+        BlockPos wall = f.tankBlockPos();
+        if (!(s.getBlock() instanceof ExternalFilterBlock) || wall == null) return null;
+        return forFilterBlock(t, f.getBlockPos(), s.getValue(ExternalFilterBlock.FACING), wall);
     }
 
     /** Path of a filter inside the cabinet at {@code pos} (tank above it): up the tank's back wall. */

@@ -25,6 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.platform.item.ItemStackHandler;
 import org.overengineer.bettacraft.data.schema.Schemas;
 import org.overengineer.bettacraft.registry.ModBlockEntities;
+import org.overengineer.bettacraft.config.Feature;
+import org.overengineer.bettacraft.config.Features;
 
 /** External filter block next to a tank (PLAN 6.2): two heater slots; the heaters stay in the item when it is broken. */
 public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvider, FilterHost, org.overengineer.bettacraft.winding.Windable, org.overengineer.bettacraft.platform.BlockEntityLifecycle {
@@ -143,7 +145,42 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
     public BlockPos tankBlockPos() {
         BlockState s = getBlockState();
         if (!(s.getBlock() instanceof ExternalFilterBlock)) return null;
+        if (link != null) {
+            // M62: the tank chosen with a sneak-click; one below the tank only while features.equipment.filterBelowTank is on
+            if (link.getY() != worldPosition.getY() && !Features.enabled(Feature.FILTER_BELOW_TANK)) return null;
+            return link;
+        }
         return worldPosition.relative(s.getValue(ExternalFilterBlock.FACING));
+    }
+
+    // ------------------------------------------------------------------ M62 the chosen tank
+
+    /**
+     * M62: the tank block (a wall block beside the filter or one or two blocks above that) whose tank the player chose with a
+     * sneak-click; null: the filter works with the tank right in front of it, as before M62 (also every filter of an older
+     * world: nothing to migrate).
+     */
+    @Nullable
+    private BlockPos link;
+
+    @Nullable
+    public BlockPos link() {
+        return link;
+    }
+
+    /** Sets the chosen tank block (null: back to the tank in front); the client draws the hose there. */
+    public void setLink(@Nullable BlockPos wall) {
+        BlockPos w = wall == null ? null : wall.immutable();
+        if (java.util.Objects.equals(w, link)) return;
+        link = w;
+        setChanged();
+        if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
+
+    /** M62: how many blocks the filter stands below the tank block it feeds (0: beside it). */
+    public int below() {
+        BlockPos t = tankBlockPos();
+        return t == null ? 0 : t.getY() - worldPosition.getY();
     }
 
     public void onLoad() {
@@ -185,6 +222,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         tag.put("heaters", heaters.serializeNBT(registries));
         saveM23(tag);
         spring.save(tag, "spring");
+        if (link != null) tag.putLong("link", link.asLong()); // M62
         NbtCompat.write(output, tag);
     }
 
@@ -200,6 +238,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         }
         loadM23(tag);
         spring.load(tag, "spring");
+        link = tag.getLong("link").map(BlockPos::of).orElse(null); // M62
     }
 
     @Override
@@ -207,6 +246,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         CompoundTag tag = new CompoundTag();
         saveM23(tag);
         tag.putInt("regulator", regulator());
+        if (link != null) tag.putLong("link", link.asLong()); // M62: the client draws the hose to the chosen tank
         return tag;
     }
 
@@ -217,6 +257,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         loadM23(tag);
+        link = tag.getLong("link").map(BlockPos::of).orElse(null); // M62
     }
 
     /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
