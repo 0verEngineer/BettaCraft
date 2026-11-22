@@ -10,7 +10,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  * GameTest run); they are registered here only when the system property {@code bettacraft.integration} is set, which
  * {@code gradlew integrationTests} (or {@code runGameTestServer -Pintegration}) does together with every dev group of the
  * mods we integrate. Unlike the tests of the normal suite they do not pass silently without their mod: a missing mod of the
- * group fails ({@link #lacks}), so a run with an incomplete group cannot look green (except a partial CI run).
+ * group fails ({@link #lacks}), so a run with an incomplete group cannot look green.
  */
 public final class IntegrationSuite {
     static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/integration");
@@ -26,14 +26,9 @@ public final class IntegrationSuite {
     private IntegrationSuite() {}
 
     /**
-     * CI runs ({@code -PintegrationPartial}) have only the mods with a pinned official download (tools/ci/integration-mods.json):
-     * a test whose mods are missing then passes with a log line instead of failing.
-     */
-    public static final boolean PARTIAL = Boolean.getBoolean("bettacraft.integration.partial");
-
-    /**
-     * Whether the test lacks one of its mods: then it fails (the group is incomplete), or in a partial run it passes at once and
-     * the caller returns.
+     * Whether the test lacks one of its mods: then it fails (the group is incomplete). M59: every run has the whole group (the
+     * manifest dev-mods.json downloads it, locally and in CI), so there is no partial run any more (a mod without a build for
+     * this Minecraft version is a documented gap, see VersionGaps).
      */
     public static boolean lacks(GameTestHelper h, String... mods) {
         List<String> missing = java.util.Arrays.stream(mods).filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)).toList();
@@ -44,9 +39,6 @@ public final class IntegrationSuite {
             h.succeed();
             return true;
         }
-        if (!PARTIAL) throw new GameTestFailure("the integration group lacks " + missing + " (see run/*-mods)");
-        LOGGER.warn("[integration] partial run: skipped, lacks {}", missing);
-        h.succeed();
-        return true;
+        throw new GameTestFailure("the integration group lacks " + missing + " (see dev-mods.json and run/*-mods)");
     }
 }
