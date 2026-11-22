@@ -19,7 +19,9 @@ kind, rest on the bottom or stick to the glass, and every species breeds the way
 
 * They come in a **bucket** of their species or in a **fish bag** (a whole shoal fits into one bag). Right-click the
   tank to put them in; the menu takes them out one by one.
-* A shoaling fish alone or in a small group is **stressed** and gets sick after a while: keep at least the minimum.
+* A shoaling fish alone or in a small group is **stressed** and gets sick after a while: keep at least the minimum. The
+  [tank menu](aquarium/menu.md) names every shoal that is too small with its fish and the minimum ("Neon Tetra: 3 of 6": in
+  the overview, the breeding tab and the info overlays), its fish show in orange in the animal list.
 * Every species has its **temperature range**; the classic betta tank (26-28 °C) suits the cardinal, ember, harlequin,
   mosquito rasbora, sterbai cory, kuhli loach and the L-numbers, not the neon, the panda cory or the platy.
 * **Male bettas chase male guppies and dwarf and pearl gouramis**. Every adult eats the fry and the eggs it can reach.
