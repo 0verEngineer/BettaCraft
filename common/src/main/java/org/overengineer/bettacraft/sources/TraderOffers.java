@@ -282,7 +282,7 @@ public final class TraderOffers {
             List<Product> p = new ArrayList<>();
             for (PlantSpecies sp : pool) p.add(new Product(Target.plant(sp), count, emeralds, 1.0 / pool.size(), false, null));
             return p;
-        }, (trader, random) -> {
+        }, (traderLevel, trader, random) -> {
             RandomGenerator rnd = random::nextLong;
             ItemStack plant = InteriorPlants.item(pool.get(rnd.nextInt(pool.size())), 0);
             plant.setCount(count);

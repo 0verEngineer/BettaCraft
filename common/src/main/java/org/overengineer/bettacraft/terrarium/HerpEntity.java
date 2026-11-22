@@ -266,7 +266,7 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     /** M56: puts a tadpole into the water cup of a bromeliad (it stays there until it is a froglet). */
     public void putInNursery(Vec3 cup) {
         nursery = cup;
-        moveTo(cup.x, cup.y, cup.z, getYRot(), 0F);
+        snapTo(cup.x, cup.y, cup.z, getYRot(), 0F);
     }
 
     /** M56: a tadpole in a bromeliad's cup right now. */
@@ -275,14 +275,14 @@ public class HerpEntity extends TerrariumAnimalEntity implements Bucketable {
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(net.minecraft.server.level.ServerLevel serverLevel) {
         if (inNursery() && inTank()) {
             // it stays in its cup (the bromeliad holds it; the walker waits)
             if (position().distanceToSqr(nursery) > 1e-5) setPos(nursery.x, nursery.y, nursery.z);
             walker.hold();
             return;
         }
-        super.customServerAiStep();
+        super.customServerAiStep(serverLevel);
     }
 
     /** Part c: a dart frog tadpole (in the water until {@link #METAMORPHOSIS}). */

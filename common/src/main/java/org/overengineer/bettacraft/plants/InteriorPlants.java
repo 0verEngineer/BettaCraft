@@ -427,7 +427,7 @@ public final class InteriorPlants {
                 double fit = LandPlants.rate(p.species, landEnv, p.y + 0.5 < env.waterLocal());
                 int was = p.target;
                 if (p.stage > 0 && LandPlants.wilt(p, fit, days) > 0 && was == p.species.stages()) {
-                    TankCare.log(level, c, "log.bettacraft.terrarium_plant.languishing", "@" + item(p.species, 0).getDescriptionId());
+                    TankCare.log(level, c, "log.bettacraft.terrarium_plant.languishing", "@" + item(p.species, 0).getItem().getDescriptionId());
                 }
                 double rate = speed * fit;
                 if (rate > 0 && p.room == 0) p.room = room(env.waterLocal(), r, p);
@@ -537,7 +537,7 @@ public final class InteriorPlants {
                 if (p.target == p.species.stages()) {
                     p.progress = 0;
                     TankCare.log(level, c, p.species.land() ? "log.bettacraft.terrarium_plant.grown" : "log.bettacraft.aquatic_grown",
-                            "@" + item(p.species, 0).getDescriptionId());
+                            "@" + item(p.species, 0).getItem().getDescriptionId());
                 }
             }
         } else if (spread && p.species.spreads()) {
