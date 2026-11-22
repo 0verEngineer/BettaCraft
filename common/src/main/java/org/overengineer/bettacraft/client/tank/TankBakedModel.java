@@ -164,11 +164,11 @@ public class TankBakedModel implements DynamicModel {
                 }
             }
         }
-        if (fixedGlass != null && fixedStyle == TankStyle.CLEAN && side == CLEAR_ICON_FACE) {
+        if (fixedGlass != null && fixedStyle == TankStyle.CLEAN) {
             // M21.8: the item icon of a clear glass tank: a 1 px frame (the thin edge lines of the block are far below a pixel
-            // in a 16 px icon, the icon was almost invisible); M62: the panes are completely clear, only the front one carries
-            // a gloss stroke and a sparkle (tank_clear_icon)
-            out.add(clearPane(side));
+            // in a 16 px icon, the icon was almost invisible); M62: the panes are completely clear, only one carries a gloss
+            // stroke and a sparkle (tank_clear_icon)
+            if (side == CLEAR_ICON_FACE) out.add(clearPane(side));
             out.addAll(edgeQuads(side, 0, 0, 0, ITEM_EDGE_WIDTH));
             return out;
         }
@@ -387,7 +387,7 @@ public class TankBakedModel implements DynamicModel {
     static final int ITEM_EDGE_WIDTH = 1000;
     private final Map<Direction, BakedQuad> paneCache = new ConcurrentHashMap<>();
 
-    /** M62: the face of the clear glass item icon with the gloss and the sparkle (the left front face in the inventory). */
+    /** M62: the face of the clear glass item icon with the gloss and the sparkle (the right front face in the inventory). */
     static final Direction CLEAR_ICON_FACE = Direction.NORTH;
 
     /** M21.8: the pane of the clear glass item icon (M62: on {@link #CLEAR_ICON_FACE} only). */
