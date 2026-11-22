@@ -19,7 +19,8 @@ stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
 
 * **Textured**: the aquarium shows the texture of its glass like a window, and the textures are **connected**: the
   frame of the glass texture runs only along the outer edges of the whole aquarium, not between its blocks. This works
-  with the glass of other mods, too.
+  with the glass of other mods, too. The top stays open (no glass over the water); a [lid](equipment/tank_lid.md) is a block
+  of its own.
 * **Clear glass**: perfectly clear glass without any texture, only the thin dark edge lines. Craft it from 6 vanilla
   glass with an **iron nugget** in the middle instead of the iron ingot (4 aquariums).
 * A single vanilla-glass aquarium converts between both styles in the crafting grid (it turns into the other style).
