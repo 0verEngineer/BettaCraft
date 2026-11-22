@@ -7,6 +7,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
@@ -88,6 +89,25 @@ public final class WalkGroundGameTests {
             h.assertTrue(w.get("slime").airborne > 3 && w.get("slime").grounded > 10, "the slime hops: in the air " + w.get("slime").airborne
                     + ", on the ground " + w.get("slime").grounded);
             h.assertTrue(h.getTick() > 300, "watched long enough");
+        });
+    }
+
+    /**
+     * M58: an animal that is blocked more than ten times in a row drops its goal; the step must not read the dropped goal
+     * (a server crash, "NullPointerException in LandWalker.tick", seen with Minecraft frogs in a paludarium).
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_m44_walk", timeoutTicks = 200)
+    public static void aStuckWalkerDropsItsGoalWithoutCrashing(GameTestHelper h) {
+        TankBlockEntity herps = HerpGameTests.terrarium(h, 10);
+        herps.getTank().setClimate(new Climate.State(28, 28, 32, 40, 0, 0));
+        HerpEntity gecko = (HerpEntity) HerpGameTests.put(h, herps, HerpSpecies.LEOPARD_GECKO, false, 0);
+        h.runAfterDelay(5, () -> {
+            LandWalker lw = gecko.walker();
+            var t = herps.getTank();
+            // a goal beyond the glass: every step is blocked
+            lw.goTo(gecko, h.getLevel(), t, new Vec3(t.min().getX() - 4.5, t.min().getY() + 0.1, t.min().getZ() + 0.5), 1000);
+            for (int i = 0; i < 40; i++) lw.tick(gecko, h.getLevel(), t, gecko.gait(), false);
+            h.succeed();
         });
     }
 }
