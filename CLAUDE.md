@@ -119,7 +119,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   `run/saves/bettacraft_smoketest_*` / `bettacraft_fabric_smoketest_*`, GameTest, upgrade, multiplayer, Fabric save/load and
   prod worlds) is deleted before the run and after a successful one; `-PkeepWorld` keeps it. Never the showcase or user worlds.
   The dev servers write `eula.txt` / `server.properties` themselves (offline, port `dev_server_port` / `dev_fabric_server_port`
-  of `gradle.properties`, never 25565).
+  of `gradle.properties`, never 25565). M62: every server start checks its port first (not 25565, free), also the old
+  version's server of the upgrade reference builder (`tools/upgrade/server_port.sh` pins it to the port Gradle chose); `DevServerPortsTest`.
 - Optional dev mod groups, synced into the run's mods folder: `-Pshaders` (`run/shader-mods`: Sodium, Iris; Complementary in `run/shaderpacks`), `-Ppower`
   (`run/power-mods`), `-Paquatic` (`run/aquatic-mods`), `-Pbiomes` (`run/biome-mods`: biome mods such as Regions Unexplored and Oh The
   Biomes We've Gone; servers then use the world `run/world_biomes`; the biome tags `#bettacraft:*_waters` map their

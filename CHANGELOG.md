@@ -51,6 +51,14 @@ tank menu, new icons and a catch guard.
   streaks.
 - Shorter labels: "Fish %s" on the small-animals page button, German "Alle" for any sex.
 
+### Fixed
+- Development: every dev server takes the branch's own port and checks it before it starts (never 25565, a clear message
+  when it is busy): the old version's server of the upgrade reference builder (it ran on the port written into that old
+  commit, shared by every branch, or on 25565), the showcase, the upgrade smoke, the multiplayer and the Fabric
+  save/load tests; the builder takes a free port when the branch's one is busy (`DevServerPortsTest`).
+- Tests: the crank GameTest of the weeks without a generator runs at noon (the room temperature followed the time of day
+  its batch started at; at night a tank got too cold); the Fabric M62 world scene ends without the crack check.
+
 ## [1.50.0-beta.1] - 2026-11-22
 
 The whole test suite runs from a fresh clone without manual work. No change to the game.
