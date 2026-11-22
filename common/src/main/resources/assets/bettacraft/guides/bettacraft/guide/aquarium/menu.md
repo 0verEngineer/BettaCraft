@@ -11,6 +11,11 @@ navigation:
 **Right-click** an aquarium with an empty hand to open its menu. (**Sneak + right-click** enters the
 [interior](../interior.md) instead.)
 
+The menu **grows with the screen**: where the GUI scale leaves room around it (a large window or a smaller GUI scale), it
+gets wider and taller, with full-size tab labels, longer lists and longer lines; where there is no room to spare (GUI scale 4 at
+1280 × 960) it keeps its compact size. Recipe viewers (JEI, REI, EMI) keep clear of it. Text that still does not fit ends in "..." and shows in full
+when you hold the mouse over it.
+
 ## Overview
 
 ![The overview tab](../images/menu_overview.png)
@@ -32,14 +37,17 @@ navigation:
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
 * Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
   and the button to enter the interior (its tooltip shows the interior: scale and size, blocks in the miniature,
-  substrate, heaters and filters inside). The last line warns about poor water or missing power.
+  substrate, heaters and filters inside). The last lines warn about poor water, missing power or a **shoal that is too
+  small**: "Shoal too small: Neon Tetra: 3 of 6" names the fish and how many it should be (hold the mouse over it for every
+  shoal that is too small). A taller menu shows every warning, one per line.
 * The **gear** right of the interior button opens Bettacraft's **client settings** (the same as in the config file
   `bettacraft-client.toml` and in the mod list): among them **Alarm waypoints of all tanks** (`map.showAlarmWaypoints`) and
   which map mods show them (`map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`).
 
 ## Animals
 
-The list of all animals with name, type, sex and stage. The details of the selected fish: health and fed bars, stage
+The list of all animals with name, type, sex and stage (sick ones in red, fish of a shoal that is too small in orange; a
+name that does not fit shows in full under the mouse). The details of the selected fish: health and fed bars, stage
 progress, the genotype (tail, body, fins, pattern; all nine loci in the tooltip) once it is analysed with the
 [magnifier](../equipment/magnifier.md) (button **Analyse**), the generation, a name field and the buttons to take it out
 with a bucket or a fish bag. A dwarf clawed frog shows its health, its food and its air.
@@ -58,7 +66,8 @@ fish bag or a bucket (the second button). **Clutches off** takes the apple snail
 
 ## Breeding
 
-Warnings, the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
+Warnings (under "A shoal of tankmates is too small" every such shoal with its fish and the minimum, e.g. "Neon Tetra: 3
+of 6"), the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
 See [Breeding](../bettas/breeding.md).
 
 ## Water

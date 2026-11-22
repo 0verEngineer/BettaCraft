@@ -20,7 +20,9 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
 * Sie kommen in einem **Eimer** ihrer Art oder in einer **Fischtüte** (ein ganzer Schwarm passt in eine Tüte).
   Rechtsklick auf das Becken setzt sie ein; das Menü nimmt sie einzeln wieder heraus.
 * Ein Schwarmfisch allein oder in zu kleiner Gruppe ist **gestresst** und wird nach einer Weile krank: Halte mindestens
-  die Mindestzahl.
+  die Mindestzahl. Das [Tank-Menü](aquarium/menu.md) nennt jeden zu kleinen Schwarm mit seinen Fischen und der Mindestzahl
+  („Neonsalmler: 3 von 6“: in der Übersicht, im Tab Zucht und in den Info-Overlays), seine Fische stehen orange in der
+  Tierliste.
 * Jede Art hat ihren **Temperaturbereich**; das klassische Betta-Becken (26-28 °C) passt für Roten Neon, Feuersalmler,
   Keilfleckbärbling, Moskitobärbling, Sterbai-Panzerwels, Dornauge und die L-Welse, nicht für Neonsalmler,
   Panda-Panzerwels oder Platy.
