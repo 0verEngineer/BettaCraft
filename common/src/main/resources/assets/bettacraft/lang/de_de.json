@@ -3650,7 +3650,7 @@
   "log.bettacraft.terrarium.mode": "Das Becken ist jetzt: %s",
   "log.bettacraft.terrarium.problem": "%1$s: %2$s",
   "log.bettacraft.terrarium.died": "%s ist gestorben",
-  "gui.bettacraft.terrarium.no_water": "Ein Terrarium ohne Wasser: Wasserqualität, Filter, Sauerstoff und Wasserchemie stehen still",
+  "gui.bettacraft.terrarium.no_water": "Kein Wasser: Wasserqualität, Filter, Sauerstoff und Chemie ruhen",
   "gui.bettacraft.terrarium.bask_only": "Sonnenplatz %s °C",
   "bettacraft.configuration.brumation": "Winterstarre",
   "bettacraft.configuration.brumation.tooltip": "Griechische Landschildkröten halten Winterstarre (ruhen ohne Futter und ohne Schaden), solange die Luft im Becken unter brumationBelow liegt (aus: die Kälte schadet ihnen wie den anderen Schildkröten)",
