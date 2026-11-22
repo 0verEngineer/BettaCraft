@@ -77,6 +77,10 @@ public final class CatchGuardGameTests {
         return h.getLevel().getEntitiesOfClass(type, new AABB(h.absolutePos(rel)).inflate(3));
     }
 
+    private static List<? extends Entity> ofType(GameTestHelper h, EntityType<?> type, BlockPos rel) {
+        return h.getLevel().getEntities(type, new AABB(h.absolutePos(rel)).inflate(3), e -> true);
+    }
+
     private static void check(boolean ok, String what) {
         if (!ok) throw new GameTestAssertException(what);
     }
@@ -137,7 +141,7 @@ public final class CatchGuardGameTests {
         check(TerrariumBoxItem.isFilled(after), "the box of a foreign animal emptied without asking");
         ContainerRules.confirm(sp, InteractionHand.MAIN_HAND);
         check(!TerrariumBoxItem.isFilled(sp.getItemInHand(InteractionHand.MAIN_HAND)), "the confirmed box did not empty");
-        check(around(h, net.minecraft.world.entity.animal.Rabbit.class, new BlockPos(5, 2, 5)).size() == 1, "the rabbit is not out");
+        check(ofType(h, EntityType.RABBIT, new BlockPos(5, 2, 5)).size() == 1, "the rabbit is not out");
         // the transport tub into water
         for (int x = 11; x <= 15; x++) for (int z = 4; z <= 8; z++) for (int y = 1; y <= 3; y++) {
             boolean wall = x == 11 || x == 15 || z == 4 || z == 8 || y == 1;
@@ -151,7 +155,7 @@ public final class CatchGuardGameTests {
         check(TransportTubItem.isFilled(after), "the tub emptied without asking");
         ContainerRules.confirm(sp, InteractionHand.MAIN_HAND);
         check(!TransportTubItem.isFilled(sp.getItemInHand(InteractionHand.MAIN_HAND)), "the confirmed tub did not empty: " + sp.getItemInHand(InteractionHand.MAIN_HAND));
-        check(around(h, net.minecraft.world.entity.animal.Cod.class, new BlockPos(13, 3, 6)).size() == 1, "the cod is not in the water");
+        check(ofType(h, EntityType.COD, new BlockPos(13, 3, 6)).size() == 1, "the cod is not in the water");
         // the mob jar onto a block
         h.setBlock(new BlockPos(20, 1, 5), Blocks.STONE.defaultBlockState());
         stand(h, sp, new BlockPos(20, 4, 5));
@@ -163,8 +167,8 @@ public final class CatchGuardGameTests {
         check(MobJarItem.isFilled(after), "the mob jar emptied without asking");
         ContainerRules.confirm(sp, InteractionHand.MAIN_HAND);
         check(!MobJarItem.isFilled(sp.getItemInHand(InteractionHand.MAIN_HAND)), "the confirmed jar did not empty: " + sp.getItemInHand(InteractionHand.MAIN_HAND));
-        check(around(h, net.minecraft.world.entity.monster.Zombie.class, new BlockPos(20, 2, 5)).size() == 1, "the zombie is not out");
-        around(h, net.minecraft.world.entity.monster.Zombie.class, new BlockPos(20, 2, 5)).forEach(Entity::discard);
+        check(ofType(h, EntityType.ZOMBIE, new BlockPos(20, 2, 5)).size() == 1, "the zombie is not out");
+        ofType(h, EntityType.ZOMBIE, new BlockPos(20, 2, 5)).forEach(Entity::discard);
         h.succeed();
     }
 
