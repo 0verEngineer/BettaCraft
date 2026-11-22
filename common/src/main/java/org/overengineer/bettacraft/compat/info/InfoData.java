@@ -76,6 +76,7 @@ public final class InfoData {
         ListTag warn = new ListTag();
         for (String w : TankBreeding.warnings(level, c)) warn.add(StringTag.valueOf(w));
         out.put("warnings", warn);
+        if (warn.contains(StringTag.valueOf("tm_shoal"))) out.put("shoals", org.overengineer.bettacraft.tankmates.TankmateBreeding.smallShoals(level, c)); // M62
         ListTag fw = new ListTag(); // M40: multiblock filters that reach the tank without guards
         for (var e : org.overengineer.bettacraft.filter.MultiblockFilter.warnings(level, c).entrySet())
             fw.add(StringTag.valueOf(e.getKey().getX() + " " + e.getKey().getY() + " " + e.getKey().getZ() + "|" + e.getValue().key()));

@@ -243,6 +243,29 @@ public final class TankView {
     /** Breeding tab content ({@link org.overengineer.bettacraft.tank.TankBreeding#describe}). */
     public CompoundTag breeding = new CompoundTag();
     public final List<String> warnings = new ArrayList<>();
+    /** M62: the shoals that are too small (the warning "tm_shoal" names them): species, its fish, the minimum. */
+    public final List<Shoal> shoals = new ArrayList<>();
+
+    /** M62: a shoal that is too small: {@code count} fish of {@code species} (id), it needs {@code need}. */
+    public record Shoal(String species, int count, int need) {
+        /** "neon_tetra|3|6" (the menu and the overlays), null if it is not one. */
+        @javax.annotation.Nullable
+        public static Shoal parse(String s) {
+            String[] p = s.split("[|]");
+            if (p.length != 3) return null;
+            try {
+                return new Shoal(p[0], Integer.parseInt(p[1]), Integer.parseInt(p[2]));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+
+        /** The species' name ("Neon Tetra"). */
+        public net.minecraft.network.chat.Component name() {
+            var s = org.overengineer.bettacraft.tankmates.TankmateSpecies.byId(species);
+            return s == null ? net.minecraft.network.chat.Component.literal(species) : net.minecraft.network.chat.Component.translatable(s.translationKey());
+        }
+    }
     /** Interior tab (M3): scale, size, synced blocks, equipment. */
     public int scale, interiorX, interiorY, interiorZ, interiorBlocks = -1, renderLimit, substrate, heatersInside, heaterCapWet, heaterCapDry,
             filters, floating;
@@ -1235,6 +1258,8 @@ public final class TankView {
         breeding.putBoolean("box", t.breedingBox());
         breeding.putInt("box_fry", org.overengineer.bettacraft.tankmates.TankmateBreeding.boxFry(t));
         breeding.putInt("box_cap", org.overengineer.bettacraft.tankmates.TankmateBreeding.boxCapacity());
+        // M62: which shoals are too small, with their fish and the minimum
+        if (Features.enabled(Feature.TANKMATES)) breeding.put("shoals", org.overengineer.bettacraft.tankmates.TankmateBreeding.smallShoals(level, controller));
         out.put("breeding", breeding);
         out.put("interior", interior(level, t));
         CompoundTag eq = new CompoundTag();
@@ -1495,6 +1520,11 @@ public final class TankView {
         v.breeding = t.getCompoundOrEmpty("breeding");
         ListTag w = v.breeding.getListOrEmpty("warnings");
         for (int i = 0; i < w.size(); i++) v.warnings.add(w.getStringOr(i, ""));
+        ListTag sh = v.breeding.getListOrEmpty("shoals"); // M62
+        for (int i = 0; i < sh.size(); i++) {
+            Shoal sl = Shoal.parse(sh.getStringOr(i, ""));
+            if (sl != null) v.shoals.add(sl);
+        }
         return v;
     }
 }
