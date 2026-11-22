@@ -74,6 +74,8 @@ final class DevClientSmokeM61 {
     private String worldId;
     /** Between leaving and joining again (the scene does not tick then; a tick hook of its own answers the backup screen). */
     private volatile boolean rejoining;
+    /** The backup screen already answered (the world loads on in the next ticks while it still shows: press it once). */
+    private Object answered;
 
     DevClientSmokeM61() {
         watchPacketErrors();
@@ -240,6 +242,7 @@ final class DevClientSmokeM61 {
         }
         if (!rejoining || !(mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen
                 || mc.screen instanceof net.minecraft.client.gui.screens.ConfirmScreen)) return;
+        if (mc.screen == answered) return;
         String skip = Component.translatable("selectWorld.backupJoinSkipButton").getString();
         net.minecraft.client.gui.components.Button pick = null;
         for (var w : mc.screen.children()) {
@@ -248,6 +251,7 @@ final class DevClientSmokeM61 {
         }
         if (pick != null) {
             LOGGER.info("[smoketest] M61 {}: pressing {}", mc.screen.getClass().getSimpleName(), pick.getMessage().getString());
+            answered = mc.screen;
             pick.onPress(new net.minecraft.client.input.MouseButtonInfo(0, 0));
         }
     }
