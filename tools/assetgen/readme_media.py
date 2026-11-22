@@ -85,7 +85,7 @@ ANIMS = {
 }
 # M58: GUI pictures (PNG): the users tab of the tank menu (the window without the inventory), a chest of animal containers
 GUI = {
-    'readme_m58_menu_users': ('bettacraft-menu-users', (0.344, 0.243, 0.656, 0.558), 800),
+    'readme_m58_menu_users': ('bettacraft-menu-users', (0.2675, 0.12, 0.733, 0.6), 800),
     'readme_m58_icons': ('bettacraft-animal-icons', None, 800),
 }
 
@@ -115,7 +115,7 @@ def stills():
 
 
 # the tank window without the player inventory, and the top of the handbook page (fractions of the 1600x900 shot)
-MENU_BOX = (0.344, 0.243, 0.656, 0.558)
+MENU_BOX = (0.2675, 0.12, 0.733, 0.6)  # M58: the window at the GUI scale of the media run (1600x900)
 GUIDE_BOX = (0.0, 0.0, 1.0, 0.425)
 
 
