@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.50.0-beta.1] - 2026-11-22
+
+The whole test suite runs from a fresh clone without manual work. No change to the game.
+
+### Added
+- **`dev-mods.json`**, the manifest of every foreign mod the tests load: for each loader and group folder (`-Ppower`,
+  `-Paquatic`, `-Pbiomes`, `-Pstorage`, `-Pcreate`, `-Pquests`, `-Pmaps`, `-Pperf`, `-Pshaders`, `-Pkubejs`, `-Pfacades`,
+  `-Ppipes`, `-Pcompare`, the integration and zoo suites, the Fabric groups `-Poverlays`, `-Prei`, `-Pemi`,
+  `-Pfabricintegration`, `-Pvulkanmod`) the exact file with its official source (Modrinth Maven, CurseMaven, FTB Maven),
+  size, SHA-1 and SHA-256, plus the Complementary Reimagined shader pack. `gradle/dev-mods.gradle` downloads a group the
+  first time a run switches it on (Gradle cache, `--offline` works afterwards), checks both hashes (a mismatch stops the
+  build) and fills the group folders. A build without a group flag downloads nothing. The jars are never committed.
+- `tools/devmods/update_manifest.py`: rewrites the manifest from the group folders (finds each jar's official source by its
+  SHA-1 on Modrinth, the FTB Maven or CurseForge). `-Plocal` loads `run/local-mods` (mods to try out before they go into the
+  manifest); a jar in a group folder that the manifest does not list is moved to `run/local-mods-backup/<date>/`.
+- `DevModsManifestTest`: every group folder the loader builds read is in the manifest (or a documented gap), every entry has
+  an official source and its hashes, one file name is one file.
+- `tools/upgrade/references.json`: the commit each upgrade reference world is built from; `smoketestUpgrade` and
+  `runServer -PsmoketestOldWorld` build a missing reference world themselves (the old version in a git worktree next to the
+  checkout). `-PsmoketestOldWorld` loads the reference world by default (`-PoldWorld=<name>` for another one).
+- `gradlew smoketestWorldCleanup`: two server smokes in a row; the world is deleted after each and does not grow.
+
+### Changed
+- **Test worlds are cleaned up:** every world a test run makes (the server smoke's `run/world`, `world_biomes` and
+  `oldworld_check`, the client smoke worlds, the GameTest, upgrade, multiplayer and Fabric save/load and production worlds)
+  is deleted before the run and after a successful one (`run/world` had grown to 18 GB of tank interiors); `-PkeepWorld`
+  keeps it for debugging. The showcase and worlds of your own are never touched.
+- The dev servers write their `eula.txt` and `server.properties` themselves (offline mode for the multiplayer test, never
+  the default port 25565: `dev_server_port` / `dev_fabric_server_port` in `gradle.properties`).
+- CI: the manual workflow `integration.yml` runs the full integration suite, the zoo suite and the Fabric GameTests with the
+  Fabric mod groups (choose one or all), with every mod of the manifest; the `-Ppower` GameTests of the full build use the
+  manifest too. Only logs are uploaded, never a mod.
+- README: a section "Running the tests" (clone, Java, flags, where the mods come from).
+
+### Version gaps (26.1.2)
+- The manifest of this branch lists 124 files. Groups without a build for Minecraft 26.1.2 (listed under `gaps` in `dev-mods.json`, checked on Modrinth, CurseForge and the mods' mavens): `neoforge/compare-mods` (the size comparison with DragN's Just Bettas (M36) is set up on 1.21.1 only); `neoforge/create-mods` (Create and Sable have no 26.1.2 build (VersionGaps)); `fabric/emi-mods` (EMI has no build after Minecraft 1.21.1 (Modrinth emi, CurseForge 580555, maven.terraformersmc.com checked 2026-11-22)).
+
+### Removed
+- `tools/ci/fetch_mods.py`, `power-mods.json`, `integration-mods.json` and the partial integration run
+  (`-PintegrationPartial`): CI loads the same manifest as a local run.
+
 ## [1.49.0-beta.1] - 2026-11-22
 
 Pictures of every kind of tank, a short README and every feature in detail in FEATURES.md.
