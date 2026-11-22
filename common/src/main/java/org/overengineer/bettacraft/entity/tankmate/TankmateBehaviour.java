@@ -617,20 +617,122 @@ final class TankmateBehaviour {
         fish.yHeadRot = fish.getYRot();
     }
 
+    /**
+     * Outside a tank. M62: a shoaling fish swims in a school there too (switch {@code tankmates.wildSchools}): the one of its kind
+     * with the lowest id nearby leads ({@link #wildLeader}) and wanders (lively: now and then a dart), the others follow it, each
+     * at its own offset like in a tank ({@link #shoal}); a schooling big animal keeps behind and beside its leader. Targets stay
+     * in water. Without a school (alone, or the switch off) it wanders for itself as before.
+     */
     private void wild() {
         if (!fish.isInWater()) return;
+        RandomSource r = r();
+        TankmateSpecies s = fish.species();
+        TankmateEntity lead = fish.level() instanceof ServerLevel server ? wildLeader(server, s) : null;
+        if (lead != null && lead != fish) {
+            if (--ticks > 0 && target != null && followingWild) {
+                move().swimTo(target.x, target.y, target.z, speed);
+                return;
+            }
+            followingWild = true;
+            double len = Math.max(0.3, s.length() * fish.getAgeScale());
+            Vec3 t;
+            if (s.isLarge()) {
+                // behind and beside its leader, a little ahead along the leader's heading (as in a tank, #school)
+                if (offset == Vec3.ZERO || r.nextInt(5) == 0) {
+                    double side = (r.nextBoolean() ? 1 : -1) * len * (0.4 + r.nextDouble() * 0.4);
+                    offset = new Vec3(side, (r.nextDouble() - 0.5) * len * 0.4, -len * (0.4 + r.nextDouble() * 0.6));
+                }
+                double h = lead.getYRot() * Mth.DEG_TO_RAD;
+                double fx = -Math.sin(h), fz = Math.cos(h), ahead = len * 0.8 + offset.z;
+                t = lead.position().add(fx * ahead + fz * offset.x, offset.y, fz * ahead - fx * offset.x);
+            } else {
+                // a little looser than in a tank (open water)
+                double spread = 0.3 + s.length() * 2.2;
+                if (offset == Vec3.ZERO || r.nextInt(6) == 0) {
+                    offset = new Vec3(r.nextGaussian() * spread, r.nextGaussian() * spread * 0.4, r.nextGaussian() * spread);
+                }
+                t = lead.position().add(offset);
+            }
+            if (!water(t)) t = lead.position();
+            double d = fish.position().distanceTo(t);
+            target = t;
+            speed = d > 1.5 ? 1.3 : 0.85;
+            ticks = 10 + r.nextInt(12);
+            move().swimTo(t.x, t.y, t.z, speed);
+            return;
+        }
+        if (followingWild) {
+            // it was following and leads (or is alone) now: a new goal of its own at once
+            followingWild = false;
+            ticks = 0;
+        }
         if (--ticks > 0 && target != null) {
             move().swimTo(target.x, target.y, target.z, speed);
             return;
         }
-        RandomSource r = r();
-        Vec3 p = fish.position().add(r.nextGaussian() * 2, r.nextGaussian() * 0.5, r.nextGaussian() * 2);
-        BlockPos bp = BlockPos.containing(p);
-        if (fish.level().getFluidState(bp).is(net.minecraft.tags.FluidTags.WATER)) {
-            target = p;
-            speed = 0.6;
+        boolean school = lead == fish;
+        if (school && Features.enabled(Feature.LIVELY_MOVEMENT) && r.nextDouble() < DART_CHANCE) {
+            // M54/M62: the leader darts off now and then (its school follows)
+            Vec3 p = ahead(r, 1.0 + r.nextDouble() * 1.5);
+            if (water(p)) {
+                target = p;
+                speed = DART;
+                ticks = 12 + r.nextInt(14);
+                return;
+            }
         }
-        ticks = 80 + r.nextInt(80);
+        // a leader cruises on mostly ahead (its school follows in curves), a lone fish wanders as before
+        Vec3 p = school ? ahead(r, 1.5 + r.nextDouble() * 2.5) : fish.position().add(r.nextGaussian() * 2, r.nextGaussian() * 0.5, r.nextGaussian() * 2);
+        if (school && !water(p)) p = fish.position().add(r.nextGaussian() * 2, r.nextGaussian() * 0.5, r.nextGaussian() * 2);
+        if (water(p)) {
+            target = p;
+            speed = school ? 0.7 : 0.6;
+        }
+        ticks = school ? 50 + r.nextInt(70) : 80 + r.nextInt(80);
+    }
+
+    /** M62: following a wild school's leader now. */
+    private boolean followingWild;
+
+    /** M62: a point {@code dist} ahead, mostly within 60 degrees of the heading, a little up or down. */
+    private Vec3 ahead(RandomSource r, double dist) {
+        double ang = fish.getYRot() * Mth.DEG_TO_RAD + (r.nextFloat() < 0.75 ? (r.nextDouble() - 0.5) * (2 * Math.PI / 3) : r.nextDouble() * 2 * Math.PI);
+        return fish.position().add(-Math.sin(ang) * dist, (r.nextDouble() - 0.5) * 0.6, Math.cos(ang) * dist);
+    }
+
+    /** M62: the point lies in water (the block and, for a target near the surface, not above it). */
+    private boolean water(Vec3 p) {
+        return fish.level().getFluidState(BlockPos.containing(p)).is(net.minecraft.tags.FluidTags.WATER);
+    }
+
+    /** M62: how far a wild school holds together (blocks). */
+    static final double WILD_SCHOOL_RANGE = 10.0;
+
+    /**
+     * M62: the leader of a wild school: the fish of this species outside a tank in water within {@link #WILD_SCHOOL_RANGE} with
+     * the lowest entity id (refreshed every 2 s; null: not a shoaling fish, or the switch off).
+     */
+    @Nullable
+    private TankmateEntity wildLeader(ServerLevel server, TankmateSpecies s) {
+        if (!s.shoaling() || !Features.enabled(Feature.WILD_SCHOOLS)) return null;
+        long now = server.getGameTime();
+        if (now - leaderAt < 40 && leader != null && leader.isAlive() && !leader.isInTank() && leader.distanceToSqr(fish) < WILD_SCHOOL_RANGE * WILD_SCHOOL_RANGE * 2.25) {
+            return leader;
+        }
+        leaderAt = now;
+        TankmateEntity best = null;
+        for (TankmateEntity e : server.getEntitiesOfClass(TankmateEntity.class, fish.getBoundingBox().inflate(WILD_SCHOOL_RANGE),
+                e -> e.isAlive() && e.species() == s && !e.isInTank() && e.isInWater())) {
+            if (best == null || e.getId() < best.getId()) best = e;
+        }
+        leader = best;
+        return best;
+    }
+
+    /** M62 GameTests: the leader this fish follows outside a tank (itself when it leads; null without a school). */
+    @Nullable
+    TankmateEntity wildLeaderNow() {
+        return fish.level() instanceof ServerLevel server && fish.tankWater == null ? wildLeader(server, fish.species()) : null;
     }
 
     private void apply() {

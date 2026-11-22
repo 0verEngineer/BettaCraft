@@ -85,6 +85,11 @@ public class HerpRenderer extends MobRenderer<TerrariumAnimalEntity, EntityModel
         Direction wall = p.wall();
         if (wall != null) {
             // clinging: head towards the wall, then turned nose up, so the belly lies on the glass
+            // M62: in the world the animal stands half its width off the face it climbs: the belly onto the face
+            if (!e.inTank()) {
+                float off = e.getBbWidth() * 0.5F - 0.02F;
+                pose.translate(wall.getStepX() * off, 0, wall.getStepZ() * off);
+            }
             super.setupRotations(e, pose, bob, wall.toYRot(), partialTick, scale);
             pose.mulPose(Axis.XP.rotationDegrees(90F));
             return;

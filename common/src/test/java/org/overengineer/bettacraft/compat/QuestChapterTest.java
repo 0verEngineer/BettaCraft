@@ -60,6 +60,7 @@ class QuestChapterTest {
         NO_QUEST.put(Feature.PLANT_MESHES, "a visual option");
         NO_QUEST.put(Feature.SWAYING_PLANTS, "a visual option");
         NO_QUEST.put(Feature.LIVELY_MOVEMENT, "M54: how the animals move (hours, pace, climbing, hiding, actions): nothing to do, no item or event");
+        NO_QUEST.put(Feature.WORLD_CLIMBING, "M62: animals climb steps and walls in the world: nothing to do, no item or event");
         NO_QUEST.put(Feature.SMOOTH_SWIMMING, "a visual option");
         NO_QUEST.put(Feature.SOUNDS, "an audio option");
         NO_QUEST.put(Feature.WILD_SPAWN_PASS, "world generation, nothing to do");
