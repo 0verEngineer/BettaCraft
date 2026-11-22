@@ -2,7 +2,6 @@ package org.overengineer.bettacraft.client.tank;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,7 +57,8 @@ public final class TankWaterRenderer {
         if (Boolean.TRUE.equals(org.overengineer.bettacraft.platform.client.ClientPlatform.get().modelValue(level, pos, org.overengineer.bettacraft.tank.TankBlockEntity.WATER_DYNAMIC))) return;
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite still = atlas.apply(STILL), side = atlas.apply(SIDE);
-        int light = LevelRenderer.getLightColor(level, pos);
+        // M63: smooth light, one value per corner (flat light per block drew the blocks as rectangles in unevenly lit rooms)
+        long light = TankWaterLight.corners(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
         faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), (d, c, col, rev) -> {
@@ -129,7 +129,7 @@ public final class TankWaterRenderer {
     }
 
     private static void emit(VertexConsumer vc, Direction d, float[] c, float ox, float oy, float oz, TextureAtlasSprite sprite,
-                             int r, int g, int b, int a, int light, boolean reversed) {
+                             int r, int g, int b, int a, long light, boolean reversed) {
         float nx = d.getStepX(), ny = d.getStepY(), nz = d.getStepZ();
         if (reversed) {
             nx = -nx; ny = -ny; nz = -nz;
@@ -140,7 +140,7 @@ public final class TankWaterRenderer {
             vc.addVertex(ox + x, oy + y, oz + z)
                     .setColor(r, g, b, a)
                     .setUv(sprite.getU(BoxFaces.u(d, x, y, z)), sprite.getV(BoxFaces.v(d, x, y, z)))
-                    .setLight(light)
+                    .setLight(TankWaterLight.at(light, x, y, z))
                     .setNormal(nx, ny, nz);
         }
     }

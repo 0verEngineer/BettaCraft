@@ -57,6 +57,8 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     public static final ModelKey<Integer> CORNERS = new ModelKey<>("tank_corners");
     /** M18: RGB of the tank's coloured lights for the water drawn by the model (shader packs); absent = no tint. */
     public static final ModelKey<Integer> LIGHT = new ModelKey<>("tank_light");
+    /** M63: the corner lights of the water drawn by the model ({@link TankWaterLight#corners}); absent = the block's own light. */
+    public static final ModelKey<Long> WATER_LIGHT = new ModelKey<>("tank_water_light");
 
     private final TextureAtlasSprite edge;
     /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
@@ -220,9 +222,12 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         if (state.getValue(TankBlock.FILL) > 0 && TankWaterRenderer.waterAbove(level, pos, state)) corners |= WATER_ABOVE_BIT;
         corners |= TankWaterRenderer.gapMask(level, pos, state) << GAP_SHIFT;
         int light = state.getValue(TankBlock.FILL) > 0 ? TankLightTint.colorAt(level, pos) : 0;
-        if (concave == 0 && corners == 0 && light == 0) return modelData;
+        // M63: the water of the model (shader packs, contraptions) gets the smooth corner light of the fluid path
+        boolean water = state.getValue(TankBlock.FILL) > 0 && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(modelData));
+        if (concave == 0 && corners == 0 && light == 0 && !water) return modelData;
         var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
         if (light != 0) b.with(LIGHT, light);
+        if (water) b.with(WATER_LIGHT, TankWaterLight.corners(level, pos));
         return b.build();
     }
 
@@ -244,7 +249,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         // M18: the light colour (and the tint strength it was mixed with) is part of the key
         long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
                 | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48); // M20: the salt byte reaches bit 46
-        return waterCache.computeIfAbsent(key, k -> {
+        List<BakedQuad> plain = waterCache.computeIfAbsent(key, k -> {
             var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             List<BakedQuad> list = new ArrayList<>();
@@ -252,6 +257,26 @@ public class TankBakedModel implements BakedModel, DynamicModel {
                     list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite)));
             return List.copyOf(list);
         });
+        Long corners = data.get(WATER_LIGHT);
+        return corners == null ? plain : lit(plain, corners);
+    }
+
+    /**
+     * M63: copies of the water quads with the light of their corners in the vertices ({@link TankWaterLight}); the chunk
+     * renderer keeps the brighter of that and the block's own light, which the corner light always is.
+     */
+    private static List<BakedQuad> lit(List<BakedQuad> quads, long corners) {
+        List<BakedQuad> out = new ArrayList<>(quads.size());
+        for (BakedQuad q : quads) {
+            int[] v = q.getVertices().clone();
+            int stride = v.length / 4;
+            for (int i = 0; i < 4; i++) {
+                int o = i * stride;
+                v[o + 6] = TankWaterLight.at(corners, Float.intBitsToFloat(v[o]), Float.intBitsToFloat(v[o + 1]), Float.intBitsToFloat(v[o + 2]));
+            }
+            out.add(ClientPlatform.get().quad(v, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade(), false));
+        }
+        return out;
     }
 
     private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
