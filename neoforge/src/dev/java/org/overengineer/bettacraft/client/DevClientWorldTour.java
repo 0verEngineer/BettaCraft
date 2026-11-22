@@ -59,7 +59,16 @@ final class DevClientWorldTour {
     /** The world's ticks stand still during the tour ({@code bettacraft.tour.freeze}, default on): the animals do not move. */
     private static final boolean FREEZE = !"false".equals(System.getProperty("bettacraft.tour.freeze"));
 
-    private record Step(int delay, Runnable action) {}
+    /** {@code atTarget}: the step waits until the client's camera stands where the last {@link #look} put it (at most 200 ticks). */
+    private record Step(int delay, Runnable action, boolean atTarget) {
+        Step(int delay, Runnable action) {
+            this(delay, action, false);
+        }
+    }
+
+    /** Where the last {@link #look} puts the camera: x, eye y, z, yaw, pitch. */
+    private volatile double[] target;
+    private int arrivedFor;
 
     /** A tank: its box (min inclusive, size) and the side its front faces. */
     record Tank(BlockPos min, int sx, int sy, int sz, Direction front, String name) {
@@ -163,8 +172,12 @@ final class DevClientWorldTour {
         if (mc.screen != null) confirmScreens(mc, mc.screen);
     }
 
+    /** The last screen answered: Fabric initialises a screen several times (resizes); its answer must run once. */
+    private static net.minecraft.client.gui.screens.Screen answered;
+
     private static void confirmScreens(Minecraft mc, net.minecraft.client.gui.screens.Screen screen) {
         if (!(screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen || screen instanceof net.minecraft.client.gui.screens.ConfirmScreen)) return;
+        if (screen == answered) return;
         String skip = net.minecraft.network.chat.Component.translatable("selectWorld.backupJoinSkipButton").getString();
         String proceed = net.minecraft.network.chat.Component.translatable("gui.proceed").getString();
         String yes = net.minecraft.network.chat.Component.translatable("gui.yes").getString();
@@ -179,6 +192,7 @@ final class DevClientWorldTour {
         }
         if (pick != null) {
             LOGGER.info("[smoketest] world tour: pressing {} on {}", pick.getMessage().getString(), screen.getClass().getSimpleName());
+            answered = screen;
             press(pick);
         }
     }
@@ -240,7 +254,7 @@ final class DevClientWorldTour {
                     double[] cam = clear(camera(t, view), list, t);
                     if (cam == null) continue;
                     then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
-                    then(SETTLE, () -> shot(pn, t.id() + "_" + view));
+                    thenAt(SETTLE, () -> shot(pn, t.id() + "_" + view));
                     if (first && view.equals(VIEWS.split(",")[0].trim())) then(0, () -> checkTop(t));
                 }
             }
@@ -256,7 +270,7 @@ final class DevClientWorldTour {
                         boolean firstAtSpot = yaw == 0 && pitch < 0;
                         then(1, () -> look(sp[0], sp[1], sp[2], fy, pitch));
                         // a new spot: the chunks around it load and fade in first
-                        then(firstAtSpot ? 100 : SETTLE + 6, () -> shot(pn, view));
+                        thenAt(firstAtSpot ? 100 : SETTLE + 6, () -> shot(pn, view));
                         if (hideMiniatures(true, true)) {
                             then(1, () -> hideMiniatures(true, false));
                             then(SETTLE, () -> shot(pn, view + "_nomini"));
@@ -614,6 +628,8 @@ final class DevClientWorldTour {
     // ------------------------------------------------------------------ helpers
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
+        target = new double[]{x, eyeY, z, yaw, pitch};
+        arrivedFor = 0;
         server(p -> teleport(p, x, eyeY - p.getEyeHeight(), z, yaw, pitch));
     }
 
@@ -628,6 +644,19 @@ final class DevClientWorldTour {
         steps.add(new Step(delay, action));
     }
 
+    /** After the camera arrived where the last look put it and stood there {@code ticks} ticks. */
+    private void thenAt(int ticks, Runnable action) {
+        steps.add(new Step(ticks, action, true));
+    }
+
+    private boolean arrived() {
+        double[] t = target;
+        if (t == null || mc.player == null) return true;
+        double dx = mc.player.getX() - t[0], dy = mc.player.getEyeY() - t[1], dz = mc.player.getZ() - t[2];
+        float dyaw = net.minecraft.util.Mth.wrapDegrees(mc.player.getYRot() - (float) t[3]);
+        return dx * dx + dy * dy + dz * dz < 0.01 && Math.abs(dyaw) < 0.5F && Math.abs(mc.player.getXRot() - (float) t[4]) < 0.5F;
+    }
+
     /** Returns true when all steps are done. */
     private boolean tick() {
         if (mc.player != null) {
@@ -636,7 +665,16 @@ final class DevClientWorldTour {
         }
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
-        if (wait < s.delay()) {
+        if (s.atTarget()) {
+            // the picture only once the camera is there (a busy server answers a teleport late: the picture showed the last place)
+            if (arrived()) arrivedFor++;
+            else arrivedFor = 0;
+            if (arrivedFor < s.delay() && wait < 200) {
+                wait++;
+                return false;
+            }
+            if (arrivedFor < s.delay()) LOGGER.warn("[smoketest] world tour: the camera did not reach {} in 200 ticks", java.util.Arrays.toString(target));
+        } else if (wait < s.delay()) {
             wait++;
             return false;
         }
