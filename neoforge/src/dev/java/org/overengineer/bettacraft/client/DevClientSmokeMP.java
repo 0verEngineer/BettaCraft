@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Development-only multiplayer test, client side ({@code -Dbettacraft.smoketest.mp=true}, started twice by
  * {@code gradlew runMultiplayerTest} as Dev1 and Dev2): connects to the dedicated server
- * ({@code bettacraft.smoketest.mp.address}, default localhost:25599), then follows the server's script (system chat
+ * ({@code bettacraft.smoketest.mp.address}, set by the build: the dev_server_port of the branch, never the default port), then follows the server's script (system chat
  * lines {@code bcmp:<command>:<target>:<args>}, see {@code DevSmokeMP}, hidden from the chat): reports what it sees of
  * the tank, right-clicks like a player (the use key, with the crosshair where the server turned the player), works the
  * tank menu, measures the gliding of the plants frame by frame, takes screenshots ({@code mp_<name>_*.png} in its game
@@ -99,7 +99,9 @@ final class DevClientSmokeMP {
 
     private static void connect(net.minecraft.client.gui.screens.Screen parent) {
         Minecraft mc = Minecraft.getInstance();
-        String addr = System.getProperty("bettacraft.smoketest.mp.address", "localhost:25599");
+        // M62: no default (the server of runMultiplayerTest is on the branch's dev_server_port, which the build passes)
+        String addr = System.getProperty("bettacraft.smoketest.mp.address");
+        if (addr == null) throw new IllegalStateException("bettacraft.smoketest.mp.address is not set (gradlew runMultiplayerTest sets it)");
         connectTries++;
         LOGGER.info("[mp] {} connecting to {} (try {})", name(), addr, connectTries);
         ConnectScreen.startConnecting(parent, mc, ServerAddress.parseString(addr), new ServerData("Bettacraft MP test", addr, ServerData.Type.OTHER),
