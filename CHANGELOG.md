@@ -41,6 +41,16 @@ The whole test suite runs from a fresh clone without manual work. No change to t
 ### Version gaps (26.2)
 - The manifest of this branch lists 84 files. Groups without a build for Minecraft 26.2 (listed under `gaps` in `dev-mods.json`, checked on Modrinth, CurseForge and the mods' mavens): `neoforge/compare-mods` (the size comparison with DragN's Just Bettas (M36) is set up on 1.21.1 only); `neoforge/create-mods` (Create and Sable have no 26.2 build (VersionGaps)); `neoforge/facade-mods` (Cable Facades has no 26.2 build (VersionGaps)); `neoforge/kubejs-mods` (KubeJS and Rhino have no 26.2 build (VersionGaps)); `neoforge/quest-mods` (FTB Quests, Library and Teams have no 26.2 build (VersionGaps)); `fabric/emi-mods` (EMI has no build after Minecraft 1.21.1 (Modrinth emi, CurseForge 580555, maven.terraformersmc.com checked 2026-11-22)); `fabric/quest-mods` (FTB Quests, Library and Teams have no 26.2 build (VersionGaps)); `fabric/vulkan-mods` (VulkanMod has no 26.2 build (VersionGaps.RENDER_NO_BUILD)).
 
+### Fixed (tests only)
+- The FTB Quests GameTests expected 113 quests; the chapter has 115 since the terrarium plants (found by the first
+  integration run from a fresh clone).
+- The upgrade smoke counted a small animal born while the old world loads as "not analysed" (failed on a freshly built
+  reference world).
+- `runServer -PsmoketestOldWorld` lost its fresh copy of the old world to the new cleanup; it now loads the reference world
+  of the branch by default. On this branch that world already has the current schema (the branch starts with 1.42.0), so
+  the check reports "not an old world": there is no older world for this Minecraft version; `smoketestUpgrade` covers the
+  upgrade from 1.42.0.
+
 ### Removed
 - `tools/ci/fetch_mods.py`, `power-mods.json`, `integration-mods.json` and the partial integration run
   (`-PintegrationPartial`): CI loads the same manifest as a local run.
