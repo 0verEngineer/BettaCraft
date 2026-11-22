@@ -71,6 +71,11 @@ public interface Platform {
     /** The version of a loaded mod, "?" if it is not there. */
     String modVersion(String modId);
 
+    /** M57: every loaded mod as {@code id version}, sorted (the bug report). */
+    default java.util.List<String> loadedMods() {
+        return java.util.List.of();
+    }
+
     /** The translation key of a fluid (NeoForge: its fluid type's). */
     String fluidDescriptionId(Fluid fluid);
 

@@ -103,8 +103,13 @@ public final class BettaCraftNeoForge {
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer sp) BettaCraft.onPlayerLoggedIn(sp);
         });
+        // M57: the debug log follows the common config (loaded and changed in the file or the config screen)
+        modBus.addListener((ModConfigEvent.Loading e) -> {
+            if (e.getConfig().getSpec() == CommonConfig.SPEC) CommonConfig.applyDebug();
+        });
         modBus.addListener((ModConfigEvent.Reloading e) -> {
             if (e.getConfig().getSpec() == CommonConfig.SPEC) { // M33 part b: the feature switches changed in the file
+                CommonConfig.applyDebug(); // M57
                 var server = ServerLifecycleHooks.getCurrentServer();
                 if (server != null) server.execute(() -> BettaCraft.onCommonConfigReloaded(server));
                 return;
