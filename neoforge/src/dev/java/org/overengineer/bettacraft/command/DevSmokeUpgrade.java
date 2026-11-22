@@ -406,7 +406,9 @@ public final class DevSmokeUpgrade {
             }
             if (!want.get("equipment").equals(have.get("equipment"))) problems.add(where + ": equipment " + want.get("equipment") + " -> " + have.get("equipment"));
             // M22.3: every animal of an older world counts as analysed (magnifier)
-            if (legacy && have.has("unanalysed") && have.get("unanalysed").getAsInt() > 0) problems.add(where + ": " + have.get("unanalysed") + " animals not analysed");
+            // M59: small animals born while loading (allowed above) are new and not analysed yet
+            int born = Math.max(0, (have.has("critters") ? have.getAsJsonArray("critters").size() : 0) - want.getAsJsonArray("critters").size());
+            if (legacy && have.has("unanalysed") && have.get("unanalysed").getAsInt() > born) problems.add(where + ": " + have.get("unanalysed") + " animals not analysed");
             equipment += want.getAsJsonArray("equipment").size();
         }
         Map<Long, JsonElement> chests = new TreeMap<>();
