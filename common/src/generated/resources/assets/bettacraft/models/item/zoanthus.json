@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_polyps",
-    "layer1": "bettacraft:item/plant_polyps_detail"
+    "layer0": "bettacraft:item/plant_zoanthus",
+    "layer1": "bettacraft:item/plant_zoanthus_detail"
   }
 }

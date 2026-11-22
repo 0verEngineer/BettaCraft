@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/terrarium_rush",
-    "layer1": "bettacraft:item/terrarium_rush_detail"
+    "layer0": "bettacraft:item/terrarium_needlegrass",
+    "layer1": "bettacraft:item/terrarium_needlegrass_detail"
   }
 }
