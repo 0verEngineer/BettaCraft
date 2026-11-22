@@ -54,21 +54,24 @@ final class DevClientSmokeM62b {
     private String lang;
 
     DevClientSmokeM62b() {
-        then(1, () -> server(this::setup));
+        then(1, () -> {
+            mc.getTutorial().setStep(net.minecraft.client.tutorial.TutorialSteps.NONE); // no "Move with W, A, S and D" in the pictures
+            server(this::setup);
+        });
         then(80, () -> look(big.offset(5, 2, 2), -9, 6, -10));
-        then(30, () -> shot("cabinet_area_10x5"));
+        clean("cabinet_area_10x5");
         then(1, () -> look(big.offset(5, 2, 6), 8, 5, 10));
-        then(30, () -> shot("cabinet_area_10x5_back"));
+        clean("cabinet_area_10x5_back");
         then(1, () -> look(square.offset(2, 1, 2), -6, 5, -7));
-        then(30, () -> shot("cabinet_area_4x4"));
+        clean("cabinet_area_4x4");
         then(1, () -> look(ring.offset(4, 1, 2), 7, 5, -9));
-        then(30, () -> shot("cabinet_ring"));
+        clean("cabinet_ring");
         then(1, () -> look(pair, -1.2, 1.0, -2.4));
         then(40, () -> shot("cabinet_pair_overlay"));
         then(1, () -> look(below1.offset(1, 1, 0), -3, 2.5, -4));
-        then(30, () -> shot("filter_one_below"));
+        clean("filter_one_below");
         then(1, () -> look(below2.offset(1, 1, 0), -3, 3, -4.5));
-        then(30, () -> shot("filter_two_below"));
+        clean("filter_two_below");
         then(1, () -> look(unlinked, -1.6, 1.2, -2.2));
         then(40, () -> shot("filter_unlinked_overlay"));
         // the choice of the tank: two tanks side by side, the filter one below between them
@@ -88,7 +91,7 @@ final class DevClientSmokeM62b {
         then(5, () -> {
             if (mc.gui.screen() instanceof FilterLinkScreen s) s.choose(1);
         });
-        then(10, () -> shot("filter_chosen"));
+        clean("filter_chosen");
         then(5, this::checkChoice);
         // the tooltip of the filter item (drawn by a small screen: the creative inventory of the smoke world has no slots to hover)
         then(5, () -> mc.gui.setScreen(new TooltipScreen(new ItemStack(ModItems.EXTERNAL_FILTER.get()))));
@@ -107,7 +110,6 @@ final class DevClientSmokeM62b {
     private void setup(ServerPlayer p) {
         ServerLevel level = p.level();
         lang = mc.options.languageCode;
-        mc.options.tutorialStep = net.minecraft.client.tutorial.TutorialSteps.NONE;
         powerFilter = ServerConfig.POWER_FILTER.get();
         power = Features.own(Feature.POWER);
         winding = Features.own(Feature.WINDING);
@@ -261,31 +263,6 @@ final class DevClientSmokeM62b {
         }
     }
 
-    private void hoverFilter() {
-        if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
-        for (var s : scr.getMenu().slots) {
-            if (s.getItem().is(ModItems.EXTERNAL_FILTER.get())) {
-                mouseTo(DevGui.left(scr) + s.x + 8, DevGui.top(scr) + s.y + 8);
-                return;
-            }
-        }
-        problem("the filter item to hover was not found");
-    }
-
-    private void mouseTo(int x, int y) {
-        double scale = mc.getWindow().getGuiScale();
-        mc.mouseHandler.onMove(mc.getWindow().handle(), x * scale, y * scale, 0, 0);
-        try {
-            for (String f : new String[]{"xpos", "ypos"}) {
-                java.lang.reflect.Field fld = net.minecraft.client.MouseHandler.class.getDeclaredField(f);
-                fld.setAccessible(true);
-                fld.setDouble(mc.mouseHandler, f.equals("xpos") ? x * scale : y * scale);
-            }
-        } catch (ReflectiveOperationException e) {
-            LOGGER.warn("[smoketest] cannot move the mouse: {}", e.toString());
-        }
-    }
-
     private void quickLanguage(String code) {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
@@ -306,6 +283,13 @@ final class DevClientSmokeM62b {
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
         server(p -> p.teleportTo(p.level(), eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, true));
+    }
+
+    /** A picture without the HUD (the handbook): hidden for a few frames, then back. */
+    private void clean(String name) {
+        then(25, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
+        then(5, () -> shot(name));
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     private void then(int delay, Runnable action) {

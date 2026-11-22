@@ -16,7 +16,8 @@ Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus 
 (auch aus anderen Mods), drei Holzstufen und eine Holztruhe. Der Schrank bekommt das Aussehen seiner Bretter.
 
 * Nebeneinander stehende Schränke, die in dieselbe Richtung zeigen, verbinden sich zu einem langen Schrank mit
-  durchgehender Arbeitsplatte.
+  durchgehender Arbeitsplatte, und auch nach hinten: eine ganze Fläche unter einem großen Becken wird ein Unterschrank
+  (siehe unten).
 * **Filterplatz:** Lege einen [Außenfilter](filters.md) hinein. Ein Schrank direkt unter dem Aquarium zählt dann als
   angeschlossener Außenfilter; der Schlauch läuft an der Wand seiner **Auslass-Seite** hoch (siehe unten; an der
   Rückwand, wenn du keine andere wählst). Die zwei Heizstab-Plätze im Schrank-Menü sind die Heizstab-Plätze dieses Filters.
@@ -25,6 +26,30 @@ Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus 
 * **Neun Lagerplätze** für Futter und anderes. Trichter können sie benutzen, und der [Futterautomat](feeder.md) auf dem
   Aquarium nimmt Futter aus den Schränken darunter.
 * Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz, seine Auslass-Seite und seine Front.
+
+## Unter dem ganzen Becken
+
+![Ein 10 × 5 Becken auf einer ganzen Fläche aus Schränken von vorne und von hinten, und ein Ring aus Schränken um Stein](../images/cabinet_area.png)
+
+Schränke verbinden sich auch **nach hinten**, so steht selbst ein 10 × 5 Becken auf einem durchgehenden Unterschrank:
+
+* Die **vordere Reihe** zeigt die Fronten (Schubladen an den Enden, Türen dazwischen), die Seiten der äußeren Schränke
+  die glatten Seitenwände. Jeder Schrank, vor dem ein anderer steht (die hinteren Reihen und das Innere der Fläche), ist
+  ein glatter Korpus: keine Türen, Deckplatte und Seiten gehen durch.
+* Du kannst die ganze Fläche aus Schränken bauen (bei 4 × 4 auch die inneren vier) oder nur einen **Ring** aus Schränken
+  mit **normalen Blöcken in der Mitte** (billiger): von außen sieht es trotzdem aus wie aus einem Stück.
+* Ein Schrank, den du an die Seite, Rückseite oder Front eines anderen setzt, übernimmt **dessen Ausrichtung**, so kannst
+  du die Fläche von jeder Seite aus bauen. Auf den Boden gesetzt schaut er wie bisher zu dir.
+* Die Einstellung `features.equipment.cabinetArea` schaltet das ab: Schränke verbinden sich dann nur links und rechts,
+  und jeder zeigt seine Front.
+
+**Eine Feder für den ganzen Unterschrank.** Mit Strom und Aufziehen (siehe [Kurbel](crank.md)) bilden alle Schränke
+unter einem Becken und alle daran angebauten Schränke **einen Federspeicher**: auch zwei Schränke, die sich nicht
+berühren, zum Beispiel je einer an beiden Enden eines langen Beckens. Der Speicher wächst mit jedem Schrankblock; ein
+Kurbel-Klick an einem beliebigen Schrank zieht den ganzen Speicher auf (um den Schritt eines Schranks), und das Fenster
+jedes Schranks und die Anzeige zeigen den Speicher („Geteilt von 4 Schränken“). Ein abgebauter Schrank gibt seinen
+Anteil an die anderen ab, soweit sie Platz haben. Schränke älterer Welten behalten ihr Aufziehen: ihre Federn bilden
+einfach den Speicher. Die Einstellung `features.power.cabinetSharedSpring` gibt jedem Schrank wieder seine eigene Feder.
 
 ## Fronten
 
