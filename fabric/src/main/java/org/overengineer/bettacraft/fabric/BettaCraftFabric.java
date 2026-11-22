@@ -49,7 +49,13 @@ public final class BettaCraftFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> FabricPlatform.server = null);
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> BettaCraft.onTagsUpdated());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> BettaCraft.onPlayerLoggedIn(handler.player));
+        // M57: the debug log follows the common config (loaded and changed in the file or the config screen)
+        ModConfigEvents.loading(BettaCraft.MOD_ID).register(config -> {
+            if (config.getSpec() == CommonConfig.SPEC) CommonConfig.applyDebug();
+        });
+        CommonConfig.applyDebug(); // the common config may be loaded already when it was registered
         ModConfigEvents.reloading(BettaCraft.MOD_ID).register(config -> {
+            if (config.getSpec() == CommonConfig.SPEC) CommonConfig.applyDebug(); // M57
             var server = FabricPlatform.server;
             if (server == null) return;
             if (config.getSpec() == CommonConfig.SPEC) server.execute(() -> BettaCraft.onCommonConfigReloaded(server));

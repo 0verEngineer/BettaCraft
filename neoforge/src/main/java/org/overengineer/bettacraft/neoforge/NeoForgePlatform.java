@@ -297,4 +297,9 @@ public final class NeoForgePlatform implements Platform {
     public String modVersion(String modId) {
         return net.neoforged.fml.ModList.get().getModContainerById(modId).map(m -> m.getModInfo().getVersion().toString()).orElse("?");
     }
+
+    @Override
+    public java.util.List<String> loadedMods() {
+        return net.neoforged.fml.ModList.get().getMods().stream().map(m -> m.getModId() + " " + m.getVersion()).sorted().toList();
+    }
 }
