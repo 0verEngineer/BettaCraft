@@ -1,0 +1,7 @@
+{
+ "comment": "M59: the upgrade reference worlds of this branch are built, not stored. smoketestUpgrade (and runServer -PsmoketestOldWorld) build a missing one in the saves folder of the run with tools/upgrade/<script> from the commit named here (build_reference.sh: that commit's buildShowcase plus DevUpgradeReference). 'default' is the world smoketestUpgrade loads without -PupgradeWorld; the reference of this branch was made with its first version 1.42.0-beta.1.",
+ "default": "Bettacraft Referenz 1.21.11",
+ "worlds": {
+  "Bettacraft Referenz 1.21.11": {"script": "build_reference.sh", "commit": "852dcd2aecdebeea986743a5d653ad7c786099e2", "version": "1.42.0-beta.1"}
+ }
+}
