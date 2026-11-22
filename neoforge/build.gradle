@@ -434,6 +434,15 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestm63')) {
+                // gradlew runClient -Psmoketestm63 [-Pshaders] [-Pm63packs=none,ComplementaryReimagined_r5.10.zip,...] [-Pm63tag=<name>]:
+                // the M63 scene (a tank in an unevenly lit room and one outside, half under a roof; every view with every shader
+                // pack of the manifest and without; screenshots run/screenshots/bettacraft_m63_<tag>_<pack>_<view>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m63only', 'true'
+                if (project.hasProperty('m63packs')) systemProperty 'bettacraft.smoketest.m63packs', project.property('m63packs').toString()
+                if (project.hasProperty('m63tag')) systemProperty 'bettacraft.smoketest.m63tag', project.property('m63tag').toString()
+            }
             if (project.hasProperty('smoketestm61')) {
                 // gradlew runClient -Psmoketestm61 [-Ppipes]: the M61 scene (ClientLevel.sendBlockUpdated with null states next to
                 // stone and a plant; with -Ppipes Modern Dynamics fluid pipes between a reservoir and a tank, then the player leaves
@@ -723,6 +732,8 @@ neoForge {
             // M42: -Pgametests=<prefix>[,...] runs only the tests whose name (class.method, lower case), method or batch starts with a prefix
             // (M52b: filtered by BettaGameTests when it registers them)
             if (project.hasProperty('gametests')) systemProperty 'bettacraft.gametest.only', project.property('gametests')
+            // M63: -Pgametestrepeat=<n> runs every (filtered) test n times side by side in its batch (flakiness hunts)
+            if (project.hasProperty('gametestrepeat')) systemProperty 'bettacraft.gametest.repeat', project.property('gametestrepeat')
         }
 
         data {

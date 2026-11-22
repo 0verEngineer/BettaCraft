@@ -739,6 +739,27 @@
    "size": 567387,
    "sha1": "ce5f303920c12f858c6b4c27a521fe7a1ba70aea",
    "sha256": "4a61c33c87a7febe7ce898c51ca233683cd1d9854dd8fb7b0d039c88dec2fca2"
+  },
+  {
+   "file": "ComplementaryUnbound_r5.10.zip",
+   "maven": "maven.modrinth:complementary-unbound:QJiYQisE",
+   "size": 567391,
+   "sha1": "7a9a6b667b89d6b442837c5c367cd6cc8356b400",
+   "sha256": "f19bf3268669576485124b7a717980f46b6200cde146fa181e794a2df0f9c2da"
+  },
+  {
+   "file": "BSL_v10.1.8.zip",
+   "maven": "maven.modrinth:bsl-shaders:Y68yiql9",
+   "size": 1134153,
+   "sha1": "e89818c8827d0131c102fb480c3c3446624db0df",
+   "sha256": "36b0a50ff7918bf10e9422c401d93779f9d0088a26acea975b435243f96930b5"
+  },
+  {
+   "file": "MakeUp-UltraFast-9.6.zip",
+   "maven": "maven.modrinth:makeup-ultra-fast-shaders:t4YRxQug",
+   "size": 406830,
+   "sha1": "e2a930f1ffb7ca6a56cf466c13c9e36193425a38",
+   "sha256": "71319ea5d0ad114143ef1c334890e315dbf1eeb2318d6bc35f3e5021fb3c8ba8"
   }
  ],
  "gaps": {
