@@ -265,7 +265,7 @@ final class DevClientSmokeM62b {
         if (!(mc.gui.screen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr)) return;
         for (var s : scr.getMenu().slots) {
             if (s.getItem().is(ModItems.EXTERNAL_FILTER.get())) {
-                mouseTo(scr.getGuiLeft() + s.x + 8, scr.getGuiTop() + s.y + 8);
+                mouseTo(guiPos(scr, "leftPos") + s.x + 8, guiPos(scr, "topPos") + s.y + 8);
                 return;
             }
         }
@@ -338,5 +338,16 @@ final class DevClientSmokeM62b {
     private void shot(String name) {
         mc.gui.toastManager().clear();
         Screenshot.grab(mc.gameDirectory, "bettacraft_m62b_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
+    }
+
+    /** The position of a container screen (protected; 26.x is not obfuscated, the same on both loaders). */
+    private static int guiPos(net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> scr, String field) {
+        try {
+            java.lang.reflect.Field f = net.minecraft.client.gui.screens.inventory.AbstractContainerScreen.class.getDeclaredField(field);
+            f.setAccessible(true);
+            return f.getInt(scr);
+        } catch (ReflectiveOperationException e) {
+            return 0;
+        }
     }
 }
