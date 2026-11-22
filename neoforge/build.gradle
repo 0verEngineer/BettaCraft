@@ -434,14 +434,26 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestworldtour')) {
+                // M63b: gradlew runClient -Psmoketestworldtour [-Pshaders] [-PtourSource=<world>] [-PtourPacks=none,...] [-PtourViews=front,side,top,below]
+                // [-PtourTag=<name>] [-PtourRadius=<chunks>] [-PtourLimit=<tanks>] [-PtourBaseline]: the real-world tour (DevClientWorldTour) in
+                // a fresh copy "Bettacraft Rundgang" of the showcase (or this branch's upgrade reference world), deleted afterwards;
+                // pictures run/<mc>/tour/<tag>/screenshots/<pack>/, guards in summary.txt; compare two tags with py tools/tour/compare.py
+                systemProperty 'bettacraft.smoketest.worldtour', 'true'
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle'].each { k, v ->
+                    if (project.hasProperty(k)) systemProperty "bettacraft.tour.${v}", project.property(k).toString()
+                }
+                if (project.hasProperty('tourBaseline')) systemProperty 'bettacraft.tour.baseline', 'true'
+            }
             if (project.hasProperty('smoketestm63')) {
-                // gradlew runClient -Psmoketestm63 [-Pshaders] [-Pm63packs=none,ComplementaryReimagined_r5.10.zip,...] [-Pm63tag=<name>]:
+                // gradlew runClient -Psmoketestm63 [-Pshaders] [-Pm63packs=none,ComplementaryReimagined_r5.10.zip,...] [-Pm63tag=<name>] [-Pm63parts=water,decor]:
                 // the M63 scene (a tank in an unevenly lit room and one outside, half under a roof; every view with every shader
                 // pack of the manifest and without; screenshots run/screenshots/bettacraft_m63_<tag>_<pack>_<view>.png)
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m63only', 'true'
                 if (project.hasProperty('m63packs')) systemProperty 'bettacraft.smoketest.m63packs', project.property('m63packs').toString()
                 if (project.hasProperty('m63tag')) systemProperty 'bettacraft.smoketest.m63tag', project.property('m63tag').toString()
+                if (project.hasProperty('m63parts')) systemProperty 'bettacraft.smoketest.m63parts', project.property('m63parts').toString()
             }
             if (project.hasProperty('smoketestm61')) {
                 // gradlew runClient -Psmoketestm61 [-Ppipes]: the M61 scene (ClientLevel.sendBlockUpdated with null states next to
@@ -1185,6 +1197,30 @@ ensureReferenceWorld = { String name, File saves ->
 }
 def defaultReference = {
     referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).default?.toString() : null
+}
+
+// M63b: -Psmoketestworldtour: a fresh copy "Bettacraft Rundgang" of -PtourSource (default: the showcase "Bettacraft Schaukasten" when
+// there is one, else this branch's upgrade reference world, built if missing) for the tour, deleted after the run; the source stays
+// untouched. Also used by Fabric (fabric/build.gradle copies from this run's saves).
+tasks.matching { it.name == 'runClient' }.configureEach { t ->
+    if (project.hasProperty('smoketestworldtour')) {
+        def saves = rootProject.file(runRoot + '/saves')
+        def dst = new File(saves, 'Bettacraft Rundgang')
+        t.doFirst {
+            def name = (project.findProperty('tourSource') ?: (new File(saves, 'Bettacraft Schaukasten').isDirectory() ? 'Bettacraft Schaukasten' : defaultReference())).toString()
+            def src = new File(saves, name)
+            if (!src.isDirectory() && !project.hasProperty('tourSource')) ensureReferenceWorld(name, saves)
+            if (!src.isDirectory()) throw new GradleException("tour source world not found: ${src}")
+            logger.lifecycle("world tour: copying ${src} to ${dst}")
+            dst.deleteDir()
+            java.nio.file.Files.walk(src.toPath()).forEach { from ->
+                def to = dst.toPath().resolve(src.toPath().relativize(from))
+                if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+                else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+            }
+        }
+        t.doLast { if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${dst}") else deleteWorlds('after the run', [dst]) }
+    }
 }
 
 // -PsmoketestOldWorld: a fresh copy of the old world for every run (the original in run/saves stays untouched). M59: by default

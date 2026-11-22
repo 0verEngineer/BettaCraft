@@ -48,13 +48,17 @@ final class DevClientSmokeM63 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final Identifier GLASS = Identifier.withDefaultNamespace("glass");
     private static final String TAG = System.getProperty("bettacraft.smoketest.m63tag", "run");
+    /** M63b: {@code -Pm63parts=water,decor} (default both): the water views, the decorated open tank with the miniature check. */
+    private static final String PARTS = System.getProperty("bettacraft.smoketest.m63parts", "water,decor");
     private static final String DEFAULT_PACKS = "none,ComplementaryReimagined_r5.10.zip,ComplementaryUnbound_r5.10.zip,BSL_v10.1.8.zip,MakeUp-UltraFast-9.6.zip";
 
     private record Step(int delay, Runnable action) {}
 
     private final Minecraft mc = Minecraft.getInstance();
     private final Deque<Step> steps = new ArrayDeque<>();
-    private volatile BlockPos room, outside;
+    private volatile BlockPos room, outside, decor;
+    /** M63b: the decorated open tank (x, y, z blocks). */
+    private static final int DX = 8, DY = 3, DZ = 5;
     private int wait;
     private int problems;
     private String oldPack;
@@ -72,6 +76,17 @@ final class DevClientSmokeM63 {
             then(1, () -> time(6000));
             // shader compile and the rebuild of every chunk
             then(200, () -> logPack(pack));
+            if (PARTS.contains("water")) waterViews(name);
+            if (PARTS.contains("decor")) decorViews(name);
+        }
+        then(1, this::restoreIris);
+        then(1, () -> time(6000));
+        then(40, () -> mc.options.hideGui = false);
+    }
+
+    /** The views of the water (M63): the room tank and the outside tank. */
+    private void waterViews(String name) {
+        {
             // the room: just below the surface looking up (the view of the report), front, side, above, high above
             then(1, () -> lookAt(room.getX() + 2.5, room.getY() + 2.0, room.getZ() - 1.0, new Vec3(room.getX() + 2.5, room.getY() + 3.3, room.getZ() + 2.0)));
             then(60, () -> shot(name, "room_below_surface"));
@@ -97,10 +112,72 @@ final class DevClientSmokeM63 {
             then(40, () -> shot(name, "outside_night_below_surface"));
             then(1, () -> lookAt(outside.getX() + 3.0, outside.getY() + 1.8, outside.getZ() - 4.0, new Vec3(outside.getX() + 3.0, outside.getY() + 1.2, outside.getZ() + 1.5)));
             then(40, () -> shot(name, "outside_night_front"));
+            then(1, () -> time(6000));
         }
-        then(1, this::restoreIris);
-        then(1, () -> time(6000));
-        then(40, () -> mc.options.hideGui = false);
+    }
+
+    /**
+     * M63b: the decorated open tank (textured glass, a castle, a dinosaur skull and a shipwreck in its interior). Its open top
+     * must look like open water (no glass on it), and the miniature must stay in its tank: with Complementary (1.21.11
+     * NeoForge) a full-size copy of an interior hung in the sky, drawn at the camera. Every sweep view is taken twice, with the
+     * miniatures and without them; the part of the picture above the horizon (the tank is below it: the camera is above the
+     * tank) must be the same in both.
+     */
+    private void decorViews(String name) {
+        then(1, () -> lookAt(decor.getX() + DX / 2.0, decor.getY() + 1.6, decor.getZ() - 4.5, new Vec3(decor.getX() + DX / 2.0, decor.getY() + 1.4, decor.getZ() + DZ / 2.0)));
+        then(80, () -> shot(name, "decor_front"));
+        then(1, () -> lookAt(decor.getX() + DX / 2.0, decor.getY() + DY + 3.5, decor.getZ() - 3.0, new Vec3(decor.getX() + DX / 2.0, decor.getY() + DY, decor.getZ() + DZ / 2.0)));
+        then(40, () -> shot(name, "decor_above"));
+        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+        then(20, () -> shot(name, "decor_above_nomini"));
+        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+        then(1, () -> lookAt(decor.getX() + DX + 2.5, decor.getY() + DY + 1.2, decor.getZ() - 2.5, new Vec3(decor.getX() + DX / 2.0, decor.getY() + DY - 0.2, decor.getZ() + DZ / 2.0)));
+        then(40, () -> shot(name, "decor_top_surface"));
+        // the sweep: from the corner before the tank (its -x/-z side), 3 blocks above its top, looking 12 degrees down towards
+        // +x, +x+z and +z (a miniature drawn at the camera lies in the +x/+y/+z quadrant of it: above the horizon)
+        float[] yaws = {-90F, -45F, 0F};
+        for (float yaw : yaws) {
+            String view = "decor_sweep_" + (int) -yaw;
+            then(1, () -> look(decor.getX() - 3.0, decor.getY() + DY + 3.0, decor.getZ() - 3.0, yaw, 12F));
+            then(40, () -> shot(name, view));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+            then(20, () -> shot(name, view + "_nomini"));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+            then(20, () -> compareSky(name, view));
+        }
+    }
+
+    /**
+     * M63b: the rows above the horizon (the top 30 % of the picture; the camera looks 12 degrees down, the horizon is at about
+     * 37 %) of the view with and without the miniatures: more than 1 % of the pixels clearly different is a miniature drawn
+     * outside its tank.
+     */
+    private void compareSky(String pack, String view) {
+        java.io.File dir = new java.io.File(mc.gameDirectory, "screenshots");
+        java.io.File a = new java.io.File(dir, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + ".png");
+        java.io.File b = new java.io.File(dir, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + "_nomini.png");
+        try {
+            java.awt.image.BufferedImage ia = javax.imageio.ImageIO.read(a), ib = javax.imageio.ImageIO.read(b);
+            if (ia == null || ib == null || ia.getWidth() != ib.getWidth() || ia.getHeight() != ib.getHeight()) {
+                problems++;
+                LOGGER.error("[smoketest] M63 miniature check {} {}: FAIL (pictures missing or of different sizes)", pack, view);
+                return;
+            }
+            int rows = ia.getHeight() * 3 / 10, differ = 0, total = rows * ia.getWidth();
+            for (int y = 0; y < rows; y++) for (int x = 0; x < ia.getWidth(); x++) {
+                int pa = ia.getRGB(x, y), pb = ib.getRGB(x, y);
+                int d = Math.max(Math.abs((pa >> 16 & 255) - (pb >> 16 & 255)), Math.max(Math.abs((pa >> 8 & 255) - (pb >> 8 & 255)), Math.abs((pa & 255) - (pb & 255))));
+                if (d > 48) differ++;
+            }
+            double share = differ * 100.0 / total;
+            boolean ok = share <= 1.0;
+            if (!ok) problems++;
+            LOGGER.info("[smoketest] M63 miniature check {} {}: {} of {} pixels above the horizon differ ({}) {}", pack, view, differ, total,
+                    String.format(java.util.Locale.ROOT, "%.2f %%", share), ok ? "PASS" : "FAIL (a miniature drawn outside its tank)");
+        } catch (java.io.IOException e) {
+            problems++;
+            LOGGER.error("[smoketest] M63 miniature check {} {}: FAIL", pack, view, e);
+        }
     }
 
     int problems() {
@@ -135,17 +212,28 @@ final class DevClientSmokeM63 {
         level.setBlockAndUpdate(o2.offset(7, 0, -1), Blocks.TORCH.defaultBlockState());
         outside = o2.offset(0, 1, 0);
         tank(level, p, outside, 6, 2, 3, "Outside tank");
-        LOGGER.info("[smoketest] M63 scene: room tank at {}, outside tank at {}", room, outside);
+        // M63b: the decorated open tank (textured glass), east of the outside tank, in the open
+        BlockPos o3 = origin.offset(40, 0, 0);
+        for (int x = -6; x <= DX + 6; x++) for (int y = 0; y <= 8; y++) for (int z = -8; z <= DZ + 6; z++) level.setBlockAndUpdate(o3.offset(x, y, z), Blocks.AIR.defaultBlockState());
+        for (int x = 0; x < DX; x++) for (int z = 0; z < DZ; z++) level.setBlockAndUpdate(o3.offset(x, 0, z), Blocks.OAK_PLANKS.defaultBlockState());
+        decor = o3.offset(0, 1, 0);
+        TankBlockEntity dc = tank(level, p, decor, DX, DY, DZ, "Decor tank", TankStyle.TEXTURED);
+        decorate(level, dc);
+        LOGGER.info("[smoketest] M63 scene: room tank at {}, outside tank at {}, decorated tank at {}", room, outside, decor);
     }
 
-    private static void tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, String name) {
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, String name) {
+        return tank(level, p, min, sx, sy, sz, name, TankStyle.CLEAN);
+    }
+
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, String name, TankStyle style) {
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < sy; y++) for (int z = 0; z < sz; z++) for (int x = 0; x < sx; x++) blocks.add(min.offset(x, y, z));
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
             if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
                 be.setGlassId(GLASS);
-                be.setStyle(TankStyle.CLEAN);
+                be.setStyle(style);
             }
         }
         for (BlockPos pos : blocks) TankMultiblock.onTankBlockAdded(level, pos, null);
@@ -157,6 +245,23 @@ final class DevClientSmokeM63 {
         c.getTank().setOwner(p.getUUID());
         fish(level, p, c, new double[][]{{sx * 0.3, sy * 0.6, 1.2}, {sx * 0.7, sy * 0.35, 1.6}});
         c.markTankChanged();
+        return c;
+    }
+
+    /** M63b: a sand floor, a castle, a dinosaur skull and a shipwreck in the interior of the decorated tank. */
+    private static void decorate(ServerLevel level, TankBlockEntity c) {
+        ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+        org.overengineer.bettacraft.tank.interior.InteriorRegion r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, c);
+        for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
+            org.overengineer.bettacraft.tank.interior.Substrate.set(in, new BlockPos(r.originX() + x, org.overengineer.bettacraft.tank.interior.InteriorRegion.FLOOR_Y,
+                    r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
+        Object[][] items = {{org.overengineer.bettacraft.decor.DecorType.CASTLE, 20, 30}, {org.overengineer.bettacraft.decor.DecorType.DINO_SKULL, 50, 40},
+                {org.overengineer.bettacraft.decor.DecorType.SHIPWRECK, 90, 30}};
+        for (Object[] it : items) {
+            Component err = org.overengineer.bettacraft.decor.DecorItem.place(in, (org.overengineer.bettacraft.decor.DecorType) it[0],
+                    r.toWorld((int) it[1], 0, (int) it[2]), net.minecraft.world.level.block.Rotation.NONE, null);
+            if (err != null) LOGGER.warn("[smoketest] M63 decor {} not placed: {}", it[0], err.getString());
+        }
     }
 
     /** Two adult bettas at fixed spots (relative to the tank's box min), frozen. */
