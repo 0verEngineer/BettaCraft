@@ -349,8 +349,15 @@ public class BettaEntity extends AbstractFish {
 
     /** M54 (GameTests): drops every goal (the fish then only drifts by its move control). */
     public void stopGoalsForTest() {
+        // M63: removeAllGoals does not stop a running goal: a swim that had begun went on (straight swim of the move control,
+        // or a path of the navigation, whose nodes then set the wanted position again every tick) and carried the "waiting"
+        // betta up to a block away (the flaky aWaitingBettaKeepsItsHeight). Stop the goals, the path and the straight swim.
+        goalSelector.getAvailableGoals().stream().filter(net.minecraft.world.entity.ai.goal.WrappedGoal::isRunning).toList().forEach(net.minecraft.world.entity.ai.goal.WrappedGoal::stop);
         goalSelector.removeAllGoals(g -> true);
-        getMoveControl().setWantedPosition(getX(), getY(), getZ(), 0);
+        getNavigation().stop();
+        if (moveControl instanceof BettaMoveControl bmc) bmc.hold();
+        setSpeed(0);
+        setZza(0);
     }
 
     public void flee(Entity from, long until) {

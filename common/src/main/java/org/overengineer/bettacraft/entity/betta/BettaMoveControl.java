@@ -65,6 +65,12 @@ final class BettaMoveControl extends MoveControl {
         return direct;
     }
 
+    /** M63 (tests): no straight swim, no wanted position: the fish only drifts (the waiting of stopGoalsForTest). */
+    void hold() {
+        direct = false;
+        operation = Operation.WAIT;
+    }
+
     void stopDirect() {
         if (direct) {
             direct = false;

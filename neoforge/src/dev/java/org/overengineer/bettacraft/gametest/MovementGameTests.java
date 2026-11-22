@@ -349,6 +349,44 @@ public final class MovementGameTests {
         });
     }
 
+    /**
+     * M63, the cause of the flaky test above: a betta stopped in the middle of a swim (a path of the navigation and a goal
+     * still running) stays where it was stopped. Before, {@code stopGoalsForTest} only removed the goals: the path went on
+     * setting the wanted position and the betta swam up to a block on (CI: +0.27, +0.31, -1.04 in 6 s).
+     */
+    @GameTest(template = EMPTY, batch = BATCH, timeoutTicks = 300)
+    public static void aBettaStoppedMidSwimStays(GameTestHelper h) {
+        TankBlockEntity c = CritterGameTests.tank(h, 2, 2, 2, 3, 3, 3, 27_000);
+        BettaData d = BettaData.create(BettaGenotype.randomDomestic(RandomSource.create(63)), true, 0);
+        var err = TankInhabitants.insert(h.getLevel(), c, BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), d), ModEntities.BETTA.get(), null, false);
+        check(err == null, "the betta in: " + (err == null ? "" : err.getString()));
+        BettaEntity betta = null;
+        for (Entity e : TankInhabitants.liveInhabitants(h.getLevel(), c.getTank())) if (e instanceof BettaEntity b) betta = b;
+        check(betta != null, "a betta");
+        BettaEntity b = betta;
+        TankData t = c.getTank();
+        double[] start = {0};
+        h.runAfterDelay(2, () -> {
+            b.moveTo(t.min().getX() + 1.5, t.min().getY() + 2.2, t.min().getZ() + 1.5, 0, 0);
+            b.setDeltaMovement(Vec3.ZERO);
+            // a swim to the bottom far corner is under way ...
+            b.getNavigation().moveTo(t.min().getX() + 0.5, t.min().getY() + 0.3, t.min().getZ() + 2.5, 1.5);
+        });
+        h.runAfterDelay(6, () -> {
+            // ... when the betta is told to wait
+            b.stopGoalsForTest();
+            b.setDeltaMovement(Vec3.ZERO);
+            start[0] = b.getY();
+        });
+        h.runAfterDelay(106, () -> {
+            double moved = b.getY() - start[0];
+            com.mojang.logging.LogUtils.getLogger().info("[gametest] M63 betta stopped mid-swim, moved over 100 ticks: {}", f(moved));
+            check(b.getNavigation().isDone(), "no path left");
+            check(Math.abs(moved) < 0.08, "the stopped betta stays: moved " + f(moved) + " in 5 s");
+            h.succeed();
+        });
+    }
+
     // ------------------------------------------------------------------ the switch
 
     /**
