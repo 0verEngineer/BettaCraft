@@ -853,7 +853,7 @@ final class DevClientSmokeMP {
                 result.append("no menu: ").append(mc.gui.screen());
                 return;
             }
-            result.append(tabsFit(mc, ts.tabButtonsForTest()));
+            result.append(tabsFit(mc, ts.tabButtonsForTest(), ts.panelBounds()[2] - 12));
             ts.selectTabForTest(0);
         });
         then(20, () -> shot("menu_overview"));
@@ -879,7 +879,7 @@ final class DevClientSmokeMP {
     }
 
     /** The tab buttons: inside the menu, side by side without overlap, each label (drawn at the tab scale) inside its button. */
-    static String tabsFit(Minecraft mc, List<Button> tabs) {
+    static String tabsFit(Minecraft mc, List<Button> tabs, int menuW) {
         int left = tabs.getFirst().getX(), right = tabs.getLast().getX() + tabs.getLast().getWidth();
         StringBuilder bad = new StringBuilder();
         for (int i = 0; i < tabs.size(); i++) {
@@ -888,7 +888,7 @@ final class DevClientSmokeMP {
             if (label > b.getWidth() - 2) bad.append(b.getMessage().getString()).append(" too long ");
             if (i > 0 && b.getX() < tabs.get(i - 1).getX() + tabs.get(i - 1).getWidth()) bad.append("overlap ");
         }
-        if (right - left > 236) bad.append("wider than the menu ");
+        if (right - left > menuW) bad.append("wider than the menu "); // M62: the menu grows with the screen
         return bad.isEmpty() ? "tabs ok (" + tabs.size() + " tabs, " + (right - left) + " px)" : "tabs bad: " + bad;
     }
 
