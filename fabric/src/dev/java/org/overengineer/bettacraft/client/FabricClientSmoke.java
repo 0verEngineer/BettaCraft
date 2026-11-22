@@ -34,6 +34,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     /** M55: -Psmoketestm55 (wild carpets, wild plants, container icons). */
     private static DevClientSmokeM55 m55;
     private static DevClientSmokeM56 m56;
+    /** M62 part 4: -Psmoketestm62c (every tab of the tank menu, en/de, three GUI scales). */
+    private static DevClientSmokeM62c m62c;
     /** M61: -Psmoketestm61 (block changes without states, leaving and joining the world). */
     private static DevClientSmokeM61 m61;
     private static DevClientSmokeM62b m62b;
@@ -218,6 +220,19 @@ public final class FabricClientSmoke implements ClientModInitializer {
                     stage = 3;
                     LOGGER.info("[smoketest] fabric client world test finished");
                     LOGGER.info(m61.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M61");
+                    mc.stop();
+                }
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62conly")) {
+                LOGGER.info("[smoketest] fabric client in world: M62c scene");
+                m62c = new DevClientSmokeM62c();
+                stage = 62;
+            }
+            if (stage == 62) {
+                if (m62c.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
                     mc.stop();
                 }
                 return;
