@@ -398,4 +398,10 @@ public final class FabricPlatform implements Platform {
     public String modVersion(String modId) {
         return net.fabricmc.loader.api.FabricLoader.getInstance().getModContainer(modId).map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("?");
     }
+
+    @Override
+    public java.util.List<String> loadedMods() {
+        return net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods().stream()
+                .map(c -> c.getMetadata().getId() + " " + c.getMetadata().getVersion().getFriendlyString()).sorted().toList();
+    }
 }
