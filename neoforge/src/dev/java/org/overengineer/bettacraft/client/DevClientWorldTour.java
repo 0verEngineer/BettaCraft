@@ -425,6 +425,9 @@ final class DevClientWorldTour {
         org.overengineer.bettacraft.platform.client.DynamicModel dm;
         try {
             dm = (org.overengineer.bettacraft.platform.client.DynamicModel) model.getClass().getMethod("dynamic").invoke(model);
+        } catch (NoSuchMethodException e) {
+            // 1.21.1: the block state's model wraps ours (a multipart model of the tank's states): its quads without render data
+            return org.overengineer.bettacraft.platform.client.ClientPlatform.get().quads(mc.getModelManager().getBlockStateModelSet().get(s), s, side, rand, null);
         } catch (ReflectiveOperationException | ClassCastException e) {
             throw new IllegalStateException("the tank block has no Bettacraft model: " + model.getClass().getName(), e);
         }
