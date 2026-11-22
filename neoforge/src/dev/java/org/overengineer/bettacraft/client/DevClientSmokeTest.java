@@ -183,6 +183,9 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM62d m62d;
     /** M61: -Psmoketestm61 [-Ppipes] (block changes without states, Modern Dynamics pipes, leaving and joining the world). */
     private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
+    /** M63: -Psmoketestm63 [-Pshaders] [-Pm63packs=none,...] [-Pm63tag=before|after] (the tank water with every shader pack). */
+    private static final boolean M63_ONLY = Boolean.getBoolean("bettacraft.smoketest.m63only");
+    private static DevClientSmokeM63 m63;
     private static final boolean M62B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62bonly");
     private static DevClientSmokeM62b m62b;
     private static DevClientSmokeM61 m61;
@@ -486,6 +489,16 @@ final class DevClientSmokeTest {
                 if (m62d != null && m62d.tick()) {
                     m62d = null;
                     LOGGER.info("[smoketest] client world test finished (M62d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M63_ONLY) {
+                if (ticks == 60) m63 = new DevClientSmokeM63();
+                if (m63 != null && m63.tick()) {
+                    LOGGER.info("[smoketest] client world test finished (M63 only)");
+                    LOGGER.info(m63.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M63");
+                    m63 = null;
                     mc.stop();
                 }
                 return;
