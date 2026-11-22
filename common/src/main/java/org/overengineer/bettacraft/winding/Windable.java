@@ -9,6 +9,14 @@ public interface Windable {
 
     Winding.Device windDevice();
 
+    /**
+     * M62: what the crank winds and the windows show: the own spring, or the store it shares with others (the cabinets
+     * under a tank, {@code features.power.cabinetSharedSpring}).
+     */
+    default WindSpring windStore() {
+        return windSpring();
+    }
+
     /** After a click of the crank (the food maker turns its crank handle). */
     default void onWound() {}
 }

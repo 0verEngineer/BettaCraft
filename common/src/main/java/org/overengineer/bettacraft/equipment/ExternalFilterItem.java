@@ -17,6 +17,9 @@ public class ExternalFilterItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.bettacraft.external_filter.usage").withStyle(ChatFormatting.GRAY));
+        if (org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.FILTER_BELOW_TANK)) {
+            tooltip.add(Component.translatable("tooltip.bettacraft.external_filter.link").withStyle(ChatFormatting.GRAY)); // M62
+        }
         int n = 0;
         for (ItemStack h : FilterHeaters.read(stack)) {
             if (h.isEmpty()) continue;

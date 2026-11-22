@@ -189,7 +189,7 @@ public final class TankPlants {
             FilterFlow.Path path = null;
             if (f instanceof ExternalFilterBlockEntity e) {
                 BlockState s = e.getBlockState();
-                if (s.getBlock() instanceof ExternalFilterBlock) path = FilterFlow.forFilterBlock(t, e.getBlockPos(), s.getValue(ExternalFilterBlock.FACING));
+                if (s.getBlock() instanceof ExternalFilterBlock) path = FilterFlow.forFilter(t, e); // M62
             } else if (f instanceof CabinetBlockEntity cab) {
                 BlockState s = cab.getBlockState();
                 if (s.getBlock() instanceof CabinetBlock) path = FilterFlow.forCabinet(t, cab); // M22.4: its outlet side

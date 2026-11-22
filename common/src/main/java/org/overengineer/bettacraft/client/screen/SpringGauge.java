@@ -28,7 +28,14 @@ final class SpringGauge {
     }
 
     static void tooltip(GuiGraphics g, Font font, int mouseX, int mouseY, int pct) {
+        tooltip(g, font, mouseX, mouseY, pct, 1);
+    }
+
+    /** M62: with the number of cabinets that share the store (more than one: a second line). */
+    static void tooltip(GuiGraphics g, Font font, int mouseX, int mouseY, int pct, int shared) {
         if (pct < 0) return;
-        g.renderTooltip(font, font.split(Component.translatable("gui.bettacraft.spring.tooltip", pct), 200), mouseX, mouseY);
+        java.util.List<net.minecraft.util.FormattedCharSequence> lines = new java.util.ArrayList<>(font.split(Component.translatable("gui.bettacraft.spring.tooltip", pct), 200));
+        if (shared > 1) lines.addAll(font.split(Component.translatable("gui.bettacraft.spring.shared", shared).withStyle(net.minecraft.ChatFormatting.GRAY), 200));
+        g.renderTooltip(font, lines, mouseX, mouseY);
     }
 }

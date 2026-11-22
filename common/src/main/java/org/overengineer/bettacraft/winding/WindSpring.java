@@ -10,8 +10,10 @@ import net.minecraft.nbt.CompoundTag;
  * charge = one in-game day of one device); every crank click winds {@code capacity / clicks} (one charge takes
  * {@code winding.clicksPerCharge} clicks, about five seconds of holding the crank). It only runs down while the device
  * works without FE in a loaded chunk.
+ * <p>
+ * M62: not final: the cabinets under a tank share one store ({@code CabinetSprings}), a view over their springs.
  */
-public final class WindSpring {
+public class WindSpring {
     private final LongSupplier capacity;
     private final IntSupplier clicks;
     private final Runnable changed;
@@ -38,7 +40,7 @@ public final class WindSpring {
 
     /** 0..1. */
     public double fill() {
-        return Math.min(1.0, ticks / (double) capacity());
+        return Math.min(1.0, ticks() / (double) capacity());
     }
 
     public int percent() {
@@ -46,11 +48,11 @@ public final class WindSpring {
     }
 
     public boolean full() {
-        return ticks >= capacity();
+        return ticks() >= capacity();
     }
 
     public boolean empty() {
-        return ticks <= 0;
+        return ticks() <= 0;
     }
 
     public void set(long v) {
@@ -68,7 +70,7 @@ public final class WindSpring {
     /** One click of the crank; false when it is already full. */
     public boolean windStep() {
         if (full()) return false;
-        set(ticks + step());
+        set(ticks() + step());
         return true;
     }
 

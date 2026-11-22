@@ -37,7 +37,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> implements Block
         if (c == null || c.getTank() == null) return null;
         TankData t = c.getTank();
         BlockState s = be.getBlockState();
-        if (s.getBlock() instanceof ExternalFilterBlock) return FilterFlow.forFilterBlock(t, be.getBlockPos(), s.getValue(ExternalFilterBlock.FACING));
+        if (s.getBlock() instanceof ExternalFilterBlock && be instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity f) return FilterFlow.forFilter(t, f); // M62: also from below
         if (s.getBlock() instanceof CabinetBlock && be instanceof CabinetBlockEntity cab) return FilterFlow.forCabinet(t, cab); // M22.4: its outlet side
         return null;
     }

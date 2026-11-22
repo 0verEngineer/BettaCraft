@@ -184,6 +184,10 @@ public final class InfoData {
         TankBlockEntity c = FilterHost.tankOf(level, f.tankBlockPos());
         boolean attached = c != null && TankEquipment.filters(level, c).contains(f);
         out.putBoolean("attached", attached);
+        if (be instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity ef) {
+            out.putBoolean("filter_block", true); // M62: a filter block that feeds no tank explains the sneak-click
+            if (attached && ef.below() > 0) out.putInt("below", ef.below());
+        }
         if (attached) {
             out.putString("tank", c.getTank().name());
             if (TankPower.filterRequired()) out.putBoolean("unpowered", !c.filterPowered());
@@ -228,7 +232,9 @@ public final class InfoData {
         int pct = org.overengineer.bettacraft.winding.Winding.shown(w);
         if (pct < 0) return;
         out.putInt("spring", pct);
-        out.putString("spring_hours", org.overengineer.bettacraft.winding.Winding.hours(w.windSpring()));
+        org.overengineer.bettacraft.winding.WindSpring s = w.windStore(); // M62: the store of the whole under-cabinet
+        out.putString("spring_hours", org.overengineer.bettacraft.winding.Winding.hours(s));
+        if (s instanceof org.overengineer.bettacraft.equipment.CabinetSprings.Store store) out.putInt("spring_shared", store.size());
     }
 
     /** Betta: care state (only meaningful in a tank), stage progress, genotype, generation. */

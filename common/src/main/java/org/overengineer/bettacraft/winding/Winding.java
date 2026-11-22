@@ -192,7 +192,7 @@ public final class Winding {
             if (player != null) player.displayClientMessage(Component.translatable(d.refusal(), name), true);
             return Result.REFUSED;
         }
-        WindSpring s = w.windSpring();
+        WindSpring s = w.windStore(); // M62: the cabinets share one store
         if (!s.windStep()) {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.full", name), true);
             return Result.FULL;
@@ -208,7 +208,8 @@ public final class Winding {
     /** What a window or overlay shows of a spring: its fill in percent, -1 while it may not be wound (and is empty). */
     public static int shown(@Nullable Windable w) {
         if (w == null) return -1;
-        return w.windDevice().windable() || !w.windSpring().empty() ? w.windSpring().percent() : -1;
+        WindSpring s = w.windStore(); // M62
+        return w.windDevice().windable() || !s.empty() ? s.percent() : -1;
     }
 
     /** A menu slot with {@link #shown} of a device (the client copy when {@code w} is null). */

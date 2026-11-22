@@ -213,9 +213,11 @@ public final class InfoLines {
             String name = d.getString("tank");
             out.add(name.isEmpty() ? Component.translatable("jade.bettacraft.filter.tank_unnamed").withStyle(ChatFormatting.AQUA)
                     : Component.translatable("jade.bettacraft.filter.tank", name).withStyle(ChatFormatting.AQUA));
+            if (d.getInt("below") > 0) out.add(Component.translatable("jade.bettacraft.filter.below", d.getInt("below")).withStyle(ChatFormatting.GRAY)); // M62
             if (d.getBoolean("unpowered")) out.add(Component.translatable("jade.bettacraft.no_power").withStyle(ChatFormatting.RED));
         } else {
             out.add(Component.translatable("jade.bettacraft.filter.no_tank").withStyle(ChatFormatting.GOLD));
+            if (d.getBoolean("filter_block")) out.add(Component.translatable("jade.bettacraft.filter.link_hint").withStyle(ChatFormatting.GRAY)); // M62
         }
         return out;
     }
@@ -227,6 +229,7 @@ public final class InfoLines {
         int pct = d.getInt("spring");
         out.add(Component.translatable("jade.bettacraft.spring", pct, d.getString("spring_hours"))
                 .withStyle(pct <= 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
+        if (d.getInt("spring_shared") > 1) out.add(Component.translatable("jade.bettacraft.spring.shared", d.getInt("spring_shared")).withStyle(ChatFormatting.GRAY)); // M62
         return out;
     }
 

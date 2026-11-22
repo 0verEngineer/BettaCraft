@@ -89,7 +89,8 @@ public class ExternalFilterBlock extends BaseEntityBlock {
 
     @Override
     protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        // follow the tank if the one it pointed at is gone but another one is next to it
+        // follow the tank if the one it pointed at is gone but another one is next to it (M62: not a filter whose tank was chosen)
+        if (level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be && be.link() != null) return state;
         Direction f = state.getValue(FACING);
         if (!tankAt(level, pos, f)) {
             Direction d = findTank(level, pos, null);
@@ -140,8 +141,22 @@ public class ExternalFilterBlock extends BaseEntityBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    /** M62: a filter that finds no tank by itself says how to choose one. */
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && placer instanceof Player p && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be && FilterLinks.unlinked(level, be)) {
+            p.displayClientMessage(Component.translatable("message.bettacraft.filter_link.hint").withStyle(net.minecraft.ChatFormatting.GOLD), true);
+        }
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        // M62: sneak + right-click with an empty hand: choose the tank
+        if (player.isSecondaryUseActive()) {
+            if (!level.isClientSide && player instanceof ServerPlayer sp) FilterLinks.open(sp, pos);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!level.isClientSide && player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof ExternalFilterBlockEntity be) {
             org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
         }
