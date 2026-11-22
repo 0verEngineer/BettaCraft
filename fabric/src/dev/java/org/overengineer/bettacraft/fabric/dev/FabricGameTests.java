@@ -157,11 +157,14 @@ public final class FabricGameTests implements ModInitializer {
             int foreign = tests.size();
             tests.removeIf(t -> !OURS.contains(t.testName()));
             if (foreign != tests.size()) LOGGER.info("[gametest] {} GameTests of other mods left out", foreign - tests.size());
-            if (prefixes.isEmpty()) return;
-            int before = tests.size();
-            tests.removeIf(t -> prefixes.stream().noneMatch(p -> t.testName().toLowerCase(Locale.ROOT).startsWith(p)
-                    || t.testName().toLowerCase(Locale.ROOT).contains("." + p) || t.batchName().toLowerCase(Locale.ROOT).startsWith(p)));
-            LOGGER.info("[gametest] -Pgametests={}: {} of {} tests", only, tests.size(), before);
+            if (!prefixes.isEmpty()) {
+                int before = tests.size();
+                tests.removeIf(t -> prefixes.stream().noneMatch(p -> t.testName().toLowerCase(Locale.ROOT).startsWith(p)
+                        || t.testName().toLowerCase(Locale.ROOT).contains("." + p) || t.batchName().toLowerCase(Locale.ROOT).startsWith(p)));
+                LOGGER.info("[gametest] -Pgametests={}: {} of {} tests", only, tests.size(), before);
+            }
+            // M63: -Pgametestrepeat=<n>
+            org.overengineer.bettacraft.gametest.GameTestRepeat.repeat(tests, Integer.getInteger("bettacraft.gametest.repeat", 1));
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("cannot filter the GameTests", e);
         }

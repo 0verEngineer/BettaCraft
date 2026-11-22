@@ -25,12 +25,14 @@ import org.slf4j.LoggerFactory;
 public final class GameTestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/gametest");
     private static final String ONLY = System.getProperty("bettacraft.gametest.only", "");
+    /** M63: {@code -Pgametestrepeat=<n>}: every (filtered) test n times side by side in its batch. */
+    static final int REPEAT = Integer.getInteger("bettacraft.gametest.repeat", 1);
 
     private GameTestFilter() {}
 
     @SubscribeEvent
     public static void onAboutToStart(ServerAboutToStartEvent event) {
-        if (ONLY.isBlank() || !(event.getServer() instanceof GameTestServer server)) return;
+        if ((ONLY.isBlank() && REPEAT <= 1) || !(event.getServer() instanceof GameTestServer server)) return;
         List<String> prefixes = Arrays.stream(ONLY.toLowerCase(Locale.ROOT).split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
         try {
             Field f = GameTestServer.class.getDeclaredField("testFunctions");
@@ -38,9 +40,12 @@ public final class GameTestFilter {
             @SuppressWarnings("unchecked")
             Collection<TestFunction> tests = (Collection<TestFunction>) f.get(server);
             int before = tests.size();
-            tests.removeIf(t -> prefixes.stream().noneMatch(p -> t.testName().toLowerCase(Locale.ROOT).startsWith(p)
-                    || t.batchName().toLowerCase(Locale.ROOT).startsWith(p)));
-            LOGGER.info("[gametest] -Pgametests={}: {} of {} tests", ONLY, tests.size(), before);
+            if (!prefixes.isEmpty()) {
+                tests.removeIf(t -> prefixes.stream().noneMatch(p -> t.testName().toLowerCase(Locale.ROOT).startsWith(p)
+                        || t.batchName().toLowerCase(Locale.ROOT).startsWith(p)));
+                LOGGER.info("[gametest] -Pgametests={}: {} of {} tests", ONLY, tests.size(), before);
+            }
+            GameTestRepeat.repeat(tests, REPEAT);
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("cannot filter the GameTests", e);
         }
