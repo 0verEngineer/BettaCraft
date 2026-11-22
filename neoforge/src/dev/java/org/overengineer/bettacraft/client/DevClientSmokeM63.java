@@ -62,7 +62,7 @@ final class DevClientSmokeM63 {
 
     DevClientSmokeM63() {
         then(1, () -> server(this::build));
-        then(1, () -> mc.options.hideGui = true);
+        then(1, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, true));
         then(1, this::rememberIris);
         List<String> packs = packs();
         LOGGER.info("[smoketest] M63 packs: {}", packs);
@@ -100,7 +100,7 @@ final class DevClientSmokeM63 {
         }
         then(1, this::restoreIris);
         then(1, () -> time(6000));
-        then(40, () -> mc.options.hideGui = false);
+        then(40, () -> org.overengineer.bettacraft.client.DevHud.setHidden(mc, false));
     }
 
     int problems() {
@@ -297,7 +297,7 @@ final class DevClientSmokeM63 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step s = steps.peek();
         if (wait < s.delay()) {
@@ -316,7 +316,7 @@ final class DevClientSmokeM63 {
     }
 
     private void shot(String pack, String view) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), 1, c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }
