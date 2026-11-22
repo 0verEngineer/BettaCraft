@@ -28,6 +28,9 @@ if grep -q 'run/${minecraft_version}' "$WT/neoforge/build.gradle" 2>/dev/null; t
   SAVES_REL="run/$(grep '^minecraft_version=' "$WT/gradle.properties" | cut -d= -f2 | tr -d "\r")/saves"
 fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
+# M62: the old version's server takes this branch's port (never 25565, never the port hard-coded in that commit)
+. "$REPO/tools/upgrade/server_port.sh"
+pin_server_port "$WT" "${SAVES_REL%/saves}"
 SHOW="$CMD/DevShowcase.java"
 # extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.
 # M40: the end of build() is found by matching its braces (strings, chars and comments skipped): newer DevShowcase
@@ -59,7 +62,8 @@ s = s.replace('server.saveEverything(false, true, true);', 'server.saveEverythin
 open(p, 'w', encoding='utf-8').write(s)
 PY
 # its own run directory (nothing is shared with this repo's run/)
-(cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q)
+(cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q) || { check_server_log "$WT/build/showcase/server.log"; exit 1; }
+check_server_log "$WT/build/showcase/server.log"
 grep -q "MANIFEST WRITTEN" "$WT/build/showcase/server.log" || { echo "no manifest, see $WT/build/showcase/server.log"; exit 1; }
 rm -rf "$REPO/$SAVES_REL/$NAME"
 mkdir -p "$REPO/$SAVES_REL"
