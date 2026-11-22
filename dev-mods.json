@@ -708,11 +708,11 @@
     "sha256": "5b6b5124c74407ffe4945f8da61491731cbf697f0bba4b14257e0ff977dac087"
    },
    {
-    "file": "sodium-extra-fabric-0.9.5+mc1.21.11.jar",
-    "maven": "maven.modrinth:sodium-extra:efIKaD8Q",
-    "size": 487570,
-    "sha1": "131a81641152efd5feb90bdb643d82726ec1da89",
-    "sha256": "d463254d744890b58f6aef9ebfdfb268e2d4da073a99ac227b575bd20d1191b1"
+    "file": "sodium-extra-fabric-0.9.4+mc1.21.11.jar",
+    "maven": "maven.modrinth:sodium-extra:oqoegXMw",
+    "size": 471588,
+    "sha1": "5ee4535324b48628424866eca29a4dceb364d27a",
+    "sha256": "ff6ef489193a960c1abf9ac28416f11277db5650a40493bf11d1ec7d96737f4d"
    },
    {
     "file": "sodium-fabric-0.8.14+mc1.21.11.jar",
