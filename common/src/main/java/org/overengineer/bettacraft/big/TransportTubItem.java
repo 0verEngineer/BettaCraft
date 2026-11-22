@@ -100,6 +100,7 @@ public class TransportTubItem extends Item {
 
     /** Puts {@code target} into the empty tub in {@code hand} (removes the entity). */
     public static void scoop(Player player, InteractionHand hand, Entity target) {
+        org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
         TankInhabitants.release(target);
         ItemStack filled = fillWith(target);
         player.level().playSound(null, target.blockPosition(), SoundEvents.BUCKET_FILL_FISH, SoundSource.PLAYERS, 1.0F, 0.7F);
@@ -168,6 +169,8 @@ public class TransportTubItem extends Item {
             if (!level.isClientSide) player.displayClientMessage(Component.translatable("message.bettacraft.fish_bag.needs_water"), true);
             return InteractionResultHolder.fail(stack);
         }
+        // M62 part 7: like a bucket, only after the confirmation (and not right after the catch)
+        if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
         if (level instanceof ServerLevel server) {
             CompoundTag t = storedEntity(stack);
             Entity e = t == null ? null : EntityType.loadEntityRecursive(t, server, en -> en);

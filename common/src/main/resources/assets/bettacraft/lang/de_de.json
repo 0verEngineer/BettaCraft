@@ -729,6 +729,8 @@
   "bettacraft.configuration.features.power.enabled.tooltip": "Geräte verbrauchen Forge Energy (FE) aus Kabeln und Akkus anderer Mods (aus: die Geräte laufen ohne Strom). Aus: alles darunter ist auch aus, und seine Rezepte, Händler-Angebote, Loot, Kescher- und Angelfänge und Wild-Spawns entfallen; Items und Blöcke, die es schon gibt, bleiben.",
   "bettacraft.configuration.features.power.regulator": "Leistungsregler",
   "bettacraft.configuration.features.power.regulator.tooltip": "Leistungsregler 0-100 % an Filtern, Ausströmern, Luftpumpen und Strömungspumpen (Menü oder Schleichen + Mausrad): weniger Leistung reinigt und bewegt weniger, braucht weniger FE und ist leiser (aus: alles läuft mit 100 %)",
+  "bettacraft.configuration.features.equipment.catchGuard": "Fang-Schutz",
+  "bettacraft.configuration.features.equipment.catchGuard.tooltip": "Nach dem Fangen eines Tiers lässt eine halbe Sekunde lang kein Behälter ein Tier frei, damit ein zweiter Klick einer prellenden Maustaste oder eine gehaltene Taste es nicht gleich wieder freilässt (aus: keine Pause; die Rückfrage vor dem Freilassen in die Welt bleibt)",
   "bettacraft.configuration.features.equipment.breakProtection": "Bruchschutz",
   "bettacraft.configuration.features.equipment.breakProtection.tooltip": "Schalter „Bruchschutz“ im Becken-Menü: niemand kann ein geschütztes Becken, seinen Deckel, das Licht, die Futterautomaten und den Schrank darunter abbauen (aus: der Schalter ist ausgeblendet und wirkt nicht)",
   "bettacraft.configuration.features.equipment.clipOnFeeder": "Klemm-Futterautomat",

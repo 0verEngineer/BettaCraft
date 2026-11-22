@@ -53,6 +53,7 @@ public final class BettaCraft {
                 org.overengineer.bettacraft.compat.create.CreateLandingsHandlers.class,
                 org.overengineer.bettacraft.config.WorldConfigMigrationHandlers.class,
                 org.overengineer.bettacraft.containers.BucketCatchingHandlers.class,
+                org.overengineer.bettacraft.containers.CatchGuard.class, // M62 part 7
                 org.overengineer.bettacraft.critters.CritterEventsHandlers.class,
                 org.overengineer.bettacraft.equipment.MirrorStickItemHandlers.class,
                 org.overengineer.bettacraft.foreign.ForeignBreedingHandlers.class,

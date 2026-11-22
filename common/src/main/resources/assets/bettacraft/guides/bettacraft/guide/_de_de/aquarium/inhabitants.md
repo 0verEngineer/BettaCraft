@@ -35,9 +35,12 @@ ebenfalls übernommen.
 
 ## Eimer, Beutel und Flaschen ausleeren
 
-* **Tiere in die Welt:** Ein Tier-Eimer oder ein gefüllter Fisch- oder Kleintier-Beutel fragt erst in einem kleinen
-  Fenster nach, wenn du ihn auf die Welt anwendest (Boden, Teich, das Meer vom Ufer oder Boot aus): *Abbrechen* behält
-  die Tiere, *Ausleeren* lässt sie frei. Ins Aquarium kommen sie ohne Nachfrage (der Kescher holt sie wieder).
+* **Tiere in die Welt:** Ein Tier-Eimer, ein gefüllter Fisch- oder Kleintier-Beutel, eine Terrarienbox, eine
+  Transportwanne oder ein Mob-Glas fragt erst in einem kleinen Fenster nach, wenn du es auf die Welt anwendest (Boden,
+  Teich, das Meer vom Ufer oder Boot aus): *Abbrechen* behält die Tiere, *Ausleeren* lässt sie frei. Ins Aquarium kommen
+  sie ohne Nachfrage (der Kescher holt sie wieder).
+* **Fang-Schutz:** Eine halbe Sekunde nach einem Fang tut der Behälter nichts, damit ein zweiter Klick (eine prellende
+  Maustaste, eine gehaltene Taste) das Tier nicht gleich wieder freilässt (Schalter `features.equipment.catchGuard`).
 * **Eimer:** Der Meerwasser-Eimer leert sich wie ein Wassereimer, auch ins Meer und in andere Wasserflächen, in einen
   Kessel, aus einem Werfer und in Tanks und Rohre anderer Mods.
 * **Flaschen** (Salzwasser, Sumpfwasser, Infusorien, Artemia-Nauplien): Schleichen + Rechtsklick (oder Rechtsklick in

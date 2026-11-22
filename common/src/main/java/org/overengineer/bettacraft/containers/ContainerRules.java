@@ -32,6 +32,8 @@ import org.overengineer.bettacraft.entity.betta.FishBagItem;
  *     bag) never lets them go into the world without asking: the player confirms in a small screen with "Cancel" and
  *     "Empty" ({@code ConfirmEmptyScreen}); only then does the server release them ({@link #confirmed}). Putting them
  *     into a tank (as inhabitants, where the net brings them back) needs no confirmation.</li>
+ *     <li>M62: <b>no release right after a catch</b> ({@link CatchGuard}): for half a second after a catch the container
+ *     does nothing, so a second click (a bouncing mouse button, a held key) does not let the animal go again.</li>
  *     <li>The server decides; the client never predicts a release (no ghost blocks or animals in multiplayer).</li>
  * </ol>
  * New containers: implement the release through {@link #release} and the pouring through {@link #pour}, and add a
@@ -48,7 +50,11 @@ public final class ContainerRules {
     /** True if the stack holds animals (an animal bucket, a filled bag of fish, critters or a clutch). */
     public static boolean holdsAnimals(ItemStack stack) {
         return stack.getItem() instanceof MobBucketItem || stack.getItem() instanceof FishBagItem && FishBagItem.isFilled(stack)
-                || stack.getItem() instanceof CritterBucketItem && CritterBucketItem.animals(stack) != null; // M22.3
+                || stack.getItem() instanceof CritterBucketItem && CritterBucketItem.animals(stack) != null // M22.3
+                // M62 part 7: every other catcher of the mod that holds an animal (the box of a foreign land animal, the tub, the mob jar)
+                || org.overengineer.bettacraft.terrarium.TerrariumBoxItem.isFilled(stack)
+                || org.overengineer.bettacraft.big.TransportTubItem.isFilled(stack)
+                || org.overengineer.bettacraft.mobs.MobJarItem.isFilled(stack);
     }
 
     /** The player confirmed emptying the container in their hand; the release runs now on the server. */
@@ -62,6 +68,7 @@ public final class ContainerRules {
      */
     public static boolean release(Level level, Player player, InteractionHand hand, ItemStack stack) {
         if (!holdsAnimals(stack)) return true;
+        if (CatchGuard.guarded(player)) return false; // M62 part 7: just caught: no release (and no question) for half a second
         if (level.isClientSide) {
             confirmScreen.accept(hand, stack.copy());
             return false;

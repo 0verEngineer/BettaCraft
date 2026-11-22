@@ -344,9 +344,12 @@ public final class ForeignLandAnimalsGameTests {
         BlockPos ground = h.absolutePos(new BlockPos(20, 4, 28));
         while (h.getLevel().getBlockState(ground).isAir() && ground.getY() > h.getLevel().getMinBuildHeight()) ground = ground.below();
         player.moveTo(ground.getX() + 0.5, ground.getY() + 1.0, ground.getZ() + 0.5, 0F, 90F); // looking straight down onto the ground
+        // M62 part 7: the tub asks first like a bucket
+        org.overengineer.bettacraft.containers.CatchGuard.reset(player);
         var r = held.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
-        h.assertTrue(r.getResult().consumesAction(), "let go on the land: " + r.getResult());
-        h.assertFalse(TransportTubItem.isFilled(r.getObject()), "the tub is empty again");
+        h.assertFalse(r.getResult().consumesAction(), "let go on the land without asking: " + r.getResult());
+        org.overengineer.bettacraft.containers.ContainerRules.confirm(player, InteractionHand.MAIN_HAND);
+        h.assertFalse(TransportTubItem.isFilled(player.getItemInHand(InteractionHand.MAIN_HAND)), "let go on the land: the tub is empty again");
         for (Entity e : h.getLevel().getEntities(komodo, TankInhabitants.tankBox(big.getTank()).inflate(40), e -> !TankInhabitants.hasTankRef(e))) e.discard();
         player.discard();
         h.succeed();

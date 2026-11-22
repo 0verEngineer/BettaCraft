@@ -53,6 +53,7 @@ public final class BucketCatchingHandlers {
             List<CompoundTag> more = new java.util.ArrayList<>(fish);
             more.add(tmp.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY).copyTag());
             player.setItemInHand(event.getHand(), AnimalContainers.withFish(held, s, more));
+            CatchGuard.caught(player); // M62 part 7
             mob.playSound(m.getPickupSound(), 1.0F, 1.0F);
             mob.discard();
             return;

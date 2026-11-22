@@ -380,9 +380,14 @@ public abstract class TerrariumAnimalEntity extends Animal implements TerrariumA
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!(this instanceof Bucketable b)) return super.mobInteract(player, hand);
-        if (!usesBox()) return Bucketable.bucketMobPickup(player, hand, (TerrariumAnimalEntity & Bucketable) this).orElse(super.mobInteract(player, hand));
+        if (!usesBox()) {
+            var picked = Bucketable.bucketMobPickup(player, hand, (TerrariumAnimalEntity & Bucketable) this);
+            if (picked.isPresent()) org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
+            return picked.orElse(super.mobInteract(player, hand));
+        }
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.is(org.overengineer.bettacraft.registry.ModItems.TERRARIUM_BOX.get()) || !isAlive()) return super.mobInteract(player, hand);
+        org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7: no release by a second click right away
         playSound(b.getPickupSound(), 1.0F, 1.0F);
         if (!level().isClientSide) {
             TankInhabitants.release(this);
