@@ -38,6 +38,14 @@ The whole test suite runs from a fresh clone without manual work. No change to t
   manifest too. Only logs are uploaded, never a mod.
 - README: a section "Running the tests" (clone, Java, flags, where the mods come from).
 
+### Fixed (tests only)
+- The FTB Quests GameTests expected 113 quests; the chapter has 115 since the terrarium plants (found by the first
+  integration run from a fresh clone).
+- The upgrade smoke counted a small animal born while the old world loads as "not analysed" (failed on a freshly built
+  reference world).
+- `runServer -PsmoketestOldWorld` lost its fresh copy of the old world to the new cleanup; it now loads the reference world
+  of the branch by default and passes.
+
 ### Removed
 - `tools/ci/fetch_mods.py`, `power-mods.json`, `integration-mods.json` and the partial integration run
   (`-PintegrationPartial`): CI loads the same manifest as a local run.
