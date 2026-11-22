@@ -522,7 +522,7 @@ public final class InteriorPlants {
             }
         }
         InteriorRegions.get(level.getServer()).setDirty();
-        LOGGER.debug("Aquarium plants of region {}: {} plant(s) changed in {} ms", r.id(), changed, (System.nanoTime() - t0) / 1e6);
+        if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Aquarium plants of region {}: {} plant(s) changed in {} ms", r.id(), changed, (System.nanoTime() - t0) / 1e6);
         return changed;
     }
 
@@ -651,7 +651,7 @@ public final class InteriorPlants {
         p.target = target;
         interior.setBlock(to, state(p.species, PlantPart.CUTTING, p.tint), Block.UPDATE_CLIENTS);
         if (!apply(interior, r, p)) return false;
-        LOGGER.debug("Marimo {} rolled from stage {} by {},{}", p, stage, dx, dz);
+        if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Marimo {} rolled from stage {} by {},{}", p, stage, dx, dz);
         return true;
     }
 
@@ -728,7 +728,7 @@ public final class InteriorPlants {
         BlockPos root = r.toWorld(p.x, p.y, p.z);
         AquaticPlantBlock block = block(p.species);
         if (!interior.getBlockState(root).is(block)) {
-            LOGGER.debug("Plant {} lost its root in region {}", p, r.id());
+            if (org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug) org.overengineer.bettacraft.debug.LogArea.INTERIOR.debug("Plant {} lost its root in region {}", p, r.id());
             r.plants().remove(p);
             return false;
         }

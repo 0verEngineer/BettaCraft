@@ -439,7 +439,7 @@ public final class TankMoves {
             if (NbtCompat.hasUUID(tag, "UUID") && level.getEntity(NbtCompat.getUUID(tag, "UUID")) != null) continue;
             Entity e = EntityType.loadEntityRecursive(tag, level, new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.LOAD, false), en -> en);
             if (e == null) {
-                LOGGER.warn("A packed animal ({}) could not be loaded again", tag.getStringOr("id", ""));
+                org.overengineer.bettacraft.debug.LogArea.TANK.warnThrottled("packed_load", "A packed animal ({}) could not be loaded again", tag.getStringOr("id", ""));
                 continue;
             }
             if (place(level, e, map, false, home) && level.addFreshEntity(e)) n++;
@@ -455,7 +455,7 @@ public final class TankMoves {
         if (c == null && map != null) c = TankMultiblock.getController(level, map.to());
         if (c == null && home != null) c = TankMultiblock.getController(level, home);
         if (c == null) {
-            LOGGER.warn("No tank for a released {} at {}", e.getType().getDescriptionId(), p);
+            org.overengineer.bettacraft.debug.LogArea.TANK.warnThrottled("released_no_tank", "No tank for a released {} at {}", e.getType().getDescriptionId(), p);
             return false;
         }
         if (!c.getTank().contains(BlockPos.containing(p))) p = TankInhabitants.findSpawnPos(level, c.getTank(), level.getRandom());

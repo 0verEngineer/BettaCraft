@@ -203,6 +203,8 @@ public final class BettaCare {
         String causeKey = c.saltBad() ? "salinity" : c.tempBad() && fish.health.isHungry(p) ? "both" : fish.health.isHungry(p) ? "hunger"
                 : c.tempBad() ? "temperature" : c.crowdBad() ? "overcrowding" : chem && !quality ? (co2 ? "co2" : "water_chemistry") : c.waterBad() ? "water_quality" : "illness";
         TankCare.log(level, controller, "log.bettacraft.died", TankCare.nameArg(fish), "@cause.bettacraft." + causeKey);
+        if (org.overengineer.bettacraft.debug.LogArea.CARE.debug) org.overengineer.bettacraft.debug.LogArea.CARE.debug("betta {} ({}) died of {}: {}, hungry {}, chemistry bad {}, quality bad {}, CO2 bad {}, sick days {}", fish.getUUID(),
+                fish.stage(), causeKey, c, fish.health.isHungry(p), chem, quality, co2, fish.health.sickDays()); // M57
         org.overengineer.bettacraft.api.ApiEvents.died(level, controller, fish, causeKey, null); // M32 part d
         controller.getTank().inhabitants().remove(fish.getUUID());
         controller.markTankChanged();
