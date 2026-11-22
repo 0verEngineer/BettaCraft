@@ -57,6 +57,14 @@ In der Welt sonnen sie sich außerdem an hellen Tagen, und die kleinen, scheuen 
 kommt. Mit dem Schalter aus bewegen sie sich wie vorher (1.43). Derselbe Schalter lässt **Fische** ab und zu davonflitzen und
 nachts mehr ruhen und **Krebse** tagsüber in ihren Verstecken bleiben.
 
+**Klettern in der Welt** (Schalter `features.visuals.worldClimbing`): Schildkröten, der Leopardgecko und die Kornnatter steigen
+eine 1 Block hohe Stufe hoch, statt zu springen (eine Schildkröte krabbelt mit erhobenem Vorderkörper hinauf, Echsen und
+Schlange liegen flach an der Wand), der **Kronengecko** klettert ganze Wände hoch (Stämme, Felsen, Hauswände) bis oben und
+darüber, ab und zu nur ein Stück, hält sich dort eine Weile fest und kommt wieder herunter, und der **Schlammspringer** klettert
+genauso an Wurzeln und Stämmen (Holz, Mangrovenwurzeln). Die Frösche hüpfen weiter hinauf.
+
+![Eine Schmuckschildkröte und ein Leopardgecko an einer Stufe, ein Kronengecko hoch an einer Wand, eine Garnele an einem Stein unter Wasser](../images/world_climbing.png)
+
 ## Zucht
 
 Ein ausgewachsenes, gefüttertes Weibchen (zwei Tage), ohne schädliches Problem und mit wenig Stress, und ein ausgewachsenes

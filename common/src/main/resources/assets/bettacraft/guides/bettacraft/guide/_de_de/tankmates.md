@@ -23,6 +23,8 @@ schwärmen mit ihresgleichen, ruhen am Boden oder saugen sich ans Glas, und jede
   die Mindestzahl. Das [Tank-Menü](aquarium/menu.md) nennt jeden zu kleinen Schwarm mit seinen Fischen und der Mindestzahl
   („Neonsalmler: 3 von 6“: in der Übersicht, im Tab Zucht und in den Info-Overlays), seine Fische stehen orange in der
   Tierliste.
+* Auch außerhalb eines Beckens (wilde und freigelassene Fische) schwimmt eine Schwarmart als **Schwarm**: Die Fische folgen
+  wie im Becken einem Leitfisch ihrer Art (Schalter `features.tankmates.wildSchools`).
 * Jede Art hat ihren **Temperaturbereich**; das klassische Betta-Becken (26-28 °C) passt für Roten Neon, Feuersalmler,
   Keilfleckbärbling, Moskitobärbling, Sterbai-Panzerwels, Dornauge und die L-Welse, nicht für Neonsalmler,
   Panda-Panzerwels oder Platy.

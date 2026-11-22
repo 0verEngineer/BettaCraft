@@ -38,6 +38,89 @@ public final class HerpWorldGoals {
         });
         goals.addGoal(3, new Rest(e));
         goals.addGoal(4, new Bask(e));
+        goals.addGoal(4, new WallClimb(e));
+    }
+
+    /**
+     * M62: a wall climber ({@link WorldClimbing.Style#WALL}, the mudskipper on roots and trunks) now and then goes to a face
+     * nearby and climbs it: half the time to the top and over, else part of the way to hold on there for a while (then it comes
+     * down again). More often while it is active by its hours.
+     */
+    public static final class WallClimb extends Goal {
+        private final TerrariumAnimalEntity e;
+        @Nullable
+        private WorldClimbing.Spot spot;
+        private int ticks;
+        private boolean climbed;
+
+        WallClimb(TerrariumAnimalEntity e) {
+            this.e = e;
+            setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+        }
+
+        private static boolean wallStyle(WorldClimbing.Style s) {
+            return s == WorldClimbing.Style.WALL || s == WorldClimbing.Style.ROOTS;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (!(e instanceof HerpEntity h) || e.inTank() || !e.onGround() || e.isInWater() || h.climbingInWorld()) return false;
+            WorldClimbing.Style st = h.worldClimb();
+            if (!wallStyle(st)) return false;
+            Habits hb = e.habits();
+            Level l = e.level();
+            boolean active = hb == null || hb.active(l.getOverworldClockTime(), l.isBrightOutside());
+            if (e.getRandom().nextInt(active ? 300 : 900) != 0) return false;
+            spot = WorldClimbing.wallSpot(l, e.blockPosition(), 6, st, e.getRandom());
+            return spot != null;
+        }
+
+        @Override
+        public void start() {
+            ticks = 0;
+            climbed = false;
+            if (spot == null) return;
+            if (e instanceof HerpEntity h && e.getRandom().nextBoolean() && spot.height() > 2) {
+                h.climbPart(2 + e.getRandom().nextInt(Math.min(spot.height(), 6) - 1), 200 + e.getRandom().nextInt(600));
+            }
+            Vec3 foot = Vec3.atBottomCenterOf(spot.foot());
+            e.getNavigation().moveTo(foot.x, foot.y, foot.z, 1.0);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            if (spot == null || e.inTank() || !(e instanceof HerpEntity h)) return false;
+            if (h.climbingInWorld()) {
+                climbed = true;
+                return true;
+            }
+            return !climbed && ticks < 300;
+        }
+
+        @Override
+        public void tick() {
+            ticks++;
+            if (spot == null || !(e instanceof HerpEntity h) || h.climbingInWorld()) return;
+            Vec3 foot = Vec3.atBottomCenterOf(spot.foot());
+            double dx = foot.x - e.getX(), dz = foot.z - e.getZ();
+            if (dx * dx + dz * dz < 0.6 * 0.6 || e.getNavigation().isDone() && dx * dx + dz * dz < 1.5 * 1.5) {
+                // at the foot: into the face (the climb starts when it touches it)
+                e.getNavigation().stop();
+                e.getMoveControl().setWantedPosition(foot.x + spot.face().getStepX(), foot.y, foot.z + spot.face().getStepZ(), 1.0);
+            } else if (e.getNavigation().isDone()) {
+                e.getNavigation().moveTo(foot.x, foot.y, foot.z, 1.0);
+            }
+        }
+
+        @Override
+        public void stop() {
+            spot = null;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;
+        }
     }
 
     /** Small and shy animals run from a player (not the turtles, they pull in their heads). */
