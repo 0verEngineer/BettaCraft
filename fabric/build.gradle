@@ -128,6 +128,14 @@ loom {
             }
             // M61: -Psmoketestm61: sendBlockUpdated with null states, leaving and joining the world (Modern Dynamics has no Fabric
             // build at all: the pipe part is a documented gap on Fabric)
+            // M62 parts 5 and 6: -Psmoketestm62d [-Pm62dparts=snail,icons,glass] [-Pm62dtag=<name>]: snail shell, plant icons, clear glass
+            if (project.hasProperty('smoketestm62d')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m62donly', 'true'
+                if (project.hasProperty('m62dparts')) property 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
+                if (project.hasProperty('m62dtag')) property 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
+            }
             if (project.hasProperty('smoketestm61')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'

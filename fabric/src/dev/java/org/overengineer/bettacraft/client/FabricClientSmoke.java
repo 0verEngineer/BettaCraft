@@ -31,6 +31,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     /** M53: -Psmoketestm53 (users tab, gear, map mods, interior brightness, every animal from six sides). */
     private static DevClientSmokeM53 m53;
     private static DevClientSmokeM54 m54;
+    /** M62 parts 5 and 6: -Psmoketestm62d (the Tylomelania shell, every plant icon, the clear glass tank icon). */
+    private static DevClientSmokeM62d m62d;
     /** M55: -Psmoketestm55 (wild carpets, wild plants, container icons). */
     private static DevClientSmokeM55 m55;
     private static DevClientSmokeM56 m56;
@@ -207,6 +209,15 @@ public final class FabricClientSmoke implements ClientModInitializer {
                     LOGGER.info(m62b.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M62b");
                     mc.stop();
                 }
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62donly")) {
+                LOGGER.info("[smoketest] fabric client in world: M62d scene");
+                m62d = new DevClientSmokeM62d();
+                stage = 624;
+            }
+            if (stage == 624) {
+                if (m62d.tick()) stage = 4;
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m61only")) {
