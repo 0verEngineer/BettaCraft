@@ -260,7 +260,8 @@ release yet.
   for water can fill and drain aquariums and fill the larva tub, hoppers and item pipes work with the feeder, the
   cabinet, the larva tub and the hatchery.
 * **JEI:** information pages for all Bettacraft items.
-* **Sodium and Iris:** the aquarium water and the miniatures work with both.
+* **Sodium and Iris:** the aquarium water and the miniatures work with both. With shader packs (tested: Complementary
+  Reimagined and Unbound, BSL, MakeUp) the water surface stays flat and is lit smoothly, without block seams.
 * **Better Fish Tanks:** its *Fish Bag* puts animals into Bettacraft aquariums and takes them out through the menu.
   The other way round, bettas fit in its bag and its fish tanks; a filled Bettacraft fish bag or a betta bucket
   releases its animal into a Better Fish Tanks aquarium with a right-click.
