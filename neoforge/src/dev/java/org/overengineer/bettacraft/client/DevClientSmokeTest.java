@@ -177,6 +177,8 @@ final class DevClientSmokeTest {
     private static final boolean M56_ONLY = Boolean.getBoolean("bettacraft.smoketest.m56only");
     /** M61: -Psmoketestm61 [-Ppipes] (block changes without states, Modern Dynamics pipes, leaving and joining the world). */
     private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
+    private static final boolean M62B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62bonly");
+    private static DevClientSmokeM62b m62b;
     private static DevClientSmokeM61 m61;
     private static DevClientSmokeM56 m56;
     /** -Psmoketestm54: the movement of the animals (M54). */
@@ -456,6 +458,16 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M62B_ONLY) {
+                if (ticks == 60) m62b = new DevClientSmokeM62b();
+                if (m62b != null && m62b.tick()) {
+                    LOGGER.info("[smoketest] client world test finished (M62b only)");
+                    LOGGER.info(m62b.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M62b");
+                    m62b = null;
                     mc.stop();
                 }
                 return;
