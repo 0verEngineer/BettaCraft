@@ -20,7 +20,7 @@ A fix for servers with Modern Dynamics.
 ### Changed
 - Test only: a JUnit test calls the plant mesh hook as Modern Dynamics does; a GameTest asks the positional blocks with
   null arguments; the client smoke `-Psmoketestm61` calls `sendBlockUpdated` with null states next to stone and a plant
-  and leaves and joins the world again; with the new dev mod group `-Ppipes` (Modern Dynamics 0.9.6 from Modrinth, NeoForge)
+  and leaves and joins the world again; with the new dev mod group `-Ppipes` (Modern Dynamics 26.2.0 from Modrinth, NeoForge)
   it puts fluid pipes between our blocks first and fails on any "Failed to handle packet".
 - Gap: Modern Dynamics has no Fabric build (NeoForge only since Minecraft 1.20.4; checked on Modrinth and CurseForge, it is
   not on a maven): on Fabric the client smoke runs without the pipes.
