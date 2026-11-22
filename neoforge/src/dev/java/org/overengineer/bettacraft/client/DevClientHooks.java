@@ -8,6 +8,17 @@ public final class DevClientHooks {
     private DevClientHooks() {}
 
     public static void init() {
+        // M56: a fresh run dir opens the accessibility onboarding (narrator) first and no hook below would ever see the title
+        // screen: skip it like FabricClientSmoke does (the option is saved, the title screen opens and the hooks fire)
+        org.overengineer.bettacraft.platform.client.ClientEvents.SCREEN_OPENING.add(screen -> {
+            if (!(screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen)) return;
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            mc.execute(() -> {
+                mc.options.onboardAccessibility = false;
+                mc.options.save();
+                mc.gui.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+            });
+        });
         if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();
         } else if (Boolean.getBoolean("bettacraft.media")) {
