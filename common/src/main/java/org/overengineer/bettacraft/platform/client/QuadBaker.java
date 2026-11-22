@@ -19,6 +19,7 @@ public final class QuadBaker {
     private boolean shade = true;
     private int tint = -1;
     private ChunkSectionLayer layer = ChunkSectionLayer.CUTOUT;
+    private boolean ao;
 
     public QuadBaker sprite(TextureAtlasSprite sprite) {
         this.sprite = sprite;
@@ -46,6 +47,12 @@ public final class QuadBaker {
         return this;
     }
 
+    /** M63: the quad takes part in ambient occlusion and smooth light (the part must allow it too). */
+    public QuadBaker ao(boolean ao) {
+        this.ao = ao;
+        return this;
+    }
+
     /** One vertex: position, colour (ARGB), texture coordinates and normal. */
     public QuadBaker vertex(float x, float y, float z, int argb, float u, float v, float nx, float ny, float nz) {
         if (vertex >= 4) throw new IllegalStateException("a quad has four vertices");
@@ -64,7 +71,7 @@ public final class QuadBaker {
 
     public BakedQuad bake() {
         if (vertex != 4) throw new IllegalStateException("a quad needs four vertices, has " + vertex);
-        BakedQuad q = ClientPlatform.get().quad(data.clone(), tint, direction, sprite, shade ? null : Direction.UP, false, layer); // M52e: 26.3 shades by a direction (up = unshaded)
+        BakedQuad q = ClientPlatform.get().quad(data.clone(), tint, direction, sprite, shade ? null : Direction.UP, ao, layer); // M52e: 26.3 shades by a direction (up = unshaded)
         vertex = 0;
         java.util.Arrays.fill(data, 0);
         return q;

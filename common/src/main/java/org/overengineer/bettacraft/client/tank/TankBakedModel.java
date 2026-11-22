@@ -57,6 +57,12 @@ public class TankBakedModel implements DynamicModel {
     public static final ModelKey<Integer> CORNERS = new ModelKey<>("tank_corners");
     /** M18: RGB of the tank's coloured lights for the water drawn by the model (shader packs); absent = no tint. */
     public static final ModelKey<Integer> LIGHT = new ModelKey<>("tank_light");
+    /**
+     * M63: the water is drawn by the model (shader packs, contraptions): its render layer uses smooth light. 1.21.1 put the
+     * corner light into the vertices; since 1.21.11 a model quad has no light of its own, so the chunk renderer's smooth
+     * light does it (the tank blocks do not darken it: their shade brightness is 1).
+     */
+    public static final ModelKey<Boolean> WATER_SMOOTH = new ModelKey<>("tank_water_smooth");
 
     private final TextureAtlasSprite edge;
     /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
@@ -208,9 +214,12 @@ public class TankBakedModel implements DynamicModel {
         if (state.getValue(TankBlock.FILL) > 0 && TankWaterRenderer.waterAbove(level, pos, state)) corners |= WATER_ABOVE_BIT;
         corners |= TankWaterRenderer.gapMask(level, pos, state) << GAP_SHIFT;
         int light = state.getValue(TankBlock.FILL) > 0 ? TankLightTint.colorAt(level, pos) : 0;
-        if (concave == 0 && corners == 0 && light == 0) return modelData;
+        // M63: the water of the model (shader packs, contraptions) gets the smooth corner light of the fluid path
+        boolean water = state.getValue(TankBlock.FILL) > 0 && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(modelData));
+        if (concave == 0 && corners == 0 && light == 0 && !water) return modelData;
         var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
         if (light != 0) b.with(LIGHT, light);
+        if (water) b.with(WATER_SMOOTH, true);
         return b.build();
     }
 
@@ -232,7 +241,7 @@ public class TankBakedModel implements DynamicModel {
         // M18: the light colour (and the tint strength it was mixed with) is part of the key
         long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
                 | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48); // M20: the salt byte reaches bit 46
-        return waterCache.computeIfAbsent(key, k -> {
+        List<BakedQuad> plain = waterCache.computeIfAbsent(key, k -> {
             var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             List<BakedQuad> list = new ArrayList<>();
@@ -240,10 +249,11 @@ public class TankBakedModel implements DynamicModel {
                     list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite)));
             return List.copyOf(list);
         });
+        return plain;
     }
 
     private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
-        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1).layer(ChunkSectionLayer.TRANSLUCENT);
+        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1).layer(ChunkSectionLayer.TRANSLUCENT).ao(true);
         float nx = d.getStepX(), ny = d.getStepY(), nz = d.getStepZ();
         if (reversed) {
             nx = -nx; ny = -ny; nz = -nz;
@@ -508,6 +518,12 @@ public class TankBakedModel implements DynamicModel {
     @Override
     public boolean ambientOcclusion() {
         return false;
+    }
+
+    /** M63: smooth light for the translucent layer that holds the water of the model (no block seams on the surface). */
+    @Override
+    public boolean ambientOcclusion(net.minecraft.client.renderer.chunk.ChunkSectionLayer layer, ModelValues data) {
+        return layer == net.minecraft.client.renderer.chunk.ChunkSectionLayer.TRANSLUCENT && Boolean.TRUE.equals(data.get(WATER_SMOOTH));
     }
 
     /** M52b: the particle of the item (its glass) or of the block (the glass of its block entity). */
