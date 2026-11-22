@@ -22,12 +22,28 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
     <td><img src="docs/images/bettacraft-shrimp-tank-crawling.gif" alt="A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish"></td>
   </tr>
   <tr>
+    <td><img src="docs/images/bettacraft-paludarium-frogs.gif" alt="A rainforest paludarium: dart frogs hop over moss between bromeliads, ferns and orchids, Endler guppies in the water"></td>
+    <td><img src="docs/images/bettacraft-mangrove-archerfish.gif" alt="A brackish mangrove paludarium: archerfish spit at the leaves of the mangrove, mudskippers on the mud"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-seahorse-tank-swimming.gif" alt="A seahorse tank: lined and dwarf seahorses between seagrass, kelp and soft corals"></td>
+    <td><img src="docs/images/bettacraft-desert-terrarium-walking.gif" alt="A desert terrarium: leopard geckos and a corn snake walk between cacti and succulents"></td>
+  </tr>
+  <tr>
     <td><img src="docs/images/bettacraft-betta-varieties.jpg" alt="Six betta varieties in a row: Koi Galaxy, Black Orchid, Mustard Gas, Samurai, Avatar, Hellboy"></td>
     <td><img src="docs/images/bettacraft-tank-interior.jpg" alt="Inside the planted tank at 16 blocks per tank block"></td>
   </tr>
   <tr>
-    <td><img src="docs/images/bettacraft-terraria.jpg" alt="A paludarium with sliders and a musk turtle, and a leopard gecko terrarium"></td>
-    <td><img src="docs/images/bettacraft-big-sea-tank.jpg" alt="A big sea water tank with a blacktip reef shark, eagle and cownose rays and a bamboo shark"></td>
+    <td><img src="docs/images/bettacraft-terrarium-plants.jpg" alt="A rainforest terrarium full of terrarium plants with crested geckos"></td>
+    <td><img src="docs/images/bettacraft-swamp-frogs.jpg" alt="A swamp paludarium: Minecraft frogs between pitcher plants and sedges, dwarf clawed frogs and a betta under lily pads"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-giant-shark.jpg" alt="A blacktip reef shark in a big sea water tank"></td>
+    <td><img src="docs/images/bettacraft-sea-turtle.jpg" alt="A sea turtle in a sea water paludarium with a beach"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/bettacraft-hired-aquarist.jpg" alt="Two hired aquarists at work at their employer's tanks"></td>
+    <td><img src="docs/images/bettacraft-monitors.jpg" alt="A monitor wall with a dashboard between a betta tank and a reef tank"></td>
   </tr>
   <tr>
     <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for two tanks with filter pipes, T-pieces, a pipe bundle and pipe covers"></td>
@@ -37,208 +53,50 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
 
 ![The tank menu with the genes of a betta and the water values, and the handbook page on genetics](docs/images/bettacraft-menus.png)
 
-More pictures and animations (most also with Complementary Reimagined shaders) are in [docs/images](docs/images); they
-are made in the showcase world by `gradlew runClient -Psmoketestm43` (see "Building from source").
+Every kind of tank and animal with its picture: [FEATURES.md](FEATURES.md). More pictures and animations (most also with
+Complementary Reimagined shaders) are in [docs/images](docs/images); they are made in the showcase world by
+`gradlew runClient -Psmoketestm43` (see "Building from source").
 
 ## Features
 
-### Bettas and genetics
-- **Wild bettas** spawn in swamps (also those of biome mods); catch them with a water bucket or a fish bag, the fish keeps
-  all its genes. A **magnifier** (or the aquarium) analyses the hidden genes of a new animal. Some wild bettas are
-  *Betta imbellis* or *Betta smaragdina*: they cross with *B. splendens* into fertile hybrids.
-- **Mendel genetics:** nine loci with two alleles each (tail shape, fin length, pectorals, body colour, fin colour,
-  pattern, pattern colour, iridescence and its colour), dominance, carriers and mutations: 8 tail shapes, short and
-  long fins, dumbo ears, 43 colours, 12 patterns and 16 named varieties (Koi Galaxy, Nemo, Black Orchid, Mustard Gas
-  ...), all data-driven and changeable with datapacks.
-- **Breeding:** conditioning with live food, bubble nest under floating plants, spawning, eggs, larvae and six life
-  stages; fry need infusoria and artemia that you culture yourself (larva tub, artemia hatchery). Two adult males
-  fight (they flare first, also at a mirror stick).
-- **Two sizes:** bettas are drawn at **Normal** size (the default since 1.28, about halfway between the old size and the
-  bettas of other mods) or **Large** (the size before 1.28); the server sets it for everyone (`sizes.betta`), the hitbox
-  follows the look, nothing else changes.
-- **Aquarist villager:** place a breeding basin in a village and an unemployed villager becomes an aquarist. He sells
-  food, floating and aquarium plants, shrimp, snails, test kits, substrate and live food cultures, as a master pairs of
-  rare bred tankmate varieties, and **buys your bettas and bred tankmates** for emeralds by the rarity of their visible
-  genes (a data file modpacks can change).
-- **Hired aquarist:** once a player keeps three tanks and bred something, an aquarist (a person of his own, with four
-  procedural looks) comes by and offers his work; refused, the next one comes days later after another breeding. Hired, he
-  lives in a bed near a breeding basin, takes an emerald (or some bread) a day from a chest there and really walks to the
-  tanks: feeding from the chest, water changes from the reservoir, algae, trimming plants (cuttings into the chest),
-  moving young into a rearing tank and warnings in the chat (map waypoints); six tasks with three levels each in his
-  menu. Multiplayer: each player has his own; he works only at his employer's tanks, those of the FTB Teams party and
-  those released for him in the tank menu, never at locked ones. Without wage he slows down and leaves after three days.
+Every feature in detail, with a picture for each kind of tank and animal: **[FEATURES.md](FEATURES.md)**.
 
-### Aquariums and the interior
-- **Multiblock tanks** of any glass and any connected shape (box, L, T, steps ...), up to 16x16x16 (configurable to
-  64; big tanks up to 32x16x32), with the connected texture of the glass or perfectly clear. Real vanilla water, filled bucket by bucket,
-  rendered clear (also with Sodium and Iris). The animals are real entities.
-- **Interior:** sneak and right-click with an empty hand to step inside a pocket dimension at 16 blocks per tank block
-  and build with any block: substrates, equipment and 29 decorations (castle, wrecks, skull, aquascaping stones such
-  as Seiryu, dragon stone and holey rock, roots, mangrove stilt roots, clay tubes that are spawning caves, a diving helmet, a treasure chest
-  that bubbles from the air pump ...). Almond leaves and alder cones on the floor lower the pH and feed the shrimp. The
-  aquarium shows the result as a live miniature; several players can build at once.
-- **Care:** temperature from biome and time of day, heaters and coolers, hunger, overcrowding, water quality, oxygen,
-  sickness and recovery; a tank log tells you what happened. Tank menu with overview, inhabitants and their
-  genotype, breeding tab with Punnett squares, water, devices, plants, users and log; name sign, owner lock, a
-  break protection and tank users (owner, caretakers, viewers) with their own alarm waypoint switches.
+<details>
+<summary><b>Show the feature list</b></summary>
 
-### Plants and corals
-- **49 aquarium plants** (Java fern, six Anubias, ten Bucephalandras, Java, Christmas and flame moss, Riccia,
-  Cryptocorynes, Amazon sword and Echinodorus 'Red Diamond', Rotalas, Ludwigias and other stem plants, carpets such as
-  Monte Carlo, HC 'Cuba', hairgrass and Marsilea, Vallisneria, Sagittaria, Aponogeton, tiger lotus ...) grow over the
-  days from a cutting into plants of many blocks, get redder (or white) in strong light, some need CO2 or soft water,
-  are trimmed with shears and clean the water. The **Marimo** ball rolls with the current. **Floating plants**
-  (duckweed, frogbit, salvinia, red root floater, water lettuce, hornwort, Riccia) drift on the surface, grow and
-  spread; lily pads stay put.
-- **Plants of Minecraft and other mods work too:** kelp, seagrass, lily pads and corals, and the water plants of
-  Fintastic, Regions Unexplored, Twilight Forest and Alex's Caves in the interior lower the nitrate and count for
-  breeding like a full-grown plant of ours (a little less), without growing and without needs; Fintastic's live rock
-  filters salt water. Modpacks add more with profiles.
-- **Liquid fertilizer** makes them grow up to half as fast again; the plants use it up, too much feeds the algae. A
-  **fertilizer maker** mixes it from kelp meal, nutrient salt and water and pipes it into the tank; the dosing pump doses
-  it too.
-- **Every plant grows wild** in the waters of its origin: Anubias and Bucephalandra on stones in jungle water, stem
-  plants and carpets of fine sprigs in swamps, Vallisneria and round moss cushions in rivers, Marimo balls in cold lakes,
-  floating plants on calm water. Shears cut a cutting, the plant grows back.
-- Every plant and coral has **real leaves, polyps and tentacles that sway** in the water, inside and in the miniature
-  outside; zoanthids and star polyps close when a fish swims by. Kelp and seagrass sway too.
+- **Bettas and genetics:** wild bettas (also *B. imbellis* and *B. smaragdina*) caught with a bucket or fish bag; nine
+  Mendel loci, 8 tail shapes, 43 colours, 12 patterns and 16 named varieties, data-driven; bubble nests, eggs, larvae and
+  six life stages raised on cultured live food; flaring and fights; two betta sizes.
+- **Aquariums:** multiblock tanks of any glass and connected shape up to 16x16x16 (big tanks 32x16x32) with real water and
+  real entities; step **inside** into a pocket dimension at 16 blocks per tank block and aquascape with any block and 29
+  decorations, shown outside as a live miniature; care (temperature, hunger, water quality, oxygen, sickness), a tank menu
+  with genes, Punnett squares, water, devices, plants, **users** (caretakers and viewers) and log.
+- **Plants and corals:** 49 aquarium plants that grow from cuttings into many blocks, redden in strong light, need CO2 or
+  soft water and sway in the water; floating plants, liquid fertilizer, every plant **wild** in its waters (carpets of
+  fine sprigs, moss cushions, Marimo balls); the plants of Minecraft and other mods count too.
+- **Tankmates and small animals:** 50 freshwater fish (tetras, rasboras, corydoras, plecos, loaches, barbs, guppies with
+  28 strains, gouramis, cichlids, puffers) with shoals, predators and their own breeding; shrimp in many colours and grades,
+  snails, crayfish, dwarf clawed frogs, axolotls; every animal shows in its bucket's icon.
+- **Reef, brackish water and seahorses:** corals that need calcium, alkalinity and magnesium, clownfish larvae on rotifers,
+  the Banggai cardinalfish and the mandarinfish, a sump with refugium and calcium reactor; seahorses with a brood pouch;
+  archerfish that spit at insects, mudskippers and a mangrove that grows over the water.
+- **Big tanks and giants:** a size rule by real length for sharks, rays, the moray, giant catfish, the arapaima and
+  vanilla dolphins, caught with the large net or a steel leader into a transport tub.
+- **Terraria and paludaria:** air temperature, humidity and UV, 36 terrarium plants (rainforest, swamp, desert) that grow
+  by the climate; turtles with temperature-dependent sex, dart frogs that raise tadpoles in bromeliads, geckos, the corn
+  snake and sea turtles, all **moving like the real animals** with their own hours; Minecraft pets, land animals of other
+  mods and harmless mobs in glass.
+- **Technology:** filters, cabinets, feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
+  water changes; water chemistry (TDS, pH, hardness, CO2, RO water); live food cultures and a food maker; optional power
+  (FE, a crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
+  waypoints in JourneyMap, Xaero's Minimap and FTB Chunks.
+- **Aquarists:** an aquarist villager trades plants, animals and food and buys your bred animals; a hired aquarist walks
+  to your tanks every day and feeds, changes water, scrapes algae and moves the young.
+- **For players and packs:** 368 handbook pages in English and German, 72 advancements, JEI / REI / EMI pages, an FTB
+  Quests chapter of 115 quests, 144 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
+  reports.
 
-### Tankmates and small animals
-- **50 freshwater tankmates** with their own models and behaviour: tetras (neons also Diamond, Gold and Albino, gold
-  cardinals, albino glowlights), rasboras and danios, rainbowfish, corydoras (albino and longfin panda, albino sterbai, the
-  bronze cory with Albino and Gold Laser), plecos, otocinclus, loaches, the garra and the panda garra, barbs, guppies and
-  endlers (own genetics with 28 strains), platys,
-  mollies and swordtails, gouramis, **cichlids** (rams in six forms with Black and German Blue, Apistogramma, angelfish,
-  discus) and **puffers**. Shoals, water
-  ranges, predators and prey, fin nippers, snail eaters, and a breeding style per species (glued eggs, caves, egg
-  scatterers, livebearers, foam nests, open and cave brooders that guard their young, a mouthbrooder).
-- **Small animals:** Neocaridina in eleven colours with selection grades, bee shrimp (Crystal Red/Black S to SSS, Blue
-  Bolt, Wine Red, Tiger), Sulawesi shrimp and snails, dwarf crayfish, nerites, apple snails, ramshorns and more crawl
-  over floor, plants and glass; algae grow and the cleaning crew eats them. **Dwarf clawed frogs** breed like in nature: a
-  cool water change sets a pair off (amplexus), the spawn floats at the surface (fish eat it, floating plants hide it),
-  the tadpoles need infusoria and become froglets. **Big crayfish** (the
-  Florida crayfish in blue and orange, the all-female marbled crayfish) eat plants, dig them up and catch slow fish.
-- **Every animal has its own icon** in its bucket, fish bag or transport tub (and every amphibian and reptile in its box):
-  you see which fish, shrimp, snail or crayfish is inside (the gene-coloured ones in their colour).
-- **Axolotls** (vanilla) get real care in a tank: cool water with a cooler, eggs on the plants, larvae, and the five
-  colours inherited by Mendel (blue recessive and rare).
-- **Wild animals and corals** live in the waters they come from (jungle, swamp, river, mangrove, warm and lukewarm
-  ocean); the waters are biome tags, so the biomes of biome mods count too. Catch them with the aquarium net. An own
-  frugal spawn pass keeps them findable next to the fish of other mods (the shrimp and snails with their own limit, in
-  shallow water by the bank); `/bettacraft wildlife` shows what lives where.
-- **Water animals of all mods** (fish, axolotls, tadpoles, seahorses ...) live in the aquariums; whales, bosses and
-  hostile mobs are refused with a reason, other big animals go by the size rule of the big tanks.
-
-### Reef tanks and seahorses
-- Sea water, salinity, protein skimmer, flow pump, reef and live rock, actinic light. Seven corals and the bubble tip
-  anemone grow with light, flow, calcium, alkalinity and magnesium (four-channel dosing pump), bleach or glow and give
-  frags. Clownfish spawn at their anemone, and their **larvae need rotifers** that live on phytoplankton (both cultured in
-  bottles); tang, goby, chromis, damsel, the lyretail anthias (a shoal fed often), the **Banggai cardinalfish** (the male
-  broods in his mouth), the **mandarinfish** that lives only on the copepods of the live rock, cleaner and fire shrimp,
-  hermit crabs, turbo snails.
-- **Sump** in the cabinet under the tank: its water counts with the tank, its chambers hold heaters, a protein skimmer,
-  filter media and a **refugium** with Chaetomorpha that takes up nitrate; a **calcium reactor** dissolves coral rubble with
-  CO2 for the stony corals.
-
-### Brackish water and mangroves
-- The **archerfish** shoots insects off the leaves above an open tank with a jet of water (and now and then a player), the
-  **mudskipper** skips over the mud of a brackish paludarium and climbs roots, the **Amano shrimp** needs brackish water for
-  its larvae (net them over into a brackish tank), and a **mangrove propagule** grows into a small mangrove with stilt
-  roots and a crown over the water.
-- **Seahorses** (lined and dwarf) swim upright, hold on to plants and corals, eat live food, and the male gives birth
-  from his brood pouch.
-
-### Big tanks and big animals
-- **Big tanks** up to 32 x 16 x 32 blocks with a coarser interior (scale 8 or 4); a decorated tank that grows past 16
-  blocks keeps its layout at the new scale, and nothing is lost.
-- **A size rule** for big animals by their real length (12 x 6 x 3 blocks and 100 water blocks per metre, adding up).
-- **Ten giants:** pangasius, redtail and wels catfish, arapaima and motoro stingray in fresh water; bamboo shark (it lays
-  egg cases that hatch when there is room), blacktip reef shark, spotted eagle ray, schooling cownose rays and the
-  honeycomb moray in its lair in sea water. Wild in rivers, jungle water and warm oceans; vanilla **dolphins** in very
-  big sea water tanks. The giant fish of other mods (arapaimas, coelacanth, tuna, gar, catfish, the manta ray and shark of
-  Living Things) go into big tanks by the same rule with their real length.
-- Caught with the **large net** or the **steel leader** into a **transport tub** that carries one animal; big animals
-  swim wide curves, turn slowly and eat the small fish of their tank.
-
-### Terraria, turtles, frogs, pets and mobs in glass
-- **Terrarium and paludarium:** a tank without water is a terrarium, one with water and land built in its interior a
-  paludarium, with air temperature, humidity and UV; heat mats, basking lamps, misters and a thermo-hygrometer. The
-  tank type can also be fixed in the menu, so a terrarium is never flooded by mistake.
-- **Terrarium plants:** 36 species for the land of terraria and paludaria: bromeliads, ferns, mosses, orchids, begonias
-  and Pothos for the rainforest, carnivorous plants, sedges and papyrus for the shore, cacti and succulents for the desert.
-  They grow by the light, humidity and air temperature of the tank, languish in the wrong climate, spread and keep the air
-  humid; cuttings, offsets and division with the shears. Wild in jungles, swamps, deserts, savannas and the lush caves,
-  and plantable as decoration in the world. Tortoises graze them, dart frogs raise their tadpoles in the bromeliads, snakes
-  and geckos hide in them; aquarium plants grow emersed above the water of a humid paludarium.
-- **Turtles:** musk turtle, red-eared and yellow-bellied slider, Hermann's tortoise (brumates in the cold) and Reeves'
-  turtle; eggs in sand or soil, and the **nest temperature decides the sex** of the hatchlings.
-- **Amphibians and reptiles:** poison dart frogs (tadpoles in the water), Cranwell's horned frog, leopard and crested
-  geckos (the crested one climbs the glass) and the corn snake, with crickets and fruit flies from their cultures; wild
-  in jungles, deserts, forests, savannas and swamps. They **move like the real animals**, in the world as in the tank:
-  each keeps its hours (day, night, dusk), goes at a calm pace with short sprints, climbs branches and rocks, sits on
-  leaves, hides in caves and does things while it sits still: the snake raises its head, flicks its tongue and lies
-  coiled, lizards look around, frogs call, turtles stretch their necks.
-- **Land animals of other mods:** with a terrarium profile they get our care, breeding and walker in terraria and
-  paludaria: the Naturalist tortoise, alligator, lizard, snake, scorpions, snail, crab, dragonfly, duck and capybara, the
-  Critters and Companions dragonfly, leaf insect and otter; the terrarium box catches them. Fish live in the water part of a
-  paludarium, and grown sea turtles go into big sea water paludaria with a beach.
-- **Insects, small mammals and birds of other mods:** butterflies, fireflies (they glow at night), beetles, ladybugs,
-  hedgehogs, rats, ferrets, red pandas, koalas, owls, penguins, flamingos and more of Naturalist, Critters and Companions
-  and Living Things; fliers need a lid, woodlice and snails are the clean-up crew, mammals and birds breed as pairs; the
-  komodo dragon, bears, deer, zebras and lions in big terraria. The Aquaculture turtles follow our turtle rules.
-- **Minecraft animals as pets:** chickens (chicks from eggs in the sand), rabbits on grass, bees with flowers and a mini
-  beehive in the interior, frogs in paludaria, cats, foxes, parrots, armadillos, bats and wolves at their real size; pigs,
-  sheep, cows, horses, llamas and pandas in big terraria. Caught with the terrarium box or bait; no drops, no farm.
-- **Mobs in glass:** drowned, zombies, skeletons, spiders, small slimes and a few more live **shrunk and harmless** in
-  tanks: caught with the mob jar, lured with bait or put in from an EnderIO soul vial; a zombie under water becomes a
-  drowned, fed pairs breed, and they never drop anything. Mobs and pets walk with real steps in their tanks (their legs
-  matched to their size and pace).
-
-### Equipment and water
-- Internal, external, sponge and corner filters, cabinets of any wood or stone (with the filter and an air pump inside; a row of
-  cabinets gets one front with drawers at both ends and double doors between them, or a front of your choice), automatic and
-  clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16 colours
-  with dimmer and daylight timer.
-- **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
-  bulkhead leads to interior pipes, a multiblock filter of any size with media that clog; nitrate makes water changes
-  matter, a water change controller and a top-off do them for you.
-- **One filter, many aquariums:** filter pipes with T-pieces dock on any side of a tank (guards inside keep the animals
-  out), up to four lines run in one pipe bundle, fresh and waste water ports do the water changes of every tank of the
-  filter, and a pipe cover (or the facades of AE2, EnderIO, Mekanism Covers and Cable Facades) hides the pipes behind any
-  block.
-- **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
-  for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
-- Optional Forge Energy (Team Reborn Energy on Fabric) for the equipment, power regulator, own procedural sounds. No
-  generator? A **crank** winds the filters, the water devices and the cabinet under a tank, which then powers every device
-  of its tank. With **Create** a drive adapter on the tank (or a shaft on its cabinet) powers every device of the tank
-  from rotation, with real stress.
-- **Tanks on the road** (Create, NeoForge 1.21.1): on Create contraptions the care goes on with the tank's data (hunger,
-  temperature, water quality, the filters and heaters that travel along, powered by the tank's buffer, a drive adapter that turns with the trip or FE
-  batteries of the contraption); on Create Aeronautics airships the animals stay real and everything runs as on the ground.
-  The water sloshes in curves and when a contraption stops.
-- **Monitors:** monitor blocks join into screens of up to 8 x 5 blocks that find every tank around them and show a
-  dashboard: values, traffic lights with the tank's warnings, graphs over up to 7 in-game days, animals and breeding,
-  devices and power, alarms with a redstone signal and the logbook; arranged by drag and drop in an editor.
-
-### Food and live food
-- **Live food cultures:** tubifex worms in a dish with mud and mulm (or the waste water of a tank), daphnia in a barrel
-  with yeast or green water and light, mosquito larvae and artemia; they grow, go stale, crash when crowded or hot. A
-  **live food pump** feeds them through the pipes into the tanks on a schedule.
-- **Food maker:** pellets, flakes, granules, algae wafers, fry powder, shrimp food and frozen food from wheat, kelp, fish,
-  spider eyes, sugar, eggs, vegetables and live food; runs on a spring wound with the crank (a day per spring) or on FE. Hoppers,
-  AE2 and Refined Storage fill and empty it, the feeder and the reservoir.
-- **Food variety:** favourite and poorly suited food for every kind of eater; a varied diet helps the fish recover and
-  makes the bettas' colours stronger. All data-driven (item tags).
-
-### Handbook, progression, languages
-- 327 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
-  (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
-  Modonomicon book (1.21.11 and 26.x), converted at build time. 70 advancements, information pages in JEI (and REI and EMI
-  on Fabric), tooltips, and an FTB Quests chapter of 113 quests for modpacks.
-- Every feature has its own switch (`features.<group>.enabled` and sub-switches, 136 in all): off, it loses its recipes,
-  trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
-- Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
-  old age (`health.oldAge.enabled`).
+</details>
 
 ## Requirements
 
@@ -373,7 +231,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.*Require
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 113 quests (1.43.0; 33 before 1.36.0) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 115 quests (1.46.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
@@ -544,7 +402,9 @@ branch (see Requirements); `master` is 1.21.1 with Java 21, the 26.x branches ne
 ./gradlew smoketestUpgrade      # loads a reference world of an old version, nothing may be lost
 ./gradlew runClient -Psmoketestm43 -PnoJei      # README / mod page media in a copy of the showcase world (background
 ./gradlew runClient -Psmoketestm43 -PnoJei -Pshaders  # window; fixed day and weather), then the stills with Complementary
+./gradlew runClient -Psmoketestm43 -PnoJei -Pcreate -Pmediaparts=create   # the tank on a Create contraption
 py tools/assetgen/readme_media.py       # run/screenshots -> docs/images (stills, GIF and WebP animations)
+# -PshowcaseWorld=<name> (buildShowcase), -PmediaSource=<world> -PmediaWorld=<copy> -Pmediaparts=room,extras,showcase,m58
 
 ./gradlew :fabric:build         # the Fabric jar (+ the handbook book converted from the GuideME pages, verifyFabricJar)
 ./gradlew runFabricGameTest     # Fabric GameTests (the shared GameTest classes)
