@@ -725,6 +725,20 @@ tasks.matching { it.name in ['runFabricClient', 'runFabricServer', 'runFabricGam
 // ---- M59: server files and test worlds (a fresh clone runs every test without manual work)
 // the dev servers never take the default port 25565 (a real server may hold it): dev_fabric_server_port of gradle.properties
 def fabricDevPort = (project.findProperty('dev_fabric_server_port') ?: '25594').toString()
+// M62: right before a dev server starts: its server.properties names a port that is not 25565 and is free (a clear message
+// instead of the server's bind error, and never a real server's port)
+def fabricCheckServerPort = { File dir, String what ->
+    def sp = new File(dir, 'server.properties')
+    def props = new Properties()
+    if (sp.exists()) sp.withInputStream { props.load(it) }
+    def port = props.getProperty('server-port', '25565').trim()
+    if (port == '25565') throw new GradleException("${what}: ${sp} would put the server on the default port 25565 (a real server may hold it); the dev servers use dev_fabric_server_port (${fabricDevPort})")
+    try {
+        new java.net.ServerSocket(port.toInteger()).close()
+    } catch (IOException ignored) {
+        throw new GradleException("${what}: port ${port} (${sp}) is busy: is another dev server of this branch still running? Stop it or choose a port with -Pdev_fabric_server_port=<port>")
+    }
+}
 def fabricServerFiles = { File dir ->
     dir.mkdirs()
     def eula = new File(dir, 'eula.txt')
@@ -732,7 +746,8 @@ def fabricServerFiles = { File dir ->
     def sp = new File(dir, 'server.properties')
     def lines = sp.exists() ? sp.readLines('UTF-8') : ['online-mode=false']
     def port = lines.find { it.startsWith('server-port=') }?.substring(12)
-    if (!sp.exists() || port in [null, '', '25565']) {
+    // M62: always this branch's own port (the run folders of an older checkout may name another branch's port or 25565)
+    if (!sp.exists() || port != fabricDevPort) {
         sp.write((lines.findAll { !it.startsWith('server-port=') } + ["server-port=${fabricDevPort}".toString()]).join('\n') + '\n', 'UTF-8')
         logger.lifecycle("server files: ${sp} (port ${fabricDevPort})")
     }
@@ -756,7 +771,10 @@ def fabricTestWorlds = { Task t, Closure<List<File>> dirs ->
 def fabricSmokeSaves = { File saves -> (saves.listFiles() ?: []).findAll { it.isDirectory() && (it.name.startsWith('bettacraft_fabric_smoketest_') || it.name.startsWith('bettacraft_smoketest_')) } }
 tasks.matching { it.name in ['runFabricServer', 'prodFabricServer'] }.configureEach { t ->
     def dir = rootProject.file('run-fabric' + (t.name == 'runFabricServer' ? '/server' : '/prod-server'))
-    t.doFirst { fabricServerFiles(dir) }
+    t.doFirst {
+        fabricServerFiles(dir)
+        fabricCheckServerPort(dir, t.name)
+    }
     if (fabricSmoke) fabricTestWorlds(t) { [new File(dir, 'world')] }
 }
 tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
@@ -767,7 +785,7 @@ tasks.matching { it.name == 'runFabricGameTest' }.configureEach { t ->
     t.doLast { if (fabricKeepWorld) logger.lifecycle('-PkeepWorld: kept the GameTest world') else fabricDeleteWorlds('after the run', [rootProject.file('run-fabric' + '/gametest/world')]) }
 }
 
-// gradlew fabricMultiplayerTest : the Fabric multiplayer test. A dedicated Fabric server (run-fabric/mp-server, port 25595,
+// gradlew fabricMultiplayerTest : the Fabric multiplayer test. A dedicated Fabric server (run-fabric/mp-server, port dev_fabric_server_port,
 // offline mode, the stage of FabricMpSmoke) and, once it is up, two background clients Dev1 and Dev2 (run-fabric/mp-client1|2,
 // FabricMpClient) that join, check what they got synced and report in the chat. The game processes are started from the java
 // command lines of runFabricServer / runFabricClient. Logs: build/mptest-fabric/*.log. Fails without "MP PASSED".
@@ -791,7 +809,8 @@ tasks.register('fabricMultiplayerTest') {
         new File(sdir, 'world').deleteDir()
         sdir.mkdirs()
         new File(sdir, 'eula.txt').text = 'eula=true\n'
-        new File(sdir, 'server.properties').text = 'server-port=25595\nonline-mode=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngamemode=creative\nenforce-secure-profile=false\n'
+        new File(sdir, 'server.properties').text = "server-port=${fabricDevPort}\n" + 'online-mode=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngamemode=creative\nenforce-secure-profile=false\n'
+        fabricCheckServerPort(sdir, 'fabricMultiplayerTest')
         def server = new ProcessBuilder(cmd(srv, ['-Dbettacraft.smoketest.mp=true'], [])).directory(sdir)
                 .redirectErrorStream(true).redirectOutput(new File(logs, 'server.log')).start()
         def clients = []
@@ -807,7 +826,7 @@ tasks.register('fabricMultiplayerTest') {
                 def dir = rootProject.file("run-fabric/mp-client${i + 1}")
                 dir.mkdirs()
                 new File(dir, 'options.txt').text = 'onboardAccessibility:false\npauseOnLostFocus:false\nsoundCategory_master:0.0\nmaxFps:30\n'
-                clients << new ProcessBuilder(cmd(cli, ['-Dbettacraft.smoketest.mpclient=true', '-Dbettacraft.background=true'], ['--username', name]))
+                clients << new ProcessBuilder(cmd(cli, ['-Dbettacraft.smoketest.mpclient=true', '-Dbettacraft.background=true', "-Dbettacraft.smoketest.mp.address=localhost:${fabricDevPort}".toString()], ['--username', name]))
                         .directory(dir).redirectErrorStream(true).redirectOutput(new File(logs, "client${i + 1}.log")).start()
             }
             server.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)
@@ -841,8 +860,9 @@ tasks.register('fabricSaveLoadTest') {
         dir.deleteDir(); dir.mkdirs()
         new File(dir, 'eula.txt').text = 'eula=true\n'
         new File(dir, 'server.properties').text = ['online-mode=false', 'level-type=minecraft:flat', 'gamemode=creative', 'difficulty=peaceful',
-                'spawn-monsters=false', 'spawn-animals=true', 'generate-structures=false', 'server-port=25596', 'spawn-protection=0',
+                'spawn-monsters=false', 'spawn-animals=true', 'generate-structures=false', "server-port=${fabricDevPort}".toString(), 'spawn-protection=0',
                 'level-seed=21', 'allow-flight=true', 'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
+        fabricCheckServerPort(dir, 'fabricSaveLoadTest')
         def run = { String name, List props, String expect ->
             // M52.5: without Loom's @argfile (the run task writes it only when it runs; a fresh checkout has none): the classpath is -cp
             // the showcase world (455 tanks) needs more than the default heap of a 16 GB CI runner (a quarter: 4 GB ran out, 6 GB now and then)

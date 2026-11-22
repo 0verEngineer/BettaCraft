@@ -19,6 +19,9 @@ git -C "$REPO" worktree add --detach "$WT" "$COMMIT"
 CMD="$WT/src/main/java/org/overengineer/bettacraft/command"
 if [ -f "$WT/src/dev/java/org/overengineer/bettacraft/command/DevShowcase.java" ]; then CMD="$WT/src/dev/java/org/overengineer/bettacraft/command"; fi
 cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
+# M62: the old version's server takes this branch's port (never 25565, never the port hard-coded in that commit)
+. "$REPO/tools/upgrade/server_port.sh"
+pin_server_port "$WT"
 SHOW="$CMD/DevShowcase.java"
 # extra row at the end of build(ServerLevel) (after the last showcase row); manifest right after the world is saved.
 # M40: the end of build() is found by matching its braces (strings, chars and comments skipped): newer DevShowcase
@@ -50,7 +53,8 @@ s = s.replace('server.saveEverything(false, true, true);', 'server.saveEverythin
 open(p, 'w', encoding='utf-8').write(s)
 PY
 # its own run directory (nothing is shared with this repo's run/)
-(cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q)
+(cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q) || { check_server_log "$WT/build/showcase/server.log"; exit 1; }
+check_server_log "$WT/build/showcase/server.log"
 grep -q "MANIFEST WRITTEN" "$WT/build/showcase/server.log" || { echo "no manifest, see $WT/build/showcase/server.log"; exit 1; }
 rm -rf "$REPO/run/saves/$NAME"
 mkdir -p "$REPO/run/saves"
