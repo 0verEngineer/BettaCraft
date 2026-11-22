@@ -32,9 +32,11 @@ breed. Small water animals that get into the aquarium without a bucket (spawn eg
 
 ## Emptying buckets, bags and bottles
 
-* **Animals into the world:** an animal bucket or a filled fish or critter bag used on the world (the ground, a pond,
-  the sea from the shore or a boat) first asks in a small screen: *Cancel* keeps the animals, *Empty* lets them go.
-  Into an aquarium they go without asking (the net brings them back).
+* **Animals into the world:** an animal bucket, a filled fish or critter bag, a terrarium box, a transport tub or a mob
+  jar used on the world (the ground, a pond, the sea from the shore or a boat) first asks in a small screen: *Cancel*
+  keeps the animals, *Empty* lets them go. Into an aquarium they go without asking (the net brings them back).
+* **Catch guard:** for half a second after you caught an animal its container does nothing, so a second click (a
+  bouncing mouse button, a held key) does not let it go again (switch `features.equipment.catchGuard`).
 * **Buckets:** the sea water bucket pours like a water bucket, also into the sea and other water surfaces, into a
   cauldron, from a dispenser and into other mods' tanks and pipes.
 * **Bottles** (salt water, swamp water, infusoria, artemia nauplii): sneak + right-click (or right-click into the air)

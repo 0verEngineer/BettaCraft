@@ -284,6 +284,7 @@ public final class ForeignTerrarium {
 
     /** Puts the animal into one empty box of the stack in {@code hand} (removes the entity). */
     public static void catchInto(Player player, net.minecraft.world.InteractionHand hand, Entity target) {
+        org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
         TankInhabitants.release(target);
         ItemStack filled = TerrariumBoxItem.fillWith(target);
         player.level().playSound(null, target.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
