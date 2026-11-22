@@ -262,7 +262,7 @@ public final class MiniatureSway {
         ps.scale(sh.fx, sh.fy, sh.fz);
         PoseStack.Pose pose = ps.last();
         Matrix4f mat = pose.pose();
-        VertexConsumer vc = buffers.getBuffer(PlantMeshRenderer.MINI);
+        VertexConsumer vc = buffers.getBuffer(PlantMeshRenderer.Mini.TYPE);
         double w = 0.045 * Math.PI * 2;
         int quads = 0;
         for (MiniatureMesh m : sh.region.meshes.values()) {
