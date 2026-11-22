@@ -154,8 +154,21 @@ public final class TetraCoryFormGameTests {
      * A gold neon male and an albino female in a tank: their eggs (scattered on the bare ground) hatch into gold young that carry
      * albino; the longfin panda cory is drawn with longer fins (and reaches higher), the albino glowlight shows its form.
      */
-    @GameTest(template = EMPTY, timeoutTicks = 400)
+    @GameTest(template = EMPTY, timeoutTicks = 400, batch = "bettacraft_m63_neon_no_mutations")
     public static void neonFormsCrossInTheTank(GameTestHelper h) {
+        // M63: without the spontaneous mutations (wildlife.otherMutationChance, 0.3 % per allele and birth): a mutated young
+        // (albino/albino from gold x albino, seen in local repeats) made this test flaky (CI: 22 of 25); every young must now
+        // be a gold carrying albino. The mutations have their own tests (WildlifeGameTests).
+        boolean mutations = Features.own(Feature.MUTATIONS);
+        Features.set(Feature.MUTATIONS, false);
+        try {
+            neonForms(h);
+        } finally {
+            Features.set(Feature.MUTATIONS, mutations);
+        }
+    }
+
+    private static void neonForms(GameTestHelper h) {
         TankBlockEntity c = tank(h, 2, 2, 3, 2, 24F);
         TankmateSpecies neon = TankmateSpecies.NEON_TETRA;
         // three of each: enough females for a spawning within the test (0.6 a day each)
@@ -176,7 +189,9 @@ public final class TetraCoryFormGameTests {
         List<TankmateEntity> fry = mates(h, c, neon);
         check(!fry.isEmpty(), "fry hatched");
         long gold = fry.stream().filter(m -> m.variety().equals("gold") && m.genes().carries("albino")).count();
-        check(gold >= fry.size() * 0.9, "gold young carrying albino: " + gold + " of " + fry.size());
+        java.util.Map<String, Long> kinds = new java.util.TreeMap<>();
+        for (TankmateEntity m : fry) kinds.merge(m.genes().text() + " " + m.lifeStage() + (m.isFemale() ? " f" : " m"), 1L, Long::sum);
+        check(gold == fry.size(), "gold young carrying albino: " + gold + " of " + fry.size() + " " + kinds);
         // the longfin panda cory and the albino glowlight
         TankmateEntity longfin = add(h, c, TankmateSpecies.PANDA_CORY, TankmateGenes.pure(TankmateSpecies.PANDA_CORY, "longfin"), false);
         TankmateEntity wild = add(h, c, TankmateSpecies.PANDA_CORY, TankmateGenes.wild(TankmateSpecies.PANDA_CORY), true);
