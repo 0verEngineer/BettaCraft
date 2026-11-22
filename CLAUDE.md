@@ -60,6 +60,11 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
   `guide/images/` cropped from smoke screenshots by `tools/assetgen/guide_images.py`. Obtaining sections, profiles and
   species tables are generated from the game data: sources in `sources/` (`WildTables`, `TraderOffers`, `Sources`),
   page catalogue in `common/src/test/.../guide/GuideGen`, then `gradlew updateGuide`.
+- **Debug log** (M57) `debug/`: areas `LogArea` (`care`, `breeding`, `tank`, `interior`, `network`, `compat`, `render`,
+  `aquarist`, `world`); a debug line is always `if (LogArea.X.debug) LogArea.X.debug(...)` (no cost when off), repeating
+  warnings `LogArea.X.warnThrottled(kind, ...)`. Common config `debug.logLevel` / `debug.areas`, `/bettacraft debug`, file
+  `logs/bettacraft-debug.log` (`DebugLogFile`, background thread, 10 MB); `/bettacraft report` (`BugReport`); issue forms
+  in `.github/ISSUE_TEMPLATE`.
 - IDs must never contain `aquarium`, `fishtank`, `fish_tank`, `fishbowl`, `fish_bowl` (`CompatIdsTest`).
 
 ## Build and test

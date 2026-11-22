@@ -1,0 +1,77 @@
+name: Bug report
+description: Something does not work as it should (a crash, an animal that dies or vanishes, a device, another mod).
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **No field is required**: fill in what you know, everything helps.
+
+        The fastest way to a fix is the diagnosis of the mod itself (Bettacraft 1.48.0 or newer):
+        1. `/bettacraft debug all on` (operators, or the owner of a single player world; it lasts until the game restarts,
+           or set `debug.logLevel = DEBUG` in `config/bettacraft-common.toml`).
+        2. Reproduce the problem.
+        3. Look at the tank the problem is about and run `/bettacraft report`. It writes
+           `logs/bettacraft-report-<date>.txt` (versions, loaded mods, changed config values, the data of the tank and the end
+           of the debug log `logs/bettacraft-debug.log`). Clicking the path in the chat copies it.
+        4. Drag that file into the field **Diagnosis** below.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect instead?
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we make it happen again?
+      placeholder: |
+        1. Build a 3x3x3 tank ...
+        2. Put in ...
+        3. Wait one day ...
+    validations:
+      required: false
+  - type: input
+    id: minecraft
+    attributes:
+      label: Minecraft version
+      placeholder: e.g. 1.21.1
+    validations:
+      required: false
+  - type: dropdown
+    id: loader
+    attributes:
+      label: Loader
+      options:
+        - NeoForge
+        - Fabric
+        - other / not sure
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Bettacraft version
+      description: In the mod list or the name of the jar.
+      placeholder: e.g. 1.48.0-beta.1
+    validations:
+      required: false
+  - type: input
+    id: modpack
+    attributes:
+      label: Modpack
+      description: Name and version of the modpack, or "none".
+      placeholder: e.g. All the Mods 10 (5.x)
+    validations:
+      required: false
+  - type: textarea
+    id: diagnosis
+    attributes:
+      label: Diagnosis
+      description: |
+        The file of `/bettacraft report`, parts of `logs/bettacraft-debug.log` or `logs/latest.log`, a crash report
+        (`crash-reports/`) or screenshots. Drag files into this field to attach them.
+    validations:
+      required: false
