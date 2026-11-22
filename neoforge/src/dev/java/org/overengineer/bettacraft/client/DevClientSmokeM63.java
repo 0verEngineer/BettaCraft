@@ -10,7 +10,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 final class DevClientSmokeM63 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
-    private static final ResourceLocation GLASS = ResourceLocation.withDefaultNamespace("glass");
+    private static final Identifier GLASS = Identifier.withDefaultNamespace("glass");
     private static final String TAG = System.getProperty("bettacraft.smoketest.m63tag", "run");
     private static final String DEFAULT_PACKS = "none,ComplementaryReimagined_r5.10.zip,ComplementaryUnbound_r5.10.zip,BSL_v10.1.8.zip,MakeUp-UltraFast-9.6.zip";
 
@@ -110,8 +110,7 @@ final class DevClientSmokeM63 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        ServerLevel level = p.level();
         level.setWeatherParameters(6000, 0, false, false);
         BlockPos origin = p.blockPosition().offset(-20, 0, 120);
         // the room: inside x 0..10, y 0..5, z 0..8 (relative to origin); walls, floor and ceiling of stone bricks
@@ -177,7 +176,7 @@ final class DevClientSmokeM63 {
         for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
             if (!(e instanceof BettaEntity b) || i >= spots.length) continue;
             SmokeFreeze.freeze(b, true);
-            b.moveTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
+            b.snapTo(t.min().getX() + spots[i][0], t.min().getY() + spots[i][1], t.min().getZ() + spots[i][2], 90F + i * 60F, 0F);
             b.setYBodyRot(b.getYRot());
             b.setYHeadRot(b.getYRot());
             i++;
@@ -185,7 +184,7 @@ final class DevClientSmokeM63 {
     }
 
     private void time(long t) {
-        server(p -> p.serverLevel().setDayTime(t));
+        server(p -> p.level().setDayTime(t));
     }
 
     // ------------------------------------------------------------------ shader packs (Iris, by reflection; dev only)
@@ -278,7 +277,7 @@ final class DevClientSmokeM63 {
     // ------------------------------------------------------------------ helpers
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void lookAt(double x, double eyeY, double z, Vec3 target) {
@@ -317,7 +316,7 @@ final class DevClientSmokeM63 {
     }
 
     private void shot(String pack, String view) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m63_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }

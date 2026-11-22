@@ -367,7 +367,7 @@ public final class MovementGameTests {
         TankData t = c.getTank();
         double[] start = {0};
         h.runAfterDelay(2, () -> {
-            b.moveTo(t.min().getX() + 1.5, t.min().getY() + 2.2, t.min().getZ() + 1.5, 0, 0);
+            b.snapTo(t.min().getX() + 1.5, t.min().getY() + 2.2, t.min().getZ() + 1.5, 0, 0);
             b.setDeltaMovement(Vec3.ZERO);
             // a swim to the bottom far corner is under way ...
             b.getNavigation().moveTo(t.min().getX() + 0.5, t.min().getY() + 0.3, t.min().getZ() + 2.5, 1.5);
