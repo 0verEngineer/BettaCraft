@@ -111,7 +111,7 @@ final class DevClientSmokeM63 {
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.level();
-        level.setWeatherParameters(6000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         BlockPos origin = p.blockPosition().offset(-20, 0, 120);
         // the room: inside x 0..10, y 0..5, z 0..8 (relative to origin); walls, floor and ceiling of stone bricks
         for (int x = -1; x <= 11; x++) for (int y = -1; y <= 6; y++) for (int z = -1; z <= 9; z++) {
@@ -184,7 +184,7 @@ final class DevClientSmokeM63 {
     }
 
     private void time(long t) {
-        server(p -> p.level().setDayTime(t));
+        server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), t));
     }
 
     // ------------------------------------------------------------------ shader packs (Iris, by reflection; dev only)
