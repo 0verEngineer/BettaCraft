@@ -701,6 +701,122 @@ def icon_lithops():
     return leaves, top
 
 
+
+# M62: own icons for the species that shared one (Vriesea and Guzmania, Marcgravia and Pothos, Peperomia and Fittonia,
+# Butterwort and Begonia, Blue grama and the sedge, Needlegrass and the rush, the umbrella sedge and Papyrus, Haworthia and
+# Echeveria, Agave and Aloe)
+
+
+def icon_vriesea():
+    """A flat, sword-shaped flower spike of overlapping bracts over the rosette."""
+    leaves, top = _icon()
+    _fan(leaves, 7.5, 14, [2.9, 2.5, 2.05, 1.1, 0.65, 0.25], 6, 1.1)
+    for y in range(2, 11):
+        w = 1.6 * math.sin(math.pi * (y - 1.5) / 10)
+        for x in range(int(round(7.5 - w)), int(round(7.5 + w)) + 1):
+            aq._grey(top, x, y, 0.95 if (y % 2 == 0) == (x < 8) else 0.72)
+    return leaves, top
+
+
+def icon_shingle():
+    """The shingle plant: round leaves pressed flat against the bark, overlapping like roof tiles, up a vertical stem."""
+    leaves, top = _icon()
+    _line(top, 7, 1, 7, 15, 0.6)
+    for i, y in enumerate(range(13, 1, -3)):
+        x0 = 5.5 if i % 2 == 0 else 9.5
+        _blob(leaves, x0, y, 2.8, 2.0, 0.84)
+        aq._grey(leaves, int(x0), y - 1, 0.95)
+    return leaves, top
+
+
+def icon_peperomia():
+    """Peperomia: thick round leaves on short red stalks in a low clump."""
+    leaves, top = _icon()
+    for x0, y0, ang in [(7.5, 14, 1.57), (7.5, 14, 2.3), (7.5, 14, 0.85), (7.5, 14, 2.9), (7.5, 14, 0.25)]:
+        ex, ey = x0 + math.cos(ang) * 4.5, y0 - math.sin(ang) * 4.5
+        _line(top, x0, y0, x0 + math.cos(ang) * 2.5, y0 - math.sin(ang) * 2.5, 0.7)
+        _blob(leaves, ex, ey, 2.0, 1.8, 0.86)
+        aq._grey(leaves, int(round(ex - 0.5)), int(round(ey - 0.5)), 0.98)
+    return leaves, top
+
+
+def icon_butterwort():
+    """Butterwort: a flat star of pale, sticky oval leaves and one violet flower on a thin stalk."""
+    leaves, top = _icon()
+    for ang in [3.0, 2.55, 0.6, 0.15]:
+        aq._leaf_line(leaves, 7.5, 13.5, ang, 6, 1.8)
+    aq._leaf_line(leaves, 7.5, 13.5, 1.57, 4, 1.5)
+    _line(top, 8, 12, 9, 4, 0.7)
+    _blob(top, 9.5, 3, 1.8, 1.4, 0.92)
+    aq._grey(top, 11, 4, 0.8)
+    return leaves, top
+
+
+def icon_grama():
+    """Blue grama: fine leaves and seed heads like eyebrows sticking out sideways from the stalks."""
+    leaves, top = _icon()
+    for x0, lean in [(4, -0.4), (6, -0.15), (8, 0.1), (10, 0.3), (12, 0.55)]:
+        for y in range(7, 15):
+            aq._grey(leaves, int(round(x0 + lean * (14 - y) * 0.5)), y, 0.85)
+    for x0, y0 in ((5, 2), (10, 3)):
+        _line(top, x0, 8, x0, y0, 0.7)
+        for x in range(x0, x0 + 4):
+            aq._grey(top, x, y0, 0.95)
+            aq._grey(top, x, y0 + 1, 0.8 if x % 2 else 0.6)
+    return leaves, top
+
+
+def icon_needlegrass():
+    """Needlegrass: a tuft of thin blades with long, feathery, bent awns at the top."""
+    leaves, top = _icon()
+    for x0, lean in [(5, -0.3), (7, -0.1), (8, 0.1), (10, 0.3)]:
+        for y in range(8, 15):
+            aq._grey(leaves, int(round(x0 + lean * (14 - y) * 0.4)), y, 0.85)
+    for x0, dx in ((4, -1), (7, 1), (9, 1), (11, 1)):
+        for i in range(7):
+            aq._grey(top, int(round(x0 + dx * i * 0.6)), 8 - i, 0.95 if i % 2 else 0.78)
+    return leaves, top
+
+
+def icon_umbrella():
+    """The umbrella sedge: bare stems ending in a whorl of long, flat leaves spread out like the ribs of an umbrella."""
+    leaves, top = _icon()
+    for x0, y0 in ((5, 6), (10, 4)):
+        _line(top, 7.5, 15, x0, y0, 0.7)
+        for ang in np.linspace(-0.3, math.pi + 0.3, 6):
+            _line(leaves, x0, y0, x0 + math.cos(ang) * 4.2, y0 - math.sin(ang) * 1.6 + 1.2, 0.85)
+    return leaves, top
+
+
+def icon_zebra():
+    """Haworthia: a low, upright star of thick triangular leaves, striped across with white warts (dark and pale bands)."""
+    leaves, top = _icon()
+    for ang, ln, w in [(2.75, 6, 1.6), (2.2, 8, 1.7), (1.57, 9, 1.8), (0.95, 8, 1.7), (0.4, 6, 1.6)]:
+        for i in range(int(ln * 2)):
+            t = i / 2.0
+            x = 7.5 + math.cos(ang) * t
+            y = 14.5 - math.sin(ang) * t
+            half = w * (1 - t / ln)
+            for k in range(-int(round(half)), int(round(half)) + 1):
+                px, py = int(round(x - math.sin(ang) * k)), int(round(y - math.cos(ang) * k))
+                aq._grey(leaves, px, py, 0.62 if (py % 2 == 0) else 0.8)
+    for y in range(5, 15, 2):
+        for x in range(1, 15):
+            if leaves[y, x, 3] > 0.5 and (x * 3 + y) % 4 != 0:
+                aq._grey(top, x, y, 1.0)
+    return leaves, top
+
+
+def icon_agave():
+    """Agave: broad, stiff, grey-blue leaves with a dark spine at every tip."""
+    leaves, top = _icon()
+    for ang, ln in [(2.8, 7), (2.2, 9), (1.57, 10), (0.95, 9), (0.35, 7)]:
+        ex, ey = aq._leaf_line(leaves, 7.5, 14, ang, ln, 2.0) or (7.5 + math.cos(ang) * ln, 14 - math.sin(ang) * ln)
+        tx, ty = 7.5 + math.cos(ang) * (ln + 0.5), 14 - math.sin(ang) * (ln + 0.5)
+        aq._grey(top, int(round(tx)), int(round(ty)), 0.5)
+    return leaves, top
+
+
 ICONS = {
     "bromeliad": icon_bromeliad, "bromeliad_spike": lambda: icon_bromeliad(True), "airplant": icon_airplant, "vine": icon_vine,
     "bush": icon_bush, "fern": icon_fern, "broadfern": lambda: icon_fern(True), "moss": icon_moss, "lichen": lambda: icon_moss(True),
@@ -709,6 +825,8 @@ ICONS = {
     "rush": lambda: icon_grass(True), "papyrus": icon_papyrus, "barrel": icon_barrel, "cluster": lambda: icon_barrel(True),
     "column": icon_column, "opuntia": icon_opuntia, "succulent": icon_succulent, "spiky": lambda: icon_succulent(True),
     "lithops": icon_lithops,
+    "vriesea": icon_vriesea, "shingle": icon_shingle, "peperomia": icon_peperomia, "butterwort": icon_butterwort, "grama": icon_grama,
+    "needlegrass": icon_needlegrass, "umbrella": icon_umbrella, "zebra": icon_zebra, "agave": icon_agave,
 }
 
 

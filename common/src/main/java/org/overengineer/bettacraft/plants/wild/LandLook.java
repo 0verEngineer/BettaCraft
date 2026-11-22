@@ -67,10 +67,13 @@ public enum LandLook {
     public static String icon(PlantSpecies s) {
         return switch (s) {
             case NEOREGELIA -> "bromeliad";
-            case GUZMANIA, VRIESEA -> "bromeliad_spike";
+            case GUZMANIA -> "bromeliad_spike";
+            case VRIESEA -> "vriesea"; // M62: an own icon for every plant
             case TILLANDSIA -> "airplant";
-            case POTHOS, MARCGRAVIA -> "vine";
-            case FITTONIA, PEPEROMIA -> "bush";
+            case POTHOS -> "vine";
+            case MARCGRAVIA -> "shingle";
+            case FITTONIA -> "bush";
+            case PEPEROMIA -> "peperomia";
             case BOSTON_FERN -> "fern";
             case BIRDS_NEST_FERN -> "broadfern";
             case CUSHION_MOSS -> "moss";
@@ -78,20 +81,26 @@ public enum LandLook {
             case SELAGINELLA -> "carpet";
             case SEDUM -> "carpet_flowers";
             case MINI_ORCHID -> "orchid";
-            case BEGONIA, BUTTERWORT -> "begonia";
+            case BEGONIA -> "begonia";
+            case BUTTERWORT -> "butterwort";
             case SUNDEW -> "sundew";
             case SARRACENIA -> "pitcher";
             case NEPENTHES -> "nepenthes";
             case VENUS_FLYTRAP -> "flytrap";
-            case SWAMP_SEDGE, BLUE_GRAMA -> "grass";
-            case SOFT_RUSH, NEEDLEGRASS -> "rush";
-            case PAPYRUS, UMBRELLA_SEDGE -> "papyrus";
+            case SWAMP_SEDGE -> "grass";
+            case BLUE_GRAMA -> "grama";
+            case SOFT_RUSH -> "rush";
+            case NEEDLEGRASS -> "needlegrass";
+            case PAPYRUS -> "papyrus";
+            case UMBRELLA_SEDGE -> "umbrella";
             case BARREL_CACTUS -> "barrel";
             case MAMMILLARIA -> "cluster";
             case COLUMN_CACTUS -> "column";
             case PRICKLY_PEAR -> "opuntia";
-            case ECHEVERIA, HAWORTHIA -> "succulent";
-            case ALOE, AGAVE -> "spiky";
+            case ECHEVERIA -> "succulent";
+            case HAWORTHIA -> "zebra";
+            case ALOE -> "spiky";
+            case AGAVE -> "agave";
             case LITHOPS -> "lithops";
             default -> "grass";
         };

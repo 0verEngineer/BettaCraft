@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_disc",
-    "layer1": "bettacraft:item/plant_disc_detail"
+    "layer0": "bettacraft:item/plant_mushroom_coral",
+    "layer1": "bettacraft:item/plant_mushroom_coral_detail"
   }
 }

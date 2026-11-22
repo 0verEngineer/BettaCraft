@@ -194,14 +194,14 @@ def cone(prefix, sizes, start, step_y, step_z, tilt, pattern):
 
 
 def trumpet() -> list[Group]:
-    shell = Group("shell", cubes=cone("w", [5.0, 4.4, 3.8, 3.2, 2.6, 2.0, 1.4], (-2.2, 1.0), 1.8, 0.95, 28, "flecks"))
+    shell = Group("shell", cubes=cone("w", [5.0, 4.4, 3.8, 3.2, 2.6, 2.0, 1.4], (-2.75, 1.0), 1.8, 0.95, 28, "flecks"))
     foot, tent = snail_foot(7.0, 3.0, -3.6, 2.4, -4.4, thick=0.8)
     eyes = Group("eyes", cubes=pairs(c("eye", (0.5, -1.3, -4.4), (0.35, 0.35, 0.35)), "eye"))
     return [shell, foot, tent, eyes]
 
 
 def assassin() -> list[Group]:
-    shell = Group("shell", cubes=cone("w", [6.0, 5.2, 4.4, 3.6, 2.6, 1.6], (-2.6, 1.4), 1.9, 1.0, 26, "assassin"))
+    shell = Group("shell", cubes=cone("w", [6.0, 5.2, 4.4, 3.6, 2.6, 1.6], (-2.9, 1.4), 1.9, 1.0, 26, "assassin"))
     foot, tent = snail_foot(9.0, 4.0, -4.8, 3.0, -5.6, thick=0.8)
     foot.cubes.append(c("siphon", (0, -3.0, -5.2), (0.8, 0.8, 4.6), (-30, 0, 0), "skin"))
     eyes = Group("eyes", cubes=pairs(c("eye", (0.6, -1.4, -5.6), (0.4, 0.4, 0.4)), "eye"))
@@ -209,11 +209,44 @@ def assassin() -> list[Group]:
 
 
 def tylomelania() -> list[Group]:
-    """M25c: the rabbit snail of Sulawesi: a long cone shell that lies back at a low angle, a big foot, long feelers."""
-    shell = Group("shell", cubes=cone("w", [5.4, 4.8, 4.2, 3.6, 3.0, 2.4, 1.8, 1.2], (-2.6, 1.6), 1.05, 1.55, 52, "bands"))
+    """M25c: the rabbit snail of Sulawesi: a long, high-spired cone shell that lies back at a low angle, a big foot, long
+    feelers. M62: the shell is round: each whorl is an octagonal ring of three boxes along the shell axis (two crossed
+    slabs and a square core between them), the whorls overlap and taper to the apex, the dark suture at the apex end of
+    every whorl. It is narrower than the foot and rests on the mantle on top of the foot: nothing reaches below the top of
+    the foot (before: eight 2 px plates 5.4 px wide, the lowest one below the sole, through the glass when it clings)."""
+    shell = Group("shell", cubes=tylo_shell())
     foot, tent = snail_foot(9.0, 3.8, -4.6, 3.6, -5.6, thick=1.0)
+    # the mantle under the body whorl (the shell sits on it, no gap above the foot)
+    foot.cubes.append(c("mantle", (0, -1.8, 1.4), (3.2, 1.6, 5.0), (0, 0, 0), "skin"))
     eyes = Group("eyes", cubes=pairs(c("eye", (0.7, -1.5, -5.6), (0.4, 0.4, 0.4)), "eye"))
     return [shell, foot, tent, eyes]
+
+
+TYLO_ANGLE = 34.0  # the shell axis above the horizontal (apex up and back)
+TYLO_SIZES = [3.7, 3.25, 2.8, 2.3, 1.8, 1.3]
+TYLO_STEP = 1.35  # whorl to whorl along the axis
+TYLO_LENGTH = 2.2  # length of a whorl along the axis (they overlap)
+TYLO_BOTTOM = -0.95  # the lowest point of the shell (the top of the foot is at -1.0)
+
+
+def tylo_shell() -> list[Cube]:
+    a = math.radians(TYLO_ANGLE)
+    tilt = TYLO_ANGLE + 90.0  # the box's local y along the shell axis (up and back)
+    dy, dz = -math.sin(a), math.cos(a)
+    s0 = TYLO_SIZES[0]
+    # the body whorl's lowest point (half length along the axis, half width across it) on TYLO_BOTTOM
+    low = TYLO_LENGTH / 2 * math.sin(a) + s0 / 2 * math.cos(a)
+    y0, z0 = TYLO_BOTTOM - low, 1.6
+    out = []
+    for i, s in enumerate(TYLO_SIZES):
+        y, z = y0 + dy * TYLO_STEP * i, z0 + dz * TYLO_STEP * i
+        length = TYLO_LENGTH * (1.0 - 0.06 * i)
+        out.append(c(f"w{i}a", (0, y, z), (s, length, s * 0.62), (tilt, 0, 0), "tylo"))
+        out.append(c(f"w{i}b", (0, y, z), (s * 0.62, length, s), (tilt, 0, 0), "tylo"))
+        out.append(c(f"w{i}c", (0, y, z), (s * 0.86, length * 0.92, s * 0.86), (tilt, 0, 0), "tylo"))
+    n = len(TYLO_SIZES)
+    out.append(c("apex", (0, y0 + dy * TYLO_STEP * (n - 0.35), z0 + dz * TYLO_STEP * (n - 0.35)), (0.7, 1.2, 0.7), (tilt, 0, 0), "tylo"))
+    return out
 
 
 def frog() -> list[Group]:
@@ -380,6 +413,11 @@ def _pattern(cu: Cube, face: str, px: float, py: float, pz: float, rng) -> float
     elif p == "bands":
         band = math.sin(-py * 1.6 + pz * 0.25)
         base = 0.78 if band > 0.75 else 0.95
+    elif p == "tylo":
+        # M62: the rabbit snail's whorl: a dark suture at its apex end (local +y), faint growth lines across it
+        half = cu.size[1] / 2
+        t = (py - cu.center[1]) / half if half else 0.0
+        base = 0.5 if t > 0.72 else 0.8 if math.sin(px * 3.1 + pz * 2.3) > 0.85 else 0.94
     elif p == "rings":
         r = math.hypot(py + 7.6, pz - 0.6)
         base = 0.62 if (r % 2.0) < 0.45 else 0.94

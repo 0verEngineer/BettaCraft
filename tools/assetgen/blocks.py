@@ -27,17 +27,21 @@ def tank_edge() -> np.ndarray:
 
 
 def tank_clear_icon() -> np.ndarray:
-    """M21.8: the glass of the clear glass tank's item icon: a faint blue-green tint, a lighter rim inside the dark edge
-    lines and two diagonal highlights (the placed block shows no glass at all)."""
+    """The top pane of the clear glass tank's item icon. M62: only a gloss and a sparkle: the pane itself is completely
+    clear (no tint, no inner rim; the dark edge lines are the model's), with one short gloss stroke in one corner and a small
+    white four-pointed sparkle (a star like U+2726) at the back corner, the top of the icon. The model draws it on the top
+    face only (the brightest in the inventory; the placed block shows no glass at all). Before M62: a faint blue-green
+    tint, a lighter rim and two highlights."""
     out = np.zeros((S, S, 4), np.uint8)
-    yy, xx = np.mgrid[0:S, 0:S]
-    out[..., 0], out[..., 1], out[..., 2], out[..., 3] = 0xb4, 0xe2, 0xec, 70
-    rim = (xx == 1) | (yy == 1) | (xx == S - 2) | (yy == S - 2)
-    inner = (xx >= 1) & (xx <= S - 2) & (yy >= 1) & (yy <= S - 2)
-    out[rim & inner] = (0xe4, 0xf6, 0xfa, 150)
-    d = xx + yy
-    out[inner & ~rim & ((d == 6) | (d == 7))] = (0xf8, 0xfc, 0xff, 175)
-    out[inner & ~rim & (d == 10)] = (0xf0, 0xfa, 0xff, 125)
+    # the gloss: a short diagonal stroke, brightest in its middle
+    for i, (x, y) in enumerate(((2, 6), (3, 5), (4, 4), (5, 3), (6, 2))):
+        out[y, x] = (0xff, 0xff, 0xff, (150, 215, 235, 215, 150)[i])
+    # the sparkle: a white centre with four thin rays, the outer ends softer
+    cx, cy = 2, 13
+    out[cy, cx] = (0xff, 0xff, 0xff, 255)
+    for k, a in ((1, 235), (2, 140)):
+        for dx, dy in ((k, 0), (-k, 0), (0, k), (0, -k)):
+            out[cy + dy, cx + dx] = (0xff, 0xff, 0xff, a)
     return out
 
 

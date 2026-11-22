@@ -173,9 +173,10 @@ public class TankBakedModel implements BakedModel, DynamicModel {
             }
         }
         if (fixedGlass != null && fixedStyle == TankStyle.CLEAN) {
-            // M21.8: the item icon of a clear glass tank: a faint tinted pane with highlights and a 1 px frame (the thin edge
-            // lines of the block are far below a pixel in a 16 px icon, the icon was almost invisible)
-            out.add(clearPane(side));
+            // M21.8: the item icon of a clear glass tank: a 1 px frame (the thin edge lines of the block are far below a pixel
+            // in a 16 px icon, the icon was almost invisible); M62: the panes are completely clear, only one carries a gloss
+            // stroke and a sparkle (tank_clear_icon)
+            if (side == CLEAR_ICON_FACE) out.add(clearPane(side));
             out.addAll(edgeQuads(side, 0, 0, 0, ITEM_EDGE_WIDTH));
             return out;
         }
@@ -399,13 +400,16 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     static final int ITEM_EDGE_WIDTH = 1000;
     private final Map<Direction, BakedQuad> paneCache = new ConcurrentHashMap<>();
 
-    /** M21.8: the faint pane of the clear glass item icon on one face. */
+    /** M62: the face of the clear glass item icon with the gloss and the sparkle (the top, the brightest face in the inventory). */
+    static final Direction CLEAR_ICON_FACE = Direction.UP;
+
+    /** M21.8: the pane of the clear glass item icon (M62: on {@link #CLEAR_ICON_FACE} only, unshaded: the gloss and the sparkle stay white). */
     private BakedQuad clearPane(Direction side) {
         return paneCache.computeIfAbsent(side, d -> {
             float[] c = new float[12];
             float in = 0.0005F;
             BoxFaces.corners(d, in, in, in, 1 - in, 1 - in, 1 - in, c);
-            QuadBaker q = new QuadBaker().sprite(clearIcon).direction(d).shade(true).tint(-1);
+            QuadBaker q = new QuadBaker().sprite(clearIcon).direction(d).shade(false).tint(-1);
             for (int k = 0; k < 4; k++) {
                 float x = c[k * 3], y = c[k * 3 + 1], z = c[k * 3 + 2];
                 q.vertex(x, y, z, 0xFFFFFFFF, clearIcon.getU(BoxFaces.u(d, clamp(x), clamp(y), clamp(z))), clearIcon.getV(BoxFaces.v(d, clamp(x), clamp(y), clamp(z))),

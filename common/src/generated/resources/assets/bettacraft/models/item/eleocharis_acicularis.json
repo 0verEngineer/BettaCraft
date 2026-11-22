@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bettacraft:item/plant_carpet",
-    "layer1": "bettacraft:item/plant_carpet_detail"
+    "layer0": "bettacraft:item/plant_eleocharis_acicularis",
+    "layer1": "bettacraft:item/plant_eleocharis_acicularis_detail"
   }
 }
