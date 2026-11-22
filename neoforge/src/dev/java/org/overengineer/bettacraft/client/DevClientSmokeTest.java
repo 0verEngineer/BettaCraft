@@ -175,6 +175,9 @@ final class DevClientSmokeTest {
     private static final boolean M55_ONLY = Boolean.getBoolean("bettacraft.smoketest.m55only");
     private static DevClientSmokeM55 m55;
     private static final boolean M56_ONLY = Boolean.getBoolean("bettacraft.smoketest.m56only");
+    /** M62 part 4: -Psmoketestm62c (every tab of the tank menu, en/de, GUI scales 1, 2 and 4). */
+    private static final boolean M62C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62conly");
+    private static DevClientSmokeM62c m62c;
     /** M61: -Psmoketestm61 [-Ppipes] (block changes without states, Modern Dynamics pipes, leaving and joining the world). */
     private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
     private static final boolean M62B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62bonly");
@@ -472,6 +475,15 @@ final class DevClientSmokeTest {
                 if (m61 != null && m61.tick()) {
                     m61 = null;
                     LOGGER.info("[smoketest] client world test finished (M61 only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M62C_ONLY) {
+                if (ticks == 60) m62c = new DevClientSmokeM62c();
+                if (m62c != null && m62c.tick()) {
+                    m62c = null;
+                    LOGGER.info("[smoketest] client world test finished (M62c only)");
                     mc.stop();
                 }
                 return;
