@@ -12,15 +12,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -89,9 +88,9 @@ public class WildLandPlantBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState s, Direction dir, BlockState other, LevelAccessor level, BlockPos pos, BlockPos otherPos) {
+    protected BlockState updateShape(BlockState s, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos otherPos, BlockState other, RandomSource random) {
         if (dir == Direction.DOWN && !canSurvive(s, level, pos)) return Blocks.AIR.defaultBlockState();
-        return super.updateShape(s, dir, other, level, pos, otherPos);
+        return super.updateShape(s, level, tickAccess, pos, dir, otherPos, other, random);
     }
 
     @Override
@@ -99,7 +98,7 @@ public class WildLandPlantBlock extends Block {
         LandLook look = LandLook.of(species);
         int h = s.getValue(TRIMMED) ? Math.max(2, look.height / 2) : look.height;
         VoxelShape shape = look.model == LandLook.Model.MOSS || look.model == LandLook.Model.CARPET ? Block.box(0, 0, 0, 16, h, 16) : Block.box(3, 0, 3, 13, h, 13);
-        Vec3 off = s.getOffset(level, pos);
+        Vec3 off = s.getOffset(pos);
         return shape.move(off.x, off.y, off.z);
     }
 
@@ -138,15 +137,15 @@ public class WildLandPlantBlock extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(Tags.Items.TOOLS_SHEAR)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!cut(level, pos, state, hit.getDirection())) {
             player.displayClientMessage(Component.translatable("message.bettacraft.wild_plant.trimmed").withStyle(ChatFormatting.GRAY), true);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
-        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-        return ItemInteractionResult.CONSUME;
+        if (!player.getAbilities().instabuild) stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
+        return InteractionResult.CONSUME;
     }
 
     /** The plant dug out of the ground: half grown. */
@@ -168,7 +167,7 @@ public class WildLandPlantBlock extends Block {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         return InteriorPlants.item(species, 0);
     }
 
