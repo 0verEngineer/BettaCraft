@@ -842,6 +842,12 @@ final class DevClientMediaM58 {
     private void turtles(ServerLevel level) {
         TankBlockEntity c = TankMultiblock.getController(level, turtle);
         if (c == null) return;
+        // the beach must be loaded for the paludarium mode (else the tank counts as an aquarium and refuses the turtles)
+        InteriorRegion ir = InteriorRegions.get(level.getServer()).get(c.getTank().regionId());
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        for (int cx = ir.originX() >> 4; cx <= (ir.originX() + ir.sizeX()) >> 4; cx++)
+            for (int cz = ir.originZ() >> 4; cz <= (ir.originZ() + ir.sizeZ()) >> 4; cz++) in.getChunk(cx, cz);
+        TankClimate.step(level, c, 0.01);
         LivingEntity grown = insert(level, c, EntityType.TURTLE, false), baby = insert(level, c, EntityType.TURTLE, true);
         TankData t = c.getTank();
         TankTerrain ter = new TankTerrain(t, level.getServer(), InteriorRegions.get(level.getServer()).get(t.regionId()), true);
