@@ -128,7 +128,7 @@ public final class WildSpawnPass {
             int n = spawnInColumn(level, surface, ours, r, room);
             if (n > 0) {
                 if (org.overengineer.bettacraft.debug.LogArea.WORLD.debug) org.overengineer.bettacraft.debug.LogArea.WORLD.debug("wild spawn pass: {} animal(s) at {} in {} (room {})", n, surface,
-                        level.getBiome(surface).unwrapKey().map(k -> k.location().toString()).orElse("?"), room); // M57
+                        level.getBiome(surface).unwrapKey().map(k -> k.identifier().toString()).orElse("?"), room); // M57
                 return n;
             }
         }
