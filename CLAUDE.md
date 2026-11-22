@@ -106,6 +106,10 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   users tab, gear + client config, waypoints in every map mod, interior brightness check (the 26.x black interior), every
   animal from six sides, the small animals, M11 + M13 and the frame rate (`render`; with `-Pshaders` / `-Pperf` the render
   matrix). Contact sheets of the animal shots: `builds/m53-textures/<mc>-<loader>/`.
+- M63 client smoke `-Psmoketestm63 -Pshaders` (both loaders; `-Pm63packs=none,<pack.zip>,...`, `-Pm63tag=before|after`): the tank
+  water in an unevenly lit room and outside, the scene switches Iris through every pack of the manifest (Complementary Reimagined
+  and Unbound, BSL, MakeUp) and none. `-Pgametestrepeat=<n>` (GameTests, both loaders) runs every test of the run n times side by
+  side in its batch, for hunting flaky tests (with `-Pgametests=<prefix>`).
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
   `run/screenshots/bettacraft_mXX_*.png`; freeze animals with `SmokeFreeze.freeze`. Look at the screenshots.
 - **Foreign test mods come from `dev-mods.json`** (M59): a group flag makes Gradle download the group's jars from their

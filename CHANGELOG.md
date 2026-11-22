@@ -4,6 +4,26 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.52.0-beta.1] - 2026-11-22
+
+Tank water without block seams, with and without shaders.
+
+### Fixed
+- **Block rectangles on the tank water:** the water took the light of its own block, so in an unevenly lit room (a torch,
+  a lamp, a roof over part of the tank) every block of the surface had its own brightness. Shader packs (Complementary
+  Reimagined and Unbound, BSL, MakeUp) showed the surface as a grid of block-sized rectangles, without shaders they were
+  faint. The water is now lit smoothly: every corner takes the brightest light around it and the light runs on from block
+  to block. The surface stays flat and still, the view from the front and the side stays clear. Checked with Complementary
+  Reimagined, Complementary Unbound, BSL and MakeUp (Iris) and without shaders.
+- Two flaky GameTests: a "waiting" betta in `aWaitingBettaKeepsItsHeight` swam on (the test helper removed the goals but
+  did not stop a swim already under way; it now stops the goals, the path and the straight swim, and a new test stops a
+  betta mid-swim); `neonFormsCrossInTheTank` runs without the spontaneous mutations (a mutated young now and then).
+
+### Changed
+- Development: the client smoke `-Psmoketestm63` (both loaders) shows two tanks with every shader pack of the manifest
+  (Complementary Reimagined and Unbound, BSL, MakeUp; pinned in `dev-mods.json`) and without; `-Pgametestrepeat=<n>` runs
+  every GameTest of a run n times side by side.
+
 ## [1.51.0-beta.1] - 2026-11-22
 
 Animals behave in the world as in the tank, cabinets under the whole tank, the external filter below the tank, a roomier
