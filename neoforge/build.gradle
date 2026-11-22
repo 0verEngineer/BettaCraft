@@ -1053,7 +1053,11 @@ def smokeSaves = { File saves -> (saves.listFiles() ?: []).findAll { it.isDirect
 tasks.matching { it.name == 'runServer' }.configureEach { t ->
     t.doFirst { seedServerFiles(rootProject.file(runRoot), false) }
     // the world of the server smoke (run/world, with -Pbiomes run/world_biomes) and the copy of -PsmoketestOldWorld
-    if (smokeRun) testWorlds(t) { [rootProject.file(runRoot + '/world'), rootProject.file(runRoot + '/world_biomes'), rootProject.file(runRoot + '/oldworld_check')] }
+    if (smokeRun) {
+        testWorlds(t) { [rootProject.file(runRoot + '/world'), rootProject.file(runRoot + '/world_biomes')] }
+        // the copy of -PsmoketestOldWorld is made by a doFirst of its own that runs before this one: deleted only after the run
+        t.doLast { if (!keepWorld) deleteWorlds('after the run', [rootProject.file(runRoot + '/oldworld_check')]) }
+    }
 }
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     // the worlds the client smoke scenes create (bettacraft_smoketest_<time>); the showcase and the user's worlds stay
