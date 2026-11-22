@@ -41,6 +41,12 @@ public final class VersionGaps {
      */
     public static final Set<String> FABRIC_NO_BUILD = Set.of("moderndynamics");
 
+    /**
+     * M59: EMI (-Pemi, Fabric) has no build after Minecraft 1.21.1 (Modrinth, CurseForge 580555 and maven.terraformersmc.com
+     * checked on 2026-11-22); a gap of the dev mod manifest (dev-mods.json, "gaps"), like every group listed there.
+     */
+    public static final Set<String> RECIPE_VIEWER_NO_BUILD = Set.of("emi");
+
     /** Whether every one of these mods has no build for this version (then a test that needs them has nothing to test). */
     public static boolean allWithoutBuild(String... mods) {
         return mods.length > 0 && Arrays.stream(mods).allMatch(NO_BUILD::contains);
