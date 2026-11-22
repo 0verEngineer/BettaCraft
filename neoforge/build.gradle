@@ -420,6 +420,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm62b')) {
+                // gradlew runClient -Psmoketestm62b : the M62 parts 2 and 3 scene (cabinets under the whole tank, the shared
+                // spring, the external filter one and two blocks below the tank, the choice of its tank, en and de)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m62bonly', 'true'
+            }
             if (project.hasProperty('smoketestm61')) {
                 // gradlew runClient -Psmoketestm61 [-Ppipes]: the M61 scene (ClientLevel.sendBlockUpdated with null states next to
                 // stone and a plant; with -Ppipes Modern Dynamics fluid pipes between a reservoir and a tank, then the player leaves
