@@ -19,7 +19,10 @@ public final class DevClientHooks {
                 mc.gui.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
             });
         });
-        if (Boolean.getBoolean("bettacraft.smoketest.world")) {
+        if (Boolean.getBoolean("bettacraft.smoketest.worldtour")) {
+            DevClientWorldTour.register(); // M63b: gradlew runClient -Psmoketestworldtour: every tank of a copy of the showcase
+            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.client.event.ScreenEvent.Init.Post e) -> DevClientWorldTour.afterInit(e.getScreen()));
+        } else if (Boolean.getBoolean("bettacraft.smoketest.world")) {
             DevClientSmokeTest.register();
         } else if (Boolean.getBoolean("bettacraft.media")) {
             DevClientMedia.register(); // M43: gradlew runClient -Psmoketestm43: README and mod page media in a copy of the showcase world
