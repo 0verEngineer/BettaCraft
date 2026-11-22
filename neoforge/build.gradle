@@ -1173,7 +1173,7 @@ def defaultReference = {
 // untouched. Also used by Fabric (fabric/build.gradle copies from this run's saves).
 tasks.matching { it.name == 'runClient' }.configureEach { t ->
     if (project.hasProperty('smoketestworldtour')) {
-        def saves = rootProject.file(runRoot + '/saves')
+        def saves = rootProject.file('run/saves')
         def dst = new File(saves, 'Bettacraft Rundgang')
         t.doFirst {
             def name = (project.findProperty('tourSource') ?: (new File(saves, 'Bettacraft Schaukasten').isDirectory() ? 'Bettacraft Schaukasten' : defaultReference())).toString()
