@@ -15,6 +15,9 @@ Tank water without block seams, with and without shaders.
   faint. The water is now lit smoothly: every corner takes the brightest light around it and the light runs on from block
   to block. The surface stays flat and still, the view from the front and the side stays clear. Checked with Complementary
   Reimagined, Complementary Unbound, BSL and MakeUp (Iris) and without shaders.
+- **Tank water with Sodium or Iris (26.x):** Sodium meshed the tank water as vanilla water (the flowing texture on the
+  sides, a sloped surface; with a shader pack on top of the tank's own water, so the tank looked nearly opaque). The tank
+  water is now drawn as always: a flat, still surface and clear sides.
 - Two flaky GameTests: a "waiting" betta in `aWaitingBettaKeepsItsHeight` swam on (the test helper removed the goals but
   did not stop a swim already under way; it now stops the goals, the path and the straight swim, and a new test stops a
   betta mid-swim); `neonFormsCrossInTheTank` runs without the spontaneous mutations (a mutated young now and then).
