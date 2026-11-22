@@ -178,6 +178,9 @@ final class DevClientSmokeTest {
     /** M62 part 4: -Psmoketestm62c (every tab of the tank menu, en/de, GUI scales 1, 2 and 4). */
     private static final boolean M62C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62conly");
     private static DevClientSmokeM62c m62c;
+    /** M62 parts 5 and 6: -Psmoketestm62d (the Tylomelania shell, every plant icon, the clear glass tank icon). */
+    private static final boolean M62D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62donly");
+    private static DevClientSmokeM62d m62d;
     /** M61: -Psmoketestm61 [-Ppipes] (block changes without states, Modern Dynamics pipes, leaving and joining the world). */
     private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
     private static final boolean M62B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62bonly");
@@ -461,6 +464,15 @@ final class DevClientSmokeTest {
                 if (m32d != null && m32d.tick()) {
                     m32d = null;
                     LOGGER.info("[smoketest] client world test finished (M32 part d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M62D_ONLY) {
+                if (ticks == 60) m62d = new DevClientSmokeM62d();
+                if (m62d != null && m62d.tick()) {
+                    m62d = null;
+                    LOGGER.info("[smoketest] client world test finished (M62d only)");
                     mc.stop();
                 }
                 return;

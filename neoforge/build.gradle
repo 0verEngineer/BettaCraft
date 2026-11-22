@@ -425,6 +425,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m32donly', 'true'
             }
+            if (project.hasProperty('smoketestm62d')) {
+                // gradlew runClient -Psmoketestm62d [-Pm62dparts=snail,icons,glass] [-Pm62dtag=<name>]: M62 parts 5 and 6 (the
+                // Tylomelania shell in a tank and in the world, every plant item on chest pages, the glass and the clear glass tank)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m62donly', 'true'
+                if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
+                if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
+            }
             if (project.hasProperty('smoketestm62b')) {
                 // gradlew runClient -Psmoketestm62b : the M62 parts 2 and 3 scene (cabinets under the whole tank, the shared
                 // spring, the external filter one and two blocks below the tank, the choice of its tank, en and de)
