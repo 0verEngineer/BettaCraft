@@ -6,6 +6,8 @@ Realistic fishkeeping for Minecraft 1.21.1, 1.21.11, 26.1.2, 26.2 and 26.3, on N
 and tankmates, keep them in multiblock aquariums of any shape, aquascape with swaying plants and corals, and breed with
 real genetics.
 
+All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
+
 ![An aquarium room: a reef tank, a planted show tank with LED panels, CO2 and a multiblock filter, and a betta nano tank](images/bettacraft-aquarium-room.jpg)
 
 ![A planted tank: a Koi Galaxy betta, neon tetras, harlequin rasboras, corydoras and shrimp swim between swaying plants](images/bettacraft-planted-tank-swimming.gif)
@@ -64,6 +66,8 @@ real genetics.
 
 ![A time lapse: cuttings grow into Vallisneria, Rotala, Ludwigia, a sword plant and a Monte Carlo carpet](images/bettacraft-plant-growth.gif)
 
+![A pond in the world: wild carpets, mosses, stem plants and floating plants in the water, sedges and carnivorous plants on the bank](images/bettacraft-wild-plants.jpg)
+
 ## Shrimp, snails and other small animals
 
 - **Neocaridina in eleven colours** with selection grades that you breed up, bee shrimp from Crystal Red S to SSS,
@@ -77,6 +81,8 @@ real genetics.
 - **Axolotls** get real care in a cool tank: eggs on the plants, larvae, and the five colours inherited by Mendel.
 
 ![A shrimp tank: Neocaridina in every colour, bee shrimp, nerites and a dwarf crayfish on moss and wood](images/bettacraft-shrimp-tank-crawling.gif)
+
+![Buckets, critter buckets, fish bags and terrarium boxes, each with the animal inside as its icon](images/bettacraft-animal-icons.png)
 
 ## Tankmates
 
@@ -109,7 +115,19 @@ real genetics.
 
 ![A reef tank: clownfish at their anemone, green chromis, a yellow tang, seahorses and corals](images/bettacraft-reef-tank-swimming.gif)
 
+![A seahorse tank: yellow, orange and wild lined seahorses and dwarf seahorses between seagrass, kelp and soft corals](images/bettacraft-seahorse-tank-swimming.gif)
+
+![A brackish mangrove paludarium: archerfish spit at the leaves of the mangrove, mudskippers on the mud beach](images/bettacraft-mangrove-archerfish.gif)
+
 ![A big sea water tank with a blacktip reef shark, eagle and cownose rays and a bamboo shark](images/bettacraft-big-sea-tank.jpg)
+
+![A blacktip reef shark](images/bettacraft-giant-shark.jpg)
+
+![A spotted eagle ray](images/bettacraft-giant-eagle-ray.jpg)
+
+![A wels catfish in a big freshwater tank](images/bettacraft-giant-wels.jpg)
+
+![Two dolphins in a 32 x 8 x 16 sea water tank](images/bettacraft-giant-dolphin.jpg)
 
 ## Terraria and paludaria
 
@@ -129,6 +147,16 @@ real genetics.
   mini beehive, frogs, cats, foxes and more at their real size, walking with real steps. No drops, no farm.
 - **Mobs in glass:** drowned, zombies, skeletons, spiders and small slimes live shrunk and harmless in a tank. Catch one
   in a **mob jar** or lure it in with bait: decoration, not a farm.
+
+![A rainforest paludarium: dart frogs hop over moss between bromeliads, ferns and orchids, Endler guppies in the water](images/bettacraft-paludarium-frogs.gif)
+
+![A rainforest terrarium full of terrarium plants: bromeliads, Fittonia, ferns, Pothos, orchids and an air plant on a branch, crested geckos](images/bettacraft-terrarium-plants.jpg)
+
+![A desert terrarium in motion: leopard geckos and a corn snake between cacti, agave, aloe and living stones](images/bettacraft-desert-terrarium-walking.gif)
+
+![A swamp paludarium: Minecraft frogs on the bank between pitcher plants, sundews and sedges, dwarf clawed frogs and a betta under the lily pads](images/bettacraft-swamp-frogs.jpg)
+
+![A sea water paludarium with a beach: a sea turtle swims, a hatchling sits on the sand](images/bettacraft-sea-turtle.jpg)
 
 ![A paludarium with sliders and a musk turtle under a basking lamp, and a leopard gecko terrarium](images/bettacraft-terraria.jpg)
 
@@ -150,13 +178,19 @@ real genetics.
   a food maker for pellets, flakes, wafers and frozen food. Every eater has favourite and poorly suited food: a varied
   diet helps the fish recover and makes the bettas' colours stronger.
 - **Monitors:** monitor blocks join into screens of up to 8 x 5 blocks that find the tanks around them and show values,
-  traffic lights, graphs, animals, devices and the logbook, with alarms that give a redstone signal.
+  traffic lights, graphs, animals, devices and the logbook, with alarms that give a redstone signal and a waypoint in
+  JourneyMap, Xaero's Minimap or FTB Chunks for the owner and the users of the tank (each switches his own in the tank
+  menu).
 - **Power, your choice:** by default nothing needs energy. With the power options on, the devices take Forge Energy (on
   Fabric Team Reborn Energy), or
   you wind them with a **crank**, or with Create a **drive adapter** runs every device of a tank on rotation with real
   stress.
 
 ![One multiblock filter for two tanks: filter pipes with T-pieces, a pipe bundle with four lines, fresh and waste water ports and pipe covers](images/bettacraft-filter-lines.jpg)
+
+![A monitor wall between a betta tank and a reef tank: status, a temperature graph, a salinity alarm, animals, devices and the logbook](images/bettacraft-monitors.jpg)
+
+![A planted tank with two bettas on a Create minecart contraption: the water sloshes in the curve](images/bettacraft-create-cart.jpg)
 
 ## A hired aquarist
 
@@ -166,14 +200,20 @@ reservoir, scrapes the algae, trims the plants, moves the young into a rearing t
 emerald (or some bread) a day. Each of his six tasks has its own level in his menu. In multiplayer every player has his
 own, and he only works at his employer's tanks, those of the team (FTB Teams) and those released for him.
 
+![The aquarist villager at his breeding basin, two betta tanks beside him](images/bettacraft-aquarist-villager.jpg)
+
+![Two hired aquarists at work at their employer's tanks: one with the pellets, one with the fish bag](images/bettacraft-hired-aquarist.jpg)
+
 ## Handbook and menus
 
 An in-game handbook in English and German with a page for every animal, plant, coral and device and where to get it
 (GuideME on NeoForge; on Fabric a Patchouli book on 1.21.1 and a Modonomicon book on 1.21.11 and 26.x, made from the same
-pages), 70 advancements, information pages in JEI (and REI and EMI on Fabric) and tooltips. Without a handbook mod every
+pages), 72 advancements, information pages in JEI (and REI and EMI on Fabric) and tooltips. Without a handbook mod every
 item explains itself in its tooltip.
 
 ![The tank menu with the genes of a betta and the water values, and the handbook page on genetics](images/bettacraft-menus.png)
+
+![The users tab of the tank menu: the owner, a caretaker and a viewer, each with an alarm waypoint switch](images/bettacraft-menu-users.png)
 
 ## Versions and loaders
 
@@ -208,7 +248,7 @@ version; what is missing where is listed after them.
   the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (113 quests, English and German; quests of switched-off features
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (115 quests, English and German; quests of switched-off features
   hide themselves), KubeJS events (animal born, animal died, monitor alarm), waypoints at tanks with a monitor
   alarm (JourneyMap, Xaero's Minimap, FTB Chunks; for the owner and the listed users), FTB Teams for the hired aquarist, and `/bettacraft foreign list` to see which animals of other mods still need a
   profile.
@@ -256,7 +296,7 @@ another Minecraft version.
 Tags and datapacks control spawns, food, inhabitants and genetics, and the pack files (quest chapter, KubeJS example)
 come with every release.
 
-**Can I turn features off?** Yes. Every feature has its own switch (`features.*` in `config/bettacraft-common.toml`, 136
+**Can I turn features off?** Yes. Every feature has its own switch (`features.*` in `config/bettacraft-common.toml`, 144
 in all): off, it loses its recipes, trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its
 logic rests. Presets (`preset = SIMPLE | REALISTIC | DECOR`) set other defaults in one line, `care.mode = NO_DEATH` keeps
 every animal alive, and datapacks can use the `bettacraft:feature` recipe and loot condition.
@@ -275,6 +315,11 @@ evaporation are on but gentle.
 
 **Is it a beta?** Yes. Worlds are migrated between versions and nothing should get lost, but keep backups. Bugs and
 ideas go to the [issue tracker](https://github.com/0verEngineer/BettaCraft/issues).
+
+**How do I report a bug?** Use the [bug report form](https://github.com/0verEngineer/BettaCraft/issues/new?template=bug_report.yml)
+(no field is required). `/bettacraft debug all on` writes what happens and why to `logs/bettacraft-debug.log`;
+reproduce the problem, look at the tank and run `/bettacraft report`: it writes a file with the versions, the mods, the
+changed config values, that tank with its animals and the end of the debug log, to drag into the form.
 
 ## Acknowledgements
 
