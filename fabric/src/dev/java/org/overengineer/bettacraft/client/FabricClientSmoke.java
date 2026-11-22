@@ -192,7 +192,13 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 stage = 24;
             }
             if (stage == 24) {
-                if (m61.tick()) stage = 4;
+                if (m61.tick()) {
+                    // no tank in this scene: straight to the end (stage 4 checks the crack overlay at a tank of the M11 scene)
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
+                    LOGGER.info(m61.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M61");
+                    mc.stop();
+                }
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m56only")) {
