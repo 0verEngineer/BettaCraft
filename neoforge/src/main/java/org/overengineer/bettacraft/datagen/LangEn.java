@@ -617,6 +617,28 @@ final class LangEn {
         a.accept("bettacraft.configuration.compat.tooltip", "Integration with other mods");
         a.accept("bettacraft.configuration.overlayProvider", "Overlay mod");
         a.accept("bettacraft.configuration.overlayProvider.tooltip", "Which overlay mod shows the Bettacraft lines (tank, betta, filter, culture): AUTO = only the first installed one in the order Jade, WTHIT, The One Probe (no doubled boxes with two overlay mods); JADE, TOP or WTHIT = only that one; ALL = every installed one");
+        // M57: the debug log and the bug report
+        a.accept("bettacraft.configuration.debug", "Debug log");
+        a.accept("bettacraft.configuration.debug.tooltip", "Debug log for bug reports: logs/bettacraft-debug.log");
+        a.accept("bettacraft.configuration.logLevel", "Debug log level");
+        a.accept("bettacraft.configuration.logLevel.tooltip", "INFO = no debug lines (no cost); DEBUG = what happens and why (deaths with their reason, breeding results, refused animals, packet sizes, errors of integrations) in logs/bettacraft-debug.log; TRACE = also every care step and every packet (large)");
+        a.accept("bettacraft.configuration.areas", "Debug log areas");
+        a.accept("bettacraft.configuration.areas.tooltip", "Areas the debug log level applies to: all, or some of care, breeding, tank, interior, network, compat, render, aquarist, world");
+        a.accept("command.bettacraft.debug.header", "Debug log %s (config debug.logLevel = %s):");
+        a.accept("command.bettacraft.debug.area", "  %s: %s");
+        a.accept("command.bettacraft.debug.area_command", "  %s: %s (by command until the restart; /bettacraft debug reset)");
+        a.accept("command.bettacraft.debug.set", "Debug log %s: %s until the restart, in %s");
+        a.accept("command.bettacraft.debug.reset", "Debug log back to the config (debug.logLevel, debug.areas)");
+        a.accept("command.bettacraft.debug.level.info", "off");
+        a.accept("command.bettacraft.debug.level.debug", "debug");
+        a.accept("command.bettacraft.debug.level.trace", "trace (everything)");
+        a.accept("command.bettacraft.report.written", "Bug report written: %s (click to copy the path)");
+        a.accept("command.bettacraft.report.written_tank", "Bug report with the tank you look at written: %s (click to copy the path)");
+        a.accept("command.bettacraft.report.issue", "Attach it to a bug report on GitHub: %s");
+        a.accept("command.bettacraft.report.link", "open the form");
+        a.accept("command.bettacraft.report.copy", "Click to copy");
+        a.accept("command.bettacraft.report.failed", "Could not write the bug report: %s");
+        a.accept("command.bettacraft.report.debug_hint", "Tip: /bettacraft debug all on, then reproduce the problem and run /bettacraft report again: the report then ends with the debug log.");
         a.accept("bettacraft.configuration.features", "Features");
         a.accept("bettacraft.configuration.features.tooltip", "Switches per feature: every group has its switch enabled, sub-switches are off when their group is off; "
                 + "a feature that is off loses its recipes, trader offers, loot, catches and wild spawns, its items and blocks stay registered");

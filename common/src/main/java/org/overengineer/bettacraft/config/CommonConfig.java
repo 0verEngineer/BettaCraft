@@ -29,6 +29,9 @@ public final class CommonConfig {
     // M33 part c
     public static final ModConfigSpec.EnumValue<Preset> PRESET;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> PRESET_KEEP;
+    // M57
+    public static final ModConfigSpec.EnumValue<org.overengineer.bettacraft.debug.DebugLog.Level> DEBUG_LOG_LEVEL;
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> DEBUG_AREAS;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -86,6 +89,16 @@ public final class CommonConfig {
         SWAYING_EXCLUDE = b.comment("Blocks that never sway: block ids (\"modid:block\"), block tags (\"#modid:tag\") or whole mods (\"modid:*\")")
                 .defineListAllowEmpty("exclude", java.util.List.of(), () -> "", o -> o instanceof String);
         b.pop();
+        // M57: the debug log (logs/bettacraft-debug.log); /bettacraft debug switches it until the restart
+        b.comment("Debug log for bug reports (M57): lines go to logs/bettacraft-debug.log (10 MB, one older file), the normal log stays clean.",
+                "/bettacraft debug <area|all> <on|off|trace> switches areas at once until the restart; /bettacraft report writes a report").push("debug");
+        DEBUG_LOG_LEVEL = b.comment("INFO = no debug lines (no cost); DEBUG = what happens and why (deaths with their reason, breeding results,",
+                        "refused animals, packet sizes, errors of integrations); TRACE = also every care step and every packet (large)")
+                .defineEnum("logLevel", org.overengineer.bettacraft.debug.DebugLog.Level.INFO);
+        DEBUG_AREAS = b.comment("Areas the level applies to: all, or some of " + String.join(", ", java.util.Arrays.stream(org.overengineer.bettacraft.debug.LogArea.values()).map(a -> a.id).toList()))
+                .defineListAllowEmpty("areas", java.util.List.of("all"), () -> "care",
+                        o -> o instanceof String str && (str.trim().equalsIgnoreCase("all") || org.overengineer.bettacraft.debug.LogArea.byId(str) != null));
+        b.pop();
         SPEC = b.build();
     }
 
@@ -100,6 +113,12 @@ public final class CommonConfig {
 
     public static boolean vanillaSounds() { return getOr(SOUNDS_USE_VANILLA, false); }
     public static double wildPlantFrequency() { return getOr(WILD_PLANT_FREQUENCY, 1.0); }
+
+    /** M57: the debug section was loaded or changed (any thread): the switches of the debug log follow it. */
+    public static void applyDebug() {
+        org.overengineer.bettacraft.debug.DebugLog.configure(getOr(DEBUG_LOG_LEVEL, org.overengineer.bettacraft.debug.DebugLog.Level.INFO),
+                getOr(DEBUG_AREAS, java.util.List.of("all")));
+    }
 
 
     /** M33: the feature tree in the order of {@link Feature}: sections are pushed as the paths need them. */
