@@ -10,7 +10,9 @@ feature: invertebrates.enabled
 
 Neben den Bettas kann ein Aquarium eine ganze Gemeinschaft kleiner Tiere halten: **Garnelen**, **Zwergkrebse** und
 **Schnecken** krabbeln über den Boden, die Deko, die Pflanzen und das Glas hinauf, und **Zwergkrallenfrösche** paddeln am
-Grund. Schnecken und Garnelen sind deine **Putzkolonne**: Sie halten das Glas frei von [Algen](aquarium/algae.md).
+Grund. Schnecken und Garnelen sind deine **Putzkolonne**: Sie halten das Glas frei von [Algen](aquarium/algae.md). In der
+Wildnis klettern die Schnecken und Garnelen, die im Becken am Glas klettern, auch unter Wasser Wände hoch (ein Ufer, ein Stein)
+und weiden dort eine Weile (Schalter `features.visuals.worldClimbing`).
 
 Die **großen Krebse** ([Floridakrebs](invertebrates/florida_crayfish.md), [Marmorkrebs](invertebrates/marbled_crayfish.md))
 sind keine Putzkolonne: Sie fressen Pflanzen und Kleintiere und fangen langsame Fische. Der Vanilla-**[Axolotl](invertebrates/axolotl.md)**
