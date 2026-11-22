@@ -257,7 +257,8 @@ version; what is missing where is listed after them.
   profile.
 - **Biome mods:** the swamps, rivers, mangroves and warm oceans of Regions Unexplored, Oh The Biomes We've Gone, Biomes
   O' Plenty and others get the wild animals, plants and corals (biome tags).
-- **Sodium and Iris:** supported, water and miniatures render correctly with shaders.
+- **Sodium and Iris:** supported, water and miniatures render correctly with shaders (tested with Complementary Reimagined
+  and Unbound, BSL and MakeUp).
 
 What is missing where (the other mod has no version there):
 
@@ -285,7 +286,8 @@ What is missing where (the other mod has no version there):
 
 ## FAQ
 
-**Does it work with shaders?** Yes. Sodium and Iris are supported, the water and the miniatures render correctly (on
+**Does it work with shaders?** Yes. Sodium and Iris are supported, the water and the miniatures render correctly, the tank
+water lit smoothly without block seams (on
 NeoForge 26.3 as soon as Sodium and Iris run there). The
 last three pictures under Compatibility were taken with Complementary Reimagined; every other picture on this page is
 without shaders.
