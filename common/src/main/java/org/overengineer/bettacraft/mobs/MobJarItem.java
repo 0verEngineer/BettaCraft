@@ -111,6 +111,7 @@ public class MobJarItem extends Item {
         TankInhabitants.release(m);
         GlassMobs.prepare(m); // the mark: it never drops anything again
         ItemStack filled = fillWith(m);
+        org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
         m.playSound(SoundEvents.BOTTLE_FILL_DRAGONBREATH, 0.8F, 1.3F);
         player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
         player.getCooldowns().addCooldown(stack, COOLDOWN);
@@ -126,24 +127,47 @@ public class MobJarItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    /** A full jar on a block that is no tank (the tank takes it first): the mob comes out, at full size. */
+    /**
+     * A full jar on a block that is no tank (the tank takes it first): the mob comes out, at full size. M62 part 7: only after
+     * the confirmation, like a bucket ({@link org.overengineer.bettacraft.containers.ContainerRules#release}).
+     */
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         ItemStack stack = ctx.getItemInHand();
         CompoundTag stored = storedEntity(stack);
         if (stored == null) return InteractionResult.PASS;
-        if (!(ctx.getLevel() instanceof ServerLevel level)) return InteractionResult.SUCCESS;
+        Player player = ctx.getPlayer();
+        if (player != null && !org.overengineer.bettacraft.containers.ContainerRules.release(ctx.getLevel(), player, ctx.getHand(), stack)) return InteractionResult.FAIL;
+        return releaseAt(ctx.getLevel(), player, ctx.getHand(), stored, ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getRotation());
+    }
+
+    /** M62 part 7: the confirmed release (the confirmation uses the item again): onto the block the player looks at. */
+    @Override
+    public InteractionResult use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        CompoundTag stored = storedEntity(stack);
+        if (stored == null) return InteractionResult.PASS;
+        net.minecraft.world.phys.BlockHitResult hit = getPlayerPOVHitResult(level, player, net.minecraft.world.level.ClipContext.Fluid.NONE);
+        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK
+                || level.getBlockState(hit.getBlockPos()).getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock) {
+            return InteractionResult.PASS;
+        }
+        if (!org.overengineer.bettacraft.containers.ContainerRules.release(level, player, hand, stack)) return org.overengineer.bettacraft.containers.ContainerRules.waiting(stack);
+        InteractionResult r = releaseAt(level, player, hand, stored, hit.getBlockPos().relative(hit.getDirection()), player.getYRot() + 180F);
+        return r.consumesAction() ? InteractionResult.CONSUME : InteractionResult.FAIL;
+    }
+
+    private static InteractionResult releaseAt(net.minecraft.world.level.Level lvl, @Nullable Player player, InteractionHand hand, CompoundTag stored, BlockPos at, float yaw) {
+        if (!(lvl instanceof ServerLevel level)) return InteractionResult.SUCCESS;
         Entity e = org.overengineer.bettacraft.compat.FishContainers.create(level, stored);
         if (e == null) return InteractionResult.FAIL;
-        BlockPos at = ctx.getClickedPos().relative(ctx.getClickedFace());
-        e.snapTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, ctx.getRotation(), 0F);
+        e.snapTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, yaw, 0F);
         if (e instanceof Mob m) GlassMobs.unshrink(m);
         TankInhabitants.release(e);
         if (!level.tryAddFreshEntityWithPassengers(e)) return InteractionResult.FAIL;
         level.playSound(null, at, SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 0.8F, 1.0F);
-        Player player = ctx.getPlayer();
         if (player != null && !player.getAbilities().instabuild) {
-            player.setItemInHand(ctx.getHand(), new ItemStack(ModItems.MOB_JAR.get()));
+            player.setItemInHand(hand, new ItemStack(ModItems.MOB_JAR.get()));
         }
         return InteractionResult.CONSUME;
     }

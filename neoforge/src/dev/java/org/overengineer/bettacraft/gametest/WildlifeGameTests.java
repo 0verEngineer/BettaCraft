@@ -287,6 +287,7 @@ public final class WildlifeGameTests {
         for (ItemStack s : sp.getInventory().getNonEquipmentItems()) if (AnimalContainers.critters(s) != null) bag = s;
         check(bag != null && AnimalContainers.critters(bag).getFirst().equals(original), "the bag changed the animal: " + bag);
         stand(h, sp, new BlockPos(5, 6, 5), 90F);
+        org.overengineer.bettacraft.containers.CatchGuard.reset(sp); // M62 part 7: as if half a second had passed since the catch
         ItemStack held = use(sp, bag.copy());
         check(FishBagItem.isFilled(held), "let go without asking");
         ContainerRules.confirm(sp, InteractionHand.MAIN_HAND);
