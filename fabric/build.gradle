@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM62b', 'DevClientSmokeM62c'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -125,6 +125,14 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
+            }
+            // M62 parts 5 and 6: -Psmoketestm62d [-Pm62dparts=snail,icons,glass] [-Pm62dtag=<name>]: snail shell, plant icons, clear glass
+            if (project.hasProperty('smoketestm62d')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m62donly', 'true'
+                if (project.hasProperty('m62dparts')) property 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
+                if (project.hasProperty('m62dtag')) property 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
             // M61: -Psmoketestm61: sendBlockUpdated with null states, leaving and joining the world (Modern Dynamics has no Fabric
             // build at all: the pipe part is a documented gap on Fabric)

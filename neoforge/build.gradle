@@ -431,6 +431,14 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m62bonly', 'true'
             }
+            if (project.hasProperty('smoketestm62d')) {
+                // gradlew runClient -Psmoketestm62d [-Pm62dparts=snail,icons,glass] [-Pm62dtag=<name>]: M62 parts 5 and 6 (the
+                // Tylomelania shell in a tank and in the world, every plant item on chest pages, the glass and the clear glass tank)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m62donly', 'true'
+                if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
+                if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
+            }
             if (project.hasProperty('smoketestm61')) {
                 // gradlew runClient -Psmoketestm61 [-Ppipes]: the M61 scene (ClientLevel.sendBlockUpdated with null states next to
                 // stone and a plant; with -Ppipes Modern Dynamics fluid pipes between a reservoir and a tank, then the player leaves
