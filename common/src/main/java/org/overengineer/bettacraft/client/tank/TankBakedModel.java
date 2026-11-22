@@ -42,6 +42,7 @@ import org.overengineer.bettacraft.tank.TankStyle;
  *     the glass of any mod whose model has ordinary face quads (the frame width is read from the sprite).</li>
  *     <li>{@link TankStyle#CLEAN}: no glass quads at all (perfectly clear).</li>
  * </ul>
+ * M63b: the top faces never get glass (a tank is open at the top; lids are blocks of their own).
  * Both get thin dark-grey edge lines ({@code render.tankEdgeWidth} pixels, default 0.25 = 1/64 block) along the outer edges
  * of the whole tank, the concave edges of free shapes (M10) and, new in M11, a small square in the in-plane inner
  * corners of a flat wall (e.g. the front of a T), where the lines of two neighbouring blocks meet.
@@ -146,7 +147,9 @@ public class TankBakedModel implements DynamicModel {
         Long concaveData = data.get(CONCAVE);
         long concave = concaveData == null ? 0 : concaveData;
         List<BakedQuad> out = new ArrayList<>();
-        if (styleOf(data) == TankStyle.TEXTURED) {
+        // M63b: a tank is open at the top: no glass on its top faces (it looked like a lid over the water; the edge lines stay).
+        // The item keeps it (a glass block icon).
+        if (styleOf(data) == TankStyle.TEXTURED && (side != Direction.UP || fixedGlass != null)) {
             BlockState glass = glassOf(data);
             BlockStateModel gm = glassModel(glass);
             if (renderType == null || ClientPlatform.get().layers(gm, glass, rand).contains(renderType)) {
