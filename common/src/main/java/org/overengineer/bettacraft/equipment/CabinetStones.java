@@ -141,9 +141,14 @@ public final class CabinetStones {
         return !s.is(BlockTags.PLANKS) && s.is(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 
-    /** The stone a cabinet in the world is made of, or null for wood (and for anything that is not a cabinet). */
+    /**
+     * The stone a cabinet in the world is made of, or null for wood (and for anything that is not a cabinet). M61: also null
+     * without a level or position: other mods ask block states whose vanilla methods ignore both (the map colour, the
+     * destroy progress, the sound) with nulls, and every positional method of the cabinet comes here first.
+     */
     @Nullable
-    public static BlockState stoneOf(BlockGetter level, BlockPos pos) {
+    public static BlockState stoneOf(@Nullable BlockGetter level, @Nullable BlockPos pos) {
+        if (level == null || pos == null) return null;
         if (!(level.getBlockEntity(pos) instanceof CabinetBlockEntity be)) return null;
         BlockState m = be.woodState();
         return isStoneMaterial(m.getBlock()) ? m : null;
