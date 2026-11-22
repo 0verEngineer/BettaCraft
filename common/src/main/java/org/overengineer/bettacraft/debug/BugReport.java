@@ -164,7 +164,7 @@ public final class BugReport {
             return;
         }
         TankData t = c.getTank();
-        out.add("Controller: " + c.getBlockPos() + " in " + (c.getLevel() == null ? "?" : c.getLevel().dimension().location()));
+        out.add("Controller: " + c.getBlockPos() + " in " + (c.getLevel() == null ? "?" : c.getLevel().dimension().identifier()));
         out.add("Id: " + t.id() + ", name: " + (t.name() == null || t.name().isEmpty() ? "-" : t.name()));
         out.add("Animals (inhabitants): " + t.inhabitants().size() + ", water quality " + t.waterQuality());
         out.add("Data (SNBT):");
@@ -193,7 +193,7 @@ public final class BugReport {
     static String describe(Entity e) {
         CompoundTag tag = new CompoundTag();
         try {
-            e.saveWithoutId(tag);
+            org.overengineer.bettacraft.util.NbtCompat.saveEntity(e, tag);
         } catch (RuntimeException ex) {
             tag.putString("error", ex.toString());
         }
