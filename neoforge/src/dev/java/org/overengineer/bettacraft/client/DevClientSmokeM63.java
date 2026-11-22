@@ -289,6 +289,8 @@ final class DevClientSmokeM63 {
     }
 
     private void time(long t) {
+        // M63b: clear weather with every view series (one run takes longer than a clear spell: rain and lightning in the pictures)
+        server(p -> DevClientWorldTour.clearWeather(p.level()));
         server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), t));
     }
 
