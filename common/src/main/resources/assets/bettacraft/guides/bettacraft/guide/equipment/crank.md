@@ -41,7 +41,8 @@ Internal and corner filters, lights, the feeder, the dosing pump, misters and he
 wind the **cabinet** under the tank. It stores the winding and gives it to every device of its tank that needs FE: its
 filter and air pump, the external and internal filters, heaters and coolers, heat mats, misters, lights and air pumps.
 Each working device uses one device-tick per tick, so **the more devices, the faster it runs down**: one filter runs six
-days on a full cabinet, six devices one day.
+days on a full cabinet, six devices one day. Several cabinets under one tank share **one store** that grows with every
+cabinet block, and a click at any of them winds it (see [Cabinet](cabinet.md)).
 
 * **FE always goes first.** The spring only runs while the FE is short, so a battery and a spring back each other up.
 * A spring only runs down while its chunk is loaded; time in unloaded chunks does not count.

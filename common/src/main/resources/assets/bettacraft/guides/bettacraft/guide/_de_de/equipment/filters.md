@@ -36,10 +36,28 @@ Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Str�
   und kühlen seine Kühler das Aquarium.
 * Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
 * Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
+* Er darf auch **ein oder zwei Blöcke tiefer** als das Becken stehen, neben dem Schrank oder ohne Schrank (siehe unten).
 * Er ist die kleine Variante: ein [Multiblock-Außenfilter](multiblock_filter.md) in jeder Größe, mit Filtermedien und
   Rohren, reinigt viel mehr.
 
 Das Aquarium-Menü zeigt „Filter: 1 außen (Heizstäbe: 2), 1 innen“.
+
+### Unter dem Becken
+
+![Außenfilter ein und zwei Blöcke unter ihren Becken, und das gewählte Becken umrandet](../images/filter_below.png)
+
+Neben einem Becken verbindet sich der Filter von selbst. **Ein oder zwei Blöcke tiefer** (neben dem Schrank oder auf dem
+Boden neben einem Unterbau) rät er nicht, denn bei mehreren Becken nebeneinander läge er leicht falsch: die Anzeige sagt
+„Mit keinem Aquarium verbunden“, und beim Setzen erscheint ein Hinweis.
+
+![Die Wahl des Beckens](../images/filter_choice.png)
+
+**Shift + Rechtsklick mit leerer Hand auf den Filter**: eine Liste zeigt jedes Becken in Reichweite mit Namen, Position,
+Seite und wie weit der Filter darunter steht. Das Becken unter der Maus wird in der Welt **umrandet** (türkis, der
+Wandblock, an dem der Schlauch hochgeht, gelb). Klick eines an: der Filter dreht sich dorthin, und der Schlauch läuft den
+längeren Weg am Schrank und am Glas hoch. Mit demselben Klick wechselt ein Filter zwischen zwei Becken sein Becken.
+Filter älterer Welten direkt an ihrem Becken bleiben angeschlossen. Die Einstellung `features.equipment.filterBelowTank`
+erlaubt wieder nur Filter direkt neben einem Becken (ein gewähltes Becken darunter bleibt für später gespeichert).
 
 ## Weitere Innenfilter, Jungfische und der Leistungsregler
 
