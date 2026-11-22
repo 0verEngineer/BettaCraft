@@ -19,7 +19,8 @@ gefärbtes Glas, getöntes Glas und das Glas anderer Mods (`#c:glass_blocks`).
 
 * **Mit Glastextur**: Das Aquarium zeigt die Textur seines Glases wie ein Fenster, und die Texturen sind **verbunden**:
   Der Rahmen der Glastextur läuft nur an den Außenkanten des ganzen Aquariums, nicht zwischen seinen Blöcken. Das
-  klappt auch mit dem Glas anderer Mods.
+  klappt auch mit dem Glas anderer Mods. Oben bleibt das Aquarium offen (kein Glas über dem Wasser); eine
+  [Abdeckung](equipment/tank_lid.md) ist ein eigener Block.
 * **Klarglas**: vollkommen klares Glas ohne Textur, nur mit den dünnen dunklen Kantenlinien. Stelle es aus 6
   Vanilla-Glas mit einem **Eisennugget** in der Mitte statt des Eisenbarrens her (4 Aquarien).
 * Ein einzelnes Aquarium aus Vanilla-Glas lässt sich im Werkbankgitter zwischen beiden Ausführungen umwandeln (es wird
