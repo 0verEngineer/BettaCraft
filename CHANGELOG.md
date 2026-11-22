@@ -58,6 +58,8 @@ tank menu, new icons and a catch guard.
   save/load tests; the builder takes a free port when the branch's one is busy (`DevServerPortsTest`).
 - Tests: the crank GameTest of the weeks without a generator runs at noon (the room temperature followed the time of day
   its batch started at; at night a tank got too cold); the Fabric M62 world scene ends without the crack check.
+- Tests: the multiplayer test lets the aquarium plants grow only once the light at the surface is there (in two runs on
+  26.2 / 26.3 under load no plant grew).
 
 ## [1.50.0-beta.1] - 2026-11-22
 
