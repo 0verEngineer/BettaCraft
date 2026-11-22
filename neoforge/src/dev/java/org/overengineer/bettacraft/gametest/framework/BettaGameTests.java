@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * The classes of the normal suite are listed by the build ({@code bettacraft_gametests.txt}: every class with
  * {@code @GameTestHolder}); the integration and zoo suites add theirs only with their system property.
  * {@code -Pgametests=<prefix>[,...]} (system property {@code bettacraft.gametest.only}) keeps only the tests whose name, method
- * name or batch starts with a prefix. The loaders register: NeoForge in {@code NeoGameTestRegistration} (RegisterEvent,
+ * name or batch starts with a prefix; {@code -Pgametestrepeat=<n>} (M63) runs each of them n times side by side. The loaders register: NeoForge in {@code NeoGameTestRegistration} (RegisterEvent,
  * RegisterGameTestsEvent), Fabric in {@code FabricGameTests}.
  */
 public final class BettaGameTests {
@@ -136,6 +136,21 @@ public final class BettaGameTests {
             }
         }
         if (!prefixes.isEmpty()) LOGGER.info("[gametest] -Pgametests={}: {} of {} tests", ONLY, out.size(), total);
+        // M63: -Pgametestrepeat=<n>: every test n times side by side in its batch (copies <test>_r<i>), for flakiness hunts
+        int repeat = Integer.getInteger("bettacraft.gametest.repeat", 1);
+        if (repeat > 1) {
+            for (Entry e : List.copyOf(out.values())) {
+                TestFunction f = e.function();
+                for (int i = 2; i <= repeat; i++) {
+                    String name = f.testName() + "_r" + i;
+                    TestFunction copy = new TestFunction(f.batchName(), name, f.structureName(), f.rotation(), f.maxTicks(), f.setupTicks(),
+                            f.required(), f.manualOnly(), f.maxAttempts(), f.requiredSuccesses(), f.skyAccess(), f.function());
+                    Entry c = new Entry(Identifier.fromNamespaceAndPath(NAMESPACE, sanitize(name)), e.method() + "_r" + i, copy);
+                    out.put(c.id(), c);
+                }
+            }
+            LOGGER.info("[gametest] -Pgametestrepeat={}: {} tests", repeat, out.size());
+        }
         return out;
     }
 
