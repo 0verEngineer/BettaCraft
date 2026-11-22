@@ -21,11 +21,28 @@ Tank water without block seams, with and without shaders.
 - Two flaky GameTests: a "waiting" betta in `aWaitingBettaKeepsItsHeight` swam on (the test helper removed the goals but
   did not stop a swim already under way; it now stops the goals, the path and the straight swim, and a new test stops a
   betta mid-swim); `neonFormsCrossInTheTank` runs without the spontaneous mutations (a mutated young now and then).
+- **A tank interior hung in the sky with shader packs:** with Iris and a shader pack (Complementary, BSL ...) the miniature of a
+  tank was drawn at full size at the camera, moving with it (a castle, plants and decoration above the player), and the tank
+  itself looked empty: Iris draws the terrain with the pack's programs, which take their transform from another uniform
+  than the vanilla terrain shader. The miniature now gives Iris its transform too and stays in its tank (NeoForge 26.3 has no Iris yet; Fabric 26.3 was affected). Without shaders
+  nothing changed. In 1.51 as well.
+- **Open tanks looked closed:** a tank with glass texture drew the glass on its top faces as well, so the water of an open
+  tank (no lid) looked like it lay under a pane with white streaks. The top faces have no glass any more (the thin edge
+  lines stay); a lid is a block of its own. The item icon keeps its glass block look.
+- `ChunkUnloadGameTests` failed now and then on CI (26.3, "the animals did not come back"): an idle GameTest server ticks a
+  few hundred times a second, while chunks and entities load in real time; the 600 ticks it waited were half a second. Every
+  wait now gets at least a minute of real time; nothing was lost.
 
 ### Changed
 - Development: the client smoke `-Psmoketestm63` (both loaders) shows two tanks with every shader pack of the manifest
   (Complementary Reimagined and Unbound, BSL, MakeUp; pinned in `dev-mods.json`) and without; `-Pgametestrepeat=<n>` runs
   every GameTest of a run n times side by side.
+- Development: `-Psmoketestm63` adds a decorated open tank (`-Pm63parts=water,decor`) and checks with every pack that no
+  miniature is drawn outside its tank; the new real-world tour `-Psmoketestworldtour` (both loaders) flies through a copy of
+  the showcase (or the branch's upgrade reference world): every tank from the front, the side, above and just below the
+  surface, and 360 degree sweeps with the sky, with and without shader packs; guards for miniatures outside their tanks and
+  glass on open tops; `py tools/tour/compare.py` compares two tours (e.g. this version and the last release) picture by
+  picture.
 
 ## [1.51.0-beta.1] - 2026-11-22
 
