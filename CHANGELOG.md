@@ -4,6 +4,40 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.48.0-beta.1] - 2026-11-22
+
+A debug log and a bug report for finding problems.
+
+### Added
+- **Debug log** (`logs/bettacraft-debug.log`): Bettacraft writes what happens and why in nine areas: `care` (deaths with
+  their reason and the conditions behind it, the tank log), `breeding` (nests with eggs and parents, larvae that survive
+  with the care score, young born), `tank` (animals taken or refused with the reason, the tank blocks), `interior`,
+  `network` (interior syncs with their size, packets per type and minute), `compat` (other mods and their errors),
+  `render` (miniature statistics), `aquarist` (the jobs of the hired aquarist) and `world` (wild spawns); TRACE adds
+  every care step and every packet. The file is written in the background, has at most 10 MB and keeps the one before it
+  (`bettacraft-debug.1.log`); the normal log stays clean (info and warnings only).
+- **Switching it:** common config `debug.logLevel` (INFO, DEBUG or TRACE; default INFO = off) and `debug.areas` (`all` or a
+  list), also in the config screen and at once; the command `/bettacraft debug <area|all> <on|off|trace>` switches areas
+  at once until the restart, `/bettacraft debug` shows the state, `/bettacraft debug reset` goes back to the config.
+  Operators and the owner of a single player world (also without cheats).
+- **`/bettacraft report`** writes `logs/bettacraft-report-<date>.txt` to attach to a GitHub issue: the versions of the mod,
+  loader, Minecraft and Java, the integrations and every loaded mod, the config values that differ from the default, the
+  active preset, the debug switches, the data of the tank you look at with its animals, the animal you look at and the
+  end of the debug log. The chat shows the path (click to copy) and a link to the bug report form.
+- **Issue forms** on GitHub: a bug report form (description, steps, Minecraft version, loader, mod version, modpack and a
+  field for the report, logs and crash reports; it explains the commands) and an idea form; no field is required, blank
+  issues stay possible. README (Reporting bugs) and the handbook (Settings > Reporting bugs) link to them.
+
+### Changed
+- Warnings that can repeat every tick (a broken script listening to our events, map mod waypoints, Better Fish Tanks,
+  Create contraptions, packed animals, tank blocks without their controller, miniature mesh jobs) come at most once a
+  minute, with the number left out.
+- `logMiniatureStats` (client config) still writes the miniature statistics into the normal log; with the debug areas
+  `render` / `network` they go into the debug log instead.
+- With the debug log off (the default) a debug line costs one read of a field: nothing is built or formatted (JUnit: a
+  million switched-off lines allocate nothing; the M33 benchmarks of care, pipes, monitors and terraria are the same as
+  before, see the M57 report).
+
 ## [1.47.0-beta.1] - 2026-11-22
 
 A fix for servers with Modern Dynamics.
