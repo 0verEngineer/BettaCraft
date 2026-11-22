@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM62b'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM62b', 'DevClientSmokeM62c'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -132,6 +132,12 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m61only', 'true'
+            }
+            // M62 part 4: -Psmoketestm62c: every tab of the tank menu, en/de, GUI scales 1, 2 and 4
+            if (project.hasProperty('smoketestm62c')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m62conly', 'true'
             }
             // M56: -Psmoketestm56 [-Pm56parts=tanks,world,menu]: terrarium plants in three tanks and the world, the tank menu en/de
             if (project.hasProperty('smoketestm56')) {

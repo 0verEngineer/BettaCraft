@@ -439,6 +439,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.m61only', 'true'
                 if (requireGroup('pipes')) systemProperty 'bettacraft.smoketest.m61pipes', 'true'
             }
+            if (project.hasProperty('smoketestm62c')) {
+                // gradlew runClient -Psmoketestm62c: the M62 part 4 scene (every tab of the tank menu of a stocked aquarium and a
+                // terrarium in English and German at the GUI scales 1, 2 and 4 of a 1920 x 1080 window, with the text fit check)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m62conly', 'true'
+            }
             if (project.hasProperty('smoketestm56')) {
                 // gradlew runClient -Psmoketestm56 [-Pm56parts=tanks,world,menu]: the M56 scene (a rainforest terrarium, a swamp
                 // paludarium and a desert terrarium with their plants outside and inside, every terrarium plant in the world, every
