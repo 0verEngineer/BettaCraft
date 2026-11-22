@@ -4,6 +4,53 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.51.0-beta.1] - 2026-11-22
+
+Animals behave in the world as in the tank, cabinets under the whole tank, the external filter below the tank, a roomier
+tank menu, new icons and a catch guard.
+
+### Added
+- **Schools in the wild:** wild shoaling fish (and fish you let go) swim as a school outside a tank, following a leader of
+  their kind like in a tank; schooling rays swim behind and beside theirs (`features.tankmates.wildSchools`).
+- **Climbing in the world** (`features.visuals.worldClimbing`): turtles, the tortoise, the leopard gecko and the corn snake
+  climb one-block steps instead of jumping, with a climbing pose. The crested gecko climbs whole walls, to the top and
+  over, or part of the way to hold on for a while. The mudskipper climbs logs and mangrove roots. Frogs still hop. Snails
+  and shrimp that climb the glass in a tank climb walls under water in the wild and graze there for a while.
+- **Cabinets under the whole tank:** cabinets join to the back as well, so a whole area under a big tank (e.g. 10 x 5)
+  becomes one under-cabinet. The front row shows the fronts; the cabinets behind are a plain carcass with the counter top
+  and the sides running through. The middle may be normal blocks. A cabinet placed against another takes its facing
+  (`features.equipment.cabinetArea`).
+- **One spring for the whole under-cabinet:** all cabinets under a tank, and the cabinets joined to them, share one spring
+  store, even two that do not touch (both ends of a long tank). It grows with every cabinet, one crank click at any of them
+  winds the whole store, and a broken cabinet hands its share to the others. The springs of older worlds form the store,
+  nothing is lost (`features.power.cabinetSharedSpring`).
+- **External filter below the tank:** the external filter may stand one or two blocks lower than its tank, beside the
+  cabinet or without one. Sneak-right-click it with an empty hand and choose the tank from a list (name, position, side;
+  the tank under the mouse is outlined); the hose runs the longer way up. An unconnected filter says so when placed, in
+  its tooltip and in the Jade / TOP / WTHIT overlay. Filters right at a tank stay connected as before
+  (`features.equipment.filterBelowTank`).
+- **Small shoals named:** "A shoal of tankmates is too small" now says which fish and how many: "Neon Tetra: 3 of 6" in
+  the overview (every small shoal in its tooltip), under the warning in the breeding tab and in the info overlays; the
+  fish of a small shoal show in orange in the animal list.
+- **Catch guard:** for half a second after a catch no container lets an animal go, so a second click of a bouncing mouse
+  button or a held key does not release the animal you just caught (`features.equipment.catchGuard`).
+
+### Changed
+- **The tank menu grows with the screen:** where the GUI scale leaves room it gets wider and taller (up to 380 x 214 of
+  content), with full-size tab labels, longer lists and lines and all warnings at once; names that do not fit end in "..."
+  and show in full under the mouse; JEI, REI and EMI keep clear of it. On a small screen it is the menu as before.
+- **Every catcher asks first:** the terrarium box with an animal of another mod, the transport tub and the mob jar now ask
+  for the confirmation before they let an animal go into the world, like buckets and bags (the terrarium box let its
+  animal go at once).
+- **Every plant has its own icon:** the 57 aquarium plants and corals had 13 shared pictures; each now has its own, and
+  plants that look alike differ clearly in colour. Nine terrarium plants that shared a look got their own. A test makes
+  sure no two items of the mod look the same.
+- **Tylomelania:** the rabbit snail has a round, high-spired shell that rests on its body; no shell reaches through the
+  sole or the glass any more (the trumpet and assassin snails sit a little higher too).
+- **Clear Glass Tank icon:** only its edges, a short gloss stroke and a small white sparkle; the Glass Tank keeps its glass
+  streaks.
+- Shorter labels: "Fish %s" on the small-animals page button, German "Alle" for any sex.
+
 ## [1.50.0-beta.1] - 2026-11-22
 
 The whole test suite runs from a fresh clone without manual work. No change to the game.
