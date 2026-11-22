@@ -108,6 +108,7 @@ public class FishBagItem extends Item {
         if (!player.level().isClientSide()) {
             TankInhabitants.release(target);
             ItemStack filled = fillWith(target);
+            org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
             target.playSound(target instanceof Bucketable b ? b.getPickupSound() : SoundEvents.BUCKET_FILL_FISH, 1.0F, 1.0F);
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled, false));
             target.discard();

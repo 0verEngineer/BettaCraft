@@ -157,6 +157,7 @@ public final class AnimalContainers {
 
     /** Puts the animal into the container found (the slot gets the filled container). */
     public static void putCritter(Player player, Found f, CompoundTag animal, boolean bucket) {
+        CatchGuard.caught(player); // M62 part 7
         var inv = player.getInventory();
         ItemStack st = inv.getItem(f.slot());
         if (f.mode() == Mode.ADD) {
@@ -171,6 +172,7 @@ public final class AnimalContainers {
 
     /** Replaces one item of the stack in {@code slot} by {@code filled} (creative keeps the empty one). */
     public static void give(Player player, int slot, ItemStack filled) {
+        CatchGuard.caught(player); // M62 part 7
         var inv = player.getInventory();
         ItemStack st = inv.getItem(slot);
         if (player.getAbilities().instabuild && !waterBucket(st)) {

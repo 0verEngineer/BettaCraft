@@ -408,6 +408,7 @@ public final class NetCatching {
 
     /** Puts a catch into an empty fish bag of the player; without one it gets away. */
     public static void give(Player player, ItemStack filled, Component name) {
+        org.overengineer.bettacraft.containers.CatchGuard.caught(player); // M62 part 7
         var inv = player.getInventory();
         int slot = -1;
         for (int i = 0; i < inv.getContainerSize(); i++) {
