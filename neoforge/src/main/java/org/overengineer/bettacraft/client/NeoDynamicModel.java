@@ -54,7 +54,7 @@ public final class NeoDynamicModel implements DynamicBlockStateModel {
             List<BakedQuad>[] sides = new List[7];
             for (Direction d : Direction.values()) sides[d.ordinal()] = dynamic.quads(state, d, random, data, layer);
             sides[6] = dynamic.quads(state, null, random, data, layer);
-            parts.add(new Part(layer, sides, dynamic.ambientOcclusion(), dynamic.particle(data)));
+            parts.add(new Part(layer, sides, dynamic.ambientOcclusion(layer, data), dynamic.particle(data)));
         }
     }
 
