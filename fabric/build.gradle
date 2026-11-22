@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -121,6 +121,15 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
             }
+            // M63b: -Psmoketestworldtour [-Pshaders] [-PtourSource=<world>] [-PtourPacks=...] [-PtourViews=...] [-PtourTag=<name>]
+            // [-PtourRadius=<chunks>] [-PtourLimit=<tanks>] [-PtourBaseline]: the real-world tour (DevClientWorldTour, see neoforge/build.gradle)
+            if (project.hasProperty('smoketestworldtour')) {
+                property 'bettacraft.smoketest.worldtour', 'true'
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle'].each { k, v ->
+                    if (project.hasProperty(k)) property "bettacraft.tour.${v}", project.property(k).toString()
+                }
+                if (project.hasProperty('tourBaseline')) property 'bettacraft.tour.baseline', 'true'
+            }
             // M62 parts 5 and 6: -Psmoketestm62d [-Pm62dparts=snail,icons,glass] [-Pm62dtag=<name>]: snail shell, plant icons, clear glass
             if (project.hasProperty('smoketestm62d')) {
                 property 'bettacraft.smoketest.world', 'true'
@@ -136,13 +145,14 @@ loom {
             }
             // M61: -Psmoketestm61: sendBlockUpdated with null states, leaving and joining the world (Modern Dynamics has no Fabric
             // build at all: the pipe part is a documented gap on Fabric)
-            // M63: -Psmoketestm63 [-Pshaders] [-Pm63packs=...] [-Pm63tag=<name>]: the tank water with every shader pack
+            // M63: -Psmoketestm63 [-Pshaders] [-Pm63packs=...] [-Pm63tag=<name>] [-Pm63parts=water,decor]: the tank water with every shader pack
             if (project.hasProperty('smoketestm63')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m63only', 'true'
                 if (project.hasProperty('m63packs')) property 'bettacraft.smoketest.m63packs', project.property('m63packs').toString()
                 if (project.hasProperty('m63tag')) property 'bettacraft.smoketest.m63tag', project.property('m63tag').toString()
+                if (project.hasProperty('m63parts')) property 'bettacraft.smoketest.m63parts', project.property('m63parts').toString()
             }
             if (project.hasProperty('smoketestm61')) {
                 property 'bettacraft.smoketest.world', 'true'
@@ -745,6 +755,30 @@ tasks.matching { it.name in ['runFabricServer', 'prodFabricServer'] }.configureE
 tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
     def saves = rootProject.file(fabricRunRoot + (t.name == 'runFabricClient' ? '/saves' : '/prod-client/saves'))
     if (fabricSmoke) fabricTestWorlds(t) { fabricSmokeSaves(saves) }
+}
+// M63b: -Psmoketestworldtour: a fresh copy "Bettacraft Rundgang" of -PtourSource from the NeoForge run's saves (default: the showcase
+// when there is one, else this branch's upgrade reference world; build it with the NeoForge run first), deleted after the run
+tasks.matching { it.name in ['runFabricClient', 'prodFabricClient'] }.configureEach { t ->
+    if (project.hasProperty('smoketestworldtour')) {
+        def saves = rootProject.file(fabricRunRoot + (t.name == 'runFabricClient' ? '/saves' : '/prod-client/saves'))
+        def srcSaves = rootProject.file('run/26.3/saves')
+        def dst = new File(saves, 'Bettacraft Rundgang')
+        t.doFirst {
+            def refs = rootProject.file('tools/upgrade/references.json')
+            def name = (project.findProperty('tourSource') ?: (new File(srcSaves, 'Bettacraft Schaukasten').isDirectory() ? 'Bettacraft Schaukasten'
+                    : new groovy.json.JsonSlurper().parse(refs).default)).toString()
+            def src = new File(srcSaves, name)
+            if (!src.isDirectory()) throw new GradleException("tour source world not found: ${src} (gradlew smoketestUpgrade or :neoforge:runServer -PsmoketestOldWorld builds the reference world)")
+            logger.lifecycle("world tour: copying ${src} to ${dst}")
+            dst.deleteDir()
+            java.nio.file.Files.walk(src.toPath()).forEach { from ->
+                def to = dst.toPath().resolve(src.toPath().relativize(from))
+                if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+                else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+            }
+        }
+        t.doLast { if (fabricKeepWorld) logger.lifecycle("-PkeepWorld: kept ${dst}") else fabricDeleteWorlds('after the run', [dst]) }
+    }
 }
 tasks.matching { it.name == 'runFabricGameTest' }.configureEach { t ->
     t.doLast { if (fabricKeepWorld) logger.lifecycle('-PkeepWorld: kept the GameTest world') else fabricDeleteWorlds('after the run', [rootProject.file(fabricRunRoot + '/gametest/world')]) }

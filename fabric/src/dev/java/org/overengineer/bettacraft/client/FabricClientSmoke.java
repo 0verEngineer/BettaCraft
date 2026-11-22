@@ -118,7 +118,21 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        if (Boolean.getBoolean("bettacraft.smoketest.fabric")) {
+        if (Boolean.getBoolean("bettacraft.smoketest.worldtour")) {
+            // M63b: -Psmoketestworldtour: every tank of a copy of the showcase (DevClientWorldTour)
+            ClientEvents.SCREEN_OPENING.add(screen -> {
+                if (screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) {
+                    Minecraft mc = Minecraft.getInstance();
+                    mc.execute(() -> {
+                        mc.options.onboardAccessibility = false;
+                        mc.options.save();
+                        mc.gui.setScreen(new TitleScreen());
+                    });
+                }
+            });
+            DevClientWorldTour.register();
+            net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> DevClientWorldTour.afterInit(screen));
+        } else if (Boolean.getBoolean("bettacraft.smoketest.fabric")) {
             ClientEvents.SCREEN_OPENING.add(FabricClientSmoke::onScreen);
             ClientEvents.TICK_POST.add(FabricClientSmoke::tick);
         } else if (Boolean.getBoolean("bettacraft.smoketest")) {
