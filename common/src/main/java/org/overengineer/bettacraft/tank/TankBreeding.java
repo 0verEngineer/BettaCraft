@@ -320,6 +320,7 @@ public final class TankBreeding {
     }
 
     private static void abandon(ServerLevel level, TankBlockEntity controller, TankData tank, String key) {
+        if (org.overengineer.bettacraft.debug.LogArea.BREEDING.debug) org.overengineer.bettacraft.debug.LogArea.BREEDING.debug("tank {}: nest given up: {}", tank.id(), key); // M57
         tank.setNest(null);
         controller.chaseLogged = false;
         TankCare.log(level, controller, key);
@@ -351,6 +352,8 @@ public final class TankBreeding {
         controller.chaseLogged = false;
         level.sendParticles(ParticleTypes.BUBBLE_POP, n.pos.x, n.pos.y, n.pos.z, 12, 0.2, 0.05, 0.2, 0.01);
         TankCare.log(level, controller, "log.bettacraft.spawned", TankCare.nameArg(female), TankCare.nameArg(male), String.valueOf(count));
+        if (org.overengineer.bettacraft.debug.LogArea.BREEDING.debug) org.overengineer.bettacraft.debug.LogArea.BREEDING.debug("tank {}: nest spawned, {} eggs (conditioned {}, mutation chance {}), mother {} {}, father {} {}, generation {}",
+                controller.getTank().id(), count, female.breeding().isConditioned(), mutation, female.getUUID(), mg, male.getUUID(), fg, n.generation); // M57
     }
 
     /** Larvae become free-swimming fry entities; how many survive depends on the care. */
@@ -382,6 +385,8 @@ public final class TankBreeding {
         tank.setNest(null);
         controller.chaseLogged = false;
         TankCare.log(level, controller, "log.bettacraft.fry_free", String.valueOf(spawned), String.valueOf(n.eggs.size() - spawned));
+        if (org.overengineer.bettacraft.debug.LogArea.BREEDING.debug) org.overengineer.bettacraft.debug.LogArea.BREEDING.debug("tank {}: {} of {} larvae free (care score {}, survival {}, room {})", tank.id(), spawned, n.eggs.size(),
+                n.careScore(), survival, room); // M57
         org.overengineer.bettacraft.api.ApiEvents.born(level, controller, ModEntities.BETTA.get(), spawned, true); // M32 part d
         controller.markTankChanged();
     }

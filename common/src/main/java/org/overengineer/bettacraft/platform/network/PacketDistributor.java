@@ -12,26 +12,32 @@ public final class PacketDistributor {
     private PacketDistributor() {}
 
     public static void sendToServer(CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, "server"); // M57
         Platform.get().sendToServer(payload);
     }
 
     public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, player.getScoreboardName()); // M57
         Platform.get().sendToPlayer(player, payload);
     }
 
     public static void sendToPlayersTrackingEntity(Entity entity, CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, "tracking"); // M57
         Platform.get().sendToPlayersTrackingEntity(entity, payload);
     }
 
     public static void sendToPlayersTrackingEntityAndSelf(Entity entity, CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, "tracking"); // M57
         Platform.get().sendToPlayersTrackingEntityAndSelf(entity, payload);
     }
 
     public static void sendToPlayersTrackingChunk(ServerLevel level, ChunkPos chunk, CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, "chunk"); // M57
         Platform.get().sendToPlayersTrackingChunk(level, chunk, payload);
     }
 
     public static void sendToAllPlayers(CustomPacketPayload payload) {
+        if (org.overengineer.bettacraft.debug.LogArea.NETWORK.debug) org.overengineer.bettacraft.debug.PacketStats.sent(payload, "all"); // M57
         Platform.get().sendToAllPlayers(payload);
     }
 }
