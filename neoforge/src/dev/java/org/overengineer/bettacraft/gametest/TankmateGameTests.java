@@ -540,6 +540,36 @@ public final class TankmateGameTests {
         h.succeed();
     }
 
+    /**
+     * M62: the menu (and the info overlays) name the shoals that are too small with their fish and the minimum, the smallest share
+     * first; a full shoal is not listed, and one that grows to its minimum leaves the list.
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void menuNamesTheSmallShoalsWithTheirFishAndMinimum(GameTestHelper h) {
+        TankBlockEntity c = tank(h, 2, 2, 2, 3, 2, 2, 12000, 24F);
+        for (int i = 0; i < 2; i++) add(h, c, TankmateSpecies.NEON_TETRA, i % 2 == 0);
+        for (int i = 0; i < 4; i++) add(h, c, TankmateSpecies.HARLEQUIN_RASBORA, i % 2 == 0);
+        for (int i = 0; i < TankmateSpecies.CHERRY_BARB.shoal(); i++) add(h, c, TankmateSpecies.CHERRY_BARB, i % 2 == 0);
+        ServerPlayer sp = player(h);
+        TankView v = TankView.read(TankView.build(sp, c));
+        h.assertTrue(v.warnings.contains("tm_shoal"), "the warning stays: " + v.warnings);
+        h.assertTrue(v.shoals.size() == 2, "two shoals too small (not the full one of cherry barbs): " + v.shoals);
+        TankView.Shoal neon = v.shoals.get(0), harl = v.shoals.get(1);
+        h.assertTrue(neon.species().equals("neon_tetra") && neon.count() == 2 && neon.need() == TankmateSpecies.NEON_TETRA.shoal(),
+                "neons first (2 of 6, the smallest share): " + neon);
+        h.assertTrue(harl.species().equals("harlequin_rasbora") && harl.count() == 4 && harl.need() == TankmateSpecies.HARLEQUIN_RASBORA.shoal(),
+                "then the harlequins, 4 of their minimum: " + harl);
+        h.assertTrue(neon.name().getString().equals(net.minecraft.network.chat.Component.translatable(TankmateSpecies.NEON_TETRA.translationKey()).getString()),
+                "named by the species: " + neon.name().getString());
+        var info = org.overengineer.bettacraft.compat.info.InfoData.tank(h.getLevel(), c.getBlockPos());
+        h.assertTrue(info.getListOrEmpty("shoals").size() == 2, "the info overlays get the same list: " + info.getListOrEmpty("shoals"));
+        // the neons grow to their minimum: they leave the list
+        for (int i = 2; i < TankmateSpecies.NEON_TETRA.shoal(); i++) add(h, c, TankmateSpecies.NEON_TETRA, i % 2 == 0);
+        v = TankView.read(TankView.build(sp, c));
+        h.assertTrue(v.shoals.size() == 1 && v.shoals.getFirst().species().equals("harlequin_rasbora"), "only the harlequins are left: " + v.shoals);
+        h.succeed();
+    }
+
     /** The menu shows a tankmate's shoal, temperature and stocking; the breeding tab its species; the data survives saving. */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void menuShowsTankmatesAndDataSurvives(GameTestHelper h) {
