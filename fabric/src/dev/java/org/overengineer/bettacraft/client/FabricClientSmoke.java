@@ -33,6 +33,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     /** M55: -Psmoketestm55 (wild carpets, wild plants, container icons). */
     private static DevClientSmokeM55 m55;
     private static DevClientSmokeM56 m56;
+    /** M61: -Psmoketestm61 (block changes without states, leaving and joining the world). */
+    private static DevClientSmokeM61 m61;
     private static int stage;
     private static BookTour book;
 
@@ -182,6 +184,15 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 LOGGER.info("[smoketest] fabric client book test finished");
                 LOGGER.info("[smoketest] PASSED");
                 mc.stop();
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m61only")) {
+                LOGGER.info("[smoketest] fabric client in world: M61 scene");
+                m61 = new DevClientSmokeM61();
+                stage = 24;
+            }
+            if (stage == 24) {
+                if (m61.tick()) stage = 4;
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m56only")) {

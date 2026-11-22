@@ -574,6 +574,11 @@ and the crucible; the capture items of EnderIO and Industrial Foregoing; the Kub
 Bettacraft's data; breeding runs of Critters and Companions koi. A missing mod fails these tests, so an incomplete group cannot look green. `-Pgametests=<prefix>` runs only
 the tests whose method name or batch starts with the prefix (also in the normal suite).
 
+`-Ppipes` (also part of `-Pintegration`) puts Modern Dynamics (`run/pipe-mods`, NeoForge) into the run: `./gradlew runClient
+-Ppipes -Psmoketestm61 --no-configuration-cache` builds its fluid pipes between a reservoir and a tank, leaves the world and
+joins it again, and fails on any "Failed to handle packet" (Modern Dynamics reports block changes on the client without
+their states, which broke joining servers before 1.47).
+
 ### Zoo tests (optional)
 
 The second part of the optional suite tests Bettacraft against the animals and water plants of mods it does **not**
