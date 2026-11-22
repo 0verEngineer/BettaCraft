@@ -245,7 +245,8 @@ betrittst.
   einschaltet; Wasserleitungen können Aquarien füllen und leeren und den Larvenbottich füllen, Trichter und
   Item-Leitungen funktionieren mit Futterautomat, Schrank, Larvenbottich und Zuchtbecken.
 * **JEI:** Info-Seiten für alle Bettacraft-Items.
-* **Sodium und Iris:** Aquarium-Wasser und Miniaturen funktionieren mit beiden.
+* **Sodium und Iris:** Aquarium-Wasser und Miniaturen funktionieren mit beiden. Mit Shaderpacks (getestet: Complementary
+  Reimagined und Unbound, BSL, MakeUp) bleibt die Wasseroberfläche flach und gleichmäßig beleuchtet, ohne Blockkanten.
 * **Better Fish Tanks:** Seine *Fish Bag* setzt Tiere in Bettacraft-Aquarien ein und nimmt sie über das Menü wieder
   heraus. Umgekehrt passen Bettas in seine Tüte und seine Aquarien; eine gefüllte Bettacraft-Fischtüte oder ein
   Betta-Eimer setzt das Tier per Rechtsklick in ein Better-Fish-Tanks-Aquarium.
