@@ -28,6 +28,11 @@ public final class TankWaterLight {
             m.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
             around[(dx + 1) + 3 * (dy + 1) + 9 * (dz + 1)] = LevelRenderer.getLightColor(level, m);
         }
+        return corners(around);
+    }
+
+    /** The eight corner lights from the packed lights of the 27 blocks around a block, index {@code (dx+1) + 3 (dy+1) + 9 (dz+1)}. */
+    public static long corners(int[] around) {
         long out = 0;
         for (int c = 0; c < 8; c++) {
             int cx = c & 1, cy = (c >> 1) & 1, cz = (c >> 2) & 1;
