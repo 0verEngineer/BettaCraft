@@ -45,5 +45,6 @@ check_server_log() {
     echo "PORT: the server of the old version did not start on port $PORT: $line ($log)" >&2
     return 1
   fi
+  [ -z "$line" ] || echo "the old version's server: ${line##*]: }"
   return 0
 }
