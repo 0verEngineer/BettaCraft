@@ -107,7 +107,7 @@ public final class WalkGroundGameTests {
             var t = herps.getTank();
             // a goal beyond the glass: every step is blocked
             lw.goTo(gecko, h.getLevel(), t, new Vec3(t.min().getX() - 4.5, t.min().getY() + 0.1, t.min().getZ() + 0.5), 1000);
-            for (int i = 0; i < 40; i++) lw.tick(gecko, h.getLevel(), t, gecko.gait(), false);
+            for (int i = 0; i < 800; i++) lw.tick(gecko, h.getLevel(), t, gecko.gait(), false); // it walks to the glass, then is blocked every step
             h.succeed();
         });
     }
