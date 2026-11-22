@@ -108,7 +108,7 @@ final class DevClientSmokeM12 {
                 then(10, () -> {
                     if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
                         ts.showPlantsPageForTest();
-                        String fit = DevClientSmokeMP.tabsFit(mc, ts.tabButtonsForTest());
+                        String fit = DevClientSmokeMP.tabsFit(mc, ts.tabButtonsForTest(), ts.panelBounds()[2] - 12);
                         StringBuilder labels = new StringBuilder();
                         for (var b : ts.tabButtonsForTest()) labels.append(b.getMessage().getString()).append('=').append(b.getWidth()).append(' ');
                         LOGGER.info("[smoketest] M12 menu tabs {} GUI scale {}: {} [{}]", code, sc, fit, labels.toString().trim());
