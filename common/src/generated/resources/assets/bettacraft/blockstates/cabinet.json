@@ -1,603 +1,1203 @@
 {
   "variants": {
-    "facing=east,front=drawers,joints=false,left=false,right=false": {
+    "covered=false,facing=east,front=drawers,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers",
       "y": 90
     },
-    "facing=east,front=drawers,joints=false,left=false,right=true": {
+    "covered=false,facing=east,front=drawers,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers",
       "y": 90
     },
-    "facing=east,front=drawers,joints=false,left=true,right=false": {
+    "covered=false,facing=east,front=drawers,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers",
       "y": 90
     },
-    "facing=east,front=drawers,joints=false,left=true,right=true": {
+    "covered=false,facing=east,front=drawers,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers",
       "y": 90
     },
-    "facing=east,front=drawers,joints=true,left=false,right=false": {
+    "covered=false,facing=east,front=drawers,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers_joints",
       "y": 90
     },
-    "facing=east,front=drawers,joints=true,left=false,right=true": {
+    "covered=false,facing=east,front=drawers,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers_joints",
       "y": 90
     },
-    "facing=east,front=drawers,joints=true,left=true,right=false": {
+    "covered=false,facing=east,front=drawers,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers_joints",
       "y": 90
     },
-    "facing=east,front=drawers,joints=true,left=true,right=true": {
+    "covered=false,facing=east,front=drawers,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers_joints",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=false,left=false,right=false": {
+    "covered=false,facing=east,front=pair_l,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=false,left=false,right=true": {
+    "covered=false,facing=east,front=pair_l,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=false,left=true,right=false": {
+    "covered=false,facing=east,front=pair_l,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=false,left=true,right=true": {
+    "covered=false,facing=east,front=pair_l,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=true,left=false,right=false": {
+    "covered=false,facing=east,front=pair_l,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l_joints",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=true,left=false,right=true": {
+    "covered=false,facing=east,front=pair_l,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l_joints",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=true,left=true,right=false": {
+    "covered=false,facing=east,front=pair_l,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l_joints",
       "y": 90
     },
-    "facing=east,front=pair_l,joints=true,left=true,right=true": {
+    "covered=false,facing=east,front=pair_l,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l_joints",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=false,left=false,right=false": {
+    "covered=false,facing=east,front=pair_r,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=false,left=false,right=true": {
+    "covered=false,facing=east,front=pair_r,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=false,left=true,right=false": {
+    "covered=false,facing=east,front=pair_r,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=false,left=true,right=true": {
+    "covered=false,facing=east,front=pair_r,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=true,left=false,right=false": {
+    "covered=false,facing=east,front=pair_r,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r_joints",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=true,left=false,right=true": {
+    "covered=false,facing=east,front=pair_r,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r_joints",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=true,left=true,right=false": {
+    "covered=false,facing=east,front=pair_r,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r_joints",
       "y": 90
     },
-    "facing=east,front=pair_r,joints=true,left=true,right=true": {
+    "covered=false,facing=east,front=pair_r,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r_joints",
       "y": 90
     },
-    "facing=east,front=single,joints=false,left=false,right=false": {
+    "covered=false,facing=east,front=single,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single",
       "y": 90
     },
-    "facing=east,front=single,joints=false,left=false,right=true": {
+    "covered=false,facing=east,front=single,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single",
       "y": 90
     },
-    "facing=east,front=single,joints=false,left=true,right=false": {
+    "covered=false,facing=east,front=single,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single",
       "y": 90
     },
-    "facing=east,front=single,joints=false,left=true,right=true": {
+    "covered=false,facing=east,front=single,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single",
       "y": 90
     },
-    "facing=east,front=single,joints=true,left=false,right=false": {
+    "covered=false,facing=east,front=single,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single_joints",
       "y": 90
     },
-    "facing=east,front=single,joints=true,left=false,right=true": {
+    "covered=false,facing=east,front=single,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single_joints",
       "y": 90
     },
-    "facing=east,front=single,joints=true,left=true,right=false": {
+    "covered=false,facing=east,front=single,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single_joints",
       "y": 90
     },
-    "facing=east,front=single,joints=true,left=true,right=true": {
+    "covered=false,facing=east,front=single,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single_joints",
       "y": 90
     },
-    "facing=east,front=two,joints=false,left=false,right=false": {
+    "covered=false,facing=east,front=two,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet",
       "y": 90
     },
-    "facing=east,front=two,joints=false,left=false,right=true": {
+    "covered=false,facing=east,front=two,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right",
       "y": 90
     },
-    "facing=east,front=two,joints=false,left=true,right=false": {
+    "covered=false,facing=east,front=two,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left",
       "y": 90
     },
-    "facing=east,front=two,joints=false,left=true,right=true": {
+    "covered=false,facing=east,front=two,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both",
       "y": 90
     },
-    "facing=east,front=two,joints=true,left=false,right=false": {
+    "covered=false,facing=east,front=two,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_two_joints",
       "y": 90
     },
-    "facing=east,front=two,joints=true,left=false,right=true": {
+    "covered=false,facing=east,front=two,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_two_joints",
       "y": 90
     },
-    "facing=east,front=two,joints=true,left=true,right=false": {
+    "covered=false,facing=east,front=two,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_two_joints",
       "y": 90
     },
-    "facing=east,front=two,joints=true,left=true,right=true": {
+    "covered=false,facing=east,front=two,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_two_joints",
       "y": 90
     },
-    "facing=north,front=drawers,joints=false,left=false,right=false": {
+    "covered=false,facing=north,front=drawers,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers"
     },
-    "facing=north,front=drawers,joints=false,left=false,right=true": {
+    "covered=false,facing=north,front=drawers,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers"
     },
-    "facing=north,front=drawers,joints=false,left=true,right=false": {
+    "covered=false,facing=north,front=drawers,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers"
     },
-    "facing=north,front=drawers,joints=false,left=true,right=true": {
+    "covered=false,facing=north,front=drawers,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers"
     },
-    "facing=north,front=drawers,joints=true,left=false,right=false": {
+    "covered=false,facing=north,front=drawers,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers_joints"
     },
-    "facing=north,front=drawers,joints=true,left=false,right=true": {
+    "covered=false,facing=north,front=drawers,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers_joints"
     },
-    "facing=north,front=drawers,joints=true,left=true,right=false": {
+    "covered=false,facing=north,front=drawers,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers_joints"
     },
-    "facing=north,front=drawers,joints=true,left=true,right=true": {
+    "covered=false,facing=north,front=drawers,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers_joints"
     },
-    "facing=north,front=pair_l,joints=false,left=false,right=false": {
+    "covered=false,facing=north,front=pair_l,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l"
     },
-    "facing=north,front=pair_l,joints=false,left=false,right=true": {
+    "covered=false,facing=north,front=pair_l,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l"
     },
-    "facing=north,front=pair_l,joints=false,left=true,right=false": {
+    "covered=false,facing=north,front=pair_l,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l"
     },
-    "facing=north,front=pair_l,joints=false,left=true,right=true": {
+    "covered=false,facing=north,front=pair_l,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l"
     },
-    "facing=north,front=pair_l,joints=true,left=false,right=false": {
+    "covered=false,facing=north,front=pair_l,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l_joints"
     },
-    "facing=north,front=pair_l,joints=true,left=false,right=true": {
+    "covered=false,facing=north,front=pair_l,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l_joints"
     },
-    "facing=north,front=pair_l,joints=true,left=true,right=false": {
+    "covered=false,facing=north,front=pair_l,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l_joints"
     },
-    "facing=north,front=pair_l,joints=true,left=true,right=true": {
+    "covered=false,facing=north,front=pair_l,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l_joints"
     },
-    "facing=north,front=pair_r,joints=false,left=false,right=false": {
+    "covered=false,facing=north,front=pair_r,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r"
     },
-    "facing=north,front=pair_r,joints=false,left=false,right=true": {
+    "covered=false,facing=north,front=pair_r,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r"
     },
-    "facing=north,front=pair_r,joints=false,left=true,right=false": {
+    "covered=false,facing=north,front=pair_r,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r"
     },
-    "facing=north,front=pair_r,joints=false,left=true,right=true": {
+    "covered=false,facing=north,front=pair_r,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r"
     },
-    "facing=north,front=pair_r,joints=true,left=false,right=false": {
+    "covered=false,facing=north,front=pair_r,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r_joints"
     },
-    "facing=north,front=pair_r,joints=true,left=false,right=true": {
+    "covered=false,facing=north,front=pair_r,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r_joints"
     },
-    "facing=north,front=pair_r,joints=true,left=true,right=false": {
+    "covered=false,facing=north,front=pair_r,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r_joints"
     },
-    "facing=north,front=pair_r,joints=true,left=true,right=true": {
+    "covered=false,facing=north,front=pair_r,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r_joints"
     },
-    "facing=north,front=single,joints=false,left=false,right=false": {
+    "covered=false,facing=north,front=single,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single"
     },
-    "facing=north,front=single,joints=false,left=false,right=true": {
+    "covered=false,facing=north,front=single,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single"
     },
-    "facing=north,front=single,joints=false,left=true,right=false": {
+    "covered=false,facing=north,front=single,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single"
     },
-    "facing=north,front=single,joints=false,left=true,right=true": {
+    "covered=false,facing=north,front=single,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single"
     },
-    "facing=north,front=single,joints=true,left=false,right=false": {
+    "covered=false,facing=north,front=single,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single_joints"
     },
-    "facing=north,front=single,joints=true,left=false,right=true": {
+    "covered=false,facing=north,front=single,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single_joints"
     },
-    "facing=north,front=single,joints=true,left=true,right=false": {
+    "covered=false,facing=north,front=single,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single_joints"
     },
-    "facing=north,front=single,joints=true,left=true,right=true": {
+    "covered=false,facing=north,front=single,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single_joints"
     },
-    "facing=north,front=two,joints=false,left=false,right=false": {
+    "covered=false,facing=north,front=two,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet"
     },
-    "facing=north,front=two,joints=false,left=false,right=true": {
+    "covered=false,facing=north,front=two,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right"
     },
-    "facing=north,front=two,joints=false,left=true,right=false": {
+    "covered=false,facing=north,front=two,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left"
     },
-    "facing=north,front=two,joints=false,left=true,right=true": {
+    "covered=false,facing=north,front=two,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both"
     },
-    "facing=north,front=two,joints=true,left=false,right=false": {
+    "covered=false,facing=north,front=two,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_two_joints"
     },
-    "facing=north,front=two,joints=true,left=false,right=true": {
+    "covered=false,facing=north,front=two,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_two_joints"
     },
-    "facing=north,front=two,joints=true,left=true,right=false": {
+    "covered=false,facing=north,front=two,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_two_joints"
     },
-    "facing=north,front=two,joints=true,left=true,right=true": {
+    "covered=false,facing=north,front=two,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_two_joints"
     },
-    "facing=south,front=drawers,joints=false,left=false,right=false": {
+    "covered=false,facing=south,front=drawers,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers",
       "y": 180
     },
-    "facing=south,front=drawers,joints=false,left=false,right=true": {
+    "covered=false,facing=south,front=drawers,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers",
       "y": 180
     },
-    "facing=south,front=drawers,joints=false,left=true,right=false": {
+    "covered=false,facing=south,front=drawers,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers",
       "y": 180
     },
-    "facing=south,front=drawers,joints=false,left=true,right=true": {
+    "covered=false,facing=south,front=drawers,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers",
       "y": 180
     },
-    "facing=south,front=drawers,joints=true,left=false,right=false": {
+    "covered=false,facing=south,front=drawers,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers_joints",
       "y": 180
     },
-    "facing=south,front=drawers,joints=true,left=false,right=true": {
+    "covered=false,facing=south,front=drawers,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers_joints",
       "y": 180
     },
-    "facing=south,front=drawers,joints=true,left=true,right=false": {
+    "covered=false,facing=south,front=drawers,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers_joints",
       "y": 180
     },
-    "facing=south,front=drawers,joints=true,left=true,right=true": {
+    "covered=false,facing=south,front=drawers,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers_joints",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=false,left=false,right=false": {
+    "covered=false,facing=south,front=pair_l,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=false,left=false,right=true": {
+    "covered=false,facing=south,front=pair_l,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=false,left=true,right=false": {
+    "covered=false,facing=south,front=pair_l,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=false,left=true,right=true": {
+    "covered=false,facing=south,front=pair_l,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=true,left=false,right=false": {
+    "covered=false,facing=south,front=pair_l,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l_joints",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=true,left=false,right=true": {
+    "covered=false,facing=south,front=pair_l,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l_joints",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=true,left=true,right=false": {
+    "covered=false,facing=south,front=pair_l,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l_joints",
       "y": 180
     },
-    "facing=south,front=pair_l,joints=true,left=true,right=true": {
+    "covered=false,facing=south,front=pair_l,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l_joints",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=false,left=false,right=false": {
+    "covered=false,facing=south,front=pair_r,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=false,left=false,right=true": {
+    "covered=false,facing=south,front=pair_r,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=false,left=true,right=false": {
+    "covered=false,facing=south,front=pair_r,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=false,left=true,right=true": {
+    "covered=false,facing=south,front=pair_r,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=true,left=false,right=false": {
+    "covered=false,facing=south,front=pair_r,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r_joints",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=true,left=false,right=true": {
+    "covered=false,facing=south,front=pair_r,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r_joints",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=true,left=true,right=false": {
+    "covered=false,facing=south,front=pair_r,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r_joints",
       "y": 180
     },
-    "facing=south,front=pair_r,joints=true,left=true,right=true": {
+    "covered=false,facing=south,front=pair_r,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r_joints",
       "y": 180
     },
-    "facing=south,front=single,joints=false,left=false,right=false": {
+    "covered=false,facing=south,front=single,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single",
       "y": 180
     },
-    "facing=south,front=single,joints=false,left=false,right=true": {
+    "covered=false,facing=south,front=single,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single",
       "y": 180
     },
-    "facing=south,front=single,joints=false,left=true,right=false": {
+    "covered=false,facing=south,front=single,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single",
       "y": 180
     },
-    "facing=south,front=single,joints=false,left=true,right=true": {
+    "covered=false,facing=south,front=single,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single",
       "y": 180
     },
-    "facing=south,front=single,joints=true,left=false,right=false": {
+    "covered=false,facing=south,front=single,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single_joints",
       "y": 180
     },
-    "facing=south,front=single,joints=true,left=false,right=true": {
+    "covered=false,facing=south,front=single,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single_joints",
       "y": 180
     },
-    "facing=south,front=single,joints=true,left=true,right=false": {
+    "covered=false,facing=south,front=single,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single_joints",
       "y": 180
     },
-    "facing=south,front=single,joints=true,left=true,right=true": {
+    "covered=false,facing=south,front=single,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single_joints",
       "y": 180
     },
-    "facing=south,front=two,joints=false,left=false,right=false": {
+    "covered=false,facing=south,front=two,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet",
       "y": 180
     },
-    "facing=south,front=two,joints=false,left=false,right=true": {
+    "covered=false,facing=south,front=two,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right",
       "y": 180
     },
-    "facing=south,front=two,joints=false,left=true,right=false": {
+    "covered=false,facing=south,front=two,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left",
       "y": 180
     },
-    "facing=south,front=two,joints=false,left=true,right=true": {
+    "covered=false,facing=south,front=two,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both",
       "y": 180
     },
-    "facing=south,front=two,joints=true,left=false,right=false": {
+    "covered=false,facing=south,front=two,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_two_joints",
       "y": 180
     },
-    "facing=south,front=two,joints=true,left=false,right=true": {
+    "covered=false,facing=south,front=two,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_two_joints",
       "y": 180
     },
-    "facing=south,front=two,joints=true,left=true,right=false": {
+    "covered=false,facing=south,front=two,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_two_joints",
       "y": 180
     },
-    "facing=south,front=two,joints=true,left=true,right=true": {
+    "covered=false,facing=south,front=two,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_two_joints",
       "y": 180
     },
-    "facing=west,front=drawers,joints=false,left=false,right=false": {
+    "covered=false,facing=west,front=drawers,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers",
       "y": 270
     },
-    "facing=west,front=drawers,joints=false,left=false,right=true": {
+    "covered=false,facing=west,front=drawers,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers",
       "y": 270
     },
-    "facing=west,front=drawers,joints=false,left=true,right=false": {
+    "covered=false,facing=west,front=drawers,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers",
       "y": 270
     },
-    "facing=west,front=drawers,joints=false,left=true,right=true": {
+    "covered=false,facing=west,front=drawers,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers",
       "y": 270
     },
-    "facing=west,front=drawers,joints=true,left=false,right=false": {
+    "covered=false,facing=west,front=drawers,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_drawers_joints",
       "y": 270
     },
-    "facing=west,front=drawers,joints=true,left=false,right=true": {
+    "covered=false,facing=west,front=drawers,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_drawers_joints",
       "y": 270
     },
-    "facing=west,front=drawers,joints=true,left=true,right=false": {
+    "covered=false,facing=west,front=drawers,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_drawers_joints",
       "y": 270
     },
-    "facing=west,front=drawers,joints=true,left=true,right=true": {
+    "covered=false,facing=west,front=drawers,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_drawers_joints",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=false,left=false,right=false": {
+    "covered=false,facing=west,front=pair_l,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=false,left=false,right=true": {
+    "covered=false,facing=west,front=pair_l,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=false,left=true,right=false": {
+    "covered=false,facing=west,front=pair_l,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=false,left=true,right=true": {
+    "covered=false,facing=west,front=pair_l,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=true,left=false,right=false": {
+    "covered=false,facing=west,front=pair_l,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_l_joints",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=true,left=false,right=true": {
+    "covered=false,facing=west,front=pair_l,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_l_joints",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=true,left=true,right=false": {
+    "covered=false,facing=west,front=pair_l,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_l_joints",
       "y": 270
     },
-    "facing=west,front=pair_l,joints=true,left=true,right=true": {
+    "covered=false,facing=west,front=pair_l,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_l_joints",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=false,left=false,right=false": {
+    "covered=false,facing=west,front=pair_r,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=false,left=false,right=true": {
+    "covered=false,facing=west,front=pair_r,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=false,left=true,right=false": {
+    "covered=false,facing=west,front=pair_r,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=false,left=true,right=true": {
+    "covered=false,facing=west,front=pair_r,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=true,left=false,right=false": {
+    "covered=false,facing=west,front=pair_r,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_pair_r_joints",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=true,left=false,right=true": {
+    "covered=false,facing=west,front=pair_r,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_pair_r_joints",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=true,left=true,right=false": {
+    "covered=false,facing=west,front=pair_r,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_pair_r_joints",
       "y": 270
     },
-    "facing=west,front=pair_r,joints=true,left=true,right=true": {
+    "covered=false,facing=west,front=pair_r,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_pair_r_joints",
       "y": 270
     },
-    "facing=west,front=single,joints=false,left=false,right=false": {
+    "covered=false,facing=west,front=single,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single",
       "y": 270
     },
-    "facing=west,front=single,joints=false,left=false,right=true": {
+    "covered=false,facing=west,front=single,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single",
       "y": 270
     },
-    "facing=west,front=single,joints=false,left=true,right=false": {
+    "covered=false,facing=west,front=single,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single",
       "y": 270
     },
-    "facing=west,front=single,joints=false,left=true,right=true": {
+    "covered=false,facing=west,front=single,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single",
       "y": 270
     },
-    "facing=west,front=single,joints=true,left=false,right=false": {
+    "covered=false,facing=west,front=single,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_single_joints",
       "y": 270
     },
-    "facing=west,front=single,joints=true,left=false,right=true": {
+    "covered=false,facing=west,front=single,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_single_joints",
       "y": 270
     },
-    "facing=west,front=single,joints=true,left=true,right=false": {
+    "covered=false,facing=west,front=single,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_single_joints",
       "y": 270
     },
-    "facing=west,front=single,joints=true,left=true,right=true": {
+    "covered=false,facing=west,front=single,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_single_joints",
       "y": 270
     },
-    "facing=west,front=two,joints=false,left=false,right=false": {
+    "covered=false,facing=west,front=two,joints=false,left=false,right=false": {
       "model": "bettacraft:block/cabinet",
       "y": 270
     },
-    "facing=west,front=two,joints=false,left=false,right=true": {
+    "covered=false,facing=west,front=two,joints=false,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right",
       "y": 270
     },
-    "facing=west,front=two,joints=false,left=true,right=false": {
+    "covered=false,facing=west,front=two,joints=false,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left",
       "y": 270
     },
-    "facing=west,front=two,joints=false,left=true,right=true": {
+    "covered=false,facing=west,front=two,joints=false,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both",
       "y": 270
     },
-    "facing=west,front=two,joints=true,left=false,right=false": {
+    "covered=false,facing=west,front=two,joints=true,left=false,right=false": {
       "model": "bettacraft:block/cabinet_two_joints",
       "y": 270
     },
-    "facing=west,front=two,joints=true,left=false,right=true": {
+    "covered=false,facing=west,front=two,joints=true,left=false,right=true": {
       "model": "bettacraft:block/cabinet_right_two_joints",
       "y": 270
     },
-    "facing=west,front=two,joints=true,left=true,right=false": {
+    "covered=false,facing=west,front=two,joints=true,left=true,right=false": {
       "model": "bettacraft:block/cabinet_left_two_joints",
       "y": 270
     },
-    "facing=west,front=two,joints=true,left=true,right=true": {
+    "covered=false,facing=west,front=two,joints=true,left=true,right=true": {
       "model": "bettacraft:block/cabinet_both_two_joints",
+      "y": 270
+    },
+    "covered=true,facing=east,front=drawers,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=drawers,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_l,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=pair_r,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=single,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 90
+    },
+    "covered=true,facing=east,front=two,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 90
+    },
+    "covered=true,facing=north,front=drawers,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=drawers,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=drawers,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=drawers,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=drawers,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=drawers,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=drawers,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=drawers,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=pair_l,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=pair_l,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=pair_l,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=pair_l,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=pair_l,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=pair_l,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=pair_l,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=pair_l,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=pair_r,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=pair_r,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=pair_r,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=pair_r,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=pair_r,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=pair_r,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=pair_r,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=pair_r,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=single,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=single,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=single,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=single,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=single,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=single,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=single,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=single,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=two,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=two,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=two,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=two,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=north,front=two,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back"
+    },
+    "covered=true,facing=north,front=two,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right"
+    },
+    "covered=true,facing=north,front=two,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left"
+    },
+    "covered=true,facing=north,front=two,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both"
+    },
+    "covered=true,facing=south,front=drawers,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=drawers,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_l,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=pair_r,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=single,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 180
+    },
+    "covered=true,facing=south,front=two,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 180
+    },
+    "covered=true,facing=west,front=drawers,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=drawers,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_l,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=pair_r,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=single,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=false,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=false,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=false,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=false,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=true,left=false,right=false": {
+      "model": "bettacraft:block/cabinet_back",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=true,left=false,right=true": {
+      "model": "bettacraft:block/cabinet_back_right",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=true,left=true,right=false": {
+      "model": "bettacraft:block/cabinet_back_left",
+      "y": 270
+    },
+    "covered=true,facing=west,front=two,joints=true,left=true,right=true": {
+      "model": "bettacraft:block/cabinet_back_both",
       "y": 270
     }
   }

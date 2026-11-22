@@ -251,7 +251,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
             powerBtn.setMessage(Component.literal(menu.power() * 10 + "%"));
         }
         super.extractRenderState(g, mouseX, mouseY, partialTick);
-        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
+        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent(), menu.springShared());
     }
 
     /** M37: the spring gauge right of the storage. */
