@@ -69,6 +69,7 @@ tasks.register('modpackZip', Zip) {
 def descSource = file('docs/description.md')
 def descRepo = 'https://github.com/0verEngineer/BettaCraft'
 def descRaw = 'https://raw.githubusercontent.com/0verEngineer/BettaCraft'
+def descRoot = rootProject.projectDir
 def descRef = providers.gradleProperty('descriptionRef').orElse(
         providers.exec { commandLine 'git', 'rev-parse', 'HEAD'; ignoreExitValue = true }.standardOutput.asText.map { it.trim() ?: 'master' })
 tasks.register('curseforgeDescription') {
@@ -80,9 +81,13 @@ tasks.register('curseforgeDescription') {
     outputs.dir(outDir)
     doLast {
         String ref = descRef.get()
-        // M64: the ref is URL-encoded in the links: a release tag has a '+' (v1.53.0-beta.1+neoforge-1.21.1), which CurseForge
-        // turned into a space (every image 404); GitHub and raw.githubusercontent.com take '%2B'
-        String urlRef = ref.split('/').collect { URLEncoder.encode(it, 'UTF-8').replace('+', '%20') }.join('/')
+        // M64: the links are pinned to the commit of the ref, not to the ref itself: a release tag has a '+'
+        // (v1.53.0-beta.1+neoforge-1.21.1), which CurseForge turns into a space (every image 404), and it decodes '%2B' back
+        // to '+' as well. A full commit SHA never has either.
+        def git = new ProcessBuilder('git', 'rev-parse', '--verify', ref + '^{commit}').directory(descRoot).redirectErrorStream(true).start()
+        String sha = git.inputStream.getText('UTF-8').trim()
+        if (git.waitFor() != 0 || !(sha ==~ /[0-9a-f]{40}/)) throw new GradleException("curseforgeDescription: ${ref} is no commit of this repository (${sha})")
+        String urlRef = sha
         File docs = descSource.parentFile
         def problems = []
         def abs = { String url, boolean image ->
@@ -98,10 +103,10 @@ tasks.register('curseforgeDescription') {
         md = md.replaceAll(/!\[([^\]]*)\]\(([^)\s]+)\)/) { all, alt, url -> "![${alt}](${abs(url, true)})" }
         md = md.replaceAll(/(?<!!)\[([^\]]*)\]\(([^)\s]+)\)/) { all, text, url -> "[${text}](${abs(url, false)})" }
         md = md.replaceAll(/<img src="([^"]+)"/) { all, url -> "<img src=\"${abs(url, true)}\"" }
-        // M64: no generated GitHub link may keep a raw '+' (or a space) in its ref: CurseForge breaks such links
+        // M64: no generated GitHub link may contain a '+' (raw or as %2B) or a space: CurseForge breaks such links
         (md =~ /https:\/\/(raw\.githubusercontent\.com|github\.com)\/[^\s)"']*/).each { match ->
             String url = match instanceof List ? match[0] : match
-            if (url.contains('+') || url.contains(' ')) problems << "link with an unencoded ref: ${url}".toString()
+            if (url.contains('+') || url.toUpperCase().contains('%2B') || url.contains(' ')) problems << "link CurseForge would break ('+'): ${url}".toString()
         }
         if (!problems.isEmpty()) throw new GradleException("curseforgeDescription: ${problems.size()} problem(s) in docs/description.md:\n  " + problems.join('\n  '))
 
@@ -168,7 +173,7 @@ tasks.register('curseforgeDescription') {
         new File(dir, 'description.md').write(md, 'UTF-8')
         new File(dir, 'description.html').write(html.toString(), 'UTF-8')
         int images = (md =~ /raw\.githubusercontent\.com/).size()
-        logger.lifecycle("curseforgeDescription: ${images} image(s) pinned to ${ref} (${urlRef} in the links) -> ${dir}/description.md and description.html " +
+        logger.lifecycle("curseforgeDescription: ${images} image(s) pinned to ${ref} (commit ${urlRef} in the links) -> ${dir}/description.md and description.html " +
                 '(paste by hand; the images load only from a public repository)')
     }
 }
