@@ -250,20 +250,21 @@ def hornwort_texture(n=16):
 
 
 def hornwort_shoots_texture(w=16, h=64):
-    """Hornwort shoots hanging down into the water: stems with dense whorls of needle leaves (greyscale, tinted)."""
+    """Hornwort shoots hanging down into the water: stems with whorls of needle leaves (greyscale, tinted).
+    M64: two loose shoots per strip with whorls every 4 pixels and shorter needles (it looked like a dense curtain)."""
     img = np.zeros((h, w, 4), np.uint8)
     rng = _rng(2833)
-    for x0 in (3.5, 8.0, 12.5):
-        length = int(h * (0.7 + 0.3 * rng.random()))
+    for x0 in (4.5, 11.5):
+        length = int(h * (0.65 + 0.3 * rng.random()))
         phase = rng.random() * math.tau
         for y in range(length):
             x = x0 + 0.8 * math.sin(y * 0.12 + phase)
             ix = int(round(x))
             if 0 <= ix < w:
                 img[y, ix] = (150, 150, 150, 255)
-            if y % 3 == 0:
+            if y % 4 == 0:
                 for side in (-1, 1):
-                    for d in range(1, 4):
+                    for d in range(1, 3 if (y // 4) % 2 else 4):
                         xx = int(round(x + side * d))
                         yy = y + d // 2
                         if 0 <= xx < w and yy < h:

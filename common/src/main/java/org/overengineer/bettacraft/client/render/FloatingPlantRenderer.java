@@ -97,7 +97,7 @@ public final class FloatingPlantRenderer {
             float above = layered ? layerOffset(rank.getOrDefault(p, 0)) : 0;
             pose.translate(x - origin.getX(), y - origin.getY() + ABOVE + BOB + bob + above, z - origin.getZ());
             pose.mulPose(Axis.YP.rotation(p.rot));
-            drawPlant(pose, buffers, p, light, dry);
+            drawPlant(pose, buffers, p, light, dry, (float) time);
             pose.popPose();
         }
     }
@@ -125,9 +125,11 @@ public final class FloatingPlantRenderer {
         return t.waterSurfaceY();
     }
 
-    private static void drawPlant(PoseStack pose, MultiBufferSource buffers, FloatingPlant p, int light, boolean dry) {
+    private static void drawPlant(PoseStack pose, MultiBufferSource buffers, FloatingPlant p, int light, boolean dry, float time) {
         float r = (float) p.radius();
         float grow = 0.5F + 0.5F * p.size;
+        // M64: the roots sway in the water (render.swayingPlants), every plant in its own rhythm
+        Sway sway = org.overengineer.bettacraft.config.ClientConfig.swayingPlants() ? new Sway(time, p.id * 1.37F) : Sway.STILL;
         switch (p.type) {
             case DUCKWEED -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(DUCKWEED));
@@ -138,19 +140,19 @@ public final class FloatingPlantRenderer {
             case FROGBIT -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(FROGBIT));
                 rosette(pose, vc, p, r, 3 + Math.floorMod(p.id, 3), 0.55F, 0.5F, 0xFFFFFFFF, light);
-                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.55F, 3, FROGBIT_ROOTS, light);
+                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.55F, 3, FROGBIT_ROOTS, light, sway);
             }
             case SALVINIA -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(SALVINIA));
                 flat(pose, vc, 0, 0, r, 0, 0xFFFFFFFF, light);
                 flat(pose, vc, r * 0.25F, r * 0.3F, r * 0.75F, LEAF_STEP * 3, 0xFFFFFFFF, light, 1.4F);
-                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light);
+                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 2, SALVINIA_ROOTS, light, sway);
             }
             case RED_ROOT_FLOATER -> {
                 int tint = FloatingPlantSim.redRootLeafTint(p.red);
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(RED_ROOT));
                 rosette(pose, vc, p, r, 4 + Math.floorMod(p.id, 3), 0.5F, 0.42F, tint, light);
-                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, FloatingPlantSim.redRootRootTint(p.red), light);
+                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.5F, 3, FloatingPlantSim.redRootRootTint(p.red), light, sway);
             }
             case LILY_PAD -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(LILY_PAD));
@@ -160,14 +162,15 @@ public final class FloatingPlantRenderer {
             case WATER_LETTUCE -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(WATER_LETTUCE));
                 cup(pose, vc, p, r, 5 + Math.floorMod(p.id, 3), 0.62F, 0.45F, 0xFFFFFFFF, light);
-                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 3, LETTUCE_ROOTS, light);
+                if (!dry) roots(pose, buffers, (float) (p.type.rootLength() * grow), r * 0.6F, 3, LETTUCE_ROOTS, light, sway);
             }
             // hornwort: a loose tuft at the surface, its shoots hanging deep into the water
             case HORNWORT -> {
                 VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(HORNWORT));
                 flat(pose, vc, 0, 0, r, 0, HORNWORT_TINT, light);
                 flat(pose, vc, -r * 0.3F, r * 0.25F, r * 0.7F, LEAF_STEP * 3, HORNWORT_TINT, light, 1.1F);
-                strips(pose, buffers, HORNWORT_SHOOTS, (float) (p.type.rootLength() * (dry ? 0.0 : grow)), r * 0.75F, 3, HORNWORT_TINT, light);
+                // M64: two loose planes of shoots (three looked like a curtain), see FloatingPlantType#rootLength
+                strips(pose, buffers, HORNWORT_SHOOTS, (float) (p.type.rootLength() * (dry ? 0.0 : grow)), r * 0.65F, 2, HORNWORT_TINT, light, sway);
             }
             // floating Riccia: a bright cushion of forked thalli
             case RICCIA -> {
@@ -234,27 +237,52 @@ public final class FloatingPlantRenderer {
         }
     }
 
-    /** Crossed vertical strips of root texture hanging down {@code length} blocks, {@code width} wide. */
-    private static void roots(PoseStack pose, MultiBufferSource buffers, float length, float width, int planes, int argb, int light) {
-        strips(pose, buffers, ROOTS, length, width, planes, argb, light);
+    /**
+     * M64: how the roots of one plant sway: the bottom end swings by up to a fifth of the root length on a slow ellipse, the
+     * top stays at the plant ({@link #STILL}: not at all).
+     */
+    record Sway(float time, float phase) {
+        static final Sway STILL = new Sway(Float.NaN, 0F);
+
+        /** Sideways offset (x, z in the plant's frame) of the point {@code f} (0 = top, 1 = bottom) of roots {@code length} long. */
+        float[] at(float f, float length) {
+            if (Float.isNaN(time) || f <= 0) return new float[] {0F, 0F};
+            float a = 0.2F * length * f * f;
+            return new float[] {a * Mth.sin(time * 0.055F + phase + f * 0.9F), a * 0.7F * Mth.cos(time * 0.041F + phase * 1.7F + f * 0.6F)};
+        }
     }
 
-    /** Crossed vertical strips of a texture hanging down {@code length} blocks (M28: also the hornwort shoots). */
-    private static void strips(PoseStack pose, MultiBufferSource buffers, ResourceLocation tex, float length, float width, int planes, int argb, int light) {
+    /** Crossed vertical strips of root texture hanging down {@code length} blocks, {@code width} wide. */
+    private static void roots(PoseStack pose, MultiBufferSource buffers, float length, float width, int planes, int argb, int light, Sway sway) {
+        strips(pose, buffers, ROOTS, length, width, planes, argb, light, sway);
+    }
+
+    /**
+     * Crossed vertical strips of a texture hanging down {@code length} blocks (M28: also the hornwort shoots). M64: each
+     * strip in four pieces that bend with the sway.
+     */
+    private static void strips(PoseStack pose, MultiBufferSource buffers, ResourceLocation tex, float length, float width, int planes, int argb, int light,
+                               Sway sway) {
         if (length <= 0.01F) return;
         VertexConsumer vc = buffers.getBuffer(RenderType.entityCutoutNoCull(tex));
         PoseStack.Pose last = pose.last();
         Matrix4f m = last.pose();
         float v1 = Math.min(1, length / 0.45F);
+        final int pieces = 4;
+        float top = -0.004F;
         for (int i = 0; i < planes; i++) {
             float a = (float) (i * Math.PI / planes);
             float dx = Mth.cos(a) * width, dz = Mth.sin(a) * width;
             float nx = -Mth.sin(a), nz = Mth.cos(a);
-            float top = -0.004F;
-            vc.addVertex(m, -dx, top, -dz).setColor(argb).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
-            vc.addVertex(m, -dx, top - length, -dz).setColor(argb).setUv(0, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
-            vc.addVertex(m, dx, top - length, dz).setColor(argb).setUv(1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
-            vc.addVertex(m, dx, top, dz).setColor(argb).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
+            for (int k = 0; k < pieces; k++) {
+                float f0 = k / (float) pieces, f1 = (k + 1) / (float) pieces;
+                float[] o0 = sway.at(f0, length), o1 = sway.at(f1, length);
+                float y0 = top - length * f0, y1 = top - length * f1;
+                vc.addVertex(m, -dx + o0[0], y0, -dz + o0[1]).setColor(argb).setUv(0, v1 * f0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
+                vc.addVertex(m, -dx + o1[0], y1, -dz + o1[1]).setColor(argb).setUv(0, v1 * f1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
+                vc.addVertex(m, dx + o1[0], y1, dz + o1[1]).setColor(argb).setUv(1, v1 * f1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
+                vc.addVertex(m, dx + o0[0], y0, dz + o0[1]).setColor(argb).setUv(1, v1 * f0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(last, nx, 0, nz);
+            }
         }
     }
 }

@@ -54,7 +54,7 @@ public final class ClientConfig {
                 .defineInRange("miniaturePlantMeshDistance", 24, 0, 256);
         PLANT_MESHES = b.comment("Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the "
                 + "miniature (off: the old block look, only for you; the pack switch features.visuals.plantMeshes turns it off for everyone)").define("plantMeshes", true);
-        SWAYING_PLANTS = b.comment("Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank (off: they stand still, only "
+        SWAYING_PLANTS = b.comment("Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank, the roots of the floating plants in the water (off: they stand still, only "
                 + "for you; the pack switch features.visuals.swayingForeignPlants turns it off for everyone)").define("swayingPlants", true);
         TANK_DETAIL_DISTANCE = b.comment("Distance (blocks) up to which the name sign, bubble nest, floating plants, small animals and algae of a tank are drawn")
                 .defineInRange("tankDetailDistance", 48, 8, 256);
