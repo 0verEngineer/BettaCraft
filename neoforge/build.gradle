@@ -450,6 +450,16 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestm64')) {
+                // gradlew runClient -Psmoketestm64 [-Pshaders] [-Pm64packs=none,ComplementaryReimagined_r5.10.zip] [-Pm64tag=<name>]
+                // [-Pm64parts=glass,hose,coral,float,lid]: the M64 scene (connected glass at a distance with its guard, air hoses,
+                // mushroom corals, floating plant roots, a light on lids; screenshots run/screenshots/bettacraft_m64_<tag>_<pack>_<view>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m64only', 'true'
+                if (project.hasProperty('m64packs')) systemProperty 'bettacraft.smoketest.m64packs', project.property('m64packs').toString()
+                if (project.hasProperty('m64tag')) systemProperty 'bettacraft.smoketest.m64tag', project.property('m64tag').toString()
+                if (project.hasProperty('m64parts')) systemProperty 'bettacraft.smoketest.m64parts', project.property('m64parts').toString()
+            }
             if (project.hasProperty('smoketestm63')) {
                 // gradlew runClient -Psmoketestm63 [-Pshaders] [-Pm63packs=none,ComplementaryReimagined_r5.10.zip,...] [-Pm63tag=<name>] [-Pm63parts=water,decor]:
                 // the M63 scene (a tank in an unevenly lit room and one outside, half under a roof; every view with every shader
