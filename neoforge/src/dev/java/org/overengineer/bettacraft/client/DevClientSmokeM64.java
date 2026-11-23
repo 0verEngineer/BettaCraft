@@ -197,7 +197,7 @@ final class DevClientSmokeM64 {
     }
 
     /**
-     * Share (percent) of the pixels inside the tank's front face (a third of a block in from its outer edge) that differ clearly
+     * Share (percent) of the pixels of the inner panes of the tank's front face (one block in from its outer edge) that differ clearly
      * from the frameless reference; -1 when the face covers too few pixels, -2 when a picture is missing.
      */
     private double framesInside(String pack, String view, String test, int tank, Cam cam) {
@@ -212,7 +212,9 @@ final class DevClientSmokeM64 {
         if (ref == null || img == null || ref.getWidth() != img.getWidth() || ref.getHeight() != img.getHeight()) return -2;
         BlockPos m = glass[tank];
         int sx = (int) GLASS_TANKS[tank][1], sy = (int) GLASS_TANKS[tank][2];
-        double in = 0.34, z = m.getZ() - 0.002;
+        // the inner panes only: the outer row keeps the tank's own frame on its outer edge, and at the smallest mip levels (far away,
+        // flat angles, shader packs that sample lower levels) that frame tints the whole outer pane - no grid, the tank's edge
+        double in = 1.02, z = m.getZ() - 0.002;
         int[][] c = {project(img, cam, m.getX() + in, m.getY() + in, z), project(img, cam, m.getX() + sx - in, m.getY() + in, z),
                 project(img, cam, m.getX() + sx - in, m.getY() + sy - in, z), project(img, cam, m.getX() + in, m.getY() + sy - in, z)};
         for (int[] p : c) if (p == null) return -1;
@@ -229,7 +231,7 @@ final class DevClientSmokeM64 {
             n++;
             if (Math.abs(luma(img, x, y) - luma(ref, x, y)) > 6) differ++;
         }
-        if (n < 400) return -1;
+        if (n < 200) return -1;
         return differ * 100.0 / n;
     }
 
