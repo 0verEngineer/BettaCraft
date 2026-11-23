@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.53.0-beta.1] - 2026-11-23
+
+Tank optics: connected glass at a distance, stalks on their base, swaying roots, the light on the lid, a shorter overlay.
+
+### Added
+- **Light bar on a lid** (`features.equipment.lightOnLid`): the aquarium light bar can lie directly on a tank lid instead of
+  in the block above it. Put the bar onto the top of a lid, or slide a lid under a bar standing on a tank; the lid stays in
+  the same block under the bar, the tank counts as covered and gets the light; breaking it gives back the bar and the lid.
+  An LED panel directly on a tank already covered the blocks under it like a lid (no evaporation, closed for animals that
+  fly out and mobs that climb in); its info text and the handbook say so now.
+
+### Changed
+- **Tank info overlay** (Jade, The One Probe, WTHIT): the first line is the tank's name (a tank without a name: its kind,
+  aquarium, paludarium or terrarium) instead of the block name "Tank". Without sneaking it shows only the air of a terrarium
+  or paludarium and the water quality (and how many warnings there are); everything else comes with sneaking. A terrarium
+  shows no water line and no water quality any more.
+- The roots of the floating plants (frogbit, salvinia, red root floater, water lettuce) and the hornwort shoots sway in the
+  water (`render.swayingPlants`); the hornwort shoots are shorter (0.6 instead of 0.95 blocks) and looser.
+- The air hose of an air pump goes down the glass to the floor and ends there; it no longer runs over the floor to the air
+  stones and sponge filters.
+- Development: the client smoke `-Psmoketestm64` (both loaders; `-Pm64parts=glass,hose,coral,float,lid`, `-Pm64packs`, `-Pm64tag`): big
+  textured tanks from 8 to 64 blocks and at a flat angle with a guard that fails when the block borders of a face stand
+  out from the middle of the blocks (every view also the old way, which shows the grid), the air hoses, mushroom corals
+  inside and outside, swaying roots, the light on lids and an LED panel on a tank.
+- Development: the plant mesh test checks every species (aquarium plants, corals, terrarium plants) for pieces that do not really touch
+  what they grow from (within 0.15 blocks) and for pieces at the bottom that stand on nothing.
+
+### Fixed
+- **Connected glass broke up at a distance:** from far away, or at a flat angle from nearer, every block of a textured tank
+  showed its own glass frame again (a grid over the whole tank, with and without shader packs). The frame was hidden only by
+  stretching the texture over it, which works at full size but not for the smaller mipmaps the game uses at a distance:
+  they mix the frame into the pixels next to it. The block atlas now holds frameless copies of every glass texture (one for
+  each combination of hidden edges, made from the texture itself, so resource packs and the glass of other mods work), and
+  their mipmaps have no frame where the tank goes on.
+- **Mushroom coral stalks were not connected to their base:** the stalks of the outer discs began a third of the way out
+  at the height of the root and ended in the water beside the rock, and every disc floated a little above its stalk. All
+  stalks start on the coral's base now and reach the disc. The same kind of gap was closed in the bubble tip anemone (its
+  column ended below the oral disc, the tentacles started under it), the mini orchid (flowers beside the end of their
+  spike), Sedum (flowers above the tufts) and Mammillaria (flowers beside the ball). Every plant, coral and decoration was
+  checked (the plant mesh test above; every decoration template has all its blocks on the ground).
+
 ## [1.52.0-beta.1] - 2026-11-22
 
 Tank water without block seams, with and without shaders.
