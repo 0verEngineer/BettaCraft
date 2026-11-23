@@ -174,8 +174,24 @@ final class LandPlantMeshes {
         if (spike && !stalk.isEmpty()) {
             stalk.sort((p, q) -> Long.compare(p[1], q[1]));
             stalk(b, stalk, 0F);
-            for (long k : skip) if (parts.get(k) == PlantPart.TOP) flower(b, x(k), y(k), z(k), 0.9F * b.style.leafWide());
+            for (long k : skip) {
+                if (parts.get(k) != PlantPart.TOP) continue;
+                // M64: a short pedicel from the nearest block of the spike (the flowers floated beside its end)
+                long[] near = stalk.getFirst();
+                for (long[] sp : stalk) {
+                    long d0 = sq(sp[0] - x(k)) + sq(sp[1] - y(k)) + sq(sp[2] - z(k)), d1 = sq(near[0] - x(k)) + sq(near[1] - y(k)) + sq(near[2] - z(k));
+                    if (d0 < d1) near = sp;
+                }
+                b.use(x(k), y(k), z(k), PlantPart.STEM);
+                b.tube(PlantTex.STEM, new Vector3f(near[0] + 0.5F, near[1] + 0.5F, near[2] + 0.5F), new Vector3f(x(k) + 0.5F, y(k) + 0.4F, z(k) + 0.5F),
+                        0.035F * b.style.stem(), 0.03F * b.style.stem(), 4);
+                flower(b, x(k), y(k), z(k), 0.9F * b.style.leafWide());
+            }
         }
+    }
+
+    private static long sq(long v) {
+        return v * v;
     }
 
     // ------------------------------------------------------------------ low rosettes and carnivorous plants
@@ -322,7 +338,10 @@ final class LandPlantMeshes {
             long k = e.getLongKey();
             int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
             if (e.getValue() == PlantPart.TOP && b.sp != PlantSpecies.SELAGINELLA) {
-                flower(b, x, y, z, 0.6F * b.style.leafWide());
+                // M64: the flower stands on the tuft under it (it floated a little above it)
+                float fs = 0.6F * b.style.leafWide();
+                b.use(x, y, z, PlantPart.TOP);
+                b.cross(PlantTex.FLOWER, new Vector3f(x + 0.5F, y + fs * 0.5F - 0.05F, z + 0.5F), fs, PlantMeshBuilder.hash(x, y, z, 5) * 6.28F, true);
                 continue;
             }
             b.use(x, y, z, e.getValue() == PlantPart.TOP ? PlantPart.TOP : e.getValue() == PlantPart.MOSS ? PlantPart.MOSS : PlantPart.LEAF);
@@ -388,15 +407,38 @@ final class LandPlantMeshes {
             }
             rad[best] = (float) Math.max(rad[best], bd + 0.5);
         }
+        float[][] balls = new float[heads.size()][];
         for (int i = 0; i < heads.size(); i++) {
             long[] hd = heads.get(i);
             float ry = (hd[2] + 1) / 2F, rh = Math.max(0.5F, Math.min(rad[i], ry * 1.4F));
             ball(b, new Vector3f(hd[0] + 0.5F, ry, hd[1] + 0.5F), rh, ry, (int) hd[0], (int) hd[2], (int) hd[1]);
+            balls[i] = new float[]{hd[0] + 0.5F, ry, hd[1] + 0.5F, rh, ry};
         }
         for (var e : b.blocks.long2ObjectEntrySet()) {
             if (e.getValue() != PlantPart.TOP) continue;
             long k = e.getLongKey();
-            flower(b, BlockPos.getX(k), BlockPos.getY(k), BlockPos.getZ(k), (b.sp == PlantSpecies.MAMMILLARIA ? 0.8F : 1.1F) * b.style.leafWide());
+            int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            float size = (b.sp == PlantSpecies.MAMMILLARIA ? 0.8F : 1.1F) * b.style.leafWide();
+            if (balls.length == 0) {
+                flower(b, x, y, z, size);
+                continue;
+            }
+            // M64: on the surface of the nearest ball (a flower of a ring wider than its ball floated beside it)
+            Vector3f at = new Vector3f(x + 0.5F, y + 0.4F, z + 0.5F);
+            float[] best = balls[0];
+            float bestD = Float.MAX_VALUE;
+            for (float[] ba : balls) {
+                float dx = (at.x - ba[0]) / ba[3], dy = (at.y - ba[1]) / ba[4], dz = (at.z - ba[2]) / ba[3];
+                float d = dx * dx + dy * dy + dz * dz;
+                if (d < bestD) {
+                    bestD = d;
+                    best = ba;
+                }
+            }
+            float len = (float) Math.sqrt(bestD);
+            if (len > 1e-4F) at.set(best[0] + (at.x - best[0]) / len, best[1] + (at.y - best[1]) / len, best[2] + (at.z - best[2]) / len);
+            b.use(x, y, z, PlantPart.TOP);
+            b.cross(PlantTex.FLOWER, at.add(0, size * 0.25F, 0), size, PlantMeshBuilder.hash(x, y, z, 5) * 6.28F, true);
         }
     }
 
