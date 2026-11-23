@@ -103,7 +103,7 @@ final class LangM31 {
         a.accept("gui.bettacraft.terrarium.animal_problem", "%1$s: %2$s");
         a.accept("gui.bettacraft.terrarium.no_water", "No water: water quality, filters, oxygen and chemistry rest");
         // overlays, monitor
-        a.accept("jade.bettacraft.tank.climate", "%1$s: air %2$s °C, %3$s %% RH, UV %4$s");
+        a.accept("jade.bettacraft.tank.air", "Air %s °C, %s %% RH, UV %s"); // M64: the kind is the title or in the details
         a.accept("jade.bettacraft.tank.climate_detail", "Basking spot %1$s °C, land %2$s %%");
         a.accept("monitor.bettacraft.value.air_temperature", "Air temperature");
         a.accept("monitor.bettacraft.value.humidity", "Humidity");

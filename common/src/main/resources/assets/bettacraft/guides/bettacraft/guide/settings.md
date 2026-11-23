@@ -237,11 +237,13 @@ have no integration there. The FTB Quests chapter is `bettacraft.json5` there (F
 
 ## Other mods
 
-* **Jade, The One Probe and WTHIT:** (with several of them only the first one, see `compat.overlayProvider`) looking at an aquarium shows its name, temperature, water and animals (sneak for
-  the list; The One Probe needs its probe for that), the nest, filters and warnings; looking at a betta through the
-  glass shows its type, sex, health, hunger, stage and genes. Filters and cabinets show their heaters and coolers and
-  the aquarium they pump into; aquariums show the water quality and the stored power, larva tubs and hatcheries their
-  batch.
+* **Jade, The One Probe and WTHIT:** (with several of them only the first one, see `compat.overlayProvider`) looking at an aquarium shows its name as the
+  title (an aquarium without a name: its kind, aquarium, paludarium or terrarium), the air of a terrarium or paludarium and
+  the water quality; sneak (The One Probe: its probe) for everything else: glass, temperature and water (not for a
+  terrarium), animals with their health, nest, filters, tankmates, small animals, salt, algae, floating plants,
+  evaporation, power and warnings (their number shows in the short view). Looking at a betta through the glass shows its
+  type, sex, health, hunger, stage and genes. Filters and cabinets show their heaters and coolers and the aquarium they
+  pump into, larva tubs and hatcheries their batch.
 * **Energy mods:** every mod with Forge Energy (FE) cables can power aquariums when a server turns on `power.*`; pipes
   for water can fill and drain aquariums and fill the larva tub, hoppers and item pipes work with the feeder, the
   cabinet, the larva tub and the hatchery.

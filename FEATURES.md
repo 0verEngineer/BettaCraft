@@ -267,7 +267,7 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   sneak-click it to choose the tank from a list), cabinets of any wood or stone (with the filter and an air pump inside; a
   row of cabinets gets one front with drawers at both ends and double doors between them, or a front of your choice;
   cabinets join to the back as well, so a 10 x 5 tank stands on one under-cabinet, the middle may be normal blocks),
-  automatic and clip-on feeders, air pumps with air stones (bubble columns), light bar, LED panel and high-power LED in 16
+  automatic and clip-on feeders, air pumps with air stones (bubble columns), light bar (also lying directly on a lid), LED panel and high-power LED in 16
   colours with dimmer and daylight timer.
 - **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
   bulkhead leads to interior pipes, a multiblock filter of any size with media that clog; nitrate makes water changes
