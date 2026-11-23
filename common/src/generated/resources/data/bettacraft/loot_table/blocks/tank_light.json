@@ -36,6 +36,28 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "bettacraft:tank_light",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "lid": "true"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bettacraft:tank_lid"
+        }
+      ],
+      "rolls": 1.0
     }
   ],
   "random_sequence": "bettacraft:blocks/tank_light"

@@ -37,6 +37,12 @@ public class BaskingLampBlock extends TankLightBlock {
         super(properties);
     }
 
+    /** M64: only the bar lies on a lid. */
+    @Override
+    protected boolean sitsOnLids() {
+        return false;
+    }
+
     @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;

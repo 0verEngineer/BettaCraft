@@ -32,39 +32,6 @@
         2,
         9.5
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#panel",
-          "tintindex": 0
-        },
-        "east": {
-          "texture": "#housing"
-        },
-        "north": {
-          "texture": "#housing"
-        },
-        "south": {
-          "texture": "#housing"
-        },
-        "up": {
-          "texture": "#housing"
-        },
-        "west": {
-          "texture": "#housing"
-        }
-      },
-      "from": [
-        1,
-        0,
-        6.5
-      ],
-      "to": [
-        16,
-        2,
-        9.5
-      ]
     }
   ],
   "textures": {
