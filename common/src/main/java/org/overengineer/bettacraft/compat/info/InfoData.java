@@ -46,6 +46,7 @@ public final class InfoData {
         TankData t = c.getTank();
         CompoundTag out = new CompoundTag();
         out.putString("name", t.name());
+        out.putString("kind", t.terrariumMode().id()); // M64: the title of an unnamed tank, no water line for a terrarium
         // M11: the glass the tank is made of and its style (textured / clean)
         out.putString("glass", c.getGlassId().toString());
         out.putString("style", c.getStyle().getSerializedName());
