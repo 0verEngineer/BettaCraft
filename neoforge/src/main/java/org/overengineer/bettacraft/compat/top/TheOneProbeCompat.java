@@ -45,7 +45,18 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
             if (!(state.getBlock() instanceof TankBlock)) return false;
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) return false;
             EntityHitResult hit = InfoTarget.bettaBehindGlass(level, player);
-            if (hit == null || !(hit.getEntity() instanceof BettaEntity b)) return false;
+            if (hit == null || !(hit.getEntity() instanceof BettaEntity b)) {
+                // M64: the tank's name instead of the block name "Tank" (the icon and the mod name as in TOP's own header)
+                if (!(level instanceof ServerLevel server)) return false;
+                Component title = InfoLines.tankTitle(InfoData.tank(server, data.getPos()));
+                if (title == null) return false;
+                IProbeInfo head = info.horizontal();
+                head.item(state.getCloneItemStack(level, data.getPos(), false));
+                IProbeInfo names = head.vertical();
+                names.mcText(title.copy().withStyle(ChatFormatting.WHITE));
+                names.mcText(Component.literal("Bettacraft").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
+                return true;
+            }
             IProbeInfo head = info.horizontal();
             head.entity(b);
             IProbeInfo names = head.vertical();
