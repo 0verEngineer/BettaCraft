@@ -48,8 +48,11 @@ final class DevClientSmokeM63 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final ResourceLocation GLASS = ResourceLocation.withDefaultNamespace("glass");
     private static final String TAG = System.getProperty("bettacraft.smoketest.m63tag", "run");
-    /** M63b: {@code -Pm63parts=water,decor} (default both): the water views, the decorated open tank with the miniature check. */
-    private static final String PARTS = System.getProperty("bettacraft.smoketest.m63parts", "water,decor");
+    /**
+     * M63b: {@code -Pm63parts=water,decor,break} (default all): the water views, the decorated open tank with the miniature check,
+     * M63d: the refused break of a tank block (the tank must look the same afterwards).
+     */
+    private static final String PARTS = System.getProperty("bettacraft.smoketest.m63parts", "water,decor,break");
     private static final String DEFAULT_PACKS = "none,ComplementaryReimagined_r5.10.zip,ComplementaryUnbound_r5.10.zip,BSL_v10.1.8.zip,MakeUp-UltraFast-9.6.zip";
 
     private record Step(int delay, Runnable action) {}
@@ -57,6 +60,20 @@ final class DevClientSmokeM63 {
     private final Minecraft mc = Minecraft.getInstance();
     private final Deque<Step> steps = new ArrayDeque<>();
     private volatile BlockPos room, outside, decor;
+    /** M63d: the tanks of the break part (one per target block) and the block each one is broken at. */
+    private final List<BreakCase> breakCases = java.util.Collections.synchronizedList(new ArrayList<>());
+    /** M63d: the block the player is breaking right now (every client tick, like holding the attack key), or null. */
+    private volatile BlockPos breaking;
+    private int breakTicks, attempts, lastStage = -1;
+    private boolean sawPredictedRemoval;
+    /** M63d: the client's block entity of the target before the break (a new one afterwards = the client removed the block). */
+    private Object breakEntity;
+
+    /**
+     * M63d: one tank of the break part: its box min, the block to break and what the server's block entity of that block holds
+     * (the client's must equal it after the refused break).
+     */
+    private record BreakCase(String name, BlockPos min, BlockPos target, BlockPos controller, ResourceLocation glass, TankStyle style) {}
     /** M63b: the decorated open tank (x, y, z blocks). */
     private static final int DX = 8, DY = 3, DZ = 5;
     private int wait;
@@ -78,6 +95,7 @@ final class DevClientSmokeM63 {
             then(200, () -> logPack(pack));
             if (PARTS.contains("water")) waterViews(name);
             if (PARTS.contains("decor")) decorViews(name);
+            if (PARTS.contains("break")) breakViews(name);
         }
         then(1, this::restoreIris);
         then(1, () -> time(6000));
@@ -180,6 +198,148 @@ final class DevClientSmokeM63 {
         }
     }
 
+    /** M63d: the tanks of the break part, east to west: [name, target (relative to the box min), break protection, animals]. */
+    private static final Object[][] BREAK_TANKS = {
+            // the report: the showcase tanks are break-protected; the lower right block seen from the front (front = north:
+            // the viewer looks south, his right is west, -x) of a tank with corals only, one with animals, and other blocks
+            {"protected_corals_lower_right", new BlockPos(0, 0, 0), true, false},
+            {"protected_fish_lower_right", new BlockPos(0, 0, 0), true, true},
+            {"protected_corals_lower_left", new BlockPos(4, 0, 0), true, false},
+            {"protected_corals_top_middle", new BlockPos(2, 2, 0), true, false},
+            {"protected_corals_back_corner", new BlockPos(4, 2, 2), true, false},
+            // animals in it, no break protection: the client knows it is refused (synced count) and keeps the block
+            {"fish_lower_right", new BlockPos(0, 0, 0), false, true},
+            // neither: the break goes through (the server removes the block, the client follows)
+            {"empty_lower_right", new BlockPos(0, 0, 0), false, false},
+    };
+    /** M63d: the size of the break tanks. */
+    private static final int BX = 5, BY = 3, BZ = 3;
+
+    /**
+     * M63d: for every tank of the break part a picture from the front with and without the miniatures, then the player (in
+     * survival, like the report) breaks the target block the way a player does it (the attack key held: the client predicts the
+     * break, the server refuses it), then the same two pictures again: they must equal the ones before, and the client's block
+     * entity of the target block must equal the server's (controller, glass, style).
+     */
+    private void breakViews(String name) {
+        then(1, () -> server(p -> {
+            p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            p.getAbilities().mayfly = true;
+            p.getAbilities().flying = true;
+            p.onUpdateAbilities();
+        }));
+        for (int i = 0; i < BREAK_TANKS.length; i++) {
+            final int n = i;
+            String view = "break_" + BREAK_TANKS[i][0];
+            then(1, () -> breakCamera(n));
+            then(80, () -> shot(name, view + "_before"));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+            then(20, () -> shot(name, view + "_before_nomini"));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+            then(1, () -> startBreaking(n));
+            // about 45 ticks per attempt (flying, bare hand): a few refused attempts
+            then(120, this::stopBreaking);
+            then(1, () -> breakCamera(n));
+            then(80, () -> shot(name, view + "_after"));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+            then(20, () -> shot(name, view + "_after_nomini"));
+            then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+            then(20, () -> checkBreak(name, n, view));
+        }
+        then(1, () -> server(p -> p.setGameMode(net.minecraft.world.level.GameType.CREATIVE)));
+    }
+
+    private void breakCamera(int i) {
+        BreakCase c = breakCases.get(i);
+        lookAt(c.min().getX() + BX / 2.0, c.min().getY() + 1.7, c.min().getZ() - 3.2, new Vec3(c.min().getX() + BX / 2.0, c.min().getY() + 1.3, c.min().getZ() + BZ / 2.0));
+    }
+
+    private void startBreaking(int i) {
+        breakTicks = 0;
+        attempts = 0;
+        lastStage = -1;
+        sawPredictedRemoval = false;
+        breaking = breakCases.get(i).target();
+        breakEntity = mc.level.getBlockEntity(breaking);
+    }
+
+    private void stopBreaking() {
+        BlockPos pos = breaking;
+        breaking = null;
+        if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
+        // the crack of the last attempt stays drawn otherwise (stopDestroyBlock leaves it when the client is between attempts)
+        if (pos != null) mc.level.destroyBlockProgress(mc.player.getId(), pos, -1);
+    }
+
+    /** One client tick of holding the attack key on {@link #breaking} (as the client's own key handling does it). */
+    private void breakTick() {
+        BlockPos pos = breaking;
+        if (pos == null || mc.gameMode == null || mc.player == null || mc.level == null) return;
+        breakTicks++;
+        if (!mc.level.getBlockState(pos).is(ModBlocks.TANK.get())) sawPredictedRemoval = true;
+        else if (mc.gameMode.continueDestroyBlock(pos, Direction.NORTH)) mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+        // a finished attempt: the crack stage falls from its last stage back to none (the client called destroyBlock)
+        int stage = mc.gameMode.getDestroyStage();
+        if (lastStage >= 7 && stage < 0) attempts++;
+        lastStage = stage;
+        if (!mc.level.getBlockState(pos).is(ModBlocks.TANK.get())) sawPredictedRemoval = true;
+    }
+
+    private void checkBreak(String pack, int i, String view) {
+        BreakCase c = breakCases.get(i);
+        boolean ok = true;
+        boolean serverHas = mc.getSingleplayerServer().overworld().getBlockState(c.target()).is(ModBlocks.TANK.get());
+        if (!(boolean) BREAK_TANKS[i][2] && !(boolean) BREAK_TANKS[i][3]) {
+            // nothing keeps this tank: the block is gone on both sides
+            boolean clientHas = mc.level.getBlockState(c.target()).is(ModBlocks.TANK.get());
+            boolean gone = !serverHas && !clientHas;
+            if (!gone) problems++;
+            LOGGER.info("[smoketest] M63 break check {} {}: server keeps the block {}, client keeps it {} {}", pack, view, serverHas, clientHas,
+                    gone ? "PASS (broken)" : "FAIL (an empty tank block must break)");
+            return;
+        }
+        // the server refused it: the block must still be there on both sides
+        String data;
+        if (mc.level.getBlockEntity(c.target()) instanceof TankBlockEntity be) {
+            if (be != breakEntity) sawPredictedRemoval = true;
+            boolean same = java.util.Objects.equals(be.getControllerPos(), c.controller()) && be.getGlassId().equals(c.glass()) && be.getStyle() == c.style();
+            data = "controller " + be.getControllerPos() + " (server " + c.controller() + "), glass " + be.getGlassId() + " (server " + c.glass() + "), style "
+                    + be.getStyle() + " (server " + c.style() + ")";
+            if (!same) ok = false;
+        } else {
+            data = "no tank block entity";
+            ok = false;
+        }
+        if (!serverHas || attempts == 0) ok = false;
+        double with = differ(pack, view + "_before", view + "_after"), without = differ(pack, view + "_before_nomini", view + "_after_nomini");
+        if (with < 0 || without < 0 || with > 0.5 || without > 0.5) ok = false;
+        if (!ok) problems++;
+        LOGGER.info("[smoketest] M63 break check {} {}: server keeps the block {}, {} attempts in {} ticks, client predicted the removal {}, client {}; pictures differ "
+                        + "{} (with the miniatures) and {} (without) {}", pack, view, serverHas, attempts, breakTicks, sawPredictedRemoval, data,
+                String.format(java.util.Locale.ROOT, "%.2f %%", with), String.format(java.util.Locale.ROOT, "%.2f %%", without),
+                ok ? "PASS" : "FAIL (the tank looks different after the refused break)");
+    }
+
+    /** M63d: the share (percent) of clearly different pixels of two pictures of this run, -1 when one is missing. */
+    private double differ(String pack, String a, String b) {
+        java.io.File dir = new java.io.File(mc.gameDirectory, "screenshots");
+        try {
+            java.awt.image.BufferedImage ia = javax.imageio.ImageIO.read(new java.io.File(dir, "bettacraft_m63_" + TAG + "_" + pack + "_" + a + ".png"));
+            java.awt.image.BufferedImage ib = javax.imageio.ImageIO.read(new java.io.File(dir, "bettacraft_m63_" + TAG + "_" + pack + "_" + b + ".png"));
+            if (ia == null || ib == null || ia.getWidth() != ib.getWidth() || ia.getHeight() != ib.getHeight()) return -1;
+            long differ = 0, total = (long) ia.getWidth() * ia.getHeight();
+            for (int y = 0; y < ia.getHeight(); y++) for (int x = 0; x < ia.getWidth(); x++) {
+                int pa = ia.getRGB(x, y), pb = ib.getRGB(x, y);
+                int d = Math.max(Math.abs((pa >> 16 & 255) - (pb >> 16 & 255)), Math.max(Math.abs((pa >> 8 & 255) - (pb >> 8 & 255)), Math.abs((pa & 255) - (pb & 255))));
+                if (d > 48) differ++;
+            }
+            return differ * 100.0 / total;
+        } catch (java.io.IOException e) {
+            LOGGER.error("[smoketest] M63 break pictures {} / {} not readable", a, b, e);
+            return -1;
+        }
+    }
+
     int problems() {
         return problems;
     }
@@ -220,6 +380,25 @@ final class DevClientSmokeM63 {
         decor = o3.offset(0, 1, 0);
         TankBlockEntity dc = tank(level, p, decor, DX, DY, DZ, "Decor tank", TankStyle.TEXTURED);
         decorate(level, dc);
+        // M63d: the break tanks, in a row south of the room (one per target block), on planks in the open
+        BlockPos o4 = origin.offset(0, 0, 40);
+        for (int x = -4; x <= BREAK_TANKS.length * (BX + 4) + 4; x++) for (int y = 0; y <= 8; y++) for (int z = -8; z <= BZ + 4; z++)
+            level.setBlockAndUpdate(o4.offset(x, y, z), Blocks.AIR.defaultBlockState());
+        breakCases.clear();
+        for (int i = 0; i < BREAK_TANKS.length; i++) {
+            BlockPos base = o4.offset(i * (BX + 4), 0, 0);
+            for (int x = 0; x < BX; x++) for (int z = 0; z < BZ; z++) level.setBlockAndUpdate(base.offset(x, 0, z), Blocks.OAK_PLANKS.defaultBlockState());
+            BlockPos min = base.offset(0, 1, 0);
+            boolean fish = (boolean) BREAK_TANKS[i][3];
+            TankBlockEntity bc = tank(level, p, min, BX, BY, BZ, "Break tank " + i, TankStyle.CLEAN, fish);
+            bc.getTank().setBreakProtected((boolean) BREAK_TANKS[i][2]);
+            decorateSmall(level, bc);
+            bc.markTankChanged();
+            BlockPos target = min.offset((BlockPos) BREAK_TANKS[i][1]);
+            TankBlockEntity be = (TankBlockEntity) level.getBlockEntity(target);
+            breakCases.add(new BreakCase((String) BREAK_TANKS[i][0], min, target, be.getControllerPos(), be.getGlassId(), be.getStyle()));
+            LOGGER.info("[smoketest] M63 break tank {} at {}: target {}, controller {}", BREAK_TANKS[i][0], min, target, bc.getBlockPos());
+        }
         LOGGER.info("[smoketest] M63 scene: room tank at {}, outside tank at {}, decorated tank at {}", room, outside, decor);
     }
 
@@ -228,6 +407,10 @@ final class DevClientSmokeM63 {
     }
 
     private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, String name, TankStyle style) {
+        return tank(level, p, min, sx, sy, sz, name, style, true);
+    }
+
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, int sx, int sy, int sz, String name, TankStyle style, boolean withFish) {
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < sy; y++) for (int z = 0; z < sz; z++) for (int x = 0; x < sx; x++) blocks.add(min.offset(x, y, z));
         for (BlockPos pos : blocks) {
@@ -244,7 +427,7 @@ final class DevClientSmokeM63 {
         c.getTank().setFront(Direction.NORTH);
         c.getTank().setSignVisible(false);
         c.getTank().setOwner(p.getUUID());
-        fish(level, p, c, new double[][]{{sx * 0.3, sy * 0.6, 1.2}, {sx * 0.7, sy * 0.35, 1.6}});
+        if (withFish) fish(level, p, c, new double[][]{{sx * 0.3, sy * 0.6, 1.2}, {sx * 0.7, sy * 0.35, 1.6}});
         c.markTankChanged();
         return c;
     }
@@ -263,6 +446,19 @@ final class DevClientSmokeM63 {
                     r.toWorld((int) it[1], 0, (int) it[2]), net.minecraft.world.level.block.Rotation.NONE, null);
             if (err != null) LOGGER.warn("[smoketest] M63 decor {} not placed: {}", it[0], err.getString());
         }
+    }
+
+    /** M63d: a sand floor, a castle and two coral blocks (no plants: their sway would differ between two pictures). */
+    private static void decorateSmall(ServerLevel level, TankBlockEntity c) {
+        ServerLevel in = org.overengineer.bettacraft.tank.interior.InteriorManager.interiorLevel(level.getServer());
+        org.overengineer.bettacraft.tank.interior.InteriorRegion r = org.overengineer.bettacraft.tank.interior.InteriorManager.ensureRegion(level, c);
+        for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
+            org.overengineer.bettacraft.tank.interior.Substrate.set(in, new BlockPos(r.originX() + x, org.overengineer.bettacraft.tank.interior.InteriorRegion.FLOOR_Y,
+                    r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
+        Component err = org.overengineer.bettacraft.decor.DecorItem.place(in, org.overengineer.bettacraft.decor.DecorType.CASTLE, r.toWorld(30, 0, 20),
+                net.minecraft.world.level.block.Rotation.NONE, null);
+        if (err != null) LOGGER.warn("[smoketest] M63 break decor not placed: {}", err.getString());
+        for (int x = 0; x < 2; x++) in.setBlockAndUpdate(r.toWorld(8 + x * 50, 1, 30), Blocks.TUBE_CORAL_BLOCK.defaultBlockState());
     }
 
     /** Two adult bettas at fixed spots (relative to the tank's box min), frozen. */
@@ -401,6 +597,7 @@ final class DevClientSmokeM63 {
 
     /** Returns true when all steps are done. */
     boolean tick() {
+        breakTick();
         if (mc.player != null && !steps.isEmpty()) {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);

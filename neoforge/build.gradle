@@ -387,7 +387,7 @@ neoForge {
                 // a fresh copy "Bettacraft Rundgang" of the showcase (or this branch's upgrade reference world), deleted afterwards;
                 // pictures run/<mc>/tour/<tag>/screenshots/<pack>/, guards in summary.txt; compare two tags with py tools/tour/compare.py
                 systemProperty 'bettacraft.smoketest.worldtour', 'true'
-                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle'].each { k, v ->
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names'].each { k, v ->
                     if (project.hasProperty(k)) systemProperty "bettacraft.tour.${v}", project.property(k).toString()
                 }
                 if (project.hasProperty('tourBaseline')) systemProperty 'bettacraft.tour.baseline', 'true'
