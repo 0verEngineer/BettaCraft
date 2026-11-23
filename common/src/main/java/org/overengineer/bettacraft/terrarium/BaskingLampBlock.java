@@ -35,6 +35,12 @@ public class BaskingLampBlock extends TankLightBlock {
         super(properties);
     }
 
+    /** M64: only the bar lies on a lid. */
+    @Override
+    protected boolean sitsOnLids() {
+        return false;
+    }
+
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(HANGING) ? HANGING_SHAPE : STANDING;

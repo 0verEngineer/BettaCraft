@@ -342,7 +342,7 @@ public final class ModDataGen {
             getVariantBuilder(ModBlocks.TANK_LIGHT.get()).forAllStatesExcept(state -> {
                 boolean neg = state.getValue(TankLightBlock.NEG), pos = state.getValue(TankLightBlock.POS);
                 boolean hanging = state.getValue(TankLightBlock.HANGING), lit = state.getValue(TankLightBlock.LIT);
-                ModelFile m = lightModel(neg, pos, hanging, lit);
+                ModelFile m = lightModel(neg, pos, hanging, lit, !hanging && state.getValue(TankLightBlock.LID));
                 return ConfiguredModel.builder().modelFile(m)
                         .rotationY(state.getValue(TankLightBlock.AXIS) == Direction.Axis.Z ? 90 : 0).build();
             }, TankLightBlock.POWERED, TankLightBlock.COLOR, TankLightBlock.DIM); // M18: the colour is a tint of the panel (BettaCraftClient)
@@ -664,11 +664,31 @@ public final class ModDataGen {
             return m;
         }
 
-        private ModelFile lightModel(boolean neg, boolean pos, boolean hanging, boolean lit) {
+        /** M64: every light model is built once (the hanging states with and without the lid flag share theirs). */
+        private final java.util.Map<String, ModelFile> lightModels = new java.util.HashMap<>();
+
+        private ModelFile lightModel(boolean neg, boolean pos, boolean hanging, boolean lit, boolean lid) {
             String ends = neg && pos ? "both" : neg ? "neg" : pos ? "pos" : "none";
-            String name = "tank_light_" + ends + (hanging ? "_hanging" : "") + (lit ? "_on" : "_off");
-            float a0 = neg ? 0 : 1, a1 = pos ? 16 : 15, y0 = hanging ? 14 : 0;
-            return models().getBuilder(name)
+            String name = "tank_light_" + ends + (hanging ? "_hanging" : "") + (lid ? "_lid" : "") + (lit ? "_on" : "_off");
+            return lightModels.computeIfAbsent(name, k -> buildLightModel(name, neg, pos, hanging, lit, lid));
+        }
+
+        private ModelFile buildLightModel(String name, boolean neg, boolean pos, boolean hanging, boolean lit, boolean lid) {
+            float a0 = neg ? 0 : 1, a1 = pos ? 16 : 15, y0 = hanging ? 14 : lid ? 1 : 0;
+            BlockModelBuilder b = models().getBuilder(name);
+            if (lid) {
+                // M64: the lid under the bar (as the tank lid's model, without its handle: the bar lies there)
+                b.renderType("cutout").texture("glass", mcLoc("block/glass")).texture("frame", mcLoc("block/iron_block"));
+                b.element().from(0, 0, 0).to(16, 1, 16)
+                        .face(Direction.UP).texture("#glass").end()
+                        .face(Direction.DOWN).texture("#glass").cullface(Direction.DOWN).end()
+                        .face(Direction.NORTH).uvs(0, 15, 16, 16).texture("#frame").end()
+                        .face(Direction.SOUTH).uvs(0, 15, 16, 16).texture("#frame").end()
+                        .face(Direction.EAST).uvs(0, 15, 16, 16).texture("#frame").end()
+                        .face(Direction.WEST).uvs(0, 15, 16, 16).texture("#frame").end()
+                        .end();
+            }
+            return b
                     .texture("housing", modLoc("block/tank_light"))
                     .texture("panel", modLoc(lit ? "block/tank_light_panel_on" : "block/tank_light_panel_off"))
                     .texture("particle", modLoc("block/tank_light"))
@@ -1363,7 +1383,12 @@ public final class ModDataGen {
                     .add(LootItem.lootTableItem(ModBlocks.TANK_LIGHT.get())
                             .apply(net.minecraft.world.level.storage.loot.functions.CopyBlockState.copyState(ModBlocks.TANK_LIGHT.get()).copy(TankLightBlock.COLOR)
                                     .when(net.minecraft.world.level.storage.loot.predicates.MatchBlock.blockMatches(this.blocks, ModBlocks.TANK_LIGHT.get(), net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
-                                                    .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert()))))));
+                                                    .hasProperty(TankLightBlock.COLOR, net.minecraft.world.item.DyeColor.WHITE)).invert())))))
+                    // M64: a bar lying on a lid drops the lid too
+                    .withPool(applyExplosionCondition(ModBlocks.TANK_LIGHT.get(), LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
+                            .add(LootItem.lootTableItem(ModBlocks.TANK_LID.get()))
+                            .when(net.minecraft.world.level.storage.loot.predicates.MatchBlock.blockMatches(this.blocks, ModBlocks.TANK_LIGHT.get(),
+                                    net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties().hasProperty(TankLightBlock.LID, true))))));
             dropSelf(ModBlocks.TANK_LID.get());
             dropSelf(ModBlocks.SPAWNING_CAVE.get()); // M19
             dropSelf(ModBlocks.SPAWNING_MOP.get());

@@ -42,6 +42,12 @@ public class LedPanelBlock extends TankLightBlock {
         registerDefaultState(defaultBlockState().setValue(PARTNER_POS, true));
     }
 
+    /** M64: only the bar lies on a lid. */
+    @Override
+    protected boolean sitsOnLids() {
+        return false;
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
         super.createBlockStateDefinition(b);
