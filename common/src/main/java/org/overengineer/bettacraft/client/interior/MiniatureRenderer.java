@@ -81,6 +81,36 @@ public final class MiniatureRenderer {
     /** M63b: a dev scene hides the miniatures for a picture without them (the check that none is drawn outside its tank). */
     public static volatile boolean hiddenForTest;
 
+    /**
+     * M63c: whether no mesh job is waiting or running (a dev scene waits for this before a picture, so a freshly loaded
+     * tank is not taken without its miniature). Only the tanks the miniatures are drawn for count (within their distance).
+     */
+    public static boolean idleForTest() {
+        return busyForTest() == null;
+    }
+
+    /** M63c: why the miniatures are not idle (for the log of a dev scene), null when they are. */
+    public static @org.jetbrains.annotations.Nullable String busyForTest() {
+        if (inFlight > 0 || !DONE.isEmpty()) return inFlight + " mesh jobs running, " + DONE.size() + " results waiting";
+        Minecraft mc = Minecraft.getInstance();
+        Vec3 cam = mc.gameRenderer.mainCamera().position();
+        double max = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
+        for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
+            if (be.getLevel() != mc.level) continue;
+            TankData t = be.getTank();
+            if (t == null || t.regionId() < 0) continue;
+            double d = Vec3.atLowerCornerOf(t.min()).add(t.sizeX() / 2.0, t.sizeY() / 2.0, t.sizeZ() / 2.0).distanceToSqr(cam);
+            if (d > max * max) continue;
+            ClientRegion region = ClientInteriorCache.get(t.regionId());
+            // a tank close by not synced yet (its chunks just came back; farther ones may never be synced), or not meshed yet
+            if (region == null && d < 16 * 16) return "region " + t.regionId() + " of the tank at " + t.min() + " not synced";
+            if (region == null) continue;
+            if (region.pendingJobs > 0 || !region.dirtyCells.isEmpty()) return "region " + region.id + " at " + t.min() + ": " + region.pendingJobs
+                    + " jobs, " + region.dirtyCells.size() + " dirty cells";
+        }
+        return null;
+    }
+
     private record Result(int regionId, long cell, int generation, Map<ChunkSectionLayer, MeshData> data, Map<ChunkSectionLayer, MeshData> plantData,
                           Map<ChunkSectionLayer, MeshData> swayData, MiniatureSway.Data sway,
                           List<ByteBufferBuilder> memory, int quads, int blocks, long workerNanos, int minX, int minY, int minZ) {
@@ -610,20 +640,39 @@ public final class MiniatureRenderer {
         var lightmap = mc.gameRenderer.lightmap();
         var lightSampler = RenderSystem.getSamplerCache().getClampToEdge(com.mojang.renderpearl.api.textures.FilterMode.LINEAR);
         org.overengineer.bettacraft.client.render.LevelDraws.add(pass -> {
-            pass.setUniform("TerrainUniform", terrain);
-            pass.setUniform("ChunkSection", section);
-            if (iris != null) pass.setUniform("DynamicTransforms", iris);
+            if (iris == null) {
+                pass.setUniform("TerrainUniform", terrain);
+                pass.setUniform("ChunkSection", section);
+            } else {
+                pass.setUniform("DynamicTransforms", iris);
+            }
             pass.setUniform("Sampler0", atlas, sampler);
             pass.setUniform("Sampler2", lightmap, lightSampler);
             pass.setIndexBuffer(quads.getBuffer(), quads.type());
             for (var e : byLayer.entrySet()) {
-                pass.setPipeline(RenderSystem.getCompiledPipeline(e.getKey().pipeline(false)));
+                pass.setPipeline(RenderSystem.getCompiledPipeline(iris != null ? blockPipeline(e.getKey()) : e.getKey().pipeline(false)));
                 for (MiniatureMesh.Buffer b : e.getValue()) {
                     pass.setVertexBuffer(0, b.vertices().slice());
                     pass.drawIndexed(b.indexCount(), 1, 0, 0, 0);
                 }
             }
         });
+    }
+
+    /**
+     * M63c: the pipeline of a layer while an Iris shader pack is in use: the block pipelines (moving and falling blocks:
+     * {@code DynamicTransforms}, no chunk sections), not the terrain ones. Iris 1.11.7 (26.3) draws the terrain pipelines
+     * outside its own chunk rendering (Sodium does that) so that only the depth of our draws reached the pack: with BSL the miniature
+     * was a black, dark blue or bright green cut-out of its tank (the floor, the plants and every block alike), and a colour
+     * modulator changed nothing. The block pipelines take the same vertices and the same transform (the one Iris reads
+     * anyway, see the M63b note in drawWithModelView) and come out in colour with every pack.
+     */
+    private static com.mojang.renderpearl.api.pipeline.RenderPipeline blockPipeline(ChunkSectionLayer layer) {
+        return switch (layer) {
+            case SOLID -> net.minecraft.client.renderer.RenderPipelines.SOLID_BLOCK;
+            case CUTOUT -> net.minecraft.client.renderer.RenderPipelines.CUTOUT_BLOCK;
+            default -> net.minecraft.client.renderer.RenderPipelines.TRANSLUCENT_BLOCK;
+        };
     }
 
     /**

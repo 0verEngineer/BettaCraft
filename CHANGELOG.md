@@ -29,6 +29,11 @@ Tank water without block seams, with and without shaders.
 - **Crash with Sodium or Iris on Fabric 26.3** ("Can't use a closed render pass"): a miniature drawn in the translucent stage
   went into the level's main render pass after Iris had closed it (also without a shader pack, now and then after a few
   minutes in a world with many tanks; in 1.51 as well). Such draws now get a pass of their own.
+- **Black or green tank floors with BSL (Fabric 26.3):** with Iris and the BSL shader pack the miniature of a tank came out as a
+  black, dark blue or bright green cut-out (the substrate, the plants and the decoration alike): Iris 1.11.7 lets only the
+  depth of the terrain pipelines the miniature used reach the pack. With a shader pack the miniature is now drawn with the
+  block pipelines (those of moving blocks) and shows in colour with every pack (Complementary, BSL, MakeUp). Without shaders
+  and on the other versions nothing changed.
 - **Open tanks looked closed:** a tank with glass texture drew the glass on its top faces as well, so the water of an open
   tank (no lid) looked like it lay under a pane with white streaks. The top faces have no glass any more (the thin edge
   lines stay); a lid is a block of its own. The item icon keeps its glass block look.
@@ -46,6 +51,10 @@ Tank water without block seams, with and without shaders.
   surface, and 360 degree sweeps with the sky, with and without shader packs; guards for miniatures outside their tanks and
   glass on open tops; `py tools/tour/compare.py` compares two tours (e.g. this version and the last release) picture by
   picture.
+- Development: the world tour also takes the side view of every tank without the miniatures and fails when a miniature is
+  missing or much darker with a shader pack than without (the BSL floors above); it waits for the miniatures to be meshed
+  before a picture; `-PtourTanks=<ids>`, `-PtourSweeps=false` and `-PtourMiniCheck=<views>` narrow a run; `prodFabricClient`
+  takes `-Pshaders`, `-Psmoketestm63` and `-Psmoketestworldtour` as on 1.21.1.
 
 ## [1.51.0-beta.1] - 2026-11-22
 
