@@ -23,6 +23,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
     @Override
     public void register(IClientRegistrar registrar) {
         registrar.body(new Tank(), TankBlock.class);
+        registrar.head(new Tank(), TankBlock.class, 5000); // M64: the tank's name instead of the block name (after the core name)
         registrar.body(new Filter(), ExternalFilterBlock.class);
         registrar.body(new Filter(), CabinetBlock.class);
         registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
@@ -48,6 +49,14 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return redirect.toSelf();
             EntityHitResult hit = InfoTarget.bettaBehindGlass(accessor.getLevel(), accessor.getPlayer());
             return hit == null ? redirect.toSelf() : redirect.to(hit);
+        }
+
+        @Override
+        public void appendHead(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
+            net.minecraft.network.chat.Component title = InfoLines.tankTitle(accessor.getData().raw().getCompound(InfoData.KEY));
+            if (title != null) tooltip.setLine(mcp.mobius.waila.api.WailaConstants.OBJECT_NAME_TAG,
+                    mcp.mobius.waila.api.IWailaConfig.get().getFormatter().blockName(title.getString()));
         }
 
         @Override

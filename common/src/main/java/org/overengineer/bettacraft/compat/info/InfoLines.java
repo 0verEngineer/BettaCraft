@@ -50,28 +50,57 @@ public final class InfoLines {
     }
 
     /**
-     * Tank: name, temperature and water, animals, nest, filters and warnings always; the list of animals with health
-     * only with {@code details}.
+     * M64: the first line of the tank's overlay (instead of the block name "Tank"): the tank's name, or for a tank without one
+     * its kind (aquarium, paludarium, terrarium).
+     */
+    public static Component tankTitle(CompoundTag d) {
+        if (d == null || d.isEmpty()) return null;
+        String name = d.getString("name");
+        if (!name.isEmpty()) return Component.literal(name);
+        String kind = d.getString("kind");
+        return Component.translatable("gui.bettacraft.terrarium.mode." + (kind.isEmpty() ? "aquarium" : kind));
+    }
+
+    /**
+     * Tank (the title comes from {@link #tankTitle}). M64: without {@code details} only what a keeper looks at all the time:
+     * the air of a terrarium or paludarium and the water quality of a tank with water (not of a terrarium: its water is a
+     * dish), and a hint that sneaking shows the rest (with the number of warnings). With {@code details} everything: glass,
+     * water (not for a terrarium), climate details, animals, nest, filters, tankmates, small animals, salt, algae, floating
+     * plants, evaporation, power, warnings and the list of animals with their health.
      */
     public static List<Component> tank(CompoundTag d, boolean details) {
         List<Component> out = new ArrayList<>();
         if (d == null || d.isEmpty()) return out;
-        if (!d.getString("name").isEmpty()) out.add(Component.literal(d.getString("name")).withStyle(ChatFormatting.WHITE));
+        boolean terrarium = "terrarium".equals(d.getString("kind"));
+        // M31: the air of a terrarium / paludarium (always; the kind is the title of an unnamed tank, else in the details)
+        if (d.contains("air")) {
+            out.add(Component.translatable("jade.bettacraft.tank.air", f1(d.getFloat("air")), Math.round(d.getFloat("rh")), f1(d.getFloat("uv")))
+                    .withStyle(ChatFormatting.GREEN));
+        }
+        // M9: water quality (always, for a tank with water that is no terrarium)
+        if (d.contains("quality") && !terrarium && d.getLong("water") > 0) {
+            String st = d.getString("quality_state");
+            ChatFormatting col = "bad".equals(st) ? ChatFormatting.RED : "poor".equals(st) ? ChatFormatting.GOLD : ChatFormatting.GREEN;
+            out.add(Component.translatable("jade.bettacraft.tank.quality", Math.round(d.getFloat("quality") * 100),
+                    Component.translatable("gui.bettacraft.water.state." + st).withStyle(col)));
+        }
+        ListTag warn = d.getList("warnings", Tag.TAG_STRING);
+        ListTag fw = d.getList("filter_warn", Tag.TAG_STRING);
+        if (!details) {
+            int n = warn.size() + fw.size();
+            out.add(n > 0 ? Component.translatable("jade.bettacraft.sneak_warnings", n).withStyle(ChatFormatting.GOLD)
+                    : Component.translatable("jade.bettacraft.sneak").withStyle(ChatFormatting.DARK_GRAY));
+            return out;
+        }
         if (d.contains("glass")) out.add(glassLine(d.getString("glass"), d.getString("style")));
-        out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp")), d.getLong("water"), d.getLong("cap")));
-        // M31: terrarium / paludarium climate
+        if (!terrarium) out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp")), d.getLong("water"), d.getLong("cap")));
         if (d.contains("terra_mode")) {
             Component mode = Component.translatable(d.getString("terra_mode"));
             if (d.getBoolean("terra_fixed")) mode = Component.translatable("jade.bettacraft.tank.mode_fixed", mode); // M33.1
-            if (d.contains("air")) {
-                out.add(Component.translatable("jade.bettacraft.tank.climate", mode, f1(d.getFloat("air")), Math.round(d.getFloat("rh")), f1(d.getFloat("uv")))
-                        .withStyle(ChatFormatting.GREEN));
-                if (details) out.add(Component.translatable("jade.bettacraft.tank.climate_detail", f1(d.getFloat("bask")), Math.round(d.getFloat("land") * 100))
-                        .withStyle(ChatFormatting.GRAY));
-            } else {
-                out.add(mode.copy().withStyle(ChatFormatting.GREEN));
-            }
+            out.add(mode.copy().withStyle(ChatFormatting.GREEN));
         }
+        if (d.contains("air")) out.add(Component.translatable("jade.bettacraft.tank.climate_detail", f1(d.getFloat("bask")), Math.round(d.getFloat("land") * 100))
+                .withStyle(ChatFormatting.GRAY));
         MutableComponent animals = Component.translatable("jade.bettacraft.tank.animals", d.getInt("count"), d.getInt("adults"));
         if (d.getBoolean("crowded")) animals.append(" ").append(Component.translatable("gui.bettacraft.tank.crowded").withStyle(ChatFormatting.RED));
         out.add(animals);
@@ -103,7 +132,7 @@ public final class InfoLines {
             MutableComponent l = Component.translatable("jade.bettacraft.tank.critters", cr[0], cr[1], cr[2]);
             if (cr[3] > 0) l.append(" ").append(Component.translatable("jade.bettacraft.tank.critters_young", cr[3]));
             out.add(l.withStyle(ChatFormatting.GOLD));
-            if (details) out.add(Component.translatable("jade.bettacraft.tank.stocking", f1(d.getFloat("stock"))).withStyle(ChatFormatting.GRAY));
+            out.add(Component.translatable("jade.bettacraft.tank.stocking", f1(d.getFloat("stock"))).withStyle(ChatFormatting.GRAY));
         }
         // M20: salt water
         if (d.getFloat("salinity") >= org.overengineer.bettacraft.tank.Salinity.BRACKISH_FROM) {
@@ -120,14 +149,8 @@ public final class InfoLines {
             out.add(Component.translatable("jade.bettacraft.tank.plants", d.getInt("plants"), Math.min(100, Math.round(d.getFloat("plant_cover") * 100)))
                     .withStyle(ChatFormatting.DARK_GREEN));
         }
-        // M9: water quality, evaporation and power
-        if (d.contains("quality")) {
-            String st = d.getString("quality_state");
-            ChatFormatting col = "bad".equals(st) ? ChatFormatting.RED : "poor".equals(st) ? ChatFormatting.GOLD : ChatFormatting.GREEN;
-            out.add(Component.translatable("jade.bettacraft.tank.quality", Math.round(d.getFloat("quality") * 100),
-                    Component.translatable("gui.bettacraft.water.state." + st).withStyle(col)));
-        }
-        if (details && d.getDouble("evaporation") > 0) {
+        // M9: evaporation and power
+        if (d.getDouble("evaporation") > 0) {
             out.add(Component.translatable("jade.bettacraft.tank.evaporation", f1((float) d.getDouble("evaporation"))).withStyle(ChatFormatting.GRAY));
         }
         if (d.contains("power")) {
@@ -140,7 +163,6 @@ public final class InfoLines {
                     ? Component.translatable("jade.bettacraft.tank.drive_overstressed", d.getInt("drive_inputs")).withStyle(ChatFormatting.RED)
                     : Component.translatable("jade.bettacraft.tank.drive", d.getInt("drive_fe"), d.getInt("drive_inputs")).withStyle(ChatFormatting.GRAY));
         }
-        ListTag warn = d.getList("warnings", Tag.TAG_STRING);
         for (int i = 0; i < warn.size(); i++) {
             out.add(Component.translatable("gui.bettacraft.breeding.warn." + warn.getString(i)).withStyle(ChatFormatting.RED));
             if (warn.getString(i).equals("tm_shoal")) { // M62: which fish, how many of how many
@@ -152,12 +174,11 @@ public final class InfoLines {
                 }
             }
         }
-        ListTag fw = d.getList("filter_warn", Tag.TAG_STRING);
         for (int i = 0; i < fw.size(); i++) {
             String[] kp = fw.getString(i).split("[|]", 2);
             if (kp.length == 2) out.add(Component.translatable("gui.bettacraft.water.filter_warning." + kp[1], kp[0]).withStyle(ChatFormatting.RED));
         }
-        if (details) {
+        {
             ListTag list = d.getList("list", Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag e = list.getCompound(i);
@@ -176,8 +197,6 @@ public final class InfoLines {
                 if (e.getBoolean("sick")) line.append(" ").append(Component.translatable("gui.bettacraft.fish.sick").withStyle(ChatFormatting.RED));
                 out.add(line);
             }
-        } else if (d.getInt("count") > 0) {
-            out.add(Component.translatable("jade.bettacraft.sneak").withStyle(ChatFormatting.DARK_GRAY));
         }
         return out;
     }

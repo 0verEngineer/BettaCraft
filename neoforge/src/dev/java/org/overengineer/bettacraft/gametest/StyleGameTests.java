@@ -184,7 +184,7 @@ public final class StyleGameTests {
         add(h, new BlockPos(2, 1, 2), LIGHT_BLUE, TankStyle.TEXTURED);
         CompoundTag d = InfoData.tank(level, h.absolutePos(new BlockPos(2, 1, 2)));
         h.assertTrue(d != null && LIGHT_BLUE.toString().equals(d.getString("glass")) && "textured".equals(d.getString("style")), "glass in the info data: " + d);
-        List<Component> lines = InfoLines.tank(d, false);
+        List<Component> lines = InfoLines.tank(d, true); // M64: the glass line comes with sneaking
         boolean found = false;
         for (Component l : lines) {
             if (l.getContents() instanceof TranslatableContents tc && tc.getKey().equals("jade.bettacraft.tank.glass")) {

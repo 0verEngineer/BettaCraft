@@ -36,7 +36,11 @@ final class JadeClientTooltips {
         @Override
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
-            InfoLines.tank(accessor.getServerData().getCompound(InfoData.KEY), accessor.showDetails()).forEach(tooltip::add);
+            net.minecraft.nbt.CompoundTag d = accessor.getServerData().getCompound(InfoData.KEY);
+            // M64: the tank's name instead of the block name "Tank"
+            net.minecraft.network.chat.Component title = InfoLines.tankTitle(d);
+            if (title != null) tooltip.replace(snownee.jade.api.JadeIds.CORE_OBJECT_NAME, snownee.jade.api.theme.IThemeHelper.get().title(title));
+            InfoLines.tank(d, accessor.showDetails()).forEach(tooltip::add);
         }
 
         @Override
