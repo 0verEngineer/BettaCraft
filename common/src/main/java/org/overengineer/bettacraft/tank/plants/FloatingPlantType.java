@@ -23,9 +23,10 @@ public enum FloatingPlantType implements net.minecraft.util.StringRepresentable 
     WATER_LETTUCE("water_lettuce", 0.3, 0.8, 1.5, 0.9, 0.5),
     /**
      * Hornkraut (Ceratophyllum demersum): rootless shoots that float free just under the surface, their whorls of stiff
-     * leaves hanging deep into the water column; grows fast and takes up the most waste.
+     * leaves hanging deep into the water column; grows fast and takes up the most waste. M64: shoots 0.6 blocks long (were
+     * 0.95, too long for the tanks).
      */
-    HORNWORT("hornwort", 0.2, 1.3, 1.6, 0.6, 0.95),
+    HORNWORT("hornwort", 0.2, 1.3, 1.6, 0.6, 0.6),
     /**
      * Riccia fluitans floating: a bright cushion just at the surface, a nest site bettas like. Its item is the aquarium
      * plant {@code riccia_fluitans} (tied onto stone or wood in the interior, or put onto the surface).
