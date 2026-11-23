@@ -36,7 +36,8 @@
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
     "client.CreativeModeTabsAccessor",
-    "client.IrisBlockIdsMixin"
+    "client.IrisBlockIdsMixin",
+    "client.SpriteSourceListMixin"
   ],
   "injectors": {
     "defaultRequire": 1

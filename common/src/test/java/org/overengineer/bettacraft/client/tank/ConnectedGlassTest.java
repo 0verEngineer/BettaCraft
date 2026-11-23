@@ -91,4 +91,38 @@ class ConnectedGlassTest {
         // clear modded glass without a frame
         assertEquals(0, ConnectedGlass.frameTexels(texture(16, 0, 0, 0x30FFFFFF), 16, 16));
     }
+
+    /** M64: the frameless copy keeps the frame only on the edges that are not hidden, also in its corners. */
+    @Test
+    void framelessCopyDropsTheFrameOnHiddenEdges() {
+        int frame = 0xFFFFFFFF, inside = 0x30A0C0E0;
+        int[] tex = texture(16, 1, frame, inside);
+        int[] left = ConnectedGlass.withoutFrame(tex, 16, 16, 1, GlassVariants.LEFT);
+        for (int y = 1; y < 15; y++) assertEquals(inside, left[y * 16], "left column without frame, row " + y);
+        assertEquals(frame, left[0], "top left corner: still the top edge's frame");
+        assertEquals(frame, left[15], "right edge keeps its frame");
+        int[] all = ConnectedGlass.withoutFrame(tex, 16, 16, 1, 15);
+        for (int k = 0; k < 256; k++) assertEquals(inside, all[k], "all edges hidden: no frame at " + k);
+        // a 2x2 box filter (the first mip level) of the copy shows no frame on the hidden edge either
+        for (int y = 2; y < 14; y += 2) {
+            int a = left[y * 16] >>> 24, b = left[y * 16 + 1] >>> 24, c = left[(y + 1) * 16] >>> 24, d = left[(y + 1) * 16 + 1] >>> 24;
+            assertEquals(inside >>> 24, (a + b + c + d) / 4, "mip 1 at the hidden edge, row " + y);
+        }
+    }
+
+    /** M64: the face-local hidden slots map onto the texture edges, whatever way the UVs run. */
+    @Test
+    void hiddenSlotsMapToTextureEdges() {
+        float[] s = {0, 1, 1, 0}, t = {0, 0, 1, 1};
+        // straight: u = s, v = t
+        assertEquals(GlassVariants.LEFT, ConnectedGlass.textureEdges(s, t, new float[] {0, 1, 1, 0}, new float[] {0, 0, 1, 1}, 1));
+        assertEquals(GlassVariants.BOTTOM, ConnectedGlass.textureEdges(s, t, new float[] {0, 1, 1, 0}, new float[] {0, 0, 1, 1}, 8));
+        // mirrored: u = 1 - s
+        assertEquals(GlassVariants.RIGHT, ConnectedGlass.textureEdges(s, t, new float[] {1, 0, 0, 1}, new float[] {0, 0, 1, 1}, 1));
+        // turned by 90 degrees: u = t, v = 1 - s
+        assertEquals(GlassVariants.TOP | GlassVariants.BOTTOM,
+                ConnectedGlass.textureEdges(s, t, new float[] {0, 0, 1, 1}, new float[] {1, 0, 0, 1}, 1 | 2));
+        // a quad on a part of the texture only: no frameless copy fits
+        assertEquals(-1, ConnectedGlass.textureEdges(s, t, new float[] {0, 0.5F, 0.5F, 0}, new float[] {0, 0, 1, 1}, 1));
+    }
 }
