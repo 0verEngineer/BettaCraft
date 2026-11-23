@@ -626,7 +626,7 @@ def prodProps = { boolean client ->
     def l = []
     if (project.hasProperty('smoketest')) l << '-Dbettacraft.smoketest=true'
     if (client) {
-        l << '-Dbettacraft.background=true'
+        if (!project.hasProperty('foreground')) l << '-Dbettacraft.background=true'
         if (!project.hasProperty('sound')) l << '-Dbettacraft.silent=true'
         if (project.hasProperty('smoketestfabric')) l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true']
         if (project.hasProperty('smoketestbook')) l << '-Dbettacraft.smoketest.book=true'
