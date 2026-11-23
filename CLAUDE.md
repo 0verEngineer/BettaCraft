@@ -117,7 +117,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   360 degree sweeps with the sky, for every pack of `-PtourPacks` (default none, Complementary Reimagined, BSL); guards: no miniature
   geometry outside the tank boxes (each sweep view again without miniatures), no glass on open tops, M63c: every miniature shows in
   colour with a pack (the side view again without miniatures, compared with the run without shaders) (`summary.txt`). Pictures
-  `run/<mc>/tour/<tag>/screenshots/<pack>/` (`-PtourTag`, `-PtourViews`, `-PtourLimit`, `-PtourRadius`, `-PtourTanks=<t…ids>`,
+  `run/<mc>/tour/<tag>/screenshots/<pack>/` (`-PtourTag`, `-PtourViews` (M63d: `break` = the refused break of every tank with a picture and data guard), `-PtourNames`, `-PtourLimit`, `-PtourRadius`, `-PtourTanks=<t…ids>`,
   `-PtourSweeps=false`, `-PtourMiniCheck=<views>|none`); for the last release the same
   tour in a worktree of its tag with `-PtourBaseline`, then `py tools/tour/compare.py <old run> <new run> <out>` (pairs, diff list,
   contact sheets of every picture).

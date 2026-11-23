@@ -68,6 +68,8 @@ final class DevClientWorldTour {
     private static final int WIDTH = 960, HEIGHT = 540;
     /** The world's ticks stand still during the tour ({@code bettacraft.tour.freeze}, default on): the animals do not move. */
     private static final boolean FREEZE = !"false".equals(System.getProperty("bettacraft.tour.freeze"));
+    /** M63d: only the tanks whose name contains one of these (comma separated, any case; {@code -PtourNames}), empty = all. */
+    private static final String NAMES = System.getProperty("bettacraft.tour.names", "");
 
     /** {@code atTarget}: the step waits until the client's camera stands where the last {@link #look} put it (at most 60 ticks). */
     private record Step(int delay, Runnable action, boolean atTarget) {
@@ -263,6 +265,10 @@ final class DevClientWorldTour {
                 if (!ONLY.isEmpty() && !ONLY.contains(t.id())) continue;
                 for (String v : VIEWS.split(",")) {
                     String view = v.trim();
+                    if (view.equals("break")) {
+                        breakViews(pn, t, list);
+                        continue;
+                    }
                     double[] cam = clear(camera(t, view), list, t);
                     if (cam == null) continue;
                     then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
@@ -281,7 +287,7 @@ final class DevClientWorldTour {
             // 360 degree sweeps (pitch -20: sky; 25: ground) at the four corners outside the tank area and high above its middle
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
-            for (int s = 0; SWEEPS && s < spots.length; s++) {
+            for (int s = 0; SWEEPS && !VIEWS.trim().equals("break") && s < spots.length; s++) { // M63d: a run of only the break view leaves out the sweeps
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
@@ -378,9 +384,156 @@ final class DevClientWorldTour {
                         found.add(new Tank(t.min(), t.sizeX(), t.sizeY(), t.sizeZ(), t.front(), t.name()));
                     }
                 }
+            if (!NAMES.isBlank()) found.removeIf(t -> java.util.Arrays.stream(NAMES.split(",")).map(String::trim).filter(n -> !n.isEmpty())
+                    .noneMatch(n -> t.name() != null && t.name().toLowerCase(Locale.ROOT).contains(n.toLowerCase(Locale.ROOT))));
             found.sort(Comparator.comparingInt((Tank t) -> t.min().getZ()).thenComparingInt(t -> t.min().getX()).thenComparingInt(t -> t.min().getY()));
             return found.size() > LIMIT ? new ArrayList<>(found.subList(0, LIMIT)) : found;
         }).join();
+    }
+
+    // ------------------------------------------------------------------ M63d: the refused break
+
+    /** M63d: the block the player is breaking (every client tick, like holding the attack key), or null. */
+    private volatile BlockPos breaking;
+    private Direction breakFace = Direction.NORTH;
+    private int breakAttempts, breakStage = -1;
+    private Object breakEntity;
+    /** M63d: the server's block states and tank block entity data around the target before the break. */
+    private volatile java.util.Map<BlockPos, String> breakBefore = java.util.Map.of();
+
+    /**
+     * M63d (view {@code break}, {@code -PtourViews=break}): the report of M63d in the real world. The tank from the front with
+     * and without the miniatures; then the player, in survival and close to it, holds the attack key on the lower right block
+     * of the front (as seen from the front) until the client has finished two attempts (the server refuses: break protection
+     * of the showcase, animals); back at the front the same two pictures. Guard: the pictures equal the ones before, and the
+     * client's block states and tank block entity data of the blocks around the target equal the server's.
+     */
+    private void breakViews(String pn, Tank t, List<Tank> all) {
+        Direction f = t.front() == null || t.front().getAxis() == Direction.Axis.Y ? Direction.NORTH : t.front();
+        // the viewer looks against the front; his right hand side is the front's counter-clockwise neighbour
+        Direction right = f.getCounterClockWise();
+        int width = f.getAxis() == Direction.Axis.Z ? t.sx() : t.sz(), depth = f.getAxis() == Direction.Axis.Z ? t.sz() : t.sx();
+        // the box's lower front right corner block
+        int bx = f == Direction.EAST ? t.sx() - 1 : f == Direction.WEST ? 0 : right == Direction.EAST ? t.sx() - 1 : 0;
+        int bz = f == Direction.SOUTH ? t.sz() - 1 : f == Direction.NORTH ? 0 : right == Direction.SOUTH ? t.sz() - 1 : 0;
+        BlockPos target = t.min().offset(bx, 0, bz);
+        double[] cam = clear(camera(t, "front"), all, t);
+        String id = t.id() + "_break";
+        then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
+        thenAt(SETTLE + 10, () -> shot(pn, id + "_before"));
+        if (hideMiniatures(true, true)) {
+            then(1, () -> hideMiniatures(true, false));
+            then(SETTLE, () -> shot(pn, id + "_before_nomini"));
+            then(1, () -> hideMiniatures(false, false));
+        }
+        then(1, () -> breakBefore = around(target, true));
+        then(1, () -> server(p -> {
+            p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+            p.getAbilities().mayfly = true;
+            p.getAbilities().flying = true;
+            p.onUpdateAbilities();
+        }));
+        // 2.2 blocks in front of the target block, at its height, looking at it
+        double ex = target.getX() + 0.5 + f.getStepX() * 2.7, ez = target.getZ() + 0.5 + f.getStepZ() * 2.7;
+        then(1, () -> lookAt(ex, target.getY() + 0.6, ez, new Vec3(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5)));
+        thenAt(SETTLE, () -> {
+            breakFace = f;
+            breakAttempts = 0;
+            breakStage = -1;
+            breakEntity = mc.level.getBlockEntity(target);
+            breaking = target;
+        });
+        then(140, () -> {
+            breaking = null;
+            if (mc.gameMode != null) mc.gameMode.stopDestroyBlock();
+            // the crack of the last attempt stays drawn otherwise (stopDestroyBlock leaves it when the client is between attempts)
+            mc.level.destroyBlockProgress(mc.player.getId(), target, -1);
+        });
+        then(40, () -> server(p -> {
+            p.setGameMode(net.minecraft.world.level.GameType.CREATIVE);
+            p.getAbilities().flying = true;
+            p.onUpdateAbilities();
+        }));
+        then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
+        thenAt(SETTLE + 10, () -> shot(pn, id + "_after"));
+        if (hideMiniatures(true, true)) {
+            then(1, () -> hideMiniatures(true, false));
+            then(SETTLE, () -> shot(pn, id + "_after_nomini"));
+            then(1, () -> hideMiniatures(false, false));
+        }
+        then(4, () -> breakGuard(pn, t, id, target, cam));
+    }
+
+    /** One client tick of the attack key held on {@link #breaking}. */
+    private void breakTick() {
+        BlockPos pos = breaking;
+        if (pos == null || mc.gameMode == null || mc.player == null || mc.level == null) return;
+        if (mc.level.getBlockState(pos).getBlock() instanceof TankBlock && mc.gameMode.continueDestroyBlock(pos, breakFace))
+            mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+        int stage = mc.gameMode.getDestroyStage();
+        if (breakStage >= 7 && stage < 0) breakAttempts++;
+        breakStage = stage;
+    }
+
+    /** The block states and tank block entity data (controller, glass, style) of the 3 x 3 x 3 blocks around a block, server or client. */
+    private java.util.Map<BlockPos, String> around(BlockPos c, boolean onServer) {
+        java.util.function.Supplier<java.util.Map<BlockPos, String>> read = () -> {
+            net.minecraft.world.level.Level level = onServer ? mc.getSingleplayerServer().overworld() : mc.level;
+            java.util.Map<BlockPos, String> m = new java.util.LinkedHashMap<>();
+            for (BlockPos p : BlockPos.betweenClosed(c.offset(-1, -1, -1), c.offset(1, 1, 1))) {
+                StringBuilder b = new StringBuilder(level.getBlockState(p).toString());
+                if (level.getBlockEntity(p) instanceof TankBlockEntity be)
+                    b.append(" controller ").append(be.getControllerPos()).append(" glass ").append(be.getGlassId()).append(" style ").append(be.getStyle());
+                m.put(p.immutable(), b.toString());
+            }
+            return m;
+        };
+        return onServer ? mc.getSingleplayerServer().submit(read::get).join() : read.get();
+    }
+
+    private void breakGuard(String pack, Tank t, String id, BlockPos target, double[] cam) {
+        java.util.Map<BlockPos, String> server = around(target, true), client = around(target, false);
+        List<String> wrong = new ArrayList<>();
+        for (var e : server.entrySet()) if (!e.getValue().equals(client.get(e.getKey()))) wrong.add(e.getKey().toShortString() + " client " + client.get(e.getKey()) + " server " + e.getValue());
+        boolean kept = server.equals(breakBefore);
+        boolean recreated = mc.level.getBlockEntity(target) != breakEntity;
+        // the pictures inside the tank's screen box only
+        double dx = cam[3] - cam[0], dy = cam[4] - cam[1], dz = cam[5] - cam[2];
+        float yaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90.0), pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        double with = differ(pack, id + "_before", id + "_after", t, cam, yaw, pitch),
+                without = hideMiniatures(true, true) ? differ(pack, id + "_before_nomini", id + "_after_nomini", t, cam, yaw, pitch) : 0;
+        boolean ok = kept && wrong.isEmpty() && breakAttempts > 0 && with >= 0 && without >= 0 && with <= BREAK_PICTURE_LIMIT && without <= BREAK_PICTURE_LIMIT;
+        guard(ok, String.format(Locale.ROOT, "break %s %s (%s) at %s: %d attempts, server kept it %s, client block entity recreated %s, %d client/server differences%s; "
+                        + "pictures differ %.2f %% (with the miniatures) and %.2f %% (without) in the tank's box", pack, t.id(), t.name(), target.toShortString(), breakAttempts, kept, recreated,
+                wrong.size(), wrong.isEmpty() ? "" : " " + wrong, with, without));
+    }
+
+    /**
+     * M63d: at most this share (percent) of the pixels in the tank's screen box may differ after the refused break (the world's
+     * ticks stand still, players and the network go on: the break particles; a lost block entity took the miniature and the
+     * sign: about 5 %).
+     */
+    private static final double BREAK_PICTURE_LIMIT = 1.0;
+
+    /** The share (percent) of clearly different pixels of two pictures of this pack in a tank's screen box, -1 when one is missing. */
+    private double differ(String pack, String a, String b, Tank t, double[] cam, float yaw, float pitch) {
+        File dir = new File(out, "screenshots/" + pack);
+        try {
+            java.awt.image.BufferedImage ia = javax.imageio.ImageIO.read(new File(dir, a + ".png")), ib = javax.imageio.ImageIO.read(new File(dir, b + ".png"));
+            if (ia == null || ib == null || ia.getWidth() != ib.getWidth() || ia.getHeight() != ib.getHeight()) return -1;
+            int w = ia.getWidth(), h = ia.getHeight();
+            boolean[] mask = new boolean[w * h];
+            if (maskBox(mask, w, h, t, cam[0], cam[1], cam[2], yaw, pitch, mc.options.fov().get()) == 0) java.util.Arrays.fill(mask, true);
+            long differ = 0, total = 0;
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
+                if (!mask[y * w + x]) continue;
+                total++;
+                if (delta(ia.getRGB(x, y), ib.getRGB(x, y)) > 48) differ++;
+            }
+            return total == 0 ? -1 : differ * 100.0 / total;
+        } catch (IOException e) {
+            return -1;
+        }
     }
 
     // ------------------------------------------------------------------ guards
@@ -659,6 +812,9 @@ final class DevClientWorldTour {
     }
 
     private void finish() {
+        // M63d: the world ticks again before the client leaves it (a frozen server could spin for minutes in its last chunk unloads)
+        var server = mc.getSingleplayerServer();
+        if (FREEZE && server != null) server.submit(() -> server.tickRateManager().setFrozen(false)).join();
         try {
             Files.createDirectories(out.toPath());
             Files.write(new File(out, "summary.txt").toPath(), summary, StandardCharsets.UTF_8);
@@ -779,6 +935,7 @@ final class DevClientWorldTour {
 
     /** Returns true when all steps are done. */
     private boolean tick() {
+        breakTick();
         if (mc.player != null) {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
