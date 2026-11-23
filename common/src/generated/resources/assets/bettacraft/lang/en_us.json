@@ -557,6 +557,8 @@
   "bettacraft.configuration.features.equipment.filterMediaAutomation.tooltip": "Hoppers, pipes and the buses of ME and RS put a fresh filter medium into an empty chamber of the multiblock filter and take a used-up medium (fully clogged or spent) out; a medium that still works stays in (off: media only by hand)",
   "bettacraft.configuration.features.equipment.ledTiers": "LED tiers",
   "bettacraft.configuration.features.equipment.ledTiers.tooltip": "Stronger aquarium lights: the LED panel (2 blocks wide) and the high-power LED (any size); stronger light makes red plants redder, lets the strong-light plants grow and brings more algae (off: the new lights count like the light bar)",
+  "bettacraft.configuration.features.equipment.lightOnLid": "Light bar on a lid",
+  "bettacraft.configuration.features.equipment.lightOnLid.tooltip": "The aquarium light bar can lie directly on a tank lid: put it onto the top of a lid (or a lid under a bar standing on a tank); the lid stays under the bar in the same block, the tank counts as covered and gets the light. Breaking it gives back both (off: no new bar goes onto a lid; bars already on lids stay)",
   "bettacraft.configuration.features.equipment.lightTimer": "Dimmer and daylight timer",
   "bettacraft.configuration.features.equipment.lightTimer.tooltip": "Dimmer and daylight timer with sunrise and sunset for the lights of a tank (tank menu, tab Devices) (off: lights are on at full strength like before)",
   "bettacraft.configuration.features.equipment.moreInternalFilters": "More internal filters",

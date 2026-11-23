@@ -40,6 +40,12 @@ public class HighPowerLedBlock extends TankLightBlock {
         registerDefaultState(defaultBlockState().setValue(NORTH, false).setValue(SOUTH, false));
     }
 
+    /** M64: only the bar lies on a lid. */
+    @Override
+    protected boolean sitsOnLids() {
+        return false;
+    }
+
     @Override
     protected MapCodec<? extends Block> codec() {
         return CODEC;
