@@ -29,6 +29,30 @@
         }
       ],
       "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "bettacraft:tank_light",
+            "state": {
+              "lid": "true"
+            }
+          },
+          {
+            "type": "minecraft:survives_explosion"
+          }
+        ]
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bettacraft:tank_lid"
+        }
+      ],
+      "rolls": 1
     }
   ],
   "random_sequence": "bettacraft:blocks/tank_light"
