@@ -30,6 +30,18 @@ public class TankLidBlock extends Block {
         return SHAPE;
     }
 
+    /**
+     * M64: the aquarium light bar put onto the top of a lid takes the lid's place and lies on it (the lid stays part of the
+     * block, {@link TankLightBlock#LID}); only on a tank, only from above, with {@code features.equipment.lightOnLid}.
+     */
+    @Override
+    protected boolean canBeReplaced(BlockState state, net.minecraft.world.item.context.BlockPlaceContext ctx) {
+        if (!(ctx.getItemInHand().getItem() instanceof net.minecraft.world.item.BlockItem bi) || bi.getBlock() != org.overengineer.bettacraft.registry.ModBlocks.TANK_LIGHT.get())
+            return false;
+        if (ctx.getClickedFace() != net.minecraft.core.Direction.UP || !TankLightBlock.lidAllowed()) return false;
+        return ctx.getLevel().getBlockState(ctx.getClickedPos().below()).getBlock() instanceof org.overengineer.bettacraft.tank.TankBlock;
+    }
+
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;
