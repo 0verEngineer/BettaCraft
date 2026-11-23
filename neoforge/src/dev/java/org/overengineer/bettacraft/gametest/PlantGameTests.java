@@ -249,7 +249,7 @@ public final class PlantGameTests {
             var d = org.overengineer.bettacraft.compat.info.InfoData.tank(level, c.getBlockPos());
             h.assertTrue(d.getIntOr("plants", 0) == t.plants().size(), "overlay data: plant count");
             boolean line = false;
-            for (var l : org.overengineer.bettacraft.compat.info.InfoLines.tank(d, false)) {
+            for (var l : org.overengineer.bettacraft.compat.info.InfoLines.tank(d, true)) { // M64: with sneaking
                 if (l.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc && tc.getKey().equals("jade.bettacraft.tank.plants")) {
                     line = String.valueOf(tc.getArgs()[0]).equals(String.valueOf(t.plants().size()))
                             && String.valueOf(tc.getArgs()[1]).equals(String.valueOf(Math.min(100, Math.round(TankPlants.coverage(t) * 100))));
