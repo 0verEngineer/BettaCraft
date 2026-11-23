@@ -120,8 +120,19 @@ public final class LevelDraws {
             return true;
         }
         for (Consumer<RenderPass> op : now) {
-            RenderSystem.bindDefaultUniforms(p);
-            op.accept(p);
+            try {
+                RenderSystem.bindDefaultUniforms(p);
+                op.accept(p);
+            } catch (IllegalStateException e) {
+                // the pass was closed after all (the check above reads a private flag, which a production run cannot name):
+                // this op and the rest like a draw outside the pass
+                p = null;
+                add(op);
+            }
+            if (p == null) {
+                for (Consumer<RenderPass> rest : now.subList(now.indexOf(op) + 1, now.size())) add(rest);
+                break;
+            }
         }
         return true;
     }
