@@ -132,8 +132,9 @@ public final class ConnectedGlass {
 
     /**
      * M64: a copy of a square glass texture ({@code argb} row by row) without its frame ({@code f} texels wide) on the texture
-     * edges {@code edges}: a frame texel is replaced when every edge whose frame it belongs to is one of them (a corner keeps
-     * the frame of the other edge, which goes on along the tank's outer edge). It gets the colour most of the inside has
+     * edges {@code edges}: a frame texel is replaced when every edge whose frame it belongs to is one of them; a corner between a
+     * hidden and a kept edge takes the colour of the kept edge's frame next to it (the frame goes on along the tank's outer edge,
+     * in its own colour). It gets the colour most of the inside has
      * (vanilla glass: clear; stained glass: its tint), or, for an inside without such a colour, the texel mirrored inwards
      * across the frame line.
      */
@@ -159,7 +160,20 @@ public final class ConnectedGlass {
             if (x >= w - f) in |= GlassVariants.RIGHT;
             if (y < f) in |= GlassVariants.TOP;
             if (y >= h - f) in |= GlassVariants.BOTTOM;
-            if (in == 0 || (in & ~edges) != 0) continue;
+            if (in == 0) continue;
+            if ((in & ~edges) != 0) {
+                // a corner of a kept edge next to a hidden one: the kept edge's frame goes on, in its own colour (vanilla glass
+                // shades its frame: the corner has the colour of the side frame, which put a dark texel into the light top line
+                // at every block junction) - the frame texel next to it along the kept edge, out of the hidden edge's frame
+                if ((in & edges) == 0) continue;
+                int sx = x, sy = y;
+                if ((in & edges & GlassVariants.LEFT) != 0) sx = f;
+                if ((in & edges & GlassVariants.RIGHT) != 0) sx = w - f - 1;
+                if ((in & edges & GlassVariants.TOP) != 0) sy = f;
+                if ((in & edges & GlassVariants.BOTTOM) != 0) sy = h - f - 1;
+                out[y * w + x] = argb[sy * w + sx];
+                continue;
+            }
             if (useMode) {
                 out[y * w + x] = mode;
             } else {
