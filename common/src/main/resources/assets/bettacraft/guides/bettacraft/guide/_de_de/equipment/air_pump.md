@@ -23,8 +23,7 @@ Seite) oder **oben darauf**: ihr Luftschlauch führt über den Glasrand ins Wass
 Aquariums. Sie kann auch **in den [Aquariumschrank](cabinet.md)** unter dem Aquarium (eigener Platz im Schrank-Menü):
 ihr Schlauch läuft dann zusammen mit dem Filterschlauch an der Auslass-Seite des Schranks hoch.
 
-Der Schlauch führt innen an der Scheibe bis zum Boden und über den Boden zum nächsten Ausströmer oder Schwammfilter,
-von dort weiter zum nächsten.
+Der Schlauch führt innen an der Scheibe bis zum Boden und endet dort (er liegt nicht über den Boden zu den Ausströmern und Schwammfiltern).
 
 * Eine Pumpe treibt **4 Ausströmer oder Schwammfilter** mit voller Stärke. Bei mehr teilen sie sich die Luft und
   sprudeln weniger (eine zweite Pumpe hilft).

@@ -20,6 +20,9 @@ Das <ItemLink id="bettacraft:tank_light" /> leuchtet mit Lichtstufe 15.
 
 * Lichter in einer Reihe verbinden sich zu **einer langen Leiste** (nur der Länge nach, nicht zu einer Fläche).
 * Setze es oben auf das Aquarium, auf den Glasrand oder **hängend** unter einen Block über dem Aquarium.
+* Es kann auch **auf einer [Abdeckung](tank_lid.md)** liegen: auf die Oberseite der Abdeckung setzen (oder eine Abdeckung
+  unter eine Leiste schieben, die auf dem Aquarium steht). Abdeckung und Leiste teilen sich den Block, der obere Block bleibt
+  abgedeckt; abbauen gibt beides zurück (`features.equipment.lightOnLid`).
 * Es ist standardmäßig an. Ein **Redstone-Signal** an irgendeinem Teil der Leiste schaltet die ganze Leiste aus, zum
   Beispiel mit einem Tageslichtsensor.
 * Das Aquarium-Menü zeigt, wie viele Lichter an sind („Licht: 4/4 an“).

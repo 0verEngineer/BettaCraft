@@ -28,7 +28,7 @@ Hornkraut (*Ceratophyllum demersum*): wurzellose Triebe mit Quirlen aus steifen 
 ## Haltung
 
 * Wächst schnell und nimmt am meisten Abfall auf von allen Schwimmpflanzen.
-* Seine Triebe hängen tief in die Wassersäule.
+* Seine Triebe hängen etwa einen halben Block ins Wasser und wiegen sich darin.
 
 ## Bezug
 

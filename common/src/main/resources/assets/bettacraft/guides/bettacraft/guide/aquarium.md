@@ -25,7 +25,7 @@ stained glass, tinted glass and the glass of other mods (`#c:glass_blocks`).
   glass with an **iron nugget** in the middle instead of the iron ingot (4 aquariums).
 * A single vanilla-glass aquarium converts between both styles in the crafting grid (it turns into the other style).
 * The two styles never join: a clear aquarium next to a textured one stays a separate aquarium.
-* Aquariums from older versions are textured. The style and the glass are shown in Jade, The One Probe, WTHIT and on
+* Aquariums from older versions are textured. The style and the glass are shown in Jade, The One Probe, WTHIT (sneaking) and on
   the water tab of the tank menu.
 
 ![Textured and clear aquariums](images/tank_styles.png)

@@ -28,7 +28,7 @@ Hornwort (*Ceratophyllum demersum*): rootless shoots with whorls of stiff leaves
 ## Care
 
 * Grows fast and takes up the most waste of all floating plants.
-* Its shoots hang deep into the water column.
+* Its shoots hang about half a block into the water and sway with it.
 
 ## Obtaining
 

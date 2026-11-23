@@ -26,6 +26,8 @@ Das <ItemLink id="bettacraft:led_panel" /> ist die **mittlere Lichtstufe**, stä
   **Algen** schneller.
 * Färben wie die Lichtleiste (Rechtsklick mit Farbstoff färbt das ganze Panel); Redstone schaltet es aus; Dimmer und
   Tageslicht-Timer im Aquarium-Menü.
+* Direkt auf einem Aquarium **deckt** es die Blöcke darunter ab wie eine [Abdeckung](tank_lid.md): dort verdunstet nichts,
+  nichts fliegt heraus oder klettert hinein.
 
 ## Bezug
 
