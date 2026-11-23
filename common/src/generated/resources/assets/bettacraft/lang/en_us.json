@@ -3639,7 +3639,7 @@
   "jade.bettacraft.nest.larva": "%s larvae",
   "jade.bettacraft.no_power": "no power!",
   "jade.bettacraft.sneak": "Sneak for details",
-  "jade.bettacraft.sneak_warnings": "Sneak for details (%s warnings)",
+  "jade.bettacraft.sneak_warnings": "Sneak for details (warnings: %s)",
   "jade.bettacraft.spring": "Spring: %s%% (%s h)",
   "jade.bettacraft.spring.shared": "Shared by %s cabinets",
   "jade.bettacraft.tank.air": "Air %s °C, %s %% RH, UV %s",

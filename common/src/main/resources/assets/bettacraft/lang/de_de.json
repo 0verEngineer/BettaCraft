@@ -291,7 +291,7 @@
   "jade.bettacraft.nest.egg": "%s Eier",
   "jade.bettacraft.nest.larva": "%s Larven",
   "jade.bettacraft.sneak": "Schleichen für Details",
-  "jade.bettacraft.sneak_warnings": "Schleichen für Details (%s Warnungen)",
+  "jade.bettacraft.sneak_warnings": "Schleichen für Details (Warnungen: %s)",
   "jade.bettacraft.betta.type": "Betta (%s)",
   "jade.bettacraft.betta.health": "Gesundheit %s, satt %s",
   "jade.bettacraft.betta.hungry": "hungrig",
