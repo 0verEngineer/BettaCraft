@@ -80,6 +80,9 @@ tasks.register('curseforgeDescription') {
     outputs.dir(outDir)
     doLast {
         String ref = descRef.get()
+        // M64: the ref is URL-encoded in the links: a release tag has a '+' (v1.53.0-beta.1+neoforge-1.21.1), which CurseForge
+        // turned into a space (every image 404); GitHub and raw.githubusercontent.com take '%2B'
+        String urlRef = ref.split('/').collect { URLEncoder.encode(it, 'UTF-8').replace('+', '%20') }.join('/')
         File docs = descSource.parentFile
         def problems = []
         def abs = { String url, boolean image ->
@@ -88,13 +91,18 @@ tasks.register('curseforgeDescription') {
             def rel = docs.parentFile.toPath().relativize(target).toString().replace('\\', '/')
             if (!target.toFile().exists()) problems << "missing file ${url}".toString()
             if (image && url.toLowerCase().endsWith('.webp')) problems << "WebP image ${url} (use the GIF / PNG / JPG)".toString()
-            return image ? "${descRaw}/${ref}/${rel}".toString() : "${descRepo}/blob/${ref}/${rel}".toString()
+            return image ? "${descRaw}/${urlRef}/${rel}".toString() : "${descRepo}/blob/${urlRef}/${rel}".toString()
         }
         String md = descSource.getText('UTF-8').replace('\r\n', '\n')
         // images first (also inside links), then links
         md = md.replaceAll(/!\[([^\]]*)\]\(([^)\s]+)\)/) { all, alt, url -> "![${alt}](${abs(url, true)})" }
         md = md.replaceAll(/(?<!!)\[([^\]]*)\]\(([^)\s]+)\)/) { all, text, url -> "[${text}](${abs(url, false)})" }
         md = md.replaceAll(/<img src="([^"]+)"/) { all, url -> "<img src=\"${abs(url, true)}\"" }
+        // M64: no generated GitHub link may keep a raw '+' (or a space) in its ref: CurseForge breaks such links
+        (md =~ /https:\/\/(raw\.githubusercontent\.com|github\.com)\/[^\s)"']*/).each { match ->
+            String url = match instanceof List ? match[0] : match
+            if (url.contains('+') || url.contains(' ')) problems << "link with an unencoded ref: ${url}".toString()
+        }
         if (!problems.isEmpty()) throw new GradleException("curseforgeDescription: ${problems.size()} problem(s) in docs/description.md:\n  " + problems.join('\n  '))
 
         // a small Markdown -> HTML converter for what description.md uses: headings, paragraphs, lists, tables, images,
@@ -160,7 +168,7 @@ tasks.register('curseforgeDescription') {
         new File(dir, 'description.md').write(md, 'UTF-8')
         new File(dir, 'description.html').write(html.toString(), 'UTF-8')
         int images = (md =~ /raw\.githubusercontent\.com/).size()
-        logger.lifecycle("curseforgeDescription: ${images} image(s) pinned to ${ref} -> ${dir}/description.md and description.html " +
+        logger.lifecycle("curseforgeDescription: ${images} image(s) pinned to ${ref} (${urlRef} in the links) -> ${dir}/description.md and description.html " +
                 '(paste by hand; the images load only from a public repository)')
     }
 }
