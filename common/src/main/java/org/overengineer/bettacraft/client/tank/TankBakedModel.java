@@ -276,7 +276,7 @@ public class TankBakedModel implements DynamicModel {
      */
     private BakedQuad[] connected(BakedQuad q, Direction side, int hidden, int water) {
         Map<Integer, BakedQuad[]> variants = glassCache.computeIfAbsent(q, k -> new ConcurrentHashMap<>());
-        int key = hidden | water << 4;
+        int key = hidden | water << 4 | (GlassVariants.offForTest ? 1 << 30 : 0) | (GlassVariants.allFramelessForTest ? 1 << 29 : 0);
         BakedQuad[] r = variants.get(key);
         if (r == null) {
             float frame = hidden == 0 ? 0 : frameOf(q.sprite());
@@ -326,7 +326,36 @@ public class TankBakedModel implements DynamicModel {
             u[i] = Float.intBitsToFloat(data[o + 4]);
             v[i] = Float.intBitsToFloat(data[o + 5]);
         }
-        if (!ConnectedGlass.clipAndRemapUv(s, t, u, v, hidden, frame, sMin, sMax, tMin, tMax)) return q;
+        // M64: the frameless copy of the glass texture for the texture edges that lie on the hidden face edges (its mipmaps
+        // have no frame there either); without one the UVs stretch over the frame as before (full size only)
+        TextureAtlasSprite sprite = q.sprite(), target = sprite;
+        int remapHidden = hidden;
+        float remapFrame = frame;
+        if (hidden != 0) {
+            float du = sprite.getU1() - sprite.getU0(), dv = sprite.getV1() - sprite.getV0();
+            if (du > 1e-7F && dv > 1e-7F) {
+                float[] un = new float[4], vn = new float[4];
+                for (int i = 0; i < 4; i++) {
+                    un[i] = (u[i] - sprite.getU0()) / du;
+                    vn[i] = (v[i] - sprite.getV0()) / dv;
+                }
+                int edges = ConnectedGlass.textureEdges(s, t, un, vn, hidden);
+                if (edges >= 0 && GlassVariants.allFramelessForTest) edges = 15;
+                TextureAtlasSprite copy = edges > 0 ? GlassVariants.variant(sprite, edges) : null;
+                if (copy != null) {
+                    target = copy;
+                    remapHidden = 0;
+                    remapFrame = 0;
+                }
+            }
+        }
+        if (!ConnectedGlass.clipAndRemapUv(s, t, u, v, remapHidden, remapFrame, sMin, sMax, tMin, tMax)) return q;
+        if (target != sprite) {
+            for (int i = 0; i < 4; i++) {
+                u[i] = target.getU0() + (u[i] - sprite.getU0()) / (sprite.getU1() - sprite.getU0()) * (target.getU1() - target.getU0());
+                v[i] = target.getV0() + (v[i] - sprite.getV0()) / (sprite.getV1() - sprite.getV0()) * (target.getV1() - target.getV0());
+            }
+        }
         if (clip) {
             float smin = Math.min(Math.min(s[0], s[1]), Math.min(s[2], s[3])), smax = Math.max(Math.max(s[0], s[1]), Math.max(s[2], s[3]));
             float tmin = Math.min(Math.min(t[0], t[1]), Math.min(t[2], t[3])), tmax = Math.max(Math.max(t[0], t[1]), Math.max(t[2], t[3]));
@@ -343,7 +372,7 @@ public class TankBakedModel implements DynamicModel {
             copy[i * stride + 4] = Float.floatToRawIntBits(u[i]);
             copy[i * stride + 5] = Float.floatToRawIntBits(v[i]);
         }
-        return ClientPlatform.get().quad(copy, q.tintIndex(), q.direction(), q.sprite(), q.shade(), ClientPlatform.get().quadAo(q));
+        return ClientPlatform.get().quad(copy, q.tintIndex(), q.direction(), target, q.shade(), ClientPlatform.get().quadAo(q));
     }
 
     /** Inverse of {@link BoxFaces#u} / {@link BoxFaces#v}: sets the in-plane coordinates of {@code p} on face {@code side}. */

@@ -95,6 +95,83 @@ public final class ConnectedGlass {
     }
 
     /**
+     * M64: the texture edges ({@link GlassVariants#LEFT} ...) of the sprite that lie on the face-local edge slots {@code hidden}.
+     * {@code s,t} = face-local positions of the 4 vertices, {@code u,v} = their texture coordinates within the sprite (0..1,
+     * any rotation or mirroring). -1 when the quad does not cover the whole sprite (then the frameless copies do not fit) or
+     * is degenerate.
+     */
+    public static int textureEdges(float[] s, float[] t, float[] u, float[] v, int hidden) {
+        float uMin = Math.min(Math.min(u[0], u[1]), Math.min(u[2], u[3])), uMax = Math.max(Math.max(u[0], u[1]), Math.max(u[2], u[3]));
+        float vMin = Math.min(Math.min(v[0], v[1]), Math.min(v[2], v[3])), vMax = Math.max(Math.max(v[0], v[1]), Math.max(v[2], v[3]));
+        if (uMin > 0.02F || vMin > 0.02F || uMax < 0.98F || vMax < 0.98F) return -1;
+        int[][] tri = {{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}};
+        for (int[] k : tri) {
+            int i0 = k[0], i1 = k[1], i2 = k[2];
+            float ds1 = s[i1] - s[i0], dt1 = t[i1] - t[i0], ds2 = s[i2] - s[i0], dt2 = t[i2] - t[i0];
+            float det = ds1 * dt2 - ds2 * dt1;
+            if (Math.abs(det) < 1e-6F) continue;
+            float du1 = u[i1] - u[i0], du2 = u[i2] - u[i0], dv1 = v[i1] - v[i0], dv2 = v[i2] - v[i0];
+            float aU = (du1 * dt2 - du2 * dt1) / det, bU = (ds1 * du2 - ds2 * du1) / det;
+            float aV = (dv1 * dt2 - dv2 * dt1) / det, bV = (ds1 * dv2 - ds2 * dv1) / det;
+            int out = 0;
+            // the middle of each face edge: slot 0 = (0, .5), 1 = (1, .5), 2 = (.5, 0), 3 = (.5, 1)
+            float[][] mid = {{0F, 0.5F}, {1F, 0.5F}, {0.5F, 0F}, {0.5F, 1F}};
+            for (int slot = 0; slot < 4; slot++) {
+                if ((hidden & (1 << slot)) == 0) continue;
+                float uu = u[i0] + aU * (mid[slot][0] - s[i0]) + bU * (mid[slot][1] - t[i0]);
+                float vv = v[i0] + aV * (mid[slot][0] - s[i0]) + bV * (mid[slot][1] - t[i0]);
+                if (uu < 0.25F) out |= GlassVariants.LEFT;
+                else if (uu > 0.75F) out |= GlassVariants.RIGHT;
+                else if (vv < 0.25F) out |= GlassVariants.TOP;
+                else if (vv > 0.75F) out |= GlassVariants.BOTTOM;
+            }
+            return out;
+        }
+        return -1;
+    }
+
+    /**
+     * M64: a copy of a square glass texture ({@code argb} row by row) without its frame ({@code f} texels wide) on the texture
+     * edges {@code edges}: a frame texel is replaced when every edge whose frame it belongs to is one of them (a corner keeps
+     * the frame of the other edge, which goes on along the tank's outer edge). It gets the colour most of the inside has
+     * (vanilla glass: clear; stained glass: its tint), or, for an inside without such a colour, the texel mirrored inwards
+     * across the frame line.
+     */
+    public static int[] withoutFrame(int[] argb, int w, int h, int f, int edges) {
+        int[] out = argb.clone();
+        if (f <= 0 || edges == 0) return out;
+        // the most common colour of the inside
+        java.util.HashMap<Integer, Integer> count = new java.util.HashMap<>();
+        int inside = 0;
+        for (int y = f; y < h - f; y++) for (int x = f; x < w - f; x++) {
+            count.merge(argb[y * w + x], 1, Integer::sum);
+            inside++;
+        }
+        int mode = 0, best = 0;
+        for (var e : count.entrySet()) if (e.getValue() > best) {
+            best = e.getValue();
+            mode = e.getKey();
+        }
+        boolean useMode = inside > 0 && best >= inside * 0.4;
+        for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
+            int in = 0;
+            if (x < f) in |= GlassVariants.LEFT;
+            if (x >= w - f) in |= GlassVariants.RIGHT;
+            if (y < f) in |= GlassVariants.TOP;
+            if (y >= h - f) in |= GlassVariants.BOTTOM;
+            if (in == 0 || (in & ~edges) != 0) continue;
+            if (useMode) {
+                out[y * w + x] = mode;
+            } else {
+                int mx = x < f ? 2 * f - 1 - x : x >= w - f ? 2 * (w - f) - 1 - x : x;
+                int my = y < f ? 2 * f - 1 - y : y >= h - f ? 2 * (h - f) - 1 - y : y;
+                out[y * w + x] = argb[Math.clamp(my, 0, h - 1) * w + Math.clamp(mx, 0, w - 1)];
+            }
+        }
+        return out;
+    }
+
+    /**
      * Width of the frame of a square glass texture, in texels: how many rings from the border inwards differ clearly
      * (alpha or colour) from the inside of the texture. {@code argb} row by row, {@code w x h} (first frame only).
      * 0 = no frame (nothing to hide), at most {@code w / 8}.

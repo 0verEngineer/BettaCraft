@@ -45,7 +45,8 @@
     "client.IrisBlockIdsMixin",
     "client.LevelRendererFrustumMixin",
     "client.LivingEntityRendererGlassMixin",
-    "client.LivingEntityRenderStateMixin"
+    "client.LivingEntityRenderStateMixin",
+    "client.SpriteSourceListMixin"
   ],
   "injectors": {
     "defaultRequire": 1
