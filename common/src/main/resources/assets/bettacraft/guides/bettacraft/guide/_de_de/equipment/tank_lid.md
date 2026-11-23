@@ -17,6 +17,9 @@ Lampe oder einem vollen Block darauf) **verdunstet** nicht: der Wasserstand blei
 Reiter Wasser im [Aquarium-Menü](../aquarium/menu.md) zeigt, wie viele obere Blöcke noch offen sind. Siehe
 [Wasserqualität](../aquarium/water_quality.md).
 
+Die [Lichtleiste](light.md) kann direkt auf einer Abdeckung liegen (auf die Oberseite der Abdeckung setzen): das Licht
+braucht keinen eigenen Block über der Abdeckung.
+
 ## Bezug
 
 Herstellung:

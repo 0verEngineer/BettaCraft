@@ -27,7 +27,7 @@ gefärbtes Glas, getöntes Glas und das Glas anderer Mods (`#c:glass_blocks`).
   zur jeweils anderen Ausführung).
 * Die beiden Ausführungen verbinden sich nie: Ein Klarglas-Aquarium neben einem mit Glastextur bleibt ein eigenes
   Aquarium.
-* Aquarien aus älteren Versionen haben die Glastextur. Ausführung und Glas zeigen Jade, The One Probe, WTHIT und der
+* Aquarien aus älteren Versionen haben die Glastextur. Ausführung und Glas zeigen Jade, The One Probe, WTHIT (beim Schleichen) und der
   Wasser-Tab des Aquarium-Menüs.
 
 ![Aquarien mit Glastextur und aus Klarglas](images/tank_styles.png)

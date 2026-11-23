@@ -23,7 +23,7 @@ endet mit „...“ und steht vollständig da, wenn die Maus darauf liegt.
 * **Name** (bis 32 Zeichen) und **Namensschild**: an oder aus, seine Position (oben oder unten, links, Mitte oder
   rechts) und die **Vorderseite** des Aquariums, auf der es sitzt. Das Schild ist schwarz mit weißer Schrift und 0,12 Blöcke
   hoch (jeder Spieler kann es mit der Client-Config `render.signScale` größer oder kleiner stellen, 0,5 bis 2); lange
-  Namen bekommen eine kleinere Schrift. Der Name steht auch bei ausgeschaltetem Schild im Menü und in Jade.
+  Namen bekommen eine kleinere Schrift. Der Name steht auch bei ausgeschaltetem Schild im Menü und als Überschrift in Jade, The One Probe und WTHIT.
 * **Sperre**: Wer das Aquarium gesetzt hat, ist sein Besitzer. Ist es gesperrt, dürfen nur Besitzer, seine
   Pfleger (Nutzer-Tab, unten) und Operatoren es ändern (Wasser, Tiere, Einstellungen, Innenraum); ansehen dürfen es alle anderen.
 * **Bruchschutz** (der Knopf zwischen Name und Sperre; nur Besitzer und Operatoren, bei neuen Aquarien aus): solange er an

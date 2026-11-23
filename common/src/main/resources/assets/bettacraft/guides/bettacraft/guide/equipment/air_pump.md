@@ -23,8 +23,8 @@ The <ItemLink id="bettacraft:air_pump" /> is a small membrane pump. Place it **n
 [aquarium cabinet](cabinet.md)** under the aquarium (its own slot in the cabinet menu): its hose then goes up together
 with the filter hose at the cabinet's outlet side.
 
-The hose runs down the inside of the glass to the floor and over the floor to the nearest air stone or sponge filter,
-from there on to the next one.
+The hose runs down the inside of the glass to the floor and ends there (it does not lie across the floor to the air stones
+and sponge filters).
 
 * One pump drives **4 air stones or sponge filters** at full strength. With more, they share the air and bubble less
   (a second pump helps).

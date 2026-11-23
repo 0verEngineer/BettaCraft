@@ -20,6 +20,9 @@ The <ItemLink id="bettacraft:tank_light" /> gives light level 15.
 
 * Lights next to each other in a row join into **one long bar** (only lengthwise, not into a surface).
 * Place it on top of the aquarium, on the glass rim or **hanging** under a block above the aquarium.
+* It can also lie **on a [lid](tank_lid.md)**: put it onto the top of the lid (or slide a lid under a bar standing on the
+  aquarium). Lid and bar share the block, the top stays covered; breaking it gives back both
+  (`features.equipment.lightOnLid`).
 * It is on by default. A **redstone signal** at any part of the bar switches the whole bar off, for example with a
   daylight sensor.
 * The tank menu shows how many lights are on ("Light: 4/4 on").

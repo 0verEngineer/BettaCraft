@@ -683,7 +683,8 @@ final class LangEn {
         a.accept("jade.bettacraft.nest.built", "ready");
         a.accept("jade.bettacraft.nest.egg", "%s eggs");
         a.accept("jade.bettacraft.nest.larva", "%s larvae");
-        a.accept("jade.bettacraft.sneak", "Sneak for the list of animals");
+        a.accept("jade.bettacraft.sneak", "Sneak for details");
+        a.accept("jade.bettacraft.sneak_warnings", "Sneak for details (%s warnings)"); // M64
         a.accept("jade.bettacraft.betta.type", "Betta (%s)");
         a.accept("jade.bettacraft.betta.health", "Health %s, fed %s");
         a.accept("jade.bettacraft.betta.hungry", "hungry");
@@ -717,7 +718,7 @@ final class LangEn {
         a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality) and moves the surface (oxygen). Without an intake sponge it sucks in fry. Right-click or sneak + mouse wheel: power regulator.");
         a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nKeeps 32 water blocks clean and holds two heaters or coolers of any size.");
         a.accept("info.bettacraft.feeder", "Place it on top of a tank and fill it with food (also by hopper).\nFeeds 1 to 3 times a day, picks fry food for fry and takes food from cabinets under the tank.");
-        a.accept("info.bettacraft.tank_light", "Place it on or above a tank; neighbouring lights join into one bar.\nLight level 15, the weakest of the three light tiers (stronger: LED panel, high-power LED). A redstone signal switches the whole bar off; dimmer and daylight timer in the tank menu (tab Devices).\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
+        a.accept("info.bettacraft.tank_light", "Place it on or above a tank, or onto a lid on a tank (it lies on the lid in the same block); neighbouring lights join into one bar.\nLight level 15, the weakest of the three light tiers (stronger: LED panel, high-power LED). A redstone signal switches the whole bar off; dimmer and daylight timer in the tank menu (tab Devices).\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
         a.accept("info.bettacraft.cabinet", "Made from any planks or stone (with the slabs of the same stone). Put a tank on it.\nHolds an external filter (with two heaters) and nine stacks the feeder can use.\nThe button \"Outlet\" in its menu chooses the tank wall the filter hose goes up: back (default), left, right or front. Jet, bubbles and the current follow it; in front of the outlet the water moves faster (seahorses mind it, corals like it). Broken, the cabinet keeps the setting.\nCabinets side by side make one front: drawers at both ends, double doors between them. The button \"Front\" in the menu fixes the front of one cabinet, the small button next to it switches the dark joints.");
         a.accept("info.bettacraft.betta_spawn_egg", "Spawns a betta with random domestic genes.");
         a.accept("info.bettacraft.decor", "A decoration structure: places a small build facing you.\nWorks in a tank interior (it then shows up in the tank in miniature) and anywhere in the world.");
@@ -1102,7 +1103,7 @@ final class LangEn {
         a.accept("info.bettacraft.cooler_small", "Cools up to 16 water blocks towards the target temperature of the tank when it is warmer around the tank (deserts, the Nether).\nPlace it in the tank interior (under water) or into an external filter. Coolers add up.");
         a.accept("info.bettacraft.cooler_medium", "Cools up to 32 water blocks. Place it in the tank interior or into an external filter.");
         a.accept("info.bettacraft.cooler_large", "Cools up to 64 water blocks. Place it in the tank interior or into an external filter.");
-        a.accept("info.bettacraft.tank_lid", "Lay it on a top block of a tank: that block no longer loses water by evaporation.\nThe feeder and lights cover the block they stand on as well.");
+        a.accept("info.bettacraft.tank_lid", "Lay it on a top block of a tank: that block no longer loses water by evaporation.\nThe feeder and lights cover the block they stand on as well; the light bar can also lie on the lid itself.");
         a.accept("info.bettacraft.larva_tub", "Breeds mosquito larvae under the open sky.\nFill it with a water bucket (or a pipe) and add organic matter: leaves, wheat, rotten flesh or bone meal (also by hopper).\nA batch takes about 2 days, faster at night, in swamps and in the rain. Harvest with a glass bottle or let a hopper below take the larvae.");
         a.accept("info.bettacraft.artemia_hatchery", "Hatches artemia nauplii in the light (level 9 or more).\nPour in salt water bottles, add artemia cysts and glass bottles (also by hopper; emptied salt water bottles are reused).\nA batch takes 1 day. Take the nauplii with an empty hand or let a hopper below take them.");
 
