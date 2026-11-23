@@ -216,7 +216,7 @@ final class DevClientSmokeM64 {
         int sx = (int) GLASS_TANKS[tank][1], sy = (int) GLASS_TANKS[tank][2];
         // the inner panes only: the outer row keeps the tank's own frame on its outer edge, and at the smallest mip levels (far away,
         // flat angles, shader packs that sample lower levels) that frame tints the whole outer pane - no grid, the tank's edge
-        double in = 1.02, z = m.getZ() - 0.002;
+        double in = 1.25, z = m.getZ() - 0.002; // a quarter block more: the rounded projection puts the last pixel of the outer pane inside
         int[][] c = {project(img, cam, m.getX() + in, m.getY() + in, z), project(img, cam, m.getX() + sx - in, m.getY() + in, z),
                 project(img, cam, m.getX() + sx - in, m.getY() + sy - in, z), project(img, cam, m.getX() + in, m.getY() + sy - in, z)};
         for (int[] p : c) if (p == null) return -1;
