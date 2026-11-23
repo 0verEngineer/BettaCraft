@@ -27,7 +27,8 @@ Tank optics: connected glass at a distance, stalks on their base, swaying roots,
 - Development: the client smoke `-Psmoketestm64` (both loaders; `-Pm64parts=glass,hose,coral,float,lid`, `-Pm64packs`, `-Pm64tag`): big
   textured tanks from 8 to 64 blocks and at a flat angle with a guard that fails when the block borders of a face stand
   out from the middle of the blocks (every view also the old way, which shows the grid), the air hoses, mushroom corals
-  inside and outside, swaying roots, the light on lids and an LED panel on a tank.
+  inside and outside, swaying roots, the light on lids and an LED panel on a tank (NeoForge 26.3 has no Iris yet: its smoke runs
+  without shader packs, Fabric 26.3 with them).
 - Development: the plant mesh test checks every species (aquarium plants, corals, terrarium plants) for pieces that do not really touch
   what they grow from (within 0.15 blocks) and for pieces at the bottom that stand on nothing.
 
