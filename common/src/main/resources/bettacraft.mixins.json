@@ -48,7 +48,8 @@
     "client.LevelRendererFrustumMixin",
     "client.LivingEntityRendererGlassMixin",
     "client.LivingEntityRenderStateMixin",
-    "client.SodiumFluidRendererMixin"
+    "client.SodiumFluidRendererMixin",
+    "client.SpriteSourceListMixin"
   ],
   "injectors": {
     "defaultRequire": 1
