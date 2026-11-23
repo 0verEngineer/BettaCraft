@@ -258,11 +258,13 @@ kein lauffähiges Release.
 
 ## Andere Mods
 
-* **Jade, The One Probe und WTHIT:** (bei mehreren nur das erste, siehe `compat.overlayProvider`) Der Blick auf ein Aquarium zeigt Name, Temperatur, Wasser und Tiere (schleichen
-  für die Liste; The One Probe braucht dafür seine Sonde), das Nest, die Filter und Warnungen; der Blick durch das Glas
-  auf einen Betta zeigt Typ, Geschlecht, Gesundheit, Hunger, Stufe und Gene. Filter und Schränke zeigen ihre
-  Heizstäbe und Kühler und das Aquarium, in das sie pumpen; Aquarien zeigen die Wasserqualität und den gespeicherten
-  Strom, Larvenbottiche und Zuchtbecken ihren Ansatz.
+* **Jade, The One Probe und WTHIT:** (bei mehreren nur das erste, siehe `compat.overlayProvider`) Der Blick auf ein Aquarium zeigt seinen Namen als
+  Überschrift (ein Aquarium ohne Namen: seine Art, Aquarium, Paludarium oder Terrarium), die Luft eines Terrariums oder
+  Paludariums und die Wasserqualität; schleichen (The One Probe: seine Sonde) zeigt alles andere: Glas, Temperatur und
+  Wasser (nicht bei einem Terrarium), Tiere mit ihrer Gesundheit, Nest, Filter, Beifische, Kleintiere, Salz, Algen,
+  Schwimmpflanzen, Verdunstung, Strom und Warnungen (ihre Zahl steht in der kurzen Ansicht). Der Blick durch das Glas auf
+  einen Betta zeigt Typ, Geschlecht, Gesundheit, Hunger, Stufe und Gene. Filter und Schränke zeigen ihre Heizstäbe und
+  Kühler und das Aquarium, in das sie pumpen, Larvenbottiche und Zuchtbecken ihren Ansatz.
 * **Energie-Mods:** Jede Mod mit Forge-Energy-Kabeln (FE) kann Aquarien versorgen, wenn ein Server `power.*`
   einschaltet; Wasserleitungen können Aquarien füllen und leeren und den Larvenbottich füllen, Trichter und
   Item-Leitungen funktionieren mit Futterautomat, Schrank, Larvenbottich und Zuchtbecken.

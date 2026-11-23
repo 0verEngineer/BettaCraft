@@ -25,6 +25,8 @@ The <ItemLink id="bettacraft:led_panel" /> is the **middle light tier**, stronge
   plants (Monte Carlo, Alternanthera) grow faster, and without CO2 and fertiliser the **algae** grow faster too.
 * Dye it like the light bar (right-click with a dye colours the whole panel); redstone switches it off; dimmer and
   daylight timer in the tank menu.
+* Directly on an aquarium it **covers** the blocks under it like a [lid](tank_lid.md): no evaporation there, nothing flies
+  out or climbs in.
 
 ## Obtaining
 

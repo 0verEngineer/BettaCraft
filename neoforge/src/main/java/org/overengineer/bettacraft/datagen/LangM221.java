@@ -9,7 +9,7 @@ final class LangM221 {
     static void addAll(BiConsumer<String, String> a) {
         // config: swaying water plants in the miniature
         a.accept("bettacraft.configuration.swayingPlants", "Swaying water plants in miniatures");
-        a.accept("bettacraft.configuration.swayingPlants.tooltip", "Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank (off: they stand still, only for you)");
+        a.accept("bettacraft.configuration.swayingPlants.tooltip", "Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank, the roots of the floating plants in the water (off: they stand still, only for you)");
         a.accept("bettacraft.configuration.swaying", "Swaying water plants");
         a.accept("bettacraft.configuration.autoDetect", "Find other water plants by themselves");
         a.accept("bettacraft.configuration.autoDetect.tooltip", "Besides #bettacraft:swaying_plants also every other underwater plant (plant material, waterlogged or a water plant, drawn as a cross or a plant model) sways (off: only the tag)");
