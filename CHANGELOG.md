@@ -45,6 +45,10 @@ Tank optics: connected glass at a distance, stalks on their base, swaying roots,
   column ended below the oral disc, the tentacles started under it), the mini orchid (flowers beside the end of their
   spike), Sedum (flowers above the tufts) and Mammillaria (flowers beside the ball). Every plant, coral and decoration was
   checked (the plant mesh test above; every decoration template has all its blocks on the ground).
+- **CurseForge description images did not load:** `gradlew curseforgeDescription` put the release tag verbatim into the
+  image and file links (`.../v1.52.0-beta.1+neoforge-26.3/docs/images/...`); CurseForge turned the '+' into a space and every
+  image failed (404). The tag is URL-encoded in the links now ('+' as '%2B', which GitHub accepts), and the task fails on a
+  GitHub link with an unencoded ref.
 
 ## [1.52.0-beta.1] - 2026-11-22
 
