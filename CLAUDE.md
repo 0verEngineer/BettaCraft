@@ -215,6 +215,7 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 ./gradlew runFabricClient -Psmoketestfabric --no-configuration-cache   # background client: M11 + M13 scenes, run-fabric/screenshots
 ./gradlew runFabricClient -Psmoketestbook -Poverlays|-Prei|-Pemi --no-configuration-cache   # handbook (Patchouli) en+de + recipe viewer
 ./gradlew prodFabricServer -Psmoketest / prodFabricClient -Psmoketestfabric   # production (intermediary) runs with official jars
+./gradlew prodFabricClient -Pforeground                  # the production client as a normal window (not in the background), to play it with the mouse
 ./gradlew fabricMultiplayerTest --no-configuration-cache   # Fabric server + two background clients (Dev1, Dev2)
 ./gradlew fabricSaveLoadTest --no-configuration-cache      # showcase world built on Fabric, reloaded twice, nothing lost
 ./gradlew runFabricGameTest -Pfabric_loader_version=<min> -Pfabric_api_version=<min> -PexactFabricVersions --no-configuration-cache   # the declared minimums exactly (fabric.mod.json, README)
