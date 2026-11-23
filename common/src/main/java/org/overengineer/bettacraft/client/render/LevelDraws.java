@@ -111,6 +111,10 @@ public final class LevelDraws {
         RenderPass p = pass != null ? pass : mainPass;
         List<Consumer<RenderPass>> now = new ArrayList<>(ops);
         ops.clear();
+        // M63b: with an Iris shader pack the main pass the mixin saw can be closed by the time the translucent stage comes (Iris
+        // splits the level drawing): "Can't use a closed render pass" crashed the client (Fabric 26.3, also in 1.51). Then the
+        // ops are drawn like a draw outside the pass (a pass of their own when none is open).
+        if (p != null && closed(p)) p = null;
         if (p == null) {
             for (Consumer<RenderPass> op : now) add(op);
             return true;
@@ -120,6 +124,24 @@ public final class LevelDraws {
             op.accept(p);
         }
         return true;
+    }
+
+    private static @Nullable java.lang.reflect.Field closedField;
+    private static boolean closedFieldTried;
+
+    /** Whether a render pass of the frontend was closed already (its private flag; false when it cannot be read). */
+    static boolean closed(RenderPass pass) {
+        if (!(pass instanceof com.mojang.renderpearl.frontend.FrontendRenderPass)) return false;
+        try {
+            if (!closedFieldTried) {
+                closedFieldTried = true;
+                closedField = com.mojang.renderpearl.frontend.FrontendRenderPass.class.getDeclaredField("isClosed");
+                closedField.setAccessible(true);
+            }
+            return closedField != null && closedField.getBoolean(pass);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
     }
 
     /** Whether a render pass is open on the device's encoder. */

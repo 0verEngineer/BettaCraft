@@ -26,6 +26,9 @@ Tank water without block seams, with and without shaders.
   itself looked empty: Iris draws the terrain with the pack's programs, which take their transform from another uniform
   than the vanilla terrain shader. The miniature now gives Iris its transform too and stays in its tank (NeoForge 26.3 has no Iris yet; Fabric 26.3 was affected). Without shaders
   nothing changed. In 1.51 as well.
+- **Crash with Sodium or Iris on Fabric 26.3** ("Can't use a closed render pass"): a miniature drawn in the translucent stage
+  went into the level's main render pass after Iris had closed it (also without a shader pack, now and then after a few
+  minutes in a world with many tanks; in 1.51 as well). Such draws now get a pass of their own.
 - **Open tanks looked closed:** a tank with glass texture drew the glass on its top faces as well, so the water of an open
   tank (no lid) looked like it lay under a pane with white streaks. The top faces have no glass any more (the thin edge
   lines stay); a lid is a block of its own. The item icon keeps its glass block look.
