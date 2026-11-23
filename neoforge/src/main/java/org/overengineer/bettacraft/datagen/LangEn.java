@@ -684,7 +684,7 @@ final class LangEn {
         a.accept("jade.bettacraft.nest.egg", "%s eggs");
         a.accept("jade.bettacraft.nest.larva", "%s larvae");
         a.accept("jade.bettacraft.sneak", "Sneak for details");
-        a.accept("jade.bettacraft.sneak_warnings", "Sneak for details (%s warnings)"); // M64
+        a.accept("jade.bettacraft.sneak_warnings", "Sneak for details (warnings: %s)"); // M64
         a.accept("jade.bettacraft.betta.type", "Betta (%s)");
         a.accept("jade.bettacraft.betta.health", "Health %s, fed %s");
         a.accept("jade.bettacraft.betta.hungry", "hungry");
