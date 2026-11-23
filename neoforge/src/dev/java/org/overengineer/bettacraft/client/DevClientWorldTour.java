@@ -53,6 +53,16 @@ final class DevClientWorldTour {
     private static final int RADIUS = Integer.getInteger("bettacraft.tour.radius", 16);
     private static final int LIMIT = Integer.getInteger("bettacraft.tour.limit", Integer.MAX_VALUE);
     private static final boolean BASELINE = Boolean.getBoolean("bettacraft.tour.baseline");
+    /** M63c: only these tanks ({@code -PtourTanks=t105_-59_33,...}, the ids of the picture names; default all). */
+    private static final java.util.Set<String> ONLY = java.util.Set.of(System.getProperty("bettacraft.tour.tanks", "").split(",")).stream()
+            .map(String::trim).filter(x -> !x.isEmpty()).collect(java.util.stream.Collectors.toUnmodifiableSet());
+    /** M63c: the 360 degree sweeps ({@code -PtourSweeps=false} leaves them out, for a quick look at a few tanks). */
+    private static final boolean SWEEPS = !"false".equals(System.getProperty("bettacraft.tour.sweeps"));
+    /**
+     * M63c: the views of every tank that are also taken without the miniatures, for the colour guard ({@code -PtourMiniCheck=side,below};
+     * {@code none} for no check). Default the side view.
+     */
+    private static final java.util.Set<String> MINI_CHECK = java.util.Set.of(System.getProperty("bettacraft.tour.minicheck", "side").split(","));
     /** Ticks after a teleport before the picture (the client follows the server position, the frame is drawn). */
     private static final int SETTLE = Integer.getInteger("bettacraft.tour.settle", 4);
     private static final int WIDTH = 960, HEIGHT = 540;
@@ -69,6 +79,7 @@ final class DevClientWorldTour {
     /** Where the last {@link #look} puts the camera: x, eye y, z, yaw, pitch. */
     private volatile double[] target;
     private int arrivedFor;
+    private int idleWait;
 
     /** A tank: its box (min inclusive, size) and the side its front faces. */
     record Tank(BlockPos min, int sx, int sy, int sz, Direction front, String name) {
@@ -249,19 +260,28 @@ final class DevClientWorldTour {
             then(240, () -> logPack(pack));
             if (first) then(0, () -> {});
             for (Tank t : list) {
+                if (!ONLY.isEmpty() && !ONLY.contains(t.id())) continue;
                 for (String v : VIEWS.split(",")) {
                     String view = v.trim();
                     double[] cam = clear(camera(t, view), list, t);
                     if (cam == null) continue;
                     then(1, () -> lookAt(cam[0], cam[1], cam[2], new Vec3(cam[3], cam[4], cam[5])));
                     thenAt(SETTLE, () -> shot(pn, t.id() + "_" + view));
+                    if (MINI_CHECK.contains(view) && hideMiniatures(true, true)) {
+                        // M63c: the same view without the miniatures: the miniature must show in colour (see miniatureColourGuard)
+                        then(1, () -> hideMiniatures(true, false));
+                        then(SETTLE, () -> shot(pn, t.id() + "_" + view + "_nomini"));
+                        then(1, () -> hideMiniatures(false, false));
+                        then(SETTLE, () -> shot(pn, t.id() + "_" + view + "_again"));
+                        then(1, () -> measureMiniature(pn, t, view, cam));
+                    }
                     if (first && view.equals(VIEWS.split(",")[0].trim())) then(0, () -> checkTop(t));
                 }
             }
             // 360 degree sweeps (pitch -20: sky; 25: ground) at the four corners outside the tank area and high above its middle
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
-            for (int s = 0; s < spots.length; s++) {
+            for (int s = 0; SWEEPS && s < spots.length; s++) {
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
@@ -283,6 +303,7 @@ final class DevClientWorldTour {
             }
         }
         then(1, this::openTopGuard);
+        then(40, this::miniatureColourGuard); // the last screenshots are written meanwhile
         then(1, this::restoreIris);
     }
 
@@ -500,6 +521,95 @@ final class DevClientWorldTour {
         }
     }
 
+    /** M63c: no miniature mesh job waiting or running (reflection: the tour also runs in the worktree of an old release). */
+    private static boolean miniaturesIdle() {
+        return miniaturesBusy() == null;
+    }
+
+    /** Why the miniatures around are not meshed yet, null when they are. */
+    private static String miniaturesBusy() {
+        try {
+            return (String) org.overengineer.bettacraft.client.interior.MiniatureRenderer.class.getMethod("busyForTest").invoke(null);
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    /** M63c: the miniature's pixels of one tank view (the steady ones): how many change without it and how bright they are with it. */
+    private record MiniLook(int changed, double luma) {}
+
+    private final java.util.Map<String, java.util.Map<String, MiniLook>> miniLooks = new java.util.LinkedHashMap<>();
+    /** The views to measure at the end (a screenshot is written a little later than it is taken). */
+    private final List<Runnable> miniMeasures = new ArrayList<>();
+
+    private void measureMiniature(String pack, Tank t, String view, double[] cam) {
+        miniMeasures.add(() -> measureMiniatureNow(pack, t, view, cam));
+    }
+
+    private void measureMiniatureNow(String pack, Tank t, String view, double[] cam) {
+        File dir = new File(out, "screenshots/" + pack);
+        try {
+            java.awt.image.BufferedImage a = javax.imageio.ImageIO.read(new File(dir, t.id() + "_" + view + ".png")),
+                    b = javax.imageio.ImageIO.read(new File(dir, t.id() + "_" + view + "_nomini.png")),
+                    c = javax.imageio.ImageIO.read(new File(dir, t.id() + "_" + view + "_again.png"));
+            if (a == null || b == null || c == null || a.getWidth() != b.getWidth() || a.getHeight() != b.getHeight() || a.getWidth() != c.getWidth()
+                    || a.getHeight() != c.getHeight()) return;
+            int w = a.getWidth(), h = a.getHeight();
+            boolean[] mask = new boolean[w * h];
+            double dx = cam[3] - cam[0], dy = cam[4] - cam[1], dz = cam[5] - cam[2];
+            float yaw = (float) (Math.toDegrees(Math.atan2(dz, dx)) - 90.0);
+            float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+            maskBox(mask, w, h, t, cam[0], cam[1], cam[2], yaw, pitch, mc.options.fov().get());
+            int changed = 0;
+            double luma = 0;
+            for (int py = 0; py < h; py++)
+                for (int px = 0; px < w; px++) {
+                    if (!mask[py * w + px]) continue;
+                    int pa = a.getRGB(px, py);
+                    // only where the picture is steady (the same before and after: a chunk at the edge of the world fading in)
+                    if (delta(pa, c.getRGB(px, py)) > 24 || delta(pa, b.getRGB(px, py)) <= 24) continue;
+                    changed++;
+                    luma += 0.2126 * (pa >> 16 & 255) + 0.7152 * (pa >> 8 & 255) + 0.0722 * (pa & 255);
+                }
+            miniLooks.computeIfAbsent(pack, k -> new java.util.LinkedHashMap<>()).put(t.id() + "_" + view, new MiniLook(changed, changed == 0 ? 0 : luma / changed));
+        } catch (IOException e) {
+            guard(false, "miniature colour " + pack + " " + t.id() + "_" + view + ": " + e);
+        }
+    }
+
+    /**
+     * M63c guard: with a shader pack every miniature shows, and in colour. Against the run without shaders (pack {@code none}):
+     * a tank view whose miniature changes at least 300 pixels there (and is not dark itself) fails when with the pack its
+     * miniature changes less than 15 % of those pixels (not drawn) or comes out at less than 35 % of the brightness (the 26.3
+     * Iris/BSL miniature was a black, dark blue or green cut-out).
+     */
+    private void miniatureColourGuard() {
+        for (Runnable r : miniMeasures) r.run();
+        miniMeasures.clear();
+        java.util.Map<String, MiniLook> none = miniLooks.get("noshader");
+        if (none == null) {
+            if (!miniLooks.isEmpty()) {
+                String l = "SKIP miniature colour: no run without shaders to compare with (packs " + packs() + ")";
+                summary.add(l);
+                LOGGER.info("[smoketest] world tour guard {}", l);
+            }
+            return;
+        }
+        for (var pe : miniLooks.entrySet()) {
+            if (pe.getKey().equals("noshader")) continue;
+            int checked = 0;
+            List<String> bad = new ArrayList<>();
+            for (var te : pe.getValue().entrySet()) {
+                MiniLook n = none.get(te.getKey()), p = te.getValue();
+                if (n == null || n.changed() < 300 || n.luma() < 60) continue;
+                checked++;
+                if (p.changed() < n.changed() * 0.15) bad.add(String.format(Locale.ROOT, "%s not drawn (%d of %d px)", te.getKey(), p.changed(), n.changed()));
+                else if (p.luma() < n.luma() * 0.35) bad.add(String.format(Locale.ROOT, "%s dark (luma %.0f, without shaders %.0f)", te.getKey(), p.luma(), n.luma()));
+            }
+            guard(bad.isEmpty(), String.format(Locale.ROOT, "miniature colour %s: %d tank views checked, %d without colour %s", pe.getKey(), checked, bad.size(), bad));
+        }
+    }
+
     private static int delta(int pa, int pb) {
         return Math.max(Math.abs((pa >> 16 & 255) - (pb >> 16 & 255)), Math.max(Math.abs((pa >> 8 & 255) - (pb >> 8 & 255)), Math.abs((pa & 255) - (pb & 255))));
     }
@@ -684,6 +794,13 @@ final class DevClientWorldTour {
                 return false;
             }
             if (arrivedFor < s.delay()) LOGGER.warn("[smoketest] world tour: the camera did not reach {} in 60 ticks (pushed out of a block?)", java.util.Arrays.toString(target));
+            // M63c: and once the miniatures around are meshed (a tank whose chunks just loaded was taken without its miniature)
+            if (!miniaturesIdle() && idleWait < 200) {
+                idleWait++;
+                return false;
+            }
+            if (idleWait >= 200) LOGGER.warn("[smoketest] world tour: the miniatures were still being meshed after 200 ticks at {} ({})", java.util.Arrays.toString(target), miniaturesBusy());
+            idleWait = 0;
         } else if (wait < s.delay()) {
             wait++;
             return false;

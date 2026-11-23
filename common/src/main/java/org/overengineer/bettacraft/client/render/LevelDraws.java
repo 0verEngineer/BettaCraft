@@ -114,7 +114,10 @@ public final class LevelDraws {
         // M63b: with an Iris shader pack the main pass the mixin saw can be closed by the time the translucent stage comes (Iris
         // splits the level drawing): "Can't use a closed render pass" crashed the client (Fabric 26.3, also in 1.51). Then the
         // ops are drawn like a draw outside the pass (a pass of their own when none is open).
-        if (p != null && closed(p)) p = null;
+        if (p != null && closed(p)) {
+            p = null;
+            noteClosed("its flag");
+        }
         if (p == null) {
             for (Consumer<RenderPass> op : now) add(op);
             return true;
@@ -127,6 +130,7 @@ public final class LevelDraws {
                 // the pass was closed after all (the check above reads a private flag, which a production run cannot name):
                 // this op and the rest like a draw outside the pass
                 p = null;
+                noteClosed("the exception");
                 add(op);
             }
             if (p == null) {
@@ -135,6 +139,13 @@ public final class LevelDraws {
             }
         }
         return true;
+    }
+
+    private static final java.util.Set<String> NOTED = new java.util.HashSet<>();
+
+    /** M63c: once per way of finding it, that a closed main pass was met (the production run of 26.3 Fabric only sees the exception). */
+    private static void noteClosed(String how) {
+        if (NOTED.add(how)) LOGGER.info("The main render pass was closed already (found by {}); the mod's draws of that stage get a pass of their own", how);
     }
 
     private static @Nullable java.lang.reflect.Field closedField;

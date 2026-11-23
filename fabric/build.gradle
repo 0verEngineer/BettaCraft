@@ -125,7 +125,7 @@ loom {
             // [-PtourRadius=<chunks>] [-PtourLimit=<tanks>] [-PtourBaseline]: the real-world tour (DevClientWorldTour, see neoforge/build.gradle)
             if (project.hasProperty('smoketestworldtour')) {
                 property 'bettacraft.smoketest.worldtour', 'true'
-                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle'].each { k, v ->
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourTanks': 'tanks', 'tourSweeps': 'sweeps', 'tourMiniCheck': 'minicheck'].each { k, v ->
                     if (project.hasProperty(k)) property "bettacraft.tour.${v}", project.property(k).toString()
                 }
                 if (project.hasProperty('tourBaseline')) property 'bettacraft.tour.baseline', 'true'
@@ -632,6 +632,22 @@ def prodProps = { boolean client ->
         if (!project.hasProperty('sound')) l << '-Dbettacraft.silent=true'
         if (project.hasProperty('smoketestfabric')) l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true']
         if (project.hasProperty('smoketestbook')) l << '-Dbettacraft.smoketest.book=true'
+        // M63c: the shader water scene and the real-world tour in production as well (the closed-pass path of LevelDraws differs
+        // there: the private flag of the render pass cannot be read, the exception is caught)
+        if (project.hasProperty('smoketestm63')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m63only=true']
+            if (project.hasProperty('m63packs')) l << "-Dbettacraft.smoketest.m63packs=${project.property('m63packs')}".toString()
+            if (project.hasProperty('m63tag')) l << "-Dbettacraft.smoketest.m63tag=${project.property('m63tag')}".toString()
+            if (project.hasProperty('m63parts')) l << "-Dbettacraft.smoketest.m63parts=${project.property('m63parts')}".toString()
+        }
+        if (project.hasProperty('smoketestworldtour')) {
+            l << '-Dbettacraft.smoketest.worldtour=true'
+            ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle',
+             'tourTanks': 'tanks', 'tourSweeps': 'sweeps', 'tourMiniCheck': 'minicheck'].each { k, v ->
+                if (project.hasProperty(k)) l << "-Dbettacraft.tour.${v}=${project.property(k)}".toString()
+            }
+            if (project.hasProperty('tourBaseline')) l << '-Dbettacraft.tour.baseline=true'
+        }
     }
     l
 }
@@ -658,6 +674,14 @@ tasks.register('prodFabricClient', net.fabricmc.loom.task.prod.ClientProductionR
     minecraftVersion = prodMinecraft
     runDir = rootProject.layout.projectDirectory.dir("${fabricRunRoot}/prod-client")
     jvmArgs.addAll(prodProps(true))
+    // M63c: -Pshaders: the shader mods of the manifest (<fabricRunRoot>/shader-mods, filled by runFabricClient -Pshaders) and its packs
+    if (project.hasProperty('shaders')) {
+        mods.from(rootProject.fileTree("${fabricRunRoot}/shader-mods") { include '*.jar' })
+        doFirst {
+            def packs = rootProject.file("${fabricRunRoot}/prod-client/shaderpacks"); packs.mkdirs()
+            rootProject.fileTree("${fabricRunRoot}/shaderpacks") { include '*.zip' }.each { java.nio.file.Files.copy(it.toPath(), new File(packs, it.name).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING) }
+        }
+    }
     programArgs.addAll(['--width', '1280', '--height', '760'])
 }
 
