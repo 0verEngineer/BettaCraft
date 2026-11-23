@@ -1570,16 +1570,20 @@ final class PlantMeshBuilder {
         for (int i = 0; i < mids.size(); i++) {
             Vector3f mid = mids.get(i);
             long ck = centres.get(i).getLong(0);
-            Vector3f foot = new Vector3f(0.5F + (mid.x - 0.5F) * 0.3F, 0.1F, 0.5F + (mid.z - 0.5F) * 0.3F);
+            // M64: every stalk starts on the root block (the generator's stalk blocks run from the root to the disc); before, a
+            // far disc's stalk began a third of the way out at the root's height and ended in the water beside the rock
+            Vector3f foot = new Vector3f(0.5F + Math.clamp((mid.x - 0.5F) * 0.3F, -0.3F, 0.3F), 0.1F, 0.5F + Math.clamp((mid.z - 0.5F) * 0.3F, -0.3F, 0.3F));
             Vector3f at = new Vector3f(mid.x, mid.y + 0.15F, mid.z);
             anim(PlantMeshRenderer.ANIM_RISE, foot, Math.max(0.5F, at.distance(foot) * 0.6F));
             use(ck, PlantPart.STEM);
-            tube(PlantTex.FLESH, foot, new Vector3f(at).sub(0, 0.2F, 0), 0.32F, 0.26F, 6);
+            float yaw = hash(ck, 4) * 6.28F;
+            Vector3f tilt = new Vector3f((hash(ck, 5) - 0.5F) * 0.35F, 1, (hash(ck, 6) - 0.5F) * 0.35F);
+            // M64: up to the underside of the domed disc (it ended 0.2 below the disc's centre while the dome rises 0.22 above
+            // it: every disc floated over its stalk)
+            tube(PlantTex.FLESH, foot, new Vector3f(at).add(new Vector3f(tilt).normalize().mul(0.22F * 0.85F)), 0.32F, 0.26F, 6);
             int outer = colorOf(PlantSkeleton.x(ck), PlantSkeleton.y(ck), PlantSkeleton.z(ck), PlantPart.LEAF);
             int inner = colorOf(PlantSkeleton.x(ck), PlantSkeleton.y(ck), PlantSkeleton.z(ck), PlantPart.TOP);
             use(ck, PlantPart.LEAF);
-            float yaw = hash(ck, 4) * 6.28F;
-            Vector3f tilt = new Vector3f((hash(ck, 5) - 0.5F) * 0.35F, 1, (hash(ck, 6) - 0.5F) * 0.35F);
             disc(PlantTex.MUSHROOM, at, tilt, new Vector3f((float) Math.cos(yaw), 0, (float) Math.sin(yaw)), (radius[i] + 0.65F) * style.detail(),
                     0.22F, 0.08F, 12, inner, outer);
             still();
@@ -1797,7 +1801,9 @@ final class PlantMeshBuilder {
             disc = Math.max(disc, Math.max(Math.abs(BlockPos.getX(k)), Math.abs(BlockPos.getZ(k))));
         }
         use(0, 0, 0, PlantPart.LEAF);
-        tube(PlantTex.FLESH, new Vector3f(0.5F, 0F, 0.5F), new Vector3f(0.5F, footY + 0.4F, 0.5F), 1.0F, 0.8F, 8);
+        // M64: the column reaches the domed oral disc (it ended 0.4 below it: a gap under the disc from a low angle)
+        float discR = disc + 0.7F, top = footY + 0.55F + 0.25F * (1 - (0.8F / discR) * (0.8F / discR));
+        tube(PlantTex.FLESH, new Vector3f(0.5F, 0F, 0.5F), new Vector3f(0.5F, top, 0.5F), 1.0F, 0.8F, 8);
         int footC = colorOf(0, footY, 0, PlantPart.LEAF);
         disc(PlantTex.MUSHROOM, new Vector3f(0.5F, footY + 0.55F, 0.5F), new Vector3f(0, 1, 0), new Vector3f(1, 0, 0), disc + 0.7F, 0.25F, 0.15F, 14,
                 lerpColor(footC, colorOf(0, footY, 0, PlantPart.TOP), 0.35F), footC);
@@ -1822,7 +1828,9 @@ final class PlantMeshBuilder {
                 }
                 pts.add(c(cx, yy, cz));
             }
-            pts.add(new Vector3f(cx + 0.5F, footY + 0.55F, cz + 0.5F));
+            // M64: the tentacle starts on the domed disc (not under it)
+            float rr = Math.min(1F, (float) Math.sqrt(cx * cx + cz * cz) / discR);
+            pts.add(new Vector3f(cx + 0.5F, footY + 0.55F + 0.25F * (1 - rr * rr) - 0.02F, cz + 0.5F));
             java.util.Collections.reverse(pts);
             pts = smooth(pts, 2);
             Vector3f base = pts.getFirst();
