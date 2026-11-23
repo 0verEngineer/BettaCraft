@@ -486,7 +486,14 @@ final class DevClientWorldTour {
                     if (delta(pa, pc) > 24) continue;
                     if (delta(pa, pb) > 48) differ++;
                 }
-            double share = total == 0 ? 0 : differ * 100.0 / total;
+            if (total == 0) {
+                // a tank partly behind the camera masks the whole picture: nothing left to check here
+                String l = "SKIP miniature " + pack + " " + view + ": every pixel within a tank box (a tank partly behind the camera)";
+                summary.add(l);
+                LOGGER.info("[smoketest] world tour guard {}", l);
+                return;
+            }
+            double share = differ * 100.0 / total;
             guard(share <= 0.3, String.format(Locale.ROOT, "miniature %s %s: %d of %d pixels outside the %d tank boxes differ (%.2f %%)", pack, view, differ,
                     total, masked, share));
         } catch (IOException e) {
