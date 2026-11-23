@@ -60,67 +60,6 @@
         16,
         9.5
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "neoforge_data": {
-            "block_light": 15,
-            "sky_light": 15
-          },
-          "texture": "#panel",
-          "tintindex": 0
-        },
-        "east": {
-          "texture": "#housing",
-          "uv": [
-            6.5,
-            14.0,
-            9.5,
-            16.0
-          ]
-        },
-        "north": {
-          "texture": "#housing",
-          "uv": [
-            0.0,
-            14.0,
-            16.0,
-            16.0
-          ]
-        },
-        "south": {
-          "texture": "#housing",
-          "uv": [
-            0.0,
-            14.0,
-            16.0,
-            16.0
-          ]
-        },
-        "up": {
-          "texture": "#housing"
-        },
-        "west": {
-          "texture": "#housing",
-          "uv": [
-            6.5,
-            14.0,
-            9.5,
-            16.0
-          ]
-        }
-      },
-      "from": [
-        0,
-        14,
-        6.5
-      ],
-      "to": [
-        16,
-        16,
-        9.5
-      ]
     }
   ],
   "textures": {
