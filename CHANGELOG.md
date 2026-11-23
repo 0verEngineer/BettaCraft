@@ -29,6 +29,11 @@ Tank water without block seams, with and without shaders.
 - `ChunkUnloadGameTests` failed now and then on CI (26.3, "the animals did not come back"): an idle GameTest server ticks a
   few hundred times a second, while chunks and entities load in real time; the 600 ticks it waited were half a second. Every
   wait now gets at least a minute of real time; nothing was lost.
+- **A tank looked broken after a refused break (Fabric):** breaking a block of a tank that may not be broken (the break
+  protection, as on every tank of the showcase, a claim, another mod that refuses the break) removed the block on the
+  client for a moment; when the server said no, the block came back without its tank data: the tank lost its miniature,
+  water, sign or glass until the world was joined again. NeoForge kept the data. The client now leaves the removal of a
+  tank block to the server (both loaders), so nothing flickers and nothing is lost.
 
 ### Changed
 - Development: the client smoke `-Psmoketestm63` (both loaders) shows two tanks with every shader pack of the manifest
@@ -41,6 +46,10 @@ Tank water without block seams, with and without shaders.
   glass on open tops; `py tools/tour/compare.py` compares two tours (e.g. this version and the last release) picture by
   picture. `buildShowcase` builds the showcase on the ground again (the spawn chunk was not loaded: it stood
   buried at the bottom of the world).
+- Development: the real-world tour takes `-PtourViews=break` (the refused break of the lower right block of every tank,
+  pictures before and after with and without the miniatures, the client's blocks and tank data around it against the
+  server's) and `-PtourNames=<part of a tank name>,...`; `-Psmoketestm63` has the same check in a fixed scene
+  (`-Pm63parts=break`); `prodFabricClient -Pforeground` starts the production client as a normal window.
 
 ## [1.51.0-beta.1] - 2026-11-22
 

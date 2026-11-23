@@ -354,8 +354,14 @@ public class TankBlock extends BaseEntityBlock implements BlockRemoval, org.over
             return false;
         }
         playerWillDestroy(level, pos, state, player);
+        // M63d: the client never removes a tank block by itself, the server's block update does it. A predicted removal took the
+        // block entity with it; when the server refused (break protection, a claim, another mod's break event) the client put the
+        // block back with an empty block entity (on Fabric the server's block entity data arrived while the block was still air
+        // and was dropped): no controller, no tank data, so the miniature, the water, the sign and the glass of the block were
+        // wrong until the world was joined again.
+        if (level.isClientSide()) return false;
         // The water simply vanishes: the block becomes air, never a water source (PLAN 4.1).
-        return level.setBlock(pos, Blocks.AIR.defaultBlockState(), level.isClientSide() ? 11 : 3);
+        return level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     }
 
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
