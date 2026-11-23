@@ -100,6 +100,14 @@ class ConnectedGlassTest {
         int[] left = ConnectedGlass.withoutFrame(tex, 16, 16, 1, GlassVariants.LEFT);
         for (int y = 1; y < 15; y++) assertEquals(inside, left[y * 16], "left column without frame, row " + y);
         assertEquals(frame, left[0], "top left corner: still the top edge's frame");
+        // M64: a shaded frame (top row light, the side columns darker, the corners in the side colour like vanilla glass):
+        // with the right edge hidden the top line goes on in its own colour, also in the top right corner
+        int light = 0xFFD0EAE9, dark = 0xFFA8D0D9;
+        int[] shaded = texture(16, 1, dark, inside);
+        for (int x = 1; x < 15; x++) shaded[x] = light;
+        int[] right = ConnectedGlass.withoutFrame(shaded, 16, 16, 1, GlassVariants.RIGHT);
+        assertEquals(light, right[15], "top right corner continues the light top line");
+        assertEquals(dark, right[0], "top left corner (both edges kept) unchanged");
         assertEquals(frame, left[15], "right edge keeps its frame");
         int[] all = ConnectedGlass.withoutFrame(tex, 16, 16, 1, 15);
         for (int k = 0; k < 256; k++) assertEquals(inside, all[k], "all edges hidden: no frame at " + k);
