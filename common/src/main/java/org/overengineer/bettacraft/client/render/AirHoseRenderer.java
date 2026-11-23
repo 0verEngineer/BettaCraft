@@ -29,14 +29,12 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 /**
  * M23: the air hose of an air pump: from the pump up the glass, over the rim and down into the water of the tank it
  * serves (a pump on the tank: straight down). Thin clear silicone tube. M29.1: the hose goes down along the glass to
- * the floor and over the floor to the air stones and sponge filters (to the nearest one first, then from one to the
- * next); an air pump in the cabinet sends its hose up next to the filter hose at the cabinet's outlet side.
+ * the floor (M64: not over the floor to the stones any more); an air pump in the cabinet sends its hose up next to the
+ * filter hose at the cabinet's outlet side.
  */
 public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.LegacyBlockEntityRenderer<AirPumpBlockEntity> {
     public static final Identifier TEXTURE = BettaCraft.id("textures/entity/filter/air_hose.png");
     private static final float HALF = 0.02F;
-    /** At most this many stones are joined by one hose (more would only clutter the floor). */
-    private static final int MAX_TARGETS = 6;
 
     public AirHoseRenderer(BlockEntityRendererProvider.Context ctx) {}
 
@@ -71,49 +69,12 @@ public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.L
 
     /**
      * M29.1: the part in the water, from the last point of {@code pts} (inside the tank, above the water or at its rim):
-     * straight down to the floor near the glass, then over the floor to the nearest air stone or sponge filter and from
-     * there on to the next nearest (at most {@link #MAX_TARGETS}); without any, the hose ends on the floor.
+     * straight down along the glass. M64: it ends on the floor by the glass; it no longer runs over the floor to the air
+     * stones and sponge filters (a hose lying on the substrate looked out of place; the stones still bubble).
      */
     static void inWater(List<Vec3> pts, TankData t) {
         Vec3 entry = pts.getLast();
-        List<Vec3> targets = new ArrayList<>(MiniatureJets.airTargets(t));
-        double floor = MiniatureJets.floorY(t);
-        if (targets.isEmpty()) {
-            pts.add(new Vec3(entry.x, floor, entry.z));
-            return;
-        }
-        Vec3 at = new Vec3(entry.x, floor, entry.z);
-        Vec3 first = nearest(targets, at);
-        pts.add(new Vec3(entry.x, Math.min(first.y, entry.y), entry.z));
-        for (int n = 0; n < MAX_TARGETS && !targets.isEmpty(); n++) {
-            Vec3 next = n == 0 ? first : nearest(targets, at);
-            targets.remove(next);
-            // along the floor (or at the height of a sponge filter's lift tube) in straight runs, like a laid hose
-            straight(pts, next);
-            at = next;
-        }
-    }
-
-    /** Adds the way from the last point to {@code to} as straight runs along the axes (down first, up last). */
-    private static void straight(List<Vec3> pts, Vec3 to) {
-        Vec3 p = pts.getLast();
-        if (to.y < p.y) pts.add(p = new Vec3(p.x, to.y, p.z));
-        if (Math.abs(to.x - p.x) > 1e-4) pts.add(p = new Vec3(to.x, p.y, p.z));
-        if (Math.abs(to.z - p.z) > 1e-4) pts.add(p = new Vec3(p.x, p.y, to.z));
-        if (Math.abs(to.y - p.y) > 1e-4) pts.add(to);
-    }
-
-    private static Vec3 nearest(List<Vec3> targets, Vec3 from) {
-        Vec3 best = targets.getFirst();
-        double bd = Double.MAX_VALUE;
-        for (Vec3 v : targets) {
-            double dx = v.x - from.x, dz = v.z - from.z, d = dx * dx + dz * dz;
-            if (d < bd) {
-                bd = d;
-                best = v;
-            }
-        }
-        return best;
+        pts.add(new Vec3(entry.x, MiniatureJets.floorY(t), entry.z));
     }
 
     /** Draws the hose through the points (every segment is a box along one axis: {@link FlowRenderer#segment}). */
