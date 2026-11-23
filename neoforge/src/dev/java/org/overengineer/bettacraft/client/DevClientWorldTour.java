@@ -611,12 +611,28 @@ final class DevClientWorldTour {
      * without the miniatures.
      */
     private void miniatureGuard(String pack, String view, double x, double eyeY, double z, float yaw, float pitch) {
+        miniatureGuard(pack, view, x, eyeY, z, yaw, pitch, 0);
+    }
+
+    private void miniatureGuard(String pack, String view, double x, double eyeY, double z, float yaw, float pitch, int tries) {
         File dir = new File(out, "screenshots/" + pack);
+        // M64: the screenshots are written in the background; under load (several runs at once) the third one was not on disk
+        // yet ("pictures missing"): wait for them, up to 100 ticks
+        boolean ready = true;
+        for (String f : new String[] {view + ".png", view + "_nomini.png", view + "_again.png"}) ready &= new File(dir, f).length() > 0;
+        if (!ready && tries < 20) {
+            steps.addFirst(new Step(5, () -> miniatureGuard(pack, view, x, eyeY, z, yaw, pitch, tries + 1)));
+            return;
+        }
         try {
             java.awt.image.BufferedImage a = javax.imageio.ImageIO.read(new File(dir, view + ".png")), b = javax.imageio.ImageIO.read(new File(dir, view + "_nomini.png")),
                     c = javax.imageio.ImageIO.read(new File(dir, view + "_again.png"));
             if (a == null || b == null || c == null || a.getWidth() != b.getWidth() || a.getHeight() != b.getHeight() || a.getWidth() != c.getWidth()
                     || a.getHeight() != c.getHeight()) {
+                if (tries < 20) { // a picture still being written
+                    steps.addFirst(new Step(5, () -> miniatureGuard(pack, view, x, eyeY, z, yaw, pitch, tries + 1)));
+                    return;
+                }
                 guard(false, "miniature " + pack + " " + view + ": pictures missing");
                 return;
             }
