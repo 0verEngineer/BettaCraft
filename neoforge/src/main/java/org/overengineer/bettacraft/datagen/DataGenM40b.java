@@ -80,7 +80,7 @@ final class DataGenM40b {
                     PipeModels.bundleArm(m, arm, d);
                     float[] c = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.COLLAR, 1.5F, mid);
                     BlockModelBuilder t = p.models().getBuilder(name + "_tee").texture("c", p.modLoc("block/pipe_tee")).texture("particle", tex).renderType("solid");
-                    t.element().from(c[0], c[1], c[2]).to(c[3], c[4], c[5]).allFaces((dd, f) -> f.texture("#c").uvs(5, 5, 11, 11)).end();
+                    t.element().from(c[0], c[1], c[2]).to(c[3], c[4], c[5]).allFaces((dd, f) -> f.texture("#c").uvs(6, 6, 10, 10)).end();
                 }
             }
         }

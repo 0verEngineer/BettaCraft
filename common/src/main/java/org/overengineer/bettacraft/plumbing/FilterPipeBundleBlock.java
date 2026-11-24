@@ -61,9 +61,9 @@ import org.overengineer.bettacraft.registry.ModItems;
 public class FilterPipeBundleBlock extends BaseEntityBlock implements org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
     public static final MapCodec<FilterPipeBundleBlock> CODEC = simpleCodec(FilterPipeBundleBlock::new);
     /** The manifold in the middle (in pixels). */
-    public static final float HUB_MIN = 3.5F, HUB_MAX = 12.5F;
+    public static final float HUB_MIN = 4.625F, HUB_MAX = 11.375F; // M65: 6.75 px (was 9)
     /** Half the width of an arm and of a T-piece collar, the distance of an arm from the middle of its face. */
-    public static final float ARM = 2F, COLLAR = 2.4F, OFFSET = 2.5F;
+    public static final float ARM = 1.5F, COLLAR = 1.8F, OFFSET = 1.875F; // M65: 3 px arms like the single pipes (were 4 px), all 3/4 of before
     private static final VoxelShape HUB = box(HUB_MIN, HUB_MIN, HUB_MIN, HUB_MAX, HUB_MAX, HUB_MAX);
     private static final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<VoxelShape> SHAPES = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
 

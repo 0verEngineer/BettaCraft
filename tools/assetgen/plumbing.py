@@ -52,10 +52,10 @@ def steel(seed, base="#b9c0c8", frame=True):
     return _img(px)
 
 
-# M65: the pipes are 4 px thick (columns 6..9 of the texture across the pipe) and drawn with the texture's columns across
+# M65: the pipes are 3 px thick (columns 6.5..9.5 of the texture across the pipe: half of 6, 7, 8, half of 9) and drawn with the texture's columns across
 # the pipe and its rows along it on every face (the models pick the texture or its transposed copy "_r" per face). The
 # shading depends on the column only, so a pipe has no lines across it at the block borders or in the middle of a block.
-PIPE_SHADE = {6: 0.84, 7: 1.0, 8: 0.97, 9: 0.86}
+PIPE_SHADE = {6: 0.8, 7: 1.0, 8: 0.94, 9: 0.8}
 
 
 def pipe_shade(x):
@@ -68,7 +68,7 @@ def transposed(img):
 
 
 def glass_pipe_tex():
-    """Glass pipe wall: clear glass with a bright edge along both sides and a highlight line, nothing across."""
+    """Glass pipe wall (3 px): denser edges along both sides and a highlight, nothing across."""
     def px(x, y):
         if x in (6, 9):
             return _rgb("#d8f0f4")
@@ -78,10 +78,10 @@ def glass_pipe_tex():
 
     def a(x, y):
         if x in (6, 9):
-            return 190
+            return 200
         if x == 7:
-            return 140
-        return 70
+            return 150
+        return 80
     return _img(px, a)
 
 
