@@ -9,11 +9,11 @@ version as release notes.
 Thinner, cleaner pipes; no water over blocks at the glass.
 
 ### Changed
-- **Pipes:** the glass, stainless steel and filter pipes are 4 px thick instead of 6. Their textures run along the pipe on
+- **Pipes:** the glass, stainless steel and filter pipes are 3 px thick instead of 6, the pipe bundles and their manifold smaller to match. Their textures run along the pipe on
   every face (lighter in the middle, darker along the edges) without the grey lines across them at every block border and in
   the middle of a block; a glass pipe shows no faces inside it any more. The filter pipes carry a ring of their line's colour
   (blue, orange, green, brown) at every block border. The T-piece is a grey steel collar like the pipes (it was a brown brass
-  box), 6 px instead of 8.
+  box), 4.5 px instead of 8.
 - **Pipe bundles:** where a line leaves a bundle into a single pipe (or a filter connector, an aquarium), its arm comes out of
   the middle of the manifold, in line with the pipe; it kept to its corner of the manifold and the pipe stepped sideways at the
   block border. Between two bundles every line keeps its corner as before.
