@@ -11,6 +11,9 @@
 # its reference world from an old commit). The mod groups (integration, zoo, Fabric groups) run in the manual workflow
 # integration.yml.
 name: Build
+# M65: the run says what it builds (the commit message otherwise), e.g. "Build master", "Build master (full, fabric)",
+# "Build PR #12 (m65-pipes)"; a call from release.yml runs under the release's name
+run-name: "Build ${{ github.event_name == 'pull_request' && format('PR #{0} ({1})', github.event.number, github.head_ref) || github.ref_name }}${{ inputs.full && (inputs.loader != '' && inputs.loader != 'both') && format(' (full, {0})', inputs.loader) || inputs.full && ' (full)' || (inputs.loader != '' && inputs.loader != 'both') && format(' ({0})', inputs.loader) || '' }}"
 
 on:
   push:
@@ -88,6 +91,10 @@ jobs:
           chmod +x gradlew
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew build releaseNotes $GRADLE_ARGS
+
+      # M65: the CurseForge description follows the commit behind its ref (a tag set again must not stay UP-TO-DATE)
+      - name: CurseForge description cache test
+        run: bash tools/ci/test_curseforge_description.sh
 
       - name: Generated resources are up to date (runData)
         run: |
