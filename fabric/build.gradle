@@ -142,6 +142,15 @@ loom {
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
             }
+            // M65: -Psmoketestm65 [-Pshaders] [-Pm65packs=...] [-Pm65tag=<name>] [-Pm65parts=pipes,wall]: pipes, water at blocks against the glass
+            if (project.hasProperty('smoketestm65')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m65only', 'true'
+                if (project.hasProperty('m65packs')) property 'bettacraft.smoketest.m65packs', project.property('m65packs').toString()
+                if (project.hasProperty('m65tag')) property 'bettacraft.smoketest.m65tag', project.property('m65tag').toString()
+                if (project.hasProperty('m65parts')) property 'bettacraft.smoketest.m65parts', project.property('m65parts').toString()
+            }
             // M64: -Psmoketestm64 [-Pshaders] [-Pm64packs=...] [-Pm64tag=<name>] [-Pm64parts=glass,hose,coral,float,lid]: the tank optics of M64
             if (project.hasProperty('smoketestm64')) {
                 property 'bettacraft.smoketest.world', 'true'
@@ -697,6 +706,13 @@ def prodProps = { boolean client ->
             if (project.hasProperty('m63packs')) l << "-Dbettacraft.smoketest.m63packs=${project.property('m63packs')}".toString()
             if (project.hasProperty('m63tag')) l << "-Dbettacraft.smoketest.m63tag=${project.property('m63tag')}".toString()
             if (project.hasProperty('m63parts')) l << "-Dbettacraft.smoketest.m63parts=${project.property('m63parts')}".toString()
+        }
+        // M65: pipes and the water at blocks against the glass in production (shader packs on Fabric 1.21.1)
+        if (project.hasProperty('smoketestm65')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m65only=true']
+            if (project.hasProperty('m65packs')) l << "-Dbettacraft.smoketest.m65packs=${project.property('m65packs')}".toString()
+            if (project.hasProperty('m65tag')) l << "-Dbettacraft.smoketest.m65tag=${project.property('m65tag')}".toString()
+            if (project.hasProperty('m65parts')) l << "-Dbettacraft.smoketest.m65parts=${project.property('m65parts')}".toString()
         }
         // M64: the tank optics scene in production (shader packs on Fabric 1.21.1)
         if (project.hasProperty('smoketestm64')) {

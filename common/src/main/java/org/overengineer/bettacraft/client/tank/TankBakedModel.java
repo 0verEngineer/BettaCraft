@@ -243,6 +243,7 @@ public class TankBakedModel implements BakedModel, DynamicModel {
      * translucent block, like tinted glass). Iris rebuilds all chunks when a pack is switched.
      */
     private List<BakedQuad> waterQuads(BlockState state, ModelValues data) {
+        if (TankWaterRenderer.hiddenForTest) return List.of();
         Integer cd = data.get(CORNERS);
         int bits = cd == null ? 0 : cd;
         boolean above = (bits & WATER_ABOVE_BIT) != 0;
@@ -251,7 +252,8 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         int light = ld == null ? 0 : ld;
         // M18: the light colour (and the tint strength it was mixed with) is part of the key
         long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
-                | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48); // M20: the salt byte reaches bit 46
+                | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48) // M20: the salt byte reaches bit 46
+                | (TankWaterGeometry.oldSideInsetForTest ? 1L << 62 : 0L); // M65: the guard's old way
         List<BakedQuad> plain = waterCache.computeIfAbsent(key, k -> {
             var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
@@ -304,7 +306,8 @@ public class TankBakedModel implements BakedModel, DynamicModel {
      */
     private BakedQuad[] connected(BakedQuad q, Direction side, int hidden, int water) {
         Map<Integer, BakedQuad[]> variants = glassCache.computeIfAbsent(q, k -> new ConcurrentHashMap<>());
-        int key = hidden | water << 4 | (GlassVariants.offForTest ? 1 << 30 : 0) | (GlassVariants.allFramelessForTest ? 1 << 29 : 0);
+        int key = hidden | water << 4 | (GlassVariants.offForTest ? 1 << 30 : 0) | (GlassVariants.allFramelessForTest ? 1 << 29 : 0)
+                | (TankWaterGeometry.oldSideInsetForTest ? 1 << 28 : 0);
         BakedQuad[] r = variants.get(key);
         if (r == null) {
             float frame = hidden == 0 ? 0 : frameOf(q.getSprite());
