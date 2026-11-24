@@ -193,18 +193,16 @@ final class DevClientSmokeM65 {
             String kind = (String) WALL_TANKS[t][3] + t;
             for (double d : new double[] {3.2, 8, 20}) {
                 String view = "wall_" + kind + "_front_" + (int) d;
-                then(1, () -> {
+                wallShot(pack, view, ti, () -> {
                     BlockPos m = wall[ti];
                     lookAt(m.getX() + WALL_SX / 2.0, m.getY() + 1.2, m.getZ() - d, new Vec3(m.getX() + WALL_SX / 2.0, m.getY() + 1.2, m.getZ()));
                 });
-                wallShot(pack, view, ti);
             }
             String view = "wall_" + kind + "_oblique";
-            then(1, () -> {
+            wallShot(pack, view, ti, () -> {
                 BlockPos m = wall[ti];
                 lookAt(m.getX() - 1.6, m.getY() + 2.0, m.getZ() - 3.6, new Vec3(m.getX() + 1.5, m.getY() + 1.0, m.getZ()));
             });
-            wallShot(pack, view, ti);
         }
     }
 
@@ -212,11 +210,13 @@ final class DevClientSmokeM65 {
      * Every view three times: no water ({@code _dry}), the old way ({@code _old}) and M65. On the blocks at the glass (inside a
      * margin) M65 must equal the dry picture; beside them, where the water is, M65 must differ from it.
      */
-    private void wallShot(String pack, String view, int tank) {
+    private void wallShot(String pack, String view, int tank, Runnable aim) {
         Cam[] cam = new Cam[1];
         String[] modes = {"dry", "old", "new", "dry2"};
         for (String mode : modes) {
             String v = mode.equals("new") ? view : view + "_" + mode;
+            // the camera set again for every picture (a client that drifted between two pictures compared different views)
+            then(1, aim);
             then(1, () -> {
                 TankWaterRenderer.hiddenForTest = mode.startsWith("dry");
                 TankWaterGeometry.oldSideInsetForTest = mode.equals("old");
