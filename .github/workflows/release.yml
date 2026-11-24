@@ -123,7 +123,7 @@ jobs:
           fi
           # the tests ran in the checks job; here only the jar of the tag, its check and the notes
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
-          ./gradlew $tasks releaseNotes curseforgeDescription modpackZip $expected -PdescriptionRef="${DESCRIPTION_REF//+/%2B}" $GRADLE_ARGS
+          ./gradlew $tasks releaseNotes curseforgeDescription modpackZip $expected -PdescriptionRef="$DESCRIPTION_REF" $GRADLE_ARGS
           cat "$report"
           test -f "$JAR"
           (cd build/libs && sha256sum "$(basename "$JAR")" > "$(basename "$JAR").sha256")
