@@ -2,23 +2,41 @@
   "elements": [
     {
       "faces": {
-        "down": {
-          "texture": "#t"
-        },
         "east": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            12.5,
+            10.0,
+            16.0
+          ]
         },
         "north": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            12.5,
+            10.0,
+            16.0
+          ]
         },
         "south": {
-          "texture": "#t"
-        },
-        "up": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            12.5,
+            10.0,
+            16.0
+          ]
         },
         "west": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            12.5,
+            10.0,
+            16.0
+          ]
         }
       },
       "from": [
@@ -36,6 +54,7 @@
   "render_type": "minecraft:solid",
   "textures": {
     "particle": "bettacraft:block/filter_inlet_pipe",
+    "r": "bettacraft:block/filter_inlet_pipe_r",
     "t": "bettacraft:block/filter_inlet_pipe"
   }
 }

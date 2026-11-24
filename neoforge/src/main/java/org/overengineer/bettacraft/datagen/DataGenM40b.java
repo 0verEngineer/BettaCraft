@@ -69,14 +69,19 @@ final class DataGenM40b {
         p.simpleBlock(ModBlocks.FILTER_PIPE_BUNDLE.get(), hub);
         for (PipeLine l : PipeLine.values()) {
             var tex = p.modLoc("block/" + l.blockId());
+            var texR = p.modLoc("block/" + l.blockId() + "_r");
             for (Direction d : Direction.values()) {
-                String name = "filter_pipe_bundle_" + l.getSerializedName() + "_" + d.getSerializedName();
-                float[] arm = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.ARM, 0);
-                BlockModelBuilder m = p.models().getBuilder(name).texture("t", tex).texture("particle", tex).renderType("solid");
-                m.element().from(arm[0], arm[1], arm[2]).to(arm[3], arm[4], arm[5]).allFaces((dd, f) -> f.texture("#t")).end();
-                float[] c = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.COLLAR, 1.5F);
-                BlockModelBuilder t = p.models().getBuilder(name + "_tee").texture("c", p.modLoc("block/pipe_tee")).texture("particle", tex).renderType("solid");
-                t.element().from(c[0], c[1], c[2]).to(c[3], c[4], c[5]).allFaces((dd, f) -> f.texture("#c")).end();
+                // M65: the arms textured along the pipe like the single pipes (PipeModels); "_mid": the arm in the middle of the
+                // face, towards a single pipe (FilterPipeBundleBlock#centredSides)
+                for (boolean mid : new boolean[]{false, true}) {
+                    String name = "filter_pipe_bundle_" + l.getSerializedName() + "_" + d.getSerializedName() + (mid ? "_mid" : "");
+                    float[] arm = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.ARM, 0, mid);
+                    BlockModelBuilder m = p.models().getBuilder(name).texture("t", tex).texture("r", texR).texture("particle", tex).renderType("solid");
+                    PipeModels.bundleArm(m, arm, d);
+                    float[] c = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.COLLAR, 1.5F, mid);
+                    BlockModelBuilder t = p.models().getBuilder(name + "_tee").texture("c", p.modLoc("block/pipe_tee")).texture("particle", tex).renderType("solid");
+                    t.element().from(c[0], c[1], c[2]).to(c[3], c[4], c[5]).allFaces((dd, f) -> f.texture("#c").uvs(5, 5, 11, 11)).end();
+                }
             }
         }
     }

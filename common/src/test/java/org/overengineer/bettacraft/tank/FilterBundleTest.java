@@ -80,4 +80,20 @@ class FilterBundleTest {
         assertArrayEquals(new long[]{0, 0}, FilterWater.distribute(new long[]{100, 100}, 0));
         assertArrayEquals(new long[]{0, 0}, FilterWater.distribute(new long[]{0, -5}, 100));
     }
+
+    /** M65: towards a single pipe a line's arm leaves the middle of the face, exactly where the single pipe (4 px, 6..10) is. */
+    @Test
+    void theArmTowardsASinglePipeIsInLineWithIt() {
+        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) {
+            float[] a = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.ARM, 0, true);
+            for (int i = 0; i < 3; i++) {
+                if (i == d.getAxis().ordinal()) {
+                    assertTrue(a[i] == 0 || a[i + 3] == 16, "reaches the face " + l + " " + d);
+                    continue;
+                }
+                assertEquals(6F, a[i], 1e-6F, l + " " + d);
+                assertEquals(10F, a[i + 3], 1e-6F, l + " " + d);
+            }
+        }
+    }
 }

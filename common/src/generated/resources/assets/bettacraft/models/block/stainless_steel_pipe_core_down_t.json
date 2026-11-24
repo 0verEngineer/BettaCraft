@@ -1,0 +1,27 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "particle": "bettacraft:block/stainless_steel_pipe",
+    "r": "bettacraft:block/stainless_steel_pipe_r",
+    "t": "bettacraft:block/stainless_steel_pipe"
+  }
+}
