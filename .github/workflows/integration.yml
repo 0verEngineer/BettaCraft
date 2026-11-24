@@ -9,6 +9,8 @@
 #                biomes and create
 #   fabric:      gradlew runFabricGameTest -Pfabricintegration -Pquests - the Fabric GameTests with the Fabric mod groups
 name: Integration tests
+# M65: the run names the suite and the branch, e.g. "Integration tests: zoo on master"
+run-name: "Integration tests: ${{ inputs.suite }} on ${{ github.ref_name }}"
 
 on:
   workflow_dispatch:

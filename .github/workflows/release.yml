@@ -20,6 +20,8 @@
 #   Secret:    CURSEFORGE_TOKEN        CurseForge API token (https://legacy.curseforge.com/account/api-tokens)
 #   Variable:  CURSEFORGE_PROJECT_ID   numeric id of the CurseForge project
 name: Release
+# M65: the run is named after the tag (GitHub names it after the commit message of the tagged commit otherwise)
+run-name: "${{ github.event_name == 'workflow_dispatch' && format('Release dry run {0} ({1})', inputs.loader, github.ref_name) || format('Release {0}', github.ref_name) }}"
 
 on:
   push:
