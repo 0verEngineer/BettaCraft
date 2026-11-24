@@ -43,8 +43,9 @@ final class DataGenM24 {
     // ------------------------------------------------------------------ block states
 
     static void blockStates(BlockStateProvider p) {
-        pipe(p, ModBlocks.GLASS_PIPE.get(), "glass_pipe", 5, 11, "translucent");
-        pipe(p, ModBlocks.STAINLESS_STEEL_PIPE.get(), "stainless_steel_pipe", 5, 11, "solid");
+        // M65: 4 px thick, textured along the pipe (PipeModels); the glass pipe has no end faces (they showed through it)
+        PipeModels.pipe(p, ModBlocks.GLASS_PIPE.get(), "glass_pipe", "translucent", false, null);
+        PipeModels.pipe(p, ModBlocks.STAINLESS_STEEL_PIPE.get(), "stainless_steel_pipe", "solid", true, null);
         pipe(p, ModBlocks.INTERIOR_PIPE.get(), "interior_pipe", 6, 10, "translucent");
         waterPump(p);
         crucible(p);

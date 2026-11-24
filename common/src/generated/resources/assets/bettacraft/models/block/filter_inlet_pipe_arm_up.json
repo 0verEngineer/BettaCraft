@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#t"
+        },
+        "north": {
+          "texture": "#t"
+        },
+        "south": {
+          "texture": "#t"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#t"
+        },
+        "west": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        6,
+        10,
+        6
+      ],
+      "to": [
+        10,
+        16,
+        10
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "particle": "bettacraft:block/filter_inlet_pipe",
+    "r": "bettacraft:block/filter_inlet_pipe_r",
+    "t": "bettacraft:block/filter_inlet_pipe"
+  }
+}

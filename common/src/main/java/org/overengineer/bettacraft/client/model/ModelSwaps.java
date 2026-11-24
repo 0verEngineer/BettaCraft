@@ -36,8 +36,10 @@ public final class ModelSwaps {
     /** The extra (standalone) models to load: the arms of the pipe bundle. */
     public static List<ResourceLocation> extraModels() {
         List<ResourceLocation> out = new ArrayList<>();
-        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) for (boolean tee : new boolean[]{false, true})
+        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) for (boolean tee : new boolean[]{false, true}) {
             out.add(FilterBundleModel.armModel(l, d, tee));
+            out.add(FilterBundleModel.armModel(l, d, tee, true)); // M65: the arm in the middle of the face (towards a single pipe)
+        }
         return out;
     }
 

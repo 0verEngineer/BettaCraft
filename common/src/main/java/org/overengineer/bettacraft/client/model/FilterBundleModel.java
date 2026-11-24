@@ -27,9 +27,13 @@ import org.overengineer.bettacraft.registry.ModBlocks;
  * ({@link FilterPipeBlockEntity#LINES}) its arms on the joined sides (and the brass collars of a T-piece) are added from
  * their own models (made by the datagen, {@code block/filter_pipe_bundle_<line>_<side>[_tee]}). With a cover (part c) the
  * bundle is drawn as that block, like a single filter pipe.
+ * M65: on the sides where the one line joined there meets a single pipe, its arm is the one in the middle of the face
+ * ({@code ..._mid[_tee]}, {@link FilterPipeBundleBlock#centredSides}, read from the neighbours while the chunk is meshed).
  */
 public final class FilterBundleModel extends WrappedModel {
-    private volatile BakedModel[][] arms, tees;
+    private volatile BakedModel[][] arms, tees, midArms, midTees;
+    /** M65: {@link FilterPipeBundleBlock#centredSides} of the block (absent = none). */
+    public static final org.overengineer.bettacraft.platform.model.ModelKey<Integer> CENTRED = new org.overengineer.bettacraft.platform.model.ModelKey<>("bundle_centred");
 
     public FilterBundleModel(BakedModel original) {
         super(original);
@@ -38,17 +42,35 @@ public final class FilterBundleModel extends WrappedModel {
     /** The arm models, looked up once after the models are baked (extra models, {@link ModelSwaps#EXTRA}). */
     private void resolveArms() {
         if (arms != null) return;
-        BakedModel[][] a = new BakedModel[PipeLine.values().length][6], t = new BakedModel[PipeLine.values().length][6];
+        int n = PipeLine.values().length;
+        BakedModel[][] a = new BakedModel[n][6], t = new BakedModel[n][6], ma = new BakedModel[n][6], mt = new BakedModel[n][6];
         for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) {
             a[l.ordinal()][d.ordinal()] = ClientPlatform.get().standaloneModel(armModel(l, d, false));
             t[l.ordinal()][d.ordinal()] = ClientPlatform.get().standaloneModel(armModel(l, d, true));
+            ma[l.ordinal()][d.ordinal()] = ClientPlatform.get().standaloneModel(armModel(l, d, false, true));
+            mt[l.ordinal()][d.ordinal()] = ClientPlatform.get().standaloneModel(armModel(l, d, true, true));
         }
         tees = t;
+        midArms = ma;
+        midTees = mt;
         arms = a;
     }
 
     public static ResourceLocation armModel(PipeLine l, Direction d, boolean tee) {
-        return BettaCraft.id("block/filter_pipe_bundle_" + l.getSerializedName() + "_" + d.getSerializedName() + (tee ? "_tee" : ""));
+        return armModel(l, d, tee, false);
+    }
+
+    /** M65: {@code mid}: the arm (or collar) in the middle of the face. */
+    public static ResourceLocation armModel(PipeLine l, Direction d, boolean tee, boolean mid) {
+        return BettaCraft.id("block/filter_pipe_bundle_" + l.getSerializedName() + "_" + d.getSerializedName() + (mid ? "_mid" : "") + (tee ? "_tee" : ""));
+    }
+
+    @Override
+    public ModelValues modelData(net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelValues data) {
+        Integer lines = data.get(FilterPipeBlockEntity.LINES);
+        if (lines == null || data.get(FilterPipeBlockEntity.COVER) != null) return data;
+        int centred = org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.centredSides(level, pos, lines);
+        return centred == 0 ? data : data.derive().with(CENTRED, centred).build();
     }
 
     @Override
@@ -59,14 +81,17 @@ public final class FilterBundleModel extends WrappedModel {
         Integer lines = data.get(FilterPipeBlockEntity.LINES);
         if (lines == null) return out;
         resolveArms();
+        Integer cd = data.get(CENTRED);
+        int centred = cd == null ? 0 : cd;
         for (PipeLine l : PipeLine.values()) {
             int slot = FilterPipes.slot(lines, l);
             if (!FilterPipes.present(slot)) continue;
             for (Direction d : Direction.values()) {
                 if (!FilterPipes.joined(slot, d)) continue;
-                BakedModel a = arms[l.ordinal()][d.ordinal()];
+                boolean mid = (centred & 1 << d.ordinal()) != 0;
+                BakedModel a = (mid ? midArms : arms)[l.ordinal()][d.ordinal()];
                 if (a != null) out.addAll(ClientPlatform.get().quads(a, state, side, rand, renderType));
-                BakedModel t = FilterPipes.junction(slot) ? tees[l.ordinal()][d.ordinal()] : null;
+                BakedModel t = FilterPipes.junction(slot) ? (mid ? midTees : tees)[l.ordinal()][d.ordinal()] : null;
                 if (t != null) out.addAll(ClientPlatform.get().quads(t, state, side, rand, renderType));
             }
         }
