@@ -186,6 +186,9 @@ final class DevClientSmokeTest {
     /** M63: -Psmoketestm63 [-Pshaders] [-Pm63packs=none,...] [-Pm63tag=before|after] (the tank water with every shader pack). */
     private static final boolean M63_ONLY = Boolean.getBoolean("bettacraft.smoketest.m63only");
     private static DevClientSmokeM63 m63;
+    /** M65: -Psmoketestm65 [-Pshaders] [-Pm65packs=none,...] [-Pm65tag=before|after] [-Pm65parts=pipes,wall]. */
+    private static final boolean M65_ONLY = Boolean.getBoolean("bettacraft.smoketest.m65only");
+    private static DevClientSmokeM65 m65;
     /** M64: -Psmoketestm64 [-Pshaders] [-Pm64packs=none,...] [-Pm64tag=before|after] [-Pm64parts=glass,hose,coral,float,lid]. */
     private static final boolean M64_ONLY = Boolean.getBoolean("bettacraft.smoketest.m64only");
     private static DevClientSmokeM64 m64;
@@ -492,6 +495,25 @@ final class DevClientSmokeTest {
                     LOGGER.info("[smoketest] client world test finished (M62b only)");
                     LOGGER.info(m62b.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M62b");
                     m62b = null;
+                    mc.stop();
+                }
+                return;
+            }
+            if (M62D_ONLY) {
+                if (ticks == 60) m62d = new DevClientSmokeM62d();
+                if (m62d != null && m62d.tick()) {
+                    m62d = null;
+                    LOGGER.info("[smoketest] client world test finished (M62d only)");
+                    mc.stop();
+                }
+                return;
+            }
+            if (M65_ONLY) {
+                if (ticks == 60) m65 = new DevClientSmokeM65();
+                if (m65 != null && m65.tick()) {
+                    LOGGER.info("[smoketest] client world test finished (M65 only)");
+                    LOGGER.info(m65.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M65");
+                    m65 = null;
                     mc.stop();
                 }
                 return;

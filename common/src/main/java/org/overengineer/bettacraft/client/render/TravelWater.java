@@ -223,7 +223,9 @@ public final class TravelWater {
             if (h0 <= bottom + 0.01) continue;
             boolean w = cols.containsKey(BlockPos.asLong(x - 1, 0, z)), east = cols.containsKey(BlockPos.asLong(x + 1, 0, z));
             boolean n = cols.containsKey(BlockPos.asLong(x, 0, z - 1)), south = cols.containsKey(BlockPos.asLong(x, 0, z + 1));
-            float x0 = x + (w ? 0 : INSET), x1 = x + 1 - (east ? 0 : INSET), z0 = z + (n ? 0 : INSET), z1 = z + 1 - (south ? 0 : INSET);
+            // M65: the sides behind the front of the miniature's blocks at the glass, like the water of a standing tank
+            float si = org.overengineer.bettacraft.client.tank.TankWaterGeometry.sideInset();
+            float x0 = x + (w ? 0 : si), x1 = x + 1 - (east ? 0 : si), z0 = z + (n ? 0 : si), z1 = z + 1 - (south ? 0 : si);
             float y00 = clampH(height(s, h0, cx, cz, x0, z0, time), bottom, roof), y10 = clampH(height(s, h0, cx, cz, x1, z0, time), bottom, roof);
             float y11 = clampH(height(s, h0, cx, cz, x1, z1, time), bottom, roof), y01 = clampH(height(s, h0, cx, cz, x0, z1, time), bottom, roof);
             // top (normal up), counter-clockwise seen from above

@@ -23,9 +23,25 @@ import net.minecraft.core.Direction;
  * cut at the same lines ({@link #glassCuts}): at the water height and {@link #INSET} from every outer edge. So each
  * water face has exactly the centre of the glass piece in front of it, moved inwards: for every camera that can see
  * that glass piece the water is the farther one and is drawn first.
+ * <p>
+ * M65, water drawn over blocks that stand inside against the glass (a paludarium's land, a back wall built in the tank,
+ * the substrate): the miniature is drawn {@code MiniatureRenderer.MARGIN} (0.5 px) inside the glass, exactly where the water's
+ * side faces were, so the water won the depth test on the front of every block at the glass and tinted it. The side faces
+ * now lie {@link #SIDE_INSET} inside the glass, a quarter pixel behind the front of those blocks: the blocks (drawn before
+ * the translucent water) hide the water where they stand, and the water stays everywhere else. A quarter pixel is far more
+ * than the depth buffer resolves within the miniature's render distance.
  */
 public final class TankWaterGeometry {
     public static final float INSET = 0.5F / 16F;
+    /** M65: the outer side faces (north, south, east, west): a quarter pixel behind the front of the miniature's blocks. */
+    public static final float SIDE_INSET = INSET + 0.25F / 16F;
+    /** Dev smoke test only (the M65 guard's "before" pictures): the side faces at {@link #INSET} again, where the miniature is. */
+    public static volatile boolean oldSideInsetForTest;
+
+    /** The inset of the outer side faces ({@link #SIDE_INSET}; {@link #INSET} for the M65 guard's old way). */
+    public static float sideInset() {
+        return oldSideInsetForTest ? INSET : SIDE_INSET;
+    }
 
     private TankWaterGeometry() {}
 
@@ -47,10 +63,11 @@ public final class TankWaterGeometry {
      */
     public static Body body(int mask, int fill, boolean waterAbove) {
         if (fill <= 0) return null;
-        float x0 = connected(mask, Direction.WEST) ? 0 : INSET;
-        float x1 = connected(mask, Direction.EAST) ? 1 : 1 - INSET;
-        float z0 = connected(mask, Direction.NORTH) ? 0 : INSET;
-        float z1 = connected(mask, Direction.SOUTH) ? 1 : 1 - INSET;
+        float side = sideInset();
+        float x0 = connected(mask, Direction.WEST) ? 0 : side;
+        float x1 = connected(mask, Direction.EAST) ? 1 : 1 - side;
+        float z0 = connected(mask, Direction.NORTH) ? 0 : side;
+        float z1 = connected(mask, Direction.SOUTH) ? 1 : 1 - side;
         float y0 = connected(mask, Direction.DOWN) ? 0 : INSET;
         float y1 = surface(fill, waterAbove);
         int faces = 0;
@@ -69,7 +86,7 @@ public final class TankWaterGeometry {
 
     /**
      * The quad of face {@code d} of the body into {@code out[12]} (vanilla winding, see {@link BoxFaces#corners}): inset
-     * by {@link #INSET} along the normal only, full block width sideways, side faces from 0 up to the water height.
+     * by {@link #INSET} ({@link #SIDE_INSET} on the sides) along the normal only, full block width sideways, side faces from 0 up to the water height.
      */
     public static void face(Body b, Direction d, float[] out) {
         BoxFaces.corners(d, b.x0(), b.y0(), b.z0(), b.x1(), b.y1(), b.z1(), out);
@@ -77,7 +94,7 @@ public final class TankWaterGeometry {
 
     /**
      * Where the translucent glass face {@code side} of a block with this water is cut, as {sCuts..., NaN, tCuts...} in the
-     * face coordinates of {@link BoxFaces#u}/{@link BoxFaces#v} (0..1): {@link #INSET} from each outer edge of the water
+     * face coordinates of {@link BoxFaces#u}/{@link BoxFaces#v} (0..1): the inset from each outer edge of the water
      * face behind it and, on the side faces, at the water height. Empty without water behind the glass.
      */
     public static float[] glassCuts(int mask, int fill, boolean waterAbove, Direction side) {

@@ -38,6 +38,8 @@ public final class TankWaterRenderer {
      * and no split of the glass. Never set in normal play.
      */
     public static volatile boolean m10Look;
+    /** Dev smoke test only (the M65 guard's reference pictures): no water at all. Never set in normal play. */
+    public static volatile boolean hiddenForTest;
 
     private TankWaterRenderer() {}
 
@@ -50,7 +52,7 @@ public final class TankWaterRenderer {
     }
 
     public static void render(BlockAndTintGetter level, BlockPos pos, VertexConsumer vc, BlockState state) {
-        if (state.getValue(TankBlock.FILL) <= 0) return;
+        if (state.getValue(TankBlock.FILL) <= 0 || hiddenForTest) return;
         // with a shader pack the tank model draws the water instead (see TankBakedModel#waterQuads)
         if (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()) return;
         // M50: a travelling tank (airship) draws its sloshing water itself (the model data of the block says so)
