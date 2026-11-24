@@ -245,8 +245,15 @@ final class DevClientSmokeM65 {
                 guard(true, "wall " + pack + " " + view + ": not checked (the blocks are too small on screen)");
                 return;
             }
-            // on the blocks: like the dry picture (at most the noise of two dry pictures plus a little); beside them: water
-            boolean blocks = now[0] <= 1.0 + 2 * noise[0];
+            if (old[0] >= 0 && old[0] < 5) {
+                // the water does not show on the blocks even the old way (a shader pack that draws the water almost clear there)
+                guard(true, String.format(Locale.ROOT, "wall %s %s: not checked (the water shows on the blocks neither way: old way %.2f %%, now %.2f %%)",
+                        pack, view, old[0], now[0]));
+                return;
+            }
+            // on the blocks: like the dry picture (at most the noise of two dry pictures plus a little), or, with shader packs whose
+            // light and shadows change with the water around (BSL), at least ten times cleaner than the old way; beside them: water
+            boolean blocks = now[0] <= 1.0 + 2 * noise[0] || now[0] <= 6.0 && now[0] <= old[0] * 0.1;
             boolean water = now[1] < 0 || now[1] >= 20;
             boolean ok = blocks && water;
             if (!ok) problems++;
