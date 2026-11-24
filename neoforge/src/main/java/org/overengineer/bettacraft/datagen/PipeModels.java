@@ -2,12 +2,12 @@ package org.overengineer.bettacraft.datagen;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockModelBuilder;
+import org.overengineer.bettacraft.datagen.model.BlockStateProvider;
+import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
 
 /**
@@ -103,8 +103,8 @@ final class PipeModels {
         e.end();
     }
 
-    private static BlockModelBuilder model(BlockStateProvider p, String name, ResourceLocation tex, String render) {
-        return p.models().getBuilder(name).texture("t", tex).texture("r", ResourceLocation.fromNamespaceAndPath(tex.getNamespace(), tex.getPath() + "_r"))
+    private static BlockModelBuilder model(BlockStateProvider p, String name, Identifier tex, String render) {
+        return p.models().getBuilder(name).texture("t", tex).texture("r", Identifier.fromNamespaceAndPath(tex.getNamespace(), tex.getPath() + "_r"))
                 .texture("particle", tex).renderType(render);
     }
 
@@ -113,7 +113,7 @@ final class PipeModels {
      * {@code junction} != null: also the T-piece collar ({@code <name>_tee}, a 6 px steel sleeve) while it is true.
      */
     static void pipe(BlockStateProvider p, Block block, String name, String render, boolean endFaces, @Nullable BooleanProperty junction) {
-        ResourceLocation tex = p.modLoc("block/" + name);
+        Identifier tex = p.modLoc("block/" + name);
         MultiPartBlockStateBuilder mp = p.getMultipartBuilder(block);
         for (Direction d : Direction.values()) {
             BlockModelBuilder arm = model(p, name + "_arm_" + d.getSerializedName(), tex, render);

@@ -499,15 +499,6 @@ final class DevClientSmokeTest {
                 }
                 return;
             }
-            if (M62D_ONLY) {
-                if (ticks == 60) m62d = new DevClientSmokeM62d();
-                if (m62d != null && m62d.tick()) {
-                    m62d = null;
-                    LOGGER.info("[smoketest] client world test finished (M62d only)");
-                    mc.stop();
-                }
-                return;
-            }
             if (M65_ONLY) {
                 if (ticks == 60) m65 = new DevClientSmokeM65();
                 if (m65 != null && m65.tick()) {

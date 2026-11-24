@@ -242,15 +242,6 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62donly")) {
-                LOGGER.info("[smoketest] fabric client in world: M62d scene");
-                m62d = new DevClientSmokeM62d();
-                stage = 624;
-            }
-            if (stage == 624) {
-                if (m62d.tick()) stage = 4;
-                return;
-            }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m65only")) {
                 LOGGER.info("[smoketest] fabric client in world: M65 scene");
                 m65 = new DevClientSmokeM65();

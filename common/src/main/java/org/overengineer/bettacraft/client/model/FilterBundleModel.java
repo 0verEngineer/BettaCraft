@@ -66,7 +66,7 @@ public final class FilterBundleModel extends WrappedModel {
     }
 
     @Override
-    public ModelValues modelData(net.minecraft.world.level.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelValues data) {
+    public ModelValues modelData(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, ModelValues data) {
         Integer lines = data.get(FilterPipeBlockEntity.LINES);
         if (lines == null || data.get(FilterPipeBlockEntity.COVER) != null) return data;
         int centred = org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.centredSides(level, pos, lines);
