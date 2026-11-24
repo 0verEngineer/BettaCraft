@@ -1239,6 +1239,11 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m65"]:
+        # M65: the thinner pipes (the pipe pictures of the M24 and M40 scenes, -Psmoketestm24, -Psmoketestm40a, -Psmoketestm40b)
+        m24(out_en)
+        m40(out_en)
+        return 0
     if sys.argv[1:] == ["m62b"]:
         m62b(out_en, out_de)
         return 0
