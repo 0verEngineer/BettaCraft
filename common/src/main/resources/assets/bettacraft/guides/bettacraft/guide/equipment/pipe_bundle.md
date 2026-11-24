@@ -33,7 +33,11 @@ again: its pipe (and T-piece) come back, and with one line left the block is a p
 the pipe of every line back.
 
 The four lines and their colours: intake (blue) and return (orange) of the [filter lines](filter_lines.md), fresh water
-(green) and waste water (brown).
+(green) and waste water (brown); each pipe carries a ring of its colour at every block border.
+
+Between two bundles every line keeps to its own corner of the steel manifold, so the bundles line up. Where a line leaves
+the bundle into a single pipe (or a filter connector, an aquarium), its arm comes out of the **middle** of the manifold, in
+line with that pipe.
 
 ## Fresh and waste water
 
