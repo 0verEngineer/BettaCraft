@@ -85,7 +85,7 @@ final class DevClientSmokeM65 {
     DevClientSmokeM65() {
         then(1, () -> server(this::build));
         then(1, () -> {
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             mc.options.fovEffectScale().set(0.0);
         });
         then(1, this::rememberIris);
@@ -101,7 +101,7 @@ final class DevClientSmokeM65 {
         then(1, this::restoreIris);
         then(1, () -> time(6000));
         then(40, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             writeSummary();
         });
     }
@@ -220,7 +220,7 @@ final class DevClientSmokeM65 {
             then(1, () -> {
                 TankWaterRenderer.hiddenForTest = mode.startsWith("dry");
                 TankWaterGeometry.oldSideInsetForTest = mode.equals("old");
-                mc.levelRenderer.allChanged();
+                mc.levelExtractor.allChanged();
             });
             then(60, () -> {
                 cam[0] = new Cam(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ(), mc.player.getYRot(), mc.player.getXRot(), mc.options.fov().get());
@@ -230,7 +230,7 @@ final class DevClientSmokeM65 {
         then(1, () -> {
             TankWaterRenderer.hiddenForTest = false;
             TankWaterGeometry.oldSideInsetForTest = false;
-            mc.levelRenderer.allChanged();
+            mc.levelExtractor.allChanged();
         });
         then(20, () -> {
             double[] old = compare(pack, view, view + "_old", tank, cam[0]);
@@ -530,7 +530,7 @@ final class DevClientSmokeM65 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         if (started && !built) return false;
         Step s = steps.peek();
@@ -551,7 +551,7 @@ final class DevClientSmokeM65 {
     }
 
     private void shot(String pack, String view) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m65_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), 1, c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m65_" + TAG + "_" + pack + "_" + view + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }
