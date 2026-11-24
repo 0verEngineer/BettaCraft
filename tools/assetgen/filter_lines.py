@@ -17,7 +17,7 @@ import numpy as np
 
 from common import BLOCK_TEX, ITEM_TEX, save_png
 from icons import grid
-from plumbing import S, _img, _rgb, steel
+from plumbing import S, _img, _rgb, steel, steel_pipe_tex, transposed
 
 INTAKE = "#3a8ad8"
 RETURN = "#e08a30"
@@ -26,24 +26,25 @@ WASTE = "#7a5234"
 
 
 def line_pipe(colour, seed):
-    """A steel filter pipe with two coloured bands (the line) and a dark seam."""
-    img = steel(seed, "#b4bcc5")
+    """M65: a steel filter pipe (the steel pipe's look) with a ring of its line's colour at both ends of every block (rows 0
+    and 15: a band at every joint), nothing else across it."""
+    img = steel_pipe_tex("#b4bcc5", seed)
     c = _rgb(colour)
     for x in range(S):
-        for y in (3, 4, 11, 12):
-            img[y, x, :3] = np.clip(c * (0.92 + 0.08 * math.sin(x * 0.9)), 0, 255).astype(np.uint8)
-        img[7, x, :3] = (np.array(img[7, x, :3], float) * 0.85).astype(np.uint8)
+        for y in (0, 15):
+            img[y, x, :3] = np.clip(c * (0.9 + 0.1 * (x in (7, 8))), 0, 255).astype(np.uint8)
     return img
 
 
 def tee_collar():
-    """The collar of a T-piece: brushed brass with rivets in the corners."""
+    """M65: the collar of a T-piece in the steel of the pipes (it was brass): a 6 px sleeve (columns 5..10) with a slightly
+    darker rim."""
+    from plumbing import pipe_shade
+
     def px(x, y):
-        base = _rgb("#c9a04a") * (0.92 + 0.06 * math.sin(y * 1.3) + 0.02 * ((x * 7 + y * 3) % 5) / 5)
-        if x in (0, 15) or y in (0, 15):
-            base = base * 0.75
-        if (x, y) in ((2, 2), (13, 2), (2, 13), (13, 13)):
-            return _rgb("#5a4720")
+        base = _rgb("#a9b1ba") * (0.97 + 0.03 * math.sin(x * 0.9))
+        if x in (5, 10) or y in (5, 10):
+            return base * 0.86
         return base
     return _img(px)
 
@@ -129,7 +130,7 @@ TEE = [
     "................",
     "................",
 ]
-TEE_P = {"b": "#5c646c", "S": "#d0d8e0", "s": "#9aa4ae", "c": "#8a6a2a", "C": "#d8b05a"}
+TEE_P = {"b": "#5c646c", "S": "#d0d8e0", "s": "#9aa4ae", "c": "#6c757e", "C": "#b9c1ca"}  # M65: a steel collar (was brass)
 
 
 # M40 part c: the pipe cover, a steel trowel with a brick-faced plate on its blade (the cover it puts on)
@@ -159,6 +160,8 @@ def write_all():
     blocks = {
         "filter_inlet_pipe": line_pipe(INTAKE, 4001), "filter_outlet_pipe": line_pipe(RETURN, 4002),
         "filter_fresh_pipe": line_pipe(FRESH, 4003), "filter_waste_pipe": line_pipe(WASTE, 4004),
+        "filter_inlet_pipe_r": transposed(line_pipe(INTAKE, 4001)), "filter_outlet_pipe_r": transposed(line_pipe(RETURN, 4002)),
+        "filter_fresh_pipe_r": transposed(line_pipe(FRESH, 4003)), "filter_waste_pipe_r": transposed(line_pipe(WASTE, 4004)),
         "filter_fresh_port": port(FRESH), "filter_waste_port": port(WASTE), "filter_pipe_bundle": manifold(),
         "pipe_tee": tee_collar(), "intake_guard": mesh(True), "outlet_guard": mesh(False), "pipe_anchor": flange(),
     }

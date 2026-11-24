@@ -53,36 +53,9 @@ final class DataGenM40 {
         guards(p);
     }
 
+    /** M65: 4 px thick, textured along the pipe, the T-piece a 6 px steel collar ({@link PipeModels}). */
     static void pipe(BlockStateProvider p, Block block, String name) {
-        float a = 5, b = 11;
-        var tex = p.modLoc("block/" + name);
-        BlockModelBuilder core = p.models().getBuilder(name + "_core").texture("t", tex).texture("particle", tex).renderType("solid");
-        core.element().from(a, a, a).to(b, b, b).allFaces((d, f) -> f.texture("#t")).end();
-        BlockModelBuilder tee = p.models().getBuilder(name + "_tee").texture("t", tex).texture("c", p.modLoc("block/pipe_tee"))
-                .texture("particle", tex).renderType("solid");
-        tee.element().from(4, 4, 4).to(12, 12, 12).allFaces((d, f) -> f.texture("#c")).end();
-        BlockModelBuilder arm = p.models().getBuilder(name + "_arm").texture("t", tex).texture("particle", tex).renderType("solid");
-        arm.element().from(a, a, 0).to(b, b, a)
-                .face(Direction.UP).uvs(a, 0, b, a).texture("#t").end()
-                .face(Direction.DOWN).uvs(a, 0, b, a).texture("#t").end()
-                .face(Direction.EAST).uvs(0, a, a, b).texture("#t").end()
-                .face(Direction.WEST).uvs(0, a, a, b).texture("#t").end()
-                .face(Direction.NORTH).uvs(a, a, b, b).texture("#t").end()
-                .end();
-        MultiPartBlockStateBuilder mp = p.getMultipartBuilder(block);
-        mp.part().modelFile(core).addModel().condition(FilterPipeBlock.JUNCTION, false).end();
-        mp.part().modelFile(tee).addModel().condition(FilterPipeBlock.JUNCTION, true).end();
-        for (Direction d : Direction.values()) {
-            var part = mp.part().modelFile(arm);
-            switch (d) {
-                case UP -> part.rotationX(270);
-                case DOWN -> part.rotationX(90);
-                default -> part.rotationY(((int) d.toYRot() + 180) % 360);
-            }
-            part.addModel().condition(PipeBlock.SIDES.get(d), true).end();
-        }
-        BlockModelBuilder item = p.models().getBuilder(name + "_item").texture("t", tex).texture("particle", tex).renderType("solid");
-        item.element().from(a, a, 0).to(b, b, 16).allFaces((d, f) -> f.texture("#t")).end();
+        PipeModels.pipe(p, block, name, "solid", true, FilterPipeBlock.JUNCTION);
     }
 
     /** The dock: a flange on the floor with a stub up, turned to the side of the tank it sits on. */

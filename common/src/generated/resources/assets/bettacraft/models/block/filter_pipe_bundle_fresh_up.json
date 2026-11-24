@@ -2,23 +2,41 @@
   "elements": [
     {
       "faces": {
-        "down": {
-          "texture": "#t"
-        },
         "east": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            3.5
+          ]
         },
         "north": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            3.5
+          ]
         },
         "south": {
-          "texture": "#t"
-        },
-        "up": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            3.5
+          ]
         },
         "west": {
-          "texture": "#t"
+          "texture": "#t",
+          "uv": [
+            6.0,
+            0.0,
+            10.0,
+            3.5
+          ]
         }
       },
       "from": [
@@ -36,6 +54,7 @@
   "render_type": "minecraft:solid",
   "textures": {
     "particle": "bettacraft:block/filter_fresh_pipe",
+    "r": "bettacraft:block/filter_fresh_pipe_r",
     "t": "bettacraft:block/filter_fresh_pipe"
   }
 }

@@ -5,7 +5,6 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.util.RandomSource;
 import com.mojang.serialization.MapCodec;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -56,7 +55,9 @@ import org.overengineer.bettacraft.registry.ModItems;
  * bundles and connectors of its line, exactly like a single pipe; the lines never mix.
  * <p>
  * Drawn as a steel manifold ({@link #HUB}) with one arm per joined side and line; the arms of a line sit at the same spot
- * of a face in every bundle (so bundles line up), {@link #arm}.
+ * of a face in every bundle (so bundles line up), {@link #arm}. M65: where the one line joined on a side meets a single pipe
+ * (or anything else that is not a bundle) its arm leaves the manifold in the middle of the face, where the single pipe is
+ * ({@link #centredSides}); it used to keep to its corner and the pipe stepped sideways at the block border.
  * <p>
  * Part c: a cover ({@link PipeCovers}) draws it as a full block; shape, light, sound and drops follow the cover.
  */
@@ -67,7 +68,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
     /** Half the width of an arm and of a T-piece collar, the distance of an arm from the middle of its face. */
     public static final float ARM = 2F, COLLAR = 2.4F, OFFSET = 2.5F;
     private static final VoxelShape HUB = box(HUB_MIN, HUB_MIN, HUB_MIN, HUB_MAX, HUB_MAX, HUB_MAX);
-    private static final Int2ObjectOpenHashMap<VoxelShape> SHAPES = new Int2ObjectOpenHashMap<>();
+    private static final it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<VoxelShape> SHAPES = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
 
     public FilterPipeBundleBlock(Properties properties) {
         super(properties);
@@ -107,7 +108,12 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
      * a T-piece, {@code depth} long from the manifold, 0 = to the face).
      */
     public static float[] arm(PipeLine l, Direction d, float half, float depth) {
-        int[] sg = signs(l);
+        return arm(l, d, half, depth, false);
+    }
+
+    /** M65: {@code centred}: the arm in the middle of the face (towards a single pipe, {@link #centredSides}). */
+    public static float[] arm(PipeLine l, Direction d, float half, float depth, boolean centred) {
+        int[] sg = centred ? new int[3] : signs(l);
         float[] min = new float[3], max = new float[3];
         int axis = d.getAxis().ordinal();
         for (int i = 0; i < 3; i++) {
@@ -133,18 +139,39 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
 
     /** The shape for packed lines (cached). */
     public static VoxelShape shapeOf(int lines) {
+        return shapeOf(lines, 0);
+    }
+
+    /** The shape for packed lines with the arms on the {@link #centredSides} in the middle (cached). */
+    public static VoxelShape shapeOf(int lines, int centred) {
+        long key = (lines & 0xFFFFFFFFL) | (long) centred << 32;
         synchronized (SHAPES) {
-            VoxelShape s = SHAPES.get(lines);
+            VoxelShape s = SHAPES.get(key);
             if (s != null) return s;
             s = HUB;
             for (PipeLine l : PipeLine.values()) {
                 int slot = FilterPipes.slot(lines, l);
-                for (Direction d : Direction.values()) if (FilterPipes.joined(slot, d)) s = Shapes.or(s, box(arm(l, d, ARM, 0)));
+                for (Direction d : Direction.values()) if (FilterPipes.joined(slot, d)) s = Shapes.or(s, box(arm(l, d, ARM, 0, (centred & 1 << d.ordinal()) != 0)));
             }
             s = s.optimize();
-            SHAPES.put(lines, s);
+            SHAPES.put(key, s);
             return s;
         }
+    }
+
+    /**
+     * M65: the sides (bit = direction ordinal) where exactly one line of the bundle joins and the neighbour is no bundle (a
+     * single pipe, a filter connector, a tank): there the arm is drawn in the middle of the face, in line with the single pipe.
+     * Between two bundles every line keeps its corner, so they line up.
+     */
+    public static int centredSides(BlockGetter level, BlockPos pos, int lines) {
+        int out = 0;
+        for (Direction d : Direction.values()) {
+            int n = 0;
+            for (PipeLine l : PipeLine.values()) if (FilterPipes.joined(FilterPipes.slot(lines, l), d)) n++;
+            if (n == 1 && !(level.getBlockState(pos.relative(d)).getBlock() instanceof FilterPipeBundleBlock)) out |= 1 << d.ordinal();
+        }
+        return out;
     }
 
     private static int linesAt(BlockGetter level, BlockPos pos) {
@@ -153,7 +180,8 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return PipeCovers.shape(level, pos, shapeOf(linesAt(level, pos))); // part c: a full block under a cover
+        int lines = linesAt(level, pos);
+        return PipeCovers.shape(level, pos, shapeOf(lines, centredSides(level, pos, lines))); // part c: a full block under a cover
     }
 
     @Override
@@ -193,6 +221,12 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
     /** The line of the bundle closest to where it was hit (an arm, else the spot of the line next to the manifold). */
     @Nullable
     public static PipeLine lineAt(int lines, Vec3 local) {
+        return lineAt(lines, 0, local);
+    }
+
+    /** The line closest to where it was hit, with the arms on the {@link #centredSides} in the middle. */
+    @Nullable
+    public static PipeLine lineAt(int lines, int centred, Vec3 local) {
         PipeLine best = null;
         double bd = Double.MAX_VALUE;
         for (PipeLine l : FilterPipes.lines(lines)) {
@@ -203,7 +237,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
                     (8 + sg[0] * OFFSET + ARM) / 16, (8 + sg[1] * OFFSET + ARM) / 16, (8 + sg[2] * OFFSET + ARM) / 16).distanceToSqr(local) + 1e-4;
             for (Direction dir : Direction.values()) {
                 if (!FilterPipes.joined(slot, dir)) continue;
-                float[] b = arm(l, dir, ARM, 0);
+                float[] b = arm(l, dir, ARM, 0, (centred & 1 << dir.ordinal()) != 0);
                 d = Math.min(d, new AABB(b[0] / 16, b[1] / 16, b[2] / 16, b[3] / 16, b[4] / 16, b[5] / 16).distanceToSqr(local));
             }
             if (d < bd) {
@@ -358,7 +392,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
         if (facade != null) return facade;
         if (stack.getItem() instanceof PipeTeeItem) {
             if (!level.isClientSide()) {
-                PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
+                PipeLine l = lineAt(linesAt(level, pos), centredSides(level, pos, linesAt(level, pos)), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
                 if (l == null) return InteractionResult.FAIL;
                 if (FilterPipes.junction(FilterPipes.at(level, pos, l))) {
                     player.displayClientMessage(Component.translatable("message.bettacraft.pipe_tee.already").withStyle(ChatFormatting.GOLD), true);
@@ -376,7 +410,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!player.isShiftKeyDown()) return InteractionResult.PASS;
         if (!level.isClientSide()) {
-            PipeLine l = lineAt(linesAt(level, pos), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
+            PipeLine l = lineAt(linesAt(level, pos), centredSides(level, pos, linesAt(level, pos)), hit.getLocation().subtract(Vec3.atLowerCornerOf(pos)));
             if (l == null) return InteractionResult.FAIL;
             for (ItemStack it : removeLine(level, pos, l)) {
                 if (player.getAbilities().instabuild) continue;
@@ -409,7 +443,7 @@ public class FilterPipeBundleBlock extends BaseEntityBlock implements BlockRemov
 
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         int lines = linesAt(level, pos);
-        PipeLine l = target instanceof BlockHitResult b ? lineAt(lines, b.getLocation().subtract(Vec3.atLowerCornerOf(pos))) : null;
+        PipeLine l = target instanceof BlockHitResult b ? lineAt(lines, centredSides(level, pos, lines), b.getLocation().subtract(Vec3.atLowerCornerOf(pos))) : null;
         return l == null ? new ItemStack(ModItems.FILTER_INLET_PIPE.get()) : new ItemStack(pipeOf(l));
     }
 
