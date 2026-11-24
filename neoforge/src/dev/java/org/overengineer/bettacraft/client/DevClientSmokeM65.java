@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
@@ -344,9 +344,9 @@ final class DevClientSmokeM65 {
     // ------------------------------------------------------------------ scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
-        ServerLevel in = InteriorManager.interiorLevel(p.server);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        ServerLevel level = p.level();
+        ServerLevel in = InteriorManager.interiorLevel(p.level().getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         DevClientWorldTour.clearWeather(level);
         origin = p.blockPosition().offset(-20, 0, 180);
         yard = origin.offset(0, 1, 0);
@@ -357,7 +357,7 @@ final class DevClientSmokeM65 {
             BlockPos base = row.offset(t * 7, 0, 0);
             for (int x = 0; x < WALL_SX; x++) for (int z = 0; z < WALL_SZ; z++) level.setBlockAndUpdate(base.offset(x, 0, z), Blocks.OAK_PLANKS.defaultBlockState());
             wall[t] = base.offset(0, 1, 0);
-            TankBlockEntity c = tank(level, p, wall[t], ResourceLocation.withDefaultNamespace((String) WALL_TANKS[t][0]), (TankStyle) WALL_TANKS[t][1],
+            TankBlockEntity c = tank(level, p, wall[t], Identifier.withDefaultNamespace((String) WALL_TANKS[t][0]), (TankStyle) WALL_TANKS[t][1],
                     (float) WALL_TANKS[t][2], "M65 " + WALL_TANKS[t][3] + " " + t);
             InteriorRegion r = InteriorManager.ensureRegion(level, c);
             for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
@@ -386,7 +386,7 @@ final class DevClientSmokeM65 {
         for (int x = 0; x < sx; x++) for (int z = 0; z < sz; z++) level.setBlock(min.offset(x, -1, z), Blocks.GRASS_BLOCK.defaultBlockState(), Block.UPDATE_CLIENTS);
     }
 
-    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, ResourceLocation glassId, TankStyle style, float fill, String name) {
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, Identifier glassId, TankStyle style, float fill, String name) {
         List<BlockPos> blocks = new ArrayList<>();
         for (int y = 0; y < WALL_SY; y++) for (int z = 0; z < WALL_SZ; z++) for (int x = 0; x < WALL_SX; x++) blocks.add(min.offset(x, y, z));
         for (BlockPos pos : blocks) {
@@ -410,8 +410,8 @@ final class DevClientSmokeM65 {
     }
 
     private void time(long t) {
-        server(p -> DevClientWorldTour.clearWeather(p.serverLevel()));
-        server(p -> p.serverLevel().setDayTime(t));
+        server(p -> DevClientWorldTour.clearWeather(p.level()));
+        server(p -> org.overengineer.bettacraft.gametest.framework.DevTime.set(p.level(), t));
     }
 
     // ------------------------------------------------------------------ shader packs (Iris, by reflection; dev only)
@@ -508,8 +508,8 @@ final class DevClientSmokeM65 {
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
         server(p -> {
-            ServerLevel to = InteriorManager.isInterior(p.level()) ? p.server.overworld() : p.serverLevel();
-            p.teleportTo(to, x, eyeY - p.getEyeHeight(), z, yaw, pitch);
+            ServerLevel to = InteriorManager.isInterior(p.level()) ? p.level().getServer().overworld() : p.level();
+            p.teleportTo(to, x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 
@@ -551,7 +551,7 @@ final class DevClientSmokeM65 {
     }
 
     private void shot(String pack, String view) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m65_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m65_" + TAG + "_" + pack + "_" + view + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
