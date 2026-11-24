@@ -34,7 +34,11 @@ einer verbleibenden Leitung ist der Block wieder ein normales Rohr. Wer ein Bün
 zurück.
 
 Die vier Leitungen und ihre Farben: Einlass (blau) und Rücklauf (orange) der [Filterleitungen](filter_lines.md),
-Frischwasser (grün) und Abwasser (braun).
+Frischwasser (grün) und Abwasser (braun); jedes Rohr trägt an jeder Blockgrenze einen Ring seiner Farbe.
+
+Zwischen zwei Bündeln bleibt jede Leitung in ihrer eigenen Ecke des Stahlverteilers, so liegen die Bündel in einer Linie. Wo
+eine Leitung das Bündel in ein einzelnes Rohr verlässt (oder in einen Filteranschluss, ein Aquarium), kommt ihr Arm aus der
+**Mitte** des Verteilers, in einer Linie mit dem Rohr.
 
 ## Frisch- und Abwasser
 

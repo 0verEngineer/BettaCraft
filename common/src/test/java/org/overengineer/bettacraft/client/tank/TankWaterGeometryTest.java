@@ -141,7 +141,7 @@ class TankWaterGeometryTest {
                         float plane = d.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0;
                         float along = (float) d.getAxis().choose(c[0], c[1], c[2]);
                         if (d == Direction.UP) assertTrue(along < 1, "top below the glass: " + where);
-                        else assertEquals(plane - TankWaterGeometry.INSET * d.getAxisDirection().getStep(), along, E, "inset of " + where);
+                        else assertEquals(plane - inset(d) * d.getAxisDirection().getStep(), along, E, "inset of " + where);
                         // sideways: every border of the water face is a block border or a cut of the glass in front of it,
                         // so the glass piece in front of the water has exactly its extent (and centre)
                         float sMin = 1, sMax = 0, tMin = 1, tMax = 0;
@@ -164,7 +164,7 @@ class TankWaterGeometryTest {
                         // an outer side of the face ends exactly at the water face of that side (closed corner)
                         for (Direction e : Direction.values()) {
                             if (e.getAxis() == d.getAxis() || TankWaterGeometry.connected(mask, e)) continue;
-                            float edge = e.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 - TankWaterGeometry.INSET : TankWaterGeometry.INSET;
+                            float edge = e.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 - inset(e) : inset(e);
                             float bound = (float) (e.getAxisDirection() == Direction.AxisDirection.POSITIVE
                                     ? Math.max(Math.max(e.getAxis().choose(c[0], c[1], c[2]), e.getAxis().choose(c[3], c[4], c[5])),
                                     Math.max(e.getAxis().choose(c[6], c[7], c[8]), e.getAxis().choose(c[9], c[10], c[11])))
@@ -177,6 +177,11 @@ class TankWaterGeometryTest {
                 }
             }
         }
+    }
+
+    /** M65: the sides 0.75 px inside the glass, bottom and top 0.5 px. */
+    private static float inset(Direction d) {
+        return d.getAxis() == Direction.Axis.Y ? TankWaterGeometry.INSET : TankWaterGeometry.SIDE_INSET;
     }
 
     private static boolean isBorderOrCut(float v, java.util.List<Float> cuts) {
