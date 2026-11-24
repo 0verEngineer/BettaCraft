@@ -11,7 +11,7 @@ import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
 
 /**
- * M65: the models of the water pipes (glass, stainless steel) and the filter pipes: 4 px thick ({@link #A} to {@link #B}),
+ * M65: the models of the water pipes (glass, stainless steel) and the filter pipes: 3 px thick ({@link #A} to {@link #B}),
  * every face textured with the texture's columns across the pipe and its rows along it. A pipe texture ({@code #t}) is shaded
  * by column only (lighter in the middle, darker along the edges, a coloured ring in the first and last row for the filter
  * lines); its transposed copy ({@code #r}, {@code <texture>_r}) is used on the faces whose texture rows run across the pipe
@@ -24,7 +24,7 @@ import org.overengineer.bettacraft.plumbing.PipeBlock;
  * goes on along it or along neither of the face's axes, else along its U axis.
  */
 final class PipeModels {
-    static final float A = 6, B = 10;
+    static final float A = 6.5F, B = 9.5F;
 
     private PipeModels() {}
 
@@ -110,7 +110,7 @@ final class PipeModels {
 
     /**
      * The block state and models of a pipe: {@code <name>_arm_<side>}, {@code <name>_core_<face>_t|r}, {@code <name>_item};
-     * {@code junction} != null: also the T-piece collar ({@code <name>_tee}, a 6 px steel sleeve) while it is true.
+     * {@code junction} != null: also the T-piece collar ({@code <name>_tee}, a 4.5 px steel sleeve) while it is true.
      */
     static void pipe(BlockStateProvider p, Block block, String name, String render, boolean endFaces, @Nullable BooleanProperty junction) {
         Identifier tex = p.modLoc("block/" + name);
@@ -146,7 +146,7 @@ final class PipeModels {
         }
         if (junction != null) {
             BlockModelBuilder tee = p.models().getBuilder(name + "_tee").texture("c", p.modLoc("block/pipe_tee")).texture("particle", tex).renderType(render);
-            tee.element().from(5, 5, 5).to(11, 11, 11).allFaces((dd, f) -> f.texture("#c")).end();
+            tee.element().from(5.75F, 5.75F, 5.75F).to(10.25F, 10.25F, 10.25F).allFaces((dd, f) -> f.texture("#c")).end();
             mp.part().modelFile(tee).addModel().condition(junction, true).end();
         }
         // item: a straight piece north-south

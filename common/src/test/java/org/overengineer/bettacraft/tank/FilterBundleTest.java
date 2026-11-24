@@ -81,7 +81,7 @@ class FilterBundleTest {
         assertArrayEquals(new long[]{0, 0}, FilterWater.distribute(new long[]{0, -5}, 100));
     }
 
-    /** M65: towards a single pipe a line's arm leaves the middle of the face, exactly where the single pipe (4 px, 6..10) is. */
+    /** M65: towards a single pipe a line's arm leaves the middle of the face, exactly where the single pipe (3 px, 6.5..9.5) is. */
     @Test
     void theArmTowardsASinglePipeIsInLineWithIt() {
         for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) {
@@ -91,8 +91,8 @@ class FilterBundleTest {
                     assertTrue(a[i] == 0 || a[i + 3] == 16, "reaches the face " + l + " " + d);
                     continue;
                 }
-                assertEquals(6F, a[i], 1e-6F, l + " " + d);
-                assertEquals(10F, a[i + 3], 1e-6F, l + " " + d);
+                assertEquals(6.5F, a[i], 1e-6F, l + " " + d);
+                assertEquals(9.5F, a[i + 3], 1e-6F, l + " " + d);
             }
         }
     }
