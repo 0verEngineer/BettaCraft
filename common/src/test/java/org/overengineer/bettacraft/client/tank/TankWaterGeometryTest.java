@@ -191,11 +191,31 @@ class TankWaterGeometryTest {
         assertNotNull(b);
         assertEquals(0, b.faces(), "no face at all inside the water body");
         assertEquals(1F, (b.x1() - b.x0()) * (b.y1() - b.y0()) * (b.z1() - b.z0()), E);
-        // a single block: all faces, 0.5 px inside the glass
+        // a single block: all faces, 0.5 px inside the glass at the bottom, 0.75 px at the sides (M65)
         TankWaterGeometry.Body s = TankWaterGeometry.body(0, 16, false);
         assertEquals(63, s.faces());
-        assertEquals(TankWaterGeometry.INSET, s.x0(), E);
+        assertEquals(TankWaterGeometry.SIDE_INSET, s.x0(), E);
+        assertEquals(1 - TankWaterGeometry.SIDE_INSET, s.z1(), E);
+        assertEquals(TankWaterGeometry.INSET, s.y0(), E);
         assertEquals(1 - TankWaterGeometry.INSET, s.y1(), E, "a full block keeps the surface just below the rim");
         assertNull(TankWaterGeometry.body(0, 0, false), "dry block");
+    }
+
+    /**
+     * M65: the miniature is drawn 0.5 px inside the glass (MiniatureRenderer.MARGIN); the water's side faces must lie behind the
+     * front of its blocks there, by at least a quarter pixel (what the depth buffer resolves within the miniature's distance),
+     * or the water is drawn over the blocks that stand against the glass.
+     */
+    @Test
+    void sideFacesLieBehindTheMiniaturesBlocksAtTheGlass() {
+        float miniatureMargin = 0.5F / 16F;
+        assertTrue(TankWaterGeometry.SIDE_INSET - miniatureMargin >= 0.25F / 16F - E);
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            TankWaterGeometry.Body b = TankWaterGeometry.body(0, 10, false);
+            float[] q = new float[12];
+            TankWaterGeometry.face(b, d, q);
+            float depth = d.getAxis() == Direction.Axis.X ? (d == Direction.WEST ? q[0] : 1 - q[0]) : (d == Direction.NORTH ? q[2] : 1 - q[2]);
+            assertTrue(depth > miniatureMargin + 0.2F / 16F, d + " face at " + depth);
+        }
     }
 }

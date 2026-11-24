@@ -36,11 +36,12 @@ public class PipeBlock extends Block implements BlockRemoval {
     public static final Map<Direction, BooleanProperty> SIDES = new EnumMap<>(Map.of(
             Direction.NORTH, BlockStateProperties.NORTH, Direction.SOUTH, BlockStateProperties.SOUTH, Direction.EAST, BlockStateProperties.EAST,
             Direction.WEST, BlockStateProperties.WEST, Direction.UP, BlockStateProperties.UP, Direction.DOWN, BlockStateProperties.DOWN));
-    private static final VoxelShape CORE = box(5, 5, 5, 11, 11, 11);
+    // M65: 4 px thick (was 6); the T-piece collar 6 px (was 8)
+    private static final VoxelShape CORE = box(6, 6, 6, 10, 10, 10);
     private static final Map<Direction, VoxelShape> ARMS = new EnumMap<>(Map.of(
-            Direction.NORTH, box(5, 5, 0, 11, 11, 5), Direction.SOUTH, box(5, 5, 11, 11, 11, 16),
-            Direction.WEST, box(0, 5, 5, 5, 11, 11), Direction.EAST, box(11, 5, 5, 16, 11, 11),
-            Direction.DOWN, box(5, 0, 5, 11, 5, 11), Direction.UP, box(5, 11, 5, 11, 16, 11)));
+            Direction.NORTH, box(6, 6, 0, 10, 10, 6), Direction.SOUTH, box(6, 6, 10, 10, 10, 16),
+            Direction.WEST, box(0, 6, 6, 6, 10, 10), Direction.EAST, box(10, 6, 6, 16, 10, 10),
+            Direction.DOWN, box(6, 0, 6, 10, 6, 10), Direction.UP, box(6, 10, 6, 10, 16, 10)));
     private final boolean steel;
 
     public PipeBlock(boolean steel, Properties properties) {

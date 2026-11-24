@@ -52,29 +52,47 @@ def steel(seed, base="#b9c0c8", frame=True):
     return _img(px)
 
 
+# M65: the pipes are 4 px thick (columns 6..9 of the texture across the pipe) and drawn with the texture's columns across
+# the pipe and its rows along it on every face (the models pick the texture or its transposed copy "_r" per face). The
+# shading depends on the column only, so a pipe has no lines across it at the block borders or in the middle of a block.
+PIPE_SHADE = {6: 0.84, 7: 1.0, 8: 0.97, 9: 0.86}
+
+
+def pipe_shade(x):
+    return PIPE_SHADE.get(x, 0.95)
+
+
+def transposed(img):
+    """The copy of a pipe texture for the faces whose rows run across the pipe (columns and rows swapped)."""
+    return np.ascontiguousarray(np.transpose(img, (1, 0, 2)))
+
+
 def glass_pipe_tex():
-    """Glass pipe wall: almost clear with bright edges and a highlight line."""
+    """Glass pipe wall: clear glass with a bright edge along both sides and a highlight line, nothing across."""
     def px(x, y):
-        if x in (0, 15) or y in (0, 15):
+        if x in (6, 9):
             return _rgb("#d8f0f4")
-        if x == 3:
+        if x == 7:
             return _rgb("#ffffff")
         return _rgb("#bfe6ee")
 
     def a(x, y):
-        if x in (0, 15) or y in (0, 15):
-            return 210
-        if x == 3:
-            return 170
+        if x in (6, 9):
+            return 190
+        if x == 7:
+            return 140
         return 70
     return _img(px, a)
 
 
-def steel_pipe_tex():
-    img = steel(2401, "#aeb6bf")
-    for x in range(S):  # a weld seam ring
-        img[7, x, :3] = (np.array(img[7, x, :3], float) * 0.82).astype(np.uint8)
-    return img
+def steel_pipe_tex(base="#aeb6bf", seed=2401):
+    """Brushed stainless steel pipe: lighter in the middle, darker along both edges, brushed along the pipe."""
+    r = _rng(seed)
+    brush = 1 + (r.random(S) - 0.5) * 0.03
+
+    def px(x, y):
+        return _rgb(base) * pipe_shade(x) * brush[x]
+    return _img(px)
 
 
 def nether_brick(seed):
@@ -517,6 +535,7 @@ def write_all():
     out = []
     blocks = {
         "glass_pipe": glass_pipe_tex(), "stainless_steel_pipe": steel_pipe_tex(),
+        "glass_pipe_r": transposed(glass_pipe_tex()), "stainless_steel_pipe_r": transposed(steel_pipe_tex()),
         "stainless_steel_block": steel(2400),
         "crucible_side": nether_brick(2402), "crucible_top": crucible_top(False), "crucible_top_lit": crucible_top(True),
         "water_pump_front": pump_face("front"), "water_pump_back": pump_face("back"), "water_pump_side": pump_face("side"),
