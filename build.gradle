@@ -72,11 +72,17 @@ def descRaw = 'https://raw.githubusercontent.com/0verEngineer/BettaCraft'
 def descRoot = rootProject.projectDir
 def descRef = providers.gradleProperty('descriptionRef').orElse(
         providers.exec { commandLine 'git', 'rev-parse', 'HEAD'; ignoreExitValue = true }.standardOutput.asText.map { it.trim() ?: 'master' })
+// M65: the commit behind the ref is the task's input, not only the ref's name: a tag set again on a new commit (or a branch
+// that moved) left the task UP-TO-DATE with the old commit in every link
+def descSha = descRef.flatMap { String ref ->
+    providers.exec { commandLine 'git', 'rev-parse', '--verify', '--quiet', ref + '^{commit}'; ignoreExitValue = true; workingDir descRoot }
+            .standardOutput.asText.map { it.trim() } }
 tasks.register('curseforgeDescription') {
     group = 'build'
     description = 'Builds the CurseForge project description (Markdown + HTML with absolute links) from docs/description.md'
     inputs.file(descSource)
     inputs.property('ref', descRef)
+    inputs.property('sha', descSha)
     def outDir = layout.buildDirectory.dir('curseforge')
     outputs.dir(outDir)
     doLast {
@@ -84,9 +90,8 @@ tasks.register('curseforgeDescription') {
         // M64: the links are pinned to the commit of the ref, not to the ref itself: a release tag has a '+'
         // (v1.53.0-beta.1+neoforge-1.21.1), which CurseForge turns into a space (every image 404), and it decodes '%2B' back
         // to '+' as well. A full commit SHA never has either.
-        def git = new ProcessBuilder('git', 'rev-parse', '--verify', ref + '^{commit}').directory(descRoot).redirectErrorStream(true).start()
-        String sha = git.inputStream.getText('UTF-8').trim()
-        if (git.waitFor() != 0 || !(sha ==~ /[0-9a-f]{40}/)) throw new GradleException("curseforgeDescription: ${ref} is no commit of this repository (${sha})")
+        String sha = descSha.get()
+        if (!(sha ==~ /[0-9a-f]{40}/)) throw new GradleException("curseforgeDescription: ${ref} is no commit of this repository")
         String urlRef = sha
         File docs = descSource.parentFile
         def problems = []
