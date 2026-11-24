@@ -4,6 +4,35 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.54.0-beta.1] - 2026-11-24
+
+Thinner, cleaner pipes; no water over blocks at the glass.
+
+### Changed
+- **Pipes:** the glass, stainless steel and filter pipes are 4 px thick instead of 6. Their textures run along the pipe on
+  every face (lighter in the middle, darker along the edges) without the grey lines across them at every block border and in
+  the middle of a block; a glass pipe shows no faces inside it any more. The filter pipes carry a ring of their line's colour
+  (blue, orange, green, brown) at every block border. The T-piece is a grey steel collar like the pipes (it was a brown brass
+  box), 6 px instead of 8.
+- **Pipe bundles:** where a line leaves a bundle into a single pipe (or a filter connector, an aquarium), its arm comes out of
+  the middle of the manifold, in line with the pipe; it kept to its corner of the manifold and the pipe stepped sideways at the
+  block border. Between two bundles every line keeps its corner as before.
+- CI: the GitHub Actions runs are named after what they do ("Release v1.54.0-beta.1+neoforge-1.21.1", "Build master (full)",
+  "Integration tests: zoo on master") instead of the commit message.
+- Development: the client smoke `-Psmoketestm65` (both loaders; `-Pm65parts=pipes,wall`, `-Pm65packs`, `-Pm65tag`): a pipe yard
+  (straight runs, bends, T and cross, the four filter lines with T-pieces, bundles with lines coming in and leaving) and the
+  water at blocks against the glass with its guard (every view without water, the old way and now; on the blocks the picture
+  must equal the one without water, beside them the water must be there).
+
+### Fixed
+- **Water drawn over blocks at the glass:** blocks standing inside a tank against the glass (the land of a paludarium, a back
+  wall built into an aquarium, the substrate) were tinted by the water as if it stood between them and the glass. The water's
+  side faces lay exactly where the miniature draws the front of those blocks and won the depth test; they lie a quarter
+  pixel behind it now.
+- `curseforgeDescription` stayed UP-TO-DATE when only the commit behind its ref changed (a release tag set again on another
+  commit) and kept the old commit in every link; the commit is now an input of the task (test `tools/ci/test_curseforge_description.sh`,
+  also in the build workflow).
+
 ## [1.53.0-beta.1] - 2026-11-23
 
 Tank optics: connected glass at a distance, stalks on their base, swaying roots, the light on the lid, a shorter overlay.
