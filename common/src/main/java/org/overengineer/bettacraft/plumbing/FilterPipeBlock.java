@@ -62,13 +62,13 @@ public class FilterPipeBlock extends BaseEntityBlock implements org.overengineer
     public static final Map<Direction, BooleanProperty> SIDES = PipeBlock.SIDES;
     /** A T-piece (joins up to all six sides). */
     public static final BooleanProperty JUNCTION = BooleanProperty.create("junction");
-    // M65: 4 px thick (was 6); the T-piece collar 6 px (was 8)
-    private static final VoxelShape CORE = box(6, 6, 6, 10, 10, 10);
-    private static final VoxelShape JUNCTION_CORE = box(5, 5, 5, 11, 11, 11);
+    // M65: the pipe 3 px thick (was 6); the T-piece collar 4.5 px (was 8)
+    private static final VoxelShape CORE = box(6.5, 6.5, 6.5, 9.5, 9.5, 9.5);
+    private static final VoxelShape JUNCTION_CORE = box(5.75, 5.75, 5.75, 10.25, 10.25, 10.25);
     private static final Map<Direction, VoxelShape> ARMS = Map.of(
-            Direction.NORTH, box(6, 6, 0, 10, 10, 6), Direction.SOUTH, box(6, 6, 10, 10, 10, 16),
-            Direction.WEST, box(0, 6, 6, 6, 10, 10), Direction.EAST, box(10, 6, 6, 16, 10, 10),
-            Direction.DOWN, box(6, 0, 6, 10, 6, 10), Direction.UP, box(6, 10, 6, 10, 16, 10));
+            Direction.NORTH, box(6.5, 6.5, 0, 9.5, 9.5, 6.5), Direction.SOUTH, box(6.5, 6.5, 9.5, 9.5, 9.5, 16),
+            Direction.WEST, box(0, 6.5, 6.5, 6.5, 9.5, 9.5), Direction.EAST, box(9.5, 6.5, 6.5, 16, 9.5, 9.5),
+            Direction.DOWN, box(6.5, 0, 6.5, 9.5, 6.5, 9.5), Direction.UP, box(6.5, 9.5, 6.5, 9.5, 16, 9.5));
     /** Bumped on every change of a filter pipe (the pump heads look at their lines again). */
     private static volatile int version;
     private final PipeLine line;

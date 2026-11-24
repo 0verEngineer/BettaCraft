@@ -37,15 +37,12 @@ def line_pipe(colour, seed):
 
 
 def tee_collar():
-    """M65: the collar of a T-piece in the steel of the pipes (it was brass): a 6 px sleeve (columns 5..10) with a slightly
-    darker rim."""
+    """M65: the collar of a T-piece in the steel of the pipes (it was brass): a 4.5 px sleeve (columns 5.75..10.25), plain steel a
+    little darker than the pipe."""
     from plumbing import pipe_shade
 
     def px(x, y):
-        base = _rgb("#a9b1ba") * (0.97 + 0.03 * math.sin(x * 0.9))
-        if x in (5, 10) or y in (5, 10):
-            return base * 0.86
-        return base
+        return _rgb("#a3abb4") * (0.97 + 0.03 * math.sin(x * 0.9))
     return _img(px)
 
 
