@@ -17,10 +17,11 @@ full of lights) there is no room left: the <ItemLink id="bettacraft:clip_feeder"
 instead, at the top edge, like the real feeders clipped to an aquarium rim.
 
 * **Place** it on a side face of a **top** tank block (on a lower block it does not hold).
-* **Right-click with food**: fills it. It holds **one stack**.
-* **Right-click with an empty hand**: 1, 2 or 3 feedings a day (like the big [feeder](feeder.md): morning, afternoon,
-  evening). **Sneak + right-click** with an empty hand takes the food out.
-* No hopper, no menu, and it does **not** cover the water against evaporation.
+* **Right-click with food**: fills it. It holds **two stacks**.
+* **Right-click with an empty hand**: opens its **menu** with the two slots and the button for 1, 2 or 3 feedings a day (like the big
+  [feeder](feeder.md): morning, afternoon, evening); it also says that the feeder takes food from a [cabinet](cabinet.md) under the tank.
+  **Sneak + right-click** with an empty hand takes the food out.
+* No hopper, and it does **not** cover the water against evaporation.
 * If there is a big feeder on the aquarium too, that one feeds; the clip-on feeder is for the tanks without one.
 * It falls off when the glass behind it is broken. Config switch: `features.equipment.clipOnFeeder`.
 
