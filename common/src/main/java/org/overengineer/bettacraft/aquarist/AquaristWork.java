@@ -233,9 +233,9 @@ public final class AquaristWork {
     /** M66: the species a rearing tank can be limited to (the animals that grow up in a tank): key and translation key. */
     public static List<String[]> speciesOptions() {
         List<String[]> out = new ArrayList<>();
-        out.add(new String[]{"betta", "entity.bettacraft.betta"});
+        out.add(new String[]{"betta", org.overengineer.bettacraft.registry.ModEntities.BETTA.get().getDescriptionId()});
         for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) out.add(new String[]{sp.id(), sp.translationKey()});
-        out.add(new String[]{"dwarf_frog", "entity.bettacraft.dwarf_frog"});
+        out.add(new String[]{"dwarf_frog", org.overengineer.bettacraft.registry.ModEntities.DWARF_FROG.get().getDescriptionId()});
         return out;
     }
 
