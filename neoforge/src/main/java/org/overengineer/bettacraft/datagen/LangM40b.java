@@ -19,8 +19,8 @@ final class LangM40b {
         a.accept("tooltip.bettacraft.filter_water_pipe.usage", "Joins at most two neighbours (a T-piece: all): its port on the filter, water pumps, reservoirs, the pipes of other mods, ME/RS buses");
         a.accept("tooltip.bettacraft.filter_port.usage", "Place it against a filter chamber; a level sensor or water change controller on the filter then works on all its tanks");
         a.accept("message.bettacraft.pipe_bundle.has_line", "This line runs here already");
-        a.accept("gui.bettacraft.mb_filter.water", "Fresh water: %s mB · waste water: %s mB");
-        a.accept("gui.bettacraft.mb_filter.no_waste", "Fresh water: %s mB · no waste water port: old water is discarded");
+        a.accept("gui.bettacraft.mb_filter.water", "Fresh water: %s · waste water: %s mB");
+        a.accept("gui.bettacraft.mb_filter.no_waste", "Fresh water: %s · no waste water port: old water is discarded");
         a.accept("gui.bettacraft.water_changer.filter", "On the multiblock filter: %s tanks");
         a.accept("gui.bettacraft.water_changer.filter_waste", "Old water to the waste water port: %s mB");
         a.accept("info.bettacraft.filter_fresh_pipe", "The fresh water line of the multiblock filter: from a water pump, a reservoir, an ME or RS export bus or the pipes of other mods to the filter's fresh water port. It joins at most two neighbours (a T-piece: all) and never a tank. Right-click another filter pipe with it to run both in one block (a pipe bundle, up to four lines).");
