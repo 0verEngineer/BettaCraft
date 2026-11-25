@@ -504,6 +504,34 @@ public final class HiredAquaristGameTests {
         }
     }
 
+    /** M66: the list of the menu shows what he cares for: without a workplace nothing (and "cared" says 0), with one every tank around it. */
+    @GameTest(template = EMPTY, batch = "bettacraft_m66_list", timeoutTicks = 200)
+    public static void menuListMatchesTheTanksHeCaresFor(GameTestHelper h) {
+        floor(h);
+        home(h);
+        ServerPlayer sp = player(h);
+        try {
+            TankBlockEntity own = tank(h, 10, 2, sp.getUUID());
+            AquaristEntity npc = AquaristArrival.spawnHiredHomeless(h.getLevel(), sp.getUUID(), "tester", h.absoluteVec(new Vec3(6.5, 1, 6.5)));
+            npc.alwaysDay = true;
+            npc.setNoAi(true);
+            var none = org.overengineer.bettacraft.aquarist.AquaristMenu.view(sp, npc);
+            check(none.getIntOr("cared", 0) == 0, "no workplace: cares for none");
+            check(none.getList("tanks", net.minecraft.nbt.Tag.TAG_COMPOUND).isEmpty(), "no workplace: no tank in the list (was: "
+                    + none.getList("tanks", net.minecraft.nbt.Tag.TAG_COMPOUND).size() + ")");
+            check(npc.setHome(h.getLevel(), h.absolutePos(BASIN), h.absolutePos(BED.south())), "home");
+            var with = org.overengineer.bettacraft.aquarist.AquaristMenu.view(sp, npc);
+            long mineRows = with.getList("tanks", net.minecraft.nbt.Tag.TAG_COMPOUND).stream().filter(t -> {
+                BlockPos r = BlockPos.of(((net.minecraft.nbt.CompoundTag) t).getLongOr("pos", 0L)).subtract(h.absolutePos(BlockPos.ZERO));
+                return r.getX() >= 0 && r.getX() < 32 && r.getZ() >= 0 && r.getZ() < 32;
+            }).count();
+            check(mineRows == 1 && own.getTank().id() != null, "the tank around his workplace is listed");
+            h.succeed();
+        } finally {
+            cleanup(h, sp.getUUID());
+        }
+    }
+
     /** Team tanks count (FTB Teams through its answer); the config switch turns it off. */
     @GameTest(template = EMPTY, batch = "bettacraft_m51_team", timeoutTicks = 200)
     public static void teamTanksCount(GameTestHelper h) {
