@@ -13,6 +13,8 @@ public final class ModMenus {
 
     public static final Supplier<MenuType<TankMenu>> TANK = MENUS.register("tank", () -> org.overengineer.bettacraft.platform.Platform.get().menuType(TankMenu::new));
     public static final Supplier<MenuType<FeederMenu>> FEEDER = MENUS.register("feeder", () -> org.overengineer.bettacraft.platform.Platform.get().menuType(FeederMenu::new));
+    /** M66: the clip-on feeder's menu (two slots). */
+    public static final Supplier<MenuType<FeederMenu>> CLIP_FEEDER = MENUS.register("clip_feeder", () -> org.overengineer.bettacraft.platform.Platform.get().menuType(FeederMenu::clip));
 
     public static final Supplier<MenuType<org.overengineer.bettacraft.equipment.ExternalFilterMenu>> EXTERNAL_FILTER = MENUS.register("external_filter",
             () -> org.overengineer.bettacraft.platform.Platform.get().menuType(org.overengineer.bettacraft.equipment.ExternalFilterMenu::new));

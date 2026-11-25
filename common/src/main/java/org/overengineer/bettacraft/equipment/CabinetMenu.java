@@ -22,7 +22,9 @@ import org.overengineer.bettacraft.registry.ModMenus;
  * filter is in the slot), nine storage slots and the player inventory.
  */
 public class CabinetMenu extends AbstractContainerMenu {
-    public static final int FILTER_X = 26, FILTER_Y = 18, HEATER_X = 17, HEATER_Y = 44, STORAGE_X = 98, STORAGE_Y = 17;
+    /** M66: the panel is 216 x 188; the storage sits at x 124, the inventory 20 px right and 22 px down of the vanilla layout. */
+    public static final int FILTER_X = 26, FILTER_Y = 18, HEATER_X = 17, HEATER_Y = 44, STORAGE_X = 124, STORAGE_Y = 17,
+            INV_X = 28, INV_Y = 106, WIDTH = 216, HEIGHT = 188;
     /** M29.1: the air pump slot, right of the heaters. */
     public static final int AIR_PUMP_X = 74, AIR_PUMP_Y = 44;
     /** Menu slot indices. */
@@ -82,8 +84,8 @@ public class CabinetMenu extends AbstractContainerMenu {
                 addSlot(new SlotItemHandler(items, 1 + c + r * 3, STORAGE_X + c * 18, STORAGE_Y + r * 18));
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 9; c++)
-                addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
+                addSlot(new Slot(inv, c + r * 9 + 9, INV_X + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, INV_X + c * 18, INV_Y + 58));
         addSlot(new SlotItemHandler(items, CabinetBlockEntity.SUMP_SLOT, SUMP_X, SUMP_Y) { // M49
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -96,6 +98,8 @@ public class CabinetMenu extends AbstractContainerMenu {
             }
         });
         addPowerSlot(cabinet);
+        energy = new MenuEnergy(cabinet); // M66: the tank's store
+        for (var s : energy.slots()) addDataSlot(s);
         outlet.set(cabinet == null ? -1 : outletValue(cabinet));
         addDataSlot(new net.minecraft.world.inventory.DataSlot() {
             @Override
@@ -276,6 +280,13 @@ public class CabinetMenu extends AbstractContainerMenu {
                 power.set(v);
             }
         });
+    }
+
+    private final MenuEnergy energy;
+
+    /** M66: the energy of the tank this cabinet feeds. */
+    public MenuEnergy energy() {
+        return energy;
     }
 
     /** Regulator 0..10 as the menu sees it. */

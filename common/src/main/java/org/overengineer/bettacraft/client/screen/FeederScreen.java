@@ -7,24 +7,33 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.FeederMenu;
 
-/** Feeder screen: vanilla dispenser layout plus a "n x per day" button. */
+/**
+ * Feeder screen: the food slots (3x3 on a tank, two for the clip-on feeder, M66) and a "n x per day" button; a small hint says
+ * that the feeder also takes food from a cabinet under the tank.
+ */
 public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
-    private static final Identifier TEXTURE = Identifier.withDefaultNamespace("textures/gui/container/dispenser.png");
+    private static final Identifier TEXTURE = BettaCraft.id("textures/gui/feeder.png");
     private Button cycle;
 
     public FeederScreen(FeederMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
+        imageWidth = FeederMenu.WIDTH;
+        imageHeight = FeederMenu.HEIGHT;
+        inventoryLabelX = FeederMenu.INV_X;
+        inventoryLabelY = FeederMenu.INV_Y - 11;
     }
 
     @Override
     protected void init() {
         super.init();
         titleLabelX = (imageWidth - font.width(title)) / 2;
+        int bx = menu.slotCount() == 2 ? 112 : 124;
         cycle = addRenderableWidget(Button.builder(Component.empty(), b -> {
             if (minecraft != null && minecraft.gameMode != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, FeederMenu.BUTTON_CYCLE);
-        }).bounds(leftPos + 120, topPos + 34, 50, 16).build());
+        }).bounds(leftPos + bx, topPos + 34, 50, 16).build());
         cycle.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.feeder.tooltip")));
     }
 
@@ -36,7 +45,28 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        for (int i = 0; i < menu.slotCount(); i++) {
+            int[] at = FeederMenu.slotAt(menu.slotCount(), i);
+            g.blit(TEXTURE, leftPos + at[0] - 1, topPos + at[1] - 1, 180, 0, 18, 18);
+        }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        super.renderLabels(g, mouseX, mouseY);
+        // small and grey under the slots: it also takes food from a cabinet under the tank
+        var lines = font.split(Component.translatable("gui.bettacraft.feeder.cabinet_hint"), (int) ((imageWidth - 16) / 0.8F));
+        g.pose().pushPose();
+        g.pose().translate(8, 76, 0);
+        g.pose().scale(0.8F, 0.8F, 1);
+        int y = 0;
+        for (var l : lines) {
+            if (y > 11) break;
+            g.drawString(font, l, 0, y, 0x606060, false);
+            y += 10;
+        }
+        g.pose().popPose();
     }
 
     @Override
