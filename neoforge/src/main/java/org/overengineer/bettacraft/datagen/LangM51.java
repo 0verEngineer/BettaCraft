@@ -77,8 +77,8 @@ final class LangM51 {
         a.accept("gui.bettacraft.aquarist.wage_off", "Works without wage (config)");
         a.accept("gui.bettacraft.aquarist.unpaid", "No wage for %s days: he works slower and leaves after %s");
         a.accept("gui.bettacraft.aquarist.no_chest", "No chest next to the breeding basin");
-        a.accept("gui.bettacraft.aquarist.chest_food", "The chest at the basin has food for the tanks");
-        a.accept("gui.bettacraft.aquarist.chest_no_food", "No food for the tanks in the chests at the basin");
+        a.accept("gui.bettacraft.aquarist.chest_food", "His chest has food for the tanks");
+        a.accept("gui.bettacraft.aquarist.chest_no_food", "No food for the tanks in his chest");
         a.accept("gui.bettacraft.aquarist.rearing", "Rearing tank: %s");
         a.accept("gui.bettacraft.aquarist.tanks", "Looks after %s of at most %s tanks within %s blocks:");
         a.accept("gui.bettacraft.aquarist.no_tanks", "No tanks with an owner near his workplace");
@@ -114,7 +114,7 @@ final class LangM51 {
         a.accept("gui.bettacraft.aquarist.task.plants.level2", "Level 2: From 75 %, nearly full-grown plants");
         a.accept("gui.bettacraft.aquarist.task.plants.level3", "Level 3: From 60 %, half-grown plants");
         a.accept("gui.bettacraft.aquarist.task.young", "Moving young");
-        a.accept("gui.bettacraft.aquarist.task.young.tooltip", "Moves young bettas, young tankmates and froglets into the rearing tank you choose below");
+        a.accept("gui.bettacraft.aquarist.task.young.tooltip", "Moves young bettas, young tankmates and froglets into the rearing tanks you choose in the tab Rearing tanks");
         a.accept("gui.bettacraft.aquarist.task.young.level1", "Level 1: 2 per trip");
         a.accept("gui.bettacraft.aquarist.task.young.level2", "Level 2: 4 per trip");
         a.accept("gui.bettacraft.aquarist.task.young.level3", "Level 3: 8 per trip");
