@@ -59,8 +59,12 @@ import org.overengineer.bettacraft.tank.plants.TankPlants;
 public final class AquaristWork {
     public enum Kind { FETCH_FOOD, TEND, FETCH_WATER, CHANGE_WATER, TAKE_YOUNG, RELEASE_YOUNG, RETURN_YOUNG, DEPOSIT }
 
-    /** One job: what, at which tank (null: at the workplace). */
-    public record Job(Kind kind, @Nullable UUID tank) {
+    /** One job: what, at which tank (null: at the workplace); M66: {@code to} = the rearing tank the young of a TAKE_YOUNG go to. */
+    public record Job(Kind kind, @Nullable UUID tank, @Nullable UUID to) {
+        public Job(Kind kind, @Nullable UUID tank) {
+            this(kind, tank, null);
+        }
+
         public boolean atWorkplace() {
             return kind == Kind.FETCH_FOOD || kind == Kind.FETCH_WATER || kind == Kind.DEPOSIT;
         }
@@ -107,7 +111,8 @@ public final class AquaristWork {
 
     /** Every tank of the index around his workplace with what he may do there (for the menu). */
     public static List<AquaristRecords.TankEntry> tanksAround(ServerLevel level, AquaristEntity npc) {
-        BlockPos wp = npc.workplace() != null ? npc.workplace() : npc.blockPosition();
+        BlockPos wp = npc.workplace();
+        if (wp == null) return List.of(); // M66: without a workplace he cares for no tank, so the menu lists none
         return AquaristRecords.get(level.getServer()).near(level.dimension(), wp, ServerConfig.getOr(ServerConfig.AQUARIST_WORK_RADIUS, 32));
     }
 
@@ -139,19 +144,19 @@ public final class AquaristWork {
     /** A feeding is due (and no feeder on the tank does it). */
     public static boolean feedDue(ServerLevel level, AquaristEntity npc, TankBlockEntity c) {
         int lvl = npc.taskLevel(AquaristTask.FEED);
-        if (lvl <= 0 || TankCare.findFeeder(level, c.getTank()) != null) return false;
+        if (lvl <= 0 || !npc.mayDo(c.getTank().id(), AquaristTask.FEED) || TankCare.findFeeder(level, c.getTank()) != null) return false;
         if (TankInhabitants.liveInhabitants(level, c.getTank()).isEmpty() && c.getTank().critters().isEmpty()) return false;
         return c.getTank().aquaristDone(AquaristTask.FEED.id()) < feedKey(level.getDayTime(), lvl);
     }
 
     public static boolean algaeDue(AquaristEntity npc, TankBlockEntity c) {
         int lvl = npc.taskLevel(AquaristTask.ALGAE);
-        return lvl > 0 && Features.enabled(Feature.ALGAE) && TankAlgae.mean(c.getTank()) >= ALGAE_FROM[lvl - 1];
+        return lvl > 0 && npc.mayDo(c.getTank().id(), AquaristTask.ALGAE) && Features.enabled(Feature.ALGAE) && TankAlgae.mean(c.getTank()) >= ALGAE_FROM[lvl - 1];
     }
 
     public static boolean plantsDue(ServerLevel level, AquaristEntity npc, TankBlockEntity c) {
         int lvl = npc.taskLevel(AquaristTask.PLANTS);
-        if (lvl <= 0) return false;
+        if (lvl <= 0 || !npc.mayDo(c.getTank().id(), AquaristTask.PLANTS)) return false;
         if (!c.getTank().plants().isEmpty() && TankPlants.coverage(c.getTank()) >= FLOATING_FROM[lvl - 1]) return true;
         return !trimmable(level, c, lvl).isEmpty();
     }
@@ -171,12 +176,12 @@ public final class AquaristWork {
     }
 
     public static boolean warnDue(ServerLevel level, AquaristEntity npc, TankBlockEntity c) {
-        return npc.taskLevel(AquaristTask.WARN) > 0 && level.getGameTime() - npc.lastWarnLook(c.getTank().id()) >= WARN_EVERY;
+        return npc.taskLevel(AquaristTask.WARN) > 0 && npc.mayDo(c.getTank().id(), AquaristTask.WARN) && level.getGameTime() - npc.lastWarnLook(c.getTank().id()) >= WARN_EVERY;
     }
 
     /** A water change is due: the interval of the water change controller has passed, or the water is bad (once a day). */
     public static boolean waterDue(ServerLevel level, AquaristEntity npc, TankBlockEntity c) {
-        if (npc.taskLevel(AquaristTask.WATER) <= 0) return false;
+        if (npc.taskLevel(AquaristTask.WATER) <= 0 || !npc.mayDo(c.getTank().id(), AquaristTask.WATER)) return false;
         TankData t = c.getTank();
         if (t.waterMb() <= 0 || waterAmount(t, npc.taskLevel(AquaristTask.WATER)) <= 0) return false;
         long now = level.getGameTime();
@@ -217,6 +222,40 @@ public final class AquaristWork {
         return TankInhabitants.stocking(live, t) + TankInhabitants.weight(e) <= cap + 1e-6;
     }
 
+    /** M66: the key of an animal's species for the rearing tanks' filters: "betta", the tankmate species id, "dwarf_frog", else the type id. */
+    public static String speciesKey(Entity e) {
+        if (e instanceof BettaEntity) return "betta";
+        if (e instanceof org.overengineer.bettacraft.entity.tankmate.TankmateEntity m) return m.species().id();
+        if (e instanceof org.overengineer.bettacraft.entity.frog.DwarfFrogEntity) return "dwarf_frog";
+        return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString();
+    }
+
+    /** M66: the species a rearing tank can be limited to (the animals that grow up in a tank): key and translation key. */
+    public static List<String[]> speciesOptions() {
+        List<String[]> out = new ArrayList<>();
+        out.add(new String[]{"betta", "entity.bettacraft.betta"});
+        for (var sp : org.overengineer.bettacraft.tankmates.TankmateSpecies.values()) out.add(new String[]{sp.id(), sp.translationKey()});
+        out.add(new String[]{"dwarf_frog", "entity.bettacraft.dwarf_frog"});
+        return out;
+    }
+
+    /** M66: the first of his rearing tanks (in order) that takes this animal (species switched on, salt suits, room), or null. */
+    @Nullable
+    public static TankBlockEntity rearingFor(ServerLevel level, AquaristEntity npc, Entity e) {
+        String key = speciesKey(e);
+        for (AquaristEntity.RearingTank r : npc.rearingTanks()) {
+            if (!r.takes(key)) continue;
+            TankBlockEntity c = tank(level, npc, r.tank());
+            if (c != null && rearingTakes(level, c, e)) return c;
+        }
+        return null;
+    }
+
+    static boolean isRearing(AquaristEntity npc, TankBlockEntity c) {
+        for (AquaristEntity.RearingTank r : npc.rearingTanks()) if (r.tank().equals(c.getTank().id())) return true;
+        return false;
+    }
+
     // ------------------------------------------------------------------ planning
 
     /** The next round of jobs (empty: nothing to do now). */
@@ -230,7 +269,7 @@ public final class AquaristWork {
         List<Job> jobs = new ArrayList<>();
         // things he still carries come first
         if (!npc.carriedAnimals().isEmpty()) {
-            jobs.add(new Job(Kind.RELEASE_YOUNG, npc.rearingTank()));
+            jobs.add(new Job(Kind.RELEASE_YOUNG, npc.carriedTo() != null ? npc.carriedTo() : npc.rearingTank()));
             return jobs;
         }
         if (npc.waterMb() > 0 && npc.waterFor() != null) {
@@ -278,17 +317,19 @@ public final class AquaristWork {
             jobs.add(new Job(Kind.CHANGE_WATER, c.getTank().id()));
             break;
         }
-        // one trip with young
+        // one trip with young: from the first tank that has some a rearing tank takes (M66: the first of several that takes the animal)
         int perTrip = npc.taskLevel(AquaristTask.YOUNG);
-        TankBlockEntity rearing = perTrip > 0 ? tank(level, npc, npc.rearingTank()) : null;
-        if (rearing != null) {
+        if (perTrip > 0 && !npc.rearingTanks().isEmpty()) {
             for (TankBlockEntity c : tanks) {
-                if (c == rearing || c.getTank().id().equals(rearing.getTank().id())) continue;
-                List<Entity> y = young(level, c, YOUNG_PER_TRIP[perTrip - 1]);
-                y.removeIf(e -> !rearingTakes(level, rearing, e));
-                if (y.isEmpty()) continue;
-                jobs.add(new Job(Kind.TAKE_YOUNG, c.getTank().id()));
-                jobs.add(new Job(Kind.RELEASE_YOUNG, rearing.getTank().id()));
+                if (isRearing(npc, c) || !npc.mayDo(c.getTank().id(), AquaristTask.YOUNG)) continue;
+                TankBlockEntity target = null;
+                for (Entity e : young(level, c, 64)) {
+                    target = rearingFor(level, npc, e);
+                    if (target != null) break;
+                }
+                if (target == null) continue;
+                jobs.add(new Job(Kind.TAKE_YOUNG, c.getTank().id(), target.getTank().id()));
+                jobs.add(new Job(Kind.RELEASE_YOUNG, target.getTank().id()));
                 break;
             }
         }
@@ -319,7 +360,7 @@ public final class AquaristWork {
             }
             case TAKE_YOUNG -> {
                 TankBlockEntity c = tank(level, npc, job.tank());
-                if (c != null) takeYoung(level, npc, c);
+                if (c != null) takeYoung(level, npc, c, job.to());
             }
             case RELEASE_YOUNG, RETURN_YOUNG -> {
                 TankBlockEntity c = tank(level, npc, job.tank());
@@ -351,7 +392,7 @@ public final class AquaristWork {
         int kinds = 0;
         Set<net.minecraft.world.item.Item> seen = new HashSet<>();
         for (boolean live : new boolean[]{true, false}) {
-            for (IItemHandler h : chests(level, npc.workplace())) {
+            for (IItemHandler h : chests(level, npc)) {
                 for (int i = 0; i < h.getSlots() && kinds < 4; i++) {
                     ItemStack s = h.getStackInSlot(i);
                     if (!isTankFood(s) || s.is(ModTags.LIVE_FOOD) != live || seen.contains(s.getItem())) continue;
@@ -387,7 +428,7 @@ public final class AquaristWork {
             }
         }
         if (plantsDue(level, npc, c)) trimPlants(level, npc, c);
-        if (npc.taskLevel(AquaristTask.WARN) > 0) {
+        if (npc.taskLevel(AquaristTask.WARN) > 0 && npc.mayDo(t.id(), AquaristTask.WARN)) {
             npc.markWarnLook(t.id(), level.getGameTime());
             npc.reportWarnings(level, c, warnings(level, c, npc.taskLevel(AquaristTask.WARN)));
         }
@@ -466,7 +507,7 @@ public final class AquaristWork {
             ItemStack s = npc.bag().getStackInSlot(i);
             if (s.isEmpty()) continue;
             ItemStack rest = s.copy();
-            for (IItemHandler h : chests(level, npc.workplace())) {
+            for (IItemHandler h : chests(level, npc)) {
                 rest = ItemHandlerHelper.insertItemStacked(h, rest, false);
                 if (rest.isEmpty()) break;
             }
@@ -545,14 +586,17 @@ public final class AquaristWork {
 
     // ---- young
 
-    static void takeYoung(ServerLevel level, AquaristEntity npc, TankBlockEntity c) {
+    static void takeYoung(ServerLevel level, AquaristEntity npc, TankBlockEntity c, @Nullable UUID to) {
         int lvl = npc.taskLevel(AquaristTask.YOUNG);
-        TankBlockEntity rearing = tank(level, npc, npc.rearingTank());
+        TankBlockEntity rearing = tank(level, npc, to != null ? to : npc.rearingTank());
         if (lvl <= 0 || rearing == null) return;
         TankData t = c.getTank();
         int n = 0;
-        for (Entity e : young(level, c, YOUNG_PER_TRIP[lvl - 1])) {
-            if (!rearingTakes(level, rearing, e) || t.waterMb() < TankInhabitants.BAG_MB) continue;
+        for (Entity e : young(level, c, 64)) {
+            if (n >= YOUNG_PER_TRIP[lvl - 1]) break;
+            AquaristEntity.RearingTank r = null;
+            for (AquaristEntity.RearingTank x : npc.rearingTanks()) if (x.tank().equals(rearing.getTank().id())) r = x;
+            if ((r != null && !r.takes(speciesKey(e))) || !rearingTakes(level, rearing, e) || t.waterMb() < TankInhabitants.BAG_MB) continue;
             ItemStack bag = FishBagItem.fillWith(e);
             if (TankInhabitants.containedType(bag) != e.getType()) continue;
             TankInhabitants.release(e);
@@ -564,6 +608,7 @@ public final class AquaristWork {
             n++;
         }
         if (n > 0) {
+            npc.setCarriedTo(rearing.getTank().id());
             TankInhabitants.reconcile(level, c);
             level.playSound(null, c.getBlockPos(), SoundEvents.BUCKET_FILL_FISH, SoundSource.NEUTRAL, 0.8F, 1.1F);
         }
@@ -636,9 +681,19 @@ public final class AquaristWork {
         return out;
     }
 
-    /** Whether the workplace's chests hold food for the tanks. */
-    public static boolean chestsHaveFood(ServerLevel level, @Nullable BlockPos wp) {
-        for (IItemHandler h : chests(level, wp)) for (int i = 0; i < h.getSlots(); i++) if (isTankFood(h.getStackInSlot(i))) return true;
+    /** M66: his chest: the assigned one when there is one (and it is still a container), else the blocks around the workplace. */
+    public static List<IItemHandler> chests(ServerLevel level, AquaristEntity npc) {
+        BlockPos c = npc.chest();
+        if (c != null && level.isLoaded(c)) {
+            IItemHandler h = org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, c, null);
+            if (h != null) return new ArrayList<>(List.of(h));
+        }
+        return chests(level, npc.workplace());
+    }
+
+    /** Whether his chests hold food for the tanks. */
+    public static boolean chestsHaveFood(ServerLevel level, AquaristEntity npc) {
+        for (IItemHandler h : chests(level, npc)) for (int i = 0; i < h.getSlots(); i++) if (isTankFood(h.getStackInSlot(i))) return true;
         return false;
     }
 
