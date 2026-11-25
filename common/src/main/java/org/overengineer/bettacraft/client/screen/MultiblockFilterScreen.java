@@ -36,8 +36,9 @@ public class MultiblockFilterScreen extends Screen {
     protected void init() {
         left = (width - W) / 2;
         top = (height - H) / 2;
+        // M66: the percentage sits between the two buttons with room to spare (it overlapped them at 100 %)
         addRenderableWidget(Button.builder(Component.literal("-"), b -> PacketDistributor.sendToServer(new RegulatorPayload(pos, -1, true)))
-                .bounds(left + W - 70, top + 6, 20, 14).build());
+                .bounds(left + W - 90, top + 6, 20, 14).build());
         addRenderableWidget(Button.builder(Component.literal("+"), b -> PacketDistributor.sendToServer(new RegulatorPayload(pos, 1, true)))
                 .bounds(left + W - 26, top + 6, 20, 14).build());
     }
@@ -55,7 +56,7 @@ public class MultiblockFilterScreen extends Screen {
         if (h == null) return;
         int x = left + 10, y = top + 8;
         g.text(font, title, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-        g.centeredText(font, Component.literal(h.power() * 10 + " %"), left + W - 38, top + 9, 0xFFE0E0E0);
+        g.centeredText(font, Component.literal(h.power() * 10 + " %"), left + W - 48, top + 9, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFE0E0E0));
         y += 16;
         MultiblockFilter.Problem p = h.problem();
         if (p != MultiblockFilter.Problem.NONE) {
@@ -65,20 +66,29 @@ public class MultiblockFilterScreen extends Screen {
         }
         g.text(font, Component.translatable("gui.bettacraft.mb_filter.size", h.chambers(), h.inlets(), h.outlets()), x, y, 0xFFE0E0E0);
         y += 12;
-        Component tank = h.servedTank() == null ? Component.translatable("gui.bettacraft.mb_filter.no_tank").withStyle(ChatFormatting.GOLD)
-                : Component.translatable("gui.bettacraft.mb_filter.tank", h.servedTank().getX(), h.servedTank().getY(), h.servedTank().getZ()).withStyle(ChatFormatting.GREEN);
-        g.text(font, tank, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-        y += 12;
+        // M66: with several tanks listed below, say how many (the single tank line only for the old one-tank filter)
+        var tanks = h.tanks();
+        if (tanks.size() > 1) {
+            g.text(font, Component.translatable("gui.bettacraft.mb_filter.tanks_header", tanks.size()).withStyle(ChatFormatting.GREEN), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            y += 12;
+        } else if (tanks.isEmpty()) {
+            Component tank = h.servedTank() == null ? Component.translatable("gui.bettacraft.mb_filter.no_tank").withStyle(ChatFormatting.GOLD)
+                    : Component.translatable("gui.bettacraft.mb_filter.tank", h.servedTank().getX(), h.servedTank().getY(), h.servedTank().getZ()).withStyle(ChatFormatting.GREEN);
+            g.text(font, tank, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            y += 12;
+        }
         g.text(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         y += 12;
         if (h.freshPorts() > 0 || h.wastePorts() > 0) { // M40 part b: the water ports
-            Component w = h.wastePorts() > 0 ? Component.translatable("gui.bettacraft.mb_filter.water", h.freshMb(), h.wasteMb())
-                    : Component.translatable("gui.bettacraft.mb_filter.no_waste", h.freshMb());
+            // M66: what the filter can use: the ports and the ends of their lines, or tap water from a water source at a port
+            Component fresh = h.freshEndless() ? Component.translatable("gui.bettacraft.mb_filter.tap")
+                    : Component.literal(String.format(java.util.Locale.ROOT, "%,d mB", h.freshMb()));
+            Component w = h.wastePorts() > 0 ? Component.translatable("gui.bettacraft.mb_filter.water", fresh, h.wasteMb())
+                    : Component.translatable("gui.bettacraft.mb_filter.no_waste", fresh);
             g.text(font, w.copy().withStyle(ChatFormatting.DARK_AQUA), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 12;
         }
         // M40: every tank of the filter (A1: its share by water volume), or why the filter does not work for it
-        var tanks = h.tanks();
         if (h.retrofit() && tanks.stream().anyMatch(t -> t.status().warning())) {
             g.text(font, Component.translatable("gui.bettacraft.mb_filter.retrofit").withStyle(ChatFormatting.RED), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 11;
