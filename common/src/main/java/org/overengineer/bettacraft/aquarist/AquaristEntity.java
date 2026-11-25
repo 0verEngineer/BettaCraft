@@ -105,8 +105,13 @@ public class AquaristEntity extends PathfinderMob {
     @Nullable
     private BlockPos workplace, bed;
     private final int[] levels = new int[AquaristTask.ALL.length];
+    /** M66: the rearing tanks in the order the young are offered to them, each with the species it takes (empty: all). */
+    private final List<RearingTank> rearing = new ArrayList<>();
+    /** M66: the tasks switched off per tank (bit = task ordinal); a tank not in the map gets everything. */
+    private final Map<UUID, Integer> tankOff = new HashMap<>();
+    /** M66: the chest of his wage and his food, assigned in the menu; null: he looks in the blocks around the workplace. */
     @Nullable
-    private UUID rearingTank;
+    private BlockPos chest;
     private final ItemStackHandler bag = new ItemStackHandler(BAG_SLOTS);
     private int waterMb;
     @Nullable
@@ -117,6 +122,9 @@ public class AquaristEntity extends PathfinderMob {
     private final List<ItemStack> carried = new ArrayList<>();
     @Nullable
     private UUID carriedFrom;
+    /** M66: the rearing tank the carried young are on their way to (null: the first). */
+    @Nullable
+    private UUID carriedTo;
     private long lastWageDay = Long.MIN_VALUE;
     private int unpaidDays, homelessDays;
     private long leaveAt = -1;
@@ -229,13 +237,123 @@ public class AquaristEntity extends PathfinderMob {
         levels[t.ordinal()] = Math.max(0, Math.min(AquaristTask.MAX_LEVEL, lvl));
     }
 
-    @Nullable
-    public UUID rearingTank() {
-        return rearingTank;
+    /** M66: a rearing tank with the species it takes (their keys, {@link AquaristWork#speciesKey}); no species: every one. */
+    public static final class RearingTank {
+        private final UUID tank;
+        private final java.util.LinkedHashSet<String> species = new java.util.LinkedHashSet<>();
+
+        RearingTank(UUID tank) {
+            this.tank = tank;
+        }
+
+        public UUID tank() {
+            return tank;
+        }
+
+        public Set<String> species() {
+            return java.util.Collections.unmodifiableSet(species);
+        }
+
+        public boolean takes(String key) {
+            return species.isEmpty() || species.contains(key);
+        }
     }
 
+    /** M66: every rearing tank he has, in order. */
+    public List<RearingTank> rearingTanks() {
+        return java.util.Collections.unmodifiableList(rearing);
+    }
+
+    /** The first rearing tank (before M66 the only one), or null. */
+    @Nullable
+    public UUID rearingTank() {
+        return rearing.isEmpty() ? null : rearing.get(0).tank;
+    }
+
+    /** Makes {@code id} his only rearing tank (null: none). */
     public void setRearingTank(@Nullable UUID id) {
-        rearingTank = id;
+        rearing.clear();
+        if (id != null) rearing.add(new RearingTank(id));
+    }
+
+    /** M66: adds a rearing tank at the end of the list (false when it is one already). */
+    public boolean addRearingTank(UUID id) {
+        for (RearingTank r : rearing) if (r.tank.equals(id)) return false;
+        rearing.add(new RearingTank(id));
+        return true;
+    }
+
+    public boolean removeRearingTank(UUID id) {
+        return rearing.removeIf(r -> r.tank.equals(id));
+    }
+
+    /** M66: the species a rearing tank takes: switches {@code key} on or off (none switched on: every species). */
+    public void toggleRearingSpecies(UUID id, String key) {
+        for (RearingTank r : rearing) {
+            if (!r.tank.equals(id)) continue;
+            if (!r.species.remove(key)) r.species.add(key);
+        }
+    }
+
+    public void clearRearingSpecies(UUID id) {
+        for (RearingTank r : rearing) if (r.tank.equals(id)) r.species.clear();
+    }
+
+    /** M66: whether he may do {@code task} at the tank {@code id} (everything unless switched off for it in the menu). */
+    public boolean mayDo(@Nullable UUID id, AquaristTask task) {
+        return id == null || (tankOff.getOrDefault(id, 0) & (1 << task.ordinal())) == 0;
+    }
+
+    public void setMayDo(UUID id, AquaristTask task, boolean on) {
+        int m = tankOff.getOrDefault(id, 0);
+        m = on ? m & ~(1 << task.ordinal()) : m | (1 << task.ordinal());
+        if (m == 0) tankOff.remove(id);
+        else tankOff.put(id, m);
+    }
+
+    /** The bit mask of the tasks switched off at a tank (for the menu). */
+    public int tasksOff(UUID id) {
+        return tankOff.getOrDefault(id, 0);
+    }
+
+    /** M66: forgets the bed without giving back its ticket (the caller did). */
+    void clearBed() {
+        if (isSleeping()) stopSleeping();
+        bed = null;
+    }
+
+    /** M66: the assigned chest (null: automatic). */
+    @Nullable
+    public BlockPos chest() {
+        return chest;
+    }
+
+    public void setChest(@Nullable BlockPos pos) {
+        chest = pos == null ? null : pos.immutable();
+    }
+
+    /**
+     * M66: makes the bed at {@code pos} (either half) his: gives back the old bed and takes the new one (its POI ticket).
+     * Returns false when it is no bed or not free.
+     */
+    public boolean assignBed(ServerLevel level, BlockPos pos) {
+        var state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof BedBlock)) return false;
+        BlockPos head = state.getValue(BedBlock.PART) == net.minecraft.world.level.block.state.properties.BedPart.HEAD ? pos
+                : pos.relative(state.getValue(BedBlock.FACING));
+        if (head.equals(bed)) return true;
+        var poi = level.getPoiManager();
+        if (!poi.existsAtPosition(PoiTypes.HOME, head)) return false;
+        BlockPos old = bed;
+        if (old != null && level.isLoaded(old) && poi.existsAtPosition(PoiTypes.HOME, old)) poi.release(old);
+        BlockPos taken = poi.take(h -> h.is(PoiTypes.HOME), (h, p) -> p.equals(head), head, 1).map(BlockPos::immutable).orElse(null);
+        if (taken == null) { // taken by someone else: take the old one back
+            if (old != null) poi.take(h -> h.is(PoiTypes.HOME), (h, p) -> p.equals(old), old, 1);
+            return false;
+        }
+        if (isSleeping()) stopSleeping();
+        bed = taken;
+        return true;
     }
 
     public ItemStackHandler bag() {
@@ -292,7 +410,7 @@ public class AquaristEntity extends PathfinderMob {
     public void putInBag(ServerLevel level, ItemStack s) {
         ItemStack rest = ItemHandlerHelper.insertItemStacked(bag, s.copy(), false);
         if (rest.isEmpty()) return;
-        for (IItemHandler h : AquaristWork.chests(level, workplace)) {
+        for (IItemHandler h : AquaristWork.chests(level, this)) {
             rest = ItemHandlerHelper.insertItemStacked(h, rest, false);
             if (rest.isEmpty()) return;
         }
@@ -370,6 +488,15 @@ public class AquaristEntity extends PathfinderMob {
         return carriedFrom;
     }
 
+    @Nullable
+    public UUID carriedTo() {
+        return carriedTo;
+    }
+
+    void setCarriedTo(@Nullable UUID id) {
+        carriedTo = id;
+    }
+
     void carry(ItemStack filledBag, UUID from) {
         carried.add(filledBag);
         carriedFrom = from;
@@ -378,14 +505,14 @@ public class AquaristEntity extends PathfinderMob {
     void setCarried(List<ItemStack> left) {
         carried.clear();
         carried.addAll(left);
-        if (carried.isEmpty()) carriedFrom = null;
+        if (carried.isEmpty()) carriedFrom = carriedTo = null;
     }
 
     /** Nowhere to put the animals he carries: as filled fish bags into a chest at the workplace (else dropped there). */
     void storeCarriedAnimals(ServerLevel level) {
         for (ItemStack b : carried) {
             ItemStack rest = b.copy();
-            for (IItemHandler h : AquaristWork.chests(level, workplace)) {
+            for (IItemHandler h : AquaristWork.chests(level, this)) {
                 rest = ItemHandlerHelper.insertItemStacked(h, rest, false);
                 if (rest.isEmpty()) break;
             }
@@ -510,6 +637,7 @@ public class AquaristEntity extends PathfinderMob {
             if (isSleeping()) stopSleeping();
             bed = null;
         }
+        if (chest != null && level.isLoaded(chest) && org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, chest, null) == null) chest = null; // M66: broken
         if (workplace == null || bed == null) findHome(level);
     }
 
@@ -555,7 +683,7 @@ public class AquaristEntity extends PathfinderMob {
     boolean takeWage(ServerLevel level) {
         int emeralds = ServerConfig.getOr(ServerConfig.AQUARIST_WAGE_EMERALDS, 1), food = ServerConfig.getOr(ServerConfig.AQUARIST_WAGE_FOOD, 3);
         if (emeralds <= 0 && food <= 0) return true;
-        List<IItemHandler> chests = AquaristWork.chests(level, workplace);
+        List<IItemHandler> chests = AquaristWork.chests(level, this);
         if (emeralds > 0 && count(chests, s -> s.is(Items.EMERALD)) >= emeralds) {
             take(chests, s -> s.is(Items.EMERALD), emeralds);
             return true;
@@ -677,7 +805,7 @@ public class AquaristEntity extends PathfinderMob {
     /** The place a job takes him to (the workplace or the tank's nearest block), null when it cannot be done any more. */
     @Nullable
     BlockPos target(ServerLevel level, AquaristWork.Job job) {
-        if (job.atWorkplace()) return workplace;
+        if (job.atWorkplace()) return job.kind() != AquaristWork.Kind.FETCH_WATER && chest != null ? chest : workplace; // M66: the assigned chest
         TankBlockEntity c = AquaristWork.tank(level, this, job.tank());
         if (c == null) return null;
         BlockPos best = null;
@@ -1055,7 +1183,25 @@ public class AquaristEntity extends PathfinderMob {
         CompoundTag lv = new CompoundTag();
         for (AquaristTask t : AquaristTask.ALL) lv.putInt(t.id(), levels[t.ordinal()]);
         a.put("tasks", lv);
-        if (rearingTank != null) NbtCompat.putUUID(a, "rearing", rearingTank);
+        ListTag rl = new ListTag();
+        for (RearingTank r : rearing) {
+            CompoundTag e = new CompoundTag();
+            NbtCompat.putUUID(e, "id", r.tank);
+            ListTag sp = new ListTag();
+            for (String k : r.species) sp.add(StringTag.valueOf(k));
+            e.put("species", sp);
+            rl.add(e);
+        }
+        if (!rl.isEmpty()) a.put("rearing_tanks", rl);
+        ListTag off = new ListTag();
+        for (var e : tankOff.entrySet()) {
+            CompoundTag c = new CompoundTag();
+            NbtCompat.putUUID(c, "id", e.getKey());
+            c.putInt("off", e.getValue());
+            off.add(c);
+        }
+        if (!off.isEmpty()) a.put("tank_off", off);
+        if (chest != null) a.put("chest", NbtCompat.writeBlockPos(chest));
         a.put("bag", bag.serializeNBT(registryAccess()));
         if (waterMb > 0) {
             a.putInt("water_mb", waterMb);
@@ -1068,6 +1214,7 @@ public class AquaristEntity extends PathfinderMob {
             for (ItemStack s : carried) l.add(NbtCompat.saveStack(registryAccess(), s));
             a.put("carried", l);
             if (carriedFrom != null) NbtCompat.putUUID(a, "carried_from", carriedFrom);
+            if (carriedTo != null) NbtCompat.putUUID(a, "carried_to", carriedTo);
         }
         if (lastWageDay != Long.MIN_VALUE) a.putLong("wage_day", lastWageDay);
         a.putInt("unpaid_days", unpaidDays);
@@ -1105,7 +1252,24 @@ public class AquaristEntity extends PathfinderMob {
         bed = NbtCompat.readBlockPos(a, "bed").orElse(null);
         CompoundTag lv = a.getCompoundOrEmpty("tasks");
         for (AquaristTask t : AquaristTask.ALL) if (lv.contains(t.id())) setTaskLevel(t, lv.getIntOr(t.id(), 0));
-        rearingTank = NbtCompat.hasUUID(a, "rearing") ? NbtCompat.getUUID(a, "rearing") : null;
+        rearing.clear();
+        if (a.contains("rearing_tanks")) { // M66
+            for (Tag t : a.getListOrEmpty("rearing_tanks")) {
+                CompoundTag e = (CompoundTag) t;
+                if (!NbtCompat.hasUUID(e, "id")) continue;
+                RearingTank r = new RearingTank(NbtCompat.getUUID(e, "id"));
+                for (Tag k : e.getListOrEmpty("species")) r.species.add(NbtCompat.asString(k));
+                rearing.add(r);
+            }
+        } else if (NbtCompat.hasUUID(a, "rearing")) { // before M66: the one rearing tank stays his rearing tank
+            rearing.add(new RearingTank(NbtCompat.getUUID(a, "rearing")));
+        }
+        tankOff.clear();
+        for (Tag t : a.getListOrEmpty("tank_off")) {
+            CompoundTag e = (CompoundTag) t;
+            if (NbtCompat.hasUUID(e, "id") && e.getIntOr("off", 0) != 0) tankOff.put(NbtCompat.getUUID(e, "id"), e.getIntOr("off", 0));
+        }
+        chest = NbtCompat.readBlockPos(a, "chest").orElse(null);
         if (a.contains("bag")) bag.deserializeNBT(registryAccess(), a.getCompoundOrEmpty("bag"));
         waterMb = Math.max(0, a.getIntOr("water_mb", 0));
         tapWater = a.getBooleanOr("tap_water", false);
@@ -1114,6 +1278,7 @@ public class AquaristEntity extends PathfinderMob {
         carried.clear();
         for (Tag t : a.getListOrEmpty("carried")) NbtCompat.parseStack(registryAccess(), t).ifPresent(carried::add);
         carriedFrom = NbtCompat.hasUUID(a, "carried_from") ? NbtCompat.getUUID(a, "carried_from") : null;
+        carriedTo = NbtCompat.hasUUID(a, "carried_to") ? NbtCompat.getUUID(a, "carried_to") : null;
         lastWageDay = a.contains("wage_day") ? a.getLongOr("wage_day", 0L) : Long.MIN_VALUE;
         unpaidDays = a.getIntOr("unpaid_days", 0);
         homelessDays = a.getIntOr("homeless_days", 0);
