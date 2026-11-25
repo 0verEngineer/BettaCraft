@@ -30,6 +30,35 @@ final class JadeClientTooltips {
                 .serverConnected(accessor.isServerConnected()).showDetails(accessor.showDetails()).requireVerification().build();
     }
 
+    /**
+     * M66: a pipe carries water, it does not store any. Jade's own fluid view shows "Empty 500 mB" for it (the pipe offers its
+     * throughput as a tank size); this removes that line and says how much the pipe carries a second instead.
+     */
+    static final class Pipe implements IBlockComponentProvider {
+        static final Pipe INSTANCE = new Pipe();
+
+        @Override
+        public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
+            tooltip.remove(snownee.jade.api.JadeIds.UNIVERSAL_FLUID_STORAGE);
+            if (accessor.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
+                tooltip.add(net.minecraft.network.chat.Component.translatable("jade.bettacraft.pipe.rate", String.format(java.util.Locale.ROOT, "%,d", p.rate() * 20))
+                        .withStyle(net.minecraft.ChatFormatting.AQUA));
+            }
+        }
+
+        @Override
+        public Identifier getUid() {
+            return BettaCraftJadePlugin.PIPE;
+        }
+
+        /** After Jade's own fluid view (it is added late), so that the line can be taken out again. */
+        @Override
+        public int getDefaultPriority() {
+            return 10000;
+        }
+    }
+
     static final class Tank implements IBlockComponentProvider {
         static final Tank INSTANCE = new Tank();
 
