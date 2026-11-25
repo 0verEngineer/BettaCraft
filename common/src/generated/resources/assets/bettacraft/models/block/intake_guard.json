@@ -31,38 +31,6 @@
         13,
         13
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#s"
-        },
-        "east": {
-          "texture": "#s"
-        },
-        "north": {
-          "texture": "#s"
-        },
-        "south": {
-          "texture": "#s"
-        },
-        "up": {
-          "texture": "#s"
-        },
-        "west": {
-          "texture": "#s"
-        }
-      },
-      "from": [
-        6,
-        0,
-        6
-      ],
-      "to": [
-        10,
-        3,
-        10
-      ]
     }
   ],
   "textures": {
