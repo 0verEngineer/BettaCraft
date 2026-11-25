@@ -157,7 +157,8 @@ public final class FilterLinesGameTests {
                 "the intake guard runs");
         // M65: the guard beside the dock is drawn joined to it (both have the side towards the other)
         BlockPos gp = ra.toWorld(BlockPos.getX(gk), BlockPos.getY(gk), BlockPos.getZ(gk)), dp = ra.toWorld(BlockPos.getX(dock), BlockPos.getY(dock), BlockPos.getZ(dock));
-        Direction toDock = Direction.getNearest(dp.getX() - gp.getX(), dp.getY() - gp.getY(), dp.getZ() - gp.getZ());
+        Direction toDock = Direction.NORTH;
+        for (Direction dd : Direction.values()) if (gp.relative(dd).equals(dp)) toDock = dd;
         BlockState gs = AerationGameTests.interior(h).getBlockState(gp), dks = AerationGameTests.interior(h).getBlockState(dp);
         h.assertTrue(gp.relative(toDock).equals(dp), "the guard sits next to the dock: " + gp + " / " + dp);
         h.assertTrue(gs.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.SIDES.get(toDock))
