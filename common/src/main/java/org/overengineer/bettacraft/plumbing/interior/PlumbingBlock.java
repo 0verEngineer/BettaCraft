@@ -7,6 +7,9 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -71,8 +74,57 @@ public class PlumbingBlock extends Block {
         // M65: every piece knows the pieces it joins (the guards, outlets and docks draw a short arm towards them)
         for (Direction d : Direction.values()) s = s.setValue(PipeBlock.SIDES.get(d), joins(ctx.getLevel(), ctx.getClickedPos(), d));
         // outlets point away from the player (into the tank) or along the wall they are placed against
-        if (kind.outlet()) s = s.setValue(FACING, ctx.getHorizontalDirection());
+        if (kind.outlet()) s = s.setValue(FACING, placedFacing(s, ctx));
         return s;
+    }
+
+    private static boolean guard(Plumb kind) {
+        return kind == Plumb.INTAKE_GUARD || kind == Plumb.OUTLET_GUARD;
+    }
+
+    /**
+     * M65: a guard placed next to a piece it joins faces away from it (the mesh side is the free one); sneaking while placing
+     * keeps the look direction. Several joined pieces: the one on the clicked face, else the first horizontal one; only a
+     * vertical joint: the look direction.
+     */
+    private Direction placedFacing(BlockState s, BlockPlaceContext ctx) {
+        Direction look = ctx.getHorizontalDirection();
+        if (!guard(kind) || (ctx.getPlayer() != null && ctx.getPlayer().isShiftKeyDown())) return look;
+        return awayFrom(s, ctx.getClickedFace().getOpposite(), look);
+    }
+
+    /** Pure: the facing opposite to the joined piece (on {@code preferred} if joined there, else the first horizontal one), else {@code fallback}. */
+    public static Direction awayFrom(BlockState s, Direction preferred, Direction fallback) {
+        if (preferred.getAxis().isHorizontal() && s.getValue(PipeBlock.SIDES.get(preferred))) return preferred.getOpposite();
+        for (Direction d : Direction.Plane.HORIZONTAL) if (s.getValue(PipeBlock.SIDES.get(d))) return d.getOpposite();
+        return fallback;
+    }
+
+    /** Pure: the next horizontal facing (clockwise) that does not point at a joined piece, or the same one when there is none. */
+    public static Direction nextFacing(BlockState s) {
+        Direction f = s.getValue(FACING);
+        for (int i = 0; i < 3; i++) {
+            f = f.getClockWise();
+            if (!s.getValue(PipeBlock.SIDES.get(f))) return f;
+        }
+        return s.getValue(FACING);
+    }
+
+    /** M65: sneak + empty hand turns a guard to its next facing (not towards a joined piece). */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!guard(kind) || !player.isShiftKeyDown()) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        return rotate(level, pos, state) ? InteractionResult.CONSUME : InteractionResult.PASS;
+    }
+
+    /** Turns the guard at {@code pos} to its next facing; false when no other facing is free. Public for the GameTests. */
+    public static boolean rotate(Level level, BlockPos pos, BlockState state) {
+        Direction next = nextFacing(state);
+        if (next == state.getValue(FACING)) return false;
+        level.setBlock(pos, state.setValue(FACING, next), Block.UPDATE_ALL);
+        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.COPPER_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 0.6F, 1.6F);
+        return true;
     }
 
     static boolean joins(LevelAccessor level, BlockPos pos, Direction d) {

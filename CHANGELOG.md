@@ -9,6 +9,8 @@ version as release notes.
 Thinner, cleaner pipes; no water over blocks at the glass.
 
 ### Changed
+- **Guards:** an intake or outlet guard placed next to a pipe, dock or other plumbing piece faces away from it (sneak while placing keeps the
+  look direction); sneak + right-click with an empty hand turns it to the next side that does not point at a joined piece.
 - **Pipes:** the glass, stainless steel and filter pipes are 3 px thick instead of 6, the pipe bundles and their manifold smaller to match. Their textures run along the pipe on
   every face (lighter in the middle, darker along the edges) without the grey lines across them at every block border and in
   the middle of a block; a glass pipe shows no faces inside it any more. The filter pipes carry a ring of their line's colour
