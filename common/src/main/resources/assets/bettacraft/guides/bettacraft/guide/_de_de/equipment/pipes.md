@@ -31,6 +31,9 @@ Meerwasser und Lebendfutter-Suspension). Wasser aus einem Eimer oder einer Wasse
 * Rohre verbinden sich miteinander, mit jedem Aquariumblock, dem [Vorratsbehälter](top_off.md), dem
   [Multiblock-Filter](multiblock_filter.md), Kesseln und den **Tanks und Rohren anderer Mods** (Mekanism, EnderIO,
   Create, AE2, RS ...: der normale Fluid-Handler).
+* Wo ein Rohr (auch ein Filterrohr oder eine Leitung eines Rohrbündels) an ein Aquarium anschließt, führt eine stählerne
+  **Glasdurchführung** durch die Scheibe: außen ein Flansch, innen der gleiche Flansch mit einem kurzen Stutzen ins Becken, aus
+  dem die Rohre im Becken weitergehen.
 * **Rohre pumpen nicht.** Das Wasser bewegt sich, wenn etwas hineindrückt: die <ItemLink id="bettacraft:water_pump" />,
   der Pumpenkopf eines [Multiblock-Filters](multiblock_filter.md) oder die Pumpe einer anderen Mod. Es erreicht dann
   die Blöcke an den Enden der Rohre.

@@ -73,9 +73,8 @@ public class PlumbingBlock extends Block {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState s = defaultBlockState();
-        if (kind == Plumb.PIPE) {
-            for (Direction d : Direction.values()) s = s.setValue(PipeBlock.SIDES.get(d), joins(ctx.getLevel(), ctx.getClickedPos(), d));
-        }
+        // M65: every piece knows the pieces it joins (the guards, outlets and docks draw a short arm towards them)
+        for (Direction d : Direction.values()) s = s.setValue(PipeBlock.SIDES.get(d), joins(ctx.getLevel(), ctx.getClickedPos(), d));
         // outlets point away from the player (into the tank) or along the wall they are placed against
         if (kind.outlet()) s = s.setValue(FACING, ctx.getHorizontalDirection());
         return s;
@@ -87,8 +86,17 @@ public class PlumbingBlock extends Block {
 
     @Override
     protected BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (kind == Plumb.PIPE) return state.setValue(PipeBlock.SIDES.get(dir), neighbor.getBlock() instanceof PlumbingBlock);
-        return state;
+        return state.setValue(PipeBlock.SIDES.get(dir), neighbor.getBlock() instanceof PlumbingBlock);
+    }
+
+    /** M65: placed by the game (a dock, a guard put on from outside): it looks at its neighbours once (they look at it themselves). */
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
+        super.onPlace(state, level, pos, old, moving);
+        if (level.isClientSide || old.is(state.getBlock())) return;
+        BlockState now = state;
+        for (Direction d : Direction.values()) now = now.setValue(PipeBlock.SIDES.get(d), joins(level, pos, d));
+        if (now != state) level.setBlock(pos, now, Block.UPDATE_CLIENTS);
     }
 
     @Override

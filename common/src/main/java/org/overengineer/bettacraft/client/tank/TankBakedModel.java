@@ -60,6 +60,8 @@ public class TankBakedModel implements BakedModel, DynamicModel {
     public static final ModelKey<Integer> LIGHT = new ModelKey<>("tank_light");
     /** M63: the corner lights of the water drawn by the model ({@link TankWaterLight#corners}); absent = the block's own light. */
     public static final ModelKey<Long> WATER_LIGHT = new ModelKey<>("tank_water_light");
+    /** M65: the glass bulkheads of the pipes joined to this block ({@link TankFlanges#mask}); absent = none. */
+    public static final ModelKey<Integer> FLANGES = new ModelKey<>("tank_flanges");
 
     private final TextureAtlasSprite edge;
     /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
@@ -142,8 +144,15 @@ public class TankBakedModel implements BakedModel, DynamicModel {
             // with a shader pack the water is part of the block model (shaders then treat it like tinted glass)
             if (state != null && state.getBlock() instanceof TankBlock && (renderType == null || renderType == RenderType.translucent()) && !waterDynamic(data)
                     && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(data))) {
+                if (renderType == null) {
+                    List<BakedQuad> all = new ArrayList<>(waterQuads(state, data));
+                    all.addAll(flangeQuads(data));
+                    return all;
+                }
                 return waterQuads(state, data);
             }
+            // M65: the glass bulkheads of joined pipes (solid steel, in the cutout layer)
+            if (renderType == null || renderType == RenderType.cutout()) return flangeQuads(data);
             return List.of();
         }
         int mask = state != null && state.getBlock() instanceof TankBlock ? TankBlock.connectionMask(state) : 0;
@@ -196,6 +205,11 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         return out;
     }
 
+    private static List<BakedQuad> flangeQuads(ModelValues data) {
+        Integer f = data.get(FLANGES);
+        return f == null || f == 0 ? List.of() : TankFlanges.quads(f);
+    }
+
     @Override
     public java.util.Collection<RenderType> layers(BlockState state, RandomSource rand, ModelValues data) {
         java.util.Set<RenderType> own = new java.util.LinkedHashSet<>();
@@ -227,8 +241,10 @@ public class TankBakedModel implements BakedModel, DynamicModel {
         int light = state.getValue(TankBlock.FILL) > 0 ? TankLightTint.colorAt(level, pos) : 0;
         // M63: the water of the model (shader packs, contraptions) gets the smooth corner light of the fluid path
         boolean water = state.getValue(TankBlock.FILL) > 0 && (org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse() || waterInModel(modelData));
-        if (concave == 0 && corners == 0 && light == 0 && !water) return modelData;
+        int flanges = TankFlanges.mask(level, pos, state);
+        if (concave == 0 && corners == 0 && light == 0 && !water && flanges == 0) return modelData;
         var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
+        if (flanges != 0) b.with(FLANGES, flanges);
         if (light != 0) b.with(LIGHT, light);
         if (water) b.with(WATER_LIGHT, TankWaterLight.corners(level, pos));
         return b.build();

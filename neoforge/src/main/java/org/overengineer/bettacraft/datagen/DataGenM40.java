@@ -65,8 +65,9 @@ final class DataGenM40 {
                 .texture("particle", s);
         m.element().from(2, 0, 2).to(14, 2, 14).allFaces((d, f) -> f.texture(d.getAxis() == Direction.Axis.Y ? "#f" : "#s")).end();
         m.element().from(5, 2, 5).to(11, 8, 11).allFaces((d, f) -> f.texture("#s")).end();
-        p.getVariantBuilder(ModBlocks.PIPE_ANCHOR.get()).forAllStatesExcept(st -> {
-            Direction f = st.getValue(PipeAnchorBlock.MOUNT);
+        // M65: multipart, with the short arms of DataGenM24#interiorArms towards the pieces it joins
+        MultiPartBlockStateBuilder mp = p.getMultipartBuilder(ModBlocks.PIPE_ANCHOR.get());
+        for (Direction f : Direction.values()) {
             int x = switch (f) {
                 case DOWN -> 0;
                 case UP -> 180;
@@ -78,8 +79,9 @@ final class DataGenM40 {
                 case WEST -> 270;
                 default -> 0;
             };
-            return ConfiguredModel.builder().modelFile(m).rotationX(x).rotationY(y).build();
-        }, sidesActiveFacing());
+            mp.part().modelFile(m).rotationX(x).rotationY(y).addModel().condition(PipeAnchorBlock.MOUNT, f).end();
+        }
+        DataGenM24.interiorArms(p, mp);
     }
 
     private static void guards(BlockStateProvider p) {
@@ -93,8 +95,11 @@ final class DataGenM40 {
         out.element().from(4, 4, 4).to(12, 12, 12).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#m" : "#s")).end();
         out.element().from(5, 5, 2).to(11, 11, 4).allFaces((d, f) -> f.texture("#m")).end();
         for (var e : List.of(java.util.Map.entry(ModBlocks.INTAKE_GUARD.get(), in), java.util.Map.entry(ModBlocks.OUTLET_GUARD.get(), out))) {
-            p.getVariantBuilder(e.getKey()).forAllStatesExcept(st -> ConfiguredModel.builder().modelFile(e.getValue())
-                    .rotationY(((int) st.getValue(PlumbingBlock.FACING).toYRot() + 180) % 360).build(), sidesAndActive());
+            // M65: multipart, with short arms towards the joined pieces (the guard beside a dock is visibly connected to it)
+            MultiPartBlockStateBuilder mp = p.getMultipartBuilder(e.getKey());
+            for (Direction f : Direction.Plane.HORIZONTAL)
+                mp.part().modelFile(e.getValue()).rotationY(((int) f.toYRot() + 180) % 360).addModel().condition(PlumbingBlock.FACING, f).end();
+            DataGenM24.interiorArms(p, mp);
         }
     }
 

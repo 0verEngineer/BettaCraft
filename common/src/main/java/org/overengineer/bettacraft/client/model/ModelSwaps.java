@@ -46,6 +46,7 @@ public final class ModelSwaps {
     /** Before a new bake: forget sprites and the list (the blocks exist by then). */
     public static void beforeBake() {
         CabinetBakedModel.clearSprites();
+        org.overengineer.bettacraft.client.tank.TankFlanges.clearCache(); // M65: the bulkhead quads hold the sprite of the old atlas
     }
 
     /** The model that replaces the baked one at {@code loc}, or null to keep it. */
