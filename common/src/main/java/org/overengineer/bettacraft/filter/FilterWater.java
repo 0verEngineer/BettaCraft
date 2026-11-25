@@ -58,6 +58,43 @@ public final class FilterWater {
     public static WaterSources.Supply supply(ServerLevel level, BlockPos device, FilterPumpHeadBlockEntity head) {
         List<IFluidHandler> handlers = new ArrayList<>(WaterSources.handlers(level, device));
         boolean endless = WaterSources.endless(level, device);
+        return addPorts(level, head, handlers, endless);
+    }
+
+    /**
+     * M66: the fresh water the filter itself can give (what the menu shows): the water in its fresh water ports, at the ends
+     * of their lines (a reservoir, another mod's tank) and a water source block at a port (tap water, endless).
+     */
+    public static WaterSources.Supply portSupply(ServerLevel level, FilterPumpHeadBlockEntity head) {
+        return addPorts(level, head, new ArrayList<>(), false);
+    }
+
+    /**
+     * M66: the mB of fresh water the menu shows: what is in the fresh water ports, plus what lies at the ends of their lines (behind a pipe
+     * of ours the whole network's store, not the window of one step), every block once. {@code endless[0]} says a water source block touches a port.
+     */
+    public static long freshAvailable(ServerLevel level, FilterPumpHeadBlockEntity head, boolean[] endless) {
+        long sum = 0;
+        java.util.Set<BlockPos> ends = new java.util.HashSet<>();
+        for (BlockPos p : head.structure(level).fresh()) {
+            if (!(level.getBlockEntity(p) instanceof FilterPortBlockEntity port)) continue;
+            sum += port.water().amount();
+            endless[0] |= WaterSources.endless(level, p);
+            for (FilterLines.End e : FilterLines.portReach(level, p, port.facing(), PipeLine.FRESH).ends()) {
+                IFluidHandler h = e.handler(level);
+                if (h == null || !ends.add(e.pos())) continue;
+                if (h instanceof org.overengineer.bettacraft.plumbing.PipeFluid pipe) {
+                    sum += pipe.stored();
+                    continue;
+                }
+                FluidStack s = FluidMoves.peekWater(h, Integer.MAX_VALUE);
+                if (!s.isEmpty()) sum += s.getAmount();
+            }
+        }
+        return sum;
+    }
+
+    private static WaterSources.Supply addPorts(ServerLevel level, FilterPumpHeadBlockEntity head, List<IFluidHandler> handlers, boolean endless) {
         for (BlockPos p : head.structure(level).fresh()) {
             if (!(level.getBlockEntity(p) instanceof FilterPortBlockEntity port)) continue;
             handlers.add(port.water());
