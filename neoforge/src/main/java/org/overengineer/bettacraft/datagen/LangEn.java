@@ -76,6 +76,7 @@ final class LangEn {
         LangM40c.addAll(a); // M40 part c
         LangM41.addAll(a); // M41
         LangM44.addAll(a); // M44
+        LangM66.addAll(a); // M66
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -456,7 +457,7 @@ final class LangEn {
         a.accept("gui.bettacraft.breeding.warn.remove_male", "Take the male out! (he eats the fry)");
         a.accept("gui.bettacraft.breeding.warn.fight", "Males are fighting! Separate them.");
         a.accept("gui.bettacraft.breeding.warn.predator", "A predator hunts the small fish!");
-        a.accept("gui.bettacraft.breeding.nest.none", "No bubble nest. Breeding conditions:");
+        a.accept("gui.bettacraft.breeding.nest.none", "Bubble nest: none yet");
         a.accept("gui.bettacraft.breeding.nest.building", "The male builds a bubble nest (%s%%)");
         a.accept("gui.bettacraft.breeding.nest.built", "Bubble nest ready, waiting for a female");
         a.accept("gui.bettacraft.breeding.nest.egg", "Bubble nest with %s eggs");
@@ -827,7 +828,7 @@ final class LangEn {
         a.accept("gui.bettacraft.plants.too_dark", "No growth: too dark (tank light, daylight)");
         a.accept("gui.bettacraft.plants.full", "Surface full: no new offshoots");
         a.accept("gui.bettacraft.plants.growing", "Growing (light and nutrients)");
-        a.accept("gui.bettacraft.plants.uptake", "Take up waste: +%s %% quality per day");
+        a.accept("gui.bettacraft.plants.uptake", "Improves water quality: +%s %% per day");
         a.accept("gui.bettacraft.plants.dense", "Dense cover (from %s %%): shade, food on the leaves");
         a.accept("gui.bettacraft.plants.hint", "Hand or net: take out");
         a.accept("gui.bettacraft.breeding.cond.plants", "Floating plants: a good nest site (faster ready)");
