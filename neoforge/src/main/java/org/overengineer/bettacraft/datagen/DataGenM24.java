@@ -185,9 +185,34 @@ final class DataGenM24 {
         simple(p, ModBlocks.SPRAY_BAR.get(), bar, true);
     }
 
+    /**
+     * The interior pieces as multipart: the piece (turned to its facing) and, M65, a short steel arm towards every piece it
+     * joins ({@link #interiorArms}), so a guard or an outlet next to a dock is visibly connected to it.
+     */
     private static void simple(BlockStateProvider p, PlumbingBlock block, ModelFile m, boolean facing) {
-        p.getVariantBuilder(block).forAllStatesExcept(s -> ConfiguredModel.builder().modelFile(m)
-                .rotationY(facing ? yRot(s.getValue(PlumbingBlock.FACING)) : 0).build(), sidesAndActive());
+        MultiPartBlockStateBuilder mp = p.getMultipartBuilder(block);
+        if (facing) {
+            for (Direction f : Direction.Plane.HORIZONTAL) mp.part().modelFile(m).rotationY(yRot(f)).addModel().condition(PlumbingBlock.FACING, f).end();
+        } else {
+            mp.part().modelFile(m).addModel().end();
+        }
+        interiorArms(p, mp);
+    }
+
+    /** M65: the arm of an interior piece towards a joined neighbour: steel, 4 px, from the block face to the middle. */
+    static void interiorArms(BlockStateProvider p, MultiPartBlockStateBuilder mp) {
+        var s = p.modLoc("block/plumbing_steel");
+        BlockModelBuilder arm = p.models().getBuilder("plumbing_arm").texture("s", s).texture("particle", s).renderType("solid");
+        arm.element().from(6, 6, 0).to(10, 10, 8).allFaces((d, f) -> f.texture("#s")).end();
+        for (Direction d : Direction.values()) {
+            var part = mp.part().modelFile(arm);
+            switch (d) {
+                case UP -> part.rotationX(270);
+                case DOWN -> part.rotationX(90);
+                default -> part.rotationY(((int) d.toYRot() + 180) % 360);
+            }
+            part.addModel().condition(PipeBlock.SIDES.get(d), true).end();
+        }
     }
 
     private static net.minecraft.world.level.block.state.properties.Property<?>[] sidesAndActive() {
