@@ -1295,7 +1295,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** M66: a thin line across the content, between two groups of lines. */
     private void separator(GuiGraphicsExtractor g, int y) {
-        g.fill(9, y, cw + 5, y + 1, 0x38FFFFFF);
+        g.fill(9, y, cw + 5, y + 1, 0x55FFFFFF);
     }
 
     /** M66: a small caption with a line after it, over a group of lines (9 px high). */
@@ -1308,7 +1308,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         g.pose().scale(s, s);
         g.text(font, label, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x8FB8C8), false);
         g.pose().popMatrix();
-        g.fill(11 + w + 4, y + 4, cw + 5, y + 5, 0x38FFFFFF);
+        g.fill(11 + w + 4, y + 4, cw + 5, y + 5, 0x55FFFFFF);
     }
 
     /**
@@ -2699,7 +2699,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             int idx = breedScroll + r;
             if (idx >= rows.size()) break;
             BreedRow row = rows.get(idx);
-            if (row.text() == null) g.fill(9, y + r * 10 + 4, cw + 5, y + r * 10 + 5, 0x38FFFFFF);
+            if (row.text() == null) g.fill(9, y + r * 10 + 4, cw + 5, y + r * 10 + 5, 0x55FFFFFF);
             else g.text(font, row.text(), x + row.indent(), y + r * 10, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT_LIGHT), false);
         }
         scrollbar(g, rows.size(), shown, breedScroll, false);
