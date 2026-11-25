@@ -46,6 +46,7 @@ public final class ModelSwaps {
     public static void beforeBake() {
         CabinetBakedModel.clearSprites();
         tank = null;
+        org.overengineer.bettacraft.client.tank.TankFlanges.clearCache(); // M65: the bulkhead quads hold the sprite of the old atlas
     }
 
     /**

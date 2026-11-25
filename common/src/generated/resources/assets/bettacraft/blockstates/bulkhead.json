@@ -1,16 +1,62 @@
 {
-  "variants": {
-    "facing=east": {
-      "model": "bettacraft:block/bulkhead"
+  "multipart": [
+    {
+      "apply": {
+        "model": "bettacraft:block/bulkhead"
+      }
     },
-    "facing=north": {
-      "model": "bettacraft:block/bulkhead"
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
     },
-    "facing=south": {
-      "model": "bettacraft:block/bulkhead"
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
     },
-    "facing=west": {
-      "model": "bettacraft:block/bulkhead"
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
     }
-  }
+  ]
 }
