@@ -22,6 +22,14 @@ import org.overengineer.bettacraft.tank.menu.TankView;
 final class BreedingLines {
     private BreedingLines() {}
 
+    /** M66: a thin line between two groups of lines (compared by identity). */
+    static final Component SEPARATOR = Component.literal("");
+
+    /** A separator, unless nothing came before or the last line is one already. */
+    private static void sep(List<Component> out) {
+        if (!out.isEmpty() && out.get(out.size() - 1) != SEPARATOR) out.add(SEPARATOR);
+    }
+
     private static String f1(double d) {
         return String.format(Locale.ROOT, "%.1f", d);
     }
@@ -53,10 +61,13 @@ final class BreedingLines {
         int[] bs = b.getIntArray("stages").orElse(new int[0]);
         int bettas = 0;
         for (int x : bs) bettas += x;
-        if (bettas == 0 && !NbtCompat.has(b, "nest", Tag.TAG_COMPOUND) && !b.getListOrEmpty("tankmates").isEmpty()) {
+        if (bettas == 0 && !org.overengineer.bettacraft.util.NbtCompat.has(b, "nest", Tag.TAG_COMPOUND) && !b.getListOrEmpty("tankmates").isEmpty()) {
+            sep(out);
             tankmates(b, out);
             return out;
         }
+        // M66: the bubble nest is a betta thing: the conditions come first, the nest (and everything about the young) below
+        sep(out);
         // nest
         if (NbtCompat.has(b, "nest", Tag.TAG_COMPOUND)) {
             CompoundTag n = b.getCompoundOrEmpty("nest");
@@ -73,7 +84,7 @@ final class BreedingLines {
                 }
             }
         } else {
-            out.add(header("gui.bettacraft.breeding.nest.none"));
+            out.add(header("gui.bettacraft.breeding.conditions"));
             CompoundTag c = b.getCompoundOrEmpty("conditions");
             out.add(check(c.getBooleanOr("male", false) && c.getBooleanOr("female", false), Component.translatable("gui.bettacraft.breeding.cond.pair")));
             out.add(check(c.getBooleanOr("temp", false), Component.translatable("gui.bettacraft.breeding.cond.temp", f1(b.getFloatOr("min_temp", 0f)),
@@ -97,16 +108,20 @@ final class BreedingLines {
                 out.add(Component.translatable("gui.bettacraft.breeding.cond.ready", Math.round(c.getFloatOr("ready", 0f) * 100))
                         .withStyle(ChatFormatting.AQUA));
             }
+            out.add(SEPARATOR);
+            out.add(Component.translatable("gui.bettacraft.breeding.nest.none").withStyle(ChatFormatting.GRAY));
         }
         // young fish
         int[] st = b.getIntArray("stages").orElse(new int[0]);
         if (st.length == LifeStage.values().length) {
+            sep(out);
             int fry = st[LifeStage.FRY.ordinal()], juv = st[LifeStage.JUVENILE.ordinal()], sub = st[LifeStage.SUBADULT.ordinal()];
             out.add(Component.translatable("gui.bettacraft.breeding.young", fry, juv, sub)
                     .withStyle(fry + juv + sub > 0 ? ChatFormatting.WHITE : ChatFormatting.GRAY));
             if (fry > 0) out.add(Component.translatable("gui.bettacraft.breeding.fry_food").withStyle(ChatFormatting.GRAY));
         }
         // parents + prediction
+        sep(out);
         if (b.getBooleanOr("prediction_hidden", false)) {
             // M22.3: the parents' genes are not analysed yet
             out.add(header("gui.bettacraft.breeding.parents", TankCare.argComponent(b.getStringOr("father", "")),
@@ -139,6 +154,7 @@ final class BreedingLines {
         } else {
             out.add(Component.translatable("gui.bettacraft.breeding.no_pair").withStyle(ChatFormatting.GRAY));
         }
+        if (!b.getListOrEmpty("tankmates").isEmpty() || b.getBooleanOr("box", false)) sep(out);
         tankmates(b, out);
         return out;
     }
