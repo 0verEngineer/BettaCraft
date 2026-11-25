@@ -22,6 +22,8 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
     public static final Identifier CULTURE = BettaCraft.id("culture");
     /** M37: the spring of the devices the crank winds. */
     public static final Identifier SPRING = BettaCraft.id("spring");
+    /** M66: the water pipes (no stored water, the flow a second). */
+    public static final Identifier PIPE = BettaCraft.id("pipe");
     /** M51: the hired aquarist. */
     public static final Identifier AQUARIST = BettaCraft.id("hired_aquarist");
 
@@ -45,6 +47,9 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(JadeClientTooltips.Tank.INSTANCE, TankBlock.class);
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
         registration.registerEntityComponent(JadeClientTooltips.Aquarist.INSTANCE, org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
+        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.PipeBlock.class); // M66
+        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.FilterPipeBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlock.class);
