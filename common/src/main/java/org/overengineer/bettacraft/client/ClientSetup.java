@@ -275,6 +275,7 @@ public final class ClientSetup {
     public static void screens(Screens event) {
         event.register(ModMenus.TANK.get(), TankScreen::new);
         event.register(ModMenus.FEEDER.get(), FeederScreen::new);
+        event.register(ModMenus.CLIP_FEEDER.get(), FeederScreen::new); // M66
         event.register(ModMenus.DOSING_PUMP.get(), org.overengineer.bettacraft.client.screen.DosingPumpScreen::new); // M25 part c
         event.register(ModMenus.SUMP.get(), org.overengineer.bettacraft.client.screen.SumpScreen::new); // M49
         event.register(ModMenus.CALCIUM_REACTOR.get(), org.overengineer.bettacraft.client.screen.CalciumReactorScreen::new); // M49
