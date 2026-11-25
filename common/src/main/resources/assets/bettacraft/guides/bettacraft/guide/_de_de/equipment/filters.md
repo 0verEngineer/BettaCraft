@@ -34,6 +34,7 @@ Glasrand, ein Strahl plätschert ins Wasser (unter Wasser ist es eine kurze Str�
 * Er hat **zwei Plätze** für [Heizstäbe](heaters.md) oder [Kühler](coolers.md) beliebiger Größe. Öffne ihn per
   Rechtsklick oder rechtsklicke ihn mit einem Heizstab. Solange der Filter angeschlossen ist, heizen seine Heizstäbe
   und kühlen seine Kühler das Aquarium.
+* Sein Menü (seit 1.55.0 größer) zeigt die **Energie** im Speicher seines Beckens (mit einem Balken); der Filter speichert selbst keine.
 * Abgebaut behält er seine Heizstäbe im Item (der Tooltip listet sie auf).
 * Er passt auch in einen [Aquariumschrank](cabinet.md) unter dem Aquarium.
 * Er darf auch **ein oder zwei Blöcke tiefer** als das Becken stehen, neben dem Schrank oder ohne Schrank (siehe unten).

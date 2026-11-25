@@ -64,6 +64,10 @@ A row of cabinets side by side (facing the same way) shows **one front** instead
 
 ![The cabinet menu with the buttons Front and joints](../images/cabinet_front_menu.png)
 
+The cabinet menu is bigger since 1.55.0 (the text of the front button fits). Under the heater row it shows the **energy** stored in the
+store of the tank the cabinet's filter feeds (with a bar): the filter keeps no energy of its own, what flows into it goes into that store,
+and all the devices of the tank draw from it (see [Power](power.md)).
+
 The button **"Front: Auto"** at the top right of the cabinet menu fixes the front of this one cabinet: **Auto** (from the
 row, the default), **double door, left leaf**, **double door, right leaf**, **single door**, **drawers** or **two doors
 (old)**. Click for the next, sneak + click for the previous one. The small button next to it switches the thin **dark
