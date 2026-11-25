@@ -31,38 +31,6 @@
         10,
         12
       ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#g"
-        },
-        "east": {
-          "texture": "#g"
-        },
-        "north": {
-          "texture": "#g"
-        },
-        "south": {
-          "texture": "#g"
-        },
-        "up": {
-          "texture": "#g"
-        },
-        "west": {
-          "texture": "#g"
-        }
-      },
-      "from": [
-        6,
-        10,
-        6
-      ],
-      "to": [
-        10,
-        16,
-        10
-      ]
     }
   ],
   "render_type": "minecraft:translucent",
