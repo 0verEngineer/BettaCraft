@@ -14,6 +14,11 @@ Thinner, cleaner pipes; no water over blocks at the glass.
   the middle of a block; a glass pipe shows no faces inside it any more. The filter pipes carry a ring of their line's colour
   (blue, orange, green, brown) at every block border. The T-piece is a grey steel collar like the pipes (it was a brown brass
   box), 4.5 px instead of 8.
+- **Glass bulkheads:** where a pipe, a filter pipe or a line of a pipe bundle joins a tank, a steel flange sits on the glass
+  outside and the same flange inside, with a short stub into the tank; the small dock of the tank's interior sits in that stub,
+  so the inside and the outside match (the dock inside used to be far smaller than the pipe outside).
+- **Interior pipes:** the guards, outlets and pipe docks inside a tank draw a short arm towards every piece they join; a guard
+  put on from outside sat beside its dock without any visible connection.
 - **Pipe bundles:** where a line leaves a bundle into a single pipe (or a filter connector, an aquarium), its arm comes out of
   the middle of the manifold, in line with the pipe; it kept to its corner of the manifold and the pipe stepped sideways at the
   block border. Between two bundles every line keeps its corner as before.

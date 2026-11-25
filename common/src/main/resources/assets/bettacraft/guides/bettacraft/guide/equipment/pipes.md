@@ -31,6 +31,9 @@ sea water and live food suspensions). Water from a bucket or a water source is f
 * Pipes join each other, every aquarium block, the [reservoir](top_off.md), the
   [multiblock filter](multiblock_filter.md), cauldrons and the **tanks and pipes of other mods** (Mekanism, EnderIO,
   Create, AE2, RS ...: the normal fluid handler).
+* Where a pipe (also a filter pipe or a line of a pipe bundle) joins an aquarium, a steel **bulkhead** goes through the
+  glass: a flange outside and the same flange inside, with a short stub into the tank, from which the pipes inside the tank
+  go on.
 * **Pipes do not pump.** Water moves when something pushes it in: the <ItemLink id="bettacraft:water_pump" />, the
   pump head of a [multiblock filter](multiblock_filter.md) or the pump of another mod. It then reaches the blocks at
   the ends of the pipes.
