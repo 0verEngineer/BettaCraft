@@ -236,6 +236,14 @@ public final class TankView {
     /** Water the bag button takes: 100 mB for fish bags, 0 for a Fintastic fishnet (M7). */
     public long bagMb = 100;
     public long minInsertMb;
+
+    /**
+     * M66: whether the overview says "fill to x mB to add animals": only for a tank of water animals that is not full enough. A terrarium
+     * (and a paludarium, which goes by its water part) needs no water to take animals, so it never says it.
+     */
+    public static boolean showFillHint(TankView v) {
+        return !v.climate.hasLand() && v.waterMb < v.minInsertMb && v.climate.maxWater < 0;
+    }
     public final List<Inhabitant> inhabitants = new ArrayList<>();
     public final List<LogLine> log = new ArrayList<>();
     public long gameTime;
