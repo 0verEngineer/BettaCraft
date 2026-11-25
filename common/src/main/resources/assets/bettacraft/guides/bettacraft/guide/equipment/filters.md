@@ -33,6 +33,7 @@ water (under water it is a short current).
 
 * It has **two slots** for [heaters](heaters.md) or [coolers](coolers.md) of any size. Open it with a right-click or
   right-click it with a heater. While the filter is attached, its heaters heat and its coolers cool the aquarium.
+* Its menu (bigger since 1.55.0) shows the **energy** stored in the store of its tank (with a bar); the filter keeps none of its own.
 * Broken, it keeps its heaters in the item (the tooltip lists them).
 * It can also go into an [aquarium cabinet](cabinet.md) under the aquarium.
 * It may also stand **one or two blocks lower** than the tank, beside the cabinet or without one (see below).

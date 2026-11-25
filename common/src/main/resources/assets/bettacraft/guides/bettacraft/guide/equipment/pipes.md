@@ -28,6 +28,8 @@ sea water and live food suspensions). Water from a bucket or a water source is f
 * <ItemLink id="bettacraft:glass_pipe" />: cheap, carries **50 mB per tick**.
 * <ItemLink id="bettacraft:stainless_steel_pipe" />: carries **250 mB per tick**. A network of both kinds carries what
   its weakest pipe carries.
+* Jade shows what a pipe carries a second (50 mB per tick = 1,000 mB a second); a pipe stores no water, so it shows no
+  stored amount.
 * Pipes join each other, every aquarium block, the [reservoir](top_off.md), the
   [multiblock filter](multiblock_filter.md), cauldrons and the **tanks and pipes of other mods** (Mekanism, EnderIO,
   Create, AE2, RS ...: the normal fluid handler).

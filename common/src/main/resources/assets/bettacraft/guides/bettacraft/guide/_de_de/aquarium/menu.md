@@ -37,7 +37,9 @@ endet mit „...“ und steht vollständig da, wenn die Maus darauf liegt.
   (freigegeben für Freunde, die ihren Aquaristen teilen), **A-** keiner. Ein gesperrtes Aquarium fasst kein Aquarist an.
   Unsichtbar, solange `features.aquaristNpc.enabled` aus ist.
 * Größe, Wassermenge, Wasser- und Umgebungstemperatur, die **Zieltemperatur** (– / +).
-* Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter, die Zahl der Tiere
+* Heizstäbe (oder Kühler, wenn das Ziel unter der Umgebung liegt), Futterautomat, Licht und Filter (ein **-**, wo keins
+  eingebaut ist), der gespeicherte [Strom](../equipment/power.md) und was die Geräte ziehen (nur wenn der Server Strom
+  verlangt; mit der Maus darauf siehst du, welche Gruppen Strom haben), die Zahl der Tiere
   und der Knopf zum Betreten des Innenraums (sein Tooltip zeigt den Innenraum: Maßstab und Größe, Blöcke in der Miniatur,
   Bodengrund, Heizer und Filter darin). Die letzten Zeilen warnen vor mäßigem Wasser, fehlendem Strom oder einem **zu
   kleinen Schwarm**: „Schwarm zu klein: Neonsalmler: 3 von 6“ nennt die Fische und wie viele es sein sollten (mit der Maus
@@ -70,35 +72,38 @@ nimmt die Gelege der Apfelschnecken vom Glas.
 
 ## Zucht
 
-Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solche Schwarm mit seinen Fischen und der Mindestzahl, z. B.
-„Neonsalmler: 3 von 6“), das Schaumnest, die Zuchtbedingungen mit ✔ und ✘, die Jungtiere, die Eltern und die erwarteten Nachkommen.
-Siehe [Zucht](../bettas/breeding.md).
+In Gruppen mit einer dünnen Linie dazwischen: die Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solche Schwarm mit
+seinen Fischen und der Mindestzahl, z. B. „Neonsalmler: 3 von 6“); die **Zuchtbedingungen** mit ✔ und ✘ (solange es kein Nest gibt)
+und darunter das **Schaumnest** (eine Betta-Sache: andere Tiere brüten anders, siehe unten); die Jungtiere; die Eltern und die
+erwarteten Nachkommen; die Zucht der Beifische. Siehe [Zucht](../bettas/breeding.md).
 
 ## Wasser
 
 ![Der Wasser-Tab](../images/menu_water.png)
 
-Wasservolumen, die [Wasserqualität](water_quality.md) mit einem Balken (die rote Marke zeigt, ab wann die Bettas
-leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Filter entfernen), das letzte Frischwasser,
-Verdunstung und offene obere Blöcke, Heizer und Kühler und der gespeicherte [Strom](../equipment/power.md), wenn der
-Server ihn verlangt.
+Zwei Gruppen mit einer Linie dazwischen. **Das Wasser:** das Volumen, TDS und pH, die Verdunstung (und die offenen oberen
+Blöcke) und der [Sauerstoff](oxygen.md) mit Balken (der weiße Strich ist die Sättigung; mit der Maus darauf siehst du, wohin er
+strebt und warum: Austausch und Verbrauch). **Was es gut hält:** die [Wasserqualität](water_quality.md) mit einem Balken (die rote
+Marke zeigt, ab wann die Bettas leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Filter entfernen),
+das Nitrat und das letzte Frischwasser, Heizer und Kühler. Der gespeicherte [Strom](../equipment/power.md) steht in der Übersicht.
 
 ## Technik
 
 ![Der Reiter Technik](../images/menu_devices.png)
 
-Der [Sauerstoff](oxygen.md) mit Balken (der weiße Strich ist die Sättigung), wohin er strebt und warum (Austausch und
-Verbrauch), die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
+Zwei Gruppen mit je einer Überschrift. **Belüftung:** die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
 [Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt, wie viele Motorfilter keinen
-[Ansaugschutz](../equipment/intake_sponge.md) haben, die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
-**Tageslicht-Timer** mit ihren Knöpfen (siehe [Licht](../equipment/light.md)).
+[Ansaugschutz](../equipment/intake_sponge.md) haben. **Licht:** die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
+**Tageslicht-Timer** mit ihren Knöpfen (siehe [Licht](../equipment/light.md)). Der [Sauerstoff](oxygen.md) ist ein Wasserwert und
+steht im Reiter Wasser.
 
 ## Pflanzen
 
 ![Der Pflanzen-Tab](../images/menu_plants.png)
 
-Die [Schwimmpflanzen](../plants/floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, Abfallaufnahme, die
-Warnung bei dichter Decke und der Knopf **Ausdünnen**.
+Die [Schwimmpflanzen](../plants/floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, die
+Warnung bei dichter Decke und der Knopf **Ausdünnen**; auf beiden Seiten **Verbessert Wasserqualität: +x,x % pro Tag**: was alle
+Pflanzen des Aquariums zusammen leisten, die Schwimmpflanzen und die Pflanzen im Innenraum (mit der Maus darauf siehst du die beiden Anteile).
 
 ## Nutzer
 
@@ -113,7 +118,7 @@ Der Nutzer-Tab (er hat in 1.43.0 den Innenraum-Tab ersetzt) zeigt, wer an diesem
 | **Betrachter** | das Menü öffnen und ansehen; ändert nichts und kann nicht ins Aquarium |
 | **Nicht eingetragen** | alle anderen: dürfen es ändern, solange es offen ist, gesperrt nur ansehen |
 
-Besitzer und Pfleger tippen den Namen eines Spielers, der online ist, wählen **als Pfleger** oder **als Betrachter** und
+Besitzer und Pfleger tippen den Namen eines Spielers, der online ist (**Tab** ergänzt ihn, Umschalt + Tab den davor), wählen **als Pfleger** oder **als Betrachter** und
 drücken **Eintragen**; ein ausgewählter Nutzer bekommt eine andere Rolle oder wird entfernt (jeder Nutzer kann sich selbst
 austragen). Spieler in der FTB-Teams-Gruppe des Besitzers zählen als Pfleger. Der Knopf **Andere** ist die Sperre.
 Operatoren dürfen immer alles. Config-Schalter: `features.equipment.tankUsers` (aus: die Liste wird ignoriert, nur

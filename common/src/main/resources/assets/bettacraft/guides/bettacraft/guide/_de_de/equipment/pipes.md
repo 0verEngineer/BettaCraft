@@ -28,6 +28,8 @@ Meerwasser und Lebendfutter-Suspension). Wasser aus einem Eimer oder einer Wasse
 * <ItemLink id="bettacraft:glass_pipe" />: günstig, trägt **50 mB pro Tick**.
 * <ItemLink id="bettacraft:stainless_steel_pipe" />: trägt **250 mB pro Tick**. Ein Netz aus beiden Sorten trägt, was
   sein schwächstes Rohr trägt.
+* Jade zeigt, was ein Rohr pro Sekunde fördert (50 mB pro Tick = 1.000 mB pro Sekunde); ein Rohr speichert kein
+  Wasser und zeigt darum keine gespeicherte Menge.
 * Rohre verbinden sich miteinander, mit jedem Aquariumblock, dem [Vorratsbehälter](top_off.md), dem
   [Multiblock-Filter](multiblock_filter.md), Kesseln und den **Tanks und Rohren anderer Mods** (Mekanism, EnderIO,
   Create, AE2, RS ...: der normale Fluid-Handler).
