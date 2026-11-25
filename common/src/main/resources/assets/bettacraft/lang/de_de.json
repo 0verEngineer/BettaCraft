@@ -5116,7 +5116,7 @@
   "gui.bettacraft.aquarist.assign": "Zuweisen...",
   "gui.bettacraft.aquarist.assign.bed.tooltip": "Danach das Bett rechtsklicken, in dem er schlafen soll (höchstens %s Blöcke von seinem Zuchtbecken).",
   "gui.bettacraft.aquarist.assign.chest.tooltip": "Danach die Kiste oder das Fass für seinen Lohn, sein Futter und seine Ableger rechtsklicken (höchstens %s Blöcke von seinem Zuchtbecken).",
-  "gui.bettacraft.aquarist.auto": "Auto",
+  "gui.bettacraft.aquarist.auto": "Autom.",
   "gui.bettacraft.aquarist.auto.bed.tooltip": "Gibt sein Bett zurück; er sucht selbst ein freies.",
   "gui.bettacraft.aquarist.auto.chest.tooltip": "Er sucht wieder in den Behältern neben seinem Zuchtbecken.",
   "gui.bettacraft.aquarist.chest_assigned": "Kiste bei %s (zugewiesen)",
