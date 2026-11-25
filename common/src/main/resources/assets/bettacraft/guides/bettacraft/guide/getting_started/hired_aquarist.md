@@ -35,6 +35,9 @@ takes his wage every morning and **really walks to your tanks** to feed, change 
 * He needs a **free bed** and a **free [breeding basin](aquarist.md)** (his workplace) within 32 blocks of where he
   stands when you hire him. He takes them for himself (no villager uses them then). "Find home" in his menu makes him look
   again around where he stands.
+* **Assign bed and chest** (tab **Work** of his menu): **Assign...** next to the bed or the chest, then right-click the bed or the
+  chest (barrels and the storage of other mods too) within 32 blocks of his basin; **Auto** gives it back and he looks by himself again.
+  Without an assigned chest:
 * **Chests next to the basin** (any side, also diagonally; barrels and the storage of other mods too) hold what he needs:
   the **food** for the tanks, the **cuttings** he brings back, and his **wage**.
 * Water for the water changes comes from a **reservoir**, a pipe, another mod's tank or a water source **next to the
@@ -47,8 +50,8 @@ takes his wage every morning and **really walks to your tanks** to feed, change 
 
 ## His tasks
 
-Right-click him: his menu shows his status, home, wage and the six tasks. Click a task's name to switch it on or off, the
-number to set its level 1 to 3:
+Right-click him: his menu has three tabs. **Work** shows his basin, bed and chest (with the buttons to assign them), the wage and the six
+tasks: click a task's name to switch it on or off, the number to set its level 1 to 3. **Rearing tanks** and **Tanks** are described below.
 
 | Task | What he does | Level 1 / 2 / 3 |
 |---|---|---|
@@ -56,7 +59,7 @@ number to set its level 1 to 3:
 | Water change | carries water from the reservoir at the basin and changes it, when the interval of the [water change controller](../equipment/water_change.md) has passed or the water is bad | 15 / 25 / 35 % |
 | Algae | scrapes the algae off the glass | from 50 / 30 / 15 % algae |
 | Plants | thins out floating plants and trims grown aquarium plants; plants and cuttings go into the chest | from 90 / 75 / 60 % cover, full-grown / nearly / half-grown plants |
-| Moving young | carries young bettas, young tankmates and froglets into the **rearing tank** you choose in his menu (the arrows) | 2 / 4 / 8 per trip |
+| Moving young | carries young bettas, young tankmates and froglets into one of his **rearing tanks** (tab Rearing tanks) | 2 / 4 / 8 per trip |
 | Warnings | tells you in the chat what is wrong (with a map mod also as a waypoint at the tank, when your waypoint switch is on there) | sick animals and too little water / also temperature, water, hunger, crowding / also the breeding warnings |
 
 He looks after up to **16 tanks within 32 blocks** of his basin (the nearest first) and only tanks that are **loaded**.
@@ -77,8 +80,17 @@ He only works at tanks he may touch; he checks it again right before every job:
   their aquarist's work) and "no aquarist" (A-);
 * **never locked tanks** (the lock of the tank menu) and never tanks of strangers.
 
-His menu lists the tanks around his workplace and whether they are his employer's, the team's, released, foreign, locked
-or unwanted.
+His menu lists the tanks around his workplace (none without a workplace) and whether they are his employer's, the team's, released,
+foreign, locked or unwanted.
+
+## Rearing tanks and what he does where
+
+* **Several rearing tanks** (up to 5; tab **Rearing tanks**): choose a tank with the arrows and put it in with the **check mark** at the right. The young go
+  into the **first** rearing tank in the list that takes them (the species, the salt and room). Each rearing tank can be limited to species (the
+  button at its row opens a list to tick; nothing ticked: all species). The ✕ takes a tank out of the list. The rearing tank of an
+  older version stays his rearing tank.
+* **Per tank** (tab **Tanks**): click a tank in the list, then switch the six tasks on or off for that tank. By default he does everything
+  at every tank he may work at; a tank with some tasks off shows "4 of 6 tasks".
 
 ![The tank menu with the aquarist button](../images/hired_aquarist_tank_menu.png)
 

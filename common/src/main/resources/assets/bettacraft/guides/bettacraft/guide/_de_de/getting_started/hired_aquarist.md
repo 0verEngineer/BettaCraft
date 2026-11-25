@@ -37,6 +37,9 @@ wechseln, zu putzen, zu schneiden und Jungtiere umzusetzen.
 * Er braucht ein **freies Bett** und ein **freies [Zuchtbecken](aquarist.md)** (seinen Arbeitsplatz) im Umkreis von 32
   Blöcken um die Stelle, an der er beim Einstellen steht. Er nimmt sie für sich (kein Dorfbewohner benutzt sie dann). „Neu
   suchen“ in seinem Menü lässt ihn um die Stelle herum suchen, an der er gerade steht.
+* **Bett und Kiste zuweisen** (Reiter **Arbeit** seines Menüs): **Zuweisen...** neben dem Bett oder der Kiste, dann das Bett oder die
+  Kiste (auch Fässer und Speicher anderer Mods) rechtsklicken, höchstens 32 Blöcke von seinem Zuchtbecken; **Auto** gibt es zurück, und er sucht wieder
+  selbst. Ohne zugewiesene Kiste:
 * **Kisten neben dem Zuchtbecken** (an jeder Seite, auch schräg; auch Fässer und Speicher anderer Mods) halten, was er
   braucht: das **Futter** für die Becken, die **Stecklinge**, die er zurückbringt, und seinen **Lohn**.
 * Das Wasser für den Wasserwechsel kommt aus einem **Reservoir**, einem Rohr, einem Tank einer anderen Mod oder einer
@@ -50,8 +53,9 @@ wechseln, zu putzen, zu schneiden und Jungtiere umzusetzen.
 
 ## Seine Aufgaben
 
-Rechtsklick auf ihn: Sein Menü zeigt Status, Zuhause, Lohn und die sechs Aufgaben. Ein Klick auf den Namen einer Aufgabe
-schaltet sie an oder aus, die Zahl stellt ihre Stufe 1 bis 3:
+Rechtsklick auf ihn: Sein Menü hat drei Reiter. **Arbeit** zeigt sein Zuchtbecken, Bett und Kiste (mit den Knöpfen zum Zuweisen), den Lohn und die
+sechs Aufgaben: ein Klick auf den Namen einer Aufgabe schaltet sie an oder aus, die Zahl stellt ihre Stufe 1 bis 3. **Aufzuchtbecken** und
+**Becken** stehen weiter unten:
 
 | Aufgabe | Was er tut | Stufe 1 / 2 / 3 |
 |---|---|---|
@@ -59,7 +63,7 @@ schaltet sie an oder aus, die Zahl stellt ihre Stufe 1 bis 3:
 | Wasserwechsel | trägt Wasser aus dem Reservoir am Zuchtbecken heran und wechselt es, wenn der Abstand des [Wasserwechsel-Reglers](../equipment/water_change.md) um ist oder das Wasser schlecht | 15 / 25 / 35 % |
 | Algen putzen | kratzt die Algen von der Scheibe | ab 50 / 30 / 15 % Algen |
 | Pflanzen schneiden | dünnt Schwimmpflanzen aus und schneidet ausgewachsene Aquarienpflanzen zurück; Pflanzen und Stecklinge kommen in die Kiste | ab 90 / 75 / 60 % Bedeckung, ausgewachsene / fast / halb gewachsene Pflanzen |
-| Jungtiere umsetzen | trägt junge Bettas, junge Beifische und Jungfrösche in das **Aufzuchtbecken**, das du in seinem Menü wählst (die Pfeile) | 2 / 4 / 8 je Gang |
+| Jungtiere umsetzen | trägt junge Bettas, junge Beifische und Jungfrösche in eins seiner **Aufzuchtbecken** (Reiter Aufzuchtbecken) | 2 / 4 / 8 je Gang |
 | Warnungen | sagt dir im Chat, was nicht stimmt (mit einer Karten-Mod auch als Wegpunkt am Becken, wenn dein Wegpunkt-Schalter dort an ist) | kranke Tiere und zu wenig Wasser / auch Temperatur, Wasser, Hunger, Überbesatz / auch die Zuchtwarnungen |
 
 Er pflegt bis zu **16 Becken im Umkreis von 32 Blöcken** um sein Zuchtbecken (die nächsten zuerst), und nur Becken, die
@@ -82,8 +86,17 @@ Er arbeitet nur an Becken, die er anfassen darf; das prüft er vor jeder Arbeit 
   Freunde, die die Arbeit ihres Aquaristen teilen) und „kein Aquarist“ (A-);
 * **nie an gesperrten Becken** (die Sperre des Beckenmenüs) und nie an Becken Fremder.
 
-Sein Menü listet die Becken um seinen Arbeitsplatz und ob sie dem Arbeitgeber, dem Team gehören, freigegeben, fremd,
+Sein Menü listet die Becken um seinen Arbeitsplatz (ohne Arbeitsplatz keine) und ob sie dem Arbeitgeber, dem Team gehören, freigegeben, fremd,
 gesperrt oder unerwünscht sind.
+
+## Aufzuchtbecken und was er wo tut
+
+* **Mehrere Aufzuchtbecken** (bis 5; Reiter **Aufzuchtbecken**): ein Becken mit den Pfeilen wählen und mit dem **Haken** ganz rechts aufnehmen. Die
+  Jungtiere kommen in das **erste** Aufzuchtbecken der Liste, das sie nimmt (Art, Salzgehalt und Platz). Jedes Aufzuchtbecken lässt sich auf Arten
+  beschränken (der Knopf in seiner Zeile öffnet eine Liste zum Anhaken; nichts angehakt: alle Arten). Das ✕ nimmt ein Becken aus der Liste.
+  Das Aufzuchtbecken einer älteren Version bleibt sein Aufzuchtbecken.
+* **Je Becken** (Reiter **Becken**): ein Becken in der Liste anklicken und dann die sechs Aufgaben für dieses Becken an- oder ausschalten.
+  Standardmäßig tut er an jedem Becken, an dem er arbeiten darf, alles; ein Becken mit abgeschalteten Aufgaben zeigt „4 von 6 Aufgaben“.
 
 ![Das Beckenmenü mit dem Aquaristen-Knopf](../images/hired_aquarist_tank_menu.png)
 

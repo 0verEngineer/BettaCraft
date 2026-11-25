@@ -55,6 +55,9 @@ Seit Version 1.32 versorgt ein Filter über eigene Rohre **mehrere Aquarien**, u
 
 * [Filterleitungen und Schutzaufsätze](filter_lines.md): die Einlass- und Rücklaufrohre, T-Stücke, Andocken an jeder
   Seite, die Schutzaufsätze.
+* Das Menü des Filters sagt „Versorgt 3 Becken:“ über der Liste seiner Becken, und sein **Frischwasser** ist, was er nutzen kann: das Wasser in seinen
+  Frischwasser-Anschlüssen plus das an den Enden ihrer Leitungen (ein [Vorratsbehälter](top_off.md), der Tank einer anderen Mod) oder „Leitungswasser,
+  unbegrenzt“, wenn ein Wasserquellenblock an einem Anschluss liegt.
 * [Rohrbündel, Frisch- und Abwasser](pipe_bundle.md): vier Leitungen in einem Block, Wasserwechsel und Nachfüllen für
   jedes Aquarium des Filters.
 * [Rohrverkleidung und Facaden](pipe_cover.md): die Rohre hinter jedem vollen Block verstecken.

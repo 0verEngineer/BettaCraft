@@ -68,6 +68,10 @@ jedem Block:
 
 ![Das Schrank-Menü mit den Knöpfen Front und Fugen](../images/cabinet_front_menu.png)
 
+Das Schrank-Menü ist seit 1.55.0 größer (der Text des Front-Knopfs passt hinein). Unter der Heizer-Reihe zeigt es die **Energie** im Speicher
+des Beckens, das der Filter des Schranks versorgt (mit einem Balken): der Filter speichert selbst keine Energie, was in ihn hineinfließt, geht in
+diesen Speicher, und alle Geräte des Beckens ziehen von dort (siehe [Strom](power.md)).
+
 Der Knopf **„Schrankfront: Automatisch“** oben rechts im Schrank-Menü legt die Front dieses einen Schranks fest:
 **Auto** (aus der Reihe, Standard), **Doppeltür, linker Flügel**, **Doppeltür, rechter Flügel**, **Einzeltür**,
 **Schubladen** oder **zwei Türen (alt)**. Klick: nächste, Schleichen + Klick: vorige. Der kleine Knopf daneben schaltet
