@@ -165,7 +165,6 @@ final class DataGenM24 {
         BlockModelBuilder strainer = p.models().getBuilder("intake_strainer").texture("t", p.modLoc("block/intake_strainer")).texture("g", p.modLoc("block/plumbing_glass"))
                 .texture("particle", p.modLoc("block/intake_strainer")).renderType("translucent");
         strainer.element().from(4, 0, 4).to(12, 10, 12).allFaces((d, f) -> f.texture("#t")).end();
-        strainer.element().from(6, 10, 6).to(10, 16, 10).allFaces((d, f) -> f.texture("#g")).end();
         simple(p, ModBlocks.INTAKE_STRAINER.get(), strainer, true);
         // lily pipe: a glass stem up to a mouth that opens towards the facing (north in the model)
         BlockModelBuilder lily = p.models().getBuilder("lily_pipe").texture("g", p.modLoc("block/plumbing_glass"))
