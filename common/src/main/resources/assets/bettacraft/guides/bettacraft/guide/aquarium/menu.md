@@ -35,7 +35,9 @@ when you hold the mouse over it.
   who share their aquarist), **A-** none. A locked aquarium is never touched by an aquarist. Hidden while
   `features.aquaristNpc.enabled` is off.
 * Size, water volume, water and surrounding temperature, the **target temperature** (– / +).
-* Heaters (or coolers, when the target is below the surroundings), feeder, light and filters, the number of animals
+* Heaters (or coolers, when the target is below the surroundings), feeder, light and filters (a **-** where none is
+  installed), the stored [power](../equipment/power.md) and what the equipment draws (only when the server needs power; hold
+  the mouse over it to see which groups have power), the number of animals
   and the button to enter the interior (its tooltip shows the interior: scale and size, blocks in the miniature,
   substrate, heaters and filters inside). The last lines warn about poor water, missing power or a **shoal that is too
   small**: "Shoal too small: Neon Tetra: 3 of 6" names the fish and how many it should be (hold the mouse over it for every
@@ -66,34 +68,38 @@ fish bag or a bucket (the second button). **Clutches off** takes the apple snail
 
 ## Breeding
 
-Warnings (under "A shoal of tankmates is too small" every such shoal with its fish and the minimum, e.g. "Neon Tetra: 3
-of 6"), the bubble nest, the breeding conditions with ✔ and ✘, the young fish, the parents and the expected offspring.
-See [Breeding](../bettas/breeding.md).
+In groups with a thin line between them: the warnings (under "A shoal of tankmates is too small" every such shoal with its
+fish and the minimum, e.g. "Neon Tetra: 3 of 6"); the **breeding conditions** with ✔ and ✘ (while there is no nest) and,
+below them, the **bubble nest** (a betta thing: other animals breed in their own ways, see below); the young fish; the parents
+and the expected offspring; the breeding of the tankmates. See [Breeding](../bettas/breeding.md).
 
 ## Water
 
 ![The water tab](../images/menu_water.png)
 
-Water volume, the [water quality](water_quality.md) with a bar (the red mark is where the bettas start to suffer), how
-fast it drops and why (animals per water block, how much the filters remove), the last fresh water, evaporation and
-open top blocks, heaters and coolers, and the stored [power](../equipment/power.md) when the server needs it.
+Two groups with a line between them. **The water:** the volume, TDS and pH, the evaporation (and the open top blocks)
+and the [oxygen](oxygen.md) with a bar (the white mark is saturation; hold the mouse over it for what it tends to and why:
+exchange and use). **What keeps it good:** the [water quality](water_quality.md) with a bar (the red mark is where the bettas
+start to suffer), how fast it drops and why (animals per water block, how much the filters remove), the nitrate and the last
+fresh water, heaters and coolers. The stored [power](../equipment/power.md) is in the overview.
 
 ## Devices
 
 ![The devices tab](../images/menu_devices.png)
 
-The [oxygen](oxygen.md) with a bar (the white mark is saturation), what it tends to and why (exchange and use), the
-[air pumps](../equipment/air_pump.md), [air stones](../equipment/air_stone.md) and
+Two groups with a caption each. **Aeration:** the [air pumps](../equipment/air_pump.md), [air stones](../equipment/air_stone.md) and
 [sponge filters](../equipment/sponge_filter.md), how much CO2 the aeration drives out, how many motor filters have no
-[intake sponge](../equipment/intake_sponge.md), the lights of the aquarium with the light strength, and the
-**dimmer** and the **daylight timer** with their buttons (see [Light](../equipment/light.md)).
+[intake sponge](../equipment/intake_sponge.md). **Light:** the lights of the aquarium with the light strength, and the
+**dimmer** and the **daylight timer** with their buttons (see [Light](../equipment/light.md)). The [oxygen](oxygen.md) is a
+water value and shows in the tab Water.
 
 ## Plants
 
 ![The plants tab](../images/menu_plants.png)
 
-The [floating plants](../plants/floating_plants.md) of the aquarium: number per species, cover, light, growth, waste uptake, the
-warning for a dense cover and the **Thin out** button.
+The [floating plants](../plants/floating_plants.md) of the aquarium: number per species, cover, light, growth, the
+warning for a dense cover and the **Thin out** button; on both pages **Improves water quality: +x.x % per day**: what all the plants
+of the aquarium do together, the floating plants and the plants of the interior (hold the mouse over it for the two shares).
 
 ## Users
 
@@ -108,7 +114,7 @@ The users tab (it replaced the interior tab in 1.43.0) lists who may do what at 
 | **Viewer** | open the menu and look; changes nothing and cannot go into the aquarium |
 | **Not listed** | everyone else: may change it while it is open, only look while it is locked |
 
-The owner and the caretakers type the name of an online player, choose **as Caretaker** or **as Viewer** and press
+The owner and the caretakers type the name of an online player (**Tab** completes it, Shift + Tab the one before), choose **as Caretaker** or **as Viewer** and press
 **Add**; a selected user gets another role or is removed (every user may take himself off the list). Players in the
 owner's FTB Teams party count as caretakers. The button **Others** is the lock. Operators may always do everything.
 Config switch: `features.equipment.tankUsers` (off: the list is ignored, only the owner and the lock count).

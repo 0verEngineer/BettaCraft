@@ -53,6 +53,9 @@ The old one-block [external filter](filters.md) stays the small variant.
 Since version 1.32 one filter serves **several aquariums** through its own pipes, and up to four lines run in one block:
 
 * [Filter lines and guards](filter_lines.md): the intake and return pipes, T-pieces, docking on any side, the guards.
+* The filter's menu says "Serves 3 tanks:" above the list of its tanks, and its **fresh water** is what it can use: the water in its fresh
+  water ports plus what lies at the ends of their lines (a [reservoir](top_off.md), another mod's tank), or "tap water, unlimited" when a
+  water source block touches a port.
 * [Pipe bundles, fresh and waste water](pipe_bundle.md): four lines in one block, water changes and top-off for every
   aquarium of the filter.
 * [Pipe cover and facades](pipe_cover.md): hide the pipes behind any full block.
