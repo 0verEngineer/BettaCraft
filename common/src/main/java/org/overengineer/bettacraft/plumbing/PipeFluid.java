@@ -29,6 +29,27 @@ public final class PipeFluid implements IFluidHandler {
         return level.isClientSide ? null : PipeNetwork.of(level, pos);
     }
 
+    /**
+     * M66: the water that lies at the ends of this pipe's network (reservoirs, other mods' tanks), apart from the block this handler is
+     * seen from: what the pipe could deliver in time, not what one window of its throughput moves. 0 on the client.
+     */
+    public int stored() {
+        PipeNetwork n = net();
+        if (n == null) return 0;
+        int sum = 0;
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        for (PipeNetwork.End e : n.ends()) {
+            if (e.pos().equals(from) || !seen.add(e.pos()) || !level.isLoaded(e.pos())) continue;
+            IFluidHandler h = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, e.pos(), e.face());
+            if (h == null || h instanceof PipeFluid) continue;
+            for (int i = 0; i < h.getTanks(); i++) {
+                FluidStack s = h.getFluidInTank(i);
+                if (org.overengineer.bettacraft.registry.ModFluids.isWater(s.getFluid())) sum += s.getAmount();
+            }
+        }
+        return sum;
+    }
+
     @Override
     public int getTanks() {
         return 1;
