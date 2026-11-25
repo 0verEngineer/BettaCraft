@@ -227,6 +227,11 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         return Component.translatable("block.bettacraft.feeder");
     }
 
+    /** M66: the menu type (the clip-on feeder has its own, with two slots). */
+    public net.minecraft.world.inventory.MenuType<FeederMenu> menuType() {
+        return org.overengineer.bettacraft.registry.ModMenus.FEEDER.get();
+    }
+
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
@@ -255,7 +260,9 @@ public class FeederBlockEntity extends BlockEntity implements MenuProvider {
         HolderLookup.Provider registries = input.lookup();
         super.loadAdditional(input);
         CompoundTag tag = Schemas.FEEDER.migrate(raw);
-        items.deserializeNBT(registries, tag.getCompoundOrEmpty("items"));
+        CompoundTag stored = tag.getCompoundOrEmpty("items").copy();
+        stored.putInt("Size", slots); // M66: the clip-on feeder had one slot, now two: what it holds stays in the first
+        items.deserializeNBT(registries, stored);
         feedingsPerDay = Math.max(1, Math.min(3, tag.getIntOr("feedings", 0)));
         lastEvent = tag.contains("last_event") ? tag.getLongOr("last_event", 0L) : Long.MIN_VALUE;
         double credit = tag.getDoubleOr("credit", 0d);

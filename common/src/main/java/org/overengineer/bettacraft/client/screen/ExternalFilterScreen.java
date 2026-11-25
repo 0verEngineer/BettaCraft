@@ -12,19 +12,26 @@ import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.equipment.ExternalFilterMenu;
 import org.overengineer.bettacraft.equipment.FilterHeaters;
 
-/** External filter: two heater slots (any size) and a hint. */
+/**
+ * External filter: two heater slots (any size), a hint and the power regulator. M66: a bigger menu (216 x 184): the hint
+ * fits in two lines, and the energy stored in the tank's store shows at the bottom.
+ */
 public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilterMenu> {
     static final Identifier TEXTURE = BettaCraft.id("textures/gui/external_filter.png");
+    /** The energy row (menu coordinates). */
+    private static final int ENERGY_X = 8, ENERGY_Y = 78, ENERGY_W = 200;
 
     public ExternalFilterScreen(ExternalFilterMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
+        super(menu, inv, title, ExternalFilterMenu.WIDTH, ExternalFilterMenu.HEIGHT); // M66: bigger
+        inventoryLabelX = ExternalFilterMenu.INV_X;
+        inventoryLabelY = ExternalFilterMenu.INV_Y - 11;
     }
 
     @Override
     protected void init() {
         super.init();
         titleLabelX = (imageWidth - font.width(title)) / 2;
-        powerBtn = addRenderableWidget(powerButton(leftPos + 112, topPos + 35, 56, 16, menu::power, menu.containerId));
+        powerBtn = addRenderableWidget(powerButton(leftPos + 134, topPos + 35, 66, 16, menu::power, menu.containerId));
     }
 
     private TankScreen.FitButton powerBtn;
@@ -49,7 +56,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         for (int i = 0; i < FilterHeaters.SLOTS; i++) {
             if (!menu.getSlot(i).hasItem()) {
-                g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 176, 18, 16, 16, 256, 256);
+                g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 220, 18, 16, 16, 256, 256);
             }
         }
     }
@@ -57,8 +64,16 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     @Override
     protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractLabels(g, mouseX, mouseY);
+        // the hint under the slots, wrapped (a longer translation takes a third line, drawn smaller)
         Component hint = Component.translatable("gui.bettacraft.filter.heaters_hint");
-        g.text(font, hint, (imageWidth - font.width(hint)) / 2, 58, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
+        var lines = font.split(hint, imageWidth - 48); // right of the spring gauge
+        int y = 56;
+        for (var l : lines) {
+            if (y > 66) break;
+            g.text(font, l, (imageWidth - font.width(l)) / 2, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
+            y += 9;
+        }
+        EnergyRow.draw(g, font, ENERGY_X, ENERGY_Y, ENERGY_W, menu.energy());
     }
 
     @Override
@@ -66,6 +81,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         if (powerBtn != null) powerBtn.setMessage(Component.translatable("gui.bettacraft.regulator.button", menu.power() * 10));
         super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
+        else if (EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, mouseX, mouseY, menu.energy());
     }
 
     /** M37: the spring gauge on the left. */

@@ -130,7 +130,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(ModTags.BETTA_FOOD)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
-            ItemStack rest = be.items().insertItem(0, stack.copy(), false);
+            ItemStack rest = org.overengineer.bettacraft.platform.item.ItemHandlerHelper.insertItemStacked(be.items(), stack.copy(), false);
             int moved = stack.getCount() - rest.getCount();
             if (moved > 0 && !player.getAbilities().instabuild) stack.shrink(moved);
             player.sendOverlayMessage(moved > 0 ? status(be) : Component.translatable("message.bettacraft.clip_feeder.full").withStyle(ChatFormatting.RED));
@@ -142,12 +142,15 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             if (player.isShiftKeyDown()) {
-                ItemStack out = be.items().extractItem(0, 64, false);
-                if (!out.isEmpty() && !player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
-            } else {
-                be.cycleFeedings();
+                for (int i = 0; i < be.items().getSlots(); i++) {
+                    ItemStack out = be.items().extractItem(i, 64, false);
+                    if (!out.isEmpty() && !player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
+                }
+                player.sendOverlayMessage(status(be));
+            } else if (player instanceof net.minecraft.server.level.ServerPlayer sp) {
+                // M66: a menu with the two slots and the feedings a day (before: the feedings cycled right here)
+                org.overengineer.bettacraft.platform.Platform.get().openMenu(sp, be, buf -> buf.writeBlockPos(pos));
             }
-            player.sendOverlayMessage(status(be));
         }
         return InteractionResult.SUCCESS;
     }
@@ -159,7 +162,7 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
-            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(0));
+            for (int i = 0; i < be.items().getSlots(); i++) Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
         }
     }
 }
