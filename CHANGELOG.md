@@ -4,7 +4,7 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
-## [1.54.0-beta.1] - 2026-11-24
+## [1.54.0-beta.1] - 2026-11-25
 
 Thinner, cleaner pipes; no water over blocks at the glass.
 
