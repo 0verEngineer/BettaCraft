@@ -89,7 +89,6 @@ final class DataGenM40 {
         BlockModelBuilder in = p.models().getBuilder("intake_guard").texture("m", p.modLoc("block/intake_guard")).texture("s", s)
                 .texture("particle", p.modLoc("block/intake_guard"));
         in.element().from(3, 3, 3).to(13, 13, 13).allFaces((d, f) -> f.texture("#m")).end();
-        in.element().from(6, 0, 6).to(10, 3, 10).allFaces((d, f) -> f.texture("#s")).end();
         BlockModelBuilder out = p.models().getBuilder("outlet_guard").texture("m", p.modLoc("block/outlet_guard")).texture("s", s)
                 .texture("particle", p.modLoc("block/outlet_guard"));
         out.element().from(4, 4, 4).to(12, 12, 12).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#m" : "#s")).end();
