@@ -1,19 +1,92 @@
 {
-  "variants": {
-    "facing=east": {
-      "model": "bettacraft:block/outlet_guard",
-      "y": 90
+  "multipart": [
+    {
+      "apply": {
+        "model": "bettacraft:block/outlet_guard"
+      },
+      "when": {
+        "facing": "north"
+      }
     },
-    "facing=north": {
-      "model": "bettacraft:block/outlet_guard"
+    {
+      "apply": {
+        "model": "bettacraft:block/outlet_guard",
+        "y": 90
+      },
+      "when": {
+        "facing": "east"
+      }
     },
-    "facing=south": {
-      "model": "bettacraft:block/outlet_guard",
-      "y": 180
+    {
+      "apply": {
+        "model": "bettacraft:block/outlet_guard",
+        "y": 180
+      },
+      "when": {
+        "facing": "south"
+      }
     },
-    "facing=west": {
-      "model": "bettacraft:block/outlet_guard",
-      "y": 270
+    {
+      "apply": {
+        "model": "bettacraft:block/outlet_guard",
+        "y": 270
+      },
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/plumbing_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
     }
-  }
+  ]
 }

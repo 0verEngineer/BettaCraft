@@ -155,6 +155,13 @@ public final class FilterLinesGameTests {
         long gk = InteriorPlumbing.net(ra, dock).intakes().getLong(0);
         h.assertTrue(AerationGameTests.interior(h).getBlockState(ra.toWorld(BlockPos.getX(gk), BlockPos.getY(gk), BlockPos.getZ(gk))).getValue(PlumbingBlock.ACTIVE),
                 "the intake guard runs");
+        // M65: the guard beside the dock is drawn joined to it (both have the side towards the other)
+        BlockPos gp = ra.toWorld(BlockPos.getX(gk), BlockPos.getY(gk), BlockPos.getZ(gk)), dp = ra.toWorld(BlockPos.getX(dock), BlockPos.getY(dock), BlockPos.getZ(dock));
+        Direction toDock = Direction.getNearest(dp.getX() - gp.getX(), dp.getY() - gp.getY(), dp.getZ() - gp.getZ());
+        BlockState gs = AerationGameTests.interior(h).getBlockState(gp), dks = AerationGameTests.interior(h).getBlockState(dp);
+        h.assertTrue(gp.relative(toDock).equals(dp), "the guard sits next to the dock: " + gp + " / " + dp);
+        h.assertTrue(gs.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.SIDES.get(toDock))
+                && dks.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.SIDES.get(toDock.getOpposite())), "guard and dock joined: " + gs + " / " + dks);
         // breaking a branch: that tank leaves the filter, its dock goes
         level.destroyBlock(h.absolutePos(new BlockPos(0, 2, 2)), false);
         head.run(level, true);

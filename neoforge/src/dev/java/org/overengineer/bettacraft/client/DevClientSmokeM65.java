@@ -46,13 +46,16 @@ import org.slf4j.LoggerFactory;
  *     blocks at the glass the M65 picture must equal the dry one (no water drawn over them), next to them it must not (the
  *     water is still there). The old way shows the water over the blocks (the red half of the guard).</li>
  * </ul>
+ * <ul><li>{@code dock} (Nachtrag 2): a tank with pipes docking on its glass (a filter intake pipe, a bundle with two lines, a steel
+ * water pipe, a glass pipe from above) and guards put on from outside: the glass bulkheads outside and inside, and inside the
+ * interior the guards joined to their docks.</li></ul>
  * Screenshots {@code bettacraft_m65_<tag>_<pack>_<view>.png} ({@code -Pm65tag}, default {@code run}), packs {@code -Pm65packs}
  * (default none and Complementary Reimagined when Iris is there), summary {@code bettacraft_m65_<tag>_summary.txt}.
  */
 final class DevClientSmokeM65 {
     private static final Logger LOGGER = LoggerFactory.getLogger("bettacraft/smoketest");
     private static final String TAG = System.getProperty("bettacraft.smoketest.m65tag", "run");
-    private static final String PARTS = System.getProperty("bettacraft.smoketest.m65parts", "pipes,wall");
+    private static final String PARTS = System.getProperty("bettacraft.smoketest.m65parts", "pipes,wall,dock");
     private static final String DEFAULT_PACKS = "none,ComplementaryReimagined_r5.10.zip";
     /** The wall tanks: [glass block, style, fill share of the height, what stands at the glass]. */
     private static final Object[][] WALL_TANKS = {
@@ -72,7 +75,8 @@ final class DevClientSmokeM65 {
 
     private final Minecraft mc = Minecraft.getInstance();
     private final Deque<Step> steps = new ArrayDeque<>();
-    private volatile BlockPos origin, yard;
+    private volatile BlockPos origin, yard, dockTank;
+    private volatile InteriorRegion dockRegion;
     private final BlockPos[] wall = new BlockPos[WALL_TANKS.length];
     private final List<String> summary = new ArrayList<>();
     private int wait;
@@ -97,6 +101,7 @@ final class DevClientSmokeM65 {
                     org.overengineer.bettacraft.client.interior.IrisCompat.shaderPackInUse()));
             if (PARTS.contains("pipes")) pipeViews(name);
             if (PARTS.contains("wall")) wallViews(name);
+            if (PARTS.contains("dock")) dockViews(name);
         }
         then(1, this::restoreIris);
         then(1, () -> time(6000));
@@ -183,6 +188,59 @@ final class DevClientSmokeM65 {
 
     private static void set(ServerLevel level, BlockPos pos, Block b) {
         level.setBlock(pos, b.defaultBlockState(), Block.UPDATE_ALL);
+    }
+
+    // ------------------------------------------------------------------ glass bulkheads, docks and guards
+
+    private void dockViews(String pack) {
+        BlockPos[] t = new BlockPos[1];
+        then(1, () -> t[0] = dockTank);
+        then(1, () -> lookAt(t[0].getX() + 1.5, t[0].getY() + 1.3, t[0].getZ() - 2.2, new Vec3(t[0].getX() + 1.5, t[0].getY() + 0.8, t[0].getZ())));
+        then(80, () -> shot(pack, "dock_front"));
+        then(1, () -> lookAt(t[0].getX() + 0.9, t[0].getY() + 0.7, t[0].getZ() - 0.9, new Vec3(t[0].getX() + 0.5, t[0].getY() + 0.5, t[0].getZ())));
+        then(40, () -> shot(pack, "dock_close"));
+        then(1, () -> lookAt(t[0].getX() + 1.6, t[0].getY() + 0.9, t[0].getZ() + 0.35, new Vec3(t[0].getX() + 0.5, t[0].getY() + 0.5, t[0].getZ())));
+        then(40, () -> shot(pack, "dock_inside_glass"));
+        then(1, () -> lookAt(t[0].getX() + 4.4, t[0].getY() + 1.0, t[0].getZ() + 1.0, new Vec3(t[0].getX() + 3, t[0].getY() + 0.5, t[0].getZ() + 1.0)));
+        then(40, () -> shot(pack, "dock_side"));
+        then(1, () -> lookAt(t[0].getX() + 1.5, t[0].getY() + 3.2, t[0].getZ() + 1.0, new Vec3(t[0].getX() + 1.5, t[0].getY() + 2, t[0].getZ() + 1.0)));
+        then(40, () -> shot(pack, "dock_top"));
+        // inside the interior: the north dock of the first tank block and its guard
+        then(1, () -> server(p -> {
+            BlockPos a = dockRegion.toWorld(8, 8, 0);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), a.getX() + 3.5, a.getY() + 1.0 - p.getEyeHeight(), a.getZ() + 4.0, java.util.Set.of(), 140F, 10F, false);
+        }));
+        then(80, () -> shot(pack, "dock_interior"));
+        then(1, () -> server(p -> {
+            BlockPos a = dockRegion.toWorld(8, 8, 0);
+            p.teleportTo(InteriorManager.interiorLevel(p.level().getServer()), a.getX() - 2.5, a.getY() + 2.5 - p.getEyeHeight(), a.getZ() + 3.5, java.util.Set.of(), -140F, 30F, false);
+        }));
+        then(40, () -> shot(pack, "dock_interior_b"));
+    }
+
+    private void buildDock(ServerPlayer p, ServerLevel level, ServerLevel in, BlockPos base) {
+        clear(level, base.offset(-4, 0, -6), 12, 8, 12);
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 2; z++) level.setBlockAndUpdate(base.offset(x, 0, z), Blocks.OAK_PLANKS.defaultBlockState());
+        dockTank = base.offset(0, 1, 0);
+        TankBlockEntity c = tank(level, p, dockTank, Identifier.withDefaultNamespace("glass"), TankStyle.TEXTURED, 0.8F, "M65 docks", 3, 2, 2);
+        InteriorRegion r = InteriorManager.ensureRegion(level, c);
+        dockRegion = r;
+        for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
+            Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
+        BlockPos t = dockTank;
+        // north: a filter intake pipe into the first block, a bundle (intake + return) into the second
+        for (int z = -3; z <= -1; z++) set(level, t.offset(0, 0, z), ModBlocks.FILTER_INLET_PIPE.get());
+        for (int z = -3; z <= -1; z++) set(level, t.offset(2, 0, z), ModBlocks.FILTER_OUTLET_PIPE.get());
+        for (int z = -3; z <= -1; z++) FilterPipeBundleBlock.addLine(level, t.offset(2, 0, z), PipeLine.INTAKE, null, null);
+        // east: a stainless steel water pipe, top: a glass pipe coming down
+        for (int x = 3; x <= 5; x++) set(level, t.offset(x, 0, 1), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int y = 2; y <= 4; y++) set(level, t.offset(1, y, 1), ModBlocks.GLASS_PIPE.get());
+        // the guards behind the filter docks (put on from outside, like a player does)
+        org.overengineer.bettacraft.plumbing.interior.TankAnchors.installGuard(level, t, Direction.NORTH, null,
+                new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_GUARD.get()), org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
+        org.overengineer.bettacraft.plumbing.interior.TankAnchors.installGuard(level, t.offset(2, 0, 0), Direction.NORTH, null,
+                new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.OUTLET_GUARD.get()), org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
+        LOGGER.info("[smoketest] M65 dock tank at {}", t);
     }
 
     // ------------------------------------------------------------------ water at blocks against the glass
@@ -358,6 +416,7 @@ final class DevClientSmokeM65 {
         origin = p.blockPosition().offset(-20, 0, 180);
         yard = origin.offset(0, 1, 0);
         buildYard(level);
+        buildDock(p, level, in, origin.offset(60, 0, 0));
         BlockPos row = origin.offset(30, 0, 0);
         clear(level, row.offset(-4, 0, -24), 30, 10, 30);
         for (int t = 0; t < WALL_TANKS.length; t++) {
@@ -365,7 +424,7 @@ final class DevClientSmokeM65 {
             for (int x = 0; x < WALL_SX; x++) for (int z = 0; z < WALL_SZ; z++) level.setBlockAndUpdate(base.offset(x, 0, z), Blocks.OAK_PLANKS.defaultBlockState());
             wall[t] = base.offset(0, 1, 0);
             TankBlockEntity c = tank(level, p, wall[t], Identifier.withDefaultNamespace((String) WALL_TANKS[t][0]), (TankStyle) WALL_TANKS[t][1],
-                    (float) WALL_TANKS[t][2], "M65 " + WALL_TANKS[t][3] + " " + t);
+                    (float) WALL_TANKS[t][2], "M65 " + WALL_TANKS[t][3] + " " + t, WALL_SX, WALL_SY, WALL_SZ);
             InteriorRegion r = InteriorManager.ensureRegion(level, c);
             for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
                 Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
@@ -393,9 +452,10 @@ final class DevClientSmokeM65 {
         for (int x = 0; x < sx; x++) for (int z = 0; z < sz; z++) level.setBlock(min.offset(x, -1, z), Blocks.GRASS_BLOCK.defaultBlockState(), Block.UPDATE_CLIENTS);
     }
 
-    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, Identifier glassId, TankStyle style, float fill, String name) {
+    private static TankBlockEntity tank(ServerLevel level, ServerPlayer p, BlockPos min, Identifier glassId, TankStyle style, float fill, String name,
+                                        int sx, int sy, int sz) {
         List<BlockPos> blocks = new ArrayList<>();
-        for (int y = 0; y < WALL_SY; y++) for (int z = 0; z < WALL_SZ; z++) for (int x = 0; x < WALL_SX; x++) blocks.add(min.offset(x, y, z));
+        for (int y = 0; y < sy; y++) for (int z = 0; z < sz; z++) for (int x = 0; x < sx; x++) blocks.add(min.offset(x, y, z));
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
             if (level.getBlockEntity(pos) instanceof TankBlockEntity be) {
@@ -405,7 +465,7 @@ final class DevClientSmokeM65 {
         }
         for (BlockPos pos : blocks) TankMultiblock.onTankBlockAdded(level, pos, null);
         TankBlockEntity c = TankMultiblock.getController(level, min);
-        TankInteractions.changeWater(level, c, (long) (WALL_SX * WALL_SY * WALL_SZ * 1000 * fill), 0F);
+        TankInteractions.changeWater(level, c, (long) (sx * sy * sz * 1000 * fill), 0F);
         c.getTank().setName(name);
         c.getTank().setFront(Direction.NORTH);
         c.getTank().setSignVisible(false);
