@@ -292,6 +292,30 @@ public final class FilterWaterGameTests {
     }
 
     /**
+     * M66: the menu's fresh water is what the filter can use: the water in its fresh ports and at the ends of their lines (a
+     * full reservoir behind a pipe), "endless" next to a water source block (tap water).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 300)
+    public static void freshWaterShownCountsTheLineEndsAndTapWater(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        Rig r = rig(h);
+        FilterLinesGameTests.guardAll(level, r.head().getBlockPos());
+        ReservoirBlockEntity res = PlumbingGameTests.reservoir(h, new BlockPos(15, 2, 4), 4000, null);
+        PlumbingGameTests.pipe(h, true, new BlockPos(14, 2, 4));
+        pipes(h, ModBlocks.FILTER_FRESH_PIPE.get(), new int[]{12, 2, 4}, new int[]{13, 2, 4});
+        r.head().run(level, true);
+        h.assertTrue(r.head().freshMb() == 4000 && !r.head().freshEndless(), "the reservoir at the end of the line counts: " + r.head().freshMb());
+        port(h, 11, 2, 4).water().fill(WaterValues.stack(500, null), IFluidHandler.FluidAction.EXECUTE);
+        r.head().run(level, true);
+        h.assertTrue(r.head().freshMb() == 4500, "port + line end: " + r.head().freshMb());
+        h.setBlock(new BlockPos(11, 2, 5), Blocks.WATER);
+        r.head().run(level, true);
+        h.assertTrue(r.head().freshEndless(), "a water source block at the port: tap water");
+        h.assertTrue(res.water().amount() == 4000, "nothing was taken");
+        h.succeed();
+    }
+
+    /**
      * The water change controller on the filter changes 25 % of both tanks (2000 and 4000 mB) from endless tap water (a
      * water source block next to the fresh port). Without a waste port the old water is discarded; with one (its line to a
      * reservoir) the reservoir gets the old water. Short of fresh water (3000 mB in the port), each tank gets its part by
