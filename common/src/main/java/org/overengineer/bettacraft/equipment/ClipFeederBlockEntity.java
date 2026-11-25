@@ -17,8 +17,16 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
  * change the feedings, sneak: take the food out), does not cover the water against evaporation.
  */
 public class ClipFeederBlockEntity extends FeederBlockEntity {
+    /** M66: two slots (before one), with a menu like the feeder's. */
+    public static final int SLOTS = 2;
+
     public ClipFeederBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.CLIP_FEEDER.get(), pos, state, 1);
+        super(ModBlockEntities.CLIP_FEEDER.get(), pos, state, SLOTS);
+    }
+
+    @Override
+    public net.minecraft.world.inventory.MenuType<FeederMenu> menuType() {
+        return org.overengineer.bettacraft.registry.ModMenus.CLIP_FEEDER.get();
     }
 
     @Override

@@ -32,6 +32,7 @@ import org.overengineer.bettacraft.equipment.ClipFeederBlockEntity;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
 import org.overengineer.bettacraft.registry.ModItems;
+import org.overengineer.bettacraft.registry.ModMenus;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankCare;
 import org.overengineer.bettacraft.tank.TankInhabitants;
@@ -271,20 +272,24 @@ public final class PolishGameTests {
                 "clip-on feeder on the west side");
         ClipFeederBlockEntity f = (ClipFeederBlockEntity) level.getBlockEntity(h.absolutePos(fp));
         h.assertTrue(TankCare.findFeeder(level, small.getTank()) == f, "the tank finds its clip-on feeder");
-        // food in by hand: one stack at most
+        // food in by hand: two stacks at most (M66: two slots, a menu like the feeder's)
         use(sp, h.absolutePos(fp), Direction.WEST, new ItemStack(ModItems.BETTA_PELLETS.get(), 64));
         use(sp, h.absolutePos(fp), Direction.WEST, new ItemStack(ModItems.BETTA_PELLETS.get(), 10));
-        h.assertTrue(f.foodCount() == 64, "one stack: " + f.foodCount());
+        h.assertTrue(f.foodCount() == 74, "two slots: 64 and 10: " + f.foodCount());
+        use(sp, h.absolutePos(fp), Direction.WEST, new ItemStack(ModItems.BETTA_PELLETS.get(), 64));
+        h.assertTrue(f.foodCount() == 128, "two stacks at most: " + f.foodCount());
+        var menu = f.createMenu(7, sp.getInventory(), sp);
+        h.assertTrue(menu instanceof org.overengineer.bettacraft.equipment.FeederMenu fm && fm.slotCount() == 2 && fm.getType() == ModMenus.CLIP_FEEDER.get(),
+                "its menu has two slots");
         var data = org.overengineer.bettacraft.entity.betta.BettaData.create(org.overengineer.bettacraft.genetics.BettaGenotype.randomDomestic(
                 net.minecraft.util.RandomSource.create(5)), false, level.getGameTime());
         var err = TankInhabitants.insert(level, small, org.overengineer.bettacraft.entity.betta.BettaBucketItem.withFish(new ItemStack(ModItems.BETTA_BUCKET.get()), data),
                 ModEntities.BETTA.get(), null, false);
         h.assertTrue(err == null, "betta inserted: " + (err == null ? "" : err.getString()));
         int used = f.feedNow(level, small);
-        h.assertTrue(used == 1 && f.foodCount() == 63, "fed one pellet, used " + used);
-        // empty hand: 1 -> 2 feedings a day
-        use(sp, h.absolutePos(fp), Direction.WEST, ItemStack.EMPTY);
-        h.assertTrue(f.feedingsPerDay() == 2, "two feedings a day");
+        h.assertTrue(used == 1 && f.foodCount() == 127, "fed one pellet, used " + used);
+        // the menu's button: 1 -> 2 feedings a day
+        h.assertTrue(menu.clickMenuButton(sp, org.overengineer.bettacraft.equipment.FeederMenu.BUTTON_CYCLE) && f.feedingsPerDay() == 2, "two feedings a day");
         // breaking the tank block drops the feeder
         level.destroyBlock(h.absolutePos(new BlockPos(8, 2, 3)), false);
         h.runAfterDelay(2, () -> {

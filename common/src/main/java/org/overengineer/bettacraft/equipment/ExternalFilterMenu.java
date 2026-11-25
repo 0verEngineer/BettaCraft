@@ -16,7 +16,8 @@ import org.overengineer.bettacraft.registry.ModMenus;
 
 /** Two heater slots of the external filter plus the player inventory (vanilla 3-row container layout). */
 public class ExternalFilterMenu extends AbstractContainerMenu {
-    public static final int SLOT_X = 71, SLOT_Y = 35;
+    /** M66: the panel is 216 x 184 (the heater slots in the middle, the inventory 20 px right and 18 px down of the vanilla layout). */
+    public static final int SLOT_X = 89, SLOT_Y = 35, INV_X = 28, INV_Y = 102, WIDTH = 216, HEIGHT = 184;
     @Nullable
     private final ExternalFilterBlockEntity filter;
 
@@ -46,10 +47,19 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
         }
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 9; c++)
-                addSlot(new Slot(inv, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
-        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, 8 + c * 18, 142));
+                addSlot(new Slot(inv, c + r * 9 + 9, INV_X + c * 18, INV_Y + r * 18));
+        for (int c = 0; c < 9; c++) addSlot(new Slot(inv, c, INV_X + c * 18, INV_Y + 58));
         addPowerSlot(filter);
+        energy = new MenuEnergy(filter); // M66: the tank's store
+        for (var s : energy.slots()) addDataSlot(s);
         addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(filter)); // M37
+    }
+
+    private final MenuEnergy energy;
+
+    /** M66: the energy of the tank this filter feeds. */
+    public MenuEnergy energy() {
+        return energy;
     }
 
     /** M37: the spring of the filter in percent (-1: not windable now). */

@@ -28,17 +28,22 @@ ICON_LOCK = (16, 232)  # 10x10
 ICON_UNLOCK = (26, 232)  # 10x10
 SLOT_FRAME = (36, 232)  # 18x18 slot frame
 
-# M4: 176x166 container panels (vanilla layout: title y 6, inventory y 84, hotbar y 142)
-SMALL = (0, 0, 176, 166)
-FILTER_SLOTS = [(71, 35), (89, 35)]
+# M4: container panels (vanilla layout: title y 6, inventory 82 px under the first row, hotbar 58 px under it)
+# M66: the external filter (216 x 184) and the cabinet (216 x 188) are bigger: room for their texts, the front button and the stored energy;
+# the inventory moves with the panel (x + 20, y + 18 / + 22): the Java menus mirror these numbers.
+EXTERNAL = (0, 0, 216, 184)
+CABINET = (0, 0, 216, 188)
+FEEDER = (0, 0, 176, 190)  # M66: the feeders' own panel (the dispenser panel had no room for their hint); the slot frames are drawn by the screen
+FEEDER_SLOT_FRAME = (180, 0)  # 18x18
+FILTER_SLOTS = [(89, 35), (107, 35)]
 CABINET_FILTER = (26, 18)
 CABINET_HEATERS = [(17, 44), (35, 44)]  # frames drawn by the screen only while a filter is in the slot
-CABINET_STORAGE = [(98 + 18 * c, 17 + 18 * r) for r in range(3) for c in range(3)]
-SIDE_SLOT_FRAME = (176, 0)  # 18x18
-SIDE_HEATER_GHOST = (176, 18)  # 16x16
-SIDE_FILTER_GHOST = (176, 34)  # 16x16
+CABINET_STORAGE = [(124 + 18 * c, 17 + 18 * r) for r in range(3) for c in range(3)]
+SIDE_SLOT_FRAME = (220, 0)  # 18x18 (the sprites sit right of the panels)
+SIDE_HEATER_GHOST = (220, 18)  # 16x16
+SIDE_FILTER_GHOST = (220, 34)  # 16x16
 CABINET_AIR_PUMP = (74, 44)  # M29.1: the air pump slot of the cabinet
-SIDE_AIR_PUMP_GHOST = (176, 50)  # 16x16, cabinet only
+SIDE_AIR_PUMP_GHOST = (220, 50)  # 16x16, cabinet only
 
 
 def panel(img, x, y, w, h):
@@ -159,14 +164,15 @@ def air_pump_ghost() -> np.ndarray:
     return out
 
 
-def _small_panel() -> np.ndarray:
+def _small_panel(size) -> np.ndarray:
     img = np.zeros((H, W, 4), np.uint8)
-    panel(img, *SMALL)
+    panel(img, *size)
+    ix, iy = (size[2] - 162) // 2 + 1, size[3] - 82  # the player inventory: 162 px wide, 82 px from the bottom edge
     for r in range(3):
         for c in range(9):
-            slot(img, 8 + 18 * c, 84 + 18 * r)
+            slot(img, ix + 18 * c, iy + 18 * r)
     for c in range(9):
-        slot(img, 8 + 18 * c, 142)
+        slot(img, ix + 18 * c, iy + 58)
     x, y = SIDE_SLOT_FRAME
     inset(img, x, y, 18, 18)
     x, y = SIDE_HEATER_GHOST
@@ -177,14 +183,21 @@ def _small_panel() -> np.ndarray:
 
 
 def external_filter_gui() -> np.ndarray:
-    img = _small_panel()
+    img = _small_panel(EXTERNAL)
     for ix, iy in FILTER_SLOTS:
         slot(img, ix, iy)
     return img
 
 
+def feeder_gui() -> np.ndarray:
+    img = _small_panel(FEEDER)
+    x, y = FEEDER_SLOT_FRAME
+    inset(img, x, y, 18, 18)
+    return img
+
+
 def cabinet_gui() -> np.ndarray:
-    img = _small_panel()
+    img = _small_panel(CABINET)
     slot(img, *CABINET_FILTER)
     for ix, iy in CABINET_STORAGE:
         slot(img, ix, iy)
@@ -200,7 +213,7 @@ def cabinet_gui() -> np.ndarray:
 
 def write_all() -> list:
     return [save_png(tank_gui(), GUI_TEX / "tank.png"), save_png(external_filter_gui(), GUI_TEX / "external_filter.png"),
-            save_png(cabinet_gui(), GUI_TEX / "cabinet.png")]
+            save_png(cabinet_gui(), GUI_TEX / "cabinet.png"), save_png(feeder_gui(), GUI_TEX / "feeder.png")]
 
 
 if __name__ == "__main__":
