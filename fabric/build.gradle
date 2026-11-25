@@ -73,7 +73,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -141,6 +141,14 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
+            }
+            // M66: -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the menus of the UI overhaul
+            if (project.hasProperty('smoketestm66')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m66only', 'true'
+                if (project.hasProperty('m66tag')) property 'bettacraft.smoketest.m66tag', project.property('m66tag').toString()
+                if (project.hasProperty('m66parts')) property 'bettacraft.smoketest.m66parts', project.property('m66parts').toString()
             }
             // M65: -Psmoketestm65 [-Pshaders] [-Pm65packs=...] [-Pm65tag=<name>] [-Pm65parts=pipes,wall]: pipes, water at blocks against the glass
             if (project.hasProperty('smoketestm65')) {
@@ -706,6 +714,12 @@ def prodProps = { boolean client ->
             if (project.hasProperty('m63packs')) l << "-Dbettacraft.smoketest.m63packs=${project.property('m63packs')}".toString()
             if (project.hasProperty('m63tag')) l << "-Dbettacraft.smoketest.m63tag=${project.property('m63tag')}".toString()
             if (project.hasProperty('m63parts')) l << "-Dbettacraft.smoketest.m63parts=${project.property('m63parts')}".toString()
+        }
+        // M66: the menus of the UI overhaul in production
+        if (project.hasProperty('smoketestm66')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m66only=true']
+            if (project.hasProperty('m66tag')) l << "-Dbettacraft.smoketest.m66tag=${project.property('m66tag')}".toString()
+            if (project.hasProperty('m66parts')) l << "-Dbettacraft.smoketest.m66parts=${project.property('m66parts')}".toString()
         }
         // M65: pipes and the water at blocks against the glass in production (shader packs on Fabric 1.21.1)
         if (project.hasProperty('smoketestm65')) {
