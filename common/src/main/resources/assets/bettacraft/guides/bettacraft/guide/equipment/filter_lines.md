@@ -62,6 +62,9 @@ Place the guard inside at the dock or at the end of the interior pipes, or use i
 pipe docks: it goes straight in front of the dock. **Without its guard the filter does not filter that aquarium**: a red
 line in the aquarium menu (water tab), in Jade / The One Probe / WTHIT and in the filter screen says what is missing.
 
+A guard placed next to a pipe or dock turns its mesh away from it by itself (sneak while placing to face where you look);
+sneak + right-click on a guard with an empty hand turns it to its next free side.
+
 ![The intake guard and the pipe dock on the side wall inside the aquarium](../images/pipe_guards.png)
 
 ## Filters built before the update

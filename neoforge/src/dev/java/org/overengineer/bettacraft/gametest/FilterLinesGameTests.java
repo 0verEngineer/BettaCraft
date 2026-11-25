@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
 import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
@@ -216,6 +217,29 @@ public final class FilterLinesGameTests {
         h.assertTrue(AerationGameTests.interior(h).getBlockState(guard).getValue(PlumbingBlock.ACTIVE), "the outlet guard at the end of the pipes runs");
         h.assertTrue(InteriorPlumbing.currents(level, t).stream().anyMatch(cu -> cu.dx() == 1 && cu.strength() == Plumb.OUTLET_GUARD.strength()),
                 "its soft current: " + InteriorPlumbing.currents(level, t));
+        h.succeed();
+    }
+
+    /** M65: a guard beside a pipe faces away from it; sneak + right-click turns it, skipping the side of the pipe. */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void guardFacesAwayAndRotatesPastItsPipe(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        h.setBlock(new BlockPos(2, 2, 2), ModBlocks.INTERIOR_PIPE.get().defaultBlockState());
+        BlockPos at = new BlockPos(3, 2, 2);
+        for (Block guard : List.of(ModBlocks.OUTLET_GUARD.get(), ModBlocks.INTAKE_GUARD.get())) {
+            net.minecraft.world.item.context.BlockPlaceContext ctx = new net.minecraft.world.item.context.BlockPlaceContext(level, null,
+                    net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(guard.asItem()), new net.minecraft.world.phys.BlockHitResult(
+                            h.absolutePos(new BlockPos(2, 2, 2)).getCenter(), Direction.EAST, h.absolutePos(new BlockPos(2, 2, 2)), false));
+            BlockState s = guard.getStateForPlacement(ctx);
+            h.assertTrue(s.getValue(PlumbingBlock.FACING) == Direction.EAST, guard + " beside a pipe on its west faces east: " + s.getValue(PlumbingBlock.FACING));
+            h.setBlock(at, s.setValue(PlumbingBlock.FACING, Direction.NORTH));
+            // from north the clockwise turns go east, south, then west (the pipe) is skipped: north
+            BlockPos abs = h.absolutePos(at);
+            h.assertTrue(PlumbingBlock.rotate(level, abs, level.getBlockState(abs)) && level.getBlockState(abs).getValue(PlumbingBlock.FACING) == Direction.EAST, "north to east");
+            h.assertTrue(PlumbingBlock.rotate(level, abs, level.getBlockState(abs)) && level.getBlockState(abs).getValue(PlumbingBlock.FACING) == Direction.SOUTH, "east to south");
+            h.assertTrue(PlumbingBlock.rotate(level, abs, level.getBlockState(abs)) && level.getBlockState(abs).getValue(PlumbingBlock.FACING) == Direction.NORTH, "south skips the pipe: north");
+            h.setBlock(at, Blocks.AIR.defaultBlockState());
+        }
         h.succeed();
     }
 

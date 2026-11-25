@@ -66,6 +66,9 @@ Den Schutz innen am Anschluss oder am Ende der Innenraum-Rohre setzen, oder von 
 andockt: er kommt direkt vor den Anschluss. **Ohne seinen Schutz filtert der Filter dieses Aquarium nicht**: eine rote
 Zeile im Aquariummenü (Reiter Wasser), in Jade / The One Probe / WTHIT und im Filter-Fenster sagt, was fehlt.
 
+Ein Schutz, der neben ein Rohr oder einen Anschluss gesetzt wird, dreht sein Gitter von selbst davon weg (beim Setzen schleichen: er schaut
+wohin du siehst); Schleichen + Rechtsklick mit leerer Hand auf einen Schutz dreht ihn zur nächsten freien Seite.
+
 ![Der Ansaugschutz und der Rohranschluss an der Seitenwand im Aquarium](../images/pipe_guards.png)
 
 ## Filter von vor dem Update
