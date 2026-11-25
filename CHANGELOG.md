@@ -4,6 +4,44 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.55.0-beta.1] - 2026-11-25
+
+UI overhaul: the tank menu in groups, bigger cabinet and filter menus with their energy, a menu for the clip-on feeder, an aquarist
+with tabs (several rearing tanks, chest and bed to assign, what he does per tank), a pipe tooltip that says what a pipe carries.
+
+### Changed
+- **Tank menu, overview:** "-" where a feeder, a light or a filter is not installed (the word "none" needed a gender: "keiner" for
+  the light). The stored energy and the demand moved here from the water tab and show only while a device needs power (hover: which groups
+  have power). The hint "Fill to x mB to add animals" no longer shows in a terrarium or paludarium, which take animals without water.
+- **Tank menu, water tab:** in two groups with a line between them: the water (amount, TDS and pH, evaporation, oxygen) and what keeps it
+  good (quality, decline, filters, nitrate and the last change, heaters and coolers). The oxygen came from the tab Devices (its details are
+  the tooltip); the lines about the glass and "power: not needed (config)" are gone.
+- **Tank menu, devices tab:** two groups with captions (aeration, light).
+- **Tank menu, plants tab:** "Improves water quality: +x.x % per day" (it said "Take up waste") on both pages, for all the plants of the
+  tank together: the floating plants and the plants of the interior (ours and those of other mods); the tooltip gives the two shares.
+  It shows with the water quality on, also at 0 %.
+- **Tank menu, breeding tab:** "Breeding conditions:" is its own group; the bubble nest (a betta thing) comes below it, then the young, the
+  parents and the tankmates, with a line between the groups. Climate tab: lines between the values, the devices and the animals.
+- **Tank menu, users tab:** Tab in the name field completes the name with an online player (Shift + Tab: the one before).
+- **Cabinet and external filter:** bigger menus (216 x 188 and 216 x 184); the cabinet's front button shows its whole text, the hint of the
+  filter fits; both show the energy stored in the tank's store (the filter keeps none of its own) with a bar.
+- **Feeders:** the clip-on feeder has a menu now (right-click with an empty hand; sneaking takes the food out) with two slots instead of one
+  (what it holds stays); both feeders say in their menu that they also take food from a cabinet under the tank.
+- **Hired aquarist:** the menu has three tabs: Work, Rearing tanks, Tanks. He can have several rearing tanks (at most 5): the young go into the
+  first that takes them (species, salt, room); each can be limited to species (a list to tick, nothing ticked: all). The tank he had stays his
+  rearing tank. The chest of his wage and food and his bed can be assigned: "Assign..." and a right-click on the block (within the home
+  radius of his basin); "Auto" gives it back. Per tank (click it in the list): which of the six tasks he does there.
+- **Multiblock filter menu:** the percentage sits between the two buttons; with several tanks it says "Serves 3 tanks:" above the list
+  instead of "Cleans the tank at ..."; the fresh water shows what the filter can use.
+- **Water pipes (Jade):** no "Empty 500 mB" any more (a pipe stores nothing); it says how much the pipe carries a second.
+
+### Fixed
+- **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
+  water line and a water source block at a port (tap water) were not shown. It adds the water at the line ends now ("tap water, unlimited"
+  for a source).
+- **Aquarist, tank list:** without a workplace he cares for no tank, but the list still showed the tanks around him as ones he works at
+  ("0 of at most 16 tanks" over a list of them). The list shows the tanks around his workplace only.
+
 ## [1.54.0-beta.1] - 2026-11-25
 
 Thinner, cleaner pipes; no water over blocks at the glass.
