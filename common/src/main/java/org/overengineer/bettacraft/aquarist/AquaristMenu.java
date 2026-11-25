@@ -32,6 +32,16 @@ public final class AquaristMenu {
     public static final int SET_REARING = 3;
     public static final int FIND_HOME = 4;
     public static final int DISMISS = 5;
+    /** M66: text = a tank id: adds it at the end of his rearing tanks / takes it out. */
+    public static final int ADD_REARING = 6, REMOVE_REARING = 7;
+    /** M66: most rearing tanks one aquarist has. */
+    public static final int MAX_REARING = 5;
+    /** M66: text = "tank id|species key": switches the species on or off for that rearing tank; CLEAR_SPECIES (text = tank id): every species. */
+    public static final int TOGGLE_SPECIES = 8, CLEAR_SPECIES = 9;
+    /** M66: value = task ordinal * 2 + (1 = on, 0 = off), text = the tank id: what he may do at that tank. */
+    public static final int SET_TANK_TASK = 10;
+    /** M66: wait for the next right-click on a chest / a bed; AUTO_*: back to looking by himself. */
+    public static final int ASSIGN_CHEST = 11, ASSIGN_BED = 12, AUTO_CHEST = 13, AUTO_BED = 14;
     /** Rows of the tank list. */
     public static final int MAX_TANK_ROWS = 24;
 
@@ -67,18 +77,45 @@ public final class AquaristMenu {
         v.putInt("radius", ServerConfig.getOr(ServerConfig.AQUARIST_WORK_RADIUS, 32));
         v.putInt("cared", AquaristWork.tanks(level, npc).size());
         v.putString("job", npc.currentJob() == null ? "" : npc.currentJob().kind().name().toLowerCase(java.util.Locale.ROOT));
-        v.putBoolean("food", AquaristWork.chestsHaveFood(level, npc.workplace()));
-        v.putInt("chests", AquaristWork.chests(level, npc.workplace()).size());
+        v.putBoolean("food", AquaristWork.chestsHaveFood(level, npc));
+        v.putInt("chests", AquaristWork.chests(level, npc).size());
+        if (npc.chest() != null) v.putLong("chest", npc.chest().asLong()); // M66: assigned (else automatic)
+        v.putInt("home_radius", ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32));
         if (npc.offerUntil() != Long.MAX_VALUE) v.putLong("offer_left", Math.max(0, npc.offerUntil() - level.getServer().overworld().getGameTime()));
-        if (npc.rearingTank() != null) NbtCompat.putUUID(v, "rearing", npc.rearingTank());
-        ListTag tanks = new ListTag();
+        if (npc.rearingTank() != null) v.putUUID("rearing", npc.rearingTank());
         AquaristRecords rec = AquaristRecords.get(level.getServer());
+        // M66: the rearing tanks in order, each with its species
+        ListTag rear = new ListTag();
+        for (AquaristEntity.RearingTank r : npc.rearingTanks()) {
+            CompoundTag t = new CompoundTag();
+            t.putUUID("id", r.tank());
+            AquaristRecords.TankEntry e = rec.tank(r.tank());
+            TankBlockEntity c = e == null ? null : rec.resolve(level.getServer(), e);
+            if (e != null) t.putLong("pos", e.pos().asLong());
+            t.putString("name", c == null ? "" : c.getTank().name());
+            t.putBoolean("ok", AquaristWork.tank(level, npc, r.tank()) != null);
+            ListTag sp = new ListTag();
+            for (String k : r.species()) sp.add(net.minecraft.nbt.StringTag.valueOf(k));
+            t.put("species", sp);
+            rear.add(t);
+        }
+        v.put("rearing_tanks", rear);
+        ListTag opts = new ListTag();
+        for (String[] o : AquaristWork.speciesOptions()) {
+            CompoundTag t = new CompoundTag();
+            t.putString("k", o[0]);
+            t.putString("t", o[1]);
+            opts.add(t);
+        }
+        v.put("species_options", opts);
+        ListTag tanks = new ListTag();
         for (AquaristRecords.TankEntry e : AquaristWork.tanksAround(level, npc)) {
             if (tanks.size() >= MAX_TANK_ROWS) break;
             TankBlockEntity c = rec.resolve(level.getServer(), e);
             CompoundTag t = new CompoundTag();
             NbtCompat.putUUID(t, "id", e.tank());
             t.putLong("pos", e.pos().asLong());
+            t.putInt("off", npc.tasksOff(e.tank())); // M66: the tasks switched off here
             if (c == null) {
                 t.putString("name", "");
                 t.putString("verdict", "unloaded");
@@ -90,6 +127,14 @@ public final class AquaristMenu {
         }
         v.put("tanks", tanks);
         return v;
+    }
+
+    private static UUID parse(String s) {
+        try {
+            return UUID.fromString(s);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public static void handle(ServerPlayer p, AquaristActionPayload a) {
@@ -124,6 +169,55 @@ public final class AquaristMenu {
                     } catch (IllegalArgumentException e) {
                         err = Component.translatable("message.bettacraft.aquarist.rearing_not_his");
                     }
+                }
+            }
+            case ADD_REARING -> {
+                UUID id = parse(a.text());
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id == null || AquaristWork.tank(level, npc, id) == null) err = Component.translatable("message.bettacraft.aquarist.rearing_not_his");
+                else if (npc.rearingTanks().size() >= MAX_REARING) err = Component.translatable("message.bettacraft.aquarist.rearing_max", MAX_REARING);
+                else npc.addRearingTank(id);
+            }
+            case REMOVE_REARING -> {
+                UUID id = parse(a.text());
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id != null) npc.removeRearingTank(id);
+            }
+            case TOGGLE_SPECIES -> {
+                int bar = a.text().indexOf("|");
+                UUID id = bar < 0 ? null : parse(a.text().substring(0, bar));
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id != null) npc.toggleRearingSpecies(id, a.text().substring(bar + 1));
+            }
+            case CLEAR_SPECIES -> {
+                UUID id = parse(a.text());
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id != null) npc.clearRearingSpecies(id);
+            }
+            case SET_TANK_TASK -> {
+                UUID id = parse(a.text());
+                int task = a.value() / 2;
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id != null && task >= 0 && task < AquaristTask.ALL.length) npc.setMayDo(id, AquaristTask.ALL[task], a.value() % 2 == 1);
+            }
+            case ASSIGN_CHEST, ASSIGN_BED -> {
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else {
+                    AquaristAssign.start(p, npc, a.action() == ASSIGN_BED);
+                    return; // the menu closed itself; it opens again when the block is clicked
+                }
+            }
+            case AUTO_CHEST -> {
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else npc.setChest(null);
+            }
+            case AUTO_BED -> {
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else {
+                    var poi = level.getPoiManager();
+                    if (npc.bed() != null && level.isLoaded(npc.bed()) && poi.existsAtPosition(net.minecraft.world.entity.ai.village.poi.PoiTypes.HOME, npc.bed())) poi.release(npc.bed());
+                    npc.clearBed();
+                    npc.findHome(level);
                 }
             }
             case FIND_HOME -> {

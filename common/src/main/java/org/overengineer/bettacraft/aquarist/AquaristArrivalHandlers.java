@@ -32,6 +32,12 @@ import static org.overengineer.bettacraft.aquarist.AquaristArrival.*;
 public final class AquaristArrivalHandlers {
     private AquaristArrivalHandlers() {}
 
+    /** M66: the click that assigns his chest or his bed ({@link AquaristAssign}). */
+    @SubscribeEvent(priority = org.overengineer.bettacraft.platform.event.EventPriority.HIGH)
+    public static void onRightClickBlock(org.overengineer.bettacraft.platform.event.PlayerInteractEvent.RightClickBlock e) {
+        AquaristAssign.onRightClick(e);
+    }
+
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post e) {
         MinecraftServer server = e.getServer();
