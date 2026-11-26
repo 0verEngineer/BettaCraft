@@ -64,7 +64,7 @@ erlaubt wieder nur Filter direkt neben einem Becken (ein gewähltes Becken darun
 
 * Der [Schwammfilter](sponge_filter.md) (luftbetrieben, schonend für Jungfische) und der [Eckfilter](corner_filter.md)
   sind weitere Innenfilter.
-* Filter mit Motor (Innen-, Eck-, Außen- und Schrankfilter) **saugen Jungfische ein**, wenn kein
+* Filter mit Motor (Innen-, Eck-, Außen- und Schrankfilter) **saugen Jungtiere ein** (Jungfische, Junggarnelen, Kaulquappen), wenn kein
   [Ansaugschutz](intake_sponge.md) angebracht ist.
 * Jeder Filter hat einen [Leistungsregler](regulator.md) (0 bis 100 %): weniger Leistung reinigt weniger, braucht
   weniger Energie und ist leiser. Filterauslässe bringen auch etwas **Sauerstoff** ins Wasser (siehe
