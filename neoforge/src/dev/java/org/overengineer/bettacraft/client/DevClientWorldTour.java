@@ -272,7 +272,7 @@ final class DevClientWorldTour {
                             be.getTank().algae().clear();
                             if (lvl != 0) { // a negative level: every face at a random level (seeded), the stages mixed like in a grown tank
                                 java.util.Random rnd = new java.util.Random(7);
-                                for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
+                                for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) if (algaeWall(t, f.dir())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
                             }
                         }
                     }
@@ -402,6 +402,16 @@ final class DevClientWorldTour {
         then(1, this::openTopGuard);
         then(40, this::miniatureColourGuard); // the last screenshots are written meanwhile
         then(1, this::restoreIris);
+    }
+
+    /** M66 v5: -PtourAlgaeWalls=front|back|all: the walls that get algae (front: the glass the front camera looks through; back: the opposite one). */
+    private static boolean algaeWall(Tank t, int dir) {
+        String w = System.getProperty("bettacraft.tour.algaewalls", "all");
+        if (w.equals("all")) return true;
+        Direction f = t.front() == null || t.front().getAxis() == Direction.Axis.Y ? Direction.NORTH : t.front();
+        boolean front = org.overengineer.bettacraft.tank.algae.AlgaeSim.stepX(dir) == f.getStepX() && org.overengineer.bettacraft.tank.algae.AlgaeSim.stepZ(dir) == f.getStepZ();
+        boolean back = org.overengineer.bettacraft.tank.algae.AlgaeSim.stepX(dir) == -f.getStepX() && org.overengineer.bettacraft.tank.algae.AlgaeSim.stepZ(dir) == -f.getStepZ();
+        return w.equals("front") ? front : w.equals("back") ? back : true;
     }
 
     /** {x, eyeY, z, targetX, targetY, targetZ} of one view of a tank, null when it has no such view. */
