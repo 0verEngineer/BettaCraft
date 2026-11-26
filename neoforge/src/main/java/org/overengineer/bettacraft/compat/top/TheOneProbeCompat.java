@@ -40,16 +40,17 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     public Void apply(ITheOneProbe probe) {
         probe.registerProvider(new Blocks());
         probe.registerEntityProvider(new Bettas());
-        // M52 (1.21.11): The One Probe 1.21.11_neo-13.0.0 crashes the client when it draws its own fluid bar (it asks for the
-        // block atlas by its pre-1.21.9 id): no fluid bar of TOP on our blocks, our own lines show the water anyway
+        // M66: TOP's own tank gauge (the tank's pipe connection as stored water, in the sneak view) is switched off for the tank;
+        // the water is in the menu
         probe.registerProbeConfigProvider(new mcjty.theoneprobe.api.IProbeConfigProvider() {
             @Override
-            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level level, Entity entity, IProbeHitEntityData data) {
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, Entity entity, IProbeHitEntityData data) {
             }
 
             @Override
-            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level level, BlockState state, IProbeHitData data) {
-                if (BettaCraft.MOD_ID.equals(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace())) {
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, BlockState state, IProbeHitData data) {
+                if (state.getBlock() instanceof TankBlock
+                        && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) {
                     config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
                 }
             }
