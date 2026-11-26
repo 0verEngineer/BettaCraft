@@ -829,7 +829,7 @@ final class LangEn {
         a.accept("gui.bettacraft.plants.full", "Surface full: no new offshoots");
         a.accept("gui.bettacraft.plants.growing", "Growing (light and nutrients)");
         a.accept("gui.bettacraft.plants.uptake", "Improves water quality: +%s %% per day");
-        a.accept("gui.bettacraft.plants.dense", "Dense cover (from %s %%): shade, food on the leaves");
+        a.accept("gui.bettacraft.plants.dense", "Dense cover (from %s %%): shade, feeder food stays on the floating plants");
         a.accept("gui.bettacraft.plants.hint", "Hand or net: take out");
         a.accept("gui.bettacraft.breeding.cond.plants", "Floating plants: a good nest site (faster ready)");
         a.accept("gui.bettacraft.breeding.warn.dense_plants", "Floating plants cover the surface densely: thin them out");
