@@ -392,24 +392,28 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         ResourceLocation oldGlass = glass;
         TankStyle oldStyle = style;
+        boolean wasController = isController();
         if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         ResourceLocation oldGlass = glass;
         TankStyle oldStyle = style;
+        boolean wasController = isController();
         loadWithComponents(tag, registries); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
-    private void afterClientUpdate(ResourceLocation oldGlass, TankStyle oldStyle) {
+    private void afterClientUpdate(ResourceLocation oldGlass, TankStyle oldStyle, boolean wasController) {
         if (level != null && level.isClientSide) {
             updateClientControllerSet();
-            if (!oldGlass.equals(glass) || oldStyle != style) {
-                org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-            }
+            // M66: only the controller's renderer draws (TankSignRenderer.shouldRenderOffScreen); the chunk mesher sorts the block
+            // entities into "always" and "when the section is visible" when it builds the section, so a new or former controller
+            // gets its section built again
+            boolean looks = !oldGlass.equals(glass) || oldStyle != style;
+            if (looks) org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
+            if (looks || wasController != isController()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
         }
     }
 
