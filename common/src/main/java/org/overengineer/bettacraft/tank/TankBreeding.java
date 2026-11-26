@@ -568,6 +568,13 @@ public final class TankBreeding {
             nt.putString("stage", n.phase == BubbleNest.Phase.EGGS ? n.stage().id() : "");
             nt.putFloat("days_left", (float) n.daysUntilFree());
             nt.putFloat("care", (float) n.careScore());
+            // M66: what the care is made of right now (tooltip), and the survival range of the larvae
+            nt.putInt("temp_state", breedingTemp(tank) ? 0 : TankTemperature.isTolerable(tank.waterTemp()) ? 1 : 2);
+            nt.putBoolean("crowded", controller.isCrowded());
+            nt.putBoolean("father_fed", male != null && !male.health().isHungry(BettaCare.params()));
+            double lo = ServerConfig.getOr(ServerConfig.BREEDING_MIN_SURVIVAL, 0.6), hi = ServerConfig.getOr(ServerConfig.BREEDING_MAX_SURVIVAL, 0.9);
+            nt.putFloat("surv_lo", (float) lo);
+            nt.putFloat("surv_hi", (float) Math.max(lo, hi));
             out.put("nest", nt);
             if (n.motherGenotype != null) {
                 mother = n.motherGenotype;

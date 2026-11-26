@@ -53,10 +53,10 @@ final class LangM223 {
         a.accept("gui.bettacraft.magnifier.analyse", "Analyse");
         a.accept("gui.bettacraft.magnifier.tooltip", "Analyse the hidden genes of the selected animal with your magnifier (one use)");
         a.accept("gui.bettacraft.magnifier.nothing", "Select an animal that is not analysed yet");
-        a.accept("gui.bettacraft.critters.sex.any", "Any sex");
+        a.accept("gui.bettacraft.critters.sex.any", "♂♀ Both");
         a.accept("gui.bettacraft.critters.sex.male", "♂ Males");
         a.accept("gui.bettacraft.critters.sex.female", "♀ Females");
-        a.accept("gui.bettacraft.critters.sex_tooltip", "Which animals \"Take out\" takes from the selected kind: any, only males or only females");
+        a.accept("gui.bettacraft.critters.sex_tooltip", "Which sex \"Take out\" takes from the selected kind: both, only males or only females. (How many it takes: Shift and Ctrl on the button next to it.)");
         a.accept("gui.bettacraft.critters.into_bag", "Bag");
         a.accept("gui.bettacraft.critters.into_bucket", "Bucket");
         a.accept("gui.bettacraft.critters.take_bucket", "Into bucket");

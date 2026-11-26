@@ -677,7 +677,7 @@ final class LangEn {
         a.accept("config.jade.plugin_bettacraft.betta", "Bettacraft betta");
         a.accept("config.jade.plugin_bettacraft.filter", "Bettacraft filter and cabinet");
         a.accept("config.jade.plugin_bettacraft.culture", "Bettacraft larva tub and artemia hatchery");
-        a.accept("jade.bettacraft.tank.water", "Water %s °C | %s / %s mB");
+        a.accept("jade.bettacraft.tank.water", "Water %s °C");
         a.accept("jade.bettacraft.tank.animals", "Animals: %s (%s adults)");
         a.accept("jade.bettacraft.tank.nest", "Nest: %s");
         a.accept("jade.bettacraft.nest.building", "being built");
@@ -716,7 +716,7 @@ final class LangEn {
         a.accept("info.bettacraft.heater_small", "Heats up to 16 water blocks towards the target temperature of the tank (default 27 °C).\nPlace it in the tank interior (under water) or into an external filter. Heaters add up.");
         a.accept("info.bettacraft.heater_medium", "Heats up to 32 water blocks. Place it in the tank interior or into an external filter.");
         a.accept("info.bettacraft.heater_large", "Heats up to 64 water blocks. Place it in the tank interior or into an external filter.");
-        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality) and moves the surface (oxygen). Without an intake sponge it sucks in fry. Right-click or sneak + mouse wheel: power regulator.");
+        a.accept("info.bettacraft.internal_filter", "Place it in the tank interior: a filter tower with a visible water jet.\nWhile it stands under water it keeps 16 water blocks clean (water quality) and moves the surface (oxygen). Without an intake sponge it sucks in young animals. Right-click or sneak + mouse wheel: power regulator.");
         a.accept("info.bettacraft.external_filter", "Place it next to a tank (facing it) or put it into a cabinet under the tank.\nKeeps 32 water blocks clean and holds two heaters or coolers of any size.");
         a.accept("info.bettacraft.feeder", "Place it on top of a tank and fill it with food (also by hopper).\nFeeds 1 to 3 times a day, picks fry food for fry and takes food from cabinets under the tank.");
         a.accept("info.bettacraft.tank_light", "Place it on or above a tank, or onto a lid on a tank (it lies on the lid in the same block); neighbouring lights join into one bar.\nLight level 15, the weakest of the three light tiers (stronger: LED panel, high-power LED). A redstone signal switches the whole bar off; dimmer and daylight timer in the tank menu (tab Devices).\nDye it (right-click dyes the whole bar, or in the crafting grid): 16 colours tint the water, the plants get the same light.");
@@ -1076,7 +1076,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.mossChance.tooltip", "Chance that shears on a moss block next to water give Java moss");
         a.accept("gui.bettacraft.plants.page_aquatic", "Interior plants");
         a.accept("gui.bettacraft.plants.page_floating", "Floating plants");
-        a.accept("gui.bettacraft.aquatic.count", "Aquarium plants: %s (at most %s)");
+        a.accept("gui.bettacraft.aquatic.count", "Interior plants: %s (at most %s)");
         a.accept("gui.bettacraft.aquatic.none", "No aquarium plants: plant cuttings in the interior");
         a.accept("gui.bettacraft.aquatic.none_built", "No interior yet: sneak + right-click to enter");
         a.accept("gui.bettacraft.aquatic.mass", "Plant mass: %s blocks (%s %% of the water)");
