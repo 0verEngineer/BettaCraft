@@ -31,8 +31,9 @@ public final class AlgaeRenderer {
         for (int i = 1; i <= AlgaeSim.STAGES; i++) STAGES[i] = BettaCraft.id("textures/entity/algae/algae_" + i + ".png");
     }
 
-    /** Distance of the algae film from the outer face of the block (just inside the 1/16 glass). */
-    private static final float INSET = 1F / 16F + 0.003F;
+    /** Distance of the algae film from the outer face of the block (inside the 1/16 glass; M66: 0.012 and not 0.003, a film that close to the glass fought it for the depth buffer
+     * (diagonal flicker over the whole wall when moving, with shader packs from about ten blocks away)). */
+    private static final float INSET = 1F / 16F + 0.012F;
 
     private AlgaeRenderer() {}
 
@@ -41,26 +42,36 @@ public final class AlgaeRenderer {
         if (level == null || t.algae().isEmpty()) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        for (var e : t.algae().long2ObjectEntrySet()) {
-            p.set(e.getLongKey());
-            if (!t.contains(p)) continue;
-            BlockState s = level.getBlockState(p);
-            float top = 1F;
-            if (s.getBlock() instanceof TankBlock) {
-                int fill = s.getValue(TankBlock.FILL);
-                top = fill <= 0 ? 0.25F : Math.min(fill / 16F, 1 - TankWaterGeometry.INSET);
-            }
-            float[] v = e.getValue();
-            for (int d = 0; d < 4; d++) {
-                int stage = Math.round(v[d] * AlgaeSim.STAGES);
-                if (stage <= 0) continue;
-                if (t.contains(BlockPos.asLong(p.getX() + AlgaeSim.stepX(d), p.getY(), p.getZ() + AlgaeSim.stepZ(d)))) continue;
-                int light = LevelRenderer.getLightColor(level, p);
-                VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(STAGES[Math.min(AlgaeSim.STAGES, stage)]));
-                // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
-                int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
-                boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
-                quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, top, light, neg, pos);
+        // M66: one pass per stage. A buffer source ends (draws) the running batch whenever the render type changes, so drawing the
+        // faces in map order (the four stage textures mixed) was one draw call per change, hundreds on a large tank, and with a
+        // shader pack each one is expensive (the lag at large tanks with algae)
+        for (int stage = 1; stage <= AlgaeSim.STAGES; stage++) {
+            VertexConsumer vc = null;
+            for (var e : t.algae().long2ObjectEntrySet()) {
+                float[] v = e.getValue();
+                if (v[0] <= 0 && v[1] <= 0 && v[2] <= 0 && v[3] <= 0) continue;
+                p.set(e.getLongKey());
+                if (!t.contains(p)) continue;
+                float top = -1;
+                int light = 0;
+                for (int d = 0; d < 4; d++) {
+                    if (Math.min(AlgaeSim.STAGES, Math.round(v[d] * AlgaeSim.STAGES)) != stage) continue;
+                    if (t.contains(BlockPos.asLong(p.getX() + AlgaeSim.stepX(d), p.getY(), p.getZ() + AlgaeSim.stepZ(d)))) continue;
+                    if (top < 0) {
+                        BlockState s = level.getBlockState(p);
+                        top = 1F;
+                        if (s.getBlock() instanceof TankBlock) {
+                            int fill = s.getValue(TankBlock.FILL);
+                            top = fill <= 0 ? 0.25F : Math.min(fill / 16F, 1 - TankWaterGeometry.INSET);
+                        }
+                        light = LevelRenderer.getLightColor(level, p);
+                    }
+                    if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(STAGES[stage]));
+                    // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
+                    int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
+                    boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
+                    quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, top, light, neg, pos);
+                }
             }
         }
     }
