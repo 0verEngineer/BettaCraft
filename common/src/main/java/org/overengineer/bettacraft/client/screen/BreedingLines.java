@@ -43,10 +43,68 @@ final class BreedingLines {
         return Component.translatable(key, args).withStyle(ChatFormatting.YELLOW);
     }
 
-    static List<Component> build(TankView v) {
+    /** M66: the groups of animals the tab can show (only those in the tank are offered). */
+    enum Group {
+        BETTAS("bettas"), TANKMATES("tankmates"), SMALL("small"), FROGS("frogs"), HERPS("herps"), FOREIGN("foreign");
+
+        final String key;
+
+        Group(String key) {
+            this.key = key;
+        }
+
+        String listKey() {
+            return "g_" + key;
+        }
+    }
+
+    /** The lines of a group and the tooltips of some of them (by identity of the line). */
+    record Result(List<Component> lines, java.util.IdentityHashMap<Component, List<Component>> tips) {}
+
+    /** M66: the groups present in the tank, in the order of the switch (the bettas when there is nothing else). */
+    static List<Group> groups(TankView v) {
+        CompoundTag b = v.breeding;
+        List<Group> out = new ArrayList<>();
+        int bettas = 0;
+        for (int x : b.getIntArray("stages")) bettas += x;
+        if (bettas > 0 || b.contains("nest", Tag.TAG_COMPOUND)) out.add(Group.BETTAS);
+        if (!b.getListOrEmpty("tankmates").isEmpty() || b.getBooleanOr("box", false)) out.add(Group.TANKMATES);
+        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) if (b.contains(g.listKey(), Tag.TAG_LIST)) out.add(g);
+        if (out.isEmpty()) out.add(Group.BETTAS);
+        return out;
+    }
+
+    /** Whether eggs, larvae or young animals of any group are in the tank (then a filter without an intake sponge is a danger). */
+    private static boolean youngAround(CompoundTag b) {
+        int[] st = b.getIntArray("stages");
+        if (st.length == LifeStage.values().length && st[LifeStage.FRY.ordinal()] + st[LifeStage.JUVENILE.ordinal()] > 0) return true;
+        if (b.contains("nest", Tag.TAG_COMPOUND) && b.getCompoundOrEmpty("nest").getIntOr("eggs", 0) > 0) return true;
+        ListTag tm = b.getListOrEmpty("tankmates");
+        for (int i = 0; i < tm.size(); i++) {
+            CompoundTag d = tm.getCompound(i);
+            if (d.getIntOr("young", 0) > 0 || !d.getListOrEmpty("clutches").isEmpty()) return true;
+        }
+        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) {
+            ListTag l = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+            for (int i = 0; i < l.size(); i++) {
+                CompoundTag e = l.getCompound(i);
+                int[] c = e.getIntArray("c");
+                if (c.length == 3 && c[2] > 0 || !e.getListOrEmpty("st").isEmpty()) return true;
+            }
+        }
+        return false;
+    }
+
+    static Result build(TankView v, Group group) {
+        java.util.IdentityHashMap<Component, List<Component>> tips = new java.util.IdentityHashMap<>();
+        return new Result(lines(v, group, tips), tips);
+    }
+
+    private static List<Component> lines(TankView v, Group group, java.util.IdentityHashMap<Component, List<Component>> tips) {
         CompoundTag b = v.breeding;
         List<Component> out = new ArrayList<>();
         for (String w : v.warnings) {
+            if (w.startsWith("tm_") && group != Group.TANKMATES) continue; // the shoal and temperature warnings belong to the tankmates
             out.add(Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.breeding.warn." + w))
                     .withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
             // M62: which shoals are too small and how many fish they need
@@ -57,13 +115,21 @@ final class BreedingLines {
                 }
             }
         }
-        // M19: a tank without bettas but with tankmates shows their breeding only
-        int[] bs = b.getIntArray("stages").orElse(new int[0]);
-        int bettas = 0;
-        for (int x : bs) bettas += x;
-        if (bettas == 0 && !b.contains("nest", Tag.TAG_COMPOUND) && !b.getListOrEmpty("tankmates").isEmpty()) {
+        // M66: a filter without an intake sponge sucks in the young animals: a warning while there are eggs or young (how to fit one: the tooltip)
+        if (v.tech.fry && v.tech.unprotected > 0 && youngAround(b)) {
+            Component sponge = Component.translatable("item.bettacraft.intake_sponge");
+            Component w = Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.devices.fry_risk", v.tech.unprotected, sponge)).withStyle(ChatFormatting.GOLD);
+            out.add(w);
+            tips.put(w, List.of(Component.translatable("gui.bettacraft.devices.fry_tip", sponge).withStyle(ChatFormatting.WHITE)));
+        }
+        if (group == Group.TANKMATES) {
             sep(out);
             tankmates(b, out);
+            return out;
+        }
+        if (group != Group.BETTAS) {
+            sep(out);
+            entries(b, group, out);
             return out;
         }
         // M66: the bubble nest is a betta thing: the conditions come first, the nest (and everything about the young) below
@@ -79,8 +145,10 @@ final class BreedingLines {
                     LifeStage stage = LifeStage.byId(n.getStringOr("stage", ""));
                     out.add(header(stage == LifeStage.LARVA ? "gui.bettacraft.breeding.nest.larva" : "gui.bettacraft.breeding.nest.egg",
                             n.getIntOr("eggs", 0)));
-                    out.add(Component.translatable("gui.bettacraft.breeding.nest.free_in", f1(n.getFloatOr("days_left", 0f)),
-                            Math.round(n.getFloatOr("care", 0f) * 100)).withStyle(ChatFormatting.GRAY));
+                    Component freeIn = Component.translatable("gui.bettacraft.breeding.nest.free_in", f1(n.getFloatOr("days_left", 0f)),
+                            Math.round(n.getFloatOr("care", 0f) * 100)).withStyle(ChatFormatting.GRAY);
+                    out.add(freeIn);
+                    tips.put(freeIn, careTip(n));
                 }
             }
         } else {
@@ -154,8 +222,52 @@ final class BreedingLines {
         } else {
             out.add(Component.translatable("gui.bettacraft.breeding.no_pair").withStyle(ChatFormatting.GRAY));
         }
-        if (!b.getListOrEmpty("tankmates").isEmpty() || b.getBooleanOr("box", false)) sep(out);
-        tankmates(b, out);
+        return out;
+    }
+
+    /** M66: how the care of the eggs is made up now, what is missing and how many larvae will probably swim free. */
+    private static List<Component> careTip(CompoundTag n) {
+        List<Component> t = new ArrayList<>();
+        int temp = n.getIntOr("temp_state", 0);
+        boolean crowded = n.getBooleanOr("crowded", false), fed = n.getBooleanOr("father_fed", false);
+        t.add(Component.translatable("gui.bettacraft.breeding.care_tip").withStyle(ChatFormatting.WHITE));
+        t.add(check(temp == 0, Component.translatable("gui.bettacraft.breeding.care_tip.temp." + temp)));
+        t.add(check(!crowded, Component.translatable("gui.bettacraft.breeding.care_tip.crowded")));
+        t.add(check(fed, Component.translatable("gui.bettacraft.breeding.care_tip.fed")));
+        float lo = n.getFloatOr("surv_lo", 0f), hi = n.getFloatOr("surv_hi", 0f), care = n.getFloatOr("care", 0f);
+        int eggs = n.getIntOr("eggs", 0);
+        double surv = lo + (hi - lo) * Math.max(0, Math.min(1, care));
+        t.add(Component.translatable("gui.bettacraft.breeding.care_tip.survival", Math.round(lo * 100), Math.round(hi * 100), Math.round(surv * 100),
+                Math.round(eggs * surv), eggs).withStyle(ChatFormatting.AQUA));
+        return t;
+    }
+
+    /** M66: the entries of a group of the small animals, frogs, terrarium animals and animals of other mods. */
+    private static void entries(CompoundTag b, Group g, List<Component> out) {
+        ListTag list = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag e = list.getCompound(i);
+            int[] c = e.getIntArray("c");
+            if (i > 0) out.add(SEPARATOR);
+            out.add(header("gui.bettacraft.breeding.g.header", Component.translatable(e.getStringOr("n", "")), c.length == 3 ? c[0] : 0, c.length == 3 ? c[1] : 0,
+                    c.length == 3 ? c[2] : 0));
+            ListTag cond = e.getListOrEmpty("cond");
+            for (int k = 0; k < cond.size(); k++) {
+                CompoundTag l = cond.getCompound(k);
+                out.add(check(l.getBooleanOr("ok", false), Component.translatable("gui.bettacraft.breeding.c." + l.getStringOr("k", ""), args(l))));
+            }
+            ListTag st = e.getListOrEmpty("st");
+            for (int k = 0; k < st.size(); k++) {
+                CompoundTag l = st.getCompound(k);
+                out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.s." + l.getStringOr("k", ""), args(l))).withStyle(ChatFormatting.AQUA));
+            }
+        }
+    }
+
+    private static Object[] args(CompoundTag l) {
+        ListTag a = l.getListOrEmpty("a");
+        Object[] out = new Object[a.size()];
+        for (int i = 0; i < out.length; i++) out[i] = a.getString(i);
         return out;
     }
 
