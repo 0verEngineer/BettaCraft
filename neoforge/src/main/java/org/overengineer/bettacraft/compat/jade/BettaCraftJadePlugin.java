@@ -60,13 +60,13 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPartBlock.class);
         // M66: Jade's own fluid view (the tank's and the pipes' fluid connections as 'Water 12 mB' / 'Empty 500 mB') comes after
-        // every provider whatever their priority, so it is taken out once the whole tooltip is collected
+        // every provider whatever their priority, so it is taken out once the whole tooltip is collected; also when another overlay
+        // carries our lines (overlay.provider): the line is wrong in every overlay (a pass-through connection, not stored water)
         registration.addTooltipCollectedCallback((box, accessor) -> {
             if (accessor instanceof snownee.jade.api.BlockAccessor b && (b.getBlock() instanceof TankBlock
                     || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
                     || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBlock
-                    || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock)
-                    && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) {
+                    || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock)) {
                 box.getTooltip().remove(snownee.jade.api.JadeIds.UNIVERSAL_FLUID_STORAGE);
             }
         });
