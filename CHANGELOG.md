@@ -29,11 +29,11 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   (what it holds stays); both feeders say in their menu that they also take food from a cabinet under the tank.
 - **Hired aquarist:** the menu has three tabs: Work, Rearing tanks, Tanks. He can have several rearing tanks (at most 5): the young go into the
   first that takes them (species, salt, room); each can be limited to species (a list to tick, nothing ticked: all). The tank he had stays his
-  rearing tank. The chest of his wage and food and his bed can be assigned: "Assign..." and a right-click on the block (within the home
+  rearing tank. His breeding basin (only a free one), the chest of his wage and food and his bed can be assigned: "Assign..." and a right-click on the block (within the home
   radius of his basin); "Auto" gives it back. Per tank (click it in the list): which of the six tasks he does there.
 - **Multiblock filter menu:** the percentage sits between the two buttons; with several tanks it says "Serves 3 tanks:" above the list
   instead of "Cleans the tank at ..."; the fresh water shows what the filter can use.
-- **Water pipes (Jade):** no "Empty 500 mB" any more (a pipe stores nothing); it says how much the pipe carries a second.
+- **Water pipes (Jade, WTHIT, The One Probe):** no "Empty 500 mB" any more (a pipe stores nothing); all three say how much the pipe carries a second.
 
 ### Fixed
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
