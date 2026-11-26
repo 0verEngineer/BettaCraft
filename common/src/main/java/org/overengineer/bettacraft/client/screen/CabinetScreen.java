@@ -257,7 +257,14 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
         super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent(), menu.springShared());
-        else if (EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, mouseX, mouseY, menu.energy());
+        else if (energyTipForTest || EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, energyTipForTest ? leftPos + 10 : mouseX, energyTipForTest ? topPos + 60 : mouseY, menu.energy(), "gui.bettacraft.filter.energy_tooltip.cabinet");
+    }
+
+    private boolean energyTipForTest;
+
+    /** Dev smoke test only: shows the tooltip of the energy row. */
+    public void showEnergyTipForTest() {
+        energyTipForTest = true;
     }
 
     /** M37: the spring gauge right of the storage. */
