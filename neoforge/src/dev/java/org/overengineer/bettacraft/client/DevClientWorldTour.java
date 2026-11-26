@@ -101,6 +101,8 @@ final class DevClientWorldTour {
     private int problems;
     private final List<String> summary = new ArrayList<>();
     private volatile List<Tank> tanks = List.of();
+    /** M66 v4: the controller of each found tank, by the tank's min corner. */
+    private static final java.util.Map<BlockPos, BlockPos> CONTROLLERS = new java.util.concurrent.ConcurrentHashMap<>();
     private String oldPack;
     private boolean oldEnabled;
     private File out;
@@ -265,6 +267,17 @@ final class DevClientWorldTour {
                         }
                     }
                 });
+                // M66 v4: with running ticks (-PtourFreeze=false) the server's copy too, or its next update takes the algae away again
+                if (!FREEZE) then(1, () -> server(p -> {
+                    for (Tank t : list) {
+                        if (org.overengineer.bettacraft.tank.TankMultiblock.getController(p.serverLevel(), t.min()) instanceof TankBlockEntity be && be.getTank() != null) {
+                            be.getTank().algae().clear();
+                            java.util.Random rnd = new java.util.Random(7);
+                            if (lvl != 0) for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
+                            be.markTankChanged();
+                        }
+                    }
+                }));
             }
             then(1, () -> look(x0 - 6, gy + 4, z0 - 6, -45F, 10F));
             // shader compile and the rebuild of the chunks and miniatures
@@ -284,11 +297,24 @@ final class DevClientWorldTour {
                         thenAt(SETTLE, () -> {});
                         then(40, () -> {});
                         int[] fps = new int[3];
+                        long[][] ft = new long[3][];
                         for (int k = 0; k < 3; k++) {
                             int kk = k;
                             then(22, () -> fps[kk] = mc.getFps());
+                            // M66 v4: the frame times of the last 240 frames too (spikes; the frame rate is a mean)
+                            then(44, () -> ft[kk] = frameTimes());
                         }
-                        then(1, () -> perf(pn, t, fps));
+                        // M66 v4: the same view without the miniatures (what they cost) and a picture of the view
+                        int[] noMini = new int[1];
+                        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+                        then(44, () -> noMini[0] = mc.getFps());
+                        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+                        thenAt(SETTLE, () -> shot(pn, t.id() + "_perf"));
+                        then(1, () -> perf(pn, t, fps, ft, noMini[0]));
+                        continue;
+                    }
+                    if (view.equals("pop")) { // M66 v4: the camera walks away from the tank on the side away from its controller, a picture every 2 blocks of controller distance 36..60
+                        popViews(pn, t);
                         continue;
                     }
                     if (view.startsWith("walk")) { // M66: "walk<distance factor>": the camera walks 4 m sideways in 40 steps of 10 cm, a picture each (flicker: single pictures that differ from both neighbours)
@@ -333,7 +359,7 @@ final class DevClientWorldTour {
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
             // M63d: a run of only the break view leaves out the sweeps
-            for (int s = 0; s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") ? 0 : spots.length); s++) {
+            for (int s = 0; s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().equals("pop") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") ? 0 : spots.length); s++) {
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
@@ -427,6 +453,7 @@ final class DevClientWorldTour {
                         if (!(be instanceof TankBlockEntity tb) || !tb.isController() || tb.getTank() == null) continue;
                         TankData t = tb.getTank();
                         found.add(new Tank(t.min(), t.sizeX(), t.sizeY(), t.sizeZ(), t.front(), t.name()));
+                        CONTROLLERS.put(t.min().immutable(), tb.getBlockPos().immutable());
                     }
                 }
             int minVol = Integer.getInteger("bettacraft.tour.minvolume", 0);
@@ -940,14 +967,78 @@ final class DevClientWorldTour {
         server.execute(() -> action.accept(server.getPlayerList().getPlayers().getFirst()));
     }
 
-    /** M66: one line per tank and pack in perf.tsv: pack, tank, size, algae faces, the three fps samples. */
-    private void perf(String pack, Tank t, int[] fps) {
+    /** M66 v4: the durations (ns) of the last frames the client drew (vanilla's frame time chart, 240 frames, always fed). */
+    private long[] frameTimes() {
+        net.minecraft.util.debugchart.LocalSampleLogger log = null;
+        try {
+            for (var f : net.minecraft.client.gui.components.DebugScreenOverlay.class.getDeclaredFields()) {
+                if (f.getType() != net.minecraft.util.debugchart.LocalSampleLogger.class) continue;
+                f.setAccessible(true);
+                log = (net.minecraft.util.debugchart.LocalSampleLogger) f.get(mc.getDebugOverlay()); // the first one is the frame time logger
+                break;
+            }
+        } catch (ReflectiveOperationException e) {
+            return new long[0];
+        }
+        if (log == null) return new long[0];
+        long[] r = new long[log.size()];
+        for (int i = 0; i < r.length; i++) r[i] = log.get(i);
+        return r;
+    }
+
+    /** M66 v4: mean / 99th percentile / max frame time in ms of one sample of {@link #frameTimes}. */
+    private static String frameStats(long[] ft) {
+        if (ft == null || ft.length == 0) return "-";
+        long[] s = ft.clone();
+        java.util.Arrays.sort(s);
+        double mean = java.util.Arrays.stream(s).average().orElse(0) / 1e6;
+        return String.format(Locale.ROOT, "%.1f/%.1f/%.1f", mean, s[Math.min(s.length - 1, (int) (s.length * 0.99))] / 1e6, s[s.length - 1] / 1e6);
+    }
+
+    /**
+     * M66 v4 (view {@code pop}): the tank's block entity renderer (algae, floating plants, small animals, nest, sign) is drawn
+     * up to {@code render.tankDetailDistance} blocks away. The camera stands on the line from the controller through the middle
+     * of the tank, beyond the middle, and walks away in steps of 2 blocks of controller distance (36..60), looking at the middle.
+     */
+    private void popViews(String pn, Tank t) {
+        BlockPos c = CONTROLLERS.get(t.min());
+        if (c == null) return;
+        double ccx = c.getX() + 0.5, ccz = c.getZ() + 0.5, mx = t.cx(), mz = t.cz();
+        double dx = mx - ccx, dz = mz - ccz, len = Math.sqrt(dx * dx + dz * dz);
+        if (len < 1) {
+            dx = 0;
+            dz = 1;
+        } else {
+            dx /= len;
+            dz /= len;
+        }
+        double eye = t.top() + 3, ddx = dx, ddz = dz;
+        Vec3 target = new Vec3(mx, t.min().getY() + t.sy() / 2.0, mz);
+        for (int d = 36; d <= 60; d += 2) {
+            int dd = d;
+            // the horizontal distance from the controller's centre that gives a 3d distance of d at this eye height
+            double dy = eye - (c.getY() + 0.5), h = Math.sqrt(Math.max(0, (double) d * d - dy * dy));
+            double px = ccx + ddx * h, pz = ccz + ddz * h;
+            double nx = Math.max(0, Math.max(t.min().getX() - px, px - (t.min().getX() + t.sx()))), nz = Math.max(0, Math.max(t.min().getZ() - pz, pz - (t.min().getZ() + t.sz())));
+            double ny = Math.max(0, eye - t.top());
+            double near = Math.sqrt(nx * nx + ny * ny + nz * nz);
+            then(1, () -> lookAt(px, eye, pz, target));
+            thenAt(SETTLE, () -> {
+                LOGGER.info("[smoketest] world tour pop: {} controller distance {} nearest point of the tank {}", t.id(), dd, String.format(Locale.ROOT, "%.1f", near));
+                shot(pn, t.id() + "_pop" + dd + "_near" + Math.round(near));
+            });
+        }
+    }
+
+    /** M66: one line per tank and pack in perf.tsv: pack, tank, size, algae faces, the three fps samples (v4: and frame times mean/p99/max ms). */
+    private void perf(String pack, Tank t, int[] fps, long[][] ft, int noMini) {
         int algae = 0;
         if (mc.level != null && org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, t.min()) instanceof TankBlockEntity be) {
             var data = be.getTank();
             algae = data == null ? 0 : data.algae().size();
         }
-        String line = pack + "	" + t.id() + "	" + t.sx() + "x" + t.sy() + "x" + t.sz() + "	" + algae + "	" + fps[0] + "	" + fps[1] + "	" + fps[2];
+        String line = pack + "	" + t.id() + "	" + t.sx() + "x" + t.sy() + "x" + t.sz() + "	" + algae + "	" + fps[0] + "	" + fps[1] + "	" + fps[2]
+                + "	" + frameStats(ft[0]) + "	" + frameStats(ft[1]) + "	" + frameStats(ft[2]) + "	nomini " + noMini;
         LOGGER.info("[smoketest] world tour perf: {}", line);
         try {
             out.mkdirs();
