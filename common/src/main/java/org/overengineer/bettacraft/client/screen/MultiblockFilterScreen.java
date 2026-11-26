@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -52,6 +54,7 @@ public class MultiblockFilterScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
+        linkTip = null;
         FilterPumpHeadBlockEntity h = be();
         if (h == null) return;
         int x = left + 10, y = top + 8;
@@ -105,6 +108,12 @@ public class MultiblockFilterScreen extends Screen {
                     : Component.translatable("gui.bettacraft.mb_filter.link_off", at, Component.translatable("gui.bettacraft.mb_filter.link." + t.status().key()))
                     .withStyle(t.status().warning() ? ChatFormatting.RED : ChatFormatting.GOLD);
             g.drawString(font, line, x, y, 0xFFFFFF);
+            // M66: what the numbers of the line mean
+            if (mouseX >= x && mouseX < left + W - 10 && mouseY >= y - 1 && mouseY < y + 9 || tipForTest && i == 0) {
+                linkTip = t.status() == MultiblockFilter.LinkStatus.OK
+                        ? List.of(Component.translatable("gui.bettacraft.mb_filter.link_tip", Math.round(t.clean()), t.blocks(), t.percent(), t.flow()))
+                        : List.of(Component.translatable("gui.bettacraft.mb_filter.link_tip_off", Component.translatable("gui.bettacraft.mb_filter.link." + t.status().key())));
+            }
             y += 10;
         }
         if (tanks.size() > 4) {
@@ -130,6 +139,20 @@ public class MultiblockFilterScreen extends Screen {
             g.drawString(font, line, left + (W - font.width(line)) / 2, hy, 0xA0A0A0);
             hy += 10;
         }
+        if (linkTip != null) {
+            List<net.minecraft.util.FormattedCharSequence> lines = new java.util.ArrayList<>();
+            for (Component c : linkTip) lines.addAll(font.split(c, 220));
+            g.renderTooltip(font, lines, tipForTest ? left + 20 : mouseX, tipForTest ? top + 150 : mouseY);
+        }
+    }
+
+    @Nullable
+    private List<Component> linkTip;
+    private boolean tipForTest;
+
+    /** Dev smoke test only: shows the tooltip of the first tank row. */
+    public void showTipForTest() {
+        tipForTest = true;
     }
 
     @Override

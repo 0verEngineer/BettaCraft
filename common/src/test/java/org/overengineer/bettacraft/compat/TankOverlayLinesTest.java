@@ -48,15 +48,17 @@ class TankOverlayLinesTest {
 
     @Test
     void titleIsTheNameOrTheKind() {
-        assertEquals("Living room", InfoLines.tankTitle(tank("aquarium", "Living room", 8000)).getString());
+        // M66: the water quality is in the title line: "Living room – 90 % (good)"
+        assertTrue(InfoLines.tankTitle(tank("aquarium", "Living room", 8000)).getString().startsWith("Living room – "));
+        assertEquals("Living room", InfoLines.tankTitle(tank("aquarium", "Living room", 0)).getString());
         Component t = InfoLines.tankTitle(tank("terrarium", "", 0));
         assertEquals("gui.bettacraft.terrarium.mode.terrarium", ((TranslatableContents) t.getContents()).getKey());
     }
 
     @Test
     void shortViewHasOnlyAirAndWaterQuality() {
-        assertEquals(List.of("jade.bettacraft.tank.quality", "jade.bettacraft.sneak"), keys(InfoLines.tank(tank("aquarium", "A", 8000), false)));
-        assertEquals(List.of("jade.bettacraft.tank.air", "jade.bettacraft.tank.quality", "jade.bettacraft.sneak"),
+        assertEquals(List.of("jade.bettacraft.sneak"), keys(InfoLines.tank(tank("aquarium", "A", 8000), false)));
+        assertEquals(List.of("jade.bettacraft.tank.air", "jade.bettacraft.sneak"),
                 keys(InfoLines.tank(tank("paludarium", "P", 4000), false)));
         // a terrarium: the air, no water quality (its water is a dish)
         assertEquals(List.of("jade.bettacraft.tank.air", "jade.bettacraft.sneak"), keys(InfoLines.tank(tank("terrarium", "T", 500), false)));
@@ -73,6 +75,7 @@ class TankOverlayLinesTest {
         List<String> t = keys(InfoLines.tank(tank("terrarium", "T", 500), true));
         assertFalse(t.contains("jade.bettacraft.tank.water"), "no water line for a terrarium: " + t);
         assertFalse(t.contains("jade.bettacraft.tank.quality"), t.toString());
+        assertEquals("T", InfoLines.tankTitle(tank("terrarium", "T", 500)).getString());
         assertTrue(t.contains("gui.bettacraft.terrarium.mode.terrarium"), "the kind in the details: " + t);
         List<String> a = keys(InfoLines.tank(tank("aquarium", "A", 8000), true));
         assertTrue(a.contains("jade.bettacraft.tank.water") && a.contains("jade.bettacraft.tank.evaporation") && a.contains("jade.bettacraft.tank.animals"), a.toString());

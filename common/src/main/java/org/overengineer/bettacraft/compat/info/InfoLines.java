@@ -56,9 +56,24 @@ public final class InfoLines {
     public static Component tankTitle(CompoundTag d) {
         if (d == null || d.isEmpty()) return null;
         String name = d.getString("name");
-        if (!name.isEmpty()) return Component.literal(name);
-        String kind = d.getString("kind");
-        return Component.translatable("gui.bettacraft.terrarium.mode." + (kind.isEmpty() ? "aquarium" : kind));
+        Component base;
+        if (!name.isEmpty()) base = Component.literal(name);
+        else {
+            String kind = d.getString("kind");
+            base = Component.translatable("gui.bettacraft.terrarium.mode." + (kind.isEmpty() ? "aquarium" : kind));
+        }
+        // M66: the water quality in the same line: "Black Orchid - 97 % (clean)"
+        if (!hasQuality(d)) return base;
+        String st = d.getString("quality_state");
+        ChatFormatting col = "bad".equals(st) ? ChatFormatting.RED : "poor".equals(st) ? ChatFormatting.GOLD : ChatFormatting.GREEN;
+        return Component.empty().append(base).append(Component.literal(" – ").withStyle(ChatFormatting.GRAY))
+                .append(Component.translatable("jade.bettacraft.tank.title_quality", Math.round(d.getFloat("quality") * 100),
+                        Component.translatable("gui.bettacraft.water.state." + st).withStyle(col)));
+    }
+
+    /** M66: whether the title carries the water quality (a tank with water that is no terrarium). */
+    private static boolean hasQuality(CompoundTag d) {
+        return d.contains("quality") && !"terrarium".equals(d.getString("kind")) && d.getLong("water") > 0;
     }
 
     /**
@@ -77,13 +92,7 @@ public final class InfoLines {
             out.add(Component.translatable("jade.bettacraft.tank.air", f1(d.getFloat("air")), Math.round(d.getFloat("rh")), f1(d.getFloat("uv")))
                     .withStyle(ChatFormatting.GREEN));
         }
-        // M9: water quality (always, for a tank with water that is no terrarium)
-        if (d.contains("quality") && !terrarium && d.getLong("water") > 0) {
-            String st = d.getString("quality_state");
-            ChatFormatting col = "bad".equals(st) ? ChatFormatting.RED : "poor".equals(st) ? ChatFormatting.GOLD : ChatFormatting.GREEN;
-            out.add(Component.translatable("jade.bettacraft.tank.quality", Math.round(d.getFloat("quality") * 100),
-                    Component.translatable("gui.bettacraft.water.state." + st).withStyle(col)));
-        }
+        // M9: the water quality moved into the title (M66, see tankTitle)
         ListTag warn = d.getList("warnings", Tag.TAG_STRING);
         ListTag fw = d.getList("filter_warn", Tag.TAG_STRING);
         if (!details) {
@@ -93,7 +102,7 @@ public final class InfoLines {
             return out;
         }
         if (d.contains("glass")) out.add(glassLine(d.getString("glass"), d.getString("style")));
-        if (!terrarium) out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp")), d.getLong("water"), d.getLong("cap")));
+        if (!terrarium) out.add(Component.translatable("jade.bettacraft.tank.water", f1(d.getFloat("temp"))));
         if (d.contains("terra_mode")) {
             Component mode = Component.translatable(d.getString("terra_mode"));
             if (d.getBoolean("terra_fixed")) mode = Component.translatable("jade.bettacraft.tank.mode_fixed", mode); // M33.1

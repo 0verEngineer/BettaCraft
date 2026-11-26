@@ -47,8 +47,9 @@ final class EnergyRow {
         return mx >= x && mx < x + w && my >= y - 1 && my < y + 9;
     }
 
-    static void tooltip(GuiGraphics g, Font font, int mx, int my, MenuEnergy e) {
-        List<FormattedCharSequence> lines = font.split(Component.translatable("gui.bettacraft.filter.energy_tooltip"), 200);
+    /** M66: {@code key} = the text of the device ({@code gui.bettacraft.filter.energy_tooltip} for the external filter, {@code .cabinet}). */
+    static void tooltip(GuiGraphics g, Font font, int mx, int my, MenuEnergy e, String key) {
+        List<FormattedCharSequence> lines = font.split(Component.translatable(key), 200);
         if (!TankPower.anyRequired()) lines = new java.util.ArrayList<>(lines);
         if (!TankPower.anyRequired()) lines.addAll(font.split(Component.translatable("gui.bettacraft.filter.energy_off").withStyle(net.minecraft.ChatFormatting.GRAY), 200));
         g.renderTooltip(font, lines, mx, my);
