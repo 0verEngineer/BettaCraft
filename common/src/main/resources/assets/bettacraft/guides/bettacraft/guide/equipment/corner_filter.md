@@ -17,7 +17,7 @@ The <ItemLink id="bettacraft:corner_filter" /> is a slim **motor filter** for th
 you when you place it.
 
 * It keeps **20 water blocks** clean and moves the surface (a little oxygen).
-* Like every motor filter it **sucks in fry** unless an [intake sponge](intake_sponge.md) is fitted.
+* Like every motor filter it **sucks in young animals** unless an [intake sponge](intake_sponge.md) is fitted.
 * **Power regulator:** right-click it or sneak + mouse wheel.
 
 ## Obtaining

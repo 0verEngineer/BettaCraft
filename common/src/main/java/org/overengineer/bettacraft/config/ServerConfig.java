@@ -657,7 +657,7 @@ public final class ServerConfig {
         FILTER_SPONGE_BLOCKS = b.comment("Water blocks one sponge filter keeps clean (it needs air from an air pump)")
                 .defineInRange("spongeFilterBlocks", 12, 0, 10000);
         FILTER_CORNER_BLOCKS = b.comment("Water blocks one corner filter keeps clean").defineInRange("cornerFilterBlocks", 20, 0, 10000);
-        FILTER_FRY_INTAKE = b.comment("Share of the fry a running motor filter without intake sponge sucks in per day (internal, corner and external filters;",
+        FILTER_FRY_INTAKE = b.comment("Share of the young animals (fish fry, young shrimp, tadpoles) a running motor filter without intake sponge sucks in per day (internal, corner and external filters;",
                 "the sponge filter never does; 0 = never)").defineInRange("fryIntakePerDay", 0.15, 0.0, 1000.0);
         b.pop();
         b.comment("Light strength of the aquarium lights (features.equipment.ledTiers): the light bar gives light 15, the stronger lights more").push("lights");

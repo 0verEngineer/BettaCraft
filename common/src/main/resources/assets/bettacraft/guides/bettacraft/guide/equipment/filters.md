@@ -63,7 +63,7 @@ kept for later).
 
 * The [sponge filter](sponge_filter.md) (air-driven, gentle for fry) and the [corner filter](corner_filter.md) are
   further internal filters.
-* Filters with a motor (internal, corner, external and cabinet filter) **suck in fry** unless an
+* Filters with a motor (internal, corner, external and cabinet filter) **suck in young animals** (fry, young shrimp, tadpoles) unless an
   [intake sponge](intake_sponge.md) is fitted.
 * Every filter has a [power regulator](regulator.md) (0 to 100 %): less power cleans less, needs less energy and is
   quieter. Filter outlets also bring a little **oxygen** into the water (see [Oxygen](../aquarium/oxygen.md)).
