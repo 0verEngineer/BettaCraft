@@ -356,6 +356,37 @@ public class AquaristEntity extends PathfinderMob {
         return true;
     }
 
+    /**
+     * M66: makes the free breeding basin at {@code pos} his workplace: gives back the old basin and takes the new one (its POI
+     * ticket). Returns false when it is no basin or somebody else has it.
+     */
+    public boolean assignBasin(ServerLevel level, BlockPos pos) {
+        if (!level.getBlockState(pos).is(ModBlocks.BREEDING_BASIN.get())) return false;
+        if (pos.equals(workplace)) return true;
+        var poi = level.getPoiManager();
+        if (!poi.existsAtPosition(ModVillagers.AQUARIST_POI_KEY, pos)) return false;
+        BlockPos old = workplace;
+        if (old != null && level.isLoaded(old) && poi.existsAtPosition(ModVillagers.AQUARIST_POI_KEY, old)) poi.release(old);
+        BlockPos taken = poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> p.equals(pos), pos, 1).map(BlockPos::immutable).orElse(null);
+        if (taken == null) { // occupied: take the old one back
+            if (old != null) poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> p.equals(old), old, 1);
+            return false;
+        }
+        workplace = taken;
+        return true;
+    }
+
+    /** M66: "auto" for the basin: gives it back and looks for another free one (the old one again when there is none). */
+    public void autoBasin(ServerLevel level) {
+        BlockPos old = workplace;
+        var poi = level.getPoiManager();
+        if (old != null && level.isLoaded(old) && poi.existsAtPosition(ModVillagers.AQUARIST_POI_KEY, old)) poi.release(old);
+        workplace = null;
+        int r = ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32);
+        poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> !p.equals(old), blockPosition(), r).ifPresent(p -> workplace = p.immutable());
+        if (workplace == null && old != null) poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> p.equals(old), old, 1).ifPresent(p -> workplace = p.immutable());
+    }
+
     public ItemStackHandler bag() {
         return bag;
     }
