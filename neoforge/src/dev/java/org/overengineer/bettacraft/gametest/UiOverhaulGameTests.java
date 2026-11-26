@@ -182,13 +182,13 @@ public final class UiOverhaulGameTests {
             BlockPos own = new BlockPos(8, 1, 12);
             h.setBlock(own, Blocks.BARREL);
             check(npc.chest() == null && AquaristWork.chests(level, npc).size() == 1, "automatic: the chest next to the basin");
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), false) != null, "stone is no chest");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), AquaristAssign.Kind.CHEST) != null, "stone is no chest");
             h.setBlock(new BlockPos(8, 1, 14), Blocks.STONE);
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), false) != null, "a block without inventory is refused");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), AquaristAssign.Kind.CHEST) != null, "a block without inventory is refused");
             h.setBlock(new BlockPos(30, 1, 30), Blocks.CHEST);
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(30, 1, 30)), false) != null, "too far from the basin is refused");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(30, 1, 30)), AquaristAssign.Kind.CHEST) != null, "too far from the basin is refused");
             check(npc.chest() == null, "nothing changed");
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(own), false) == null, "the barrel is his chest now");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(own), AquaristAssign.Kind.CHEST) == null, "the barrel is his chest now");
             check(h.absolutePos(own).equals(npc.chest()) && AquaristWork.chests(level, npc).size() == 1, "only the assigned one counts");
             // the wage comes from his chest (an emerald in the old chest does not count)
             var oldChest = HiredAquaristGameTests.chest(h);
@@ -206,13 +206,48 @@ public final class UiOverhaulGameTests {
             h.setBlock(bed2, foot);
             h.setBlock(bed2.south(), foot.setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
             BlockPos oldBed = npc.bed();
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(bed2), true) == null, "the second bed is his now");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(bed2), AquaristAssign.Kind.BED) == null, "the second bed is his now");
             check(h.absolutePos(bed2.south()).equals(npc.bed()), "his bed is the head of the second: " + npc.bed());
             check(level.getPoiManager().getFreeTickets(oldBed) > 0, "the first bed is free again");
             // somebody else's bed is refused
-            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(14, 1, 14)), true) != null, "no bed there");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(14, 1, 14)), AquaristAssign.Kind.BED) != null, "no bed there");
             npc.setChest(null);
             check(npc.chest() == null && AquaristWork.chests(level, npc).size() == 1, "auto: back to the basin's chest");
+            h.succeed();
+        } finally {
+            HiredAquaristGameTests.cleanup(h, sp.getUUID());
+        }
+    }
+
+    /**
+     * The breeding basin assigned in the menu: a free basin becomes his workplace (the old one is free again); a basin somebody else
+     * holds, and a block that is no basin, are refused and nothing changes; "auto" gives the basin back and takes a free one.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_m66_assign", timeoutTicks = 200)
+    public static void basinCanBeAssigned(GameTestHelper h) {
+        HiredAquaristGameTests.floor(h);
+        HiredAquaristGameTests.home(h);
+        ServerPlayer sp = HiredAquaristGameTests.player(h);
+        ServerLevel level = h.getLevel();
+        try {
+            AquaristEntity npc = HiredAquaristGameTests.npc(h, sp);
+            BlockPos oldBasin = npc.workplace();
+            BlockPos taken = new BlockPos(20, 1, 6), free = new BlockPos(20, 1, 12);
+            h.setBlock(taken, org.overengineer.bettacraft.registry.ModBlocks.BREEDING_BASIN.get().defaultBlockState());
+            h.setBlock(free, org.overengineer.bettacraft.registry.ModBlocks.BREEDING_BASIN.get().defaultBlockState());
+            // somebody else holds the first one
+            check(level.getPoiManager().take(hh -> hh.is(org.overengineer.bettacraft.villager.ModVillagers.AQUARIST_POI_KEY),
+                    (hh, p) -> p.equals(h.absolutePos(taken)), h.absolutePos(taken), 1).isPresent(), "the other basin is taken by somebody");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(taken), AquaristAssign.Kind.BASIN) != null, "an occupied basin is refused");
+            check(oldBasin.equals(npc.workplace()) && level.getPoiManager().getFreeTickets(oldBasin) == 0, "nothing changed, he still holds his basin");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), AquaristAssign.Kind.BASIN) != null, "no basin there");
+            check(AquaristAssign.assign(level, sp, npc, h.absolutePos(free), AquaristAssign.Kind.BASIN) == null, "the free basin is his now");
+            check(h.absolutePos(free).equals(npc.workplace()), "he works at the new basin: " + npc.workplace());
+            check(level.getPoiManager().getFreeTickets(oldBasin) > 0, "the first basin is free again");
+            check(level.getPoiManager().getFreeTickets(h.absolutePos(free)) == 0, "the new basin carries his ticket");
+            // auto: the new basin back, another free one (the first)
+            npc.autoBasin(level);
+            check(oldBasin.equals(npc.workplace()), "auto: a free basin of his own search: " + npc.workplace());
             h.succeed();
         } finally {
             HiredAquaristGameTests.cleanup(h, sp.getUUID());

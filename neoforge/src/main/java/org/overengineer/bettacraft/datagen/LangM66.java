@@ -67,6 +67,12 @@ final class LangM66 {
         a.accept("message.bettacraft.aquarist.assign_no_bed", "That is no bed.");
         a.accept("message.bettacraft.aquarist.assign_bed_taken", "Somebody else sleeps in that bed.");
         a.accept("message.bettacraft.aquarist.assign_no_chest", "That is no chest: it needs an inventory.");
+        a.accept("message.bettacraft.aquarist.assign_basin", "Right-click the free breeding basin he should work at (within %s blocks of where he is).");
+        a.accept("message.bettacraft.aquarist.assigned_basin", "That is his breeding basin now.");
+        a.accept("message.bettacraft.aquarist.assign_no_basin", "That is no breeding basin.");
+        a.accept("message.bettacraft.aquarist.assign_basin_taken", "Somebody else works at that breeding basin.");
+        a.accept("gui.bettacraft.aquarist.assign.basin.tooltip", "Then right-click the free breeding basin he should work at (within %s blocks).");
+        a.accept("gui.bettacraft.aquarist.auto.basin.tooltip", "Gives his basin back; he looks for another free one himself.");
         a.accept("message.bettacraft.aquarist.rearing_max", "At most %s rearing tanks.");
     }
 }

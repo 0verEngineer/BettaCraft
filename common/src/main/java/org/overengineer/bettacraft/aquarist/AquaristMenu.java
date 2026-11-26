@@ -41,7 +41,7 @@ public final class AquaristMenu {
     /** M66: value = task ordinal * 2 + (1 = on, 0 = off), text = the tank id: what he may do at that tank. */
     public static final int SET_TANK_TASK = 10;
     /** M66: wait for the next right-click on a chest / a bed; AUTO_*: back to looking by himself. */
-    public static final int ASSIGN_CHEST = 11, ASSIGN_BED = 12, AUTO_CHEST = 13, AUTO_BED = 14;
+    public static final int ASSIGN_CHEST = 11, ASSIGN_BED = 12, AUTO_CHEST = 13, AUTO_BED = 14, ASSIGN_BASIN = 15, AUTO_BASIN = 16;
     /** Rows of the tank list. */
     public static final int MAX_TANK_ROWS = 24;
 
@@ -200,12 +200,16 @@ public final class AquaristMenu {
                 if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
                 else if (id != null && task >= 0 && task < AquaristTask.ALL.length) npc.setMayDo(id, AquaristTask.ALL[task], a.value() % 2 == 1);
             }
-            case ASSIGN_CHEST, ASSIGN_BED -> {
+            case ASSIGN_CHEST, ASSIGN_BED, ASSIGN_BASIN -> {
                 if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
                 else {
-                    AquaristAssign.start(p, npc, a.action() == ASSIGN_BED);
+                    AquaristAssign.start(p, npc, a.action() == ASSIGN_BED ? AquaristAssign.Kind.BED : a.action() == ASSIGN_BASIN ? AquaristAssign.Kind.BASIN : AquaristAssign.Kind.CHEST);
                     return; // the menu closed itself; it opens again when the block is clicked
                 }
+            }
+            case AUTO_BASIN -> {
+                if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else npc.autoBasin(level);
             }
             case AUTO_CHEST -> {
                 if (!boss) err = Component.translatable("message.bettacraft.aquarist.not_yours");

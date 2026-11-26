@@ -138,10 +138,7 @@ public class AquaristScreen extends Screen {
 
         // ---- work tab: the home rows (basin, bed, chest) and the six tasks
         int bx = left + W - 126;
-        Button home = addRenderableWidget(new TankScreen.FitButton(bx, top + 38, 118, 14, Component.translatable("gui.bettacraft.aquarist.find_home"),
-                b -> send(AquaristMenu.FIND_HOME, 0, "")));
-        home.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.find_home.tooltip")));
-        workButtons.add(home);
+        homeButton(bx, top + 38, "basin", AquaristMenu.ASSIGN_BASIN, AquaristMenu.AUTO_BASIN);
         homeButton(bx, top + 54, "bed", AquaristMenu.ASSIGN_BED, AquaristMenu.AUTO_BED);
         homeButton(bx, top + 70, "chest", AquaristMenu.ASSIGN_CHEST, AquaristMenu.AUTO_CHEST);
         for (AquaristTask t : AquaristTask.ALL) {

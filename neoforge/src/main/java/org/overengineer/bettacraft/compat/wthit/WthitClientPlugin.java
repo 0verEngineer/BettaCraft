@@ -26,6 +26,9 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.head(new Tank(), TankBlock.class, 5000); // M64: the tank's name instead of the block name (after the core name)
         registrar.body(new Filter(), ExternalFilterBlock.class);
         registrar.body(new Filter(), CabinetBlock.class);
+        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.PipeBlock.class); // M66
+        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.FilterPipeBlock.class);
+        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.class);
         registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
         registrar.body(new Betta(), BettaEntity.class);
         registrar.body(new Aquarist(), org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
@@ -80,6 +83,15 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.spring(accessor.getData().raw().getCompoundOrEmpty(InfoData.KEY)).forEach(tooltip::addLine);
+        }
+    }
+
+    /** M66: a pipe carries water, it stores none: the flow a second. */
+    static final class Pipe implements IBlockComponentProvider {
+        @Override
+        public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
+            if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
+            InfoLines.pipe(accessor.getBlock()).forEach(tooltip::addLine);
         }
     }
 
