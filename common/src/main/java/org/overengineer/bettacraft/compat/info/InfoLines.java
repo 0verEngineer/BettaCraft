@@ -253,6 +253,15 @@ public final class InfoLines {
         return out;
     }
 
+    /** M66: what a water pipe carries a second (a pipe stores nothing); empty for any other block. */
+    public static List<Component> pipe(net.minecraft.world.level.block.Block block) {
+        List<Component> out = new ArrayList<>();
+        if (block instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
+            out.add(Component.translatable("jade.bettacraft.pipe.rate", String.format(java.util.Locale.ROOT, "%,d", p.rate() * 20)).withStyle(ChatFormatting.AQUA));
+        }
+        return out;
+    }
+
     /** Larva tub and artemia hatchery (M9). */
     public static List<Component> culture(CompoundTag d) {
         List<Component> out = new ArrayList<>();

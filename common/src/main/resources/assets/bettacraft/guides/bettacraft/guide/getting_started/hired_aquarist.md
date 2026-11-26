@@ -33,10 +33,9 @@ takes his wage every morning and **really walks to your tanks** to feed, change 
 ## His home and wage
 
 * He needs a **free bed** and a **free [breeding basin](aquarist.md)** (his workplace) within 32 blocks of where he
-  stands when you hire him. He takes them for himself (no villager uses them then). "Find home" in his menu makes him look
-  again around where he stands.
-* **Assign bed and chest** (tab **Work** of his menu): **Assign...** next to the bed or the chest, then right-click the bed or the
-  chest (barrels and the storage of other mods too) within 32 blocks of his basin; **Auto** gives it back and he looks by himself again.
+  stands when you hire him. He takes them for himself (no villager uses them then).
+* **Assign basin, bed and chest** (tab **Work** of his menu): **Assign...** next to the basin, the bed or the chest, then right-click the
+  free breeding basin (an occupied one is refused), the bed or the chest (barrels and the storage of other mods too) within 32 blocks of his basin; **Auto** gives it back and he looks by himself again.
   Without an assigned chest:
 * **Chests next to the basin** (any side, also diagonally; barrels and the storage of other mods too) hold what he needs:
   the **food** for the tanks, the **cuttings** he brings back, and his **wage**.

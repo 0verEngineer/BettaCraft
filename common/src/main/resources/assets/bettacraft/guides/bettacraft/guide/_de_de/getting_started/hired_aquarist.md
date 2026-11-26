@@ -35,10 +35,9 @@ wechseln, zu putzen, zu schneiden und Jungtiere umzusetzen.
 ## Zuhause und Lohn
 
 * Er braucht ein **freies Bett** und ein **freies [Zuchtbecken](aquarist.md)** (seinen Arbeitsplatz) im Umkreis von 32
-  Blöcken um die Stelle, an der er beim Einstellen steht. Er nimmt sie für sich (kein Dorfbewohner benutzt sie dann). „Neu
-  suchen“ in seinem Menü lässt ihn um die Stelle herum suchen, an der er gerade steht.
-* **Bett und Kiste zuweisen** (Reiter **Arbeit** seines Menüs): **Zuweisen...** neben dem Bett oder der Kiste, dann das Bett oder die
-  Kiste (auch Fässer und Speicher anderer Mods) rechtsklicken, höchstens 32 Blöcke von seinem Zuchtbecken; **Auto** gibt es zurück, und er sucht wieder
+  Blöcken um die Stelle, an der er beim Einstellen steht. Er nimmt sie für sich (kein Dorfbewohner benutzt sie dann).
+* **Zuchtbecken, Bett und Kiste zuweisen** (Reiter **Arbeit** seines Menüs): **Zuweisen...** neben Becken, Bett oder Kiste, dann das freie Zuchtbecken
+  (ein belegtes wird abgelehnt), das Bett oder die Kiste (auch Fässer und Speicher anderer Mods) rechtsklicken, höchstens 32 Blöcke von seinem Zuchtbecken; **Auto** gibt es zurück, und er sucht wieder
   selbst. Ohne zugewiesene Kiste:
 * **Kisten neben dem Zuchtbecken** (an jeder Seite, auch schräg; auch Fässer und Speicher anderer Mods) halten, was er
   braucht: das **Futter** für die Becken, die **Stecklinge**, die er zurückbringt, und seinen **Lohn**.
