@@ -103,7 +103,7 @@ final class LangM14 {
         a.accept("gui.bettacraft.critters.page", "Small animals %s"); // M56: fits its button
         a.accept("gui.bettacraft.critters.page_fish", "Fish %s");
         a.accept("gui.bettacraft.critters.take", "Into bag");
-        a.accept("gui.bettacraft.critters.take_tooltip", "One animal into a fish bag (the best grade; with Shift the worst; with Ctrl a full bag)");
+        a.accept("gui.bettacraft.critters.take_tooltip", "One animal into a fish bag (the best grade; with Shift the worst; with Ctrl a full bag at once)");
         a.accept("gui.bettacraft.critters.clutches", "Clutches off");
         a.accept("gui.bettacraft.critters.empty", "No small animals");
         a.accept("gui.bettacraft.critters.empty_hint", "Catch some with the net");
