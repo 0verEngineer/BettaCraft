@@ -378,6 +378,56 @@ public final class AerationGameTests {
         h.succeed();
     }
 
+    /**
+     * M66: an unprotected motor filter also sucks in young shrimp and the tadpoles of the dwarf clawed frogs, but never snails and
+     * never an adult shrimp; with an intake sponge nothing goes.
+     */
+    @GameTest(template = EMPTY, batch = "bettacraft_m23_fry", timeoutTicks = 300)
+    public static void motorFiltersAlsoSuckInYoungShrimpAndTadpoles(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        double saved = ServerConfig.FILTER_FRY_INTAKE.get();
+        try {
+            ServerConfig.FILTER_FRY_INTAKE.set(1000.0);
+            TankBlockEntity open = tank(h, 2, 2, 2, 2, 2, 2), guarded = tank(h, 8, 2, 2, 2, 2, 2);
+            InteriorRegion ro = region(h, open), rg = region(h, guarded);
+            put(h, ro, 4, 0, 4, anchor(ModBlocks.FILTER_SEGMENT.get()));
+            BlockPos gf = put(h, rg, 4, 0, 4, anchor(ModBlocks.FILTER_SEGMENT.get()));
+            ServerPlayer sp = MockPlayers.serverPlayer(h);
+            ItemStack spongeItem = new ItemStack(ModItems.INTAKE_SPONGE.get());
+            sp.setItemInHand(InteractionHand.MAIN_HAND, spongeItem);
+            spongeItem.useOn(new UseOnContext(interior(h), sp, InteractionHand.MAIN_HAND, spongeItem,
+                    new BlockHitResult(Vec3.atCenterOf(gf), Direction.UP, gf, false)));
+            for (TankBlockEntity c : List.of(open, guarded)) {
+                var t = c.getTank();
+                var young = new org.overengineer.bettacraft.critters.Critter(t.nextCritterId(), org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, false,
+                        org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.8F), 1, 1, 1);
+                young.age = 0;
+                t.critters().add(young);
+                var adult = new org.overengineer.bettacraft.critters.Critter(t.nextCritterId(), org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, true,
+                        org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.8F), 1, 1, 1);
+                adult.age = 1000;
+                t.critters().add(adult);
+                var snail = new org.overengineer.bettacraft.critters.Critter(t.nextCritterId(), org.overengineer.bettacraft.critters.CritterSpecies.RAMSHORN, true,
+                        org.overengineer.bettacraft.critters.CritterGenes.pure(0, 0.8F), 1, 1, 1);
+                snail.age = 0;
+                t.critters().add(snail);
+                t.tadpoles().add(new org.overengineer.bettacraft.entity.frog.Tadpole(t.nextFrogBroodId(), 1, 1, 1));
+                TankAeration.step(level, c, 0.5);
+            }
+            var o = open.getTank();
+            long youngShrimp = o.critters().stream().filter(k -> k.species == org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA && !k.adult()).count();
+            h.assertTrue(youngShrimp == 0, "the open filter sucked in the young shrimp: " + youngShrimp);
+            h.assertTrue(o.tadpoles().isEmpty(), "and the tadpole: " + o.tadpoles().size());
+            h.assertTrue(o.critters().stream().anyMatch(k -> k.species == org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA && k.adult()), "the adult shrimp stays");
+            h.assertTrue(o.critters().stream().anyMatch(k -> k.species == org.overengineer.bettacraft.critters.CritterSpecies.RAMSHORN), "the snail stays");
+            var g = guarded.getTank();
+            h.assertTrue(g.critters().size() == 3 && g.tadpoles().size() == 1, "with an intake sponge nothing goes: " + g.critters().size() + " / " + g.tadpoles().size());
+        } finally {
+            ServerConfig.FILTER_FRY_INTAKE.set(saved);
+        }
+        h.succeed();
+    }
+
     // ------------------------------------------------------------------ LED tiers
 
     /**
