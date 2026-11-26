@@ -401,15 +401,17 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
+        boolean wasController = isController();
         if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
+        boolean wasController = isController();
         loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
     /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
@@ -423,13 +425,15 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         if (!tag.isEmpty()) handleUpdateTag(tag, org.overengineer.bettacraft.util.NbtCompat.registries(this));
     }
 
-    private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle) {
+    private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle, boolean wasController) {
         if (level != null && level.isClientSide()) {
             updateClientControllerSet();
-            if (!oldGlass.equals(glass) || oldStyle != style) {
-                org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-            }
+            // M66: only the controller's renderer draws (TankSignRenderer.shouldRenderOffScreen); the chunk mesher sorts the block
+            // entities into "always" and "when the section is visible" when it builds the section, so a new or former controller
+            // gets its section built again
+            boolean looks = !oldGlass.equals(glass) || oldStyle != style;
+            if (looks) org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
+            if (looks || wasController != isController()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
         }
     }
 

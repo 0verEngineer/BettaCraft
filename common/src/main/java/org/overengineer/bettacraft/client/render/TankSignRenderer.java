@@ -129,6 +129,10 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         return (float) (PLATE_HEIGHT * Math.max(0.5, Math.min(2.0, f)));
     }
 
+    /**
+     * Port (26.x): the renderer decides this for all its block entities ({@code shouldRenderOffScreen()} has no block entity
+     * since 1.21.9), so every tank block stays in the always-drawn list; {@link #shouldRender} turns the other blocks away at once.
+     */
     @Override
     public boolean shouldRenderOffScreen() {
         return true;
@@ -142,6 +146,25 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         if (TravellingTankRenderer.travelling(be)) return org.overengineer.bettacraft.platform.Platform.get().infiniteRenderBox();
         BlockPos mn = t.min(), mx = t.max();
         return new AABB(mn.getX(), mn.getY(), mn.getZ(), mx.getX() + 1, mx.getY() + 1, mx.getZ() + 1).inflate(0.5);
+    }
+
+    /**
+     * M66: the distance is measured to the nearest point of the tank, not to the controller block (vanilla's default). The
+     * controller sits at one corner: on a large tank (28 blocks long) the algae, floating plants, small animals and the sign of the
+     * whole tank popped in and out while the player moved at about {@code render.tankDetailDistance} from that corner, also with
+     * the near end of the tank only a few blocks away (the flicker of the algae when moving).
+     */
+    @Override
+    public boolean shouldRender(TankBlockEntity be, net.minecraft.world.phys.Vec3 cam) {
+        if (!be.isController()) return false; // only the controller draws (render returns at once for the others)
+        TankData t = be.getTank();
+        if (t == null || TravellingTankRenderer.travelling(be)) return super.shouldRender(be, cam);
+        BlockPos mn = t.min(), mx = t.max();
+        double dx = Math.max(0, Math.max(mn.getX() - cam.x, cam.x - (mx.getX() + 1)));
+        double dy = Math.max(0, Math.max(mn.getY() - cam.y, cam.y - (mx.getY() + 1)));
+        double dz = Math.max(0, Math.max(mn.getZ() - cam.z, cam.z - (mx.getZ() + 1)));
+        double d = getViewDistance();
+        return dx * dx + dy * dy + dz * dz < d * d;
     }
 
     @Override
