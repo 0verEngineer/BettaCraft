@@ -61,10 +61,17 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 ### Fixed
 - **Info overlays:** the tank shows no water amount any more, in none of the three overlays: Jade's and WTHIT's own fluid view and The One Probe's
   tank gauge (the tank's pipe connection looked like stored water) are switched off for the tank; the water is in the menu. Jade's fluid line
-  of the pipes is now taken out after the whole tooltip is collected (it came after our provider whatever its priority).
+  of the pipes is now taken out after the whole tooltip is collected (it came after our provider whatever its priority). Both, and The One
+  Probe's gauge (now also for the pipes), also when another overlay carries our lines (`overlay.provider`).
 - **Plants tab:** the dense cover line says that feeder food stays on the floating plants.
 - **Algae:** drawn in one batch per stage (the render type changed per face, one draw call each: a frame cost of up to a millisecond
   on a large tank covered with algae, more with shader packs), and the film lies 0.012 instead of 0.003 inside the glass (margin against z-fighting).
+- **Algae, floating plants, small animals and the sign of large tanks popping in and out when moving:** they are drawn up to
+  `render.tankDetailDistance` (48) blocks away, but that was measured from the controller block at one corner of the tank: on a large tank
+  they vanished with its near end only about 20 blocks away and came back a step closer. The distance is now measured to the nearest point of the tank.
+- **Frame rate in worlds with many or large tanks:** every block of every tank was in the list of block entities drawn every frame, in view
+  or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. Now only the
+  controllers are.
 - **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
   (snails and grown animals never), not only fry. The same switch and rate (`features.breeding.fryIntake`, `internalFilters.fryIntakePerDay`).
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
