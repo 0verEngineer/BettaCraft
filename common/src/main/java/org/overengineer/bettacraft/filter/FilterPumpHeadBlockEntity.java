@@ -73,7 +73,8 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     private final java.util.Set<java.util.UUID> told = new java.util.HashSet<>();
 
     /** M40: one tank of the filter as the screen shows it. */
-    public record TankLink(BlockPos tank, MultiblockFilter.LinkStatus status, int flow, double clean, int percent) {}
+    /** M66: {@code blocks} = the water blocks of the tank (what the cleaning is for). */
+    public record TankLink(BlockPos tank, MultiblockFilter.LinkStatus status, int flow, double clean, int percent, int blocks) {}
 
     public FilterPumpHeadBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FILTER_PUMP_HEAD.get(), pos, state);
@@ -228,7 +229,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             allOk &= !x.warning();
             int w = working.indexOf(l);
             out.add(new TankLink(l.tank().getBlockPos(), x, w < 0 ? 0 : flows[w] / PipeNetwork.WINDOW, w < 0 ? 0 : cleans[w],
-                    w < 0 ? 0 : (int) Math.round(part[w] * 100)));
+                    w < 0 ? 0 : (int) Math.round(part[w] * 100), (int) Math.round(l.tank().getTank().waterBlocks())));
         }
         if (retrofit && allOk) {
             retrofit = false; // D2: retrofitted
@@ -461,6 +462,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             e.putInt("flow", k.flow());
             e.putDouble("clean", k.clean());
             e.putInt("percent", k.percent());
+            e.putInt("blocks", k.blocks());
             l.add(e);
         }
         t.put("tanks", l);
@@ -493,7 +495,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
                 st = MultiblockFilter.LinkStatus.OK;
             }
             BlockPos p = NbtCompat.readBlockPos(e, "pos").orElse(null);
-            if (p != null) l.add(new TankLink(p, st, e.getIntOr("flow", 0), e.getDoubleOr("clean", 0d), e.getIntOr("percent", 0)));
+            if (p != null) l.add(new TankLink(p, st, e.getIntOr("flow", 0), e.getDoubleOr("clean", 0d), e.getIntOr("percent", 0), e.getIntOr("blocks", 0)));
         }
         tanks = l;
         int[] ports = t.getIntArray("ports").orElse(new int[0]);
