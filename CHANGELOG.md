@@ -64,8 +64,13 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   of the pipes is now taken out after the whole tooltip is collected (it came after our provider whatever its priority). Both, and The One
   Probe's gauge (now also for the pipes), also when another overlay carries our lines (`overlay.provider`).
 - **Plants tab:** the dense cover line says that feeder food stays on the floating plants.
-- **Algae:** drawn in one batch per stage (the render type changed per face, one draw call each: a frame cost of up to a millisecond
-  on a large tank covered with algae, more with shader packs), and the film lies 0.012 instead of 0.003 inside the glass (margin against z-fighting).
+- **Algae jumping around on large tanks when walking:** the film on the far glass, seen through the tank, was as strong as the
+  one on the near glass, and the two films (each block at its own stage) slid over each other with every step. The far film
+  now fades with the water between it and the camera (a third is left behind 9 blocks of water). The four stages are one
+  texture now, so all algae of a tank are one batch, sorted back to front (as four batches a near patch of a lower stage hid
+  the far algae of a higher stage). Before
+  that the render type changed per face (one draw call each: up to a millisecond per frame on a large tank covered with algae,
+  more with shader packs). The film lies 0.012 instead of 0.003 inside the glass (margin against z-fighting).
 - **Algae, floating plants, small animals and the sign of large tanks popping in and out when moving:** they are drawn up to
   `render.tankDetailDistance` (48) blocks away, but that was measured from the controller block at one corner of the tank: on a large tank
   they vanished with its near end only about 20 blocks away and came back a step closer. The distance is now measured to the nearest point of the tank.
