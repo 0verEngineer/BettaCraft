@@ -47,7 +47,12 @@ import org.overengineer.bettacraft.platform.item.IItemHandler;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModEntities;
 import org.overengineer.bettacraft.registry.ModItems;
+import org.overengineer.bettacraft.plants.InteriorPlants;
+import org.overengineer.bettacraft.plants.PlantSpecies;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
+import org.overengineer.bettacraft.tank.TankData;
+import org.overengineer.bettacraft.tank.interior.InteriorManager;
+import org.overengineer.bettacraft.tank.interior.InteriorRegion;
 import org.overengineer.bettacraft.tank.TankInhabitants;
 import org.overengineer.bettacraft.tank.TankInteractions;
 import org.overengineer.bettacraft.tank.TankMultiblock;
@@ -79,7 +84,7 @@ final class DevClientSmokeM66 {
     private int problems;
     private final String tag = System.getProperty("bettacraft.smoketest.m66tag", "after");
     private final String parts = System.getProperty("bettacraft.smoketest.m66parts", "tank,devices,aquarist,pipes");
-    private volatile BlockPos base, mainTank, terrarium, cabinet, filter, feeder, clip, head, pipe, homeBasin, rearing1, rearing2, firstTank;
+    private volatile BlockPos reef, base, mainTank, terrarium, cabinet, filter, feeder, clip, head, pipe, homeBasin, rearing1, rearing2, firstTank;
     private volatile AquaristEntity npc;
     private String lang;
     private int guiScale;
@@ -118,7 +123,9 @@ final class DevClientSmokeM66 {
                 mc.gui.setScreen(null);
             });
             then(1, () -> look(pipe, 1.2, 0.8, -1.6));
-            then(60, () -> shot("en_us_pipe_tooltip"));
+            then(60, () -> shot("en_us_pipe_tooltip", false));
+            then(1, () -> look(mainTank, 1.5, 1.2, -3.2));
+            then(60, () -> shot("en_us_tank_overlay", false));
         }
         then(1, () -> {
             language(lang);
@@ -136,33 +143,91 @@ final class DevClientSmokeM66 {
 
     private void tankShots(String code, String sc) {
         String pre = code + "_" + sc + "_";
-        int[][] tabs = {{0, 0}, {5, 0}, {7, 0}, {6, 0}, {2, 0}, {4, 0}};
-        String[] names = {"tank_overview", "tank_water", "tank_devices", "tank_plants", "tank_breeding", "tank_users"};
+        // the tabs of the main tank (index of the tab: overview 0, animals 1, breeding 2, users 4, water 5, plants 6, devices 7)
+        int[][] tabs = {{0, 0}, {5, 0}, {7, 0}, {6, 0}, {4, 0}};
+        String[] names = {"tank_overview", "tank_water", "tank_devices", "tank_plants", "tank_users"};
         for (int i = 0; i < tabs.length; i++) {
             int tab = tabs[i][0];
             String name = names[i];
             near(() -> mainTank);
             then(1, () -> openTank(mainTank));
             then(25, () -> selectTab(tab));
-            then(10, () -> shot(pre + name));
+            then(10, () -> shot(pre + name, true));
             closeAll();
         }
-        // the plants tab, second page (the plants of the interior)
+        // water tab: the tooltips of the quality bar and the filter line; devices tab: the warning about the intake sponge
+        near(() -> mainTank);
+        then(1, () -> openTank(mainTank));
+        then(25, () -> selectTab(5));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(6, () -> shot(pre + "tank_water_tip_quality", false));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 1));
+        then(6, () -> shot(pre + "tank_water_tip_filters", false));
+        then(1, () -> {
+            call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, -1);
+            selectTab(7);
+        });
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(6, () -> shot(pre + "tank_devices_tip_sponge", false));
+        // devices tab scrolled to the light group
+        then(1, () -> {
+            call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, -1);
+            call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 60);
+        });
+        then(6, () -> shot(pre + "tank_devices_scrolled", true));
+        // plants: scrolled to the interior, then the list open at the bottom
+        then(1, () -> selectTab(6));
+        then(1, () -> {
+            call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 70);
+        });
+        then(6, () -> shot(pre + "tank_plants_interior", true));
+        then(1, () -> {
+            call(mc.gui.screen(), "openPlantListForTest", new Class<?>[]{boolean.class}, true);
+        });
+        then(4, () -> call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 400));
+        then(6, () -> shot(pre + "tank_plants_list", true));
+        closeAll();
+        // the breeding tab, every group of the main tank, the care tooltip and the warning
+        near(() -> mainTank);
+        then(1, () -> openTank(mainTank));
+        then(25, () -> selectTab(2));
+        for (int g = 0; g < 4; g++) {
+            int gi = g;
+            then(1, () -> call(mc.gui.screen(), "showBreedGroupForTest", new Class<?>[]{int.class}, gi));
+            then(8, () -> shot(pre + "tank_breeding_group" + gi, true));
+        }
+        then(1, () -> call(mc.gui.screen(), "showBreedGroupForTest", new Class<?>[]{int.class}, 0));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(6, () -> shot(pre + "tank_breeding_tip_warning", false));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 1));
+        then(6, () -> shot(pre + "tank_breeding_tip_care", false));
+        closeAll();
+        // the small animals page: both sexes, Ctrl for a full bucket
         near(() -> mainTank);
         then(1, () -> openTank(mainTank));
         then(25, () -> {
-            setField(mc.gui.screen(), "aquaticPage", true);
-            selectTab(6);
+            setField(mc.gui.screen(), "critterPage", true);
+            selectTab(1);
         });
-        then(10, () -> shot(pre + "tank_plants_aquatic"));
+        then(10, () -> shot(pre + "tank_critters", true));
         closeAll();
-        // a terrarium: its overview and its climate tab
+        // a reef tank: its plants tab has the corals
+        near(() -> reef);
+        then(1, () -> openTank(reef));
+        then(25, () -> selectTab(6));
+        then(10, () -> shot(pre + "reef_plants", true));
+        closeAll();
+        // a terrarium: its overview, its climate tab, its plants (terrarium plants), its breeding
         near(() -> terrarium);
         then(1, () -> openTank(terrarium));
         then(25, () -> selectTab(0));
-        then(10, () -> shot(pre + "terrarium_overview"));
+        then(10, () -> shot(pre + "terrarium_overview", true));
         then(1, () -> selectTab(8));
-        then(10, () -> shot(pre + "terrarium_climate"));
+        then(10, () -> shot(pre + "terrarium_climate", true));
+        then(1, () -> selectTab(6));
+        then(10, () -> shot(pre + "terrarium_plants", true));
+        then(1, () -> selectTab(2));
+        then(10, () -> shot(pre + "terrarium_breeding", true));
         closeAll();
     }
 
@@ -170,23 +235,29 @@ final class DevClientSmokeM66 {
         String pre = code + "_" + sc + "_";
         near(() -> cabinet);
         then(1, () -> openBlock(cabinet));
-        then(25, () -> shot(pre + "cabinet"));
+        then(25, () -> shot(pre + "cabinet", false));
+        then(1, () -> call(mc.gui.screen(), "showEnergyTipForTest", new Class<?>[0]));
+        then(6, () -> shot(pre + "cabinet_energy_tip", false));
         closeAll();
         near(() -> filter);
         then(1, () -> openBlock(filter));
-        then(25, () -> shot(pre + "external_filter"));
+        then(25, () -> shot(pre + "external_filter", false));
+        then(1, () -> call(mc.gui.screen(), "showEnergyTipForTest", new Class<?>[0]));
+        then(6, () -> shot(pre + "external_filter_energy_tip", false));
         closeAll();
         near(() -> feeder);
         then(1, () -> openBlock(feeder));
-        then(25, () -> shot(pre + "feeder"));
+        then(25, () -> shot(pre + "feeder", false));
         closeAll();
         near(() -> clip);
         then(1, () -> openBlock(clip));
-        then(25, () -> shot(pre + "clip_feeder"));
+        then(25, () -> shot(pre + "clip_feeder", false));
         closeAll();
         near(() -> head);
         then(1, () -> mc.gui.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head)));
-        then(25, () -> shot(pre + "multiblock_filter"));
+        then(25, () -> shot(pre + "multiblock_filter", false));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[0]));
+        then(6, () -> shot(pre + "multiblock_filter_tip", false));
         closeAll();
     }
 
@@ -195,7 +266,7 @@ final class DevClientSmokeM66 {
         then(1, () -> server(p -> p.teleportTo(p.level(), npc.getX() - 2, npc.getY() + 0.5, npc.getZ() - 3, java.util.Set.of(), 0F, 10F, false)));
         then(10, () -> {});
         then(1, () -> server(p -> AquaristMenu.open(p, npc)));
-        then(25, () -> shot(pre + "aquarist_work"));
+        then(25, () -> shot(pre + "aquarist_work", false));
         for (int i = 1; i <= 2; i++) {
             int tab = i;
             String name = i == 1 ? "aquarist_rearing" : "aquarist_tanks";
@@ -203,13 +274,13 @@ final class DevClientSmokeM66 {
                 call(mc.gui.screen(), "showTabForTest", new Class<?>[]{int.class}, tab);
                 if (tab == 2) call(mc.gui.screen(), "selectFirstTankForTest", new Class<?>[0]);
             });
-            then(10, () -> shot(pre + name));
+            then(10, () -> shot(pre + name, false));
         }
         then(1, () -> {
             call(mc.gui.screen(), "showTabForTest", new Class<?>[]{int.class}, 1);
             call(mc.gui.screen(), "openSpeciesForTest", new Class<?>[0]);
         });
-        then(10, () -> shot(pre + "aquarist_species"));
+        then(10, () -> shot(pre + "aquarist_species", false));
         closeAll();
     }
 
@@ -274,6 +345,7 @@ final class DevClientSmokeM66 {
         betta(level, main, false, 6601);
         betta(level, main, true, 6602);
         main.markTankChanged();
+        animals(level, main);
         // 2. a terrarium (a dry tank of the type terrarium)
         terrarium = base.offset(8, 0, 0);
         TankBlockEntity ter = tank(level, terrarium, 3, 2, 3, me, false);
@@ -281,6 +353,20 @@ final class DevClientSmokeM66 {
         ter.getTank().setTankMode(TankModeSetting.TERRARIUM);
         ter.limitMb = -1;
         TankClimate.refreshMode(level, ter);
+        terrariumAnimals(level, ter);
+        // 2b. a small reef tank (the corals of the plants tab)
+        reef = base.offset(22, 0, 12);
+        TankBlockEntity rf = tank(level, reef, 3, 2, 2, me, true);
+        rf.getTank().setName("Reef");
+        rf.getTank().setSalinity(35F);
+        rf.getTank().setWaterTemp(25F);
+        {
+            InteriorRegion ir = InteriorManager.ensureRegion(level, rf);
+            ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+            PlantSpecies[] corals = {PlantSpecies.ZOANTHUS, PlantSpecies.MUSHROOM_CORAL, PlantSpecies.LEATHER_CORAL, PlantSpecies.HAMMER_CORAL};
+            for (int i = 0; i < corals.length; i++) InteriorPlants.plantAt(in, ir, corals[i], 10 + i * 9, 0, 14, corals[i].stages(), 600L + i);
+            InteriorPlants.settleTint(level, rf);
+        }
         // 3. an external filter block beside a small aquarium, and a clip-on feeder on another
         TankBlockEntity small = tank(level, base.offset(13, 0, 0), 2, 2, 2, me, true);
         small.getTank().setName("Shrimp");
@@ -324,6 +410,99 @@ final class DevClientSmokeM66 {
         level.setBlock(pipe.west(), ModBlocks.RESERVOIR.get().defaultBlockState(), 3);
         p.teleportTo(level, base.getX() + 2.5, base.getY() + 3, base.getZ() - 6.5, java.util.Set.of(), 0F, 20F, false);
         LOGGER.info("[smoketest] M66 scene built at {}", base);
+    }
+
+    /** M66: plants in the interior of the main tank and animals of the groups of the breeding tab (a bubble nest with eggs for the care tooltip). */
+    private void animals(ServerLevel level, TankBlockEntity main) {
+        TankData t = main.getTank();
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        InteriorRegion ir = InteriorManager.ensureRegion(level, main);
+        PlantSpecies[] plants = {PlantSpecies.ALTERNANTHERA, PlantSpecies.LUDWIGIA, PlantSpecies.MONTE_CARLO, PlantSpecies.MONTE_CARLO, PlantSpecies.JAVA_FERN, PlantSpecies.VALLISNERIA};
+        for (int i = 0; i < plants.length; i++) InteriorPlants.plantAt(in, ir, plants[i], 12 + i * 8, 0, 14, plants[i].stages(), 700L + i);
+        InteriorPlants.settleTint(level, main);
+        // tankmates: a pair of guppies
+        var w = new org.overengineer.bettacraft.tank.TankWaterVolume(t);
+        for (int i = 0; i < 2; i++) {
+            Vec3 pos = w.clamp(new Vec3((w.box().minX + w.box().maxX) / 2 + i * 0.3, w.box().minY + 0.5, (w.box().minZ + w.box().maxZ) / 2), 0.35, 0.1, 0.2);
+            org.overengineer.bettacraft.tankmates.TankmateBreeding.spawn(level, main, org.overengineer.bettacraft.tankmates.TankmateSpecies.GUPPY,
+                    org.overengineer.bettacraft.tankmates.TankmateGenes.wild(org.overengineer.bettacraft.tankmates.TankmateSpecies.GUPPY), i == 0, LifeStage.ADULT, 0, pos);
+        }
+        // small animals: a pair of shrimp (one berried, one young), snails, an Amano pair with a cloud of larvae
+        var wild = org.overengineer.bettacraft.critters.CritterGenes.WILD;
+        var rnd = (java.util.random.RandomGenerator) new java.util.Random(77);
+        org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, wild, false, 40);
+        var mother = org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, wild, true, 40);
+        if (mother != null) mother.eggs = 1.0;
+        org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA, wild, true, 1);
+        org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.RAMSHORN, wild, false, 30);
+        org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.AMANO_SHRIMP, wild, false, 60);
+        var amano = org.overengineer.bettacraft.critters.TankCritters.add(level, main, org.overengineer.bettacraft.critters.CritterSpecies.AMANO_SHRIMP, wild, true, 60);
+        if (amano != null) t.critterObjects().add(org.overengineer.bettacraft.critters.AmanoLarvae.hatch(amano, t.nextCritterId(), rnd));
+        // frogs: a pair, spawn and tadpoles
+        for (boolean female : new boolean[]{false, true}) {
+            var f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+            if (f == null) continue;
+            f.setFemale(female);
+            var bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(f);
+            f.discard();
+            TankInhabitants.insert(level, main, bag, ModEntities.DWARF_FROG.get(), null, 0L);
+        }
+        for (int i = 0; i < 4; i++) t.tadpoles().add(new org.overengineer.bettacraft.entity.frog.Tadpole(t.nextFrogBroodId(), t.min().getX() + 1 + i * 0.4, t.min().getY() + 0.6, t.min().getZ() + 1));
+        // a bubble nest with eggs, the care at 80 %
+        try {
+            Class<?> nc = Class.forName("org.overengineer.bettacraft.tank.BubbleNest");
+            var ctor = nc.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            Object nest = ctor.newInstance();
+            Class<?> phase = Class.forName("org.overengineer.bettacraft.tank.BubbleNest$Phase");
+            setFieldOf(nest, "phase", Enum.valueOf((Class) phase, "EGGS"));
+            setFieldOf(nest, "progress", 0.6);
+            setFieldOf(nest, "pos", Vec3.atCenterOf(mainTank).add(0, 0.5, 0));
+            setFieldOf(nest, "careSum", 0.8);
+            setFieldOf(nest, "careTime", 1.0);
+            @SuppressWarnings("unchecked") List<Object> eggs = (List<Object>) getFieldOf(nest, "eggs");
+            for (int i = 0; i < 30; i++) eggs.add(new org.overengineer.bettacraft.tank.BubbleNest.Egg(BettaGenotype.randomDomestic(RandomSource.create(900 + i)), i % 2 == 0));
+            for (Entity e : TankInhabitants.liveInhabitants(level, t)) {
+                if (e instanceof BettaEntity b && b.isAdult() && !b.isFemale()) setFieldOf(nest, "male", b.getUUID());
+            }
+            t.setNest((org.overengineer.bettacraft.tank.BubbleNest) nest);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            problem("no bubble nest: " + e);
+        }
+        main.markTankChanged();
+    }
+
+    /** The terrarium: a pair of leopard geckos and plants of the land. */
+    private void terrariumAnimals(ServerLevel level, TankBlockEntity ter) {
+        try {
+            for (boolean female : new boolean[]{false, true}) {
+                var e = ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO).create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+                e.setFemale(female);
+                ItemStack stack = e.getBucketItemStack();
+                e.saveToBucketTag(stack);
+                e.discard();
+                Component err = TankInhabitants.insert(level, ter, stack, ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO), null, 0L);
+                if (err != null) LOGGER.warn("[smoketest] M66 gecko not inserted: {}", err.getString());
+            }
+            InteriorRegion ir = InteriorManager.ensureRegion(level, ter);
+            ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+            PlantSpecies[] land = {PlantSpecies.BOSTON_FERN, PlantSpecies.FITTONIA};
+            for (int i = 0; i < land.length; i++) InteriorPlants.plantAt(in, ir, land[i], 14 + i * 10, 0, 16, land[i].stages(), 800L + i);
+        } catch (RuntimeException e) {
+            LOGGER.warn("[smoketest] M66 terrarium animals failed: {}", e.toString());
+        }
+    }
+
+    private static void setFieldOf(Object target, String name, Object value) throws ReflectiveOperationException {
+        var f = target.getClass().getDeclaredField(name);
+        f.setAccessible(true);
+        f.set(target, value);
+    }
+
+    private static Object getFieldOf(Object target, String name) throws ReflectiveOperationException {
+        var f = target.getClass().getDeclaredField(name);
+        f.setAccessible(true);
+        return f.get(target);
     }
 
     /** The aquarist himself, after the basin and the bed have their tickets. */
@@ -511,7 +690,12 @@ final class DevClientSmokeM66 {
         server.execute(() -> action.accept(server.getPlayerList().getPlayers().getFirst()));
     }
 
-    private void shot(String name) {
+    private void shot(String name, boolean check) {
+        if (check && mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+            List<String> bad = new ArrayList<>(ts.overflowForTest());
+            bad.addAll(ts.textFitForTest());
+            if (!bad.isEmpty()) problem(name + ": " + bad);
+        }
         Screenshot.grab(mc.gameDirectory, "bettacraft_m66_" + tag + "_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }

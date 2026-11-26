@@ -320,6 +320,67 @@ public final class UiOverhaulGameTests {
         h.succeed();
     }
 
+    // ------------------------------------------------------------------ M66 part 2: the groups of the breeding tab, the motor filters by kind, the plant effects
+
+    /**
+     * The view of a tank has the breeding groups of the small animals and the frogs (conditions with their state), the motor filters by
+     * kind with and without an intake sponge, and the effects of the plant groups (the floating plants' share is what the tank takes).
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void viewHasBreedingGroupsMotorFiltersAndPlantEffects(GameTestHelper h) {
+        ServerLevel level = h.getLevel();
+        TankBlockEntity c = PlumbingGameTests.tank(h, 5, 1, 5, 3, 2, 2);
+        c.getTank().setWaterQuality(0.8F);
+        var shrimp = org.overengineer.bettacraft.critters.CritterSpecies.NEOCARIDINA;
+        org.overengineer.bettacraft.critters.TankCritters.add(level, c, shrimp, org.overengineer.bettacraft.critters.CritterGenes.WILD, false, 40);
+        org.overengineer.bettacraft.critters.TankCritters.add(level, c, shrimp, org.overengineer.bettacraft.critters.CritterGenes.WILD, true, 40);
+        c.getTank().tadpoles().add(new org.overengineer.bettacraft.entity.frog.Tadpole(c.getTank().nextFrogBroodId(), 1, 1, 1));
+        for (int i = 0; i < 12; i++) {
+            org.overengineer.bettacraft.tank.plants.TankPlants.add(c, org.overengineer.bettacraft.tank.plants.FloatingPlantType.DUCKWEED,
+                    c.getTank().min().getX() + 0.5 + i * 0.2, c.getTank().min().getZ() + 0.5, 0.8F, 0F);
+        }
+        h.setBlock(new BlockPos(4, 1, 5), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
+        var f = (ExternalFilterBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(4, 1, 5)));
+        org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        TankView v = TankView.read(TankView.build(sp, c));
+        var small = v.breeding.getListOrEmpty("g_small");
+        check(small.size() == 1 && small.getCompoundOrEmpty(0).getStringOr("n", "").equals(shrimp.translationKey()), "the shrimp group: " + small);
+        var conds = small.getCompoundOrEmpty(0).getListOrEmpty("cond");
+        boolean pair = false, temp = false;
+        for (int i = 0; i < conds.size(); i++) {
+            var cd = conds.getCompoundOrEmpty(i);
+            if (cd.getStringOr("k", "").equals("pair")) pair = cd.getBooleanOr("ok", false);
+            if (cd.getStringOr("k", "").equals("temp")) temp = cd.getBooleanOr("ok", false);
+        }
+        check(pair && temp, "a pair of shrimp at 26 C: " + conds);
+        var frogs = v.breeding.getListOrEmpty("g_frogs");
+        check(frogs.size() == 1 && !frogs.getCompoundOrEmpty(0).getListOrEmpty("st").isEmpty(), "the frog group with its tadpoles: " + frogs);
+        check(v.tech.motors[4] == 1 && v.tech.motors[5] == 0 && v.tech.unprotected >= 1, "one external filter without a sponge: " + java.util.Arrays.toString(v.tech.motors));
+        f.setIntakeSponge(true);
+        TankView v2 = TankView.read(TankView.build(sp, c));
+        check(v2.tech.motors[4] == 1 && v2.tech.motors[5] == 1, "and with one: " + java.util.Arrays.toString(v2.tech.motors));
+        check(v2.water.waterBlocks > 0, "the tank's water blocks are in the view: " + v2.water.waterBlocks);
+        double floating = v2.aquatic.effects[0];
+        check(Math.abs(floating - v2.plants.uptakePerDay) < 1e-9, "the floating plants' quality share is the tank's uptake: " + floating + " vs " + v2.plants.uptakePerDay);
+        h.succeed();
+    }
+
+    /** An old tank without a breeding tag for the groups still reads (the new lists are optional). */
+    @GameTest(template = EMPTY, timeoutTicks = 60)
+    public static void viewReadsWithoutTheNewLists(GameTestHelper h) {
+        TankBlockEntity c = PlumbingGameTests.tank(h, 5, 1, 5, 2, 2, 2);
+        ServerPlayer sp = MockPlayers.serverPlayer(h);
+        CompoundTag t = TankView.build(sp, c);
+        t.getCompoundOrEmpty("breeding").remove("g_small");
+        t.getCompoundOrEmpty("tech").remove("motors");
+        t.getCompoundOrEmpty("water_care").remove("water_blocks");
+        t.getCompoundOrEmpty("aquatic").remove("fx");
+        TankView v = TankView.read(t);
+        check(v.tech.motors.length == 8 && v.aquatic.effects.length == 16, "defaults kept");
+        h.succeed();
+    }
+
     /** Port: the free tickets of the POI at {@code pos} (1.21.1 {@code PoiManager#getFreeTickets}). */
     private static int freeTickets(ServerLevel level, BlockPos pos) {
         return level.getPoiManager().getInSquare(t -> true, pos, 0, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY)
