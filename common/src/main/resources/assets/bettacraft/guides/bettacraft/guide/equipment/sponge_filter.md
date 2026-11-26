@@ -18,7 +18,7 @@ foam sponge with a lift tube on top (2x2x5 blocks at scale 16). Rising air pulls
 * It needs an [air pump](air_pump.md) at the aquarium; without air it does nothing. With air, big bubbles gurgle out of
   its tube.
 * It keeps **12 water blocks** clean and brings some oxygen (about 15 water blocks per day).
-* It is **gentle**: it never sucks in fry or shrimp. The filter for breeding tanks.
+* It is **gentle**: it never sucks in young animals. The filter for breeding tanks.
 
 ## Obtaining
 
