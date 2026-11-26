@@ -49,8 +49,10 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
 
             @Override
             public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, BlockState state, IProbeHitData data) {
-                if (state.getBlock() instanceof TankBlock
-                        && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) {
+                // also when another overlay carries our lines, and for the pipes (their connection is a pass-through, not stored water)
+                if (state.getBlock() instanceof TankBlock || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
+                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBlock
+                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock) {
                     config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
                 }
             }
