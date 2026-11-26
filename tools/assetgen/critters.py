@@ -11,7 +11,7 @@ Single source of truth for the critter models, like ``model_defs.py`` for the be
   binary alpha, one 64x64 box-UV texture per model (packed automatically). The frog texture is coloured.
 
 Writes ``client/model/CritterModelDefinitions.java``, ``textures/entity/critters/*.png``, the algae overlays
-``textures/entity/algae/algae_1..4.png`` and the item icons ``algae_scraper``, ``dwarf_frog_bucket``.
+``textures/entity/algae/algae.png`` (the four stages side by side) and the item icons ``algae_scraper``, ``dwarf_frog_bucket``.
 
 Run from the repo root:  py tools/assetgen/critters.py
 """
@@ -703,8 +703,9 @@ def write_all() -> list:
         if name == "crayfish":  # M29d: marbled crayfish
             written.append(save_png(overlay(groups, sizes[name], "marble", 2900, "body"), CRIT_TEX / "crayfish_marble.png"))
     written.append(write_java(models, sizes))
-    for st in range(1, 5):
-        written.append(save_png(algae(st), ALGAE_TEX / f"algae_{st}.png"))
+    # M66: the four stages side by side in one texture (one render type: the film quads of every stage are drawn in one batch,
+    # sorted back to front; four textures were four batches whose order hid back-wall algae behind front-wall algae)
+    written.append(save_png(np.concatenate([algae(st) for st in range(1, 5)], axis=1), ALGAE_TEX / "algae.png"))
     written.append(save_png(scraper_icon(), ITEM_TEX / "algae_scraper.png"))
     written.append(save_png(frog_brood(), CRIT_TEX / "frog_brood.png"))  # M47 part c
     # the frog bucket: buckets.py (M21, in the style of the active bucket variant)

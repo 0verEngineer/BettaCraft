@@ -26,15 +26,28 @@ import org.overengineer.bettacraft.tank.algae.AlgaeSim;
  * looks dimmer, from inside too (no culling).
  */
 public final class AlgaeRenderer {
-    private static final Identifier[] STAGES = new Identifier[AlgaeSim.STAGES + 1];
-
-    static {
-        for (int i = 1; i <= AlgaeSim.STAGES; i++) STAGES[i] = BettaCraft.id("textures/entity/algae/algae_" + i + ".png");
-    }
+    /**
+     * The four stages side by side in one texture (M66). One texture is one render type, so every film quad of the tank goes
+     * into one batch, which the buffer source sorts back to front before drawing (entityTranslucent sorts on upload). With one
+     * texture per stage the stages were four batches drawn one after the other: the film writes depth, so a front-wall quad of
+     * a lower stage hid every back-wall quad of a higher stage behind it, and which back-wall patches showed through changed
+     * with every step (the algae "jumping" around on large tanks).
+     */
+    private static final Identifier TEXTURE = BettaCraft.id("textures/entity/algae/algae.png");
 
     /** Distance of the algae film from the outer face of the block (inside the 1/16 glass; M66: 0.012 and not 0.003, a film that close to the glass fought it for the depth buffer
      * (diagonal flicker over the whole wall when moving, with shader packs from about ten blocks away)). */
     private static final float INSET = 1F / 16F + 0.012F;
+
+    /**
+     * M66: the water between the camera and a film seen through the tank (the far glass) fades it, exp(-path / this) with the path
+     * through the water in blocks: a third left behind 9 blocks of water, a sixth behind 16. Without it the far glass of a large
+     * tank was as strong as the near one, and the two films, each with its blocks at different stages, slid over each other with
+     * every step: the algae seemed to jump around.
+     */
+    private static final float WATER_CLARITY = 8F;
+    /** Longest water path counted (blocks). */
+    private static final int MAX_PATH = 48;
 
     private AlgaeRenderer() {}
 
@@ -43,38 +56,58 @@ public final class AlgaeRenderer {
         if (level == null || t.algae().isEmpty()) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        // M66: one pass per stage. A buffer source ends (draws) the running batch whenever the render type changes, so drawing the
-        // faces in map order (the four stage textures mixed) was one draw call per change, hundreds on a large tank, and with a
-        // shader pack each one is expensive (the lag at large tanks with algae)
-        for (int stage = 1; stage <= AlgaeSim.STAGES; stage++) {
-            VertexConsumer vc = null;
-            for (var e : t.algae().long2ObjectEntrySet()) {
-                float[] v = e.getValue();
-                if (v[0] <= 0 && v[1] <= 0 && v[2] <= 0 && v[3] <= 0) continue;
-                p.set(e.getLongKey());
-                if (!t.contains(p)) continue;
-                float top = -1;
-                int light = 0;
-                for (int d = 0; d < 4; d++) {
-                    if (Math.min(AlgaeSim.STAGES, Math.round(v[d] * AlgaeSim.STAGES)) != stage) continue;
-                    if (t.contains(BlockPos.asLong(p.getX() + AlgaeSim.stepX(d), p.getY(), p.getZ() + AlgaeSim.stepZ(d)))) continue;
-                    if (top < 0) {
-                        BlockState s = level.getBlockState(p);
-                        top = 1F;
-                        if (s.getBlock() instanceof TankBlock) {
-                            int fill = s.getValue(TankBlock.FILL);
-                            top = fill <= 0 ? 0.25F : Math.min(fill / 16F, 1 - TankWaterGeometry.INSET);
-                        }
-                        light = LevelRenderer.getLightColor(level, p);
+        net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        // one batch for the whole tank (see TEXTURE): one draw call, sorted back to front
+        VertexConsumer vc = null;
+        for (var e : t.algae().long2ObjectEntrySet()) {
+            float[] v = e.getValue();
+            if (v[0] <= 0 && v[1] <= 0 && v[2] <= 0 && v[3] <= 0) continue;
+            p.set(e.getLongKey());
+            if (!t.contains(p)) continue;
+            float top = -1;
+            int light = 0;
+            for (int d = 0; d < 4; d++) {
+                int stage = Math.min(AlgaeSim.STAGES, Math.round(v[d] * AlgaeSim.STAGES));
+                if (stage <= 0) continue;
+                if (t.contains(BlockPos.asLong(p.getX() + AlgaeSim.stepX(d), p.getY(), p.getZ() + AlgaeSim.stepZ(d)))) continue;
+                if (top < 0) {
+                    BlockState s = level.getBlockState(p);
+                    top = 1F;
+                    if (s.getBlock() instanceof TankBlock) {
+                        int fill = s.getValue(TankBlock.FILL);
+                        top = fill <= 0 ? 0.25F : Math.min(fill / 16F, 1 - TankWaterGeometry.INSET);
                     }
-                    if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(STAGES[stage]));
-                    // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
-                    int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
-                    boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
-                    quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, top, light, neg, pos);
+                    light = LevelRenderer.getLightColor(level, p);
                 }
+                if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
+                // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
+                int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
+                boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
+                int alpha = Math.round(255 * seenThroughWater(t, p, d, cam));
+                if (alpha < 4) continue;
+                quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, top, light, neg, pos, stage, alpha);
             }
         }
+    }
+
+    /**
+     * How much of the film on face {@code d} of block {@code p} the water lets through to the camera: 1 when the camera looks at it
+     * through the glass (the near wall), else exp(-path / {@link #WATER_CLARITY}) with the path through the tank's water towards
+     * the camera (the run of tank blocks inwards from the face, or the camera's distance when it is inside), longer when the
+     * camera looks at the glass at a slant.
+     */
+    static float seenThroughWater(TankData t, BlockPos p, int d, net.minecraft.world.phys.Vec3 cam) {
+        int nx = AlgaeSim.stepX(d), nz = AlgaeSim.stepZ(d);
+        double fx = p.getX() + 0.5 + 0.5 * nx, fz = p.getZ() + 0.5 + 0.5 * nz;
+        double along = (cam.x - fx) * nx + (cam.z - fz) * nz; // >= 0: the camera is outside this glass
+        if (along >= 0) return 1F;
+        int run = 1;
+        while (run < MAX_PATH && t.contains(BlockPos.asLong(p.getX() - nx * run, p.getY(), p.getZ() - nz * run))) run++;
+        double path = Math.min(run, -along);
+        double vx = cam.x - fx, vy = cam.y - (p.getY() + 0.5), vz = cam.z - fz;
+        double len = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        double cos = len < 1e-3 ? 1 : Math.max(0.25, -along / len);
+        return (float) Math.exp(-(path / cos) / WATER_CLARITY);
     }
 
     /** Whether block (x, y, z) belongs to the tank and its face towards {@code dir} is glass too (the wall goes on). */
@@ -82,7 +115,7 @@ public final class AlgaeRenderer {
         return t.contains(BlockPos.asLong(x, y, z)) && !t.contains(BlockPos.asLong(x + AlgaeSim.stepX(dir), y, z + AlgaeSim.stepZ(dir)));
     }
 
-    private static void quad(PoseStack pose, VertexConsumer vc, float bx, float by, float bz, int dir, float top, int light, boolean negOpen, boolean posOpen) {
+    private static void quad(PoseStack pose, VertexConsumer vc, float bx, float by, float bz, int dir, float top, int light, boolean negOpen, boolean posOpen, int stage, int alpha) {
         PoseStack.Pose last = pose.last();
         Matrix4f m = last.pose();
         float lo = 1F / 16F, hi = 1F - 1F / 16F;
@@ -115,7 +148,8 @@ public final class AlgaeRenderer {
             }
         }
         for (float[] c : q) {
-            vc.addVertex(m, c[0], c[1], c[2]).setColor(0xFFFFFFFF).setUv(c[3], c[4]).setOverlay(OverlayTexture.NO_OVERLAY)
+            // u into the stage's quarter of the texture
+            vc.addVertex(m, c[0], c[1], c[2]).setColor(255, 255, 255, alpha).setUv((stage - 1 + c[3]) / AlgaeSim.STAGES, c[4]).setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light).setNormal(last, nx, 0, nz);
         }
     }
