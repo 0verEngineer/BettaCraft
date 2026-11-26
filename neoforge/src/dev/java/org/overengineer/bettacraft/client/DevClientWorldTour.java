@@ -203,6 +203,10 @@ final class DevClientWorldTour {
         out = new File(mc.gameDirectory, "tour/" + TAG);
         then(40, () -> {
             org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
+            if (VIEWS.contains("perf")) { // M66: frame times need the frame rate uncapped
+                mc.options.framerateLimit().set(260);
+                mc.options.enableVsync().set(false);
+            }
             mc.options.fovEffectScale().set(0.0);
             mc.options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
         });
@@ -246,6 +250,21 @@ final class DevClientWorldTour {
             boolean first = firstPack;
             firstPack = false;
             then(1, () -> switchPack(pack));
+            String algaeProp = System.getProperty("bettacraft.tour.algae"); // M66: -PtourAlgae=<0..1>: every wet glass face of every tank (client copy) at that level, 0 = none
+            if (algaeProp != null) {
+                float lvl = Float.parseFloat(algaeProp);
+                then(1, () -> {
+                    for (Tank t : list) {
+                        if (mc.level != null && org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, t.min()) instanceof TankBlockEntity be) {
+                            be.getTank().algae().clear();
+                            if (lvl != 0) { // a negative level: every face at a random level (seeded), the stages mixed like in a grown tank
+                                java.util.Random rnd = new java.util.Random(7);
+                                for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
+                            }
+                        }
+                    }
+                });
+            }
             then(1, () -> look(x0 - 6, gy + 4, z0 - 6, -45F, 10F));
             // shader compile and the rebuild of the chunks and miniatures
             then(240, () -> logPack(pack));
@@ -255,6 +274,51 @@ final class DevClientWorldTour {
                     String view = v.trim();
                     if (view.equals("break")) {
                         breakViews(pn, t, list);
+                        continue;
+                    }
+                    if (view.equals("perf")) { // M66: the frame rate in front of the tank (three one second samples), perf.tsv
+                        double[] pc = clear(camera(t, "front"), list, t);
+                        if (pc == null) continue;
+                        then(1, () -> lookAt(pc[0], pc[1], pc[2], new Vec3(pc[3], pc[4], pc[5])));
+                        thenAt(SETTLE, () -> {});
+                        then(40, () -> {});
+                        int[] fps = new int[3];
+                        for (int k = 0; k < 3; k++) {
+                            int kk = k;
+                            then(22, () -> fps[kk] = mc.getFps());
+                        }
+                        then(1, () -> perf(pn, t, fps));
+                        continue;
+                    }
+                    if (view.startsWith("walk")) { // M66: "walk<distance factor>": the camera walks 4 m sideways in 40 steps of 10 cm, a picture each (flicker: single pictures that differ from both neighbours)
+                        double[] wc = clear(camera(t, "front"), list, t);
+                        if (wc == null) continue;
+                        double dist = view.length() > 4 ? Double.parseDouble(view.substring(4)) : 1.0;
+                        Direction wf = t.front() == null || t.front().getAxis() == Direction.Axis.Y ? Direction.NORTH : t.front();
+                        Direction ws = wf.getClockWise();
+                        for (int k = 0; k < 40; k++) {
+                            double o = (k - 20) * 0.1;
+                            double px = t.cx() + (wc[0] - t.cx()) * dist + ws.getStepX() * o, pz = t.cz() + (wc[2] - t.cz()) * dist + ws.getStepZ() * o;
+                            int kk = k;
+                            then(1, () -> lookAt(px, wc[1], pz, new Vec3(wc[3], wc[4], wc[5])));
+                            thenAt(2, () -> shot(pn, t.id() + "_walk" + (int) Math.round(dist * 10) + "_" + String.format("%02d", kk)));
+                        }
+                        continue;
+                    }
+                    if (view.startsWith("jitter")) { // M66: the same view five times, the camera moved 3 cm sideways each time (flicker: the pictures differ), "jitter<distance factor>"
+                        double[] jc = clear(camera(t, "front"), list, t);
+                        if (jc == null) continue;
+                        double dist = view.length() > 6 ? Double.parseDouble(view.substring(6)) : 1.0;
+                        Direction jf = t.front() == null || t.front().getAxis() == Direction.Axis.Y ? Direction.NORTH : t.front();
+                        Direction js = jf.getClockWise();
+                        double cx0 = t.cx(), cz0 = t.cz();
+                        for (int k = 0; k < 5; k++) {
+                            double o = k * 0.03;
+                            double px = cx0 + (jc[0] - cx0) * dist + js.getStepX() * o, pz = cz0 + (jc[2] - cz0) * dist + js.getStepZ() * o;
+                            int kk = k;
+                            then(1, () -> lookAt(px, jc[1], pz, new Vec3(jc[3], jc[4], jc[5])));
+                            thenAt(SETTLE, () -> shot(pn, t.id() + "_jit" + (int) Math.round(dist * 10) + "_" + kk));
+                        }
                         continue;
                     }
                     double[] cam = clear(camera(t, view), list, t);
@@ -268,7 +332,7 @@ final class DevClientWorldTour {
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
             // M63d: a run of only the break view leaves out the sweeps
-            for (int s = 0; s < (VIEWS.trim().equals("break") ? 0 : spots.length); s++) {
+            for (int s = 0; s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") ? 0 : spots.length); s++) {
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
@@ -364,6 +428,8 @@ final class DevClientWorldTour {
                         found.add(new Tank(t.min(), t.sizeX(), t.sizeY(), t.sizeZ(), t.front(), t.name()));
                     }
                 }
+            int minVol = Integer.getInteger("bettacraft.tour.minvolume", 0);
+            found.removeIf(t -> t.sx() * t.sy() * t.sz() < minVol);
             if (!NAMES.isBlank()) found.removeIf(t -> java.util.Arrays.stream(NAMES.split(",")).map(String::trim).filter(n -> !n.isEmpty())
                     .noneMatch(n -> t.name() != null && t.name().toLowerCase(Locale.ROOT).contains(n.toLowerCase(Locale.ROOT))));
             found.sort(Comparator.comparingInt((Tank t) -> t.min().getZ()).thenComparingInt(t -> t.min().getX()).thenComparingInt(t -> t.min().getY()));
@@ -872,6 +938,24 @@ final class DevClientWorldTour {
     private void server(java.util.function.Consumer<ServerPlayer> action) {
         var server = mc.getSingleplayerServer();
         server.execute(() -> action.accept(server.getPlayerList().getPlayers().getFirst()));
+    }
+
+    /** M66: one line per tank and pack in perf.tsv: pack, tank, size, algae faces, the three fps samples. */
+    private void perf(String pack, Tank t, int[] fps) {
+        int algae = 0;
+        if (mc.level != null && org.overengineer.bettacraft.tank.TankMultiblock.getController(mc.level, t.min()) instanceof TankBlockEntity be) {
+            var data = be.getTank();
+            algae = data == null ? 0 : data.algae().size();
+        }
+        String line = pack + "	" + t.id() + "	" + t.sx() + "x" + t.sy() + "x" + t.sz() + "	" + algae + "	" + fps[0] + "	" + fps[1] + "	" + fps[2];
+        LOGGER.info("[smoketest] world tour perf: {}", line);
+        try {
+            out.mkdirs();
+            Files.writeString(new File(out, "perf.tsv").toPath(), line + "\n", StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            LOGGER.warn("[smoketest] perf.tsv: {}", e.toString());
+        }
     }
 
     private void shot(String pack, String view) {
