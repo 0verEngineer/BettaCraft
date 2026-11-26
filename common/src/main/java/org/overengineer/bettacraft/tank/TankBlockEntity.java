@@ -401,35 +401,28 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider registries) {
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
-        if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        boolean wasController = isController();
+        if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
     public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
-        loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
-        afterClientUpdate(oldGlass, oldStyle);
+        boolean wasController = isController();
+        loadWithComponents(tag, registries); // NeoForge's default
+        afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
-    /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
-    public void handleUpdateTag(net.minecraft.world.level.storage.ValueInput input) {
-        handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries(this));
-    }
-
-    /** M52b: NeoForge 21.11 hands the update packet's data over as a value input. */
-    public void onDataPacket(Connection net, net.minecraft.world.level.storage.ValueInput input) {
-        net.minecraft.nbt.CompoundTag tag = org.overengineer.bettacraft.util.NbtCompat.read(input);
-        if (!tag.isEmpty()) handleUpdateTag(tag, org.overengineer.bettacraft.util.NbtCompat.registries(this));
-    }
-
-    private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle) {
-        if (level != null && level.isClientSide()) {
+    private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle, boolean wasController) {
+        if (level != null && level.isClientSide) {
             updateClientControllerSet();
-            if (!oldGlass.equals(glass) || oldStyle != style) {
-                org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
-                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-            }
+            // M66: only the controller's renderer draws (TankSignRenderer.shouldRenderOffScreen); the chunk mesher sorts the block
+            // entities into "always" and "when the section is visible" when it builds the section, so a new or former controller
+            // gets its section built again
+            boolean looks = !oldGlass.equals(glass) || oldStyle != style;
+            if (looks) org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
+            if (looks || wasController != isController()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
         }
     }
 
