@@ -246,6 +246,16 @@ public final class TankAeration {
         return use + rot + 0.25 * p - photo;
     }
 
+    /** M66: the oxygen the plants of the interior make in mg/L per day, net of their own breathing (negative in the dark). */
+    public static double plantNet(ServerLevel level, TankBlockEntity c) {
+        TankData t = c.getTank();
+        double light = org.overengineer.bettacraft.tank.plants.TankPlants.strongLight(level, c);
+        double plants = Math.min(1.0, org.overengineer.bettacraft.plants.InteriorPlants.volumeShare(level.getServer(), t) / 0.05);
+        double p = ServerConfig.getOr(ServerConfig.OXYGEN_PLANTS, 8.0) * plants;
+        double photo = light < 7 ? 0 : p * Math.min(4.0 / 3.0, (light - 6) / 9.0);
+        return photo - 0.25 * p;
+    }
+
     private static void oxygen(ServerLevel level, TankBlockEntity c, InteriorEquipment eq, double waterY, Air air, double days) {
         TankData t = c.getTank();
         double sat = saturation(t.waterTemp(), t.salinity());
@@ -301,7 +311,13 @@ public final class TankAeration {
             if (e instanceof BettaEntity b && b.lifeStage() == LifeStage.FRY) fry.add(e);
             else if (e instanceof TankmateEntity m && m.lifeStage() == LifeStage.FRY) fry.add(e);
         }
-        if (fry.isEmpty()) return;
+        // M66: also the young shrimp and the tadpoles of the dwarf clawed frogs (data animals), never the snails
+        List<org.overengineer.bettacraft.critters.Critter> youngShrimp = new ArrayList<>();
+        for (var k : t.critters()) {
+            if (k.alive() && !k.adult() && k.species.group() == org.overengineer.bettacraft.critters.CritterSpecies.Group.SHRIMP) youngShrimp.add(k);
+        }
+        List<org.overengineer.bettacraft.entity.frog.Tadpole> tadpoles = new ArrayList<>(t.tadpoles());
+        if (fry.isEmpty() && youngShrimp.isEmpty() && tadpoles.isEmpty()) return;
         double motors = unprotectedMotors(level, c, eq, waterY);
         if (motors <= 0) return;
         double p = 1 - Math.exp(-rate * motors * days);
@@ -313,6 +329,19 @@ public final class TankAeration {
             t.inhabitants().remove(e.getUUID());
             c.markTankChanged();
             e.discard();
+        }
+        for (var k : youngShrimp) {
+            if (rnd.nextDouble() >= p) continue;
+            TankCare.log(level, c, "log.bettacraft.fry_intake", "@" + k.species.translationKey());
+            t.critters().remove(k);
+            c.markTankChanged();
+            org.overengineer.bettacraft.critters.TankCritters.sync(level, c);
+        }
+        for (var k : tadpoles) {
+            if (rnd.nextDouble() >= p) continue;
+            TankCare.log(level, c, "log.bettacraft.fry_intake", "@log.bettacraft.fry_intake.tadpole");
+            t.tadpoles().remove(k);
+            c.markTankChanged();
         }
     }
 }
