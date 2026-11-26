@@ -2631,7 +2631,7 @@
   "gui.bettacraft.pattern_with_color": "%s (%s)",
   "gui.bettacraft.plants.count": "Floating plants: %s (at most %s)",
   "gui.bettacraft.plants.coverage": "Cover: %s %% (up to %s %%)",
-  "gui.bettacraft.plants.dense": "Dense cover (from %s %%): shade, food on the leaves",
+  "gui.bettacraft.plants.dense": "Dense cover (from %s %%): shade, feeder food stays on the floating plants",
   "gui.bettacraft.plants.full": "Surface full: no new offshoots",
   "gui.bettacraft.plants.fx.co2": "CO2: takes up %s mg/L per day",
   "gui.bettacraft.plants.fx.land": "They grow by the climate and do not clean the water.",
