@@ -40,6 +40,21 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     public Void apply(ITheOneProbe probe) {
         probe.registerProvider(new Blocks());
         probe.registerEntityProvider(new Bettas());
+        // M66: TOP's own tank gauge (the tank's pipe connection as stored water, in the sneak view) is switched off for the tank;
+        // the water is in the menu
+        probe.registerProbeConfigProvider(new mcjty.theoneprobe.api.IProbeConfigProvider() {
+            @Override
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, Entity entity, IProbeHitEntityData data) {
+            }
+
+            @Override
+            public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, BlockState state, IProbeHitData data) {
+                if (state.getBlock() instanceof TankBlock
+                        && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) {
+                    config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
+                }
+            }
+        });
         // looking through the glass at a fish shows the fish, not the tank block
         probe.registerBlockDisplayOverride((mode, info, player, level, state, data) -> {
             if (!(state.getBlock() instanceof TankBlock)) return false;

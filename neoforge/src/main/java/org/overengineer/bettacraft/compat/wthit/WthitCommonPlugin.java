@@ -22,10 +22,14 @@ public final class WthitCommonPlugin implements IWailaCommonPlugin {
 
     @Override
     public void register(ICommonRegistrar registrar) {
-        IDataProvider<BlockEntity> tank = (data, accessor, config) -> put(data, InfoData.tank(accessor.getLevel(), accessor.getTarget().getBlockPos()));
+        // M66: no WTHIT fluid bar for the tank (its pipe connection would show as stored water; the water is in the menu)
+        IDataProvider<BlockEntity> tank = (data, accessor, config) -> {
+            data.blockAll(mcp.mobius.waila.api.data.FluidData.TYPE);
+            put(data, InfoData.tank(accessor.getLevel(), accessor.getTarget().getBlockPos()));
+        };
         IDataProvider<BlockEntity> filter = (data, accessor, config) -> put(data, InfoData.filter(accessor.getLevel(), accessor.getTarget()));
         IDataProvider<BettaEntity> betta = (data, accessor, config) -> put(data, InfoData.betta(accessor.getTarget()));
-        registrar.blockData(tank, TankBlockEntity.class);
+        registrar.blockData(tank, TankBlockEntity.class, 0);
         registrar.blockData(filter, ExternalFilterBlockEntity.class);
         registrar.blockData(filter, CabinetBlockEntity.class);
         IDataProvider<BlockEntity> culture = (data, accessor, config) -> put(data, InfoData.culture(accessor.getLevel(), accessor.getTarget()));
