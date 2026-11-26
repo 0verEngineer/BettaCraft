@@ -488,9 +488,15 @@ public final class TankView {
         public float share, surfaceCover, growthSpeed, hiding, temp;
         public double uptakePerDay;
         public boolean bonus, overgrown, built;
+        /** M66: what each group of plants does (see {@link org.overengineer.bettacraft.tank.plants.PlantEffects}): [group * 4 + value]. */
+        public double[] effects = new double[org.overengineer.bettacraft.tank.plants.PlantEffects.GROUPS * org.overengineer.bettacraft.tank.plants.PlantEffects.VALUES];
+        /** M66: server only: the uptake of the plants of other mods, and the blocks of plants that grow now per group. */
+        double foreignUptake;
+        final double[] active = new double[org.overengineer.bettacraft.tank.plants.PlantEffects.GROUPS];
 
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
+            t.put("fx", new net.minecraft.nbt.LongArrayTag(java.util.Arrays.stream(effects).mapToLong(Double::doubleToLongBits).toArray()));
             t.putIntArray("counts", counts);
             t.putIntArray("tints", tints);
             t.putIntArray("n", new int[]{total, maxPlants, blocks, light, growing, fullGrown, dark, dry, land, wilting});
@@ -508,6 +514,8 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
+            long[] fx = t.getLongArray("fx");
+            if (fx.length == effects.length) for (int i = 0; i < fx.length; i++) effects[i] = Double.longBitsToDouble(fx[i]);
             int[] fo = t.getIntArray("foreign");
             if (fo.length == 2) {
                 foreign = fo[0];
@@ -561,6 +569,7 @@ public final class TankView {
             a.counts[p.species.ordinal()]++;
             a.tints[p.species.ordinal()] = Math.max(a.tints[p.species.ordinal()], p.tint);
             a.blocks += p.blocks;
+            if (env.rate(p) > 0) a.active[org.overengineer.bettacraft.tank.plants.PlantEffects.group(p.species)] += p.blocks;
             if (p.species.land()) {
                 // M56: a terrarium plant: growing, grown or languishing by the climate of the land
                 a.land++;
@@ -585,6 +594,7 @@ public final class TankView {
         a.bonus = org.overengineer.bettacraft.plants.InteriorPlants.breedingBonus(level.getServer(), t) > 1.0;
         a.overgrown = org.overengineer.bettacraft.plants.InteriorPlants.overgrown(level.getServer(), t);
         a.uptakePerDay = org.overengineer.bettacraft.plants.InteriorPlants.uptakePerDay(level, c, r);
+        a.foreignUptake = org.overengineer.bettacraft.plants.InteriorPlants.foreignUptakePerDay(level, c, r);
         return a;
     }
 
@@ -660,6 +670,8 @@ public final class TankView {
         public int dimmer = 100, lightOn = 480, lightOff = 1200;
         public boolean timer;
         public int unprotected;
+        /** M66: the motor filters by kind, [inside, corner, outside, cabinet] x [all, with intake sponge] (inside = in the interior, under water). */
+        public int[] motors = new int[8];
 
         CompoundTag save() {
             CompoundTag t = new CompoundTag();
@@ -684,6 +696,7 @@ public final class TankView {
             t.putIntArray("timer_set", new int[]{dimmer, lightOn, lightOff});
             t.putBoolean("timer", timer);
             t.putInt("unprotected", unprotected);
+            t.putIntArray("motors", motors);
             return t;
         }
 
@@ -718,6 +731,8 @@ public final class TankView {
             }
             timer = t.getBoolean("timer");
             unprotected = t.getInt("unprotected");
+            int[] mo = t.getIntArray("motors");
+            if (mo.length == 8) motors = mo;
         }
     }
 
@@ -905,10 +920,27 @@ public final class TankView {
             x.stones = eq.airStones().size();
             x.spongeFilters = eq.spongeFilters().size();
             double y = org.overengineer.bettacraft.tank.TankCare.waterLocalHeight(t, r.scale());
-            for (long l : eq.filters()) if (net.minecraft.core.BlockPos.getY(l) < y && !eq.hasIntakeSponge(l)) x.unprotected++;
-            for (long l : eq.corners()) if (net.minecraft.core.BlockPos.getY(l) < y && !eq.hasIntakeSponge(l)) x.unprotected++;
+            for (long l : eq.filters()) {
+                x.motors[0]++;
+                if (eq.hasIntakeSponge(l)) x.motors[1]++;
+                else if (net.minecraft.core.BlockPos.getY(l) < y) x.unprotected++;
+            }
+            for (long l : eq.corners()) {
+                x.motors[2]++;
+                if (eq.hasIntakeSponge(l)) x.motors[3]++;
+                else if (net.minecraft.core.BlockPos.getY(l) < y) x.unprotected++;
+            }
         }
-        for (var f : org.overengineer.bettacraft.tank.TankEquipment.filters(level, c)) if (!f.intakeSponge()) x.unprotected++;
+        for (var f : org.overengineer.bettacraft.tank.TankEquipment.filters(level, c)) {
+            if (f instanceof org.overengineer.bettacraft.equipment.CabinetBlockEntity) {
+                x.motors[6]++;
+                if (f.intakeSponge()) x.motors[7]++;
+            } else if (!(f instanceof org.overengineer.bettacraft.equipment.SumpHost)) {
+                x.motors[4]++;
+                if (f.intakeSponge()) x.motors[5]++;
+            }
+            if (!f.intakeSponge()) x.unprotected++;
+        }
         x.outlets = c.airOutlets;
         x.driven = c.airDriven;
         x.airPowered = c.airPowered();
@@ -937,6 +969,8 @@ public final class TankView {
         public float quality = 1, badBelow = 0.35F;
         public String state = "clean";
         public double declinePerDay, filterShare, animalsPerBlock, filterCapacity, evaporationPerDay;
+        /** M66: the water blocks of the tank (what the filters have to clean). */
+        public double waterBlocks;
         public int openTop, totalTop, internalFilters;
         public long lastFreshWater = -1;
         /** M40: multiblock filters that reach the tank but do not filter it ("x y z|status", see MultiblockFilter.LinkStatus). */
@@ -1011,6 +1045,7 @@ public final class TankView {
             t.putDouble("filter_share", filterShare);
             t.putDouble("animals", animalsPerBlock);
             t.putDouble("filter_cap", filterCapacity);
+            t.putDouble("water_blocks", waterBlocks);
             ListTag fw = new ListTag();
             for (String x : filterWarnings) fw.add(StringTag.valueOf(x));
             t.put("filter_warn", fw); // M40
@@ -1108,6 +1143,7 @@ public final class TankView {
             filterShare = t.getDouble("filter_share");
             animalsPerBlock = t.getDouble("animals");
             filterCapacity = t.getDouble("filter_cap");
+            waterBlocks = t.getDouble("water_blocks");
             filterWarnings.clear();
             ListTag fw = t.getList("filter_warn", Tag.TAG_STRING);
             for (int i = 0; i < fw.size(); i++) filterWarnings.add(fw.getString(i));
@@ -1268,6 +1304,7 @@ public final class TankView {
         breeding.putInt("box_cap", org.overengineer.bettacraft.tankmates.TankmateBreeding.boxCapacity());
         // M62: which shoals are too small, with their fish and the minimum
         if (Features.enabled(Feature.TANKMATES)) breeding.put("shoals", org.overengineer.bettacraft.tankmates.TankmateBreeding.smallShoals(level, controller));
+        org.overengineer.bettacraft.tank.BreedingOverview.describe(level, controller, live, breeding); // M66: the other groups
         out.put("breeding", breeding);
         out.put("interior", interior(level, t));
         CompoundTag eq = new CompoundTag();
@@ -1294,7 +1331,10 @@ public final class TankView {
         out.put("climate", climate(level, controller, live).save()); // M31
         out.put("sump", org.overengineer.bettacraft.equipment.Sump.view(level, controller)); // M49
         out.put("plants", plants(level, controller).save());
-        out.put("aquatic", aquatic(level, controller).save());
+        Aquatic aq = aquatic(level, controller);
+        aq.effects = org.overengineer.bettacraft.tank.plants.PlantEffects.compute(level, controller, plants(level, controller).uptakePerDay, aq.uptakePerDay,
+                aq.foreignUptake, aq.active);
+        out.put("aquatic", aq.save());
         return out;
     }
 
@@ -1312,6 +1352,7 @@ public final class TankView {
         double blocks = t.waterBlocks();
         w.animalsPerBlock = blocks <= 0 ? 0 : animals / blocks;
         w.filterCapacity = org.overengineer.bettacraft.tank.TankWater.filterBlocks(level, c);
+        w.waterBlocks = blocks;
         for (var e : org.overengineer.bettacraft.filter.MultiblockFilter.warnings(level, c).entrySet()) // M40: filters without guards
             w.filterWarnings.add(e.getKey().getX() + " " + e.getKey().getY() + " " + e.getKey().getZ() + "|" + e.getValue().key());
         w.filterShare = org.overengineer.bettacraft.tank.WaterQuality.filterShare(w.filterCapacity, blocks, p);

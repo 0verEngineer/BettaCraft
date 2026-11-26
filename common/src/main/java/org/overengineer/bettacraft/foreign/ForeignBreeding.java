@@ -186,6 +186,56 @@ public final class ForeignBreeding {
         return p != null && p.breeding().sexed() && p.breeding().breeds() ? female(e) : null;
     }
 
+    /**
+     * M66: the breeding tab: per type of animal of another mod with a breeding profile (and the sea turtle) the counts, the conditions
+     * and the brood ({@link org.overengineer.bettacraft.tank.BreedingOverview}).
+     */
+    public static net.minecraft.nbt.ListTag overview(ServerLevel level, TankBlockEntity c, List<Entity> live) {
+        net.minecraft.nbt.ListTag out = new net.minecraft.nbt.ListTag();
+        boolean foreignOn = Features.enabled(Feature.FOREIGN_BREEDING) && !ForeignProfiles.all().isEmpty();
+        if (!foreignOn && !org.overengineer.bettacraft.terrarium.SeaTurtles.breedingOn()) return out;
+        Map<EntityType<?>, List<LivingEntity>> byType = new LinkedHashMap<>();
+        for (Entity e : live) {
+            ForeignProfile p = profile(e.getType(), foreignOn);
+            if (p == null || !p.breeding().breeds() || !(e instanceof LivingEntity le)) continue;
+            byType.computeIfAbsent(e.getType(), k -> new ArrayList<>()).add(le);
+        }
+        for (Map.Entry<EntityType<?>, List<LivingEntity>> en : byType.entrySet()) {
+            ForeignProfile p = profile(en.getKey(), foreignOn);
+            if (p == null) continue;
+            int males = 0, females = 0, young = 0, adults = 0, ready = 0;
+            double brood = -1;
+            for (LivingEntity e : en.getValue()) {
+                if (e.isBaby()) {
+                    young++;
+                    continue;
+                }
+                adults++;
+                if (p.breeding().sexed()) {
+                    if (female(e)) females++;
+                    else males++;
+                }
+                if (ready(e, p)) ready++;
+                CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
+                if (d.contains(BROOD, Tag.TAG_COMPOUND)) {
+                    double days = Math.max(1e-6, p.breeding().days());
+                    brood = Math.max(brood, d.getCompound(BROOD).getDouble("age") / days);
+                }
+            }
+            var entry = org.overengineer.bettacraft.tank.BreedingOverview.entry(en.getKey().getDescriptionId(), males, females, young);
+            org.overengineer.bettacraft.tank.BreedingOverview.cond(entry, p.breeding().sexed() ? "pair" : "pair_two",
+                    p.breeding().sexed() ? males > 0 && females > 0 : adults >= 2);
+            org.overengineer.bettacraft.tank.BreedingOverview.cond(entry, "ready_two", ready >= 2);
+            String why = blocked(level, c, p);
+            if (why == null) org.overengineer.bettacraft.tank.BreedingOverview.cond(entry, "f_free", true);
+            else if (why.startsWith("no_")) org.overengineer.bettacraft.tank.BreedingOverview.cond(entry, "f_need", false, why.substring(3));
+            else org.overengineer.bettacraft.tank.BreedingOverview.cond(entry, "f_" + why, false);
+            if (brood >= 0) org.overengineer.bettacraft.tank.BreedingOverview.state(entry, "brood", Math.round(Math.min(1, brood) * 100));
+            out.add(entry);
+        }
+        return out;
+    }
+
     private static void mate(ServerLevel level, TankBlockEntity c, ForeignProfile p, List<LivingEntity> list, double days, RandomGenerator rnd) {
         List<LivingEntity> ready = new ArrayList<>();
         for (LivingEntity e : list) if (ready(e, p)) ready.add(e);

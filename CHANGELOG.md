@@ -34,8 +34,33 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 - **Multiblock filter menu:** the percentage sits between the two buttons; with several tanks it says "Serves 3 tanks:" above the list
   instead of "Cleans the tank at ..."; the fresh water shows what the filter can use.
 - **Water pipes (Jade, WTHIT, The One Probe):** no "Empty 500 mB" any more (a pipe stores nothing); all three say how much the pipe carries a second.
+- **Tank menu, all text tabs scroll** (water, devices, plants, climate, sump: mouse wheel, bar at the right edge).
+- **Tank menu, water tab:** captions "Values" and "Quality" over the two groups. The quality bar has a second mark at 60 % (the water turns
+  poor) next to the red one at 35 %, and a tooltip with the levels. The filters line has a tooltip: how many water blocks the filters can
+  clean (the tank's), and the share of the waste they remove (never over 80 %). The heaters and coolers moved to the devices tab, the
+  fertilizer to the plants tab.
+- **Tank menu, devices tab:** four groups: aeration, **filter** (the motor filters by kind with how many have an intake sponge; the warning
+  moved here from under the aeration, says "intake sponge" like the item, and its tooltip tells how to fit one), **temperature** (heaters and
+  coolers), light.
+- **Tank menu, plants tab:** one page in groups with captions, only those that exist: floating plants, water plants (interior), corals (salt
+  water), terrarium plants. Each lists what it does for the water (water quality per day, nitrate, oxygen, CO2) and its count; a list of the
+  plants of the interior (species and count) folds out. The page button is gone.
+- **Tank menu, breeding tab:** a button switches the group of animals (only those in the tank): bettas, tankmates, small animals, frogs,
+  reptiles and amphibians, animals of other mods. The new groups show per species the counts, the conditions with check marks (what is
+  missing is marked), and what is going on (berried females, clutches, Amano larvae, spawn, tadpoles, clutches, the brood). "Fry swim free
+  in x days, care n %" has a tooltip: what the care is made of, what is missing, how many larvae will probably swim free. A warning (with
+  the way to fit an intake sponge) shows while there are eggs or young animals and a motor filter has none.
+- **Tank menu, small animals tab:** the sex button says "Both" ("♂♀ Both", it said "Any") and its tooltip that it is the sex, not the number;
+  the tooltips of the take-out button say that Ctrl fills a whole bag or bucket at once.
+- **Intake sponge:** the texts say "young animals" instead of "fry" (config tooltips, items, handbook): the motor filters suck in more than fry now (see Fixed).
+- **Cabinet and external filter:** each has its own energy tooltip (both pass power on to the tank's store; the bar shows it).
+- **Multiblock filter menu:** the tank rows have a tooltip: the water blocks cleaned (and the tank's), the share of the filter's power, the flow.
+- **Tank overlay (Jade, WTHIT, The One Probe):** no amount of water; the name and the water quality share a line ("Black Orchid – 97 % (clean)").
+- **Aquarist:** the heading of the tasks is just "Tasks".
 
 ### Fixed
+- **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
+  (snails and grown animals never), not only fry. The same switch and rate (`features.breeding.fryIntake`, `internalFilters.fryIntakePerDay`).
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
   water line and a water source block at a port (tap water) were not shown. It adds the water at the line ends now ("tap water, unlimited"
   for a source).

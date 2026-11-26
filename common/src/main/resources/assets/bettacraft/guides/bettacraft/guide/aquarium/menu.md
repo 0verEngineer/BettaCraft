@@ -61,35 +61,44 @@ and colour) with its count, sexes, young, females with eggs and grade; for the w
 on the glass, how much the cleaning crew grazes, the food and the hiding spots. Click a kind to fold open the list of
 its animals: every single one with its sex, age, grade and genes (once analysed); select one to see it in detail,
 **Analyse** it or **Take out** exactly that one. With a kind selected, **Take out** takes the animal with the best grade
-(Shift: the worst, Ctrl: a full bag or bucket) of the chosen sex (button under the list: any, males, females), into a
+(Shift: the worst, Ctrl: a full bag or a full bucket at once) of the chosen sex (button under the list: both, males, females; it is the
+sex, not the number), into a
 fish bag or a bucket (the second button). **Clutches off** takes the apple snail clutches off the glass.
 
 ![The small animals page](../images/menu_critters.png)
 
 ## Breeding
 
-In groups with a thin line between them: the warnings (under "A shoal of tankmates is too small" every such shoal with its
-fish and the minimum, e.g. "Neon Tetra: 3 of 6"); the **breeding conditions** with ✔ and ✘ (while there is no nest) and,
-below them, the **bubble nest** (a betta thing: other animals breed in their own ways, see below); the young fish; the parents
-and the expected offspring; the breeding of the tankmates. See [Breeding](../bettas/breeding.md).
+A button at the top switches between the **groups of animals** that are in the aquarium: bettas, tankmates, small animals (shrimp,
+snails, crayfish with the Amano larvae), frogs, reptiles and amphibians, animals of other mods. For each species its counts, the
+conditions with ✔ and ✘ (the ✘ is what is missing) and what is going on now (berried females, clutches, larvae, spawn, tadpoles, the
+brood). Bettas: the warnings (under "A shoal of tankmates is too small" every such shoal with its fish and the minimum), the
+**breeding conditions** (while there is no nest) and, below them, the **bubble nest**; hold the mouse over "Fry swim free in x days,
+care n %" to see what the care is made of, what is missing and how many larvae will probably swim free; the young fish; the parents
+and the expected offspring. A warning shows while there are eggs or young animals and a motor filter has no
+[intake sponge](../equipment/intake_sponge.md) (hover it to see how to fit one). See [Breeding](../bettas/breeding.md).
 
 ## Water
 
 ![The water tab](../images/menu_water.png)
 
-Two groups with a line between them. **The water:** the volume, TDS and pH, the evaporation (and the open top blocks)
+Two groups with a caption each. **Values:** the volume, TDS and pH, the evaporation (and the open top blocks)
 and the [oxygen](oxygen.md) with a bar (the white mark is saturation; hold the mouse over it for what it tends to and why:
-exchange and use). **What keeps it good:** the [water quality](water_quality.md) with a bar (the red mark is where the bettas
-start to suffer), how fast it drops and why (animals per water block, how much the filters remove), the nitrate and the last
-fresh water, heaters and coolers. The stored [power](../equipment/power.md) is in the overview.
+exchange and use). **Quality:** the [water quality](water_quality.md) with a bar (the red mark is where the animals
+start to suffer, the yellow one where the water turns poor; hold the mouse over it for the levels), how fast it drops and why
+(animals per water block), the filters (hold the mouse over the line for the water blocks they clean and the share of the waste
+they remove), the nitrate and the last fresh water. The heaters and coolers are in the tab Devices, the fertilizer in the tab
+Plants, the stored [power](../equipment/power.md) in the overview. A tab with more lines than fit scrolls (mouse wheel, bar at the
+right edge).
 
 ## Devices
 
 ![The devices tab](../images/menu_devices.png)
 
-Two groups with a caption each. **Aeration:** the [air pumps](../equipment/air_pump.md), [air stones](../equipment/air_stone.md) and
-[sponge filters](../equipment/sponge_filter.md), how much CO2 the aeration drives out, how many motor filters have no
-[intake sponge](../equipment/intake_sponge.md). **Light:** the lights of the aquarium with the light strength, and the
+Four groups with a caption each. **Aeration:** the [air pumps](../equipment/air_pump.md), [air stones](../equipment/air_stone.md) and
+[sponge filters](../equipment/sponge_filter.md), how much CO2 the aeration drives out. **Filter:** the motor filters by kind (inside,
+corner, external, cabinet) and how many of them have an [intake sponge](../equipment/intake_sponge.md); the warning for those
+without says how to fit one when you hover it. **Temperature:** the heaters and coolers. **Light:** the lights of the aquarium with the light strength, and the
 **dimmer** and the **daylight timer** with their buttons (see [Light](../equipment/light.md)). The [oxygen](oxygen.md) is a
 water value and shows in the tab Water.
 
@@ -97,9 +106,10 @@ water value and shows in the tab Water.
 
 ![The plants tab](../images/menu_plants.png)
 
-The [floating plants](../plants/floating_plants.md) of the aquarium: number per species, cover, light, growth, the
-warning for a dense cover and the **Thin out** button; on both pages **Improves water quality: +x.x % per day**: what all the plants
-of the aquarium do together, the floating plants and the plants of the interior (hold the mouse over it for the two shares).
+In groups with a caption each, only those the aquarium has: the [floating plants](../plants/floating_plants.md) (number per species,
+cover, light, growth, the warning for a dense cover, the **Thin out** button), the **water plants** of the interior, the **corals**
+(salt water) and the **terrarium plants** (terrarium, paludarium). Each group lists what it does for the water: water quality per day,
+nitrate, oxygen and CO2. The fertilizer is here too. At the end a list of the plants of the interior (species and count) folds out.
 
 ## Users
 

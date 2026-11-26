@@ -64,36 +64,44 @@ Farbe) mit Anzahl, Geschlechtern, Jungtieren, Weibchen mit Eiern und Güte; für
 am Glas, wie viel die Putzkolonne frisst, das Futter und die Verstecke. Ein Klick auf eine Sorte klappt die Liste ihrer
 Tiere auf: jedes einzelne mit Geschlecht, Alter, Güte und Genen (sobald analysiert); wähle eins, um es genau zu sehen,
 es zu **Analysieren** oder genau dieses zu **Entnehmen**. Mit einer gewählten Sorte holt **Entnehmen** das Tier mit der
-besten Güte (Umschalt: das schlechteste, Strg: eine volle Tüte bzw. einen vollen Eimer) des gewählten Geschlechts (Knopf
-unter der Liste: beliebig, Männchen, Weibchen) in eine Fischtüte oder einen Eimer (der zweite Knopf). **Gelege weg**
+besten Güte (Umschalt: das schlechteste, Strg: eine volle Tüte bzw. ein voller Eimer auf einmal) des gewählten Geschlechts (Knopf
+unter der Liste: beide, Männchen, Weibchen; es ist das Geschlecht, nicht die Menge) in eine Fischtüte oder einen Eimer (der zweite Knopf). **Gelege weg**
 nimmt die Gelege der Apfelschnecken vom Glas.
 
 ![Die Seite Kleintiere](../images/menu_critters.png)
 
 ## Zucht
 
-In Gruppen mit einer dünnen Linie dazwischen: die Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solche Schwarm mit
-seinen Fischen und der Mindestzahl, z. B. „Neonsalmler: 3 von 6“); die **Zuchtbedingungen** mit ✔ und ✘ (solange es kein Nest gibt)
-und darunter das **Schaumnest** (eine Betta-Sache: andere Tiere brüten anders, siehe unten); die Jungtiere; die Eltern und die
-erwarteten Nachkommen; die Zucht der Beifische. Siehe [Zucht](../bettas/breeding.md).
+Ein Knopf oben schaltet zwischen den **Tiergruppen** um, die im Aquarium sind: Bettas, Beifische, Kleintiere (Garnelen, Schnecken,
+Krebse mit den Amano-Larven), Frösche, Reptilien und Amphibien, Tiere anderer Mods. Zu jeder Art die Anzahlen, die Bedingungen
+mit ✔ und ✘ (das ✘ ist, was fehlt) und was gerade läuft (tragende Weibchen, Gelege, Larven, Laich, Kaulquappen, die Brut).
+Bettas: die Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solche Schwarm mit seinen Fischen und der Mindestzahl),
+die **Zuchtbedingungen** (solange es kein Nest gibt) und darunter das **Schaumnest**; mit der Maus auf „Jungfische frei in x Tagen,
+Pflege n %“ siehst du, woraus sich die Pflege zusammensetzt, was fehlt und wie viele Larven voraussichtlich frei schwimmen; die
+Jungfische; die Eltern und die erwarteten Nachkommen. Eine Warnung erscheint, solange Eier oder Jungtiere da sind und ein Motorfilter
+keinen [Ansaugschutz](../equipment/intake_sponge.md) hat (mit der Maus darauf siehst du, wie man einen anbringt). Siehe [Zucht](../bettas/breeding.md).
 
 ## Wasser
 
 ![Der Wasser-Tab](../images/menu_water.png)
 
-Zwei Gruppen mit einer Linie dazwischen. **Das Wasser:** das Volumen, TDS und pH, die Verdunstung (und die offenen oberen
+Zwei Gruppen mit je einer Überschrift. **Werte:** das Volumen, TDS und pH, die Verdunstung (und die offenen oberen
 Blöcke) und der [Sauerstoff](oxygen.md) mit Balken (der weiße Strich ist die Sättigung; mit der Maus darauf siehst du, wohin er
-strebt und warum: Austausch und Verbrauch). **Was es gut hält:** die [Wasserqualität](water_quality.md) mit einem Balken (die rote
-Marke zeigt, ab wann die Bettas leiden), wie schnell sie sinkt und warum (Tiere pro Wasserblock, wie viel die Filter entfernen),
-das Nitrat und das letzte Frischwasser, Heizer und Kühler. Der gespeicherte [Strom](../equipment/power.md) steht in der Übersicht.
+strebt und warum: Austausch und Verbrauch). **Qualität:** die [Wasserqualität](water_quality.md) mit einem Balken (die rote
+Marke zeigt, ab wann die Tiere leiden, die gelbe, ab wann das Wasser mäßig wird; mit der Maus darauf siehst du die Stufen), wie
+schnell sie sinkt und warum (Tiere pro Wasserblock), die Filter (mit der Maus auf der Zeile siehst du, wie viele Wasserblöcke sie
+schaffen und welchen Anteil des Drecks sie entfernen), das Nitrat und das letzte Frischwasser. Heizer und Kühler stehen im Reiter
+Technik, der Dünger im Reiter Pflanzen, der gespeicherte [Strom](../equipment/power.md) in der Übersicht. Ein Reiter mit mehr
+Zeilen, als hineinpassen, scrollt (Mausrad, Balken am rechten Rand).
 
 ## Technik
 
 ![Der Reiter Technik](../images/menu_devices.png)
 
-Zwei Gruppen mit je einer Überschrift. **Belüftung:** die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
-[Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt, wie viele Motorfilter keinen
-[Ansaugschutz](../equipment/intake_sponge.md) haben. **Licht:** die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
+Vier Gruppen mit je einer Überschrift. **Belüftung:** die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
+[Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt. **Filter:** die Motorfilter nach Art (innen, Eck,
+außen, Unterschrank) und wie viele davon einen [Ansaugschutz](../equipment/intake_sponge.md) haben; die Warnung für die ohne zeigt mit
+der Maus, wie man einen anbringt. **Temperatur:** die Heizer und Kühler. **Licht:** die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
 **Tageslicht-Timer** mit ihren Knöpfen (siehe [Licht](../equipment/light.md)). Der [Sauerstoff](oxygen.md) ist ein Wasserwert und
 steht im Reiter Wasser.
 
@@ -101,9 +109,11 @@ steht im Reiter Wasser.
 
 ![Der Pflanzen-Tab](../images/menu_plants.png)
 
-Die [Schwimmpflanzen](../plants/floating_plants.md) des Aquariums: Anzahl je Art, Bedeckung, Licht, Wachstum, die
-Warnung bei dichter Decke und der Knopf **Ausdünnen**; auf beiden Seiten **Verbessert Wasserqualität: +x,x % pro Tag**: was alle
-Pflanzen des Aquariums zusammen leisten, die Schwimmpflanzen und die Pflanzen im Innenraum (mit der Maus darauf siehst du die beiden Anteile).
+In Gruppen mit je einer Überschrift, nur die, die das Aquarium hat: die [Schwimmpflanzen](../plants/floating_plants.md) (Anzahl je Art,
+Bedeckung, Licht, Wachstum, die Warnung bei dichter Decke, der Knopf **Ausdünnen**), die **Wasserpflanzen** des Innenraums, die
+**Korallen** (Salzwasser) und die **Terrarienpflanzen** (Terrarium, Paludarium). Jede Gruppe zeigt, was sie für das Wasser tut:
+Wasserqualität pro Tag, Nitrat, Sauerstoff und CO2. Auch der Dünger steht hier. Am Ende klappt eine Liste der Pflanzen des Innenraums
+(Art und Anzahl) auf.
 
 ## Nutzer
 
