@@ -59,6 +59,12 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 - **Aquarist:** the heading of the tasks is just "Tasks".
 
 ### Fixed
+- **Info overlays:** the tank shows no water amount any more, in none of the three overlays: Jade's and WTHIT's own fluid view and The One Probe's
+  tank gauge (the tank's pipe connection looked like stored water) are switched off for the tank; the water is in the menu. Jade's fluid line
+  of the pipes is now taken out after the whole tooltip is collected (it came after our provider whatever its priority).
+- **Plants tab:** the dense cover line says that feeder food stays on the floating plants.
+- **Algae:** drawn in one batch per stage (the render type changed per face, one draw call each: a frame cost of up to a millisecond
+  on a large tank covered with algae, more with shader packs), and the film lies 0.012 instead of 0.003 inside the glass (margin against z-fighting).
 - **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
   (snails and grown animals never), not only fry. The same switch and rate (`features.breeding.fryIntake`, `internalFilters.fryIntakePerDay`).
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
