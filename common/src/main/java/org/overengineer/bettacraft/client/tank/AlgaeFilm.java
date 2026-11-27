@@ -31,7 +31,10 @@ import org.overengineer.bettacraft.tank.algae.AlgaeSim;
  * into the tank) is the film of the far wall seen through the water, faded by the depth of water in front of it ({@link #back}).
  * Back face culling shows only one of them at a time. The texture is in world space: {@link #SPRITES} tile over {@link #TILE} x {@link #TILE} blocks
  * and every level covers the pixels of the lower ones plus more ({@code tools/assetgen/critters.py}), so neighbouring blocks
- * at different levels read as one film that is denser on one side, not as squares.
+ * at different levels read as one film that is denser on one side, not as squares. M67.5: the tile is 16 blocks (it was 4 and
+ * the same blots came back every 4 blocks on every wall), and each tank and wall direction places it differently (a whole
+ * block offset along the wall and up, maybe mirrored; {@link #seed}): the pattern of one wall does not repeat on the next or
+ * in the next tank, and it stays where it is while the algae grow (only the level changes).
  * <p>
  * The levels per block live in {@link #FILM} (written on the main thread from the controller's synced tank view, read by
  * the chunk meshing threads).
@@ -45,15 +48,15 @@ public final class AlgaeFilm {
         for (int i = 1; i <= LEVELS; i++) SPRITES[i] = BettaCraft.id("block/algae_film_" + i);
     }
 
-    /** The film's texture spans this many blocks each way (64 px, 16 per block). */
-    public static final int TILE = 4;
+    /** The film's texture spans this many blocks each way (256 px, 16 per block). */
+    public static final int TILE = 16;
     /** Water depth (blocks) at which the far film keeps 1/e of its density. */
     static final float WATER_CLARITY = 8F;
     /** Longest water path counted (blocks). */
     private static final int MAX_PATH = 48;
 
-    /** Packed levels per block position (see {@link #pack}); absent = no film. */
-    private static final Map<Long, Integer> FILM = new ConcurrentHashMap<>();
+    /** Packed levels per block position (see {@link #pack}) in the low 32 bits, the tank's {@link #seed} above; absent = no film. */
+    private static final Map<Long, Long> FILM = new ConcurrentHashMap<>();
     /** The positions each controller put into {@link #FILM} (main thread only). */
     private static final Map<BlockPos, LongOpenHashSet> BY_CONTROLLER = new HashMap<>();
     /** The client level {@link #FILM} belongs to. */
@@ -67,8 +70,34 @@ public final class AlgaeFilm {
     /** The packed film levels of the tank block at {@code pos} (0 = none), any thread. */
     public static int at(BlockPos pos) {
         if (hiddenForTest || FILM.isEmpty() || owner != Minecraft.getInstance().level) return 0;
-        Integer v = FILM.get(pos.asLong());
-        return v == null ? 0 : v;
+        Long v = FILM.get(pos.asLong());
+        return v == null ? 0 : (int) (long) v;
+    }
+
+    /** M67.5: the placement seed of the film of the tank block at {@code pos} (0 = none), any thread. */
+    public static int seed(BlockPos pos) {
+        if (hiddenForTest || FILM.isEmpty() || owner != Minecraft.getInstance().level) return 0;
+        Long v = FILM.get(pos.asLong());
+        return v == null ? 0 : (int) (v >>> 32);
+    }
+
+    /** M67.5: the seed of a tank (from its controller's position): 1..65535, never 0 (0 places the texture as it is). */
+    public static int seedOf(BlockPos controller) {
+        long h = controller.asLong() * 0x9E3779B97F4A7C15L;
+        h ^= h >>> 29;
+        h *= 0xBF58476D1CE4E5B9L;
+        h ^= h >>> 32;
+        return 1 + (int) Math.floorMod(h, 65535L);
+    }
+
+    /** M67.5: the placement of the texture on the walls towards {@code d}: bits 0..3 offset along, 4..7 offset up, 8 mirrored. */
+    static int place(int seed, Direction d) {
+        if (seed == 0) return 0;
+        int h = seed * 0x45D9F3B + d.get2DDataValue() * 0x27D4EB2F;
+        h ^= h >>> 15;
+        h *= 0x2C1B3C6D;
+        h ^= h >>> 12;
+        return h & 0x1FF;
     }
 
     /** Level (0..{@link #LEVELS}) of the front film of the glass face towards {@code d}. */
@@ -85,7 +114,7 @@ public final class AlgaeFilm {
      * The packed levels of one tank block: per glass face (2D data value d) the front level in bits 8d..8d+3 and the back level
      * in bits 8d+4..8d+7. {@code stages[d]} is the synced algae level (stage / 4); faces with a tank block beyond them are no glass.
      */
-    static int pack(TankData t, long pos, float[] stages) {
+    public static int pack(TankData t, long pos, float[] stages) {
         int x = BlockPos.getX(pos), y = BlockPos.getY(pos), z = BlockPos.getZ(pos);
         int packed = 0;
         for (int d = 0; d < 4; d++) {
@@ -123,8 +152,9 @@ public final class AlgaeFilm {
                 int packed = pack(t, pos, e.getValue());
                 if (packed == 0) continue;
                 now.add(pos);
-                Integer prev = FILM.put(pos, packed);
-                if (prev == null || prev != packed) dirty.add(SectionPos.asLong(BlockPos.getX(pos) >> 4, BlockPos.getY(pos) >> 4, BlockPos.getZ(pos) >> 4));
+                long value = (packed & 0xFFFFFFFFL) | (long) seedOf(be.getBlockPos()) << 32;
+                Long prev = FILM.put(pos, value);
+                if (prev == null || prev != value) dirty.add(SectionPos.asLong(BlockPos.getX(pos) >> 4, BlockPos.getY(pos) >> 4, BlockPos.getZ(pos) >> 4));
             }
         }
         if (old != null) {
@@ -159,6 +189,11 @@ public final class AlgaeFilm {
      * the position modulo {@link #TILE} matters).
      */
     public static float u(Direction d, BlockPos pos, float x, float y, float z) {
+        return u(d, pos, 0, x, y, z);
+    }
+
+    /** M67.5: with the tank's placement {@code seed} ({@link #place}). Whole blocks only, so one face never wraps inside. */
+    public static float u(Direction d, BlockPos pos, int seed, float x, float y, float z) {
         // along the wall, in the direction the face's own u runs (BoxFaces.u): +x south, -x north, +z west, -z east
         float local = BoxFaces.u(d, x, y, z);
         int block = switch (d) {
@@ -167,10 +202,19 @@ public final class AlgaeFilm {
             case WEST -> pos.getZ();
             default -> -pos.getZ() - 1;
         };
-        return (Math.floorMod(block, TILE) + local) / TILE;
+        int pl = place(seed, d);
+        if ((pl & 0x100) != 0) { // mirrored along the wall
+            block = -block - 1;
+            local = 1 - local;
+        }
+        return (Math.floorMod(block + (pl & 15), TILE) + local) / TILE;
     }
 
     public static float v(BlockPos pos, float y) {
-        return (Math.floorMod(-pos.getY() - 1, TILE) + 1 - y) / TILE;
+        return v(pos, 0, Direction.NORTH, y);
+    }
+
+    public static float v(BlockPos pos, int seed, Direction d, float y) {
+        return (Math.floorMod(-pos.getY() - 1 + (place(seed, d) >> 4 & 15), TILE) + 1 - y) / TILE;
     }
 }
