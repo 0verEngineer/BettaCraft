@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM675', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -147,6 +147,13 @@ loom {
             }
             // M61: -Psmoketestm61: sendBlockUpdated with null states, leaving and joining the world (Modern Dynamics has no Fabric
             // M67: -Psmoketestm67: one energy store per tank (the crank, the tank overview, the cabinet and the external filter)
+            // M67.5: -Psmoketestm675 [-Pm675parts=animals,algae,screens,cabinet,bigtank]: the points of M67.5
+            if (project.hasProperty('smoketestm675')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m675only', 'true'
+                if (project.hasProperty('m675parts')) property 'bettacraft.smoketest.m675parts', project.property('m675parts').toString()
+            }
             if (project.hasProperty('smoketestm67')) {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
