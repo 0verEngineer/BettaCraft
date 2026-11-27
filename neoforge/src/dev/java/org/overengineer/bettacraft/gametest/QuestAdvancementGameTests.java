@@ -125,15 +125,15 @@ public final class QuestAdvancementGameTests {
     /** "Plugged In": only while a device needs power and the tank has FE (config changed: own batch, restored). */
     @GameTest(template = EMPTY, batch = "bettacraft_m45_power", timeoutTicks = 100)
     public static void pluggedInNeedsAPowerOption(GameTestHelper h) {
-        boolean heater = ServerConfig.POWER_HEATER.get();
+        ServerConfig.PowerCosts heater = ServerConfig.POWER_COSTS.get();
         TankBlockEntity c = AerationGameTests.tank(h, 2, 2, 2, 2, 2, 2);
         ServerPlayer sp = player(h, c);
         try {
-            ServerConfig.POWER_HEATER.set(false);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.OFF);
             c.getTank().setPowerBuffer(1000);
             Progress.onMenuOpened(sp, c);
             h.assertTrue(!QuestAdv.done(sp, "powered"), "no power option on: nothing");
-            ServerConfig.POWER_HEATER.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             c.getTank().setPowerBuffer(0);
             Progress.onMenuOpened(sp, c);
             h.assertTrue(!QuestAdv.done(sp, "powered"), "an empty buffer: nothing");
@@ -142,7 +142,7 @@ public final class QuestAdvancementGameTests {
             QuestAdv.check(h, sp, "powered");
             h.succeed();
         } finally {
-            ServerConfig.POWER_HEATER.set(heater);
+            ServerConfig.POWER_COSTS.set(heater);
             QuestAdv.gone(h, sp);
         }
     }

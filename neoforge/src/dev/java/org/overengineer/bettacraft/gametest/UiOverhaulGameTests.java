@@ -296,7 +296,7 @@ public final class UiOverhaulGameTests {
         DataSlot[] server = menu.energy().slots(), shown = client.slots();
         for (int i = 0; i < 4; i++) shown[i].set(server[i].get());
         check(client.stored() == 123_456L, "the stored energy: " + client.stored());
-        check(client.capacity() == TankPower.capacity(), "the capacity: " + client.capacity());
+        check(client.capacity() == TankPower.capacity(t), "the capacity: " + client.capacity());
         // not attached to a tank: nothing to show
         h.setBlock(new BlockPos(20, 1, 20), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.EAST));
         var lone = (ExternalFilterMenu) ((ExternalFilterBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(20, 1, 20)))).createMenu(10, sp.getInventory(), sp);

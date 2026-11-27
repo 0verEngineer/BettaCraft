@@ -177,12 +177,9 @@ public final class DevShowcase {
         rules.set(GameRules.SPAWN_WANDERING_TRADERS, false, server);
         level.setDayTime(6000);
         level.setWeatherParameters(120000, 0, false, false);
-        // M21.5: power off in this world (filters, heaters and pumps run without FE)
-        for (var v : List.of(org.overengineer.bettacraft.config.ServerConfig.POWER_HEATER, org.overengineer.bettacraft.config.ServerConfig.POWER_FILTER,
-                org.overengineer.bettacraft.config.ServerConfig.POWER_LIGHT)) {
-            v.set(false);
-            v.save();
-        }
+        // M21.5: power off in this world (filters, heaters and pumps run without FE); M67: power.costs OFF
+        org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.set(org.overengineer.bettacraft.config.ServerConfig.PowerCosts.OFF);
+        org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.save();
         BlockPos spawn = level.getRespawnData().pos();
         // M63b: the spawn chunk first: unloaded, the height map gave the bottom of the world and the whole showcase stood
         // buried in the ground (1.21.11 and 26.x; 1.21.1 had the chunk loaded)

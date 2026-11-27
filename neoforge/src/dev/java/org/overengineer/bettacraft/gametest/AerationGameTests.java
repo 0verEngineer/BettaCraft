@@ -218,22 +218,22 @@ public final class AerationGameTests {
 
     // ------------------------------------------------------------------ air pump and power
 
-    /** Without power mods the pump simply runs; with aeration.airPumpRequiresEnergy it needs 2 FE/t per air stone. */
+    /** Without power costs the pump simply runs; with power.costs HARD it needs 2 FE/t per air stone. */
     @GameTest(template = EMPTY, batch = "bettacraft_m23_power", timeoutTicks = 200)
     public static void airPumpWithAndWithoutPower(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean saved = ServerConfig.POWER_AIR_PUMP.get();
+        PowerSettings saved = PowerSettings.current();
         try {
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 2);
             InteriorRegion r = region(h, c);
             BlockPos s1 = put(h, r, 4, 0, 4, ModBlocks.AIR_STONE.get().defaultBlockState());
             BlockPos s2 = put(h, r, 10, 0, 4, ModBlocks.AIR_STONE.get().defaultBlockState());
             AirPumpBlockEntity p = pump(h, c, new BlockPos(2, 2, 1));
-            ServerConfig.POWER_AIR_PUMP.set(false);
+            PowerSettings.hard(false);
             TankPower.step(level, c, 20);
             TankAeration.step(level, c, 0.05);
             h.assertTrue(c.airPowered() && p.running() && active(h, s1), "no power needed: it runs");
-            ServerConfig.POWER_AIR_PUMP.set(true);
+            PowerSettings.hard(true);
             c.getTank().setPowerBuffer(0);
             TankPower.step(level, c, 20);
             TankAeration.step(level, c, 0.05);
@@ -253,7 +253,7 @@ public final class AerationGameTests {
             TankPower.step(level, c, 20);
             h.assertTrue(c.lastDemand() == 3, "1.5 outlets: 3 FE/t: " + c.lastDemand());
         } finally {
-            ServerConfig.POWER_AIR_PUMP.set(saved);
+            saved.apply();
         }
         h.succeed();
     }

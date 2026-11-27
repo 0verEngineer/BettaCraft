@@ -93,9 +93,9 @@ final class IntegrationRig {
 
     /** Switches the filter power option on (the tank then takes FE) and gives back a restore action. */
     static Runnable powerOn() {
-        boolean filter = ServerConfig.POWER_FILTER.get();
-        ServerConfig.POWER_FILTER.set(true);
-        return () -> ServerConfig.POWER_FILTER.set(filter);
+        ServerConfig.PowerCosts filter = ServerConfig.POWER_COSTS.get();
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
+        return () -> ServerConfig.POWER_COSTS.set(filter);
     }
 
     // ------------------------------------------------------------------ reflection

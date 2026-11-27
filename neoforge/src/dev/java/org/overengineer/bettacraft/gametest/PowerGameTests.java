@@ -77,22 +77,21 @@ public final class PowerGameTests {
     }
 
     /** The power settings of the server config, restored after a test. */
-    private record PowerConfig(boolean heater, boolean filter, boolean light, double heaterFe, double coolerFe, int filterFe, int lightFe, int buffer) {
+    private record PowerConfig(ServerConfig.PowerCosts costs, double heaterFe, double coolerFe, int filterFe, int lightFe, int perBlock, int perCabinet) {
         static PowerConfig current() {
-            return new PowerConfig(ServerConfig.POWER_HEATER.get(), ServerConfig.POWER_FILTER.get(), ServerConfig.POWER_LIGHT.get(),
+            return new PowerConfig(ServerConfig.POWER_COSTS.get(),
                     ServerConfig.POWER_HEATER_FE_PER_BLOCK.get(), ServerConfig.POWER_COOLER_FE_PER_BLOCK.get(), ServerConfig.POWER_FILTER_FE.get(),
-                    ServerConfig.POWER_LIGHT_FE.get(), ServerConfig.POWER_BUFFER.get());
+                    ServerConfig.POWER_LIGHT_FE.get(), ServerConfig.POWER_STORE_PER_BLOCK.get(), ServerConfig.POWER_STORE_PER_CABINET.get());
         }
 
         void apply() {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
-            ServerConfig.POWER_LIGHT.set(light);
+            ServerConfig.POWER_COSTS.set(costs);
             ServerConfig.POWER_HEATER_FE_PER_BLOCK.set(heaterFe);
             ServerConfig.POWER_COOLER_FE_PER_BLOCK.set(coolerFe);
             ServerConfig.POWER_FILTER_FE.set(filterFe);
             ServerConfig.POWER_LIGHT_FE.set(lightFe);
-            ServerConfig.POWER_BUFFER.set(buffer);
+            ServerConfig.POWER_STORE_PER_BLOCK.set(perBlock);
+            ServerConfig.POWER_STORE_PER_CABINET.set(perCabinet);
         }
     }
 
@@ -104,7 +103,7 @@ public final class PowerGameTests {
         ServerLevel level = h.getLevel();
         PowerConfig saved = PowerConfig.current();
         try {
-            new PowerConfig(true, true, true, 3.0, 5.0, 7, 2, 5000).apply();
+            new PowerConfig(ServerConfig.PowerCosts.HARD, 3.0, 5.0, 7, 2, 5000, 1000).apply();
             // heating tank: 2x2x2 = 8 water blocks, a small heater (enough for 16), one filter, one light block
             TankBlockEntity warm = tank(h, 2, 1, 2, 2, 2, 2);
             ExternalFilterBlockEntity f1 = filter(h, new BlockPos(4, 1, 2), Direction.WEST);
@@ -130,11 +129,12 @@ public final class PowerGameTests {
             cool.getTank().setTargetTemp(34.0F);
             h.assertTrue(TankPower.heaterDemand(level, cool) == 0, "a cooler draws nothing while the tank needs heating");
 
-            // buffer size
+            // M67: the store: 5000 FE per water block (8 of them), no cabinet
+            TankPower.step(level, cool, 1);
             var storage = org.overengineer.bettacraft.platform.Platform.get().energyStorage(level, cool.getBlockPos(), null);
-            h.assertTrue(storage != null && storage.getMaxEnergyStored() == 5000, "buffer 5000 FE");
+            h.assertTrue(storage != null && storage.getMaxEnergyStored() == 8 * 5000, "store 40000 FE: " + (storage == null ? -1 : storage.getMaxEnergyStored()));
             cool.getTank().setPowerBuffer(0);
-            h.assertTrue(storage.receiveEnergy(20000, false) == 5000 && storage.receiveEnergy(1, true) == 0, "takes at most the buffer");
+            h.assertTrue(storage.receiveEnergy(100000, false) == 8 * 5000 && storage.receiveEnergy(1, true) == 0, "takes at most the store");
         } finally {
             saved.apply();
         }
@@ -149,14 +149,14 @@ public final class PowerGameTests {
             return;
         }
         PowerConfig saved = PowerConfig.current();
-        new PowerConfig(false, false, false, saved.heaterFe(), saved.coolerFe(), saved.filterFe(), saved.lightFe(), saved.buffer()).apply();
+        new PowerConfig(ServerConfig.PowerCosts.OFF, saved.heaterFe(), saved.coolerFe(), saved.filterFe(), saved.lightFe(), saved.perBlock(), saved.perCabinet()).apply();
         h.setBlock(new BlockPos(1, 1, 2), block("powah:energy_cell_creative"));
         h.setBlock(new BlockPos(2, 1, 2), block("powah:energy_cable_starter"));
         h.setBlock(new BlockPos(3, 1, 2), block("powah:energy_cable_starter"));
         TankBlockEntity c = tank(h, 4, 1, 2, 1, 1, 1);
         h.runAfterDelay(30, () -> {
             h.assertTrue(c.getTank().powerBuffer() == 0, "no FE while power is off");
-            ServerConfig.POWER_FILTER.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             h.runAfterDelay(60, () -> {
                 long got = c.getTank().powerBuffer();
                 saved.apply();
@@ -176,7 +176,7 @@ public final class PowerGameTests {
             return;
         }
         PowerConfig saved = PowerConfig.current();
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         TankBlockEntity c = tank(h, 4, 1, 2, 2, 1, 1);
         h.setBlock(new BlockPos(1, 1, 2), block("powah:energy_cell_creative"));
         h.setBlock(new BlockPos(2, 1, 2), block("powah:energy_cable_starter"));
@@ -197,7 +197,7 @@ public final class PowerGameTests {
             return;
         }
         PowerConfig saved = PowerConfig.current();
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         ServerLevel level = h.getLevel();
         h.setBlock(new BlockPos(4, 1, 2), ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         TankBlockEntity c = tank(h, 4, 2, 2, 1, 1, 1);
@@ -230,7 +230,7 @@ public final class PowerGameTests {
             return;
         }
         PowerConfig saved = PowerConfig.current();
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         ServerLevel level = h.getLevel();
         // conduit -> filter
         TankBlockEntity a = tank(h, 6, 1, 2, 1, 1, 1);
@@ -259,7 +259,7 @@ public final class PowerGameTests {
             return;
         }
         PowerConfig saved = PowerConfig.current();
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         h.setBlock(new BlockPos(4, 1, 2), ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
         TankBlockEntity c = tank(h, 4, 2, 2, 1, 1, 1);
         h.setBlock(new BlockPos(1, 1, 2), block("enderio:creative_power"));

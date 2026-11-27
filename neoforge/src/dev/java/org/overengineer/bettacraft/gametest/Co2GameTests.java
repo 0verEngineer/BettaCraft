@@ -220,9 +220,9 @@ public final class Co2GameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m25_co2_power", timeoutTicks = 100)
     public static void stationAndRoUnitWithPower(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean saved = ServerConfig.POWER_PUMPS.get();
+        ServerConfig.PowerCosts saved = ServerConfig.POWER_COSTS.get();
         try {
-            ServerConfig.POWER_PUMPS.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             BlockPos furnace = new BlockPos(2, 1, 2), station = new BlockPos(2, 2, 2);
             h.setBlock(furnace, Blocks.FURNACE.defaultBlockState().setValue(BlockStateProperties.LIT, true));
             h.setBlock(station, ModBlocks.CO2_STATION.get().defaultBlockState());
@@ -245,7 +245,7 @@ public final class Co2GameTests {
             int fast = unit.step(level, 20);
             h.assertTrue(slow == 20 && fast == 80 && unit.boosted(), "slow " + slow + ", with FE " + fast);
         } finally {
-            ServerConfig.POWER_PUMPS.set(saved);
+            ServerConfig.POWER_COSTS.set(saved);
         }
         h.succeed();
     }
