@@ -1226,17 +1226,30 @@ def m62a(out_en: Path) -> None:
 
 # M68 (one pipe system): the M65 client smoke with the M68 pipes (-Psmoketestm65 -Pm65parts=pipes,dock -Pm65tag=m68, part C with
 # -Pm65tag=m68c) and the M24 scene (-Psmoketestm24): the rings by role with a short circuit, a row of bundles, the docks of a bundle's
-# lines with their guards, an interior bundle, the flanges of two bundles on the glass, the water change controller with a reservoir
-# and a drain
+# lines with their guards, the flanges of two bundles on the glass, the water change controller with a reservoir and a drain; then
+# the M68 client smoke (-Psmoketestm68): the three example setups, the filter lines, the wrench caps, a short circuit, the
+# free-standing controller and its screen (en + de), the level sensor with a lit lamp, the drain and the interior bundle at full size
 M68_WORLD = {"pipe_roles": ("bettacraft_m65_m68_noshader_pipes_tee", (0, 320, 1280, 720)),
              "pipe_bundle": ("bettacraft_m65_m68_noshader_pipes_bundle", (0, 300, 1280, 620)),
              "pipe_line_docks": ("bettacraft_m65_m68c_noshader_lines_filter_docks", (330, 330, 1010, 560)),
-             "interior_bundle": ("bettacraft_m65_m68c_noshader_lines_interior_bundle", (0, 260, 1000, 700)),
              "bundle_flanges": ("bettacraft_m65_m68c_noshader_lines_east_flanges", (0, 240, 1280, 960)),
-             "water_change_ports": ("bettacraft_m24_water_changer_ports", (100, 40, 1100, 680))}
+             "water_change_ports": ("bettacraft_m24_water_changer_ports", (100, 40, 1100, 680)),
+             # the M68 client smoke (-Psmoketestm68: the stations of the showcase rows 21 and 22, see DevShowcaseM68)
+             "water_example_single": ("bettacraft_m68_changer_at_tank", (180, 200, 1250, 740)),
+             "water_example_filter": ("bettacraft_m68_changer_at_filter", (180, 280, 1280, 680)),
+             "water_example_room": ("bettacraft_m68_technical_room", (0, 300, 1280, 820)),
+             "filter_lines": ("bettacraft_m68_changer_at_filter_back", (0, 160, 1280, 860)),
+             "filter_short_circuit": ("bettacraft_m68_short_circuit_close", (100, 160, 1180, 900)),
+             "pipe_wrench_caps": ("bettacraft_m68_pipe_wrench_caps", (180, 160, 1100, 860)),
+             "water_change_room": ("bettacraft_m68_technical_room_close", (0, 0, 1280, 960)),
+             "level_sensor_lamp": ("bettacraft_m68_sensor_alone", (160, 240, 1160, 920)),
+             "drain": ("bettacraft_m68_changer_drain", (260, 100, 1280, 760)),
+             "interior_bundle": ("bettacraft_m68_lines_inside_above", (0, 200, 1040, 700))}
+# the controller screen of the technical room (GUI scale 2), English and German
+M68_SCREENS = {"water_change_screen": ("bettacraft_m68_en_us_changer_room", "bettacraft_m68_de_de_changer_room", (340, 256, 940, 704))}
 
 
-def m68(out_en: Path) -> None:
+def m68(out_en: Path, out_de: Path) -> None:
     for name, (shot, box) in M68_WORLD.items():
         src = SHOTS / f"{shot}.png"
         if src.exists():
@@ -1245,6 +1258,13 @@ def m68(out_en: Path) -> None:
             save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
         else:
             print("missing", src)
+    for name, (en, de, box) in M68_SCREENS.items():
+        for shot, out in ((en, out_en), (de, out_de)):
+            src = SHOTS / f"{shot}.png"
+            if src.exists():
+                save(Image.open(src).convert("RGB").crop(box), out / f"{name}.png")
+            else:
+                print("missing", src)
 
 
 def save(im: Image.Image, path: Path) -> None:
@@ -1262,7 +1282,7 @@ def main() -> int:
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
     if sys.argv[1:] == ["m68"]:
-        m68(out_en)
+        m68(out_en, out_de)
         return 0
     if sys.argv[1:] == ["m65"]:
         # M65: the thinner pipes (the pipe pictures of the M24 and M40 scenes, -Psmoketestm24, -Psmoketestm40a, -Psmoketestm40b)
