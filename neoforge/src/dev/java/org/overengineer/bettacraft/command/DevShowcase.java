@@ -541,6 +541,7 @@ public final class DevShowcase {
         LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
         filterLines(level, at.east(6 + GAP)); // M40
         terraria(level); // M31
+        powerStore(level); // M67
         // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
         at = startRow(level, "Großbecken");
         bigTank(level, at, 24, 6, 12, 0F, new TankmateSpecies[]{TankmateSpecies.PANGASIUS, TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH,
@@ -572,6 +573,9 @@ public final class DevShowcase {
         herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER, true, 0);
         herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.SLIDER, false, 1);
         herp(level, pc, org.overengineer.bettacraft.terrarium.HerpSpecies.MUSK, false, 0);
+        // M66 point 12: bromeliads, ferns, moss and carnivorous plants on the land and the shore
+        landPlants(level, pc, pr, new PlantSpecies[]{PlantSpecies.NEOREGELIA, PlantSpecies.GUZMANIA, PlantSpecies.BOSTON_FERN, PlantSpecies.CUSHION_MOSS,
+                PlantSpecies.SUNDEW, PlantSpecies.SARRACENIA, PlantSpecies.VENUS_FLYTRAP, PlantSpecies.SOFT_RUSH}, 34, pr.sizeX() - 4, 6, pr.sizeZ() - 6, 5600);
         name(level, at, "Paludarium: Schmuckschildkröten");
         // a dry terrarium: leopard geckos and a corn snake on sand and stone under a basking lamp
         at = at.east(4 + GAP);
@@ -583,6 +587,9 @@ public final class DevShowcase {
         herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, true, 0);
         herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO, false, 1);
         herp(level, dc, org.overengineer.bettacraft.terrarium.HerpSpecies.CORN_SNAKE, true, 0);
+        // M66 point 12: cacti and succulents
+        landPlants(level, dc, dr, new PlantSpecies[]{PlantSpecies.BARREL_CACTUS, PlantSpecies.COLUMN_CACTUS, PlantSpecies.PRICKLY_PEAR, PlantSpecies.ECHEVERIA,
+                PlantSpecies.HAWORTHIA, PlantSpecies.ALOE, PlantSpecies.LITHOPS, PlantSpecies.SEDUM}, 4, dr.sizeX() / 2, 6, dr.sizeZ() - 6, 5610);
         name(level, at, "Terrarium: Leopardgeckos");
         // a moist terrarium on moss: crested geckos and a horned frog
         at = at.east(4 + GAP);
@@ -593,6 +600,9 @@ public final class DevShowcase {
         herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, true, 0);
         herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.CRESTED_GECKO, false, 2);
         herp(level, mc, org.overengineer.bettacraft.terrarium.HerpSpecies.HORNED_FROG, false, 0);
+        // M66 point 12: moss, ferns, fittonia
+        landPlants(level, mc, mr, new PlantSpecies[]{PlantSpecies.FITTONIA, PlantSpecies.BIRDS_NEST_FERN, PlantSpecies.SELAGINELLA, PlantSpecies.BEGONIA,
+                PlantSpecies.PEPEROMIA, PlantSpecies.CUSHION_MOSS, PlantSpecies.POTHOS, PlantSpecies.VRIESEA}, mr.sizeX() / 2, mr.sizeX() - 4, 4, mr.sizeZ() - 6, 5620);
         name(level, at, "Terrarium: Kronengeckos");
         // M31 part d: mobs in glass
         at = at.east(3 + GAP);
@@ -729,6 +739,121 @@ public final class DevShowcase {
         tank(level, header, 2, 1, 1, 0F, false);
         name(level, header, row + ": " + title);
         return start;
+    }
+
+    /** M66 point 12: grown terrarium plants on a grid of the land between x0..x1, z0..z1 (interior coordinates). */
+    private static void landPlants(ServerLevel level, TankBlockEntity c, InteriorRegion r, PlantSpecies[] species, int x0, int x1, int z0, int z1, long seed) {
+        ServerLevel in = InteriorManager.interiorLevel(level.getServer());
+        int cols = (int) Math.ceil(Math.sqrt(species.length)), rows = (species.length + cols - 1) / cols, ok = 0;
+        for (int i = 0; i < species.length; i++) {
+            PlantSpecies s = species[i];
+            int x = x0 + (int) ((i % cols + 0.5) * (x1 - x0) / cols), z = z0 + (int) ((i / cols + 0.5) * (z1 - z0) / rows);
+            if (InteriorPlants.plantAt(in, r, s, x, topAt(in, r, x, z), z, s.stages(), seed + i) != null) ok++;
+            else LOGGER.warn("[showcase] terrarium plant {} did not grow at {} {}", s, x, z);
+        }
+        InteriorPlants.settleTint(level, c);
+        plants += ok;
+        LOGGER.info("[showcase] M66 terrarium plants: {} of {} in {}", ok, species.length, c.getBlockPos());
+    }
+
+    /**
+     * M67: the station "Stromspeicher": one energy store per tank. A tank on six cabinets with two more joined beside them (a big
+     * store), a tank whose cabinet and external filter both take the crank (one store), a tank fed by FE (a Powah creative cell
+     * when Powah is there, else a sign). Signs give the numbers for EASY and HARD. The showcase world keeps power.costs OFF (the
+     * other rows run without power): the signs say how to switch it on.
+     */
+    private static void powerStore(ServerLevel level) {
+        BlockPos at = startRow(level, "Stromspeicher");
+        var saved = org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.get();
+        // 1: a 3 x 2 x 2 tank on six cabinets and two joined cabinets on its right
+        TankBlockEntity big = tank(level, at, 3, 2, 2, 0F, true);
+        for (int z = 0; z < 2; z++) {
+            BlockPos cp = at.offset(3, -1, z);
+            level.setBlockAndUpdate(cp, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
+            if (level.getBlockEntity(cp) instanceof CabinetBlockEntity cab) cab.setWood(rowWood);
+            level.setBlockAndUpdate(cp, Block.updateFromNeighbourShapes(level.getBlockState(cp), level, cp));
+        }
+        light(level, at, 3, 2, 0, DyeColor.WHITE);
+        name(level, at, "Großer Speicher: 8 Schränke");
+        // 2: a 2 x 2 x 2 tank, the crank at its cabinet and at its external filter
+        BlockPos at2 = at.east(5 + GAP);
+        TankBlockEntity crank = tank(level, at2, 2, 2, 2, 0F, true);
+        level.setBlockAndUpdate(at2.offset(2, 0, 1), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState()
+                .setValue(org.overengineer.bettacraft.equipment.ExternalFilterBlock.FACING, Direction.WEST));
+        light(level, at2, 2, 2, 0, DyeColor.WHITE);
+        name(level, at2, "Kurbel: Schrank + Filter");
+        // 3: a 2 x 2 x 2 tank fed by FE
+        BlockPos at3 = at2.east(3 + GAP);
+        TankBlockEntity fed = tank(level, at3, 2, 2, 2, 0F, true);
+        light(level, at3, 2, 2, 0, DyeColor.WHITE);
+        boolean powah = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("powah");
+        if (powah) {
+            var reg = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
+            level.setBlockAndUpdate(at3.offset(2, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cable_starter")).defaultBlockState());
+            level.setBlockAndUpdate(at3.offset(3, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cell_creative")).defaultBlockState());
+        }
+        name(level, at3, "FE-Einspeisung");
+        // the numbers at EASY and HARD (the devices of tank 2: the filter with its heater in the front cabinet, a light)
+        for (TankBlockEntity c : List.of(big, crank, fed)) {
+            c.getTank().setTargetTemp(28F); // the heater heats
+            TankEquipment.invalidate(c);
+        }
+        int[] easy = new int[3], hard = new int[3];
+        long[] cap = new long[3];
+        List<TankBlockEntity> all = List.of(big, crank, fed);
+        try {
+            for (int i = 0; i < 3; i++) {
+                TankBlockEntity c = all.get(i);
+                c.getTank().setPowerBuffer(Long.MAX_VALUE / 4);
+                org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.set(org.overengineer.bettacraft.config.ServerConfig.PowerCosts.EASY);
+                org.overengineer.bettacraft.tank.TankPower.step(level, c, 1);
+                easy[i] = c.lastDemand();
+                org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.set(org.overengineer.bettacraft.config.ServerConfig.PowerCosts.HARD);
+                org.overengineer.bettacraft.tank.TankPower.step(level, c, 1);
+                hard[i] = c.lastDemand();
+                cap[i] = org.overengineer.bettacraft.tank.TankPower.capacity(c);
+            }
+        } finally {
+            org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.set(saved);
+        }
+        big.getTank().setPowerBuffer(cap[0] * 6 / 10);
+        crank.getTank().setPowerBuffer(cap[1] / 4);
+        fed.getTank().setPowerBuffer(cap[2]);
+        for (TankBlockEntity c : all) c.markTankChanged();
+        long click = org.overengineer.bettacraft.tank.TankStore.fePerClick();
+        sign(level, at.offset(1, -1, -2), "Speicher " + kfe(cap[0]), "12 Bl. + 8 Schr.", "EASY " + days(cap[0], easy[0]), "HARD " + days(cap[0], hard[0]));
+        sign(level, at2.offset(0, -1, -2), "Kurbel: Schrank", "+ Außenfilter", click + " FE/Klick", ((cap[1] + click - 1) / click) + " Klicks voll");
+        sign(level, at2.offset(1, -1, -2), "Speicher " + kfe(cap[1]), "8 Bl. + 4 Schr.", "EASY " + days(cap[1], easy[1]), "HARD " + days(cap[1], hard[1]));
+        sign(level, at3.offset(0, -1, -2), "FE-Kabel an", "Becken, Filter,", "Schrank, Licht", powah ? "(Powah-Zelle)" : "(Strom-Mod)");
+        sign(level, at3.offset(1, -1, -2), "Welt: costs OFF", "Server-Config", "power.costs =", "EASY / HARD");
+        LOGGER.info("[showcase] M67 power store: big {} FE ({} / {} FE/t), crank {} FE ({} / {} FE/t), fed {} FE ({} / {} FE/t), Powah {}",
+                cap[0], easy[0], hard[0], cap[1], easy[1], hard[1], cap[2], easy[2], hard[2], powah);
+    }
+
+    /** "720k FE". */
+    private static String kfe(long fe) {
+        return (fe >= 10_000 ? fe / 1000 + "k" : String.valueOf(fe)) + " FE";
+    }
+
+    /** How long a full store runs the tank at {@code demand} FE/t: "1.1 Tage" / "8.4 h". */
+    private static String days(long cap, int demand) {
+        if (demand <= 0) return "-";
+        double d = cap / (24_000.0 * demand);
+        return d >= 1 ? String.format(java.util.Locale.ROOT, "%.1f Tage", d) : String.format(java.util.Locale.ROOT, "%.1f h", d * 24);
+    }
+
+    /** A standing oak sign on the path facing it (north), four short lines. */
+    private static void sign(ServerLevel level, BlockPos pos, String... lines) {
+        level.setBlockAndUpdate(pos.below(), Blocks.SMOOTH_STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos, Blocks.OAK_SIGN.defaultBlockState().setValue(net.minecraft.world.level.block.StandingSignBlock.ROTATION, 8));
+        if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity s) {
+            net.minecraft.world.level.block.entity.SignText t = new net.minecraft.world.level.block.entity.SignText();
+            for (int i = 0; i < Math.min(4, lines.length); i++) t = t.setMessage(i, Component.literal(lines[i]));
+            s.setText(t, true);
+            s.setWaxed(true);
+            s.setChanged();
+            level.sendBlockUpdated(pos, s.getBlockState(), s.getBlockState(), 3);
+        }
     }
 
     // ------------------------------------------------------------------ helpers
