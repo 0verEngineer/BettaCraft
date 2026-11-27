@@ -97,6 +97,15 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 - **Aquarist, tank list:** without a workplace he cares for no tank, but the list still showed the tanks around him as ones he works at
   ("0 of at most 16 tanks" over a list of them). The list shows the tanks around his workplace only.
 
+### Notes (Minecraft 1.21.11)
+- Only the tank's controller in the always-drawn block entity list: Minecraft 1.21.11 decides "always drawn" for a renderer as a whole
+  (no test per block entity), so the tank keeps only its controllers in the client level's list of always-drawn block entities and
+  every other tank block draws nothing; same effect as on 1.21.1.
+- The algae film in the model (shader packs) takes the smooth light of the water it lies on (this version lights the model's water by
+  the chunk renderer, not by light values per corner).
+- The One Probe: its own fluid bar stays off for every block of the mod, not only for tanks and pipes (The One Probe 13.0.0 crashes
+  the client on 1.21.11 when it draws that bar for our blocks).
+
 ## [1.54.0-beta.1] - 2026-11-25
 
 Thinner, cleaner pipes; no water over blocks at the glass.
