@@ -45,7 +45,9 @@ public class PlumbingBlock extends Block {
     public PlumbingBlock(Plumb kind, Properties properties) {
         super(properties);
         this.kind = kind;
-        BlockState s = stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
+        BlockState s = stateDefinition.any();
+        // M68 part C: the pipe dock and the interior bundle have neither (fewer states)
+        if (s.hasProperty(FACING)) s = s.setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
         for (BooleanProperty p : PipeBlock.SIDES.values()) s = s.setValue(p, false);
         registerDefaultState(s);
     }
@@ -57,7 +59,8 @@ public class PlumbingBlock extends Block {
     /** The code of a state in the equipment index (0 = no plumbing). */
     public static int code(BlockState s) {
         if (!(s.getBlock() instanceof PlumbingBlock b)) return 0;
-        if (b instanceof PipeAnchorBlock) return Plumb.code(b.kind, s.getValue(PipeAnchorBlock.MOUNT).get3DDataValue()); // M40
+        if (b instanceof PipeAnchorBlock) return Plumb.code(b.kind, s.getValue(PipeAnchorBlock.MOUNT).get3DDataValue(), s.getValue(PipeAnchorBlock.LINE)); // M40, M68 part C: its line
+        if (b instanceof InteriorBundleBlock) return Plumb.code(b.kind, s.getValue(InteriorBundleBlock.AXIS).ordinal(), s.getValue(InteriorBundleBlock.LANES)); // M68 part C
         return Plumb.code(b.kind, b.kind.outlet() ? s.getValue(FACING).get2DDataValue() : 0);
     }
 
@@ -72,7 +75,7 @@ public class PlumbingBlock extends Block {
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         BlockState s = defaultBlockState();
         // M65: every piece knows the pieces it joins (the guards, outlets and docks draw a short arm towards them)
-        for (Direction d : Direction.values()) s = s.setValue(PipeBlock.SIDES.get(d), joins(ctx.getLevel(), ctx.getClickedPos(), d));
+        for (Direction d : Direction.values()) s = s.setValue(PipeBlock.SIDES.get(d), joins(s, ctx.getLevel().getBlockState(ctx.getClickedPos().relative(d)), d));
         // outlets point away from the player (into the tank) or along the wall they are placed against
         if (kind.outlet()) s = s.setValue(FACING, placedFacing(s, ctx));
         return s;
@@ -127,13 +130,21 @@ public class PlumbingBlock extends Block {
         return true;
     }
 
-    static boolean joins(LevelAccessor level, BlockPos pos, Direction d) {
-        return level.getBlockState(pos.relative(d)).getBlock() instanceof PlumbingBlock;
+    /**
+     * Pure: whether the piece {@code self} joins the piece {@code neighbour} on its side {@code d}. Every piece joins every piece,
+     * M68 part C: but an interior bundle only where one of its lanes leaves ({@link InteriorBundleBlock#joins}); the same rule as
+     * {@link InteriorPlumbing#search}.
+     */
+    public static boolean joins(BlockState self, BlockState neighbour, Direction d) {
+        if (!(neighbour.getBlock() instanceof PlumbingBlock)) return false;
+        if (self.getBlock() instanceof InteriorBundleBlock) return InteriorBundleBlock.bundleJoins(self, neighbour, d);
+        if (neighbour.getBlock() instanceof InteriorBundleBlock) return InteriorBundleBlock.laneOn(neighbour, d.getOpposite()) >= 0;
+        return true;
     }
 
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess tickAccess, BlockPos pos, Direction dir, BlockPos neighborPos, BlockState neighbor, RandomSource random) {
-        return state.setValue(PipeBlock.SIDES.get(dir), neighbor.getBlock() instanceof PlumbingBlock);
+        return state.setValue(PipeBlock.SIDES.get(dir), joins(state, neighbor, dir));
     }
 
     /** M65: placed by the game (a dock, a guard put on from outside): it looks at its neighbours once (they look at it themselves). */
@@ -142,7 +153,7 @@ public class PlumbingBlock extends Block {
         super.onPlace(state, level, pos, old, moving);
         if (level.isClientSide() || old.is(state.getBlock())) return;
         BlockState now = state;
-        for (Direction d : Direction.values()) now = now.setValue(PipeBlock.SIDES.get(d), joins(level, pos, d));
+        for (Direction d : Direction.values()) now = now.setValue(PipeBlock.SIDES.get(d), joins(now, level.getBlockState(pos.relative(d)), d));
         if (now != state) level.setBlock(pos, now, Block.UPDATE_CLIENTS);
     }
 
@@ -159,6 +170,7 @@ public class PlumbingBlock extends Block {
             case INTAKE_GUARD -> box(3, 3, 3, 13, 13, 13); // M40
             case OUTLET_GUARD -> box(4, 4, 4, 12, 12, 12);
             case ANCHOR -> PipeAnchorBlock.shape(state);
+            case BUNDLE -> InteriorBundleBlock.shape(state); // M68 part C
             case LILY -> box(4, 0, 4, 12, 16, 12);
             case NOZZLE -> box(5, 4, 5, 11, 12, 11);
             case SPRAY_BAR -> state.getValue(FACING).getAxis() == Direction.Axis.Z ? box(0, 6, 6, 16, 10, 10) : box(6, 6, 0, 10, 10, 16);
@@ -173,7 +185,8 @@ public class PlumbingBlock extends Block {
     /** M68: an interior pipe is a glass or steel pipe placed in the interior: picking it gives that pipe. */
     @Override
     protected net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        if (kind == Plumb.PIPE) return new net.minecraft.world.item.ItemStack(this == org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_STEEL_PIPE.get()
+        if (kind == Plumb.PIPE || kind == Plumb.BUNDLE) return new net.minecraft.world.item.ItemStack(this == org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_STEEL_PIPE.get()
+                || this == org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_STEEL_PIPE_BUNDLE.get()
                 ? org.overengineer.bettacraft.registry.ModItems.STAINLESS_STEEL_PIPE.get() : org.overengineer.bettacraft.registry.ModItems.GLASS_PIPE.get());
         return super.getCloneItemStack(level, pos, state, includeData);
     }

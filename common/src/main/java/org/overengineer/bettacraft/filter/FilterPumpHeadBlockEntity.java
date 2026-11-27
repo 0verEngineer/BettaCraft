@@ -206,8 +206,8 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
                         if (flows[i] <= 0) continue;
                         if (served == null) served = l.tank().getBlockPos();
                         MultiblockFilter.serve(level, l.tank().getBlockPos(), worldPosition, cleans[i], peat * part[i]);
-                        for (var d : l.intakes()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), true, now);
-                        for (var d : l.returns()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), false, now);
+                        for (var d : l.intakes()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), d.slot(), true, now);
+                        for (var d : l.returns()) org.overengineer.bettacraft.plumbing.interior.TankAnchors.markFlow(level, l.tank(), d.member(), d.face(), d.slot(), false, now);
                     }
                     clog(level, working, part, ch, PipeNetwork.WINDOW / 24000.0);
                     int servedTanks = 0; // M45: one filter for two or more tanks

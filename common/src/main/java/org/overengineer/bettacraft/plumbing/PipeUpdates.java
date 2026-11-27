@@ -140,14 +140,17 @@ public final class PipeUpdates {
                 if (PipeSlots.present(v) && PipeSlots.ring(v) != ring) be.setSlot(slot, PipeSlots.withRing(v, ring));
             }
         }
-        // M40 (E2): where a filter line docks on a tank, its connection appears in the interior right away
-        if (level instanceof ServerLevel sl && n.role() != null && n.role().filterLine() && Features.enabled(Feature.FILTER_LINES)) {
+        // M40 (E2): where a filter line docks on a tank, its connection appears in the interior right away; M68 part C: one per line
+        // of a bundle, and every dock inside shows the ring of its line
+        if (level instanceof ServerLevel sl && !n.docks().isEmpty()) {
+            boolean filter = n.role() != null && n.role().filterLine() && Features.enabled(Feature.FILTER_LINES);
             for (PipeNetwork.Dock d : n.docks()) {
                 if (!level.isLoaded(d.member()) || !(level.getBlockState(d.member()).getBlock() instanceof TankBlock)) continue;
                 TankBlockEntity c = TankMultiblock.getController(level, d.member());
                 if (c == null) continue;
-                if (org.overengineer.bettacraft.plumbing.interior.TankAnchors.existing(sl, c, d.member(), d.face()) == Long.MIN_VALUE)
-                    org.overengineer.bettacraft.plumbing.interior.TankAnchors.ensure(sl, c, d.member(), d.face());
+                if (filter && org.overengineer.bettacraft.plumbing.interior.TankAnchors.existing(sl, c, d.member(), d.face(), d.slot()) == Long.MIN_VALUE)
+                    org.overengineer.bettacraft.plumbing.interior.TankAnchors.ensure(sl, c, d.member(), d.face(), d.slot());
+                else org.overengineer.bettacraft.plumbing.interior.TankAnchors.updateRing(sl, c, d.member(), d.face(), d.slot());
             }
         }
     }

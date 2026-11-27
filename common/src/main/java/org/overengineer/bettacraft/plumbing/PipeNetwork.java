@@ -51,7 +51,12 @@ public final class PipeNetwork {
     public record End(BlockPos pos, Direction face) {}
 
     /** M68: where the network joins a tank: the tank block and its side towards the pipe. */
-    public record Dock(BlockPos member, Direction face) {}
+    public record Dock(BlockPos member, Direction face, int slot) {
+        /** A dock of a single pipe or a device against the glass. */
+        public Dock(BlockPos member, Direction face) {
+            this(member, face, -1);
+        }
+    }
 
     /** M68: a port the network touches: the block, its face towards the pipe and the role it gives. */
     public record Port(BlockPos pos, Direction face, PipeRole role) {}
@@ -298,7 +303,7 @@ public final class PipeNetwork {
                     else nslot = Pipes.slotJoined(level, q, ns, back);
                 } else if (ns.getBlock() instanceof TankBlock) {
                     BlockPos qi = q.immutable();
-                    docks.add(new Dock(qi, back));
+                    docks.add(new Dock(qi, back, s.getBlock() instanceof PipeBundleBlock ? slot : -1)); // M68 part C: the line of a bundle
                     ends.add(new End(qi, back));
                     continue;
                 } else if (ns.getBlock() instanceof PipePort port) {

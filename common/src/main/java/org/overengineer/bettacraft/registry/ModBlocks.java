@@ -328,6 +328,9 @@ public final class ModBlocks {
             () -> new org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noLootTable().sound(SoundType.METAL).noOcclusion()
                     .pushReaction(PushReaction.IMMOVEABLE).isRedstoneConductor((s, l, p) -> false)));
+    /** M68 part C: two to four glass (or steel) pipes in one block of a tank interior: an interior bundle (no item: made of pipes). */
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock> INTERIOR_PIPE_BUNDLE = interiorBundle("interior_pipe_bundle", false);
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock> INTERIOR_STEEL_PIPE_BUNDLE = interiorBundle("interior_steel_pipe_bundle", true);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTAKE_GUARD = plumbing("intake_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> OUTLET_GUARD = plumbing("outlet_guard", org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
 
@@ -436,6 +439,12 @@ public final class ModBlocks {
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> plumbing(String id, org.overengineer.bettacraft.plumbing.interior.Plumb kind) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.PlumbingBlock(kind, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(0.3F).sound(SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED)
+                .isRedstoneConductor((s, l, p) -> false)));
+    }
+
+    private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock> interiorBundle(String id, boolean steel) {
+        return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock(steel, BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL).strength(0.3F).sound(steel ? SoundType.METAL : SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)
                 .isRedstoneConductor((s, l, p) -> false)));
     }
 

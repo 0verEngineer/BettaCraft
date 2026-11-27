@@ -7,18 +7,30 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeRing;
 
 /**
  * M40: the connection point of a filter pipe in the tank interior ({@link Plumb#ANCHOR}). The game puts it where a filter
  * pipe (or a filter connector, or the pipes of a filter from before M40) docks on the tank outside: on the wall, the top
- * or the floor of that tank block, in the middle of its face ({@link TankAnchors}). {@link #MOUNT} is the side of the
- * tank it sits on (pointing out of the tank). Interior pipes join it like the bulkhead's connection and lead the water on
- * to the guards and outlets. It cannot be broken by hand: it goes when the pipe outside goes.
+ * or the floor of that tank block ({@link TankAnchors}). {@link #MOUNT} is the side of the tank it sits on (pointing out of
+ * the tank). Interior pipes join it like the bulkhead's connection and lead the water on to the guards and outlets. It
+ * cannot be broken by hand: it goes when the pipe outside goes.
+ * <p>
+ * M68 part C: where a pipe bundle docks with two to four lines, every line has its own dock at the spot of its flange
+ * ({@link #LINE} 1..4 = slot 0..3 of the bundle; 0 = the one dock in the middle of the face for a single pipe). Its
+ * {@link #RING} shows the role colour of its line outside (blue intake, orange return, green fresh, brown waste water).
+ * No facing and no activity (the outlets have them): earlier states with them load without them.
  */
 public class PipeAnchorBlock extends PlumbingBlock {
     public static final EnumProperty<Direction> MOUNT = EnumProperty.create("mount", Direction.class);
+    /** M68 part C: 0 = the dock of a single pipe (middle of the face), 1..4 = the line of bundle slot 0..3. */
+    public static final IntegerProperty LINE = IntegerProperty.create("line", 0, 4);
+    /** M68 part C: the ring colour of its line. */
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<PipeRing> RING = PipeBlock.RING;
     private static final Map<Direction, VoxelShape> SHAPES = new EnumMap<>(Direction.class);
 
     static {
@@ -33,13 +45,13 @@ public class PipeAnchorBlock extends PlumbingBlock {
 
     public PipeAnchorBlock(Properties properties) {
         super(Plumb.ANCHOR, properties);
-        registerDefaultState(defaultBlockState().setValue(MOUNT, Direction.DOWN));
+        registerDefaultState(defaultBlockState().setValue(MOUNT, Direction.DOWN).setValue(LINE, 0).setValue(RING, PipeRing.NONE));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
-        super.createBlockStateDefinition(b);
-        b.add(MOUNT);
+        PipeBlock.SIDES.values().forEach(b::add);
+        b.add(MOUNT, LINE, RING);
     }
 
     static VoxelShape shape(BlockState state) {
