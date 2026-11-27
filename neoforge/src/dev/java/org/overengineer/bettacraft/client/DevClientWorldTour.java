@@ -205,6 +205,8 @@ final class DevClientWorldTour {
         out = new File(mc.gameDirectory, "tour/" + TAG);
         then(40, () -> {
             mc.options.hideGui = true;
+            // M66 v6: -PtourAlgaeMode=nodepth|off: the proof switches of the algae film (AlgaeRenderer.testMode)
+            org.overengineer.bettacraft.client.render.AlgaeRenderer.testMode = System.getProperty("bettacraft.tour.algaemode", "");
             if (VIEWS.contains("perf")) { // M66: frame times need the frame rate uncapped
                 mc.options.framerateLimit().set(260);
                 mc.options.enableVsync().set(false);
@@ -332,6 +334,27 @@ final class DevClientWorldTour {
                         }
                         continue;
                     }
+                    if (view.startsWith("edge")) { // M66 v6: "edge<distance factor>": the camera looks at the front right edge of the tank across the corner and walks 2 m sideways in 40 steps of 5 cm, a picture each
+                        Direction ef = t.front() == null || t.front().getAxis() == Direction.Axis.Y ? Direction.NORTH : t.front();
+                        Direction es = ef.getClockWise();
+                        double dist = view.length() > 4 ? Double.parseDouble(view.substring(4)) : 1.0;
+                        int width = ef.getAxis() == Direction.Axis.Z ? t.sx() : t.sz(), depth = ef.getAxis() == Direction.Axis.Z ? t.sz() : t.sx();
+                        // the vertical edge between the front and the right side
+                        double ex = t.cx() + ef.getStepX() * depth / 2.0 + es.getStepX() * width / 2.0, ez = t.cz() + ef.getStepZ() * depth / 2.0 + es.getStepZ() * width / 2.0;
+                        double ey = t.min().getY() + t.sy() / 2.0;
+                        double d = (Math.max(Math.max(width, depth), t.sy()) * 0.7 + 2) * dist / Math.sqrt(2);
+                        double bx = ex + (ef.getStepX() + es.getStepX()) * d, bz = ez + (ef.getStepZ() + es.getStepZ()) * d;
+                        // sideways = across the diagonal view
+                        double sx = (ef.getStepX() - es.getStepX()) / Math.sqrt(2), sz = (ef.getStepZ() - es.getStepZ()) / Math.sqrt(2);
+                        double[] ec = clear(new double[]{bx, ey + 0.4, bz, ex, ey, ez}, list, t);
+                        for (int k = 0; k < 40; k++) {
+                            double o = (k - 20) * 0.05;
+                            int kk = k;
+                            then(1, () -> lookAt(ec[0] + sx * o, ec[1], ec[2] + sz * o, new Vec3(ec[3] + sx * o, ec[4], ec[5] + sz * o)));
+                            thenAt(2, () -> shot(pn, t.id() + "_edge" + (int) Math.round(dist * 10) + "_" + String.format("%02d", kk)));
+                        }
+                        continue;
+                    }
                     if (view.startsWith("jitter")) { // M66: the same view five times, the camera moved 3 cm sideways each time (flicker: the pictures differ), "jitter<distance factor>"
                         double[] jc = clear(camera(t, "front"), list, t);
                         if (jc == null) continue;
@@ -359,7 +382,7 @@ final class DevClientWorldTour {
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
             // M63d: a run of only the break view leaves out the sweeps
-            for (int s = 0; s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().equals("pop") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") ? 0 : spots.length); s++) {
+            for (int s = 0; s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().equals("pop") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") || VIEWS.trim().startsWith("edge") ? 0 : spots.length); s++) {
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
