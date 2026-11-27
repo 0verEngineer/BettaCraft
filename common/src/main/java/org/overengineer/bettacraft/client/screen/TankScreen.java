@@ -1085,8 +1085,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (scroll) {
             textScroll = Mth.clamp(textScroll, 0, maxTextScroll());
             drawBottom = 0;
-            int[] pb = panelBounds();
-            g.enableScissor(pb[0] + CONTENT_X + 1, pb[1] + CONTENT_Y + 1, pb[0] + CONTENT_X + cw - 1, pb[1] + viewBottom() + 1);
+            // port: the scissor follows the pose on 26.x (here at the panel's corner), 1.21.1 took screen coordinates
+            g.enableScissor(CONTENT_X + 1, CONTENT_Y + 1, CONTENT_X + cw - 1, viewBottom() + 1);
             g.pose().pushMatrix();
             g.pose().translate((float) (0), (float) (-textScroll));
             mouseY += textScroll;
