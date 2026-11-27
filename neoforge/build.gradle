@@ -1484,6 +1484,57 @@ tasks.register('smoketestUpgrade') {
     }
 }
 
+// gradlew smoketestCrossLoad [-PcrossLoadWorld=<world dir>] : a world saved by Fabric (default: the world of
+// `gradlew fabricSaveLoadTest -PkeepWorld`, run-fabric/saveload/world) loaded by a dedicated NeoForge server (a copy in
+// run/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
+// (DevSmokeCrossLoad). The other direction is :fabric:fabricCrossLoadTest. Log: build/crossload/server.log.
+tasks.register('smoketestCrossLoad') {
+    group = 'verification'
+    description = 'Loads a world saved by Fabric and checks that every animal keeps its tank (dedicated server, no window)'
+    notCompatibleWithConfigurationCache('starts the game process of runServer')
+    dependsOn 'prepareServerRun'
+    dependsOn { tasks.named('runServer').get().classpathProvider }
+    doLast {
+        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file('run-fabric/saveload/world')
+        if (!new File(src, 'level.dat').exists()) throw new GradleException("smoketestCrossLoad: no world at ${src} (gradlew fabricSaveLoadTest -PkeepWorld, or -PcrossLoadWorld=<dir>)")
+        def srv = tasks.named('runServer').get()
+        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+        def logs = rootProject.file('build/crossload')
+        logs.deleteDir()
+        logs.mkdirs()
+        def dir = rootProject.file('run/crossload')
+        def saves = new File(dir, 'saves')
+        def world = new File(saves, 'crossload_check')
+        deleteWorlds('before the run', [world])
+        saves.mkdirs()
+        java.nio.file.Files.walk(src.toPath()).forEach { from ->
+            def to = world.toPath().resolve(src.toPath().relativize(from))
+            if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+            else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+        }
+        new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
+        new File(dir, 'server.properties').write(['online-mode=false', "server-port=${devServerPort}".toString(), 'spawn-protection=0', 'spawn-animals=true',
+                'max-players=1', 'max-tick-time=-1'].join('\n') + '\n', 'UTF-8')
+        checkServerPort(dir, 'smoketestCrossLoad')
+        def cp = new File(logs, 'classpath.txt')
+        cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
+        def command = ([java] + srv.allJvmArgs + ['-Dbettacraft.smoketest.crossload=true', "@${cp.absolutePath}".toString(), srv.mainClass.get()]
+                + srv.args + ['--universe', saves.absolutePath, '--world', 'crossload_check']).collect { it.toString() }
+        def log = new File(logs, 'server.log')
+        def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
+        logger.lifecycle("cross-load server started (pid ${p.pid()}), log ${log}")
+        if (!p.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)) {
+            p.destroyForcibly()
+            throw new GradleException("smoketestCrossLoad: the server did not finish in 15 minutes, see ${log}")
+        }
+        def text = log.getText('UTF-8')
+        text.readLines().findAll { it.contains('crossload') || it.contains('CROSSLOAD') }.take(30).each { logger.lifecycle("  ${it}") }
+        if (!text.contains('CROSSLOAD PASSED')) throw new GradleException("smoketestCrossLoad failed, see ${log}")
+        if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${world}") else deleteWorlds('after the run', [world])
+        logger.lifecycle('smoketestCrossLoad PASSED')
+    }
+}
+
 // gradlew smoketestWorldCleanup : M59 proof that the server smoke cleans up after itself. Runs the smoke server twice in a row
 // (the java command line of runServer with -Dbettacraft.smoketest=true, no window), measures its world after each run and
 // deletes it the way runServer -Psmoketest does. Fails when a world is left over or the second run's world is bigger than the
