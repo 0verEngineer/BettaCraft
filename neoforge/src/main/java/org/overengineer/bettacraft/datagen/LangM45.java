@@ -74,13 +74,14 @@ final class LangM45 {
         q(a, "stainless_steel", "Stainless", "The crucible melts stainless steel (the machines of Mekanism, EnderIO, Create and Thermal make it too): for pipes that never rust in salt water.");
         q(a, "pipes", "Pipework", "Water pumps and glass pipes move water between tanks, reservoirs and devices.");
         q(a, "interior_pipes", "Through the Glass", "A bulkhead takes a pipe through the glass; in the interior, spray bars, nozzles and lily pipes return the water.");
-        q(a, "auto_water_change", "Hands Free", "A water change controller with pipes to fresh water and a drain changes the water on its own schedule.");
-        q(a, "top_off", "Top It Off", "A level sensor tops evaporated water up from a pipe, so the salt and the values stay steady.");
+        q(a, "auto_water_change", "Hands Free", "A water change controller with a pipe from fresh water and a drain at its waste water outlet changes the water on its own schedule.");
+        q(a, "top_off", "Top It Off", "A level sensor at a tank measures the water level; the water change controller that fills the tank reads it and tops off evaporated water through its fresh water line, so the salt and the values stay steady.");
         q(a, "multiblock_filter", "Filter Room", "Build a multiblock filter: a pump head on filter chambers with an inlet and an outlet. Fill the chambers with sponge, rings, carbon or peat.");
         q(a, "filter_lines", "Filter Lines", "Pipes at the filter's inlet and outlet become its intake and return line and reach tanks further away. Every place where a line docks on a tank needs a guard against the fish.");
+        q(a, "drain", "Down the Drain", "A drain at the end of a waste water line discards the old water of a water change."); // M68
         q(a, "pipe_wrench", "The Right Tool", "The pipe wrench closes a side of a pipe: two lines side by side stay apart."); // M68
         q(a, "shared_filter", "One Filter for All", "Connect two tanks to the same multiblock filter: the flow and the cleaning are shared by their water volumes.");
-        q(a, "pipe_covers", "Out of Sight", "Pipe covers hide filter pipes in walls and floors in the look of any block.");
+        q(a, "pipe_covers", "Out of Sight", "Pipe covers hide pipes and pipe bundles in walls and floors in the look of any block.");
         q(a, "decor", "Interior Design", "Place decoration in the interior: caves, roots, stones and wrecks give the fish cover and the tank character.");
         q(a, "floating_plants", "Floating Carpet", "Floating plants spread on the surface, take up waste and give shade. Bettas build their nests under them.");
         q(a, "algae", "Clear View", "Strong light and waste grow algae on the glass. Scrape them off with the algae scraper, or let snails and algae eaters do it.");

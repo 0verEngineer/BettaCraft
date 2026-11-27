@@ -219,6 +219,10 @@
   "quest.216DE45855BE76D6.quest_desc": [
     "{\"translate\":\"quest.bettacraft.top_off.desc\"}"
   ],
+  "quest.7D7304C896116F06.title": "{\"translate\":\"quest.bettacraft.drain.title\"}",
+  "quest.7D7304C896116F06.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.drain.desc\"}"
+  ],
   "quest.510CECC79FBBC892.title": "{\"translate\":\"quest.bettacraft.multiblock_filter.title\"}",
   "quest.510CECC79FBBC892.quest_desc": [
     "{\"translate\":\"quest.bettacraft.multiblock_filter.desc\"}"
