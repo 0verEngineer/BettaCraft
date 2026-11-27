@@ -33,8 +33,8 @@ public final class AquaristAssign {
 
     public static void start(ServerPlayer p, AquaristEntity npc, Kind kind) {
         PENDING.put(p.getUUID(), new Pending(npc.getId(), kind, p.level().getGameTime() + WAIT));
-        p.displayClientMessage(Component.translatable("message.bettacraft.aquarist.assign_" + kind.name().toLowerCase(java.util.Locale.ROOT),
-                ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32)).withStyle(ChatFormatting.YELLOW), true);
+        p.sendOverlayMessage(Component.translatable("message.bettacraft.aquarist.assign_" + kind.name().toLowerCase(java.util.Locale.ROOT),
+                ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32)).withStyle(ChatFormatting.YELLOW));
     }
 
     /** GameTests: whether the player waits to assign something. */
@@ -60,30 +60,30 @@ public final class AquaristAssign {
         e.setCancellationResult(InteractionResult.SUCCESS);
         Component err = assign(level, p, npc, e.getPos(), w.kind());
         if (err == null) PENDING.remove(p.getUUID());
-        else p.displayClientMessage(err.copy().withStyle(ChatFormatting.RED), true);
+        else p.sendOverlayMessage(err.copy().withStyle(ChatFormatting.RED));
     }
 
     /** Assigns the block at {@code pos}; returns the reason when it does not fit, null when done (the menu opens again). */
     public static Component assign(ServerLevel level, ServerPlayer p, AquaristEntity npc, BlockPos pos, Kind kind) {
-        if (!p.getUUID().equals(npc.employer()) && !p.hasPermissions(2)) return Component.translatable("message.bettacraft.aquarist.not_yours");
+        if (!p.getUUID().equals(npc.employer()) && !org.overengineer.bettacraft.util.Perms.has(p, 2)) return Component.translatable("message.bettacraft.aquarist.not_yours");
         BlockPos from = npc.workplace() != null ? npc.workplace() : npc.blockPosition();
         int r = ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32);
         if (pos.distSqr(from) > (double) r * r) return Component.translatable("message.bettacraft.aquarist.assign_far", r);
         if (kind == Kind.BASIN) {
             if (!level.getBlockState(pos).is(org.overengineer.bettacraft.registry.ModBlocks.BREEDING_BASIN.get())) return Component.translatable("message.bettacraft.aquarist.assign_no_basin");
             if (!npc.assignBasin(level, pos)) return Component.translatable("message.bettacraft.aquarist.assign_basin_taken");
-            p.displayClientMessage(Component.translatable("message.bettacraft.aquarist.assigned_basin").withStyle(ChatFormatting.GREEN), true);
+            p.sendOverlayMessage(Component.translatable("message.bettacraft.aquarist.assigned_basin").withStyle(ChatFormatting.GREEN));
         } else if (kind == Kind.BED) {
             if (!(level.getBlockState(pos).getBlock() instanceof BedBlock)) return Component.translatable("message.bettacraft.aquarist.assign_no_bed");
             if (!npc.assignBed(level, pos)) return Component.translatable("message.bettacraft.aquarist.assign_bed_taken");
-            p.displayClientMessage(Component.translatable("message.bettacraft.aquarist.assigned_bed").withStyle(ChatFormatting.GREEN), true);
+            p.sendOverlayMessage(Component.translatable("message.bettacraft.aquarist.assigned_bed").withStyle(ChatFormatting.GREEN));
         } else {
             if (level.getBlockEntity(pos) instanceof TankBlockEntity
                     || org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, pos, null) == null) {
                 return Component.translatable("message.bettacraft.aquarist.assign_no_chest");
             }
             npc.setChest(pos);
-            p.displayClientMessage(Component.translatable("message.bettacraft.aquarist.assigned_chest").withStyle(ChatFormatting.GREEN), true);
+            p.sendOverlayMessage(Component.translatable("message.bettacraft.aquarist.assigned_chest").withStyle(ChatFormatting.GREEN));
         }
         AquaristMenu.open(p, npc);
         return null;

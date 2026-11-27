@@ -2,7 +2,7 @@ package org.overengineer.bettacraft.client.screen;
 
 import java.util.List;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.overengineer.bettacraft.equipment.MenuEnergy;
@@ -15,7 +15,7 @@ final class EnergyRow {
     private EnergyRow() {}
 
     /** The row at {@code x, y} (menu coordinates) {@code w} wide. */
-    static void draw(GuiGraphics g, Font font, int x, int y, int w, MenuEnergy e) {
+    static void draw(GuiGraphicsExtractor g, Font font, int x, int y, int w, MenuEnergy e) {
         long cap = e.capacity();
         int room = w - BAR_W - 6;
         Component text;
@@ -25,14 +25,14 @@ final class EnergyRow {
                     String.format(java.util.Locale.ROOT, "%,d", cap));
         }
         int tw = font.width(text);
-        if (tw <= room) g.drawString(font, text, x, y, 0x404040, false);
+        if (tw <= room) g.text(font, text, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
         else {
             float s = Math.max(0.5F, room / (float) tw);
-            g.pose().pushPose();
-            g.pose().translate(x, y + (1 - s) * 4, 0);
-            g.pose().scale(s, s, 1);
-            g.drawString(font, text, 0, 0, 0x404040, false);
-            g.pose().popPose();
+            g.pose().pushMatrix();
+            g.pose().translate((float) (x), (float) (y + (1 - s) * 4));
+            g.pose().scale(s, s);
+            g.text(font, text, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+            g.pose().popMatrix();
         }
         int bx = x + w - BAR_W;
         g.fill(bx - 1, y, bx + BAR_W + 1, y + 8, 0xFF555555);
@@ -48,10 +48,10 @@ final class EnergyRow {
     }
 
     /** M66: {@code key} = the text of the device ({@code gui.bettacraft.filter.energy_tooltip} for the external filter, {@code .cabinet}). */
-    static void tooltip(GuiGraphics g, Font font, int mx, int my, MenuEnergy e, String key) {
+    static void tooltip(GuiGraphicsExtractor g, Font font, int mx, int my, MenuEnergy e, String key) {
         List<FormattedCharSequence> lines = font.split(Component.translatable(key), 200);
         if (!TankPower.anyRequired()) lines = new java.util.ArrayList<>(lines);
         if (!TankPower.anyRequired()) lines.addAll(font.split(Component.translatable("gui.bettacraft.filter.energy_off").withStyle(net.minecraft.ChatFormatting.GRAY), 200));
-        g.renderTooltip(font, lines, mx, my);
+        g.setTooltipForNextFrame(font, lines, mx, my);
     }
 }

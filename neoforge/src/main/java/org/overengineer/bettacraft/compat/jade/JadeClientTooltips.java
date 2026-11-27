@@ -48,7 +48,7 @@ final class JadeClientTooltips {
         }
 
         @Override
-        public ResourceLocation getUid() {
+        public Identifier getUid() {
             return BettaCraftJadePlugin.PIPE;
         }
 

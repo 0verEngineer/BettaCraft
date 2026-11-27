@@ -58,7 +58,7 @@ public final class AlgaeRenderer {
         if (level == null || t.algae().isEmpty() || !(be.onContraption() || TankBlockEntity.DYNAMIC_WATER.test(be))) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera().position();
         // one batch for the whole tank (see TEXTURE): one draw call, sorted back to front
         VertexConsumer vc = null;
         for (var e : t.algae().long2ObjectEntrySet()) {

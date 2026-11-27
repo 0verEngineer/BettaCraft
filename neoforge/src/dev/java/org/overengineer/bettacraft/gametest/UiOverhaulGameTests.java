@@ -1,9 +1,11 @@
 package org.overengineer.bettacraft.gametest;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -17,8 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.aquarist.AquaristAccess;
 import org.overengineer.bettacraft.aquarist.AquaristAssign;
@@ -62,7 +64,7 @@ public final class UiOverhaulGameTests {
     private UiOverhaulGameTests() {}
 
     private static void check(boolean ok, String what) {
-        if (!ok) throw new GameTestAssertException(what);
+        if (!ok) throw new org.overengineer.bettacraft.gametest.framework.GameTestFailure(what);
     }
 
     // ------------------------------------------------------------------ the aquarist: rearing tanks
@@ -101,22 +103,21 @@ public final class UiOverhaulGameTests {
             npc.toggleRearingSpecies(a.getTank().id(), "neon_tetra");
             check(npc.rearingTanks().get(0).takes("betta"), "nothing ticked: all species");
             // save and load
-            CompoundTag tag = new CompoundTag();
-            npc.addAdditionalSaveData(tag);
-            AquaristEntity back = ModEntities.HIRED_AQUARIST.get().create(h.getLevel());
-            back.readAdditionalSaveData(tag);
+            CompoundTag tag = NbtCompat.saveEntityWithoutId(npc);
+            AquaristEntity back = ModEntities.HIRED_AQUARIST.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.LOAD);
+            NbtCompat.loadEntity(back, tag);
             check(back.rearingTanks().size() == 2 && back.rearingTanks().get(1).tank().equals(b.getTank().id()), "the list survives a load");
             // an older save: one "rearing" tank
             CompoundTag old = tag.copy();
-            CompoundTag inner = old.getCompound("bettacraft_aquarist");
+            CompoundTag inner = old.getCompoundOrEmpty("bettacraft_aquarist");
             inner.remove("rearing_tanks");
-            inner.putUUID("rearing", a.getTank().id());
-            AquaristEntity migrated = ModEntities.HIRED_AQUARIST.get().create(h.getLevel());
-            migrated.readAdditionalSaveData(old);
+            NbtCompat.putUUID(inner, "rearing", a.getTank().id());
+            AquaristEntity migrated = ModEntities.HIRED_AQUARIST.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.LOAD);
+            NbtCompat.loadEntity(migrated, old);
             check(migrated.rearingTanks().size() == 1 && a.getTank().id().equals(migrated.rearingTank()), "the old rearing tank stays his rearing tank");
             // the menu lists them
             CompoundTag view = AquaristMenu.view(sp, npc);
-            check(view.getList("rearing_tanks", Tag.TAG_COMPOUND).size() == 2, "the menu lists both");
+            check(view.getListOrEmpty("rearing_tanks").size() == 2, "the menu lists both");
             h.succeed();
         } finally {
             HiredAquaristGameTests.cleanup(h, sp.getUUID());
@@ -145,18 +146,17 @@ public final class UiOverhaulGameTests {
                         "no visit to the first tank for nothing");
             }
             boolean viewed = false;
-            for (Tag t : AquaristMenu.view(sp, npc).getList("tanks", Tag.TAG_COMPOUND)) {
+            for (Tag t : AquaristMenu.view(sp, npc).getListOrEmpty("tanks")) {
                 CompoundTag c = (CompoundTag) t;
-                if (c.getUUID("id").equals(a.getTank().id())) {
+                if (NbtCompat.getUUID(c, "id").equals(a.getTank().id())) {
                     viewed = true;
-                    check(c.getInt("off") == ((1 << AquaristTask.FEED.ordinal()) | (1 << AquaristTask.WARN.ordinal())), "the menu knows what is off: " + c.getInt("off"));
+                    check(c.getIntOr("off", 0) == ((1 << AquaristTask.FEED.ordinal()) | (1 << AquaristTask.WARN.ordinal())), "the menu knows what is off: " + c.getIntOr("off", 0));
                 }
             }
             check(viewed, "the tank is in the menu");
-            CompoundTag tag = new CompoundTag();
-            npc.addAdditionalSaveData(tag);
-            AquaristEntity back = ModEntities.HIRED_AQUARIST.get().create(h.getLevel());
-            back.readAdditionalSaveData(tag);
+            CompoundTag tag = NbtCompat.saveEntityWithoutId(npc);
+            AquaristEntity back = ModEntities.HIRED_AQUARIST.get().create(h.getLevel(), net.minecraft.world.entity.EntitySpawnReason.LOAD);
+            NbtCompat.loadEntity(back, tag);
             check(!back.mayDo(a.getTank().id(), AquaristTask.FEED) && back.mayDo(b.getTank().id(), AquaristTask.FEED), "it survives a load");
             npc.setMayDo(a.getTank().id(), AquaristTask.FEED, true);
             check(AquaristWork.feedDue(h.getLevel(), npc, a), "switched on again");
@@ -201,14 +201,14 @@ public final class UiOverhaulGameTests {
             check(npc.unpaidDays() == 0 && HiredAquaristGameTests.count(oldChest, Items.EMERALD) == 5, "paid from his barrel, the old chest untouched");
             // a second bed
             BlockPos bed2 = new BlockPos(12, 1, 20);
-            var foot = Blocks.RED_BED.defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.FACING, Direction.SOUTH)
+            var foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED).defaultBlockState().setValue(net.minecraft.world.level.block.BedBlock.FACING, Direction.SOUTH)
                     .setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.FOOT);
             h.setBlock(bed2, foot);
             h.setBlock(bed2.south(), foot.setValue(net.minecraft.world.level.block.BedBlock.PART, net.minecraft.world.level.block.state.properties.BedPart.HEAD));
             BlockPos oldBed = npc.bed();
             check(AquaristAssign.assign(level, sp, npc, h.absolutePos(bed2), AquaristAssign.Kind.BED) == null, "the second bed is his now");
             check(h.absolutePos(bed2.south()).equals(npc.bed()), "his bed is the head of the second: " + npc.bed());
-            check(level.getPoiManager().getFreeTickets(oldBed) > 0, "the first bed is free again");
+            check(freeTickets(level, oldBed) > 0, "the first bed is free again");
             // somebody else's bed is refused
             check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(14, 1, 14)), AquaristAssign.Kind.BED) != null, "no bed there");
             npc.setChest(null);
@@ -239,12 +239,12 @@ public final class UiOverhaulGameTests {
             check(level.getPoiManager().take(hh -> hh.is(org.overengineer.bettacraft.villager.ModVillagers.AQUARIST_POI_KEY),
                     (hh, p) -> p.equals(h.absolutePos(taken)), h.absolutePos(taken), 1).isPresent(), "the other basin is taken by somebody");
             check(AquaristAssign.assign(level, sp, npc, h.absolutePos(taken), AquaristAssign.Kind.BASIN) != null, "an occupied basin is refused");
-            check(oldBasin.equals(npc.workplace()) && level.getPoiManager().getFreeTickets(oldBasin) == 0, "nothing changed, he still holds his basin");
+            check(oldBasin.equals(npc.workplace()) && freeTickets(level, oldBasin) == 0, "nothing changed, he still holds his basin");
             check(AquaristAssign.assign(level, sp, npc, h.absolutePos(new BlockPos(8, 1, 14)), AquaristAssign.Kind.BASIN) != null, "no basin there");
             check(AquaristAssign.assign(level, sp, npc, h.absolutePos(free), AquaristAssign.Kind.BASIN) == null, "the free basin is his now");
             check(h.absolutePos(free).equals(npc.workplace()), "he works at the new basin: " + npc.workplace());
-            check(level.getPoiManager().getFreeTickets(oldBasin) > 0, "the first basin is free again");
-            check(level.getPoiManager().getFreeTickets(h.absolutePos(free)) == 0, "the new basin carries his ticket");
+            check(freeTickets(level, oldBasin) > 0, "the first basin is free again");
+            check(freeTickets(level, h.absolutePos(free)) == 0, "the new basin carries his ticket");
             // auto: the new basin back, another free one (the first)
             npc.autoBasin(level);
             check(oldBasin.equals(npc.workplace()), "auto: a free basin of his own search: " + npc.workplace());
@@ -267,10 +267,10 @@ public final class UiOverhaulGameTests {
         check(be != null && be.items().getSlots() == 2, "two slots");
         be.items().setStackInSlot(0, new ItemStack(ModItems.BETTA_PELLETS.get(), 5));
         CompoundTag tag = be.saveWithoutMetadata(level.registryAccess());
-        tag.getCompound("items").putInt("Size", 1); // what the old version wrote
-        tag.getCompound("items").getList("Items", Tag.TAG_COMPOUND);
+        tag.getCompoundOrEmpty("items").putInt("Size", 1); // what the old version wrote
+        tag.getCompoundOrEmpty("items").getListOrEmpty("Items");
         ClipFeederBlockEntity loaded = new ClipFeederBlockEntity(h.absolutePos(at), level.getBlockState(h.absolutePos(at)));
-        loaded.loadWithComponents(tag, level.registryAccess());
+        loaded.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(level.registryAccess(), tag));
         check(loaded.items().getSlots() == 2 && loaded.items().getStackInSlot(0).getCount() == 5, "the food stays in the first slot of two: " + loaded.items().getSlots());
         h.succeed();
     }
@@ -342,18 +342,18 @@ public final class UiOverhaulGameTests {
         org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         TankView v = TankView.read(TankView.build(sp, c));
-        var small = v.breeding.getList("g_small", Tag.TAG_COMPOUND);
-        check(small.size() == 1 && small.getCompound(0).getString("n").equals(shrimp.translationKey()), "the shrimp group: " + small);
-        var conds = small.getCompound(0).getList("cond", Tag.TAG_COMPOUND);
+        var small = v.breeding.getListOrEmpty("g_small");
+        check(small.size() == 1 && small.getCompoundOrEmpty(0).getStringOr("n", "").equals(shrimp.translationKey()), "the shrimp group: " + small);
+        var conds = small.getCompoundOrEmpty(0).getListOrEmpty("cond");
         boolean pair = false, temp = false;
         for (int i = 0; i < conds.size(); i++) {
-            var cd = conds.getCompound(i);
-            if (cd.getString("k").equals("pair")) pair = cd.getBoolean("ok");
-            if (cd.getString("k").equals("temp")) temp = cd.getBoolean("ok");
+            var cd = conds.getCompoundOrEmpty(i);
+            if (cd.getStringOr("k", "").equals("pair")) pair = cd.getBooleanOr("ok", false);
+            if (cd.getStringOr("k", "").equals("temp")) temp = cd.getBooleanOr("ok", false);
         }
         check(pair && temp, "a pair of shrimp at 26 C: " + conds);
-        var frogs = v.breeding.getList("g_frogs", Tag.TAG_COMPOUND);
-        check(frogs.size() == 1 && !frogs.getCompound(0).getList("st", Tag.TAG_COMPOUND).isEmpty(), "the frog group with its tadpoles: " + frogs);
+        var frogs = v.breeding.getListOrEmpty("g_frogs");
+        check(frogs.size() == 1 && !frogs.getCompoundOrEmpty(0).getListOrEmpty("st").isEmpty(), "the frog group with its tadpoles: " + frogs);
         check(v.tech.motors[4] == 1 && v.tech.motors[5] == 0 && v.tech.unprotected >= 1, "one external filter without a sponge: " + java.util.Arrays.toString(v.tech.motors));
         f.setIntakeSponge(true);
         TankView v2 = TankView.read(TankView.build(sp, c));
@@ -370,12 +370,18 @@ public final class UiOverhaulGameTests {
         TankBlockEntity c = PlumbingGameTests.tank(h, 5, 1, 5, 2, 2, 2);
         ServerPlayer sp = MockPlayers.serverPlayer(h);
         CompoundTag t = TankView.build(sp, c);
-        t.getCompound("breeding").remove("g_small");
-        t.getCompound("tech").remove("motors");
-        t.getCompound("water_care").remove("water_blocks");
-        t.getCompound("aquatic").remove("fx");
+        t.getCompoundOrEmpty("breeding").remove("g_small");
+        t.getCompoundOrEmpty("tech").remove("motors");
+        t.getCompoundOrEmpty("water_care").remove("water_blocks");
+        t.getCompoundOrEmpty("aquatic").remove("fx");
         TankView v = TankView.read(t);
         check(v.tech.motors.length == 8 && v.aquatic.effects.length == 16, "defaults kept");
         h.succeed();
+    }
+
+    /** Port 26.x: the free tickets of the POI at {@code pos} (0 when there is none). */
+    private static int freeTickets(ServerLevel level, BlockPos pos) {
+        return level.getPoiManager().getInSquare(t -> true, pos, 0, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY)
+                .filter(r -> r.getPos().equals(pos)).mapToInt(net.minecraft.world.entity.ai.village.poi.PoiRecord::getFreeTickets).findFirst().orElse(0);
     }
 }

@@ -54,11 +54,11 @@ public final class BreedingOverview {
     }
 
     public static void cond(CompoundTag e, String k, boolean ok, Object... args) {
-        e.getList("cond", 10).add(line(k, ok, args));
+        e.getListOrEmpty("cond").add(line(k, ok, args));
     }
 
     public static void state(CompoundTag e, String k, Object... args) {
-        e.getList("st", 10).add(line(k, true, args));
+        e.getListOrEmpty("st").add(line(k, true, args));
     }
 
     private static CompoundTag line(String k, boolean ok, Object[] args) {

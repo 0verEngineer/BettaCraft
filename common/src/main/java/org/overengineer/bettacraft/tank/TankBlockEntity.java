@@ -489,12 +489,12 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void setRemoved() {
         super.setRemoved();
         CLIENT_CONTROLLERS.remove(this);
-        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
+        if (level != null && level.isClientSide()) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     public void onChunkUnloaded() {
         CLIENT_CONTROLLERS.remove(this);
-        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
+        if (level != null && level.isClientSide()) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     private void updateClientControllerSet() {

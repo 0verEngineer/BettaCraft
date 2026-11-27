@@ -134,7 +134,7 @@ public final class AlgaeFilm {
             }
         }
         if (!now.isEmpty()) BY_CONTROLLER.put(be.getBlockPos().immutable(), now);
-        for (long s : dirty) mc.levelRenderer.setSectionDirty(SectionPos.x(s), SectionPos.y(s), SectionPos.z(s));
+        for (long s : dirty) mc.levelExtractor.setSectionDirty(SectionPos.x(s), SectionPos.y(s), SectionPos.z(s));
     }
 
     /** The controller left the client (removed, chunk unloaded, no controller any more): its film goes. */
@@ -145,12 +145,12 @@ public final class AlgaeFilm {
         if (old == null) return;
         LongOpenHashSet dirty = new LongOpenHashSet();
         for (long pos : old) if (FILM.remove(pos) != null) dirty.add(SectionPos.asLong(BlockPos.getX(pos) >> 4, BlockPos.getY(pos) >> 4, BlockPos.getZ(pos) >> 4));
-        for (long s : dirty) mc.levelRenderer.setSectionDirty(SectionPos.x(s), SectionPos.y(s), SectionPos.z(s));
+        for (long s : dirty) mc.levelExtractor.setSectionDirty(SectionPos.x(s), SectionPos.y(s), SectionPos.z(s));
     }
 
     /** Dev tour: every film again (after {@link #hiddenForTest} changed): all chunks are meshed again. */
     public static void refreshAllForTest() {
-        Minecraft.getInstance().levelRenderer.allChanged();
+        Minecraft.getInstance().levelExtractor.allChanged();
     }
 
     /**

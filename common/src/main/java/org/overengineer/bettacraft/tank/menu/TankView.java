@@ -1110,7 +1110,7 @@ public final class TankView {
             tannin = t.getDoubleOr("tannin", 0d);
             wood = t.getDoubleOr("wood", 0d);
             chemOff = new ArrayList<>();
-            for (net.minecraft.nbt.Tag x : t.getList("chem_off", net.minecraft.nbt.Tag.TAG_STRING)) chemOff.add(NbtCompat.asString(x));
+            for (net.minecraft.nbt.Tag x : t.getListOrEmpty("chem_off")) chemOff.add(NbtCompat.asString(x));
             co2On = t.getBooleanOr("co2_on", false);
             co2Bubbles = t.getDoubleOr("co2_bubbles", 0d);
             co2Target = t.getDoubleOr("co2_target", 0d);

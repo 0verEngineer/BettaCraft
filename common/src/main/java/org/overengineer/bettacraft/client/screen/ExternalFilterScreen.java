@@ -22,9 +22,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     private static final int ENERGY_X = 8, ENERGY_Y = 78, ENERGY_W = 200;
 
     public ExternalFilterScreen(ExternalFilterMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = ExternalFilterMenu.WIDTH;
-        imageHeight = ExternalFilterMenu.HEIGHT;
+        super(menu, inv, title, ExternalFilterMenu.WIDTH, ExternalFilterMenu.HEIGHT);
         inventoryLabelX = ExternalFilterMenu.INV_X;
         inventoryLabelY = ExternalFilterMenu.INV_Y - 11;
     }

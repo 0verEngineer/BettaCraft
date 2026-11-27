@@ -69,12 +69,12 @@ public class AquaristScreen extends Screen {
             s.refresh();
             return;
         }
-        if (mc.screen instanceof AquaristSpeciesScreen sp && sp.parent().view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
+        if (mc.gui.screen() instanceof AquaristSpeciesScreen sp && sp.parent().view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
             sp.parent().view = view;
             sp.parent().refresh();
             return;
         }
-        mc.setScreen(new AquaristScreen(view));
+        mc.gui.setScreen(new AquaristScreen(view));
     }
 
     CompoundTag view() {
@@ -99,14 +99,14 @@ public class AquaristScreen extends Screen {
     /** Dev smoke test only: selects the first tank of the list on the tanks tab. */
     public void selectFirstTankForTest() {
         var list = view.getListOrEmpty("tanks");
-        if (!list.isEmpty()) selectedTank = list.getCompoundOrEmpty(0).getUUID("id");
+        if (!list.isEmpty()) selectedTank = NbtCompat.getUUID(list.getCompoundOrEmpty(0), "id");
         refresh();
     }
 
     /** Dev smoke test only: opens the species list of the first rearing tank. */
     public void openSpeciesForTest() {
         UUID id = rearingId(0);
-        if (id != null && minecraft != null) minecraft.setScreen(new AquaristSpeciesScreen(this, id));
+        if (id != null && minecraft != null) minecraft.gui.setScreen(new AquaristSpeciesScreen(this, id));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class AquaristScreen extends Screen {
             int y = top + 62 + i * 16;
             speciesButtons[i] = addRenderableWidget(new TankScreen.FitButton(left + W - 8 - 16 - 2 - 110, y - 1, 110, 14, Component.empty(), b -> {
                 UUID id = rearingId(row);
-                if (id != null && minecraft != null) minecraft.setScreen(new AquaristSpeciesScreen(this, id));
+                if (id != null && minecraft != null) minecraft.gui.setScreen(new AquaristSpeciesScreen(this, id));
             }));
             removeButtons[i] = addRenderableWidget(Button.builder(Component.literal("✕").withStyle(ChatFormatting.RED), b -> {
                 UUID id = rearingId(row);
@@ -308,7 +308,7 @@ public class AquaristScreen extends Screen {
     /** The workable tanks that are no rearing tank yet (the choice for the next one). */
     private List<CompoundTag> candidates() {
         List<UUID> have = new ArrayList<>();
-        for (Tag t : view.getListOrEmpty("rearing_tanks")) have.add(((CompoundTag) t).getUUID("id"));
+        for (Tag t : view.getListOrEmpty("rearing_tanks")) have.add(NbtCompat.getUUID(((CompoundTag) t), "id"));
         List<CompoundTag> out = new ArrayList<>();
         for (CompoundTag c : workable()) if (!have.contains(NbtCompat.getUUID(c, "id"))) out.add(c);
         return out;
@@ -328,13 +328,13 @@ public class AquaristScreen extends Screen {
     @Nullable
     private UUID rearingId(int row) {
         var rear = view.getListOrEmpty("rearing_tanks");
-        return row >= 0 && row < rear.size() ? rear.getCompoundOrEmpty(row).getUUID("id") : null;
+        return row >= 0 && row < rear.size() ? NbtCompat.getUUID(rear.getCompoundOrEmpty(row), "id") : null;
     }
 
     @Nullable
     private CompoundTag selectedTankTag() {
         if (selectedTank == null) return null;
-        for (Tag t : view.getListOrEmpty("tanks")) if (((CompoundTag) t).getUUID("id").equals(selectedTank)) return (CompoundTag) t;
+        for (Tag t : view.getListOrEmpty("tanks")) if (NbtCompat.getUUID(((CompoundTag) t), "id").equals(selectedTank)) return (CompoundTag) t;
         return null;
     }
 
@@ -366,13 +366,15 @@ public class AquaristScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx, double my, int button) {
-        if (super.mouseClicked(mx, my, button)) return true;
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        double mx = event.x(), my = event.y();
+        int button = event.button();
+        if (super.mouseClicked(event, doubleClick)) return true;
         if (!offering() && tab == Tab.TANKS && button == 0) {
             var list = view.getListOrEmpty("tanks");
             for (int i = 0; i < TANK_ROWS && scroll + i < list.size(); i++) {
                 if (mx >= left + 8 && mx < left + W - 12 && my >= rowTop(i) && my < rowTop(i) + 12) {
-                    selectedTank = list.getCompoundOrEmpty(scroll + i).getUUID("id");
+                    selectedTank = NbtCompat.getUUID(list.getCompoundOrEmpty(scroll + i), "id");
                     refresh();
                     return true;
                 }

@@ -120,7 +120,7 @@ final class DevClientSmokeM66 {
             then(1, () -> {
                 language("en_us");
                 scale(2);
-                mc.setScreen(null);
+                mc.gui.setScreen(null);
             });
             then(1, () -> look(pipe, 1.2, 0.8, -1.6));
             then(60, () -> shot("en_us_pipe_tooltip", false));
@@ -159,32 +159,32 @@ final class DevClientSmokeM66 {
         near(() -> mainTank);
         then(1, () -> openTank(mainTank));
         then(25, () -> selectTab(5));
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
         then(6, () -> shot(pre + "tank_water_tip_quality", false));
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, 1));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 1));
         then(6, () -> shot(pre + "tank_water_tip_filters", false));
         then(1, () -> {
-            call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, -1);
+            call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, -1);
             selectTab(7);
         });
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
         then(6, () -> shot(pre + "tank_devices_tip_sponge", false));
         // devices tab scrolled to the light group
         then(1, () -> {
-            call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, -1);
-            call(mc.screen, "scrollTextForTest", new Class<?>[]{int.class}, 60);
+            call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, -1);
+            call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 60);
         });
         then(6, () -> shot(pre + "tank_devices_scrolled", true));
         // plants: scrolled to the interior, then the list open at the bottom
         then(1, () -> selectTab(6));
         then(1, () -> {
-            call(mc.screen, "scrollTextForTest", new Class<?>[]{int.class}, 70);
+            call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 70);
         });
         then(6, () -> shot(pre + "tank_plants_interior", true));
         then(1, () -> {
-            call(mc.screen, "openPlantListForTest", new Class<?>[]{boolean.class}, true);
+            call(mc.gui.screen(), "openPlantListForTest", new Class<?>[]{boolean.class}, true);
         });
-        then(4, () -> call(mc.screen, "scrollTextForTest", new Class<?>[]{int.class}, 400));
+        then(4, () -> call(mc.gui.screen(), "scrollTextForTest", new Class<?>[]{int.class}, 400));
         then(6, () -> shot(pre + "tank_plants_list", true));
         closeAll();
         // the breeding tab, every group of the main tank, the care tooltip and the warning
@@ -193,20 +193,20 @@ final class DevClientSmokeM66 {
         then(25, () -> selectTab(2));
         for (int g = 0; g < 4; g++) {
             int gi = g;
-            then(1, () -> call(mc.screen, "showBreedGroupForTest", new Class<?>[]{int.class}, gi));
+            then(1, () -> call(mc.gui.screen(), "showBreedGroupForTest", new Class<?>[]{int.class}, gi));
             then(8, () -> shot(pre + "tank_breeding_group" + gi, true));
         }
-        then(1, () -> call(mc.screen, "showBreedGroupForTest", new Class<?>[]{int.class}, 0));
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, 0));
+        then(1, () -> call(mc.gui.screen(), "showBreedGroupForTest", new Class<?>[]{int.class}, 0));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 0));
         then(6, () -> shot(pre + "tank_breeding_tip_warning", false));
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[]{int.class}, 1));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[]{int.class}, 1));
         then(6, () -> shot(pre + "tank_breeding_tip_care", false));
         closeAll();
         // the small animals page: both sexes, Ctrl for a full bucket
         near(() -> mainTank);
         then(1, () -> openTank(mainTank));
         then(25, () -> {
-            setField(mc.screen, "critterPage", true);
+            setField(mc.gui.screen(), "critterPage", true);
             selectTab(1);
         });
         then(10, () -> shot(pre + "tank_critters", true));
@@ -236,13 +236,13 @@ final class DevClientSmokeM66 {
         near(() -> cabinet);
         then(1, () -> openBlock(cabinet));
         then(25, () -> shot(pre + "cabinet", false));
-        then(1, () -> call(mc.screen, "showEnergyTipForTest", new Class<?>[0]));
+        then(1, () -> call(mc.gui.screen(), "showEnergyTipForTest", new Class<?>[0]));
         then(6, () -> shot(pre + "cabinet_energy_tip", false));
         closeAll();
         near(() -> filter);
         then(1, () -> openBlock(filter));
         then(25, () -> shot(pre + "external_filter", false));
-        then(1, () -> call(mc.screen, "showEnergyTipForTest", new Class<?>[0]));
+        then(1, () -> call(mc.gui.screen(), "showEnergyTipForTest", new Class<?>[0]));
         then(6, () -> shot(pre + "external_filter_energy_tip", false));
         closeAll();
         near(() -> feeder);
@@ -254,16 +254,16 @@ final class DevClientSmokeM66 {
         then(25, () -> shot(pre + "clip_feeder", false));
         closeAll();
         near(() -> head);
-        then(1, () -> mc.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head)));
+        then(1, () -> mc.gui.setScreen(new org.overengineer.bettacraft.client.screen.MultiblockFilterScreen(head)));
         then(25, () -> shot(pre + "multiblock_filter", false));
-        then(1, () -> call(mc.screen, "showTipForTest", new Class<?>[0]));
+        then(1, () -> call(mc.gui.screen(), "showTipForTest", new Class<?>[0]));
         then(6, () -> shot(pre + "multiblock_filter_tip", false));
         closeAll();
     }
 
     private void aquaristShots(String code, String sc) {
         String pre = code + "_" + sc + "_";
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), npc.getX() - 2, npc.getY() + 0.5, npc.getZ() - 3, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), npc.getX() - 2, npc.getY() + 0.5, npc.getZ() - 3, java.util.Set.of(), 0F, 10F, false)));
         then(10, () -> {});
         then(1, () -> server(p -> AquaristMenu.open(p, npc)));
         then(25, () -> shot(pre + "aquarist_work", false));
@@ -271,14 +271,14 @@ final class DevClientSmokeM66 {
             int tab = i;
             String name = i == 1 ? "aquarist_rearing" : "aquarist_tanks";
             then(1, () -> {
-                call(mc.screen, "showTabForTest", new Class<?>[]{int.class}, tab);
-                if (tab == 2) call(mc.screen, "selectFirstTankForTest", new Class<?>[0]);
+                call(mc.gui.screen(), "showTabForTest", new Class<?>[]{int.class}, tab);
+                if (tab == 2) call(mc.gui.screen(), "selectFirstTankForTest", new Class<?>[0]);
             });
             then(10, () -> shot(pre + name, false));
         }
         then(1, () -> {
-            call(mc.screen, "showTabForTest", new Class<?>[]{int.class}, 1);
-            call(mc.screen, "openSpeciesForTest", new Class<?>[0]);
+            call(mc.gui.screen(), "showTabForTest", new Class<?>[]{int.class}, 1);
+            call(mc.gui.screen(), "openSpeciesForTest", new Class<?>[0]);
         });
         then(10, () -> shot(pre + "aquarist_species", false));
         closeAll();
@@ -292,23 +292,23 @@ final class DevClientSmokeM66 {
 
     private void closeAll() {
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(3, () -> mc.setScreen(null));
+        then(3, () -> mc.gui.setScreen(null));
     }
 
     // ------------------------------------------------------------------ the scene
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         powerFilter = ServerConfig.POWER_FILTER.get();
         powerHeater = ServerConfig.POWER_HEATER.get();
         power = Features.own(Feature.POWER);
         ServerConfig.POWER_FILTER.set(true);
         ServerConfig.POWER_HEATER.set(true);
         Features.set(Feature.POWER, true);
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, level.getServer());
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        DevClientWorldTour.clearWeather(level);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, level.getServer());
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
         base = p.blockPosition().offset(-8, -1, 6);
@@ -390,7 +390,7 @@ final class DevClientSmokeM66 {
             ItemStack rest = s;
             for (int i = 0; i < chest.getSlots() && !rest.isEmpty(); i++) rest = chest.insertItem(i, rest, false);
         }
-        BlockState foot = Blocks.CYAN_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
+        BlockState foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.CYAN).defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
         level.setBlock(h.offset(0, 0, 3), foot, 3);
         level.setBlock(h.offset(0, 0, 4), foot.setValue(BedBlock.PART, BedPart.HEAD), 3);
         TankBlockEntity a = tank(level, h.offset(6, 0, -4), 3, 2, 2, me, true), b = tank(level, h.offset(6, 0, 2), 3, 2, 2, me, true),
@@ -408,7 +408,7 @@ final class DevClientSmokeM66 {
         level.setBlock(pipe, ModBlocks.GLASS_PIPE.get().defaultBlockState(), 3);
         level.setBlock(pipe.east(), ModBlocks.GLASS_PIPE.get().defaultBlockState(), 3);
         level.setBlock(pipe.west(), ModBlocks.RESERVOIR.get().defaultBlockState(), 3);
-        p.teleportTo(level, base.getX() + 2.5, base.getY() + 3, base.getZ() - 6.5, 0F, 20F);
+        p.teleportTo(level, base.getX() + 2.5, base.getY() + 3, base.getZ() - 6.5, java.util.Set.of(), 0F, 20F, false);
         LOGGER.info("[smoketest] M66 scene built at {}", base);
     }
 
@@ -440,7 +440,7 @@ final class DevClientSmokeM66 {
         if (amano != null) t.critterObjects().add(org.overengineer.bettacraft.critters.AmanoLarvae.hatch(amano, t.nextCritterId(), rnd));
         // frogs: a pair, spawn and tadpoles
         for (boolean female : new boolean[]{false, true}) {
-            var f = ModEntities.DWARF_FROG.get().create(level);
+            var f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.LOAD);
             if (f == null) continue;
             f.setFemale(female);
             var bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(f);
@@ -476,7 +476,7 @@ final class DevClientSmokeM66 {
     private void terrariumAnimals(ServerLevel level, TankBlockEntity ter) {
         try {
             for (boolean female : new boolean[]{false, true}) {
-                var e = ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO).create(level);
+                var e = ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO).create(level, net.minecraft.world.entity.EntitySpawnReason.LOAD);
                 e.setFemale(female);
                 ItemStack stack = e.getBucketItemStack();
                 e.saveToBucketTag(stack);
@@ -507,10 +507,10 @@ final class DevClientSmokeM66 {
 
     /** The aquarist himself, after the basin and the bed have their tickets. */
     private void setupAquarist(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos h = homeBasin;
         TankBlockEntity rear = TankMultiblock.getController(level, rearing1), rear2 = TankMultiblock.getController(level, rearing2), a = TankMultiblock.getController(level, firstTank);
-        npc = AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().getName(), Vec3.atCenterOf(h.offset(2, 0, 1)));
+        npc = AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().name(), Vec3.atCenterOf(h.offset(2, 0, 1)));
         npc.alwaysDay = true;
         npc.setNoAi(true);
         if (!npc.setHome(level, h, h.offset(0, 0, 4))) problem("the aquarist found no home: " + npc.workplace() + " " + npc.bed());
@@ -591,7 +591,7 @@ final class DevClientSmokeM66 {
 
     private void openTank(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         });
@@ -600,7 +600,7 @@ final class DevClientSmokeM66 {
     /** Opens the menu of a block entity that is a menu provider (cabinet, filter, feeders). */
     private void openBlock(BlockPos at) {
         server(p -> {
-            if (p.serverLevel().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
+            if (p.level().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, buf -> buf.writeBlockPos(at));
             } else {
                 LOGGER.error("[smoketest] M66 no menu at {}", at);
@@ -609,20 +609,20 @@ final class DevClientSmokeM66 {
     }
 
     private void selectTab(int index) {
-        if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(index);
-        else problem("no tank screen for tab " + index + ": " + mc.screen);
+        if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(index);
+        else problem("no tank screen for tab " + index + ": " + mc.gui.screen());
     }
 
     private void language(String code) {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
         mc.options.guiScale().set(s);
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     /** Calls a method that only the new version has (nothing happens in the old one). */
@@ -660,7 +660,7 @@ final class DevClientSmokeM66 {
         Vec3 d = c.subtract(eye);
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
-        server(p -> p.teleportTo(p.serverLevel(), eye.x, eye.y - p.getEyeHeight(), eye.z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -672,7 +672,7 @@ final class DevClientSmokeM66 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -691,12 +691,12 @@ final class DevClientSmokeM66 {
     }
 
     private void shot(String name, boolean check) {
-        if (check && mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
+        if (check && mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) {
             List<String> bad = new ArrayList<>(ts.overflowForTest());
             bad.addAll(ts.textFitForTest());
             if (!bad.isEmpty()) problem(name + ": " + bad);
         }
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m66_" + tag + "_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m66_" + tag + "_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }

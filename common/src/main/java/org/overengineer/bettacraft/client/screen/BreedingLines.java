@@ -69,7 +69,7 @@ final class BreedingLines {
         for (int x : b.getIntArray("stages").orElse(new int[0])) bettas += x;
         if (bettas > 0 || NbtCompat.has(b, "nest", Tag.TAG_COMPOUND)) out.add(Group.BETTAS);
         if (!b.getListOrEmpty("tankmates").isEmpty() || b.getBooleanOr("box", false)) out.add(Group.TANKMATES);
-        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) if (b.contains(g.listKey(), Tag.TAG_LIST)) out.add(g);
+        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) if (NbtCompat.has(b, g.listKey(), Tag.TAG_LIST)) out.add(g);
         if (out.isEmpty()) out.add(Group.BETTAS);
         return out;
     }
@@ -85,7 +85,7 @@ final class BreedingLines {
             if (d.getIntOr("young", 0) > 0 || !d.getListOrEmpty("clutches").isEmpty()) return true;
         }
         for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) {
-            ListTag l = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+            ListTag l = b.getListOrEmpty(g.listKey());
             for (int i = 0; i < l.size(); i++) {
                 CompoundTag e = l.getCompoundOrEmpty(i);
                 int[] c = e.getIntArray("c").orElse(new int[0]);
@@ -244,7 +244,7 @@ final class BreedingLines {
 
     /** M66: the entries of a group of the small animals, frogs, terrarium animals and animals of other mods. */
     private static void entries(CompoundTag b, Group g, List<Component> out) {
-        ListTag list = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+        ListTag list = b.getListOrEmpty(g.listKey());
         for (int i = 0; i < list.size(); i++) {
             CompoundTag e = list.getCompoundOrEmpty(i);
             int[] c = e.getIntArray("c").orElse(new int[0]);

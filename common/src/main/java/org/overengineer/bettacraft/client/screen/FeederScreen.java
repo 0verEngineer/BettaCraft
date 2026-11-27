@@ -19,9 +19,7 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
     private Button cycle;
 
     public FeederScreen(FeederMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = FeederMenu.WIDTH;
-        imageHeight = FeederMenu.HEIGHT;
+        super(menu, inv, title, FeederMenu.WIDTH, FeederMenu.HEIGHT);
         inventoryLabelX = FeederMenu.INV_X;
         inventoryLabelY = FeederMenu.INV_Y - 11;
     }
