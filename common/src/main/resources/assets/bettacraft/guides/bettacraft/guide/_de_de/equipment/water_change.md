@@ -26,6 +26,8 @@ Rechtsklicken:
 * die Aquarien, die sie versorgt (und wie viele davon über einen Multiblock-Filter), die Niveausensoren, die sie liest, ihre
   vier Anschlüsse, ihre Speicher und Warnungen.
 
+![Das Fenster der Steuerung: Abstand und Anteil, ihre Aquarien und Niveausensoren, alle vier Anschlüsse verbunden](../images/water_change_screen.png)
+
 ![Die Steuerung mit einem Vorratsbehälter am Frischwasser-Einlass und einem Abfluss am Abwasser-Ausgang](../images/water_change_ports.png)
 
 ## Die vier Anschlüsse
@@ -46,6 +48,8 @@ auch den Einlass oder Auslass eines Filters erreicht, ist ein **Kurzschluss**: d
 **Frischwasser kommt immer durch ein Rohr.** Was nur neben der Steuerung steht (ein Vorratsbehälter, eine Wasserquelle, der
 Tank einer anderen Mod), gibt ihr nichts. Pumpen und Rohre anderer Mods dürfen Wasser in den Frischwasser-Einlass drücken,
 und Rohre anderer Mods dürfen aus dem Abwasser-Ausgang ziehen.
+
+![Eine frei stehende Steuerung mit allen vier Anschlüssen: Frischwasser rein von links, raus nach hinten, Abwasser rein von oben, raus nach rechts](../images/water_change_room.png)
 
 ## Welche Aquarien sie versorgt
 

@@ -30,6 +30,8 @@ A pipe joins every neighbour that fits, so each line **branches by itself** to e
 for the filter when **both lines** dock on it (directly, on any side, the top or the bottom), or when the inlet and the
 outlet touch it directly.
 
+![A multiblock filter with a blue intake line and an orange return line branching to three aquariums](../images/filter_lines.png)
+
 ## Sharing
 
 The filter's cleaning and its flow are **shared by the water volume** of its aquariums: a big filter is enough for several
@@ -57,6 +59,8 @@ A line that reaches the inlet **and** the outlet is a **short circuit** (red rin
 screen and in Jade / The One Probe / WTHIT. Keep neighbouring lines apart with the [pipe wrench](pipe_wrench.md). The same
 happens when a line of a [water change controller](water_change.md) reaches the filter's inlet or outlet: join the
 controller's lines to a **chamber or the pump head** instead (pipes join them on every face, without a role).
+
+![A short circuit: one line joins the filter's inlet and outlet, its rings turn red](../images/filter_short_circuit.png)
 
 With `features.pipes.filterLines = false` a filter serves one aquarium as before, without guards, and its pipes are plain
 water pipes.

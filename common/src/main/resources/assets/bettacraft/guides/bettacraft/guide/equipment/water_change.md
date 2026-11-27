@@ -26,6 +26,8 @@ it:
 * the aquariums it serves (and how many through a multiblock filter), the level sensors it reads, its four ports, its stores
   and warnings.
 
+![The controller screen: interval and share, its aquariums and level sensors, all four ports joined](../images/water_change_screen.png)
+
 ![The controller with a reservoir on its fresh water inlet and a drain on its waste water outlet](../images/water_change_ports.png)
 
 ## The four ports
@@ -46,6 +48,8 @@ The front and the bottom have no port. Each line gets its role from its port and
 **Fresh water always comes through a pipe.** What merely stands next to the controller (a reservoir, a water source, another
 mod's tank) gives it nothing. Pumps and other mods' pipes may push water into the fresh water inlet, and other mods' pipes may
 pull from the waste water outlet.
+
+![A free-standing controller with all four ports in use: fresh water in from the left, out at the back, waste water in from the top, out on the right](../images/water_change_room.png)
 
 ## Which aquariums it serves
 
