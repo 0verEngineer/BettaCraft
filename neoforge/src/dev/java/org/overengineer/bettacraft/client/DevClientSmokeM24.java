@@ -86,6 +86,9 @@ final class DevClientSmokeM24 {
         then(60, () -> shot("crucible"));
         then(1, () -> look(base.getX() - 3.0, base.getY() + 3.0, base.getZ() - 2.5, -40F, 30F));
         then(60, () -> shot("top_off"));
+        // M68 part B: the controller close up from the front left: its port stubs (fresh in north, waste out south into the drain, waste in on top)
+        then(1, () -> look(base.getX() - 3.0, base.getY() + 2.9, base.getZ() + 4.4, -128F, 32F));
+        then(60, () -> shot("water_changer_ports"));
         // 2. inside the middle tank: the nozzle, the lily pipe and the spray bar run
         then(1, () -> server(p -> {
             InteriorRegion r = pipeRegion;
@@ -191,8 +194,13 @@ final class DevClientSmokeM24 {
         if (level.getBlockEntity(base.offset(-2, 1, 0)) instanceof ReservoirBlockEntity r)
             r.water().fill(new org.overengineer.bettacraft.platform.fluid.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 9000), IFluidHandler.FluidAction.EXECUTE);
         level.setBlockAndUpdate(base.offset(-1, 1, 2), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState().setValue(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.FACING, Direction.WEST));
-        level.setBlockAndUpdate(base.offset(-2, 1, 2), ModBlocks.RESERVOIR.get().defaultBlockState());
-        if (level.getBlockEntity(base.offset(-2, 1, 2)) instanceof ReservoirBlockEntity r2)
+        // M68 part B: fresh water through a steel pipe at its inlet (north, kept off the glass) from a reservoir, the old water out of its
+        // outlet (south) into a drain
+        level.setBlockAndUpdate(base.offset(-1, 1, 1), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        org.overengineer.bettacraft.plumbing.PipeWrenchItem.setClosed(level, base.offset(-1, 1, 1), -1, Direction.EAST, true);
+        level.setBlockAndUpdate(base.offset(-1, 1, 3), ModBlocks.DRAIN.get().defaultBlockState());
+        level.setBlockAndUpdate(base.offset(-2, 1, 1), ModBlocks.RESERVOIR.get().defaultBlockState());
+        if (level.getBlockEntity(base.offset(-2, 1, 1)) instanceof ReservoirBlockEntity r2)
             r2.water().fill(new org.overengineer.bettacraft.platform.fluid.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 14000), IFluidHandler.FluidAction.EXECUTE);
         // ---- middle: raised on steel pipes, two bulkheads, a pump between them
         BlockPos mb = base.offset(SPACING, 2, 0);
