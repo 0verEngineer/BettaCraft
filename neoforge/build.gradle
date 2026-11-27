@@ -1517,8 +1517,8 @@ tasks.register('smoketestUpgrade') {
 }
 
 // gradlew smoketestCrossLoad [-PcrossLoadWorld=<world dir>] : a world saved by Fabric (default: the world of
-// `gradlew fabricSaveLoadTest -PkeepWorld`, run-fabric/saveload/world) loaded by a dedicated NeoForge server (a copy in
-// run/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
+// `gradlew fabricSaveLoadTest -PkeepWorld`, <fabricRunRoot>/saveload/world) loaded by a dedicated NeoForge server (a copy in
+// <runRoot>/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
 // (DevSmokeCrossLoad). The other direction is :fabric:fabricCrossLoadTest. Log: build/crossload/server.log.
 tasks.register('smoketestCrossLoad') {
     group = 'verification'
@@ -1527,14 +1527,14 @@ tasks.register('smoketestCrossLoad') {
     dependsOn 'prepareServerRun'
     dependsOn { tasks.named('runServer').get().classpathProvider }
     doLast {
-        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file('run-fabric/saveload/world')
+        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file((project.findProperty('fabricRunDir') ?: runRoot + '/fabric') + '/saveload/world')
         if (!new File(src, 'level.dat').exists()) throw new GradleException("smoketestCrossLoad: no world at ${src} (gradlew fabricSaveLoadTest -PkeepWorld, or -PcrossLoadWorld=<dir>)")
         def srv = tasks.named('runServer').get()
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
         def logs = rootProject.file('build/crossload')
         logs.deleteDir()
         logs.mkdirs()
-        def dir = rootProject.file('run/crossload')
+        def dir = rootProject.file(runRoot + '/crossload')
         def saves = new File(dir, 'saves')
         def world = new File(saves, 'crossload_check')
         deleteWorlds('before the run', [world])
