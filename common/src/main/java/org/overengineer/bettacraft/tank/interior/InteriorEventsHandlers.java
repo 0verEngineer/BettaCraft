@@ -173,9 +173,13 @@ public final class InteriorEventsHandlers {
         InteriorCleanup.tick(event.getServer()); // M53c
     }
 
-    /** M53c: before the dimensions are loaded: the region files of removed interiors go. */
+    /**
+     * M53c: before the dimensions are loaded: the region files of removed interiors go. First the saved data of a world from
+     * before 26.1 moves to its new place (the interior region list among it), before anything reads it.
+     */
     @SubscribeEvent
     public static void onServerStarting(org.overengineer.bettacraft.platform.event.ServerAboutToStartEvent event) {
+        org.overengineer.bettacraft.data.LegacySavedDataFiles.onServerAboutToStart(event.getServer());
         InteriorCleanup.clearAll();
         InteriorCleanup.onServerStarting(event.getServer());
     }
