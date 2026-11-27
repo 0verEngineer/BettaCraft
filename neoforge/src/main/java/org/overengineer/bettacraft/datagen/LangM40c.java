@@ -8,7 +8,7 @@ final class LangM40c {
 
     static void addAll(BiConsumer<String, String> a) {
         a.accept("item.bettacraft.pipe_cover", "Pipe Cover");
-        a.accept("tooltip.bettacraft.pipe_cover.usage", "Main hand, a full block in the off hand: right-click a filter pipe or bundle and it looks like that block; sneak-right-click takes the cover off");
+        a.accept("tooltip.bettacraft.pipe_cover.usage", "Main hand, a full block in the off hand: right-click a pipe or bundle and it looks like that block; sneak-right-click takes the cover off");
         a.accept("message.bettacraft.pipe_cover.where", "Use the pipe cover on a filter pipe or a pipe bundle, with a full block in the off hand");
         a.accept("message.bettacraft.pipe_cover.need_block", "Hold a full block in the off hand: the pipe is drawn as that block");
         a.accept("message.bettacraft.pipe_cover.not_full", "%s cannot cover a pipe: only full blocks without a block entity");

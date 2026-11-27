@@ -38,7 +38,7 @@ public class PipeCoverItem extends Item {
         BlockPos pos = ctx.getClickedPos();
         Player player = ctx.getPlayer();
         if (player == null) return InteractionResult.PASS;
-        if (!FilterPipes.isPipe(level.getBlockState(pos))) {
+        if (!Pipes.isPipe(level.getBlockState(pos))) {
             if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.bettacraft.pipe_cover.where").withStyle(ChatFormatting.GOLD));
             return InteractionResult.PASS;
         }

@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#t"
+        },
+        "north": {
+          "texture": "#t"
+        },
+        "south": {
+          "texture": "#t"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#t"
+        },
+        "west": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        6.5,
+        9.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        16,
+        9.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "particle": "bettacraft:block/stainless_steel_pipe_return",
+    "r": "bettacraft:block/stainless_steel_pipe_return_r",
+    "t": "bettacraft:block/stainless_steel_pipe_return"
+  }
+}

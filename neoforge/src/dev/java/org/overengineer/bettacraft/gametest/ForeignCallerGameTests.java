@@ -28,7 +28,7 @@ public final class ForeignCallerGameTests {
     @GameTest(template = EMPTY)
     public static void positionalBlocksWithoutLevelOrPosition(GameTestHelper h) {
         ServerPlayer player = MockPlayers.serverPlayer(h);
-        List<BlockState> states = List.of(ModBlocks.CABINET.get().defaultBlockState(), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState(),
+        List<BlockState> states = List.of(ModBlocks.CABINET.get().defaultBlockState(), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState(),
                 ModBlocks.FILTER_PIPE_BUNDLE.get().defaultBlockState());
         for (BlockState s : states) {
             String name = s.getBlock().getDescriptionId();

@@ -51,8 +51,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
             public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, BlockState state, IProbeHitData data) {
                 // also when another overlay carries our lines, and for the pipes (their connection is a pass-through, not stored water)
                 if (state.getBlock() instanceof TankBlock || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
-                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBlock
-                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock) {
+                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBundleBlock) {
                     config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
                 }
             }
@@ -112,8 +111,8 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
                 add(info, InfoLines.filter(d));
             } else if (state.getBlock() instanceof org.overengineer.bettacraft.food.CultureTubBlock) {
                 add(info, InfoLines.culture(InfoData.culture(server, level.getBlockEntity(data.getPos()))));
-            } else if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock) { // M66: the flow a second
-                add(info, InfoLines.pipe(state.getBlock()));
+            } else if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(state)) { // M66: the flow a second; M68: role and flow now
+                add(info, InfoLines.pipe(level, data.getPos(), state, InfoData.pipe(server, data.getPos())));
             } else if (level.getBlockEntity(data.getPos()) instanceof org.overengineer.bettacraft.winding.Windable w) { // M37: the spring
                 add(info, InfoLines.spring(InfoData.spring(server, (net.minecraft.world.level.block.entity.BlockEntity) w)));
             }

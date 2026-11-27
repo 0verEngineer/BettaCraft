@@ -18,7 +18,7 @@ final class LangM24 {
         a.accept("block.bettacraft.level_sensor", "Level Sensor");
         a.accept("block.bettacraft.water_change_controller", "Water Change Controller");
         a.accept("block.bettacraft.bulkhead", "Bulkhead");
-        a.accept("block.bettacraft.interior_pipe", "Interior Pipe");
+        a.accept("block.bettacraft.interior_pipe", "Interior Pipe (Glass)");
         a.accept("block.bettacraft.intake_strainer", "Intake Strainer");
         a.accept("block.bettacraft.lily_pipe", "Lily Pipe");
         a.accept("block.bettacraft.nozzle", "Nozzle");
@@ -118,11 +118,10 @@ final class LangM24 {
         a.accept("log.bettacraft.auto_water_change", "Automatic water change: %s %% (%s mB)");
         a.accept("info.bettacraft.stainless_steel_ingot", "Stainless steel for pipes and the water devices. Melted in the crucible from 4 iron ingots, coal and nether quartz (3 ingots), or in the machines of Mekanism, EnderIO, Create (heated mixing) and Thermal. Steel of other mods is no stainless steel.");
         a.accept("info.bettacraft.crucible", "Melts stainless steel: 4 iron ingots, coal and nether quartz give 3 ingots in 10 seconds.\nHeat: lava, a lava cauldron or a magma block right under it (free), FE (power mods) or fuel: a lava bucket, a blaze rod or blaze powder. Hoppers fill it from above and the sides and empty it from below.");
-        a.accept("info.bettacraft.glass_pipe", "Carries water with all its values (temperature, salt, quality, nitrate) between tanks, filters, reservoirs and the tanks and pipes of other mods: 50 mB/t. Pipes do not pump: a water pump, a filter pump head or another mod's pump moves the water.");
-        a.accept("info.bettacraft.stainless_steel_pipe", "Like the glass pipe, but carries 250 mB/t. A network of both kinds carries what its weakest pipe carries.");
+        a.accept("info.bettacraft.glass_pipe", "The cheap pipe for everything: carries water with all its values (temperature, salt, quality, nitrate) between tanks, filters, reservoirs and the tanks and pipes of other mods: 50 mB/t. It joins every neighbour that fits on every side; the pipe wrench closes a side. At a filter's inlet or outlet it becomes its intake or return line (coloured rings); a filter line carries at most what its weakest pipe carries. Sneak-right-click a pipe with it: both run in one block (a bundle, up to four). Placed in a tank interior it is an interior pipe. Pipes do not pump: a water pump, a filter pump head or another mod's pump moves the water.");
+        a.accept("info.bettacraft.stainless_steel_pipe", "Like the glass pipe, but carries 250 mB/t (enough for the multiblock filter's 100 mB/t). A network of both kinds carries what its weakest pipe carries. It joins every neighbour that fits on every side; the pipe wrench closes a side. Sneak-right-click a pipe with it: both run in one block (a bundle, up to four). Placed in a tank interior it is an interior pipe.");
         a.accept("info.bettacraft.water_pump", "Pulls water from the block behind it and pushes it into the block in front of it (200 mB/t). Place it looking where the water should go.\nRight-click or sneak + mouse wheel: power regulator. Redstone stops it. With pipes.pumpsRequireEnergy it needs FE.");
         a.accept("info.bettacraft.bulkhead", "Use it on a floor block of a tank: its connection appears on the interior floor. Build on with interior pipes to an intake strainer, lily pipe, nozzle or spray bar. A pipe under that floor block then puts water in through the outlets and takes it out through the strainers, and their current acts where they sit.");
-        a.accept("info.bettacraft.interior_pipe", "A pipe in the tank interior (one pixel thin in the miniature outside). Joins the bulkhead's connection, other interior pipes and the outlets.");
         a.accept("info.bettacraft.intake_strainer", "The intake in the tank interior: water pumped out through the bulkhead leaves the tank here (a gentle pull towards it).");
         a.accept("info.bettacraft.lily_pipe", "A glass outlet in the tank interior: spreads the water softly just under the surface. Its mouth points the way you look when you place it.");
         a.accept("info.bettacraft.nozzle", "An outlet in the tank interior: a narrow, strong jet (corals and seahorses notice it, fish swim into it).");

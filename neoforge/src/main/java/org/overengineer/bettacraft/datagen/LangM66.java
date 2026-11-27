@@ -25,7 +25,6 @@ final class LangM66 {
         a.accept("gui.bettacraft.feeder.cabinet_hint", "Also takes food from a cabinet under the tank.");
         // ---- multiblock filter
         a.accept("gui.bettacraft.mb_filter.tanks_header", "Serves %s tanks:");
-        a.accept("gui.bettacraft.mb_filter.tap", "tap water, unlimited");
         // ---- pipes (Jade)
         a.accept("jade.bettacraft.pipe.rate", "Carries up to %s mB/s");
         // ---- the aquarist

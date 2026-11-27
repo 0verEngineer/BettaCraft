@@ -1,0 +1,27 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "south": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        6.5,
+        6.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        9.5,
+        9.5
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "bettacraft:block/glass_pipe_fresh",
+    "r": "bettacraft:block/glass_pipe_fresh_r",
+    "t": "bettacraft:block/glass_pipe_fresh"
+  }
+}

@@ -61,10 +61,8 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     private List<MultiblockFilter.Link> links = List.of();
     private int linkVersion = -1;
     private boolean linksStale = true;
-    /** M40 part b synced: the fresh and waste water ports and the water in them. */
-    private int freshPorts, wastePorts, freshMb, wasteMb;
-    /** M66: a water source block touches a fresh water port (tap water, endless). */
-    private boolean freshEndless;
+    /** M68: mB per tick the filter's lines let through at most (synced; -1: no limit by pipes). */
+    private int lineLimit = -1;
     /** M40 synced: per tank of the filter its status, flow and cleaning. */
     private List<TankLink> tanks = List.of();
     /** M40 (D2): built before M40 (set by the schema migration); cleared once every tank of the filter is guarded. */
@@ -109,12 +107,8 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** M40 (D2): a filter from before M40 that still lacks guards. */
     public boolean retrofit() { return retrofit; }
     public int[] media() { return media; }
-    /** M40 part b: the fresh / waste water ports of the filter and the mB in them (synced). */
-    public int freshPorts() { return freshPorts; }
-    public int wastePorts() { return wastePorts; }
-    public int freshMb() { return freshMb; }
-    public boolean freshEndless() { return freshEndless; }
-    public int wasteMb() { return wasteMb; }
+    /** M68: mB per tick the filter's lines let through at most (-1: no limit by pipes, e.g. connectors at the tank). */
+    public int lineLimit() { return lineLimit; }
 
     /** The parts of the filter (scanned again at most every 40 ticks). */
     public MultiblockFilter.Structure structure(ServerLevel level) {
@@ -130,8 +124,8 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** M40: the tanks of the filter, looked up again when the parts were scanned or a filter pipe changed. */
     public List<MultiblockFilter.Link> currentLinks(ServerLevel level) {
         MultiblockFilter.Structure s = structure(level);
-        if (linksStale || linkVersion != org.overengineer.bettacraft.plumbing.FilterPipeBlock.version()) {
-            linkVersion = org.overengineer.bettacraft.plumbing.FilterPipeBlock.version();
+        if (linksStale || linkVersion != PipeNetwork.version()) {
+            linkVersion = PipeNetwork.version();
             linksStale = false;
             links = s.formed() && Features.enabled(Feature.FILTER_LINES) ? MultiblockFilter.links(level, s) : List.of();
         }
@@ -162,13 +156,16 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             return runSingle(level, s, ch);
         }
         currentLinks(level);
+        // M68: what the lines carry, and a short circuit (a line that also touches a port of another role) stops the filter
+        MultiblockFilter.Flow lineFlow = s.formed() ? MultiblockFilter.flow(level, s) : null;
+        boolean shortCircuit = lineFlow != null && lineFlow.shortCircuit();
         // every tank: guarded? water in it?
         List<MultiblockFilter.LinkStatus> st = new ArrayList<>();
         List<MultiblockFilter.Link> working = new ArrayList<>();
         for (MultiblockFilter.Link l : links) {
             MultiblockFilter.LinkStatus x = l.tank().isRemoved() ? MultiblockFilter.LinkStatus.NO_WATER : MultiblockFilter.status(level, l);
             st.add(x);
-            if (x == MultiblockFilter.LinkStatus.OK) working.add(l);
+            if (x == MultiblockFilter.LinkStatus.OK && !shortCircuit) working.add(l);
         }
         long[] water = new long[working.size()];
         for (int i = 0; i < water.length; i++) water[i] = working.get(i).water();
@@ -184,6 +181,9 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             if (DeviceEnergy.required()) energy.drive(level, worldPosition, fe); // M32 part c: Create's rotation
             if (!DeviceEnergy.required() || org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, DeviceEnergy.pumpFe())) {
                 int max = maxBatch(ch, share);
+                // M68: each line carries at most what its weakest pipe carries; several lines add up
+                if (lineFlow != null && lineFlow.limit() < org.overengineer.bettacraft.plumbing.PipePorts.UNLIMITED)
+                    max = (int) Math.min(max, lineFlow.limit() * PipeNetwork.WINDOW);
                 // A1: the flow is shared by the water volumes (the pump moves each tank's share through the filter and back)
                 for (int i = 0; i < flows.length; i++) {
                     flows[i] = (int) Math.round(max * part[i]);
@@ -219,6 +219,16 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             }
         }
         if (served == null) MultiblockFilter.stop(level, worldPosition);
+        // M68: the overlays show what each line carries now (shared by the lines' throughput)
+        if (lineFlow != null) {
+            reportFlow(level, lineFlow.intakes(), moved / PipeNetwork.WINDOW);
+            reportFlow(level, lineFlow.returns(), moved / PipeNetwork.WINDOW);
+        }
+        int limit = lineFlow == null || lineFlow.limit() >= org.overengineer.bettacraft.plumbing.PipePorts.UNLIMITED ? -1 : (int) lineFlow.limit();
+        if (limit != lineLimit) {
+            lineLimit = limit;
+            changedLinks = true;
+        }
         // the reports for the tank menus and what the screen shows
         List<TankLink> out = new ArrayList<>();
         boolean allOk = !links.isEmpty();
@@ -235,10 +245,20 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             retrofit = false; // D2: retrofitted
             setChanged();
         } else if (retrofit && !links.isEmpty()) tellRetrofit(level);
-        boolean changed = !out.equals(tanks);
+        boolean changed = !out.equals(tanks) || changedLinks;
+        changedLinks = false;
         tanks = out;
-        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, changed);
+        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, changed, shortCircuit);
         return moved;
+    }
+
+    private boolean changedLinks;
+
+    /** M68: {@code mbPerTick} through these lines, each by its share of their throughput. */
+    private static void reportFlow(ServerLevel level, List<PipeNetwork> nets, int mbPerTick) {
+        long sum = 0;
+        for (PipeNetwork n : nets) sum += n.rate();
+        for (PipeNetwork n : nets) n.reportFlow(level, sum <= 0 ? 0 : (int) Math.round((double) mbPerTick * n.rate() / sum));
     }
 
     /** mB the pump moves per batch at most: half a water pump x regulator, slower with clogged sponges. */
@@ -294,7 +314,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             }
         }
         if (served == null) MultiblockFilter.stop(level, worldPosition);
-        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, false);
+        update(level, s, ch, moved / PipeNetwork.WINDOW, clean, served, false, false);
         return moved;
     }
 
@@ -363,32 +383,14 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         return null;
     }
 
-    private void update(Level level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch, int flowNow, double clean, @Nullable BlockPos served, boolean linksChanged) {
-        // M40 part b: the water ports
-        int fm = 0, wm = 0;
-        boolean endless = false;
-        if (level instanceof ServerLevel sl && !s.fresh().isEmpty()) {
-            // M66: what the filter can use, not only what sits in the ports: the ends of their lines and tap water count too
-            boolean[] tap = new boolean[1];
-            fm = (int) Math.min(Integer.MAX_VALUE, FilterWater.freshAvailable(sl, this, tap));
-            endless = tap[0];
-        } else {
-            for (BlockPos p : s.fresh()) if (level.getBlockEntity(p) instanceof FilterPortBlockEntity port) fm += port.water().amount();
-        }
-        for (BlockPos p : s.waste()) if (level.getBlockEntity(p) instanceof FilterPortBlockEntity port) wm += port.water().amount();
-        if (fm != freshMb || wm != wasteMb || endless != freshEndless || s.fresh().size() != freshPorts || s.waste().size() != wastePorts) {
-            freshEndless = endless;
-            freshMb = fm;
-            wasteMb = wm;
-            freshPorts = s.fresh().size();
-            wastePorts = s.waste().size();
-            linksChanged = true;
-        }
+    private void update(Level level, MultiblockFilter.Structure s, List<FilterChamberBlockEntity> ch, int flowNow, double clean, @Nullable BlockPos served, boolean linksChanged,
+                        boolean shortCircuit) {
         int[] m = new int[ch.size()];
         for (int i = 0; i < ch.size(); i++) m[i] = ch.get(i).kind().ordinal() * 1000 + (int) Math.round(ch.get(i).dirt() * 100);
-        boolean dirty = linksChanged || s.problem() != problem || s.chambers().size() != chambers || s.inlets().size() != inlets || s.outlets().size() != outlets
+        MultiblockFilter.Problem pr = s.problem() == MultiblockFilter.Problem.NONE && shortCircuit ? MultiblockFilter.Problem.SHORT_CIRCUIT : s.problem();
+        boolean dirty = linksChanged || pr != problem || s.chambers().size() != chambers || s.inlets().size() != inlets || s.outlets().size() != outlets
                 || flowNow != flow || Math.abs(clean - cleanBlocks) > 0.05 || !java.util.Objects.equals(served, tank) || !java.util.Arrays.equals(m, media);
-        problem = s.problem();
+        problem = pr;
         chambers = s.chambers().size();
         inlets = s.inlets().size();
         outlets = s.outlets().size();
@@ -466,7 +468,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             l.add(e);
         }
         t.put("tanks", l);
-        t.putIntArray("ports", new int[]{freshPorts, wastePorts, freshMb, wasteMb, freshEndless ? 1 : 0}); // M40 part b (M66: the fifth: tap water)
+        t.putInt("line_limit", lineLimit); // M68
     }
 
     private void read(CompoundTag t) {
@@ -498,12 +500,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             if (p != null) l.add(new TankLink(p, st, e.getIntOr("flow", 0), e.getDoubleOr("clean", 0d), e.getIntOr("percent", 0), e.getIntOr("blocks", 0)));
         }
         tanks = l;
-        int[] ports = t.getIntArray("ports").orElse(new int[0]);
-        freshPorts = ports.length >= 4 ? ports[0] : 0;
-        wastePorts = ports.length >= 4 ? ports[1] : 0;
-        freshMb = ports.length >= 4 ? ports[2] : 0;
-        wasteMb = ports.length >= 4 ? ports[3] : 0;
-        freshEndless = ports.length >= 5 && ports[4] != 0;
+        lineLimit = t.getIntOr("line_limit", -1);
     }
 
     @Override

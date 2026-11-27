@@ -100,13 +100,12 @@ public final class ModCreativeTabs {
                 out.accept(ModItems.INTAKE_SPONGE.get());
                 // M24: stainless steel, pipes, the multiblock filter and the water devices
                 for (var it : java.util.List.of(ModItems.STAINLESS_STEEL_INGOT, ModItems.CRUCIBLE, ModItems.GLASS_PIPE, ModItems.STAINLESS_STEEL_PIPE,
-                        ModItems.WATER_PUMP, ModItems.BULKHEAD, ModItems.INTERIOR_PIPE, ModItems.INTAKE_STRAINER, ModItems.LILY_PIPE, ModItems.NOZZLE,
+                        ModItems.PIPE_WRENCH, ModItems.WATER_PUMP, ModItems.BULKHEAD, ModItems.INTAKE_STRAINER, ModItems.LILY_PIPE, ModItems.NOZZLE,
                         ModItems.SPRAY_BAR, ModItems.FILTER_CHAMBER, ModItems.FILTER_PUMP_HEAD, ModItems.FILTER_INLET, ModItems.FILTER_OUTLET,
                         ModItems.FILTER_FOAM, ModItems.CERAMIC_RINGS, ModItems.ACTIVATED_CARBON, ModItems.FILTER_PEAT, ModItems.RESERVOIR,
                         ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
-                // M40: the filter pipes, the T-piece and the guards
-                for (var it : java.util.List.of(ModItems.FILTER_INLET_PIPE, ModItems.FILTER_OUTLET_PIPE, ModItems.FILTER_FRESH_PIPE, ModItems.FILTER_WASTE_PIPE,
-                        ModItems.PIPE_TEE, ModItems.PIPE_COVER, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD, ModItems.FILTER_FRESH_PORT, ModItems.FILTER_WASTE_PORT)) out.accept(it.get());
+                // M40: the pipe cover and the guards (M68: the filter pipes, the T-piece and the water ports are gone)
+                for (var it : java.util.List.of(ModItems.PIPE_COVER, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD)) out.accept(it.get());
                 // M25: water chemistry
                 for (var it : java.util.List.of(ModItems.TDS_METER, ModItems.PH_TEST_KIT, ModItems.REMINERALISING_SALT, ModItems.ALMOND_LEAF, ModItems.ALDER_CONE, ModItems.ACTIVE_SOIL)) out.accept(it.get());
                 out.accept(ModItems.BREEDING_BASIN.get()); // M47

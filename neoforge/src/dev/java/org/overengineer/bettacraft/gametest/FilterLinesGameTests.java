@@ -21,7 +21,9 @@ import org.overengineer.bettacraft.filter.FilterPartBlock;
 import org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity;
 import org.overengineer.bettacraft.filter.MultiblockFilter;
 import org.overengineer.bettacraft.plumbing.FilterLines;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeUpdates;
+import org.overengineer.bettacraft.plumbing.PipeWrenchItem;
 import org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing;
 import org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock;
 import org.overengineer.bettacraft.plumbing.interior.Plumb;
@@ -67,6 +69,11 @@ public final class FilterLinesGameTests {
         for (BlockPos p : rel) h.setBlock(p, b.defaultBlockState());
     }
 
+    /** M68: closes the side of the pipe at {@code a} towards the pipe at {@code b} (relative, neighbours) with the wrench: the two lines stay apart. */
+    static void apart(GameTestHelper h, BlockPos a, BlockPos b) {
+        for (Direction d : Direction.values()) if (a.relative(d).equals(b)) PipeWrenchItem.setClosed(h.getLevel(), h.absolutePos(a), -1, d, true);
+    }
+
     /** Fits an intake guard behind every dock of the filter's inlet line and an outlet guard behind every dock of its return line. */
     public static void guardAll(ServerLevel level, BlockPos headPos) {
         for (MultiblockFilter.Link l : MultiblockFilter.links(level, MultiblockFilter.scan(level, headPos))) {
@@ -102,18 +109,23 @@ public final class FilterLinesGameTests {
         TankBlockEntity b = PlumbingGameTests.tank(h, 4, 2, 0, 2, 2, 2);
         TankBlockEntity c = PlumbingGameTests.tank(h, 8, 2, 0, 4, 2, 2);
         FilterPumpHeadBlockEntity head = filter(h, new BlockPos(13, 2, 4), Direction.WEST);
-        Block in = ModBlocks.FILTER_INLET_PIPE.get(), out = ModBlocks.FILTER_OUTLET_PIPE.get();
-        // the branches first (from the glass outwards), then the trunks
-        for (int x : new int[]{0, 4, 8}) pipes(h, in, new BlockPos(x, 2, 2), new BlockPos(x, 2, 3));
-        for (int x : new int[]{1, 5, 9}) pipes(h, out, new BlockPos(x, 3, 2), new BlockPos(x, 3, 3));
-        for (int x = 0; x <= 11; x++) pipes(h, in, new BlockPos(x, 2, 4));
-        for (int x = 1; x <= 11; x++) pipes(h, out, new BlockPos(x, 3, 4));
-        h.assertTrue(FilterPipeBlock.count(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 4)))) == 2, "a plain pipe joins two sides");
-        int docksBefore = FilterLines.docks(level, h.absolutePos(new BlockPos(12, 2, 4)), Direction.WEST, org.overengineer.bettacraft.plumbing.PipeLine.INTAKE).size();
-        h.assertTrue(docksBefore == 0, "without T-pieces the plain pipes at the branches are full: the line ends before them: " + docksBefore);
-        for (int x : new int[]{4, 8}) FilterPipeBlock.makeJunction(level, h.absolutePos(new BlockPos(x, 2, 4)));
-        for (int x : new int[]{5, 9}) FilterPipeBlock.makeJunction(level, h.absolutePos(new BlockPos(x, 3, 4)));
-        h.assertTrue(FilterPipeBlock.count(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 4)))) == 3, "the T-piece joins three sides");
+        Block steel = ModBlocks.STAINLESS_STEEL_PIPE.get();
+        // M68: the branches first (from the glass outwards), then the trunks: every pipe joins every neighbour (no T-piece)
+        for (int x : new int[]{0, 4, 8}) pipes(h, steel, new BlockPos(x, 2, 2), new BlockPos(x, 2, 3));
+        for (int x : new int[]{1, 5, 9}) pipes(h, steel, new BlockPos(x, 3, 2), new BlockPos(x, 3, 3));
+        for (int x = 0; x <= 11; x++) pipes(h, steel, new BlockPos(x, 2, 4));
+        for (int x = 1; x <= 11; x++) pipes(h, steel, new BlockPos(x, 3, 4));
+        // the two trunks lie on top of each other: one network that touches the inlet and the outlet, a short circuit
+        h.assertTrue(Integer.bitCount(PipeBlock.sides(level.getBlockState(h.absolutePos(new BlockPos(4, 2, 4))))) == 4, "the branch joins west, east, north and the trunk above");
+        h.assertTrue(head.run(level, true) == 0 && head.problem() == MultiblockFilter.Problem.SHORT_CIRCUIT, "short circuit: " + head.problem());
+        PipeUpdates.flush(level);
+        h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(6, 2, 4))).getValue(PipeBlock.RING) == org.overengineer.bettacraft.plumbing.PipeRing.SHORT, "red rings");
+        // the wrench keeps them apart: the intake line at the floor, the return line above
+        for (int x = 1; x <= 11; x++) apart(h, new BlockPos(x, 2, 4), new BlockPos(x, 3, 4));
+        PipeUpdates.flush(level);
+        h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(6, 2, 4))).getValue(PipeBlock.RING) == org.overengineer.bettacraft.plumbing.PipeRing.INTAKE, "blue rings on the intake line");
+        h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(6, 3, 4))).getValue(PipeBlock.RING) == org.overengineer.bettacraft.plumbing.PipeRing.RETURN, "orange rings on the return line");
+        h.assertTrue(FilterLines.docks(level, h.absolutePos(new BlockPos(12, 2, 4)), Direction.WEST).size() == 3, "the intake line reaches the three tanks");
         double a0 = TankWater.filterBlocks(level, a), b0 = TankWater.filterBlocks(level, b), c0 = TankWater.filterBlocks(level, c);
         // no guards: every tank warns, nothing is cleaned
         h.assertTrue(head.run(level, true) == 0, "no guards: the filter stands still");
@@ -188,9 +200,11 @@ public final class FilterLinesGameTests {
         InteriorPlumbing.forget();
         TankBlockEntity t = PlumbingGameTests.tank(h, 4, 2, 4, 2, 2, 2);
         FilterPumpHeadBlockEntity head = filter(h, new BlockPos(0, 2, 4), Direction.EAST);
-        pipes(h, ModBlocks.FILTER_INLET_PIPE.get(), new BlockPos(2, 2, 4), new BlockPos(3, 2, 4));
-        pipes(h, ModBlocks.FILTER_OUTLET_PIPE.get(), new BlockPos(2, 3, 4), new BlockPos(2, 4, 4), new BlockPos(3, 4, 4), new BlockPos(4, 4, 4));
-        h.assertTrue(FilterPipeBlock.joined(level.getBlockState(h.absolutePos(new BlockPos(4, 4, 4))), Direction.DOWN), "the return pipe docks on the top");
+        pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 2, 4), new BlockPos(3, 2, 4));
+        pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 3, 4), new BlockPos(2, 4, 4), new BlockPos(3, 4, 4), new BlockPos(4, 4, 4));
+        apart(h, new BlockPos(2, 2, 4), new BlockPos(2, 3, 4)); // M68: the two lines apart
+        PipeUpdates.flush(level); // M68: the roles, and with them the docks inside
+        h.assertTrue(level.getBlockState(h.absolutePos(new BlockPos(4, 4, 4))).getValue(PipeBlock.SIDES.get(Direction.DOWN)), "the return pipe docks on the top");
         InteriorRegion r = AerationGameTests.region(h, t);
         int s = r.scale();
         long west = TankAnchors.existing(level, t, h.absolutePos(new BlockPos(4, 2, 4)), Direction.WEST);
@@ -255,8 +269,10 @@ public final class FilterLinesGameTests {
         InteriorPlumbing.forget();
         TankBlockEntity t = PlumbingGameTests.tank(h, 4, 2, 4, 2, 2, 2);
         FilterPumpHeadBlockEntity head = filter(h, new BlockPos(0, 2, 4), Direction.EAST);
-        pipes(h, ModBlocks.FILTER_INLET_PIPE.get(), new BlockPos(2, 2, 4), new BlockPos(3, 2, 4));
-        pipes(h, ModBlocks.FILTER_OUTLET_PIPE.get(), new BlockPos(2, 3, 4), new BlockPos(3, 3, 4));
+        pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 2, 4), new BlockPos(3, 2, 4));
+        pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 3, 4), new BlockPos(3, 3, 4));
+        apart(h, new BlockPos(2, 2, 4), new BlockPos(2, 3, 4)); // M68: the two lines apart
+        apart(h, new BlockPos(3, 2, 4), new BlockPos(3, 3, 4));
         guardAll(level, head.getBlockPos());
         double w0 = TankWater.filterBlocks(level, t);
         h.assertTrue(head.run(level, true) > 0 && statuses(head).equals(List.of(MultiblockFilter.LinkStatus.OK)), "guarded: " + statuses(head));
@@ -330,8 +346,9 @@ public final class FilterLinesGameTests {
             // a second filter on filter pipes only: nothing
             TankBlockEntity d = PlumbingGameTests.tank(h, 0, 2, 10, 2, 2, 2);
             FilterPumpHeadBlockEntity h2 = filter(h, new BlockPos(6, 2, 10), Direction.WEST);
-            pipes(h, ModBlocks.FILTER_INLET_PIPE.get(), new BlockPos(2, 2, 10), new BlockPos(3, 2, 10), new BlockPos(4, 2, 10), new BlockPos(5, 2, 10));
-            pipes(h, ModBlocks.FILTER_OUTLET_PIPE.get(), new BlockPos(2, 3, 10), new BlockPos(3, 3, 10), new BlockPos(4, 3, 10), new BlockPos(5, 3, 10));
+            pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 2, 10), new BlockPos(3, 2, 10), new BlockPos(4, 2, 10), new BlockPos(5, 2, 10));
+            pipes(h, ModBlocks.STAINLESS_STEEL_PIPE.get(), new BlockPos(2, 3, 10), new BlockPos(3, 3, 10), new BlockPos(4, 3, 10), new BlockPos(5, 3, 10));
+            PipeUpdates.flush(level);
             double d0 = TankWater.filterBlocks(level, d);
             h.assertTrue(h2.run(level, true) == 0 && h2.servedTank() == null && TankWater.filterBlocks(level, d) == d0, "the filter pipes carry nothing");
             h.assertTrue(TankAnchors.existing(level, d, h.absolutePos(new BlockPos(1, 2, 10)), Direction.EAST) == Long.MIN_VALUE, "and no dock appears");
