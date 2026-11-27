@@ -46,6 +46,14 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         }
     };
 
+    /** M66.5: the render box of the hose (client), see {@link FilterHost#renderBoxCache}. */
+    private final org.overengineer.bettacraft.util.RenderBoxCache renderBox = new org.overengineer.bettacraft.util.RenderBoxCache();
+
+    @Override
+    public org.overengineer.bettacraft.util.RenderBoxCache renderBoxCache() {
+        return renderBox;
+    }
+
     public ExternalFilterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.EXTERNAL_FILTER.get(), pos, state);
     }
