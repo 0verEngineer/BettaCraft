@@ -634,6 +634,7 @@ final class LangEn {
         a.accept("command.bettacraft.debug.area", "  %s: %s");
         a.accept("command.bettacraft.debug.area_command", "  %s: %s (by command until the restart; /bettacraft debug reset)");
         a.accept("command.bettacraft.debug.set", "Debug log %s: %s until the restart, in %s");
+        a.accept("command.bettacraft.algae.done", "Algae at %s on %s tanks within %s chunks");
         a.accept("command.bettacraft.debug.reset", "Debug log back to the config (debug.logLevel, debug.areas)");
         a.accept("command.bettacraft.debug.level.info", "off");
         a.accept("command.bettacraft.debug.level.debug", "debug");

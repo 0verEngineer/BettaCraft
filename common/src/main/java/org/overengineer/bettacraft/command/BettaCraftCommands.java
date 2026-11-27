@@ -87,6 +87,7 @@ public final class BettaCraftCommands {
                 // M57: the debug log per area and the bug report
                 .then(DebugCommand.debug())
                 .then(DebugCommand.report())
+                .then(AlgaeCommand.build()) // operators: algae on every tank around
                 // M16: every water animal of the loaded mods and whether tanks take it (table in bettacraft-water-animals.tsv)
                 .then(Commands.literal("wateranimals").requires(s -> s.hasPermission(2)).executes(ctx -> {
                     var src = ctx.getSource();

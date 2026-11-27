@@ -35,6 +35,7 @@ One energy store per tank: FE cables and the crank charge the same store, it gro
 ### Added
 - Feature switch `features.power.tankCrank` (the crank charges a tank's store; off: only FE does).
 - Advancement and quest "Muscle Power": charge a tank's store with the crank (optional, only with power costs).
+- Operator command `/bettacraft algae <0..1> [radius]`: sets the algae on the glass of every tank around (radius in chunks, 16; 0 cleans them).
 
 ### Migration
 - **Config:** a server config with one of the old `*RequiresEnergy` switches on becomes `power.costs = HARD`, all off become OFF; the
