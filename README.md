@@ -46,7 +46,7 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
     <td><img src="docs/images/bettacraft-monitors.jpg" alt="A monitor wall with a dashboard between a betta tank and a reef tank"></td>
   </tr>
   <tr>
-    <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for two tanks with filter pipes, T-pieces, a pipe bundle and pipe covers"></td>
+    <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for two tanks with its pipe lines, a pipe bundle and pipe covers"></td>
     <td><img src="docs/images/bettacraft-aquarium-room-shaders.jpg" alt="The aquarium room with Complementary Reimagined shaders"></td>
   </tr>
 </table>
@@ -89,14 +89,15 @@ Every feature in detail, with a picture for each kind of tank and animal: **[FEA
   snake and sea turtles, all **moving like the real animals** with their own hours (in the world they climb steps, the
   crested gecko whole walls); Minecraft pets, land animals of other mods and harmless mobs in glass.
 - **Technology:** filters (the external one also up to two blocks below its tank), cabinets under the whole tank,
-  feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
-  water changes; water chemistry (TDS, pH, hardness, CO2, RO water); live food cultures and a food maker; optional power
+  feeders, air pumps and lights; one pipe system (glass and steel pipes whose lines take their role from the port they
+  reach, a pipe wrench, bundles inside and outside the tank), a multiblock filter for many tanks and a water change
+  controller with four ports that also tops off; water chemistry (TDS, pH, hardness, CO2, RO water); live food cultures and a food maker; optional power
   (`power.costs` OFF / EASY / HARD; one energy store per tank, charged by FE, the crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
   waypoints in JourneyMap, Xaero's Minimap and FTB Chunks.
 - **Aquarists:** an aquarist villager trades plants, animals and food and buys your bred animals; a hired aquarist walks
   to your tanks every day and feeds, changes water, scrapes algae and moves the young.
 - **For players and packs:** 368 handbook pages in English and German, 72 advancements, JEI / REI / EMI pages, an FTB
-  Quests chapter of 115 quests, 150 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
+  Quests chapter of 117 quests, 150 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
   reports.
 
 </details>
@@ -169,7 +170,7 @@ CHANGELOG section):
 | [JourneyMap](https://modrinth.com/mod/journeymap), [Xaero's Minimap](https://modrinth.com/mod/xaeros-minimap) / [World Map](https://modrinth.com/mod/xaeros-world-map), [FTB Chunks](https://www.curseforge.com/minecraft/mc-mods/ftb-chunks-forge) | a waypoint at a tank whose monitor alarm went off, and at the tanks the hired aquarist warns about, for the owner and the listed users of the tank (switch per tank, per user and per map mod) |
 | FTB Teams | the hired aquarist also works at the tanks of his employer's party (`hiredAquarist.ftbTeams`) |
 | any mod with water animals | its small water animals go into aquariums (tested with Alex's Caves, Critters and Companions, Living Things, Deeper Darker, The Undergarden, Shiny, Sushi Go Crafting, L_Ender's Cataclysm, Ice and Fire, DragN's Just Bettas), large, boss and hostile ones are refused |
-| Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the filter pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
+| Applied Energistics 2, EnderIO, Mekanism Covers, [Cable Facades](https://www.curseforge.com/minecraft/mc-mods/cable-facades) | their facades and covers hide the pipes and pipe bundles (Cable Facades through its block tag, its config untouched) |
 | Mekanism, EnderIO, Create, Thermal | stainless steel from their machines (metallurgic infuser, alloy smelter, heated mixing, induction smelter); their tanks and pipes join Bettacraft pipes, aquariums and reservoirs (standard fluid handler, also AE2 and RS interfaces), also with the fluids `bettacraft:ro_water`, `bettacraft:sea_water` and `bettacraft:live_food` (Mekanism tanks too); CO2 gas of other mods (`#bettacraft:co2_gas`) fills CO2 cylinders |
 | Biome mods (Regions Unexplored, Oh The Biomes We've Gone, Biomes O' Plenty, Twilight Forest, ...) | their swamps, rivers, mangroves, lush caves and warm oceans get the wild animals, net catches, fishing loot and corals of their vanilla counterparts (biome tags `#bettacraft:*_waters`, `#bettacraft:coral_reef_biomes`) |
 | Sodium, Iris | supported (water and miniatures render correctly, also with shaders; the tank water is lit smoothly, tested with Complementary Reimagined and Unbound, BSL and MakeUp) |
@@ -234,11 +235,11 @@ and evaporation are on but gentle, and no equipment needs power (`power.costs = 
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 115 quests (1.46.0; 33 before 1.36.0) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 117 quests (1.57.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water
-change controller, top-off, multiblock filter with filter lines) and three optional Create quests. Tasks are Bettacraft
+change controller, drain, top-off, multiblock filter with filter lines, pipe wrench) and three optional Create quests. Tasks are Bettacraft
 advancements or items, rewards some experience and small items (plant cuttings, food, test kits, filter media, salt).
 
 - **Updating a pack:** copy the new `bettacraft.snbt` (26.1.2: `bettacraft.json5`) over the old one and run `/ftbquests reload` (or restart). The 33
@@ -308,6 +309,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.monitors.enabled` | Control Room |
 | `features.osmosis.enabled` | Pure Water |
 | `features.pipes.autoWaterChange` | Hands Free |
+| `features.pipes.drain` | Down the Drain |
 | `features.pipes.enabled` | Pipework |
 | `features.pipes.filterLines` | Filter Lines, One Filter for All |
 | `features.pipes.interiorPipes` | Through the Glass |
