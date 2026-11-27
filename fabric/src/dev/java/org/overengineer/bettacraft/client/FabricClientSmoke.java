@@ -45,6 +45,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM63 m63;
     /** M66: -Psmoketestm66 (the menus of the UI overhaul). */
     private static DevClientSmokeM66 m66;
+    /** M68: -Psmoketestm68 (the one pipe system). */
+    private static DevClientSmokeM68 m68;
     /** M67: -Psmoketestm67 (one energy store per tank). */
     private static DevClientSmokeM67 m67;
     /** M65: -Psmoketestm65 (pipes, water at blocks against the glass). */
@@ -238,6 +240,20 @@ public final class FabricClientSmoke implements ClientModInitializer {
             }
             if (stage == 624) {
                 if (m62d.tick()) stage = 4;
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m68only")) {
+                LOGGER.info("[smoketest] fabric client in world: M68 scene");
+                m68 = new DevClientSmokeM68();
+                stage = 68;
+            }
+            if (stage == 68) {
+                if (m68.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
+                    LOGGER.info(m68.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M68");
+                    mc.stop();
+                }
                 return;
             }
             if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m67only")) {
