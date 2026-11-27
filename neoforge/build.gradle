@@ -127,6 +127,8 @@ neoForge {
             }
             // M54: every dev client is silent (BackgroundSoundMixin; the saved options stay as they are); -Psound to hear it
             if (!project.hasProperty('sound')) systemProperty 'bettacraft.silent', 'true'
+            // M67.5: no dev client waits for VSync (BackgroundVsyncMixin; the saved option stays as it is); -Pvsync to keep it
+            if (!project.hasProperty('vsync')) systemProperty 'bettacraft.novsync', 'true'
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits

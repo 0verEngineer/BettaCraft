@@ -109,6 +109,8 @@ loom {
             }
             // M54: every dev client is silent (BackgroundSoundMixin; the saved options stay as they are); -Psound to hear it
             if (!project.hasProperty('sound')) property 'bettacraft.silent', 'true'
+            // M67.5: no dev client waits for VSync (BackgroundVsyncMixin; the saved option stays as it is); -Pvsync to keep it
+            if (!project.hasProperty('vsync')) property 'bettacraft.novsync', 'true'
             // M53: a mod resolution error of the Fabric Loader goes to the log, not into a dialog that keeps a background client open
             if (project.properties.keySet().any { it.startsWith('smoketest') }) vmArg '-Djava.awt.headless=true'
             if (project.hasProperty('smoketest')) property 'bettacraft.smoketest', 'true'
@@ -661,6 +663,7 @@ def prodProps = { boolean client ->
     if (client) {
         if (!project.hasProperty('foreground')) l << '-Dbettacraft.background=true'
         if (!project.hasProperty('sound')) l << '-Dbettacraft.silent=true'
+        if (!project.hasProperty('vsync')) l << '-Dbettacraft.novsync=true'
         if (project.hasProperty('smoketestfabric')) l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true']
         if (project.hasProperty('smoketestbook')) l << '-Dbettacraft.smoketest.book=true'
         // M66: the menus of the UI overhaul in production
