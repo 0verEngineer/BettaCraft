@@ -306,6 +306,7 @@ public final class PipeNetwork {
                     if (r != null) {
                         Port pt = new Port(q.immutable(), back, r);
                         if (!ports.contains(pt)) ports.add(pt);
+                        if (port.pipeEnd(ns, back)) ends.add(new End(q.immutable(), back)); // M68 part B: the controller's fresh inlet, waste outlet
                         continue;
                     }
                     ends.add(new End(q.immutable(), back));
@@ -386,6 +387,15 @@ public final class PipeNetwork {
 
     /** Pulls up to {@code max} mB of water (or of {@code like}'s fluid) from the ends (not from {@code from}). */
     public FluidStack drain(Level level, int max, @Nullable FluidStack like, IFluidHandler.FluidAction action, @Nullable BlockPos from) {
+        return drain(level, max, like, action, from, false);
+    }
+
+    /**
+     * As {@link #drain(Level, int, FluidStack, IFluidHandler.FluidAction, BlockPos)}; with {@code sourcesOnly} never from a tank or a
+     * port (M68 part B: the water change controller takes its fresh water from reservoirs, pumps, osmosis units and other mods' tanks,
+     * never out of an aquarium).
+     */
+    public FluidStack drain(Level level, int max, @Nullable FluidStack like, IFluidHandler.FluidAction action, @Nullable BlockPos from, boolean sourcesOnly) {
         if (max <= 0 || ends.isEmpty() || !Features.enabled(Feature.PIPES) || !carriesWater()) return FluidStack.EMPTY;
         if (!BUSY.get().add(this)) return FluidStack.EMPTY;
         try {
@@ -395,6 +405,7 @@ public final class PipeNetwork {
             for (int i = 0; i < n; i++) {
                 End e = ends.get((next + i) % n);
                 if (from != null && e.pos().equals(from)) continue;
+                if (sourcesOnly && notASource(level, e)) continue;
                 IFluidHandler h = handler(level, e);
                 if (h == null) continue;
                 // only water: look first, then take exactly that (other mods' tanks compare the values too)
@@ -414,6 +425,12 @@ public final class PipeNetwork {
         } finally {
             BUSY.get().remove(this);
         }
+    }
+
+    /** M68 part B: an end that is no source of fresh water: a tank, or a port of a device (the water change controller's own inlet). */
+    private static boolean notASource(Level level, End e) {
+        BlockState s = level.getBlockState(e.pos());
+        return s.getBlock() instanceof TankBlock || s.getBlock() instanceof PipePort p && p.pipeRole(level, e.pos(), s, e.face()) != null;
     }
 
     /** The ends of the network that are tank blocks (to find the tank a filter or a pump serves). */

@@ -40,6 +40,7 @@ public final class WthitCommonPlugin implements IWailaCommonPlugin {
         registrar.blockData(spring, org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.class);
         registrar.blockData(spring, org.overengineer.bettacraft.osmosis.RoUnitBlockEntity.class);
         registrar.blockData(spring, org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.class);
+        registrar.blockData(spring, org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity.class); // M68 part B
         registrar.blockData(spring, org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity.class);
         registrar.blockData(spring, org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity.class);
         IDataProvider<BlockEntity> pipe = (data, accessor, config) -> put(data, InfoData.pipe(accessor.getLevel(), accessor.getTarget().getBlockPos())); // M68

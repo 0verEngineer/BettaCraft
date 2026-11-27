@@ -11,7 +11,5 @@ final class LangM40b {
 
     static void addAll(BiConsumer<String, String> a) {
         a.accept("block.bettacraft.filter_pipe_bundle", "Pipe Bundle");
-        a.accept("gui.bettacraft.water_changer.filter", "On the multiblock filter: %s tanks");
-        a.accept("gui.bettacraft.water_changer.filter_waste", "Old water to the waste water port: %s mB");
     }
 }

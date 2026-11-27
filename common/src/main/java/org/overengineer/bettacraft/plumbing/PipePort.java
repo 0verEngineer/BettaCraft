@@ -19,4 +19,13 @@ public interface PipePort {
      */
     @Nullable
     PipeRole pipeRole(BlockGetter level, BlockPos pos, BlockState state, Direction face);
+
+    /**
+     * M68 part B: whether the port on {@code face} is also a fluid end of its network (it offers a fluid handler there): the water
+     * change controller's fresh water inlet takes what a pump pushes into its line, its waste water outlet gives its old water to
+     * whoever pulls on its line. Default: no (the multiblock filter's ports work their lines themselves).
+     */
+    default boolean pipeEnd(BlockState state, Direction face) {
+        return false;
+    }
 }

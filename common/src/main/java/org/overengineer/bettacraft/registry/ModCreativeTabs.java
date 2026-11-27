@@ -103,7 +103,7 @@ public final class ModCreativeTabs {
                         ModItems.PIPE_WRENCH, ModItems.WATER_PUMP, ModItems.BULKHEAD, ModItems.INTAKE_STRAINER, ModItems.LILY_PIPE, ModItems.NOZZLE,
                         ModItems.SPRAY_BAR, ModItems.FILTER_CHAMBER, ModItems.FILTER_PUMP_HEAD, ModItems.FILTER_INLET, ModItems.FILTER_OUTLET,
                         ModItems.FILTER_FOAM, ModItems.CERAMIC_RINGS, ModItems.ACTIVATED_CARBON, ModItems.FILTER_PEAT, ModItems.RESERVOIR,
-                        ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER)) out.accept(it.get());
+                        ModItems.LEVEL_SENSOR, ModItems.WATER_CHANGE_CONTROLLER, ModItems.DRAIN)) out.accept(it.get()); // M68 part B: the drain
                 // M40: the pipe cover and the guards (M68: the filter pipes, the T-piece and the water ports are gone)
                 for (var it : java.util.List.of(ModItems.PIPE_COVER, ModItems.INTAKE_GUARD, ModItems.OUTLET_GUARD)) out.accept(it.get());
                 // M25: water chemistry

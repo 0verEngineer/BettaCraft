@@ -112,6 +112,10 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
                 add(info, InfoLines.culture(InfoData.culture(server, level.getBlockEntity(data.getPos()))));
             } else if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(state)) { // M66: the flow a second; M68: role and flow now
                 add(info, InfoLines.pipe(level, data.getPos(), state, InfoData.pipe(server, data.getPos())));
+            } else if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.DrainBlock) { // M68 part B
+                add(info, InfoLines.drain(state));
+            } else if (level.getBlockEntity(data.getPos()) instanceof org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity s) { // M68 part B: the sensor
+                add(info, InfoLines.spring(InfoData.spring(server, s)));
             } else if (level.getBlockEntity(data.getPos()) instanceof org.overengineer.bettacraft.winding.Windable w) { // M37: the spring
                 add(info, InfoLines.spring(InfoData.spring(server, (net.minecraft.world.level.block.entity.BlockEntity) w)));
             }
