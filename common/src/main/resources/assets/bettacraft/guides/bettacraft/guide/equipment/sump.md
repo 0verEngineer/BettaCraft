@@ -31,7 +31,7 @@ slots and the air pump slot).
 | Filter media | two [filter media](filter_media.md); they clog and are washed like in the multiblock filter |
 | [Refugium](refugium.md) | Chaetomorpha and a tank light: takes up nitrate |
 
-* **Devices beside the cabinet:** a [level sensor](top_off.md) or a [dosing pump](../saltwater/dosing_pump.md) next to the
+* **Devices beside the cabinet:** a [level sensor](level_sensor.md) or a [dosing pump](../saltwater/dosing_pump.md) next to the
   cabinet of a sump serves the tank above, and so does a [calcium reactor](../saltwater/calcium_reactor.md): they take no
   room at the tank.
 * The tank menu gets the tab **Sump**: the water of the sumps, the pump, the chambers, the refugium and the devices beside

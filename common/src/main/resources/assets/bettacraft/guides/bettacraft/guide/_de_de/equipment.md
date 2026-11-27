@@ -25,12 +25,13 @@ navigation:
 | [Futterautomat](equipment/feeder.md) | füttert die Fische bis zu dreimal am Tag |
 | [Licht](equipment/light.md) | drei Stufen: Lichtleiste, [LED-Panel](equipment/led_panel.md), [Hochleistungs-LED](equipment/high_power_led.md); Dimmer und Tageslicht-Timer |
 | [Luftpumpe](equipment/air_pump.md) und [Ausströmer](equipment/air_stone.md) | Blasensäulen und Sauerstoff |
-| [Schwammfilter](equipment/sponge_filter.md), [Eckfilter](equipment/corner_filter.md), [Ansaugschutz](equipment/intake_sponge.md) | weitere Innenfilter; der Schwamm schützt die Jungfische |
+| [Schwammfilter](equipment/sponge_filter.md), [Eckfilter](equipment/corner_filter.md), [Ansaugschutz-Schwamm](equipment/intake_sponge.md) | weitere Innenfilter; der Schwamm schützt die Jungfische |
 | [Leistungsregler](equipment/regulator.md) | 0 bis 100 % für Filter, Pumpen und Ausströmer |
 | [Multiblock-Außenfilter](equipment/multiblock_filter.md) und [Filtermedien](equipment/filter_media.md) | ein großer Filter in jeder Größe; Medien verschmutzen und werden ausgewaschen |
-| [Rohre und Wasserpumpe](equipment/pipes.md) | tragen Wasser mit seinen Werten; auch zu Tanks und Rohren anderer Mods |
-| [Bodendurchführung und Innenraum-Rohre](equipment/bulkhead.md) | Rohre durch den Boden, Ausläufe im Aquarium mit eigener Strömung |
-| [Wasserwechsel-Steuerung](equipment/water_change.md) und [Nachfüllsystem](equipment/top_off.md) | automatische Wasserwechsel und Nachfüllen von verdunstetem Wasser |
+| [Wasser im Aquarium: wie alles zusammenhängt](equipment/water_system.md) | Rohre, Zange, Bündel, Anschlüsse und Schutzaufsätze, Wasserwechsel und Nachfüllen, mit Beispielaufbauten |
+| [Rohre und Wasserpumpe](equipment/pipes.md) | zwei Rohre für alles; eine Leitung bekommt ihre Aufgabe vom Anschluss, den sie erreicht |
+| [Rohranschlüsse und Innenraum-Rohre](equipment/bulkhead.md) | wo Leitungen ins Aquarium führen; Innenraum-Rohre und -Bündel, Auslässe mit eigener Strömung |
+| [Wasserwechsel-Steuerung](equipment/water_change.md), [Niveausensor](equipment/level_sensor.md) und [Abfluss](equipment/drain.md) | automatische Wasserwechsel über vier Anschlüsse, Nachfüllen nach dem Sensor, das Ende des Abwassers |
 | [Schmelztiegel und Edelstahl](equipment/crucible.md) | der Stahl für Rohre und Wassergeräte |
 | [Schrank](equipment/cabinet.md) | Unterbau für das Aquarium mit Platz für Filter und Futter |
 | [Abdeckung](equipment/tank_lid.md) | verhindert, dass das Wasser verdunstet |
