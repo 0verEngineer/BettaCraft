@@ -45,10 +45,10 @@ public final class DevSmokeCrossLoad {
         if (ticks == 5) {
             for (InteriorRegion r : InteriorRegions.get(server).all()) {
                 if (r.tankDimension() != Level.OVERWORLD || r.tankMin() == null) continue;
-                ChunkPos cp = new ChunkPos(r.tankMin());
+                ChunkPos cp = new ChunkPos(r.tankMin().getX() >> 4, r.tankMin().getZ() >> 4);
                 if (!chunks.contains(cp)) {
                     chunks.add(cp);
-                    level.setChunkForced(cp.x, cp.z, true);
+                    level.setChunkForced(cp.x(), cp.z(), true);
                 }
             }
             LOGGER.info("[smoketest] crossload: {} chunks with tanks", chunks.size());
@@ -57,8 +57,8 @@ public final class DevSmokeCrossLoad {
         if (ticks < 6) return;
         boolean ready = true;
         for (ChunkPos cp : chunks) {
-            level.getChunk(cp.x, cp.z);
-            ready &= level.areEntitiesLoaded(cp.toLong());
+            level.getChunk(cp.x(), cp.z());
+            ready &= level.areEntitiesLoaded(cp.pack());
         }
         if (!ready && ticks < 1200) return;
         List<String> lost = new ArrayList<>();
