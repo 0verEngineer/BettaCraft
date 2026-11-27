@@ -66,7 +66,7 @@ final class DevClientSmokeM68 {
             server(this::build);
         });
         then(100, () -> {
-            mc.options.hideGui = true;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             mc.options.fovEffectScale().set(0.0);
             checkClient();
         });
@@ -99,7 +99,7 @@ final class DevClientSmokeM68 {
         world("technical_room_close", () -> c("room_changer").add(0.8, 0.2, -0.2), new Vec3(0.6, 1.4, -2.6));
         // ---- an overlay (Jade/WTHIT/TOP, when one is there) on a glass pipe
         then(1, () -> {
-            mc.options.hideGui = false;
+            org.overengineer.bettacraft.client.DevHud.setHidden(mc, false);
             scale(2);
         });
         world("overlay_glass_pipe", () -> c("glass_pipe").add(0, 1, 0), new Vec3(0.0, 0.25, -1.6));
@@ -109,7 +109,7 @@ final class DevClientSmokeM68 {
             then(1, () -> {
                 language(code);
                 scale(2);
-                mc.setScreen(null);
+                mc.gui.setScreen(null);
             });
             menu(code, "filter_short_circuit", "short_head", true);
             menu(code, "filter_glass", "glass_head", true);
@@ -119,12 +119,12 @@ final class DevClientSmokeM68 {
             near(() -> at.get("young_tank"));
             then(1, () -> openTank(at.get("young_tank")));
             then(25, () -> {
-                if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen)) problem("no tank screen");
+                if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen)) problem("no tank screen");
             });
             for (int[] tab : new int[][] {{5, 0}, {7, 1}, {2, 2}}) {
                 String[] names = {"tank_water", "tank_devices", "tank_breeding"};
                 then(1, () -> {
-                    if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab[0]);
+                    if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(tab[0]);
                 });
                 then(15, () -> shot(code + "_" + names[tab[1]]));
             }
@@ -241,12 +241,12 @@ final class DevClientSmokeM68 {
             else org.overengineer.bettacraft.util.ClientHooks.openWaterChanger(at.get(key));
         });
         then(20, () -> {
-            boolean ok = filter ? mc.screen instanceof org.overengineer.bettacraft.client.screen.MultiblockFilterScreen
-                    : mc.screen instanceof org.overengineer.bettacraft.client.screen.WaterChangerScreen;
-            if (!ok) problem("no " + (filter ? "filter" : "controller") + " screen at " + key + ": " + mc.screen);
+            boolean ok = filter ? mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.MultiblockFilterScreen
+                    : mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.WaterChangerScreen;
+            if (!ok) problem("no " + (filter ? "filter" : "controller") + " screen at " + key + ": " + mc.gui.screen());
         });
         then(5, () -> shot(code + "_" + name));
-        then(1, () -> mc.setScreen(null));
+        then(1, () -> mc.gui.setScreen(null));
     }
 
     private void near(Supplier<BlockPos> target) {
@@ -259,7 +259,7 @@ final class DevClientSmokeM68 {
 
     private void closeAll() {
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(3, () -> mc.setScreen(null));
+        then(3, () -> mc.gui.setScreen(null));
     }
 
     private void openTank(BlockPos tankPos) {
@@ -280,7 +280,7 @@ final class DevClientSmokeM68 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
@@ -313,7 +313,7 @@ final class DevClientSmokeM68 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         if (started && !built) return false;
         Step st = steps.peek();
@@ -334,7 +334,7 @@ final class DevClientSmokeM68 {
     }
 
     private void shot(String name) {
-        mc.getToastManager().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m68_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m68_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }
