@@ -92,8 +92,8 @@ A turning Create shaft, cogwheel, gearbox or motor whose shaft points at a **wat
 (switch `features.compat.create.rotation`):
 
 * **64 RPM** (either direction) is full work, slower is proportional: 32 RPM is half the flow, half the boost.
-* The pumps and controllers need the rotation only where a server makes them need FE (`pipes.pumpsRequireEnergy`).
-* The reverse osmosis unit gets its pressure-pump boost from rotation even without the power options.
+* The pumps and controllers need the rotation only where a server makes them need FE (`power.costs`).
+* The reverse osmosis unit gets its pressure-pump boost from rotation even with power costs off.
 * The food maker on FE runs on the rotation; without FE the rotation winds its spring (at full speed twice as fast as
   the machine uses it), no crank needed.
 * The devices cost **no stress**: they are not part of Create's network, they only take the speed of the shaft.

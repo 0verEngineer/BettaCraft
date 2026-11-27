@@ -168,7 +168,7 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
 
 - **Equipment:** internal, external, sponge and corner filters (the external one also one or two blocks below its tank,
   the tank chosen by sneak-click), cabinets of any wood or stone (a row of cabinets gets one front with drawers and double
-  doors; cabinets join to the back too, so even a 10 x 5 tank stands on one under-cabinet with one shared spring), automatic and clip-on feeders, air pumps with air stones, light bars and LED
+  doors; cabinets join to the back too, so even a 10 x 5 tank stands on one under-cabinet, and every cabinet makes the tank's energy store bigger), automatic and clip-on feeders, air pumps with air stones, light bars and LED
   panels in 16 colours with dimmer and daylight timer.
 - **Pipes and the multiblock filter:** glass and stainless steel pipes and pumps carry water with all its values. A
   multiblock filter of any size with media that clog serves several aquariums: filter pipes with T-pieces dock on any side
@@ -184,10 +184,10 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   traffic lights, graphs, animals, devices and the logbook, with alarms that give a redstone signal and a waypoint in
   JourneyMap, Xaero's Minimap or FTB Chunks for the owner and the users of the tank (each switches his own in the tank
   menu).
-- **Power, your choice:** by default nothing needs energy. With the power options on, the devices take Forge Energy (on
-  Fabric Team Reborn Energy), or
-  you wind them with a **crank**, or with Create a **drive adapter** runs every device of a tank on rotation with real
-  stress.
+- **Power, your choice:** by default nothing needs energy (`power.costs` OFF / EASY / HARD). With power costs on, every
+  tank has one energy store for all its devices: charge it with Forge Energy (on Fabric Team Reborn Energy), with the
+  **crank** at its cabinet or filter (about 20 seconds for a day of a medium tank on EASY), or with Create's **drive
+  adapter** on rotation with real stress.
 
 ![One multiblock filter for two tanks: filter pipes with T-pieces, a pipe bundle with four lines, fresh and waste water ports and pipe covers](images/bettacraft-filter-lines.jpg)
 

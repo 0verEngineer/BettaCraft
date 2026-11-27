@@ -31,7 +31,7 @@ Der Schlauch führt innen an der Scheibe bis zum Boden und endet dort (er liegt 
   (Client-Config `sound.airPumpSound`).
 * **Leistungsregler:** Rechtsklick (oder Schleichen + Mausrad, während du sie ansiehst) stellt 0 bis 100 % ein.
   Weniger Leistung gibt weniger Luft, braucht weniger Energie und ist leiser (siehe [Leistungsregler](regulator.md)).
-* **Energie:** ohne Strom-Mods läuft sie einfach. Ein Server kann FE verlangen (`aeration.airPumpRequiresEnergy`):
+* **Energie:** ohne Strom-Mods läuft sie einfach. Ein Server kann FE verlangen (`power.costs`):
   2 FE/t je Ausströmer, geliefert wie bei der übrigen Technik (siehe [Strom](power.md)).
 
 Der <ItemLink id="bettacraft:air_hose" /> ist nur ein Bauteil (getrockneter Seetang oder Schleimbälle).

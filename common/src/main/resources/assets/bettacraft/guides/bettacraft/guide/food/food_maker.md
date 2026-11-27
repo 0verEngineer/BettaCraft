@@ -24,7 +24,7 @@ input slots; after a batch (10 seconds) the food lies in the output slot.
 * **Spring:** without power it runs on a spring. Right-click it with the [crank](../equipment/crank.md) to wind it (hold
   the button): the crank turns a quarter and the ratchet clicks at every click. About five seconds fill it, and a full
   spring works for **one in-game day** (`foodMaking.springTicks`). The bar on the left shows how much is left.
-* **FE:** while a power option is on (`pipes.pumpsRequireEnergy` or the `power.*` options of the tank) it takes
+* **FE:** while power costs are on (`power.costs` `EASY` or `HARD`) it takes
   `foodMaking.makerFePerTick` FE per tick while it works; the bar shows the stored FE. When the FE is short it runs on its
   spring (the brass gauge beside it), so it also works without a generator.
 * A redstone signal pauses it. A comparator reads how full the output is.

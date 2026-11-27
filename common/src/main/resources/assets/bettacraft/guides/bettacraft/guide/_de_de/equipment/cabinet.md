@@ -43,13 +43,12 @@ Schränke verbinden sich auch **nach hinten**, so steht selbst ein 10 × 5 Becke
 * Die Einstellung `features.equipment.cabinetArea` schaltet das ab: Schränke verbinden sich dann nur links und rechts,
   und jeder zeigt seine Front.
 
-**Eine Feder für den ganzen Unterschrank.** Mit Strom und Aufziehen (siehe [Kurbel](crank.md)) bilden alle Schränke
-unter einem Becken und alle daran angebauten Schränke **einen Federspeicher**: auch zwei Schränke, die sich nicht
-berühren, zum Beispiel je einer an beiden Enden eines langen Beckens. Der Speicher wächst mit jedem Schrankblock; ein
-Kurbel-Klick an einem beliebigen Schrank zieht den ganzen Speicher auf (um den Schritt eines Schranks), und das Fenster
-jedes Schranks und die Anzeige zeigen den Speicher („Geteilt von 4 Schränken“). Ein abgebauter Schrank gibt seinen
-Anteil an die anderen ab, soweit sie Platz haben. Schränke älterer Welten behalten ihr Aufziehen: ihre Federn bilden
-einfach den Speicher. Die Einstellung `features.power.cabinetSharedSpring` gibt jedem Schrank wieder seine eigene Feder.
+**Ein größerer Energiespeicher.** Mit Stromkosten (siehe [Strom](power.md)) fügt jeder Schrankblock unter einem Becken
+dem einen Energiespeicher des Beckens 20.000 FE hinzu (`power.storePerCabinet`), ebenso jeder daran angebaute Schrank,
+der unter keinem anderen Becken steht (ein angebauter Schrank zwischen zwei Becken gehört zum näheren). Die
+[Kurbel](crank.md) an jedem dieser Schränke lädt diesen Speicher. Federn, die Schränke älterer Welten aufgezogen hatten,
+gehen in den Speicher. Die Einstellung `features.power.cabinetSharedSpring` lässt nur die Schränke direkt unter dem
+Becken zählen.
 
 ## Fronten
 
@@ -102,8 +101,7 @@ hat seine eigene Seite, auch mehrere Schränke unter einem großen Becken. Klick
 Mit **Create** nimmt ein Schrank eine drehende Welle, die das Aquarium darüber mit Strom versorgt, wie ein
 [Antriebsadapter](drive_adapter.md): der Knopf mit dem Wellen-Symbol links vom Filterplatz wählt die Seite (**keine**,
 hinten, links, rechts, vorne oder unten; Klick: nächste, Schleichen + Klick: vorige), ein Messingflansch markiert sie.
-Eine Welle, ein Zahnrad oder Getriebe dort lädt den FE-Puffer des Beckens und kostet Stress im Netz von Create; mit
-Aufziehen an zieht der Rest die Feder des Schranks auf. Der Schrank behält die Seite auf seinem Item. Server können das
+Eine Welle, ein Zahnrad oder Getriebe dort lädt den Energiespeicher des Beckens und kostet Stress im Netz von Create. Der Schrank behält die Seite auf seinem Item. Server können das
 abschalten (`features.compat.create.cabinetDrive`) oder nur einige Seiten erlauben (`createDrive.cabinetSides`).
 
 ## Steinschränke

@@ -141,7 +141,7 @@ and the menu says so. A paludarium keeps all of them for its water.
 
 Server config `terrarium.*`: the land shares of the kinds, the strength of the devices, the time constants, the water of
 the mister, the days to harm; `power.*`: heat mats use the heaters' energy switch (`heatMatFePerTick`), misters their own
-(`terrarium.misterRequiresEnergy`). Common config: `features.terrariums.enabled` (off: every tank is an aquarium),
+(`power.costs`). Common config: `features.terrariums.enabled` (off: every tank is an aquarium),
 `features.terrariums.devices`, `features.terrariums.tankMode`, `features.turtles.enabled`, `features.turtles.breeding`, `features.turtles.wildSpawns`, `features.turtles.seaTurtles`, `features.foreignAnimals.terrarium`, `features.terrariums.herps`,
 `features.terrariums.herpBreeding`, `features.terrariums.wildHerps`, `features.mobsInGlass.enabled`. Turtles (and the egg layers of the amphibians and reptiles):
 `terrarium.incubationSpeed`, `terrarium.clutchIntervalDays`, `terrarium.brumation`, `terrarium.brumationBelow`. Land animals of other mods without a profile for the terrarium box: `terrarium.boxAllow`.

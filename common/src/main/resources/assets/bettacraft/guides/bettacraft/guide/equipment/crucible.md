@@ -24,7 +24,7 @@ which Minecraft does not have; Bettacraft melts it in the <ItemLink id="bettacra
 Put the ingredients into the four slots on the left (any order) and give it heat:
 
 * **lava** (a lava source, a lava cauldron or a magma block) **right under it** heats it for free;
-* **FE** while a power option is on (power mods; `crucible.fePerTick` 20 FE/t);
+* **FE** while power costs are on (power mods; `crucible.fePerTick` 20 FE/t);
 * otherwise **fuel** in the fuel slot: a lava bucket (100 s, the bucket stays), a blaze rod (12 s) or blaze powder (6 s).
 
 It glows and smokes while it melts. Hoppers fill it from the top and the sides (lava buckets, blaze rods and blaze powder

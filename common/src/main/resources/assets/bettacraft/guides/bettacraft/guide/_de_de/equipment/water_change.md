@@ -27,7 +27,7 @@ rechtsklicken:
 Wenn es so weit ist, lässt ihre Ablaufpumpe das alte Wasser in den Abfluss und füllt dieselbe Menge Frischwasser aus
 einem [Vorratsbehälter](top_off.md), einem [Rohr](pipes.md) oder dem Tank einer anderen Mod **daneben** nach, oder
 unbegrenzt aus einer **Wasserquelle** daneben. Sie lässt nur ab, was sie nachfüllen kann, und nie unter halb voll,
-solange Tiere im Aquarium leben. Das Logbuch notiert jeden Wechsel. Mit `pipes.pumpsRequireEnergy` braucht sie FE
+solange Tiere im Aquarium leben. Das Logbuch notiert jeden Wechsel. Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht sie FE
 (8 FE je 100 mB).
 
 ## Bezug

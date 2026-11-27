@@ -25,7 +25,7 @@ Stell sie **auf einen oberen Block** oder **neben das Becken**.
 * Sie fasst **4 Eimer Wasser** und verbraucht beim Sprühen 2 mB pro Sekunde (`terrarium.misterMbPerSecond`). Füll sie mit
   einem Eimer, über [Rohre](../equipment/pipes.md) oder Rohre anderer Mods, oder stell sie neben ein Reservoir oder einen
   Wasserquellblock: Von dort füllt sie sich selbst nach. Ein Komparator liest, wie voll sie ist.
-* **Energie:** Mit `terrarium.misterRequiresEnergy` braucht sie beim Sprühen FE des Beckens (6 FE/t).
+* **Energie:** Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht sie beim Sprühen FE des Beckens (6 FE/t).
 
 ## Bezug
 

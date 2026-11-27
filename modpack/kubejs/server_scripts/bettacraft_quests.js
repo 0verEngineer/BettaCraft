@@ -6,7 +6,7 @@
 // Every quest of the Bettacraft chapter carries FTB Quests tags: bettacraft_feature_<path> for the feature switches of
 // config/bettacraft-common.toml it belongs to (features.<path>, lower case, "__" for "."; FTB Quests 26.1 keeps only tags
 // of [a-z0-9_]; 1.21.x: bettacraft_feature:<path>), bettacraft_mod_<modid> for another mod it needs (Create)
-// and bettacraft_needs_power for quests that only work while a device needs power (power.*RequiresEnergy in the server
+// and bettacraft_needs_power for quests that only work while a device needs power (power.costs EASY or HARD in the server
 // config). BettacraftApi.questTagsOn(tags) says whether all of them are on. A quest that is off becomes invisible and
 // optional (it never blocks the chapter); when the switch is on again, it shows again. Nothing is written to the quest
 // file: the script runs when the server has started, when a player logs in (after /ftbquests reload) and when the

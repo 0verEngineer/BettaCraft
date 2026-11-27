@@ -42,12 +42,11 @@ Cabinets join **to the back** as well, so even a 10 x 5 tank stands on one conti
 * The setting `features.equipment.cabinetArea` switches this off: cabinets then join only left and right and every one
   shows its front.
 
-**One spring for the whole under-cabinet.** With power and winding on (see [Crank](crank.md)) all cabinets under a tank
-and all cabinets joined to them form **one spring store**: also two cabinets that do not touch, for example one at each
-end of a long tank. The store grows with every cabinet block; one click of the crank at any of them winds the whole store
-(by one cabinet's step), and every cabinet's window and the overlay show the store ("Shared by 4 cabinets"). A broken
-cabinet hands its share to the others as far as they have room. Cabinets of older worlds keep their winding: their springs
-simply form the store. The setting `features.power.cabinetSharedSpring` gives every cabinet its own spring again.
+**A bigger energy store.** With power costs on (see [Power](power.md)) every cabinet block under a tank adds 20,000 FE to the
+tank's one energy store (`power.storePerCabinet`), and so does every cabinet joined to them that stands under no other
+tank (a joined cabinet between two tanks belongs to the nearer one). The [crank](crank.md) at any of these cabinets
+charges that store. Springs that cabinets of older worlds had wound go into the store. The setting
+`features.power.cabinetSharedSpring` lets only the cabinets right under the tank count.
 
 ## Fronts
 
@@ -98,8 +97,7 @@ also several cabinets under one big tank. Click for the next side, sneak + click
 With **Create** a cabinet takes a turning shaft that powers the aquarium above it, like a
 [drive adapter](drive_adapter.md): the button with the shaft icon left of the filter slot chooses the side (**none**,
 back, left, right, front or bottom; click for the next one, sneak + click for the previous one), a brass flange marks it.
-A shaft, cogwheel or gearbox there charges the tank's FE buffer and costs stress in Create's network; with winding on, the
-rest winds the cabinet's spring. The cabinet keeps the side on its item. Servers can switch it off
+A shaft, cogwheel or gearbox there charges the tank's energy store and costs stress in Create's network. The cabinet keeps the side on its item. Servers can switch it off
 (`features.compat.create.cabinetDrive`) or allow only some sides (`createDrive.cabinetSides`).
 
 ## Stone cabinets

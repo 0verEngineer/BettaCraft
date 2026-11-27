@@ -28,8 +28,8 @@ maker) keep their own shaft as before (see [Create](../settings/create.md)).
   tank. Placed next to a tank it turns towards it by itself (the tank above first).
 * Connect a Create **shaft, cogwheel, gearbox or motor** to its shaft. The adapter is part of Create's network: the
   shaft stub turns with it, and the engineer's goggles show its stress and what it gives the tank.
-* The aquarium needs the power options of the server (`power.heaterRequiresEnergy` and the others): without them no
-  device takes FE, and the adapter only idles.
+* The aquarium needs power costs on the server (`power.costs` `EASY` or `HARD`): without them no device takes FE, and
+  the adapter only idles.
 
 ## Power
 
@@ -46,7 +46,7 @@ maker) keep their own shaft as before (see [Create](../settings/create.md)).
 The adapter costs **real stress** in Create's network, by its load: **2 SU for every FE per tick** it gives (a tank
 taking 64 FE/t costs 128 SU), at least **0.5 SU per RPM** while it turns without load. While a tank's buffer fills
 up, the adapter runs at full load. An **overstressed** network gives the tank nothing (the goggles say so); the
-devices then fall back on the FE stored in the buffer and the wound [crank](crank.md) springs.
+devices then fall back on the FE in the tank's store (which the [crank](crank.md) charges too).
 
 ## The cabinet takes a shaft too
 
@@ -54,15 +54,14 @@ devices then fall back on the FE stored in the buffer and the wound [crank](cran
 
 A [cabinet](cabinet.md) under the tank does the same as an adapter: choose the side in the cabinet menu (the button
 with the shaft left of the filter slot: none, back, left, right, front or bottom) and connect a shaft there. A brass
-flange marks the side. With winding on (`features.power.winding`), what the tank does not need **winds the cabinet's
-spring**, so the tank keeps running for a while when the rotation stops. Overlays (Jade, The One Probe, WTHIT) show
+flange marks the side. It fills the same energy store of the tank. Overlays (Jade, The One Probe, WTHIT) show
 on the cabinet and the tank what the shaft gives.
 
 ## Settings
 
 The switches `features.compat.create.drive` (the adapter and the cabinet shaft) and `features.compat.create.cabinetDrive`
 (only the cabinet shaft); the numbers in the server config section `createDrive`: full speed, FE per input, the limit
-per tank, the stress per FE and when idle, the FE per spring tick and the sides a cabinet may use (`cabinetSides`).
+per tank, the stress per FE and when idle and the sides a cabinet may use (`cabinetSides`).
 
 ## On the road
 

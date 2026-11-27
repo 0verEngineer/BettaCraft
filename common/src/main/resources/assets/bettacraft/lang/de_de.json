@@ -4230,7 +4230,7 @@
   "quest.bettacraft.powered.title": "Am Netz",
   "quest.bettacraft.powered.desc": "Optional, nur wenn das Pack Geräte Energie verbrauchen lässt: Schließe Kabel einer anderen Mod an ein Becken an und öffne sein Menü, während Energie gespeichert ist.",
   "quest.bettacraft.wound_up.title": "Aufgezogen",
-  "quest.bettacraft.wound_up.desc": "Optional, nur wenn das Pack Geräte Energie verbrauchen lässt: Ziehe statt mit Energie einen Filter, einen Schrank oder die Futtermaschine mit der Kurbel auf.",
+  "quest.bettacraft.wound_up.desc": "Optional, nur wenn das Pack Geräte Energie verbrauchen lässt: Ziehe statt mit Energie ein Gerät mit der Kurbel auf, etwa die Futtermaschine, oder lade das Becken an seinem Schrank oder Filter.",
   "quest.bettacraft.stainless_steel.title": "Rostfrei",
   "quest.bettacraft.stainless_steel.desc": "Der Tiegel schmilzt Edelstahl (auch die Maschinen von Mekanism, EnderIO, Create und Thermal stellen ihn her): für Rohre, die auch im Salzwasser nie rosten.",
   "quest.bettacraft.pipes.title": "Rohrleitungen",
@@ -5244,5 +5244,9 @@
   "gui.bettacraft.power_costs.easy": "einfach",
   "gui.bettacraft.power_costs.hard": "schwer",
   "bettacraft.configuration.features.power.tankCrank": "Kurbel lädt den Beckenspeicher",
-  "bettacraft.configuration.features.power.tankCrank.tooltip": "M67: die Kurbel an einem Unterschrank unter einem Becken oder an einem angeschlossenen Außenfilter lädt den einen Energiespeicher des Beckens (power.crankFePerClick pro Klick), denselben Speicher, den FE-Kabel laden; er betreibt alle Geräte des Beckens (aus: nur FE lädt ein Becken)"
+  "bettacraft.configuration.features.power.tankCrank.tooltip": "M67: die Kurbel an einem Unterschrank unter einem Becken oder an einem angeschlossenen Außenfilter lädt den einen Energiespeicher des Beckens (power.crankFePerClick pro Klick), denselben Speicher, den FE-Kabel laden; er betreibt alle Geräte des Beckens (aus: nur FE lädt ein Becken)",
+  "advancements.bettacraft.tank_cranked.title": "Muskelkraft",
+  "advancements.bettacraft.tank_cranked.description": "Lade den Energiespeicher eines Beckens mit der Kurbel an seinem Unterschrank oder Außenfilter",
+  "quest.bettacraft.tank_cranked.title": "Muskelkraft",
+  "quest.bettacraft.tank_cranked.desc": "Optional, nur wenn das Pack Geräte Energie verbrauchen lässt: jedes Becken hat einen Energiespeicher für alle seine Geräte. Lade ihn mit der Kurbel an einem Unterschrank unter dem Becken oder an seinem Außenfilter: etwa 20 Sekunden Kurbeln betreiben ein mittleres Becken einen Tag lang auf EASY. Mehr Unterschränke unter dem Becken machen den Speicher größer."
 }

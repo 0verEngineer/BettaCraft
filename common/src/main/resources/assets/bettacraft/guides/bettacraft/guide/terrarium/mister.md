@@ -24,7 +24,7 @@ Put it **on a top block** or **beside the tank**.
 * It holds **4 buckets of water** and uses 2 mB per second while it sprays (`terrarium.misterMbPerSecond`). Fill it with a
   bucket, by [pipes](../equipment/pipes.md) or another mod's pipes, or put it next to a reservoir or a water source block:
   it refills itself from there. A comparator reads how full it is.
-* **Energy:** with `terrarium.misterRequiresEnergy` it uses the tank's FE while it sprays (6 FE/t).
+* **Energy:** with power costs (`power.costs` `EASY` or `HARD`) it uses the tank's FE while it sprays (6 FE/t).
 
 ## Obtaining
 
