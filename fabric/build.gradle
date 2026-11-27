@@ -959,21 +959,21 @@ tasks.register('fabricSaveLoadTest') {
 }
 
 // gradlew fabricCrossLoadTest [-PcrossLoadWorld=<world dir>] : a world saved by NeoForge (default: the showcase that
-// `gradlew buildShowcase` made, run/saves/Bettacraft Schaukasten) loaded by a dedicated Fabric server (a copy in
-// run-fabric/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
+// `gradlew buildShowcase` made, <runRoot>/saves/Bettacraft Schaukasten) loaded by a dedicated Fabric server (a copy in
+// <fabricRunRoot>/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
 // (DevSmokeCrossLoad). Never the original world. Log: build/crossload-fabric/server.log.
 tasks.register('fabricCrossLoadTest') {
     group = 'verification'
     notCompatibleWithConfigurationCache('starts the game processes of the run task')
     dependsOn 'classes', 'devClasses', 'processDevResources', 'configureLaunch'
     doLast {
-        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file('run/saves/Bettacraft Schaukasten')
+        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file((project.findProperty('runDir') ?: fabricRunRoot.replaceAll('/fabric$', '')) + '/saves/Bettacraft Schaukasten')
         if (!new File(src, 'level.dat').exists()) throw new GradleException("fabricCrossLoadTest: no world at ${src} (gradlew buildShowcase, or -PcrossLoadWorld=<dir>)")
         def srv = tasks.named('runFabricServer').get()
         def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
         def logs = rootProject.file('build/crossload-fabric')
         logs.deleteDir(); logs.mkdirs()
-        def dir = rootProject.file('run-fabric/crossload')
+        def dir = rootProject.file("${fabricRunRoot}/crossload")
         def world = new File(dir, 'world')
         fabricDeleteWorlds('before the run', [world])
         dir.mkdirs()
