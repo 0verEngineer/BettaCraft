@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.plumbing;
 
-import com.mojang.serialization.MapCodec;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,15 +17,9 @@ import org.overengineer.bettacraft.platform.fluid.IFluidHandler;
  * nothing and gives nothing; other mods' pipes may use it as a sink too. Only water (with its values), no other fluid.
  */
 public class DrainBlock extends Block implements org.overengineer.bettacraft.util.BlockRemoval {
-    public static final MapCodec<DrainBlock> CODEC = simpleCodec(DrainBlock::new);
 
     public DrainBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
     }
 
     @Override
