@@ -151,7 +151,8 @@ public final class DevShowcase {
                 for (ChunkPos cp : forced) level.setChunkForced(cp.x(), cp.z(), false);
                 server.saveEverything(false, true, true);
                 if (afterSave != null) afterSave.accept(server, level);
-                LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks ({} named), {} animals, {} plants", tanks, named, animals, plants);
+                LOGGER.info("[showcase] SHOWCASE BUILT: {} tanks ({} named), {} animals, {} plants, M68 station problems {}", tanks, named, animals, plants,
+                        DevShowcaseM68.PROBLEMS.size());
                 haltAt = ticks + 20;
             } else if (ticks == haltAt) {
                 server.halt(false);
@@ -189,7 +190,7 @@ public final class DevShowcase {
         level.setRespawnData(net.minecraft.world.level.storage.LevelData.RespawnData.of(level.dimension(), new BlockPos(spawn.getX(), ground, spawn.getZ()), 180F, 0F));
         // keep the whole showcase loaded while it is built (the animals are entities)
         for (int cx = (origin.getX() >> 4) - 1; cx <= (origin.getX() + 150 >> 4) + 1; cx++)
-            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 20 * ROW + 16 >> 4) + 1; cz++) { // M30: the big tanks of the last row
+            for (int cz = (origin.getZ() >> 4) - 1; cz <= (origin.getZ() + 22 * ROW + 16 >> 4) + 1; cz++) { // M30: the big tanks of the last row
                 level.setChunkForced(cx, cz, true);
                 forced.add(new ChunkPos(cx, cz));
             }
@@ -505,8 +506,8 @@ public final class DevShowcase {
             name(level, at, tiersDe[tier]);
             at = at.east(4 + GAP);
         }
-        // M24: a multiblock filter at a tank, the top-off and the water change controller, the crucible
-        at = startRow(level, "Rohre, Filter und Wasserwechsel");
+        // M24: a multiblock filter at a tank, the crucible, one filter for two tanks (M40)
+        at = startRow(level, "Rohre und Filter");
         TankBlockEntity ft = tank(level, at, 3, 2, 2, 0F, true);
         net.minecraft.world.item.Item[] media = {ModItems.FILTER_FOAM.get(), ModItems.CERAMIC_RINGS.get()};
         for (int y = 0; y < 2; y++) {
@@ -519,21 +520,7 @@ public final class DevShowcase {
         org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, at.offset(4, 2, 0)); // M40: the guards in the tank
         name(level, at, "Multiblock-Filter");
         at = at.east(5 + GAP);
-        TankBlockEntity wt = tank(level, at, 3, 2, 2, 0F, true);
-        wt.getTank().setNitrate(45F);
-        level.setBlockAndUpdate(at.offset(-1, 0, 0), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
-        // M68 part B (minimal until part E rebuilds the station): the controller against the tank (its back), fresh water through a
-        // steel pipe at its inlet (south) from a reservoir, the old water out of its outlet (north) into a drain; the sensor only measures
-        level.setBlockAndUpdate(at.offset(3, 0, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState()
-                .setValue(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.FACING, Direction.EAST));
-        level.setBlockAndUpdate(at.offset(3, 0, 2), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
-        level.setBlockAndUpdate(at.offset(3, 0, 3), ModBlocks.RESERVOIR.get().defaultBlockState());
-        if (level.getBlockEntity(at.offset(3, 0, 3)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity res24)
-            res24.water().fill(new org.overengineer.bettacraft.platform.fluid.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000),
-                    org.overengineer.bettacraft.platform.fluid.IFluidHandler.FluidAction.EXECUTE);
-        level.setBlockAndUpdate(at.offset(3, 0, 0), ModBlocks.DRAIN.get().defaultBlockState());
-        name(level, at, "Nachfüllen + Wasserwechsel");
-        at = at.east(5 + GAP);
+        // M68 part E: the top-off and water change station moved to its own row (DevShowcaseM68.waterRow)
         level.setBlockAndUpdate(at.offset(1, -1, 0), Blocks.MAGMA_BLOCK.defaultBlockState());
         level.setBlockAndUpdate(at.offset(1, 0, 0), ModBlocks.CRUCIBLE.get().defaultBlockState());
         if (level.getBlockEntity(at.offset(1, 0, 0)) instanceof org.overengineer.bettacraft.crucible.CrucibleBlockEntity cr) {
@@ -543,10 +530,18 @@ public final class DevShowcase {
             cr.items().setStackInSlot(3, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 64));
         }
         for (int x = 2; x < 6; x++) level.setBlockAndUpdate(at.offset(x, 0, 0), (x % 2 == 0 ? ModBlocks.GLASS_PIPE : ModBlocks.STAINLESS_STEEL_PIPE).get().defaultBlockState());
-        LOGGER.info("[showcase] M24 row: filter {}, top-off {}", ft.getBlockPos(), wt.getBlockPos());
+        LOGGER.info("[showcase] M24 row: filter {}", ft.getBlockPos());
         filterLines(level, at.east(6 + GAP)); // M40
         terraria(level); // M31
         powerStore(level); // M67
+        // M68 part E: the one pipe system and the top-off / water change stations
+        DevShowcaseM68.PROBLEMS.clear();
+        at = startRow(level, "Rohrsystem");
+        LOGGER.info("[showcase] M68 pipe row: {}", DevShowcaseM68.pipeRow(level, at));
+        at = startRow(level, "Nachfüllen und Wasserwechsel");
+        LOGGER.info("[showcase] M68 water row: {}", DevShowcaseM68.waterRow(level, at));
+        if (DevShowcaseM68.PROBLEMS.isEmpty()) LOGGER.info("[showcase] M68 stations: all working");
+        else LOGGER.error("[showcase] M68 stations: {} problem(s): {}", DevShowcaseM68.PROBLEMS.size(), DevShowcaseM68.PROBLEMS);
         // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
         at = startRow(level, "Großbecken");
         bigTank(level, at, 24, 6, 12, 0F, new TankmateSpecies[]{TankmateSpecies.PANGASIUS, TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH,
@@ -848,7 +843,7 @@ public final class DevShowcase {
     }
 
     /** A standing oak sign on the path facing it (north), four short lines. */
-    private static void sign(ServerLevel level, BlockPos pos, String... lines) {
+    static void sign(ServerLevel level, BlockPos pos, String... lines) {
         level.setBlockAndUpdate(pos.below(), Blocks.SMOOTH_STONE.defaultBlockState());
         level.setBlockAndUpdate(pos, Blocks.OAK_SIGN.defaultBlockState().setValue(net.minecraft.world.level.block.StandingSignBlock.ROTATION, 8));
         if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity s) {
@@ -863,11 +858,11 @@ public final class DevShowcase {
 
     // ------------------------------------------------------------------ helpers
 
-    private static TankBlockEntity tank(ServerLevel level, BlockPos min, int sx, int sy, int sz, float salt, boolean water) {
+    static TankBlockEntity tank(ServerLevel level, BlockPos min, int sx, int sy, int sz, float salt, boolean water) {
         return tank(level, cuboid(min, sx, sy, sz), min, salt, water, null, null);
     }
 
-    private static TankBlockEntity tank(ServerLevel level, List<BlockPos> blocks, BlockPos min, float salt, boolean water, Identifier glass, TankStyle style) {
+    static TankBlockEntity tank(ServerLevel level, List<BlockPos> blocks, BlockPos min, float salt, boolean water, Identifier glass, TankStyle style) {
         cabinets(level, blocks);
         for (BlockPos pos : blocks) {
             level.setBlockAndUpdate(pos, ModBlocks.TANK.get().defaultBlockState());
@@ -927,7 +922,7 @@ public final class DevShowcase {
         return l;
     }
 
-    private static InteriorRegion region(ServerLevel level, TankBlockEntity c, BlockState floor) {
+    static InteriorRegion region(ServerLevel level, TankBlockEntity c, BlockState floor) {
         ServerLevel in = InteriorManager.interiorLevel(level.getServer());
         InteriorRegion r = InteriorManager.ensureRegion(level, c);
         for (int x = 0; x < r.sizeX(); x++)
@@ -985,7 +980,7 @@ public final class DevShowcase {
     private static Map<String, String> german;
 
     /** The German name of a key from the mod's de_de.json (the showcase is for the German user), else English, else the key. */
-    private static String de(String key) {
+    static String de(String key) {
         if (german == null) {
             german = new java.util.HashMap<>();
             try (var in = DevShowcase.class.getResourceAsStream("/assets/bettacraft/lang/de_de.json")) {
@@ -1011,7 +1006,7 @@ public final class DevShowcase {
      * Names the tank at {@code tankMin} (M21 follow-up: instead of a vanilla sign in front of it): the name plate on the
      * glass, top centre of the front, at eye height from the path. At most {@link TankData#MAX_NAME_LENGTH} characters.
      */
-    private static void name(ServerLevel level, BlockPos tankMin, String name) {
+    static void name(ServerLevel level, BlockPos tankMin, String name) {
         TankBlockEntity c = TankMultiblock.getController(level, tankMin);
         if (c == null) {
             LOGGER.warn("[showcase] no tank at {} for the name {}", tankMin, name);
@@ -1035,11 +1030,11 @@ public final class DevShowcase {
         else animals++;
     }
 
-    private static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, int n, RandomSource r) {
+    static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, int n, RandomSource r) {
         for (int i = 0; i < n; i++) fish(level, c, s, TankmateGenes.wild(s), i % 2 == 0, r);
     }
 
-    private static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, RandomSource r) {
+    static void fish(ServerLevel level, TankBlockEntity c, TankmateSpecies s, TankmateGenes genes, boolean female, RandomSource r) {
         {
             TankWaterVolume w = new TankWaterVolume(c.getTank());
             Vec3 p = w.clamp(new Vec3(w.box().minX + r.nextDouble() * (w.box().maxX - w.box().minX), w.box().minY + 0.3 + r.nextDouble() * 0.5,
@@ -1054,11 +1049,11 @@ public final class DevShowcase {
         }
     }
 
-    private static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n) {
+    static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n) {
         critters(level, c, s, n, CritterGenes.WILD);
     }
 
-    private static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n, CritterGenes g) {
+    static void critters(ServerLevel level, TankBlockEntity c, CritterSpecies s, int n, CritterGenes g) {
         for (int i = 0; i < n; i++) if (TankCritters.add(level, c, s, g, i % 2 == 0, s.juvenileDays() + 1) != null) animals++;
     }
 
@@ -1231,9 +1226,9 @@ public final class DevShowcase {
      * M40, M68: one multiblock filter for two tanks. The intake line (blue rings: it reaches the filter's inlet) runs at the floor,
      * the return line (orange: from its outlet) one block above; both branch at x 2 into both tanks (guards inside). Where they
      * run on top of each other at x 2 the pipe wrench keeps them apart (closed sides with caps); between x 3 and 6 both run in a
-     * row of pipe bundles (two of them with covers: stone bricks, oak planks). A level sensor and a water change controller sit on
-     * the filter. Layout (x east, z south): tanks x 0..1 at z 0..1 and z 3..4, branches x 2, bundles x 3..6 at z 2, filter x 7..9.
-     * Part B rebuilds the water change station (the filter's fresh and waste water ports are gone).
+     * row of pipe bundles (two of them with covers: stone bricks, oak planks). Layout (x east, z south): tanks x 0..1 at z 0..1
+     * and z 3..4, branches x 2, bundles x 3..6 at z 2, filter x 7..8. M68 part E: the level sensor and the controller that sat on the
+     * filter without lines are gone (the water change at a filter is a station of DevShowcaseM68.waterRow).
      */
     private static void filterLines(ServerLevel level, BlockPos at) {
         for (int x = 2; x <= 9; x++) for (int z = 0; z <= 4; z++) level.setBlockAndUpdate(at.offset(x, -1, z), Blocks.POLISHED_ANDESITE.defaultBlockState());
@@ -1249,8 +1244,6 @@ public final class DevShowcase {
         level.setBlockAndUpdate(head, ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState());
         level.setBlockAndUpdate(at.offset(7, 0, 2), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(facing, Direction.WEST));
         level.setBlockAndUpdate(at.offset(7, 1, 2), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(facing, Direction.WEST));
-        level.setBlockAndUpdate(at.offset(9, 0, 2), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
-        level.setBlockAndUpdate(at.offset(9, 1, 2), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
         Block steel = ModBlocks.STAINLESS_STEEL_PIPE.get();
         // the intake line at the floor, the return line above it at the branches; the wrench keeps the two apart where they touch
         for (int z = 1; z <= 3; z++) level.setBlockAndUpdate(at.offset(2, 0, z), steel.defaultBlockState());
