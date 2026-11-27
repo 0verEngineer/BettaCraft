@@ -35,7 +35,7 @@ stellt der Knopf **Typ** (im Übersichts-Reiter neben der Zieltemperatur und obe
   automatisch lassen).
 
 Die Grenze gilt für jeden Weg, auf dem Wasser hineinkommt: Eimer, Rohre und Pumpen (auch anderer Mods wie Create: sie
-bekommen den Teil, der passt), das Reservoir, das Nachfüllen über den Füllstandssensor und das Wasser, das ein Tier
+bekommen den Teil, der passt), das Reservoir, das Nachfüllen der Wasserwechsel-Steuerung und das Wasser, das ein Tier
 mitbringt. Ein Wasserwechsel ersetzt nur das Wasser, das er abgelassen hat, und Regen füllt nie ein Becken. Statt des
 Wassers kommt eine Meldung („Terrarium: kein Wasser“, „Paludarium: Wasser höchstens bis 1.8 Blöcke hoch“).
 

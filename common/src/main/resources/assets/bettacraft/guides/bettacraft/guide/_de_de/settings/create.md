@@ -95,7 +95,7 @@ ihr verschwunden, und mit ihm sein Innenraum. Züge, die in ungeladene Chunks fa
 ## Rotation für die Geräte
 
 Eine drehende Create-Welle, ein Zahnrad, Getriebe oder Motor, dessen Welle auf eine **Wasserpumpe**, einen
-**Filterpumpenkopf**, eine **Wasserwechsel-Steuerung**, einen **Füllstandssensor**, eine **Osmoseanlage** oder eine
+**Filterpumpenkopf**, eine **Wasserwechsel-Steuerung**, eine **Osmoseanlage** oder eine
 **Futtermaschine** zeigt, treibt sie statt FE an (Schalter `features.compat.create.rotation`):
 
 * **64 U/min** (in jede Richtung) ist volle Leistung, langsamer anteilig: 32 U/min sind der halbe Durchfluss, der halbe

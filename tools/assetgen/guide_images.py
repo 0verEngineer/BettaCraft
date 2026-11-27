@@ -889,10 +889,9 @@ def m39c(out_en: Path) -> None:
 # M40 scenes (DevClientSmokeM40a/b/c, -Psmoketestm40a, -Psmoketestm40b, -Psmoketestm40c -Ppower -Pstorage -Pfacades): one filter for
 # three aquariums, the filter screen with its aquariums, the guard at a side dock, the pipe bundles, the water ports, the
 # covers and the facades of other mods
-M40_WORLD = {"filter_lines": ("bettacraft_m40a_filter", (40, 380, 1240, 730)),
-             "pipe_guards": ("bettacraft_m40a_dock_side", (440, 330, 760, 500)),
-             "pipe_bundle": ("bettacraft_m40b_bundle_end", (0, 40, 1280, 720)),
-             "filter_water": ("bettacraft_m40b_filter_water", (150, 150, 900, 640)),
+# M68: filter_lines, pipe_bundle and filter_water showed the old filter pipes, T-pieces and water ports (gone; pipe_bundle comes from
+# the M68 crops now, see m68)
+M40_WORLD = {"pipe_guards": ("bettacraft_m40a_dock_side", (440, 330, 760, 500)),
              "pipe_covers": ("bettacraft_m40c_covers_close", (0, 240, 1280, 700)),
              "pipe_facades": ("bettacraft_m40c_facades", (0, 150, 1280, 620))}
 M40_SCREEN = ("bettacraft_m40a_screen", (362, 268, 918, 480))
@@ -1225,6 +1224,29 @@ def m62a(out_en: Path) -> None:
     save(out, out_en / "world_climbing.png")
 
 
+# M68 (one pipe system): the M65 client smoke with the M68 pipes (-Psmoketestm65 -Pm65parts=pipes,dock -Pm65tag=m68, part C with
+# -Pm65tag=m68c) and the M24 scene (-Psmoketestm24): the rings by role with a short circuit, a row of bundles, the docks of a bundle's
+# lines with their guards, an interior bundle, the flanges of two bundles on the glass, the water change controller with a reservoir
+# and a drain
+M68_WORLD = {"pipe_roles": ("bettacraft_m65_m68_noshader_pipes_tee", (0, 320, 1280, 720)),
+             "pipe_bundle": ("bettacraft_m65_m68_noshader_pipes_bundle", (0, 300, 1280, 620)),
+             "pipe_line_docks": ("bettacraft_m65_m68c_noshader_lines_filter_docks", (330, 330, 1010, 560)),
+             "interior_bundle": ("bettacraft_m65_m68c_noshader_lines_interior_bundle", (0, 260, 1000, 700)),
+             "bundle_flanges": ("bettacraft_m65_m68c_noshader_lines_east_flanges", (0, 240, 1280, 960)),
+             "water_change_ports": ("bettacraft_m24_water_changer_ports", (100, 40, 1100, 680))}
+
+
+def m68(out_en: Path) -> None:
+    for name, (shot, box) in M68_WORLD.items():
+        src = SHOTS / f"{shot}.png"
+        if src.exists():
+            im = Image.open(src).convert("RGB").crop(box)
+            w = min(800, im.width)
+            save(im.resize((w, round(im.height * w / im.width)), Image.LANCZOS), out_en / f"{name}.png")
+        else:
+            print("missing", src)
+
+
 def save(im: Image.Image, path: Path) -> None:
     """256-colour PNG (screenshots of blocky scenes lose nothing visible, the jar stays small)."""
     im.convert("RGB").quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(path, optimize=True)
@@ -1239,6 +1261,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m68"]:
+        m68(out_en)
+        return 0
     if sys.argv[1:] == ["m65"]:
         # M65: the thinner pipes (the pipe pictures of the M24 and M40 scenes, -Psmoketestm24, -Psmoketestm40a, -Psmoketestm40b)
         m24(out_en)

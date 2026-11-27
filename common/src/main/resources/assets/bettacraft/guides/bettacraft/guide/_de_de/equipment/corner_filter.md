@@ -17,7 +17,7 @@ Der <ItemLink id="bettacraft:corner_filter" /> ist ein schmaler **Motorfilter** 
 Aufstellen zu dir.
 
 * Er hält **20 Wasserblöcke** sauber und bewegt die Oberfläche (etwas Sauerstoff).
-* Wie jeder Motorfilter **saugt er Jungtiere ein**, wenn kein [Ansaugschutz](intake_sponge.md) angebracht ist.
+* Wie jeder Motorfilter **saugt er Jungtiere ein**, wenn kein [Ansaugschutz-Schwamm](intake_sponge.md) angebracht ist.
 * **Leistungsregler:** Rechtsklick oder Schleichen + Mausrad.
 
 ## Bezug

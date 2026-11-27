@@ -38,8 +38,7 @@ Wasserblöcke), weniger je schmutziger das Medium, mal Leistungsregler. Verstopf
 
 Rechtsklick auf den Pumpenkopf (oder mit leerer Hand auf eine Kammer): das Filter-Fenster mit Größe, Problemen, dem
 gereinigten Aquarium, Durchfluss und dem Medium jeder Kammer samt Schmutz. Schleichen + Mausrad:
-[Leistungsregler](regulator.md). Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht der Pumpenkopf FE. Ein
-[Niveausensor](top_off.md) kann auch am Filter sitzen.
+[Leistungsregler](regulator.md). Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht der Pumpenkopf FE.
 
 **Unter dem Aquarium:** Der Filter kann auch direkt unter seinem Aquarium stehen, wie ein Schrankfilter: Kammern am
 Boden, Ein- und Auslass obendrauf mit dem Anschluss nach oben in den Aquariumboden (oder Kammern direkt unter dem Boden
@@ -49,22 +48,25 @@ Block, statt den Bildschirm zu öffnen, so kannst du das Aquarium obendrauf baue
 Der alte Ein-Block-[Außenfilter](filters.md) bleibt die kleine Variante.
 
 
-## Mehrere Aquarien: Filterleitungen
+## Mehrere Aquarien, Rohre und Wasserwechsel
 
-Seit Version 1.32 versorgt ein Filter über eigene Rohre **mehrere Aquarien**, und bis zu vier Leitungen laufen in einem Block:
+* [Filterleitungen](filter_lines.md): Rohre am Einlass sind seine Zulaufleitung (blau), am Auslass seine Rücklaufleitung
+  (orange); sie verzweigen zu jedem Aquarium, das sie erreichen, und jedes Aquarium braucht innen einen Ansaug- und einen
+  Auslass-[Schutzaufsatz](guards.md). Das Fenster sagt „Versorgt 3 Becken:“ über der Liste seiner Aquarien.
+* **Durchfluss:** der Pumpenkopf bewegt bis zu 100 mB/t, aber nie mehr, als seine Leitungen tragen (Glas 50, Edelstahl
+  250 mB/t; mehrere Leitungen zählen zusammen).
+* **Andere Rohre:** Rohre verbinden sich mit den Kammern und dem Pumpenkopf an jeder Fläche, als normale Enden ohne Aufgabe.
+  Ein Rohr an Einlass oder Auslass, das auch einen anderen Anschluss erreicht, ist ein Kurzschluss.
+* **Wasserwechsel:** der Filter hat keine Frisch- oder Abwasseranschlüsse. Eine [Wasserwechsel-Steuerung](water_change.md)
+  an einer Kammer oder dem Pumpenkopf (oder mit ihren Leitungen Frischwasser raus und Abwasser rein bis zu einem davon)
+  wechselt das Wasser aller Aquarien des Filters und füllt die mit [Niveausensor](level_sensor.md) nach.
+* [Wasser im Aquarium](water_system.md): Beispielaufbauten mit einem Filter für mehrere Aquarien und einem zentralen
+  Technikraum.
 
-* [Filterleitungen und Schutzaufsätze](filter_lines.md): die Einlass- und Rücklaufrohre, T-Stücke, Andocken an jeder
-  Seite, die Schutzaufsätze.
-* Das Menü des Filters sagt „Versorgt 3 Becken:“ über der Liste seiner Becken, und sein **Frischwasser** ist, was er nutzen kann: das Wasser in seinen
-  Frischwasser-Anschlüssen plus das an den Enden ihrer Leitungen (ein [Vorratsbehälter](top_off.md), der Tank einer anderen Mod) oder „Leitungswasser,
-  unbegrenzt“, wenn ein Wasserquellenblock an einem Anschluss liegt.
-* [Rohrbündel, Frisch- und Abwasser](pipe_bundle.md): vier Leitungen in einem Block, Wasserwechsel und Nachfüllen für
-  jedes Aquarium des Filters.
-* [Rohrverkleidung und Facaden](pipe_cover.md): die Rohre hinter jedem vollen Block verstecken.
-
-**Wichtig für alte Welten:** Jeder Multiblock-Filter braucht jetzt in jedem seiner Aquarien einen **Ansaug- und einen
-Auslassschutz**, auch Filter, die vor dem Update gebaut wurden. Bis sie eingebaut sind, **filtert der Filter nicht** (rote
-Notiz in seinem Fenster und im Aquariummenü). Server können mit `features.pipes.filterLines = false` beim alten Weg bleiben.
+**Wichtig für alte Welten:** Jeder Multiblock-Filter braucht in jedem seiner Aquarien einen **Ansaug- und einen
+Auslassschutz**, auch Filter, die gebaut wurden, bevor es Schutzaufsätze gab. Bis sie eingebaut sind, **filtert der Filter
+nicht** (rote Notiz in seinem Fenster und im Aquariummenü). Server können mit `features.pipes.filterLines = false` beim alten
+Weg bleiben.
 
 <SubPages icons={true} />
 

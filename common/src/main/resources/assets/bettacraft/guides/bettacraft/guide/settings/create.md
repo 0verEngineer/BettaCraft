@@ -88,7 +88,7 @@ it, and so is its interior. Trains that go into unloaded chunks keep their tanks
 ## Rotation for the devices
 
 A turning Create shaft, cogwheel, gearbox or motor whose shaft points at a **water pump**, **filter pump head**,
-**water change controller**, **level sensor**, **reverse osmosis unit** or **food maker** drives it instead of FE
+**water change controller**, **reverse osmosis unit** or **food maker** drives it instead of FE
 (switch `features.compat.create.rotation`):
 
 * **64 RPM** (either direction) is full work, slower is proportional: 32 RPM is half the flow, half the boost.
