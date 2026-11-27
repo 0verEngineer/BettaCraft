@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityAccessor",
+    "EntityAttachmentsMixin",
     "interior.ChunkGenerationTaskMixin",
     "interior.ChunkMapMixin",
     "interior.ChunkStorageAccessor",
