@@ -85,6 +85,9 @@ public final class DevSmokeUpgrade {
     private static final String M351_FILE = "bettacraft_m35_1_cysts.txt";
     /** M40 (D2): multiblock filters of the old world: their media kept, marked retrofit, a warning and no filtering until guarded. */
     private static int m40Checked;
+    /** M67: a cabinet of the old world with a wound spring (stage 1), its energy in the tank's store after a save and reload (stage 2). */
+    private static int m67Checked;
+    static final String M67_FILE = "bettacraft_upgrade_m67.json";
     /**
      * M40: the reference world is one of the old 1.13 line (the checks for what came after it apply), not a newer one such
      * as {@code Bettacraft Referenz 1.31.0} (built for the old multiblock filters of M40: only the comparison and the M40 check).
@@ -148,6 +151,7 @@ public final class DevSmokeUpgrade {
                     }
                 }
                 if (STAGE == 2 && legacy) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
+                if (STAGE == 2) m67Check(server, level); // M67: the wound spring of stage 1 is energy in the tank's store
                 // M40: old multiblock filters need their guards now (M52: not in a world this version saved itself, the
                 // Fabric save/load test; M53c: nor in a world of 1.32 or later, whose filters have them: the ports' references)
                 if (!sameVersion && olderThan(refVersion, 1, 32)) m40Check(level);
@@ -155,6 +159,7 @@ public final class DevSmokeUpgrade {
                     for (String p : problems) LOGGER.error("[smoketest] upgrade: {}", p);
                     throw new IllegalStateException(problems.size() + " difference(s)");
                 }
+                if (STAGE == 1) m67Place(server, level); // M67: a wound spring in the old save format (before the snapshot: it may add a filter)
                 if (STAGE == 1) {
                     server.saveEverything(false, true, true);
                     write(server, level, SNAPSHOT);
@@ -178,6 +183,7 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} tanks with their tank type (old ones automatic, M33.1)", m331Checked);
                 LOGGER.info("[smoketest] upgrade: {} places with old artemia cyst jars keep their count without the old uses (M35.1)", m351Checked);
                 LOGGER.info("[smoketest] upgrade: {} old multiblock filters keep their media and warn until guarded (M40, D2)", m40Checked);
+                LOGGER.info("[smoketest] upgrade: {} wound springs (cabinet or external filter) became energy in their tank's store, nothing lost (M67)", m67Checked);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -263,6 +269,71 @@ public final class DevSmokeUpgrade {
         } else {
             m351Checked++;
         }
+    }
+
+    /**
+     * M67 stage 1: the first tank of the reference world with a cabinet under it gets a wound cabinet spring in the save format of
+     * the versions before M67 (100000 device-ticks, more than a spring holds now); a reference world without one (the ports' worlds
+     * stand on the ground) gets an external filter at its first tank with the wound spring instead. The world is saved like that;
+     * the tank, the device and the FE its store must hold afterwards go to {@link #M67_FILE}.
+     */
+    private static void m67Place(MinecraftServer server, ServerLevel level) throws java.io.IOException {
+        for (int pass = 0; pass < 2; pass++) for (JsonElement e : expected.getAsJsonArray("tanks")) {
+            BlockPos p = BlockPos.of(e.getAsJsonObject().get("pos").getAsLong());
+            TankBlockEntity c = level.isLoaded(p) ? org.overengineer.bettacraft.tank.TankMultiblock.getController(level, p) : null;
+            if (c == null) continue;
+            net.minecraft.world.level.block.entity.BlockEntity be = null;
+            var cabs = org.overengineer.bettacraft.tank.TankStore.cabinets(level, c);
+            if (!cabs.isEmpty()) be = cabs.getFirst();
+            else if (pass == 1) { // no tank of the reference world stands on a cabinet: an external filter at this one
+                BlockPos at = c.getTank().min().west();
+                if (level.getBlockEntity(at) != null) continue; // (the ports' reference tanks stand buried in dirt: that may go)
+                level.setBlockAndUpdate(at, org.overengineer.bettacraft.registry.ModBlocks.EXTERNAL_FILTER.get().defaultBlockState()
+                        .setValue(org.overengineer.bettacraft.equipment.ExternalFilterBlock.FACING, net.minecraft.core.Direction.EAST));
+                org.overengineer.bettacraft.tank.TankEquipment.invalidate(c);
+                be = level.getBlockEntity(at);
+                if (org.overengineer.bettacraft.tank.TankStore.tankOf(level, (org.overengineer.bettacraft.winding.Windable) be) != c) continue;
+            }
+            if (!(be instanceof org.overengineer.bettacraft.winding.Windable w)) continue;
+            net.minecraft.nbt.CompoundTag tag = be.saveWithFullMetadata(level.registryAccess());
+            long ticks = 100_000;
+            tag.putLong("spring", tag.getLong("spring") + ticks);
+            be.loadWithComponents(tag, level.registryAccess());
+            long want = c.getTank().powerBuffer() + org.overengineer.bettacraft.tank.TankStore.springFe(w.windSpring().ticks());
+            be.setChanged();
+            JsonObject o = new JsonObject();
+            o.addProperty("tank", c.getBlockPos().asLong());
+            o.addProperty("device", be.getBlockPos().asLong());
+            o.addProperty("fe", want);
+            Files.writeString(server.getWorldPath(LevelResource.ROOT).resolve(M67_FILE), o.toString(), StandardCharsets.UTF_8);
+            LOGGER.info("[smoketest] upgrade: M67 {} at {} of tank {} wound {} device-ticks, its store must hold {} FE", w.windDevice(), be.getBlockPos(),
+                    c.getBlockPos(), ticks, want);
+            return;
+        }
+        problems.add("M67: no tank for a wound spring in the reference world");
+    }
+
+    /** M67 stage 2: the wound spring of stage 1 is energy in the tank's store, the spring is empty, nothing is lost. */
+    private static void m67Check(MinecraftServer server, ServerLevel level) throws java.io.IOException {
+        Path f = server.getWorldPath(LevelResource.ROOT).resolve(M67_FILE);
+        if (!Files.exists(f)) {
+            problems.add("M67: " + M67_FILE + " missing");
+            return;
+        }
+        JsonObject o = JsonParser.parseString(Files.readString(f, StandardCharsets.UTF_8)).getAsJsonObject();
+        BlockPos tp = BlockPos.of(o.get("tank").getAsLong()), dp = BlockPos.of(o.get("device").getAsLong());
+        long want = o.get("fe").getAsLong();
+        TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, tp);
+        if (c == null || !(level.getBlockEntity(dp) instanceof org.overengineer.bettacraft.winding.Windable w)) {
+            problems.add("M67: tank " + tp + " or device " + dp + " gone");
+            return;
+        }
+        org.overengineer.bettacraft.tank.TankPower.step(level, c, 1); // the migration runs in the care step
+        long have = c.getTank().powerBuffer();
+        boolean costs = org.overengineer.bettacraft.tank.TankPower.anyRequired();
+        if (!w.windSpring().empty()) problems.add("M67: the spring still holds " + w.windSpring().ticks());
+        else if (costs ? have < want / 2 : have != want) problems.add("M67: the store holds " + have + " FE, the spring was worth " + want);
+        else m67Checked++;
     }
 
     /** Stage 1: a chest (16 old jars), a hatchery (16 old jars and an open one) and an item entity (16 old jars) above a chest of the reference world. */
