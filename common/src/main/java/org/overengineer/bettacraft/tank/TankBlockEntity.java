@@ -414,6 +414,8 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
             boolean looks = !oldGlass.equals(glass) || oldStyle != style;
             if (looks) org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
             if (looks || wasController != isController()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+            // M66 v6: the algae film is part of the chunk mesh; the sections whose film changed are meshed again
+            org.overengineer.bettacraft.client.tank.AlgaeFilm.update(this);
         }
     }
 
@@ -459,6 +461,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this); // NeoForge's default onLoad
         if (level != null && level.isClientSide) {
             updateClientControllerSet();
+            org.overengineer.bettacraft.client.tank.AlgaeFilm.update(this); // M66 v6
         }
     }
 
@@ -466,10 +469,12 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void setRemoved() {
         super.setRemoved();
         CLIENT_CONTROLLERS.remove(this);
+        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     public void onChunkUnloaded() {
         CLIENT_CONTROLLERS.remove(this);
+        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     private void updateClientControllerSet() {

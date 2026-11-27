@@ -19,6 +19,9 @@ import org.overengineer.bettacraft.tank.TankData;
 import org.overengineer.bettacraft.tank.algae.AlgaeSim;
 
 /**
+ * M66 v6: only for tanks whose water is drawn by the block entity renderer too (a Create contraption, a travelling tank); every
+ * other tank has its algae in the chunk mesh ({@link org.overengineer.bettacraft.client.tank.AlgaeFilm}).
+ * <p>
  * Algae on the inside of the glass (M14), drawn by the controller's block entity renderer: one quad per glass face with
  * algae, just inside the glass, from the bottom of the block up to the water in it, in four stages. The alpha is in the
  * texture (a translucent entity render type), so it works with and without shader packs; seen from outside the glass
@@ -48,30 +51,13 @@ public final class AlgaeRenderer {
     /** Longest water path counted (blocks). */
     private static final int MAX_PATH = 48;
 
-    /** Dev tour only (M66 v6, the proof of the causes): "nodepth" = the film without depth writes, "off" = no film; empty = normal. */
-    public static volatile String testMode = "";
-    private static RenderType noDepth;
-
     private AlgaeRenderer() {}
-
-    private static RenderType type() {
-        if (!"nodepth".equals(testMode)) return RenderType.entityTranslucent(TEXTURE);
-        if (noDepth == null) noDepth = RenderType.create("bettacraft_algae_nodepth", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
-                com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1536, true, true, RenderType.CompositeState.builder()
-                        .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-                        .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(TEXTURE, false, false))
-                        .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                        .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
-                        .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
-                        .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
-                        .setWriteMaskState(net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE)
-                        .createCompositeState(true));
-        return noDepth;
-    }
 
     public static void render(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         Level level = be.getLevel();
-        if (level == null || t.algae().isEmpty() || "off".equals(testMode)) return;
+        // M66 v6: a tank in the world has its film in the chunk mesh (AlgaeFilm); this renderer only draws the tanks whose water
+        // the block entity renderer draws as well (on a Create contraption, a travelling tank with sloshing water)
+        if (level == null || t.algae().isEmpty() || !(be.onContraption() || TankBlockEntity.DYNAMIC_WATER.test(be))) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -97,13 +83,15 @@ public final class AlgaeRenderer {
                     }
                     light = LevelRenderer.getLightColor(level, p);
                 }
-                if (vc == null) vc = buffers.getBuffer(type());
+                if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
                 // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
                 int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
                 boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
                 int alpha = Math.round(255 * seenThroughWater(t, p, d, cam));
                 if (alpha < 4) continue;
-                quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, top, light, neg, pos, stage, alpha);
+                // M66 v6: up and down it runs on into the tank blocks above and below too (no gap between the layers)
+                boolean below = wallAt(t, p.getX(), p.getY() - 1, p.getZ(), d), above = top >= 1 - TankWaterGeometry.INSET - 1e-4F && wallAt(t, p.getX(), p.getY() + 1, p.getZ(), d);
+                quad(pose, vc, p.getX() - origin.getX(), p.getY() - origin.getY(), p.getZ() - origin.getZ(), d, above ? 1F : top, light, neg, pos, below, stage, alpha);
             }
         }
     }
@@ -133,13 +121,13 @@ public final class AlgaeRenderer {
         return t.contains(BlockPos.asLong(x, y, z)) && !t.contains(BlockPos.asLong(x + AlgaeSim.stepX(dir), y, z + AlgaeSim.stepZ(dir)));
     }
 
-    private static void quad(PoseStack pose, VertexConsumer vc, float bx, float by, float bz, int dir, float top, int light, boolean negOpen, boolean posOpen, int stage, int alpha) {
+    private static void quad(PoseStack pose, VertexConsumer vc, float bx, float by, float bz, int dir, float top, int light, boolean negOpen, boolean posOpen, boolean belowOpen, int stage, int alpha) {
         PoseStack.Pose last = pose.last();
         Matrix4f m = last.pose();
         float lo = 1F / 16F, hi = 1F - 1F / 16F;
         // the along-axis ends: x for south / north, z for west / east
         float a0 = negOpen ? 0F : lo, a1 = posOpen ? 1F : hi;
-        float y0 = by + lo, y1 = by + Math.max(lo + 0.05F, top);
+        float y0 = by + (belowOpen ? 0F : lo), y1 = by + Math.max(lo + 0.05F, top);
         float v0 = 1 - (y1 - by), v1 = 1 - (y0 - by);
         float[][] q;
         float nx = 0, nz = 0;
