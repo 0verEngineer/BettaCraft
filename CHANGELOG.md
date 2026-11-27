@@ -79,7 +79,7 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   they vanished with its near end only about 20 blocks away and came back a step closer. The distance is now measured to the nearest point of the tank.
 - **Frame rate in worlds with many or large tanks:** every block of every tank was in the list of block entities drawn every frame, in view
   or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. Now only the
-  controllers are.
+  controllers are (not on Minecraft 26.1.2, see the version gaps below).
 - **Frame rate with Sodium and shader packs (M66.5):** Sodium draws the always-drawn block entities without testing them against the view, so
   every filter hose and water jet within 96 blocks and the small animals, floating plants and nests of every tank within 48 blocks were built
   every frame, also behind the camera (a third of the render thread in the showcase). Our renderers now test their box against the camera
@@ -96,6 +96,11 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   for a source).
 - **Aquarist, tank list:** without a workplace he cares for no tank, but the list still showed the tanks around him as ones he works at
   ("0 of at most 16 tanks" over a list of them). The list shows the tanks around his workplace only.
+
+### Version gaps (26.1.2)
+- Every tank block stays in the list of always-drawn block entities: Minecraft 26.1.2 asks a block entity renderer whether it draws off
+  screen once per block entity type, without the block entity, so only the controller cannot be picked. The other blocks say no at once
+  (no work and no allocation per frame), and the view test of the M66.5 fix applies to the controllers.
 
 ## [1.54.0-beta.1] - 2026-11-25
 
