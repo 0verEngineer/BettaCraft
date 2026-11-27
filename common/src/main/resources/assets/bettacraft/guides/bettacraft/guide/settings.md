@@ -114,7 +114,7 @@ both in the Mod settings, also on a server), the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
 (`render.tankEdgeWidth`, in pixels of 1/16 block, 0.1 to 1, default 0.25; 0 = none), the size of the name sign
 (`render.signScale`, 0.5 to 2 times the default height of 0.12 blocks), the distance up to which the name sign, nest,
-floating plants, small animals and algae are drawn (`render.tankDetailDistance`, 48), how strongly coloured lights tint
+floating plants, small animals, algae and filter hoses are drawn (`render.tankDetailDistance`, 48), how strongly coloured lights tint
 the water (`render.lightTint`, 0 to 1, default 0.6; 0 = the colour only shows at the lamp), the leg movement of mobs and pets
 walking in tanks (`render.walkAnimationBoost`: `auto` matches it to their size, a factor from 0.1 to 10, 0 = vanilla), the leave hint in the
 interior (`hud.interiorLeaveHint`) and the alarm waypoints of all tanks on your own map (`map.showAlarmWaypoints`, per map mod `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; also behind the gear in the tank menu).

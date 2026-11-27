@@ -270,6 +270,13 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         return controllerPos;
     }
 
+    /** M66.5: the client's render box of the tank (controller only), worked out once a second. */
+    private final org.overengineer.bettacraft.util.RenderBoxCache renderBox = new org.overengineer.bettacraft.util.RenderBoxCache();
+
+    public org.overengineer.bettacraft.util.RenderBoxCache renderBoxCache() {
+        return renderBox;
+    }
+
     public boolean isController() {
         return tank != null && worldPosition.equals(controllerPos);
     }
