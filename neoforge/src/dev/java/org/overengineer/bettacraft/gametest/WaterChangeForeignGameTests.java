@@ -204,7 +204,10 @@ public final class WaterChangeForeignGameTests {
         h.succeedWhen(() -> h.assertTrue(r.changer().freshStore().amount() > 0, "the AE2 export bus fills the fresh water inlet: " + r.changer().freshStore().amount()));
     }
 
-    /** Refined Storage: an importer at the end of the waste water line pulls the old water out of the controller's outlet into the network. */
+    /**
+     * Refined Storage: an importer right at the controller's waste water outlet pulls the old water into the network (the importer looks
+     * at what a handler holds; our pipes hold nothing, so it sits at the outlet itself, which shows its store).
+     */
     @GameTest(template = EMPTY, batch = "bettacraft_storage_water", timeoutTicks = 600)
     public static void refinedStorageImporterEmptiesTheWasteLine(GameTestHelper h) {
         if (!loaded("refinedstorage")) {
@@ -212,15 +215,14 @@ public final class WaterChangeForeignGameTests {
             return;
         }
         Rig r = rig(h, false);
-        WaterChangeGameTests.pipes(h, true, new int[]{10, 2, 4}, new int[]{9, 2, 4}); // waste out: west
         r.changer().wasteStore().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 4000), IFluidHandler.FluidAction.EXECUTE);
         BlockState importer = block("refinedstorage:importer").defaultBlockState();
         for (var p : importer.getProperties()) {
             if (p.getName().equals("direction")) importer = with(importer, p, "east");
         }
-        h.setBlock(new BlockPos(8, 2, 4), importer);
-        h.setBlock(new BlockPos(7, 2, 4), block("refinedstorage:creative_controller").defaultBlockState());
-        h.setBlock(new BlockPos(7, 3, 4), block("refinedstorage:creative_fluid_storage_block").defaultBlockState()); // fluids need a fluid storage
+        h.setBlock(new BlockPos(10, 2, 4), importer); // at the waste water outlet (west)
+        h.setBlock(new BlockPos(9, 2, 4), block("refinedstorage:creative_controller").defaultBlockState());
+        h.setBlock(new BlockPos(9, 3, 4), block("refinedstorage:creative_fluid_storage_block").defaultBlockState()); // fluids need a fluid storage
         h.succeedWhen(() -> h.assertTrue(r.changer().wasteStore().amount() < 4000, "the RS importer pulls from the waste water line: " + r.changer().wasteStore().amount()));
     }
 
