@@ -88,7 +88,7 @@ public class WaterChangerScreen extends Screen {
     }
 
     /** Draws {@code c} at 0.75 scale wrapped to {@code width} (the screen must fit a small window); returns the y below it. */
-    private int text(GuiGraphics g, Component c, int x, int y, int width) {
+    private int text(GuiGraphicsExtractor g, Component c, int x, int y, int width) {
         float k = 0.75F;
         for (FormattedCharSequence l : font.split(c, (int) (width / k))) {
             g.pose().pushMatrix();
