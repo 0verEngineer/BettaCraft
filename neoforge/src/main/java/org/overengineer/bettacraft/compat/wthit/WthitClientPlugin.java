@@ -35,6 +35,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.body(new Spring(), org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock.class);
         registrar.body(new Spring(), org.overengineer.bettacraft.osmosis.RoUnitBlock.class);
         registrar.body(new Spring(), org.overengineer.bettacraft.plumbing.WaterDeviceBlock.class);
+        registrar.body(new Spring(), org.overengineer.bettacraft.plumbing.DrainBlock.class); // M68 part B
         registrar.body(new Spring(), org.overengineer.bettacraft.plumbing.WaterPumpBlock.class);
         registrar.body(new Spring(), org.overengineer.bettacraft.filter.FilterPartBlock.class);
         // looking through the glass at a fish shows the fish, not the tank block
@@ -82,6 +83,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
             InfoLines.spring(accessor.getData().raw().getCompound(InfoData.KEY)).forEach(tooltip::addLine);
+            InfoLines.drain(accessor.getBlockState()).forEach(tooltip::addLine); // M68 part B
         }
     }
 

@@ -518,11 +518,16 @@ public final class DevShowcase {
         TankBlockEntity wt = tank(level, at, 3, 2, 2, 0F, true);
         wt.getTank().setNitrate(45F);
         level.setBlockAndUpdate(at.offset(-1, 0, 0), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
-        level.setBlockAndUpdate(at.offset(-2, 0, 0), ModBlocks.RESERVOIR.get().defaultBlockState());
-        if (level.getBlockEntity(at.offset(-2, 0, 0)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity res24)
+        // M68 part B (minimal until part E rebuilds the station): the controller against the tank (its back), fresh water through a
+        // steel pipe at its inlet (south) from a reservoir, the old water out of its outlet (north) into a drain; the sensor only measures
+        level.setBlockAndUpdate(at.offset(3, 0, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState()
+                .setValue(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.FACING, Direction.EAST));
+        level.setBlockAndUpdate(at.offset(3, 0, 2), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(3, 0, 3), ModBlocks.RESERVOIR.get().defaultBlockState());
+        if (level.getBlockEntity(at.offset(3, 0, 3)) instanceof org.overengineer.bettacraft.plumbing.ReservoirBlockEntity res24)
             res24.water().fill(new org.overengineer.bettacraft.platform.fluid.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 16000),
                     org.overengineer.bettacraft.platform.fluid.IFluidHandler.FluidAction.EXECUTE);
-        level.setBlockAndUpdate(at.offset(3, 0, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
+        level.setBlockAndUpdate(at.offset(3, 0, 0), ModBlocks.DRAIN.get().defaultBlockState());
         name(level, at, "Nachfüllen + Wasserwechsel");
         at = at.east(5 + GAP);
         level.setBlockAndUpdate(at.offset(1, -1, 0), Blocks.MAGMA_BLOCK.defaultBlockState());

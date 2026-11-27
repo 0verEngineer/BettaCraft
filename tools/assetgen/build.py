@@ -19,6 +19,7 @@ import plant_icons
 import aeration
 import plumbing
 import filter_lines
+import water_change
 import chemistry
 import co2_osmosis
 import reef_dosing
@@ -75,6 +76,7 @@ def main() -> int:
     written += aeration.write_all()  # M23
     written += plumbing.write_all()  # M24
     written += filter_lines.write_all()  # M40
+    written += water_change.write_all()  # M68 part B
     written += create_drive.write_all()  # M41
     written += chemistry.write_all()  # M25
     written += co2_osmosis.write_all()  # M25 part b

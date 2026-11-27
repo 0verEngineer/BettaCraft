@@ -127,8 +127,10 @@ final class NeoForgeCapabilities {
                 (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
         energy(event, ModBlockEntities.WATER_CHANGER.get(),
                 (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
-        energy(event, ModBlockEntities.LEVEL_SENSOR.get(),
-                (be, side) -> org.overengineer.bettacraft.plumbing.DeviceEnergy.required() ? be.energy() : null);
+        // M68 part B: the level sensor only measures (no FE); the controller's fresh water inlet and waste water outlet; the drain
+        fluids(event, ModBlockEntities.WATER_CHANGER.get(),
+                (be, side) -> be.fluidHandler(side));
+        fluidBlocks(event, (level, pos, state, be, side) -> org.overengineer.bettacraft.plumbing.DrainBlock.handler(level, pos, side), ModBlocks.DRAIN.get());
         // M23: the air pump forwards FE to the tank it serves
         energy(event, ModBlockEntities.AIR_PUMP.get(),
                 (be, side) -> org.overengineer.bettacraft.tank.TankPower.anyRequired() ? new org.overengineer.bettacraft.tank.TankPower.Storage(be.getLevel(), be::tankBlockPos) : null);

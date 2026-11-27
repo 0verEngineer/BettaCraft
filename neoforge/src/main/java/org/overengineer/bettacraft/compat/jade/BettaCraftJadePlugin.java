@@ -38,6 +38,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.fertilizer.FertilizerMakerBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.osmosis.RoUnitBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity.class); // M68 part B: the sensor's lines
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.PipeBlockEntity.class); // M68: the flow now
@@ -57,6 +58,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.fertilizer.FertilizerMakerBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.osmosis.RoUnitBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterDeviceBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.DrainBlock.class); // M68 part B
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPartBlock.class);
         // M66: Jade's own fluid view (the tank's and the pipes' fluid connections as 'Water 12 mB' / 'Empty 500 mB') comes after

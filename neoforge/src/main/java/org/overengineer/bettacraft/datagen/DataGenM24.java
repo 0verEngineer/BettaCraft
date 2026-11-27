@@ -123,17 +123,36 @@ final class DataGenM24 {
         ModelFile empty = p.models().cubeColumn("reservoir", p.modLoc("block/reservoir_side"), p.modLoc("block/reservoir_top")).renderType("solid");
         ModelFile full = p.models().cubeColumn("reservoir_full", p.modLoc("block/reservoir_side_full"), p.modLoc("block/reservoir_top"));
         p.getVariantBuilder(ModBlocks.RESERVOIR.get()).forAllStatesExcept(s -> ConfiguredModel.builder()
-                .modelFile(s.getValue(WaterDeviceBlock.FILL) >= 4 ? full : empty).build(), WaterDeviceBlock.FACING);
+                .modelFile(s.getValue(WaterDeviceBlock.FILL) >= 4 ? full : empty).build(), WaterDeviceBlock.FACING, WaterDeviceBlock.POWERED);
         BlockModelBuilder sensor = p.models().getBuilder("level_sensor").texture("t", p.modLoc("block/level_sensor"))
                 .texture("particle", p.modLoc("block/level_sensor"));
         sensor.element().from(4, 0, 4).to(12, 10, 12).allFaces((d, f) -> f.texture("#t")).end();
         p.getVariantBuilder(ModBlocks.LEVEL_SENSOR.get()).forAllStatesExcept(s -> ConfiguredModel.builder().modelFile(sensor)
-                .rotationY(yRot(s.getValue(WaterDeviceBlock.FACING))).build(), WaterDeviceBlock.FILL);
+                .rotationY(yRot(s.getValue(WaterDeviceBlock.FACING))).build(), WaterDeviceBlock.FILL, WaterDeviceBlock.POWERED);
+        // M68 part B: the body and four port stubs (facing north): fresh water in east (left seen from the front), out south (back),
+        // waste water in on top, out west (right); each stub's end shows its port (the ring colour of its line, an arrow in or out)
         BlockModelBuilder ch = p.models().getBuilder("water_change_controller").texture("front", p.modLoc("block/water_change_controller_front"))
-                .texture("side", p.modLoc("block/water_change_controller_side")).texture("particle", p.modLoc("block/water_change_controller_side"));
-        ch.element().from(2, 0, 2).to(14, 12, 14).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#front" : "#side")).end();
+                .texture("side", p.modLoc("block/water_change_controller_side")).texture("particle", p.modLoc("block/water_change_controller_side"))
+                .texture("stub", p.modLoc("block/water_change_port_stub"))
+                .texture("fresh_in", p.modLoc("block/water_change_port_fresh_in")).texture("fresh_out", p.modLoc("block/water_change_port_fresh_out"))
+                .texture("waste_in", p.modLoc("block/water_change_port_waste_in")).texture("waste_out", p.modLoc("block/water_change_port_waste_out"));
+        ch.element().from(2, 0, 2).to(14, 13, 14).allFaces((d, f) -> f.texture(d == Direction.NORTH ? "#front" : "#side")).end();
+        stub(ch, 5, 5, 14, 11, 11, 16, Direction.SOUTH, "#fresh_out");
+        stub(ch, 14, 5, 5, 16, 11, 11, Direction.EAST, "#fresh_in");
+        stub(ch, 0, 5, 5, 2, 11, 11, Direction.WEST, "#waste_out");
+        stub(ch, 5, 13, 5, 11, 16, 11, Direction.UP, "#waste_in");
         p.getVariantBuilder(ModBlocks.WATER_CHANGE_CONTROLLER.get()).forAllStatesExcept(s -> ConfiguredModel.builder().modelFile(ch)
-                .rotationY(yRot(s.getValue(WaterDeviceBlock.FACING))).build(), WaterDeviceBlock.FILL);
+                .rotationY(yRot(s.getValue(WaterDeviceBlock.FACING))).build(), WaterDeviceBlock.FILL, WaterDeviceBlock.POWERED);
+        // M68 part B: the drain (a grate on top, steel sides with the waste water ring)
+        p.simpleBlock(ModBlocks.DRAIN.get(), p.models().cubeBottomTop("drain", p.modLoc("block/drain_side"), p.modLoc("block/drain_bottom"), p.modLoc("block/drain_top")));
+    }
+
+    /** M68 part B: a port stub of the water change controller: its end face {@code end} shows the port, the rest is steel. */
+    private static void stub(BlockModelBuilder m, float x0, float y0, float z0, float x1, float y1, float z1, Direction end, String tex) {
+        m.element().from(x0, y0, z0).to(x1, y1, z1).allFaces((d, f) -> {
+            if (d == end) f.texture(tex).uvs(0, 0, 16, 16);
+            else f.texture("#stub");
+        }).end();
     }
 
     private static void filter(BlockStateProvider p) {
@@ -234,7 +253,7 @@ final class DataGenM24 {
         p.withExistingParent("glass_pipe", p.modLoc("block/glass_pipe_item"));
         p.withExistingParent("stainless_steel_pipe", p.modLoc("block/stainless_steel_pipe_item"));
         p.withExistingParent("crucible", p.modLoc("block/crucible_lit")); // M29.1: the glowing melt makes the icon readable
-        for (String s : List.of("water_pump", "reservoir", "level_sensor", "water_change_controller", "filter_pump_head", "filter_inlet", "filter_outlet")) {
+        for (String s : List.of("water_pump", "reservoir", "level_sensor", "water_change_controller", "drain", "filter_pump_head", "filter_inlet", "filter_outlet")) {
             p.withExistingParent(s, p.modLoc("block/" + s));
         }
         p.withExistingParent("filter_chamber", p.modLoc("block/filter_chamber_none"));
@@ -321,5 +340,10 @@ final class DataGenM24 {
                 .pattern("SCS").pattern("SPS")
                 .define('S', steel).define('C', Items.CLOCK).define('P', ModItems.WATER_PUMP.get())
                 .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("water_change_controller"));
+        // M68 part B: the drain: a grate over a steel pipe socket
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DRAIN.get())
+                .pattern("B").pattern("P").pattern("S")
+                .define('B', Items.IRON_BARS).define('P', ModItems.GLASS_PIPE.get()).define('S', steel)
+                .unlockedBy("has_filter", hasFilter).save(out, BettaCraft.id("drain"));
     }
 }

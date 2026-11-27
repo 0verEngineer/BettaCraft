@@ -1559,9 +1559,53 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             nitrateTip = null;
         }
         y += 11;
+        // M68 part B: the water change controller that serves the tank and its level sensor
+        Component changer = changerLine(w, minecraft != null && minecraft.level != null ? minecraft.level.getGameTime() : 0);
+        if (changer != null) {
+            fitLine(g, changer, x, y, TEXT_LIGHT, tw());
+            List<Component> tip = new ArrayList<>();
+            tip.add(org.overengineer.bettacraft.plumbing.ChangerTexts.lines(w.changeFlags));
+            tip.addAll(org.overengineer.bettacraft.plumbing.ChangerTexts.warnings(w.changeFlags, w.changeTanks));
+            if (w.changers > 1) tip.add(Component.translatable("gui.bettacraft.water.changer_more", w.changers - 1).withStyle(ChatFormatting.GRAY));
+            addTip(y, tip);
+            y += 11;
+        }
+        if (w.sensorTarget >= 0) {
+            Component sensor = Component.translatable(w.sensorServed ? "gui.bettacraft.water.sensor_served" : "gui.bettacraft.water.sensor", w.sensorTarget,
+                    Component.translatable(w.sensorLow ? "gui.bettacraft.level_sensor.status.low" : "gui.bettacraft.level_sensor.status.idle"))
+                    .withStyle(w.sensorLow ? ChatFormatting.GOLD : w.sensorServed ? ChatFormatting.AQUA : ChatFormatting.GRAY);
+            fitLine(g, sensor, x, y, TEXT_LIGHT, tw());
+            y += 11;
+        }
         // M66: the heaters and coolers moved to the tab Devices (group Temperature), the fertilizer to the tab Plants
         if (w.reefLine()) fitLine(g, reefLine(w), x, y, TEXT_LIGHT, tw()); // M20: skimmers, pumps, live rock
         else if (!w.chemOn) line(g, Component.translatable("gui.bettacraft.water.hint").withStyle(ChatFormatting.GRAY), x, y, 0xA0A0A0);
+    }
+
+    /** M68 part B: "The water change sucks in young animals ..." (devices and breeding). */
+    static Component changeYoungLine(TankView.Tech t) {
+        return Component.literal("⚠ ").append(Component.translatable("gui.bettacraft.devices.change_young", t.changeYoung)).withStyle(ChatFormatting.GOLD);
+    }
+
+    /** M68 part B: the water change controller and the level sensor of the tank (water tab); null when it has neither. */
+    @Nullable
+    private static Component changerLine(TankView.Water w, long now) {
+        if (w.changers <= 0) return null;
+        org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status st;
+        try {
+            st = org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status.valueOf(w.changeStatus);
+        } catch (IllegalArgumentException e) {
+            st = org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status.WAITING;
+        }
+        boolean ok = switch (st) {
+            case CHANGED, WAITING, TOPPED -> true;
+            default -> false;
+        };
+        if (w.changePending > 0 || !ok) return Component.translatable("gui.bettacraft.water.changer_status",
+                org.overengineer.bettacraft.plumbing.ChangerTexts.status(st, w.changePending, w.changeLastMb, w.changeTopOff));
+        double days = w.changeLast < 0 ? w.changeInterval : Math.max(0, (w.changeLast + w.changeInterval * 24000L - now) / 24000.0);
+        return Component.translatable("gui.bettacraft.water.changer", w.changeInterval, w.changeShare, String.format(java.util.Locale.ROOT, "%.1f", days))
+                .withStyle(ChatFormatting.AQUA);
     }
 
     /** M37: "Fertilizer 80 % (good)": none / low (grey, yellow), good (green), overdosed (gold). */
@@ -1663,7 +1707,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         int air = 20;
         int filter = air + 10 + 11 + (t.oxygenOn && t.exchange > 0 ? 11 : 0) + 2;
         int k = motorKinds(t);
-        int temp = filter + 10 + 11 * (k == 0 ? 1 : k + (t.fry ? 1 : 0)) + 2;
+        int temp = filter + 10 + 11 * (k == 0 ? 1 : k + (t.fry ? 1 : 0)) + (t.fry && t.changeYoung > 0 ? 11 : 0) + 2; // M68 part B: the water change line
         int light = temp + 10 + 11 + 2;
         return new int[]{air, filter, temp, light};
     }
@@ -1725,7 +1769,14 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                         : Component.translatable("gui.bettacraft.devices.fry_safe", sponge).withStyle(ChatFormatting.GREEN);
                 fitLine(g, w, x, y, TEXT_LIGHT, tw());
                 if (t.unprotected > 0) addTip(y, wrapTip(Component.translatable("gui.bettacraft.devices.fry_tip", sponge).withStyle(ChatFormatting.WHITE), 220));
+                y += 11;
             }
+        }
+        // M68 part B: a water change controller drains the tank through a dock without an intake guard: it sucks in young animals
+        if (t.fry && t.changeYoung > 0) {
+            if (motorKinds(t) == 0) y += 11;
+            fitLine(g, changeYoungLine(t), x, y, TEXT_LIGHT, tw());
+            addTip(y, wrapTip(Component.translatable("gui.bettacraft.devices.change_young_tip").withStyle(ChatFormatting.WHITE), 220));
         }
         // ---- M66: the heaters and coolers (from the tab Water)
         y = lay[2];

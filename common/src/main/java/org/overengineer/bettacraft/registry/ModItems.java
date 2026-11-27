@@ -347,6 +347,8 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> RESERVOIR = ITEMS.registerSimpleBlockItem(ModBlocks.RESERVOIR);
     public static final DeferredItem<BlockItem> LEVEL_SENSOR = ITEMS.registerSimpleBlockItem(ModBlocks.LEVEL_SENSOR);
     public static final DeferredItem<BlockItem> WATER_CHANGE_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_CHANGE_CONTROLLER);
+    /** M68 part B: the drain (the end of a waste water line). */
+    public static final DeferredItem<BlockItem> DRAIN = ITEMS.registerSimpleBlockItem(ModBlocks.DRAIN);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> BULKHEAD = plumbing(ModBlocks.BULKHEAD, org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_STRAINER = plumbing(ModBlocks.INTAKE_STRAINER, org.overengineer.bettacraft.plumbing.interior.Plumb.STRAINER);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> LILY_PIPE = plumbing(ModBlocks.LILY_PIPE, org.overengineer.bettacraft.plumbing.interior.Plumb.LILY);

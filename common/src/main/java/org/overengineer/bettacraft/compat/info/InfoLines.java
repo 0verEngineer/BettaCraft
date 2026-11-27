@@ -253,7 +253,9 @@ public final class InfoLines {
     /** M37: "Spring: 40 % (9.6 h)" of a device with a spring (nothing while it may not be wound). */
     public static List<Component> spring(CompoundTag d) {
         List<Component> out = new ArrayList<>();
-        if (d == null || !d.contains("spring")) return out;
+        if (d == null) return out;
+        waterDevice(out, d); // M68 part B
+        if (!d.contains("spring")) return out;
         int pct = d.getInt("spring");
         if (d.getBoolean("spring_store")) { // M67: the tank's one store (cabinet, external filter)
             out.add(Component.translatable("jade.bettacraft.store", pct, String.format(java.util.Locale.ROOT, "%,d", d.getLong("store_fe")),
@@ -275,21 +277,30 @@ public final class InfoLines {
         List<Component> out = new ArrayList<>();
         int[] flows = d == null ? new int[0] : d.getIntArray("pipe_flow");
         if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
-            pipeLines(out, null, state.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.RING), p.steel(), flows.length > 0 ? flows[0] : -1);
+            pipeLines(out, null, state.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.RING), p.steel(), flows.length > 0 ? flows[0] : -1, role(d, 0));
         } else if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBundleBlock) {
             int[] slots = org.overengineer.bettacraft.plumbing.Pipes.slotsAt(level, pos);
             int n = 0;
             for (int i = 0; i < slots.length; i++) {
                 if (!org.overengineer.bettacraft.plumbing.PipeSlots.present(slots[i])) continue;
                 pipeLines(out, ++n, org.overengineer.bettacraft.plumbing.PipeSlots.ring(slots[i]), org.overengineer.bettacraft.plumbing.PipeSlots.steel(slots[i]),
-                        i < flows.length ? flows[i] : -1);
+                        i < flows.length ? flows[i] : -1, role(d, i));
             }
         }
         return out;
     }
 
-    private static void pipeLines(List<Component> out, @javax.annotation.Nullable Integer slot, org.overengineer.bettacraft.plumbing.PipeRing ring, boolean steel, int flow) {
-        Component role = Component.translatable("jade.bettacraft.pipe.role." + ring.getSerializedName());
+    /** M68 part B: the role key of pipe {@code i} from the server's data ("" without one). */
+    private static String role(@javax.annotation.Nullable CompoundTag d, int i) {
+        if (d == null) return "";
+        var l = d.getList("pipe_role", net.minecraft.nbt.Tag.TAG_STRING);
+        return i < l.size() ? l.getString(i) : "";
+    }
+
+    private static void pipeLines(List<Component> out, @javax.annotation.Nullable Integer slot, org.overengineer.bettacraft.plumbing.PipeRing ring, boolean steel, int flow, String roleKey) {
+        // M68 part B: the four lines of the water change controller say which they are (two rings for four roles)
+        boolean own = ring != org.overengineer.bettacraft.plumbing.PipeRing.SHORT && (roleKey.startsWith("fresh_") || roleKey.startsWith("waste_"));
+        Component role = Component.translatable("jade.bettacraft.pipe.role." + (own ? roleKey : ring.getSerializedName()));
         Component line = slot == null ? role : Component.translatable("jade.bettacraft.pipe.slot", slot, role);
         ChatFormatting colour = switch (ring) {
             case NONE -> ChatFormatting.GRAY;
@@ -303,6 +314,41 @@ public final class InfoLines {
         String rate = String.format(java.util.Locale.ROOT, "%,d", org.overengineer.bettacraft.plumbing.PipeBlock.rate(steel) * 20);
         if (flow >= 0) out.add(Component.translatable("jade.bettacraft.pipe.flow", String.format(java.util.Locale.ROOT, "%,d", flow), rate).withStyle(ChatFormatting.AQUA));
         else out.add(Component.translatable("jade.bettacraft.pipe.rate", rate).withStyle(ChatFormatting.AQUA));
+    }
+
+    /** M68 part B: the lines of the water change controller and the level sensor ({@link InfoData}'s spring data). */
+    private static void waterDevice(List<Component> out, CompoundTag d) {
+        if (d.contains("wc_status")) {
+            org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status st;
+            try {
+                st = org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status.valueOf(d.getString("wc_status"));
+            } catch (IllegalArgumentException e) {
+                st = org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.Status.WAITING;
+            }
+            out.add(org.overengineer.bettacraft.plumbing.ChangerTexts.status(st, d.getLong("wc_pending"), d.getInt("wc_last"), d.getInt("wc_top")));
+            out.add(org.overengineer.bettacraft.plumbing.ChangerTexts.tanks(d.getInt("wc_tanks"), d.getInt("wc_filter"), d.getInt("wc_sensors")));
+            out.add(org.overengineer.bettacraft.plumbing.ChangerTexts.lines(d.getInt("wc_flags")));
+            out.addAll(org.overengineer.bettacraft.plumbing.ChangerTexts.warnings(d.getInt("wc_flags"), d.getInt("wc_tanks")));
+        }
+        if (d.contains("ls_status")) {
+            String st = d.getString("ls_status").toLowerCase(java.util.Locale.ROOT);
+            boolean low = st.equals("low");
+            out.add(Component.translatable("jade.bettacraft.sensor.target", d.getInt("ls_target"),
+                    Component.translatable("gui.bettacraft.level_sensor.status." + st)).withStyle(low ? ChatFormatting.GOLD : ChatFormatting.AQUA));
+            if (d.getLong("ls_missing") > 0) out.add(Component.translatable("jade.bettacraft.sensor.missing", String.format(java.util.Locale.ROOT, "%,d", d.getLong("ls_missing"))).withStyle(ChatFormatting.GRAY));
+            out.add(Component.translatable(low ? "jade.bettacraft.sensor.signal_on" : "jade.bettacraft.sensor.signal_off").withStyle(low ? ChatFormatting.RED : ChatFormatting.GRAY));
+            out.add(Component.translatable(d.getBoolean("ls_served") ? "jade.bettacraft.sensor.served" : "jade.bettacraft.sensor.unserved")
+                    .withStyle(d.getBoolean("ls_served") ? ChatFormatting.GREEN : ChatFormatting.GRAY));
+        }
+    }
+
+    /** M68 part B: the drain (client side only: it has no block entity). */
+    public static List<Component> drain(net.minecraft.world.level.block.state.BlockState state) {
+        List<Component> out = new ArrayList<>();
+        if (!(state.getBlock() instanceof org.overengineer.bettacraft.plumbing.DrainBlock)) return out;
+        out.add(Component.translatable(org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.DRAIN)
+                ? "jade.bettacraft.drain" : "jade.bettacraft.drain.off").withStyle(ChatFormatting.GRAY));
+        return out;
     }
 
     /** Larva tub and artemia hatchery (M9). */

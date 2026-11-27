@@ -302,6 +302,9 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterDeviceBlock> WATER_CHANGE_CONTROLLER = BLOCKS.register("water_change_controller",
             () -> new org.overengineer.bettacraft.plumbing.WaterDeviceBlock(org.overengineer.bettacraft.plumbing.WaterDeviceBlock.Kind.WATER_CHANGER,
                     BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5F).sound(SoundType.METAL).noOcclusion()));
+    /** M68 part B: the drain: discards the water of the pipe that ends at it. */
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.DrainBlock> DRAIN = BLOCKS.register("drain",
+            () -> new org.overengineer.bettacraft.plumbing.DrainBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL)));
     // the plumbing of the tank interior
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> BULKHEAD = plumbing("bulkhead", org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
     /** M68: a glass pipe placed in a tank interior (no item of its own: it drops the glass pipe). */

@@ -101,6 +101,7 @@ final class JadeClientTooltips {
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             InfoLines.spring(accessor.getServerData().getCompound(InfoData.KEY)).forEach(tooltip::add);
+            InfoLines.drain(accessor.getBlockState()).forEach(tooltip::add); // M68 part B
         }
 
         @Override

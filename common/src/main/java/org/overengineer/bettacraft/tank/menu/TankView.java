@@ -670,6 +670,8 @@ public final class TankView {
         public int dimmer = 100, lightOn = 480, lightOff = 1200;
         public boolean timer;
         public int unprotected;
+        /** M68 part B: water change controllers that drain this tank through a dock without an intake guard (they suck in young). */
+        public int changeYoung;
         /** M66: the motor filters by kind, [inside, corner, outside, cabinet] x [all, with intake sponge] (inside = in the interior, under water). */
         public int[] motors = new int[8];
 
@@ -696,6 +698,7 @@ public final class TankView {
             t.putIntArray("timer_set", new int[]{dimmer, lightOn, lightOff});
             t.putBoolean("timer", timer);
             t.putInt("unprotected", unprotected);
+            t.putInt("change_young", changeYoung);
             t.putIntArray("motors", motors);
             return t;
         }
@@ -731,6 +734,7 @@ public final class TankView {
             }
             timer = t.getBoolean("timer");
             unprotected = t.getInt("unprotected");
+            changeYoung = t.getInt("change_young");
             int[] mo = t.getIntArray("motors");
             if (mo.length == 8) motors = mo;
         }
@@ -941,6 +945,12 @@ public final class TankView {
             }
             if (!f.intakeSponge()) x.unprotected++;
         }
+        // M68 part B: the water change controllers that drain the tank through a dock without an intake guard
+        if (org.overengineer.bettacraft.plumbing.ChangeIntake.active()) {
+            for (var ch : org.overengineer.bettacraft.plumbing.TankWaterLinks.changers(level, c.getBlockPos())) {
+                if (!ch.wasteDocks().isEmpty() && org.overengineer.bettacraft.plumbing.ChangeIntake.openShare(level, c, ch.wasteDocks()) > 0) x.changeYoung++;
+            }
+        }
         x.outlets = c.airOutlets;
         x.driven = c.airDriven;
         x.airPowered = c.airPowered();
@@ -973,6 +983,16 @@ public final class TankView {
         public double waterBlocks;
         public int openTop, totalTop, internalFilters;
         public long lastFreshWater = -1;
+        /**
+         * M68 part B: the water change controllers that serve the tank (count) and the first one's interval, share, last change, status,
+         * running change, last change and top-off (mB), flags and tanks; the level sensor's target (-1: none), whether the water is below
+         * it and whether a controller tops off.
+         */
+        public int changers, changeInterval, changeShare, changeLastMb, changeTopOff, changeFlags, changeTanks;
+        public long changeLast = -1, changePending;
+        public String changeStatus = "";
+        public int sensorTarget = -1;
+        public boolean sensorLow, sensorServed;
         /** M40: multiblock filters that reach the tank but do not filter it ("x y z|status", see MultiblockFilter.LinkStatus). */
         public final List<String> filterWarnings = new ArrayList<>();
         public boolean heaterPower, filterPower, lightPower, heatPowered = true, filterPowered = true, lightPowered = true;
@@ -1056,6 +1076,21 @@ public final class TankView {
             t.putInt("top", totalTop);
             t.putInt("internal_filters", internalFilters);
             t.putLong("fresh", lastFreshWater);
+            CompoundTag ch = new CompoundTag(); // M68 part B
+            ch.putInt("n", changers);
+            ch.putInt("interval", changeInterval);
+            ch.putInt("share", changeShare);
+            ch.putInt("last_mb", changeLastMb);
+            ch.putInt("top", changeTopOff);
+            ch.putInt("flags", changeFlags);
+            ch.putInt("tanks", changeTanks);
+            ch.putLong("last", changeLast);
+            ch.putLong("pending", changePending);
+            ch.putString("status", changeStatus);
+            ch.putInt("sensor", sensorTarget);
+            ch.putBoolean("low", sensorLow);
+            ch.putBoolean("served", sensorServed);
+            t.put("changer", ch);
             t.putBoolean("p_heat", heaterPower);
             t.putBoolean("p_filter", filterPower);
             t.putBoolean("p_light", lightPower);
@@ -1155,6 +1190,20 @@ public final class TankView {
             totalTop = t.getInt("top");
             internalFilters = t.getInt("internal_filters");
             lastFreshWater = t.getLong("fresh");
+            CompoundTag ch = t.getCompound("changer"); // M68 part B
+            changers = ch.getInt("n");
+            changeInterval = ch.getInt("interval");
+            changeShare = ch.getInt("share");
+            changeLastMb = ch.getInt("last_mb");
+            changeTopOff = ch.getInt("top");
+            changeFlags = ch.getInt("flags");
+            changeTanks = ch.getInt("tanks");
+            changeLast = ch.contains("last") ? ch.getLong("last") : -1;
+            changePending = ch.getLong("pending");
+            changeStatus = ch.getString("status");
+            sensorTarget = ch.contains("sensor") ? ch.getInt("sensor") : -1;
+            sensorLow = ch.getBoolean("low");
+            sensorServed = ch.getBoolean("served");
             heaterPower = t.getBoolean("p_heat");
             filterPower = t.getBoolean("p_filter");
             lightPower = t.getBoolean("p_light");
@@ -1368,6 +1417,26 @@ public final class TankView {
         w.totalTop = top[1];
         w.evaporationPerDay = org.overengineer.bettacraft.tank.TankWater.evaporationPerDay(level, t);
         w.lastFreshWater = t.lastFreshWater();
+        // M68 part B: the water change controllers that serve the tank and its level sensor
+        var changers = org.overengineer.bettacraft.plumbing.TankWaterLinks.changers(level, c.getBlockPos());
+        w.changers = changers.size();
+        if (!changers.isEmpty() && level.getBlockEntity(changers.getFirst().pos()) instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity wc) {
+            w.changeInterval = wc.intervalDays();
+            w.changeShare = wc.share();
+            w.changeLast = wc.last();
+            w.changeLastMb = wc.lastMb();
+            w.changeTopOff = wc.lastTopOff();
+            w.changeFlags = wc.flags();
+            w.changeTanks = wc.tanks();
+            w.changePending = wc.pendingMb();
+            w.changeStatus = wc.status().name();
+        }
+        var sensors = org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.sensorsOf(level, c);
+        if (!sensors.isEmpty()) {
+            w.sensorTarget = sensors.getFirst().target();
+            w.sensorLow = sensors.getFirst().signal();
+            w.sensorServed = sensors.getFirst().served();
+        }
         w.heaterPower = org.overengineer.bettacraft.tank.TankPower.heaterRequired();
         w.filterPower = org.overengineer.bettacraft.tank.TankPower.filterRequired();
         w.lightPower = org.overengineer.bettacraft.tank.TankPower.lightRequired();

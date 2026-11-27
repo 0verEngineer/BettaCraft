@@ -1,22 +1,27 @@
 package org.overengineer.bettacraft.client.screen;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import org.overengineer.bettacraft.platform.network.PacketDistributor;
+import net.minecraft.util.FormattedCharSequence;
 import org.overengineer.bettacraft.network.WaterChangerPayload;
+import org.overengineer.bettacraft.platform.network.PacketDistributor;
+import org.overengineer.bettacraft.plumbing.ChangerTexts;
 import org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity;
 
 /**
- * M24: the water change controller: interval (days, sneak: 5), share (%, sneak: 1), on/off, change now, and what it
- * did last. Values come live from the synced block entity; changes go to the server.
+ * M24: the water change controller: interval (days, sneak: 5), share (%, sneak: 1), on/off, change now, and what it did last.
+ * Values come live from the synced block entity; changes go to the server.
+ * <p>
+ * M68 part B: what it serves (tanks, through a filter, level sensors), its four ports (a line, the touch, or missing), the running
+ * change, its stores and the warnings (no fresh water, no drain, a short circuit, it sucks in young animals); the hint names the
+ * ports as seen from the front.
  */
 public class WaterChangerScreen extends Screen {
-    private static final int W = 270, H = 154; // M40 part b: two lines for the filter
+    private static final int W = 300, H = 214;
     private final BlockPos pos;
     private int left, top;
     private Button toggle;
@@ -35,16 +40,16 @@ public class WaterChangerScreen extends Screen {
     protected void init() {
         left = (width - W) / 2;
         top = (height - H) / 2;
-        addRenderableWidget(Button.builder(Component.literal("-"), b -> send(hasShiftDown() ? -5 : -1, 0, null, false)).bounds(left + 150, top + 30, 20, 16).build());
+        addRenderableWidget(Button.builder(Component.literal("-"), b -> send(hasShiftDown() ? -5 : -1, 0, null, false)).bounds(left + 180, top + 30, 20, 16).build());
         addRenderableWidget(Button.builder(Component.literal("+"), b -> send(hasShiftDown() ? 5 : 1, 0, null, false)).bounds(left + W - 30, top + 30, 20, 16).build());
-        addRenderableWidget(Button.builder(Component.literal("-"), b -> send(0, hasShiftDown() ? -1 : -5, null, false)).bounds(left + 150, top + 50, 20, 16).build());
+        addRenderableWidget(Button.builder(Component.literal("-"), b -> send(0, hasShiftDown() ? -1 : -5, null, false)).bounds(left + 180, top + 50, 20, 16).build());
         addRenderableWidget(Button.builder(Component.literal("+"), b -> send(0, hasShiftDown() ? 1 : 5, null, false)).bounds(left + W - 30, top + 50, 20, 16).build());
         toggle = addRenderableWidget(Button.builder(Component.empty(), b -> {
             WaterChangerBlockEntity w = be();
             if (w != null) send(0, 0, !w.enabled(), false);
-        }).bounds(left + 10, top + 72, 120, 18).build());
+        }).bounds(left + 10, top + 72, 135, 18).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.water_changer.now"), b -> send(0, 0, null, true))
-                .bounds(left + 140, top + 72, 120, 18).build());
+                .bounds(left + 155, top + 72, 135, 18).build());
     }
 
     private void send(int dInterval, int dShare, Boolean enabled, boolean now) {
@@ -71,20 +76,24 @@ public class WaterChangerScreen extends Screen {
         g.drawString(font, Component.translatable("gui.bettacraft.water_changer.share", w.share()), left + 10, top + 54, 0xFFE0E0E0);
         Minecraft mc = Minecraft.getInstance();
         long now = mc.level == null ? 0 : mc.level.getGameTime();
-        Component status = Component.translatable("gui.bettacraft.water_changer.status." + w.status().name().toLowerCase(java.util.Locale.ROOT), w.lastMb());
-        g.drawString(font, status.copy().withStyle(w.status() == WaterChangerBlockEntity.Status.CHANGED || w.status() == WaterChangerBlockEntity.Status.WAITING
-                ? ChatFormatting.AQUA : ChatFormatting.GOLD), left + 10, top + 98, 0xFFFFFF);
-        if (w.filterTanks() > 0) { // M40 part b: on a multiblock filter
-            g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter", w.filterTanks()).withStyle(ChatFormatting.DARK_AQUA), left + 10, top + 126, 0xFFFFFF);
-            if (w.lastWasteMb() > 0) g.drawString(font, Component.translatable("gui.bettacraft.water_changer.filter_waste", w.lastWasteMb())
-                    .withStyle(ChatFormatting.GRAY), left + 10, top + 138, 0xFFFFFF);
+        int x = left + 10, y = top + 98, tw = W - 20;
+        y = text(g, ChangerTexts.status(w.status(), w.shownPending(), w.lastMb(), w.lastTopOff()), x, y, tw);
+        if (w.last() >= 0 && w.enabled() && w.shownPending() <= 0) y = text(g, ChangerTexts.next(w.last(), w.intervalDays(), now), x, y, tw);
+        y = text(g, ChangerTexts.tanks(w.tanks(), w.filterTanks(), w.sensors()), x, y, tw);
+        y = text(g, ChangerTexts.lines(w.flags()), x, y, tw);
+        y = text(g, ChangerTexts.stores(w.shownFresh(), w.shownWaste(), w.toppedTotal()), x, y, tw);
+        for (Component c : ChangerTexts.warnings(w.flags(), w.tanks())) y = text(g, c, x, y, tw);
+        y = Math.max(y + 2, top + H - 24);
+        text(g, Component.translatable("gui.bettacraft.water_changer.hint").withStyle(net.minecraft.ChatFormatting.GRAY), x, y, tw);
+    }
+
+    /** Draws {@code c} wrapped to {@code width}; returns the y below it. */
+    private int text(GuiGraphics g, Component c, int x, int y, int width) {
+        for (FormattedCharSequence l : font.split(c, width)) {
+            g.drawString(font, l, x, y, 0xFFFFFF);
+            y += 10;
         }
-        if (w.last() >= 0 && w.enabled()) {
-            double days = Math.max(0, (w.last() + w.intervalDays() * 24000L - now) / 24000.0);
-            g.drawString(font, Component.translatable("gui.bettacraft.water_changer.next", String.format(java.util.Locale.ROOT, "%.1f", days))
-                    .withStyle(ChatFormatting.GRAY), left + 10, top + 112, 0xFFFFFF);
-        }
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.water_changer.hint").withStyle(ChatFormatting.GRAY), left + W / 2, top + H + 4, 0xA0A0A0);
+        return y + 1;
     }
 
     @Override

@@ -64,7 +64,7 @@ import org.overengineer.bettacraft.tankmates.TankmateSpecies;
  * M24 GameTests: the crucible and stainless steel (recipes, tag, foreign steel), pipes and the water pump (water values,
  * throughput, foreign fluid handlers: a cauldron), the bulkhead with interior pipes and outlets (closed without outlets,
  * the current where the nozzle sits), the multiblock filter (forming, cleaning, clogging, washing), nitrate per
- * difficulty, the water change controller and the top-off (salinity stays). Deterministic: every step is called
+ * difficulty (M68 part B: the water change controller and the top-off are in {@link WaterChangeGameTests}). Deterministic: every step is called
  * directly (pump batches, care steps, melt ticks), nothing waits for chance; config changes in their own batches.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
@@ -471,76 +471,6 @@ public final class PlumbingGameTests {
         } finally {
             ServerConfig.WATER_CHANGE_DIFFICULTY.set(saved);
         }
-        h.succeed();
-    }
-
-    /**
-     * The water change controller changes 25 % from a water source (endless) or a reservoir next to it, only what it can
-     * refill, and only when due (or "change now"); the nitrate falls by a quarter, the volume stays.
-     */
-    @GameTest(template = EMPTY, timeoutTicks = 200)
-    public static void waterChangeController(GameTestHelper h) {
-        ServerLevel level = h.getLevel();
-        TankBlockEntity c = tank(h, 1, 2, 1, 2, 2, 2); // 8000 mB
-        c.getTank().setNitrate(40);
-        var watcher = QuestAdv.watcher(h, c); // M45
-        h.setBlock(new BlockPos(3, 2, 1), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
-        WaterChangerBlockEntity wc = (WaterChangerBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 1)));
-        wc.set(7, 25, true);
-        // no water next to it: nothing happens
-        h.assertTrue(wc.check(level, true) == 0 && wc.status() == WaterChangerBlockEntity.Status.NO_WATER, "no fresh water: " + wc.status());
-        h.assertTrue(near(c.getTank().nitrate(), 40, 1e-4), "nothing drained");
-        // a reservoir with 1000 mB: only that much
-        reservoir(h, new BlockPos(4, 2, 1), 1000, null);
-        int part = wc.check(level, true);
-        h.assertTrue(part == 1000 && c.getTank().waterMb() == 8000, "only what it can refill: " + part);
-        h.assertTrue(near(c.getTank().nitrate(), 35, 0.01), "1/8 fresh: 40 -> " + c.getTank().nitrate());
-        // a water source next to it: endless, the whole 25 %
-        h.setBlock(new BlockPos(3, 2, 2), Blocks.WATER);
-        c.getTank().setNitrate(40);
-        int full = wc.check(level, true);
-        h.assertTrue(full == 2000 && c.getTank().waterMb() == 8000 && near(c.getTank().nitrate(), 30, 0.01), "25 %: " + full + ", " + c.getTank().nitrate());
-        h.assertTrue(AerationGameTests.logged(c, "log.bettacraft.auto_water_change"), "logged");
-        QuestAdv.check(h, watcher, "auto_water_change"); // M45
-        QuestAdv.gone(h, watcher);
-        // not due yet: nothing
-        h.assertTrue(wc.check(level, false) == 0 && wc.status() == WaterChangerBlockEntity.Status.CHANGED, "not due: " + wc.status());
-        h.succeed();
-    }
-
-    /**
-     * Top-off in a reef tank: evaporation leaves the salt behind (salinity up), the level sensor tops off from a reservoir
-     * of fresh water and the salinity is back where it was; a salty reservoir is refused.
-     */
-    @GameTest(template = EMPTY, timeoutTicks = 200)
-    public static void topOffKeepsTheSalinity(GameTestHelper h) {
-        ServerLevel level = h.getLevel();
-        TankBlockEntity c = tank(h, 1, 2, 1, 2, 2, 2);
-        TankData t = c.getTank();
-        t.setSalinity(Salinity.SEA);
-        t.setNitrate(20);
-        // evaporation of 600 mB (as TankWater does it: salt and nitrate stay)
-        long lost = 600;
-        float salt = Salinity.concentrate(t.salinity(), t.waterMb(), lost, Salinity.MAX);
-        float no3 = TankNitrate.concentrate(t.nitrate(), t.waterMb(), lost);
-        TankInteractions.changeWater(level, c, -lost);
-        t.setSalinity(salt);
-        t.setNitrate(no3);
-        h.assertTrue(t.salinity() > Salinity.SEA + 1, "saltier after evaporating: " + t.salinity());
-        h.setBlock(new BlockPos(3, 2, 1), ModBlocks.LEVEL_SENSOR.get().defaultBlockState());
-        LevelSensorBlockEntity s = (LevelSensorBlockEntity) level.getBlockEntity(h.absolutePos(new BlockPos(3, 2, 1)));
-        // a salty reservoir is refused
-        ReservoirBlockEntity salty = reservoir(h, new BlockPos(4, 2, 1), 4000, new WaterValues(25, 35, 420, 1, 0));
-        h.assertTrue(s.check(level) == 0 && s.status() == LevelSensorBlockEntity.Status.SALTY, "salty source refused: " + s.status());
-        salty.water().drain(4000, IFluidHandler.FluidAction.EXECUTE);
-        salty.water().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 4000), IFluidHandler.FluidAction.EXECUTE);
-        int added = s.check(level);
-        h.assertTrue(added == lost && t.waterMb() == t.capacityMb(), "topped off: " + added);
-        h.assertTrue(near(t.salinity(), Salinity.SEA, 0.01), "the salinity is back: " + t.salinity());
-        h.assertTrue(near(t.nitrate(), 20, 0.01), "and the nitrate: " + t.nitrate());
-        h.assertTrue(s.status() == LevelSensorBlockEntity.Status.TOPPED && salty.water().amount() == 4000 - lost, "from the reservoir");
-        // full: nothing more
-        h.assertTrue(s.check(level) == 0 && s.status() == LevelSensorBlockEntity.Status.IDLE, "full: idle");
         h.succeed();
     }
 

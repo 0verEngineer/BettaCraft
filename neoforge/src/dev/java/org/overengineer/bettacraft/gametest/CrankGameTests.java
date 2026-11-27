@@ -328,7 +328,9 @@ public final class CrankGameTests {
             h.setBlock(new BlockPos(3, 2, 10), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState());
             WaterChangerBlockEntity wc = be(h, new BlockPos(3, 2, 10), WaterChangerBlockEntity.class);
             wc.set(7, 25, true);
-            h.setBlock(new BlockPos(3, 2, 11), Blocks.WATER);
+            // M68 part B: fresh water through a pipe at its inlet (east), from a reservoir
+            h.setBlock(new BlockPos(4, 2, 10), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+            PlumbingGameTests.reservoir(h, new BlockPos(5, 2, 10), 4000, null);
             h.assertTrue(wc.check(level, true) == 0 && wc.status() == WaterChangerBlockEntity.Status.NO_POWER, "no FE, unwound: " + wc.status());
             wc.windSpring().set(wc.windSpring().capacity());
             int changed = wc.check(level, true);

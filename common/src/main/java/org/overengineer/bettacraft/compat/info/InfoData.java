@@ -228,32 +228,59 @@ public final class InfoData {
         net.minecraft.world.level.block.state.BlockState s = level.getBlockState(pos);
         if (!org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) return null;
         int[] flows;
+        ListTag roles = new ListTag(); // M68 part B: the role of each pipe's network (the four lines of the water change controller share two rings)
         if (s.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock) {
             var n = org.overengineer.bettacraft.plumbing.PipeNetwork.of(level, pos, 0);
             flows = new int[]{n == null ? 0 : n.flow(level) * 20};
+            roles.add(StringTag.valueOf(n == null || n.role() == null ? "" : n.role().key()));
         } else {
             int[] slots = org.overengineer.bettacraft.plumbing.Pipes.slotsAt(level, pos);
             flows = new int[slots.length];
             for (int i = 0; i < slots.length; i++) {
                 if (!org.overengineer.bettacraft.plumbing.PipeSlots.present(slots[i])) {
                     flows[i] = -1;
+                    roles.add(StringTag.valueOf(""));
                     continue;
                 }
                 var n = org.overengineer.bettacraft.plumbing.PipeNetwork.of(level, pos, i);
                 flows[i] = n == null ? 0 : n.flow(level) * 20;
+                roles.add(StringTag.valueOf(n == null || n.role() == null ? "" : n.role().key()));
             }
         }
         CompoundTag out = new CompoundTag();
         out.putIntArray("pipe_flow", flows);
+        out.put("pipe_role", roles);
         return out;
+    }
+
+    /**
+     * M68 part B: the water devices: the water change controller (status, what it serves, its ports, warnings), the level sensor (its
+     * target, how far below, the redstone signal, whether a controller tops off its tank). Added to the spring's data.
+     */
+    private static void putWaterDevice(CompoundTag out, BlockEntity be) {
+        if (be instanceof org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity w) {
+            out.putString("wc_status", w.status().name());
+            out.putLong("wc_pending", w.pendingMb());
+            out.putInt("wc_last", w.lastMb());
+            out.putInt("wc_top", w.lastTopOff());
+            out.putInt("wc_tanks", w.tanks());
+            out.putInt("wc_filter", w.filterTanks());
+            out.putInt("wc_sensors", w.sensors());
+            out.putInt("wc_flags", w.flags());
+        } else if (be instanceof org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity s) {
+            out.putString("ls_status", s.status().name());
+            out.putInt("ls_target", s.target());
+            out.putLong("ls_missing", s.missingMb());
+            out.putBoolean("ls_served", s.served());
+        }
     }
 
     public static CompoundTag spring(ServerLevel level, BlockEntity be) {
         org.overengineer.bettacraft.winding.Windable w = be instanceof org.overengineer.bettacraft.winding.Windable x ? x
                 : level == null || be == null ? null : org.overengineer.bettacraft.winding.Winding.find(level, be.getBlockPos());
-        if (w == null) return null;
         CompoundTag out = new CompoundTag();
-        putSpring(out, w);
+        if (w != null) putSpring(out, w);
+        if (be != null) putWaterDevice(out, be); // M68 part B
         return out.isEmpty() ? null : out;
     }
 

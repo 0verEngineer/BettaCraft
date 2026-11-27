@@ -114,8 +114,8 @@ public class CalciumReactorBlockEntity extends BlockEntity implements MenuProvid
                 TankBlockEntity t = TankMultiblock.getController(level, cab.tankBlockPos());
                 if (t != null) add(out, t);
             }
-            if (Features.enabled(Feature.PIPES) && level.getBlockState(n).getBlock() instanceof PipeBlock) {
-                PipeNetwork net = PipeNetwork.of(level, n);
+            if (Features.enabled(Feature.PIPES) && org.overengineer.bettacraft.plumbing.Pipes.isPipe(level.getBlockState(n))) { // M68 part B: bundles too
+                PipeNetwork net = org.overengineer.bettacraft.plumbing.Pipes.networkNextTo(level, worldPosition, d);
                 if (net == null) continue;
                 for (BlockPos e : net.tankEnds(level)) {
                     TankBlockEntity t = TankMultiblock.getController(level, e);
