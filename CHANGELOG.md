@@ -131,6 +131,13 @@ One energy store per tank: FE cables and the crank charge the same store, it gro
   every device-tick they held), also beyond the capacity: nothing is lost, the surplus simply runs down first. A cabinet broken before
   that hands its spring to its tank.
 
+### Fixed
+- **A world saved on NeoForge and opened on Fabric (or the other way round) keeps its tanks' animals.** NeoForge and Fabric save our
+  entity data in different places, so each loader dropped what the other had written: every animal forgot its tank, the terrarium
+  animals on the land became free animals (a crested gecko then climbed out over an open top), the tank menu listed no animals and
+  the mobs in glass lost their data. Both places are read now. A world already opened on the other loader with an older version has
+  lost those bindings; load it from a copy saved before. Dev check: `gradlew :fabric:fabricCrossLoadTest` / `smoketestCrossLoad`.
+
 ## [1.55.0-beta.1] - 2026-11-25
 
 UI overhaul: the tank menu in groups, bigger cabinet and filter menus with their energy, a menu for the clip-on feeder, an aquarist
