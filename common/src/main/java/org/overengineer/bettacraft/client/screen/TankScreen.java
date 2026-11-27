@@ -1122,6 +1122,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
 
     /** Dev smoke test only: >= 0 shows the nth tooltip of the lines of the tab (breeding: of its rows) at a fixed place. */
     private int showTipForTest = -1;
+    /** M67: {@link #showTipForTest} value that shows the power tooltip of the overview. */
+    public static final int POWER_TIP_FOR_TEST = 99;
 
     public void showTipForTest(int n) {
         showTipForTest = n;
@@ -1297,7 +1299,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             TankView.Water pw = v.water;
             fitLine(g, Component.translatable("gui.bettacraft.water.power", String.format(java.util.Locale.ROOT, "%,d", pw.buffer),
                     String.format(java.util.Locale.ROOT, "%,d", pw.bufferCap), pw.demand), x, overviewY(next), TEXT_LIGHT, tw());
-            if (mx >= x && mx < x + tw() && my >= overviewY(next) && my < overviewY(next) + 9) pendingTooltip = powerTooltip(pw);
+            if (mx >= x && mx < x + tw() && my >= overviewY(next) && my < overviewY(next) + 9 || showTipForTest == POWER_TIP_FOR_TEST) pendingTooltip = powerTooltip(pw);
             next++;
         }
         // M18: as soon as anything counts in fractions (small animals, young, nest), the line shows the stocking

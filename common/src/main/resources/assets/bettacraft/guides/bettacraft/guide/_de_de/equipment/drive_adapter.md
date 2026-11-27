@@ -29,8 +29,8 @@ Futtermaschine, Düngermaschine) behalten wie bisher ihre eigene Welle (siehe [C
 * Eine Create-**Welle, ein Zahnrad, ein Getriebe oder einen Motor** an seine Welle anschließen. Der Adapter gehört zum
   Netz von Create: der Wellenstummel dreht sich mit, und die Ingenieursbrille zeigt seinen Stress und was er dem Becken
   gibt.
-* Das Aquarium braucht die Strom-Optionen des Servers (`power.heaterRequiresEnergy` und die anderen): ohne sie nimmt
-  kein Gerät FE, und der Adapter läuft nur leer.
+* Das Aquarium braucht Stromkosten auf dem Server (`power.costs` `EASY` oder `HARD`): ohne sie nimmt kein Gerät FE,
+  und der Adapter läuft nur leer.
 
 ## Leistung
 
@@ -48,8 +48,8 @@ Futtermaschine, Düngermaschine) behalten wie bisher ihre eigene Welle (siehe [C
 Der Adapter kostet **echten Stress** im Netz von Create, nach seiner Last: **2 SU für jedes FE pro Tick**, das er
 gibt (ein Becken, das 64 FE/t nimmt, kostet 128 SU), mindestens **0,5 SU pro U/min**, solange er ohne Last dreht.
 Während sich der Puffer eines Beckens füllt, läuft der Adapter unter voller Last. Ein **überlastetes** Netz gibt dem
-Becken nichts (die Brille sagt es); die Geräte greifen dann auf das FE im Puffer und die mit der [Kurbel](crank.md)
-aufgezogenen Federn zurück.
+Becken nichts (die Brille sagt es); die Geräte greifen dann auf das FE im Speicher des Beckens zurück (den auch die
+[Kurbel](crank.md) lädt).
 
 ## Auch der Schrank nimmt eine Welle
 
@@ -57,15 +57,14 @@ aufgezogenen Federn zurück.
 
 Ein [Schrank](cabinet.md) unter dem Becken kann dasselbe wie ein Adapter: die Seite im Schrankmenü wählen (der Knopf mit
 der Welle links vom Filterplatz: keine, hinten, links, rechts, vorne oder unten) und dort eine Welle anschließen. Ein
-Messingflansch markiert die Seite. Mit Aufziehen an (`features.power.winding`) **zieht, was das Becken nicht braucht,
-die Feder des Schranks auf**, so läuft das Becken noch eine Weile weiter, wenn die Drehung stoppt. Die Overlays (Jade,
+Messingflansch markiert die Seite. Sie füllt denselben Energiespeicher des Beckens. Die Overlays (Jade,
 The One Probe, WTHIT) zeigen am Schrank und am Becken, was die Welle gibt.
 
 ## Einstellungen
 
 Die Schalter `features.compat.create.drive` (Adapter und Schrank-Welle) und `features.compat.create.cabinetDrive` (nur
 die Schrank-Welle); die Zahlen im Server-Config-Abschnitt `createDrive`: volle Drehzahl, FE je Anschluss, Obergrenze je
-Becken, Stress pro FE und im Leerlauf, FE pro Feder-Tick und die Seiten, die ein Schrank nutzen darf (`cabinetSides`).
+Becken, Stress pro FE und im Leerlauf und die Seiten, die ein Schrank nutzen darf (`cabinetSides`).
 
 ## Unterwegs
 

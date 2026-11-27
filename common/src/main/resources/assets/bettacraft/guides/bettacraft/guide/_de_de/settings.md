@@ -54,17 +54,18 @@ navigation:
 | `osmosis.roRate`, `roPumpBoost`, `roPumpFe`, `roWastePerPart`, `roMembraneBuckets`, `roPrefilterBuckets` | 1, 4, 20, 3, 128, 32 | [Osmoseanlage](equipment/reverse_osmosis.md): mB pro Tick, wie viel schneller mit FE, FE pro Tick, Abwasser je Teil, Lebensdauer von Membran und Vorfilter |
 | `dosing.calciumPerMl`, `alkalinityPerMl`, `magnesiumPerMl`, `tracePerMl`, `magnesiumDropPerDay`, `traceUsePerDay`, `canisterMl`, `maxMlPerDay` | 2, 0.07, 4, 0.15, 1, 0.04, 500, 100 | [Dosierpumpe](saltwater/dosing_pump.md) und [Riffchemie](saltwater/reef_chemistry.md): was ein mL einem Wasserblock zugibt, Magnesiumverlust und Spurenelement-Verbrauch pro Tag, mL eines Kanisters, höchstens mL pro Tag eines Kanals |
 | `pipes.glassPipeRate`, `steelPipeRate`, `pumpRate` | 50, 250, 200 | [Rohre und Wasserpumpe](equipment/pipes.md) in mB pro Tick |
-| `pipes.pumpsRequireEnergy`, `pumpFePerTick` | false, 8 | Wasserpumpen, Filter-Pumpenköpfe, Wasserwechsel-Steuerungen und Niveausensoren brauchen FE |
+| `pipes.pumpFePerTick` | 8 | FE von Wasserpumpen, Filter-Pumpenköpfen, Wasserwechsel-Steuerungen und Niveausensoren (mit `power.costs`) |
 | `crucible.meltTicks`, `fePerTick` | 200, 20 | [Schmelztiegel](equipment/crucible.md): Dauer eines Schmelzvorgangs, FE statt Brennstoff |
 | `multiblockFilter.spongeBlocks`, `ceramicBlocks`, `carbonBlocks`, `peatBlocks`, `dirtPerDay`, `maxChambers` | 12, 24, 16, 6, 0,04, 16 | [Multiblock-Filter](equipment/multiblock_filter.md): Wasserblöcke je Medium, wie schnell Medien verschmutzen, höchstens Kammern |
-| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | Ausrüstung braucht FE |
-| `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE-Verbrauch und -Speicher |
+| `power.costs` | OFF | [Strom](equipment/power.md): OFF (kein Gerät braucht FE), EASY (ein Drittel der FE-Werte), HARD (die FE-Werte) |
+| `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick` | 8, 8, 10, 4 | FE-Verbrauch (HARD; EASY ein Drittel) |
+| `power.storePerWaterBlock`, `storePerCabinet`, `crankFePerClick` | 80000, 20000, 6500 | der eine Energiespeicher des Beckens: je Wasserblock, je Unterschrank, FE eines Kurbel-Klicks |
 | `foodBreeding.*` | | Larvenbottich (`larvaTubDays` 2, `larvaTubYield` 3) und Artemia-Zuchtbecken (`hatcheryDays` 1, `hatcheryYield` 2); höchstens 16 pro Ansatz |
 | `liveFood.*` | | [Tubifex-Zuchtschale](food/tubifex_dish.md) (`tubifexDays` 4, `tubifexRoom` 8, `tubifexConditioning` 2, `poorTubifexStress` 0,5), [Daphnien-Fass](food/daphnia_barrel.md) (`daphniaDays` 3, `daphniaRoom` 16, `crowdedDays` 1, `bottleDaphniaChance` 0,08), [Lebendfutter-Pumpe](food/live_food_pump.md) (`pumpFePerPortion` 200) |
 | `foodMaking.*` | | [Futtermaschine](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (eine volle Feder), `windsToFull` 25 (Kurbelklicks), `makerFePerTick` 10 |
-| `winding.*` | | [Kurbel](equipment/crank.md): `ticksPerCharge` 24000 (eine Ladung = ein Tag eines Geräts), `clicksPerCharge` 25 (5 Sekunden), die Ladungen jedes Geräts (`externalFilterCharges` 1, `multiblockFilterCharges` 6, `cabinetCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
+| `winding.*` | | [Kurbel](equipment/crank.md): `ticksPerCharge` 24000 (eine Ladung = ein Tag eines Geräts), `clicksPerCharge` 25 (5 Sekunden), die Ladungen jedes Geräts (`multiblockFilterCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
 | `fertilizer.*` | | [Flüssigdünger](plants/fertilizer.md): `portionWaterBlocks` 4, `growthBoost` 0.5, `plantUsePerDay` 0.5, `fertilizerDecayPerDay` 0.05, `overdoseAt` 1.5, `overdoseAlgae` 3, `pipeUpTo` 1; [Düngermaschine](plants/fertilizer_maker.md) `fertilizerTicksPerBatch` 200, `fertilizerFePerTick` 10 |
-| `monitor.*` | | [Monitore](equipment/monitor.md): `range` 32 (Blöcke bis zu den Becken), `fePerBlock` 1 (FE pro Tick und Block, solange eine Strom-Option an ist) |
+| `monitor.*` | | [Monitore](equipment/monitor.md): `range` 32 (Blöcke bis zu den Becken), `fePerBlock` 1 (FE pro Tick und Block, solange Stromkosten an sind) |
 | `diet.*` | | [Futtervielfalt](food/food_variety.md): `varietyDays` 3, `varietyGroups` 3, `varietyRecovery` 1,5, `poorFoodFedDays` 0,5, `shrimpFoodFactor` 2 |
 | `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [Schwimmpflanzen](plants/floating_plants.md): Wachstum (0 = keins), größte bedeckte Oberfläche, dichte Decke ab, Pflanzen pro Aquarium |
 | `floatingPlants.wasteUptake`, `breedingBonus`, `pelletsOnLeaves` | 0.04, 1.15, 0.25 | aufgenommener Abfall, schnelleres Nest darunter, Anteil der Pellets, der auf den Blättern liegen bleibt |
@@ -148,8 +149,9 @@ Zucht-Schalter `breeding.enabled`, Schildkröten die Terrarien). Aus heißt:
 | `frogs.enabled` | Krallenfrösche bekommen keinen Hunger und brauchen keine Luft |
 | `tankmates.enabled` (und jede Gruppe, `saltwater.reefFish`) | ihre Pflege, Schwärme, Kämpfe und Zucht |
 | `saltwater.enabled` | der Salzgehalt schadet niemandem |
-| `power.enabled` | kein Gerät braucht FE (wie mit allen Strom-Optionen aus) |
-| `power.winding` | mit Strom-Optionen laufen Futtermaschine und Düngermaschine nur mit FE, und kein anderes Gerät nimmt die Kurbel |
+| `power.enabled` | kein Gerät braucht FE (wie mit `power.costs` OFF) |
+| `power.winding` | mit Stromkosten laufen Futtermaschine und Düngermaschine nur mit FE, und kein anderes Gerät nimmt die Kurbel |
+| `power.tankCrank` | die Kurbel an Unterschrank oder Außenfilter lädt kein Becken (nur FE) |
 | `fertilizer.enabled` (`fertilizer.dosing`) | der Dünger wirkt nicht (der Spiegel bleibt), die Düngermaschine steht still (der Dosierer überspringt Düngerkanister) |
 | `liveFood.enabled` | Zuchtansätze und Kulturen stehen still |
 | `sounds.enabled` | die Gerätesounds schweigen |
@@ -196,7 +198,7 @@ setzt Feature-Schalter hier und Spielwerte in der Server-Config jeder Welt:
 | `saltwater.foreignAnimals` | LENIENT |  | REALISTIC |  |
 | `saltwater.vanillaCoralsNeedSalt` | false |  | true |  |
 | `saltwater.refuseDeadlyWater` | true |  | false |  |
-| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy`, `aeration.airPumpRequiresEnergy`, `pipes.pumpsRequireEnergy`, `terrarium.misterRequiresEnergy` | false |  | true |  |
+| `power.costs` | OFF |  | HARD |  |
 | `tankmates.behaviour.shoalStress` | true | false |  |  |
 | `frogs.frogStarveDays` | 4 | 8 |  |  |
 | `bigAnimalRules.dolphinHungryDays` | 2 | 4 |  |  |

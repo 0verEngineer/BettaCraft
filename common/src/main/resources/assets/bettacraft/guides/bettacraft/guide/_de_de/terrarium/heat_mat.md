@@ -23,7 +23,7 @@ Boden ganz, an einer Wand halb so stark.
 * Ihr Thermostat ist die **Zieltemperatur** des Beckens (Übersichts-Reiter): Sie heizt, solange die Luft kälter ist, und
   ruht, wenn die Luft sie erreicht hat. Beim Heizen glüht sie orange.
 * Sie wirkt nur an einem [Terrarium oder Paludarium](../terrarium.md). Ein Deckel hält mehr von der Wärme drin.
-* **Energie:** Mit `power.heaterRequiresEnergy` braucht sie FE des Beckens wie ein Heizer, 4 FE/t beim Heizen
+* **Energie:** Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht sie FE des Beckens wie ein Heizer, 4 FE/t beim Heizen
   (`power.heatMatFePerTick`).
 
 ## Bezug

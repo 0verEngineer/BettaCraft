@@ -93,6 +93,8 @@ public final class Progress {
     public static final String POWERED = "powered";
     /** A device was wound with the crank. */
     public static final String WOUND = "wound_up";
+    /** M67: the crank at a cabinet or an external filter charged a tank's store. */
+    public static final String TANK_CRANKED = "tank_cranked";
     /** A turning Create shaft drives a tank (drive adapter or cabinet). */
     public static final String CREATE_DRIVE = "create_drive";
     /** A tank arrived somewhere else in one piece (Create contraption, Sable sub-level). */

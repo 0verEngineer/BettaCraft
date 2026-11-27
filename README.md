@@ -88,10 +88,10 @@ Every feature in detail, with a picture for each kind of tank and animal: **[FEA
   by the climate; turtles with temperature-dependent sex, dart frogs that raise tadpoles in bromeliads, geckos, the corn
   snake and sea turtles, all **moving like the real animals** with their own hours (in the world they climb steps, the
   crested gecko whole walls); Minecraft pets, land animals of other mods and harmless mobs in glass.
-- **Technology:** filters (the external one also up to two blocks below its tank), cabinets under the whole tank with one
-  shared spring, feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
+- **Technology:** filters (the external one also up to two blocks below its tank), cabinets under the whole tank,
+  feeders, air pumps and lights; pipes, a multiblock filter for many tanks and automatic
   water changes; water chemistry (TDS, pH, hardness, CO2, RO water); live food cultures and a food maker; optional power
-  (FE, a crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
+  (`power.costs` OFF / EASY / HARD; one energy store per tank, charged by FE, the crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
   waypoints in JourneyMap, Xaero's Minimap and FTB Chunks.
 - **Aquarists:** an aquarist villager trades plants, animals and food and buys your bred animals; a hired aquarist walks
   to your tanks every day and feeds, changes water, scrapes algae and moves the young.
@@ -200,7 +200,7 @@ The handbook (GuideME, Patchouli or Modonomicon) and the JEI / REI / EMI pages e
 
 Every option has a comment in the file and can also be changed in the in-game config screen (Mods > Bettacraft >
 Config; on Fabric through Mod Menu). The files and keys are the same on every loader and Minecraft version. By default, time stands still for aquariums in unloaded chunks (`simulateUnloadedTime = false`), water quality
-and evaporation are on but gentle, and no equipment needs power (`power.*RequiresEnergy = false`).
+and evaporation are on but gentle, and no equipment needs power (`power.costs = OFF`).
 
 ### For pack makers
 
@@ -316,6 +316,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.pipes.topOff` | Top It Off |
 | `features.power.enabled` | Plugged In (needs a power option; optional) |
 | `features.power.regulator` | Turn It Down |
+| `features.power.tankCrank` | Muscle Power (needs a power option; optional) |
 | `features.power.winding` | Wound Up (needs a power option; optional) |
 | `features.saltwater.enabled` | Salt Water |
 | `features.saltwater.enabled` + `features.osmosis.enabled` + `features.waterChemistry.enabled` + `features.bettas.enabled` | Clean Reef |

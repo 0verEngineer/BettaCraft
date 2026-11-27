@@ -17,7 +17,7 @@ item_ids:
 Der <ItemLink id="bettacraft:basking_lamp" /> ist eine Wärme- und UV-Lampe in einem Reflektor. Stell ihn auf einen
 **oberen Block** des Beckens (oder häng ihn unter einen Deckenblock direkt darüber). Er ist eine Lampe wie die
 [Aquarienlampen](../equipment/light.md): Licht 15, **Dimmer und Tageslicht-Timer** des Beckens, Redstone schaltet ihn aus,
-und mit `power.lightRequiresEnergy` braucht er FE des Beckens.
+und mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht er FE des Beckens.
 
 An einem [Terrarium oder Paludarium](../terrarium.md), solange er leuchtet:
 

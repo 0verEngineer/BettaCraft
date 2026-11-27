@@ -70,7 +70,7 @@ final class LangM45 {
         q(a, "light_timer", "Sunrise, Sunset", "In the tank menu (Devices) the lights get a dimmer and a daylight timer with a sunrise and a sunset. Switch the timer on.");
         q(a, "regulator", "Turn It Down", "Filters, air pumps and flow pumps have a power regulator (menu, or sneak and mouse wheel): less power moves less water and is quieter.");
         q(a, "powered", "Plugged In", "Optional, only when the pack lets devices use energy: connect cables of another mod to a tank and open its menu while energy is stored.");
-        q(a, "wound_up", "Wound Up", "Optional, only when the pack lets devices use energy: instead of energy, wind a filter, a cabinet or the food maker with the crank.");
+        q(a, "wound_up", "Wound Up", "Optional, only when the pack lets devices use energy: instead of energy, wind a device with the crank, for example the food maker, or charge the tank at its cabinet or filter.");
         q(a, "stainless_steel", "Stainless", "The crucible melts stainless steel (the machines of Mekanism, EnderIO, Create and Thermal make it too): for pipes that never rust in salt water.");
         q(a, "pipes", "Pipework", "Water pumps and glass pipes move water between tanks, reservoirs and devices.");
         q(a, "interior_pipes", "Through the Glass", "A bulkhead takes a pipe through the glass; in the interior, spray bars, nozzles and lily pipes return the water.");

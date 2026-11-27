@@ -27,7 +27,7 @@ right-click it:
 When it is due, its drain pump lets the old water go down the drain and fills the same amount of fresh water from a
 [reservoir](top_off.md), a [pipe](pipes.md) or another mod's tank **next to it**, or endlessly from a **water source
 block** next to it. It only drains what it can refill, and never below half full while animals live in the aquarium.
-The tank log notes every change. With `pipes.pumpsRequireEnergy` it needs FE (8 FE per 100 mB).
+The tank log notes every change. With power costs (`power.costs` `EASY` or `HARD`) it needs FE (8 FE per 100 mB).
 
 ## Obtaining
 

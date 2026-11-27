@@ -23,7 +23,7 @@ the ground fully, on a wall half as much.
 * Its thermostat is the tank's **target temperature** (overview tab): it heats while the air is colder and rests when the
   air has reached it. While it heats it glows orange.
 * It only works on a [terrarium or paludarium](../terrarium.md). A lid keeps more of the warmth in.
-* **Energy:** with `power.heaterRequiresEnergy` it uses the tank's FE like a heater, 4 FE/t while it heats
+* **Energy:** with power costs (`power.costs` `EASY` or `HARD`) it uses the tank's FE like a heater, 4 FE/t while it heats
   (`power.heatMatFePerTick`).
 
 ## Obtaining
