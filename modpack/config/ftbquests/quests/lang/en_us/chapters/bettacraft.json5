@@ -195,6 +195,10 @@
   "quest.470E699F3A213CE3.quest_desc": [
     "{\"translate\":\"quest.bettacraft.wound_up.desc\"}"
   ],
+  "quest.3B31ABC9A7845BAE.title": "{\"translate\":\"quest.bettacraft.tank_cranked.title\"}",
+  "quest.3B31ABC9A7845BAE.quest_desc": [
+    "{\"translate\":\"quest.bettacraft.tank_cranked.desc\"}"
+  ],
   "quest.75F7A0B9785676A9.title": "{\"translate\":\"quest.bettacraft.pipes.title\"}",
   "quest.75F7A0B9785676A9.quest_desc": [
     "{\"translate\":\"quest.bettacraft.pipes.desc\"}"

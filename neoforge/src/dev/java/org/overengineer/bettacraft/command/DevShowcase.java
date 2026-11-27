@@ -789,8 +789,8 @@ public final class DevShowcase {
         boolean powah = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("powah");
         if (powah) {
             var reg = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
-            level.setBlockAndUpdate(at3.offset(2, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cable_starter")).defaultBlockState());
-            level.setBlockAndUpdate(at3.offset(3, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cell_creative")).defaultBlockState());
+            level.setBlockAndUpdate(at3.offset(2, 0, 0), reg.getValue(net.minecraft.resources.Identifier.parse("powah:energy_cable_starter")).defaultBlockState());
+            level.setBlockAndUpdate(at3.offset(3, 0, 0), reg.getValue(net.minecraft.resources.Identifier.parse("powah:energy_cell_creative")).defaultBlockState());
         }
         name(level, at3, "FE-Einspeisung");
         // the numbers at EASY and HARD (the devices of tank 2: the filter with its heater in the front cabinet, a light)
@@ -847,9 +847,10 @@ public final class DevShowcase {
         level.setBlockAndUpdate(pos.below(), Blocks.SMOOTH_STONE.defaultBlockState());
         level.setBlockAndUpdate(pos, Blocks.OAK_SIGN.defaultBlockState().setValue(net.minecraft.world.level.block.StandingSignBlock.ROTATION, 8));
         if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity s) {
-            net.minecraft.world.level.block.entity.SignText t = new net.minecraft.world.level.block.entity.SignText();
-            for (int i = 0; i < Math.min(4, lines.length); i++) t = t.setMessage(i, Component.literal(lines[i]));
-            s.setText(t, true);
+            java.util.List<Component> msg = new java.util.ArrayList<>();
+            for (int i = 0; i < 4; i++) msg.add(Component.literal(i < lines.length ? lines[i] : ""));
+            s.setText(new net.minecraft.world.level.block.entity.SignText(msg, msg, net.minecraft.world.item.DyeColor.BLACK, false),
+                    net.minecraft.world.level.block.entity.SignTextSlot.FRONT);
             s.setWaxed(true);
             s.setChanged();
             level.sendBlockUpdated(pos, s.getBlockState(), s.getBlockState(), 3);

@@ -5,14 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.gametest.framework.GameTest;
+import org.overengineer.bettacraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestHolder;
+import org.overengineer.bettacraft.gametest.framework.PrefixGameTestTemplate;
+import org.overengineer.bettacraft.gametest.framework.GameTestFailure;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
@@ -50,13 +51,13 @@ public final class TankStoreGameTests {
 
     private static CabinetBlockEntity cabinet(GameTestHelper h, BlockPos rel) {
         h.setBlock(rel, ModBlocks.CABINET.get().defaultBlockState().setValue(CabinetBlock.FACING, Direction.NORTH));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof CabinetBlockEntity cab)) throw new GameTestAssertException("no cabinet at " + rel);
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof CabinetBlockEntity cab)) throw new GameTestFailure("no cabinet at " + rel);
         return cab;
     }
 
     private static ExternalFilterBlockEntity filter(GameTestHelper h, BlockPos rel, Direction towardsTank) {
         h.setBlock(rel, ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, towardsTank));
-        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestAssertException("no filter at " + rel);
+        if (!(h.getLevel().getBlockEntity(h.absolutePos(rel)) instanceof ExternalFilterBlockEntity f)) throw new GameTestFailure("no filter at " + rel);
         return f;
     }
 
@@ -65,7 +66,7 @@ public final class TankStoreGameTests {
         var reg = h.getLevel().registryAccess();
         CompoundTag tag = be.saveWithFullMetadata(reg);
         tag.putLong("spring", ticks);
-        be.loadWithComponents(tag, reg);
+        be.loadWithComponents(org.overengineer.bettacraft.util.NbtCompat.input(reg, tag));
     }
 
     /**

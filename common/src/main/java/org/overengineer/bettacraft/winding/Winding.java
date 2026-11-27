@@ -209,12 +209,12 @@ public final class Winding {
     private static Result windTank(Level level, BlockPos at, Windable w, Component name, @Nullable Player player) {
         var c = org.overengineer.bettacraft.tank.TankStore.tankOf(level, w);
         if (c == null) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.no_tank", name), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.no_tank", name));
             return Result.REFUSED;
         }
         long added = org.overengineer.bettacraft.tank.TankStore.crank(c);
         if (added <= 0) {
-            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.store_full", name), true);
+            if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.store_full", name));
             return Result.FULL;
         }
         w.onWound();
@@ -223,8 +223,8 @@ public final class Winding {
         int pct = org.overengineer.bettacraft.tank.TankStore.percent(c);
         float pitch = 0.7F + 0.5F * pct / 100F;
         if (ModSounds.devices()) level.playSound(null, at, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
-        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.store", name, pct,
-                String.format(java.util.Locale.ROOT, "%,d", c.getTank().powerBuffer()), org.overengineer.bettacraft.tank.TankStore.hours(c)), true);
+        if (player != null) player.sendOverlayMessage(Component.translatable("message.bettacraft.crank.store", name, pct,
+                String.format(java.util.Locale.ROOT, "%,d", c.getTank().powerBuffer()), org.overengineer.bettacraft.tank.TankStore.hours(c)));
         return Result.WOUND;
     }
 
