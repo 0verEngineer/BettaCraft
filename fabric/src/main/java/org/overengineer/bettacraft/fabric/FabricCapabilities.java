@@ -111,15 +111,9 @@ final class FabricCapabilities {
                         () -> org.overengineer.bettacraft.equipment.AirPumpBlockEntity.tankBlock(be.getLevel(), be.getBlockPos())) : null);
         // M24: pipes carry water (no block entity: the network does it), the reservoir holds it; FE for the water devices
         fluidBlocks((level, pos, state, be, side) -> new org.overengineer.bettacraft.plumbing.PipeFluid(level, pos, side),
-                ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get());
+                ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get()); // M68: and the bundle
         fluids(ModBlockEntities.RESERVOIR.get(),
                 (be, side) -> be.water());
-        // M40 part b: the fresh and waste water lines (single pipes and bundles that carry one) and the water ports of the filter;
-        // the intake and return lines stay inside the filter
-        fluidBlocks((level, pos, state, be, side) -> org.overengineer.bettacraft.plumbing.FilterLineFluid.of(level, pos, state, be),
-                ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get());
-        fluids(ModBlockEntities.FILTER_PORT.get(),
-                (be, side) -> be.outside());
         items(ModBlockEntities.CRUCIBLE.get(),
                 (be, side) -> be.automation(side));
         energy(ModBlockEntities.CRUCIBLE.get(),

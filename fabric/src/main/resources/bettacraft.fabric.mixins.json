@@ -25,6 +25,7 @@
     "PlaceSoundMixin",
     "PlayerInteractMixin",
     "PlayerTickMixin",
+    "RegistryAliasMixin",
     "ResultSlotMixin",
     "ServerDestroyMixin",
     "StepSoundMixin",

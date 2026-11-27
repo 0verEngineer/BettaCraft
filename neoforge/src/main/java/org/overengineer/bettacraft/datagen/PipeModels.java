@@ -9,6 +9,8 @@ import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeRing;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 /**
  * M65: the models of the water pipes (glass, stainless steel) and the filter pipes: 3 px thick ({@link #A} to {@link #B}),
@@ -110,40 +112,49 @@ final class PipeModels {
 
     /**
      * The block state and models of a pipe: {@code <name>_arm_<side>}, {@code <name>_core_<face>_t|r}, {@code <name>_item};
-     * {@code junction} != null: also the T-piece collar ({@code <name>_tee}, a 4.5 px steel sleeve) while it is true.
+     * {@code junction} != null: also the T-piece collar ({@code <name>_tee}, a 4.5 px steel sleeve) while it is true. M68:
+     * {@code ring} != null: one set of parts per ring of the pipe's role, each in the texture {@code <name>_<ring>} (the plain one
+     * for {@link PipeRing#NONE}, models {@code <name>_<ring>_arm_<side>} ...), chosen by the block state.
      */
-    static void pipe(BlockStateProvider p, Block block, String name, String render, boolean endFaces, @Nullable BooleanProperty junction) {
-        ResourceLocation tex = p.modLoc("block/" + name);
+    static void pipe(BlockStateProvider p, Block block, String name, String render, boolean endFaces, @Nullable BooleanProperty junction,
+                     @Nullable EnumProperty<PipeRing> ring) {
         MultiPartBlockStateBuilder mp = p.getMultipartBuilder(block);
-        for (Direction d : Direction.values()) {
-            BlockModelBuilder arm = model(p, name + "_arm_" + d.getSerializedName(), tex, render);
-            float[][] box = armBox(d);
-            piece(arm, box[0], box[1], d.getAxis(), endFaces ? new Direction[]{d} : new Direction[0], null, true);
-            mp.part().modelFile(arm).addModel().condition(PipeBlock.SIDES.get(d), true).end();
-        }
-        for (Direction f : Direction.values()) {
-            Direction.Axis u = uAxis(f), v = vAxis(f);
-            Direction vPos = Direction.fromAxisAndDirection(v, Direction.AxisDirection.POSITIVE), vNeg = vPos.getOpposite();
-            Direction uPos = Direction.fromAxisAndDirection(u, Direction.AxisDirection.POSITIVE), uNeg = uPos.getOpposite();
-            BooleanProperty side = PipeBlock.SIDES.get(f);
-            for (boolean alongV : new boolean[]{true, false}) {
-                BlockModelBuilder m = model(p, name + "_core_" + f.getSerializedName() + (alongV ? "_t" : "_r"), tex, render);
-                m.element().from(A, A, A).to(B, B, B).face(f).texture(alongV ? "#t" : "#r").end().end();
-                var part = mp.part().modelFile(m).addModel().useOr();
-                if (alongV) {
-                    // the pipe goes on along V, or along neither axis of the face
-                    part.nestedGroup().condition(side, false).condition(PipeBlock.SIDES.get(vPos), true).end();
-                    part.nestedGroup().condition(side, false).condition(PipeBlock.SIDES.get(vNeg), true).end();
-                    part.nestedGroup().condition(side, false).condition(PipeBlock.SIDES.get(uPos), false).condition(PipeBlock.SIDES.get(uNeg), false).end();
-                } else {
-                    part.nestedGroup().condition(side, false).condition(PipeBlock.SIDES.get(vPos), false).condition(PipeBlock.SIDES.get(vNeg), false)
-                            .condition(PipeBlock.SIDES.get(uPos), true).end();
-                    part.nestedGroup().condition(side, false).condition(PipeBlock.SIDES.get(vPos), false).condition(PipeBlock.SIDES.get(vNeg), false)
-                            .condition(PipeBlock.SIDES.get(uNeg), true).end();
-                }
+        for (PipeRing r : ring == null ? new PipeRing[]{null} : PipeRing.values()) {
+            String n = r == null || r == PipeRing.NONE ? name : name + "_" + r.getSerializedName();
+            ResourceLocation tex = p.modLoc("block/" + n);
+            for (Direction d : Direction.values()) {
+                BlockModelBuilder arm = model(p, n + "_arm_" + d.getSerializedName(), tex, render);
+                float[][] box = armBox(d);
+                piece(arm, box[0], box[1], d.getAxis(), endFaces ? new Direction[]{d} : new Direction[0], null, true);
+                var part = mp.part().modelFile(arm).addModel().condition(PipeBlock.SIDES.get(d), true);
+                if (r != null) part.condition(ring, r);
                 part.end();
             }
+            for (Direction f : Direction.values()) {
+                Direction.Axis u = uAxis(f), v = vAxis(f);
+                Direction vPos = Direction.fromAxisAndDirection(v, Direction.AxisDirection.POSITIVE), vNeg = vPos.getOpposite();
+                Direction uPos = Direction.fromAxisAndDirection(u, Direction.AxisDirection.POSITIVE), uNeg = uPos.getOpposite();
+                BooleanProperty side = PipeBlock.SIDES.get(f);
+                for (boolean alongV : new boolean[]{true, false}) {
+                    BlockModelBuilder m = model(p, n + "_core_" + f.getSerializedName() + (alongV ? "_t" : "_r"), tex, render);
+                    m.element().from(A, A, A).to(B, B, B).face(f).texture(alongV ? "#t" : "#r").end().end();
+                    var part = mp.part().modelFile(m).addModel().useOr();
+                    if (alongV) {
+                        // the pipe goes on along V, or along neither axis of the face
+                        group(part, r, ring).condition(side, false).condition(PipeBlock.SIDES.get(vPos), true).end();
+                        group(part, r, ring).condition(side, false).condition(PipeBlock.SIDES.get(vNeg), true).end();
+                        group(part, r, ring).condition(side, false).condition(PipeBlock.SIDES.get(uPos), false).condition(PipeBlock.SIDES.get(uNeg), false).end();
+                    } else {
+                        group(part, r, ring).condition(side, false).condition(PipeBlock.SIDES.get(vPos), false).condition(PipeBlock.SIDES.get(vNeg), false)
+                                .condition(PipeBlock.SIDES.get(uPos), true).end();
+                        group(part, r, ring).condition(side, false).condition(PipeBlock.SIDES.get(vPos), false).condition(PipeBlock.SIDES.get(vNeg), false)
+                                .condition(PipeBlock.SIDES.get(uNeg), true).end();
+                    }
+                    part.end();
+                }
+            }
         }
+        ResourceLocation tex = p.modLoc("block/" + name);
         if (junction != null) {
             BlockModelBuilder tee = p.models().getBuilder(name + "_tee").texture("c", p.modLoc("block/pipe_tee")).texture("particle", tex).renderType(render);
             tee.element().from(5.75F, 5.75F, 5.75F).to(10.25F, 10.25F, 10.25F).allFaces((dd, f) -> f.texture("#c")).end();
@@ -152,6 +163,14 @@ final class PipeModels {
         // item: a straight piece north-south
         BlockModelBuilder item = model(p, name + "_item", tex, render);
         piece(item, new float[]{A, A, 0}, new float[]{B, B, 16}, Direction.Axis.Z, new Direction[]{Direction.NORTH, Direction.SOUTH}, null, false);
+    }
+
+    /** A nested condition group of a part, with the ring condition when there is one. */
+    private static MultiPartBlockStateBuilder.PartBuilder.ConditionGroup group(MultiPartBlockStateBuilder.PartBuilder part, @Nullable PipeRing r,
+                                                                               @Nullable EnumProperty<PipeRing> ring) {
+        var g = part.nestedGroup();
+        if (r != null) g.condition(ring, r);
+        return g;
     }
 
     /** The arm of a bundle's line (box {@code b} as from FilterPipeBundleBlock#arm) with the pipe texture's shaded columns across it. */

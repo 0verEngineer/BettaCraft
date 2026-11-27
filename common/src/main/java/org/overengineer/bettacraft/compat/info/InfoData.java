@@ -220,6 +220,34 @@ public final class InfoData {
     }
 
     /** M37: a device with a spring (food maker, fertilizer maker, osmosis, water devices, filter pump head); null otherwise. */
+    /**
+     * M68: what the pipes at {@code pos} move now, mB per second (one value per pipe: a single pipe, or each slot of a bundle; -1 for
+     * an empty slot), from their networks ({@link org.overengineer.bettacraft.plumbing.PipeNetwork#flow}).
+     */
+    public static CompoundTag pipe(ServerLevel level, net.minecraft.core.BlockPos pos) {
+        net.minecraft.world.level.block.state.BlockState s = level.getBlockState(pos);
+        if (!org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) return null;
+        int[] flows;
+        if (s.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock) {
+            var n = org.overengineer.bettacraft.plumbing.PipeNetwork.of(level, pos, 0);
+            flows = new int[]{n == null ? 0 : n.flow(level) * 20};
+        } else {
+            int[] slots = org.overengineer.bettacraft.plumbing.Pipes.slotsAt(level, pos);
+            flows = new int[slots.length];
+            for (int i = 0; i < slots.length; i++) {
+                if (!org.overengineer.bettacraft.plumbing.PipeSlots.present(slots[i])) {
+                    flows[i] = -1;
+                    continue;
+                }
+                var n = org.overengineer.bettacraft.plumbing.PipeNetwork.of(level, pos, i);
+                flows[i] = n == null ? 0 : n.flow(level) * 20;
+            }
+        }
+        CompoundTag out = new CompoundTag();
+        out.putIntArray("pipe_flow", flows);
+        return out;
+    }
+
     public static CompoundTag spring(ServerLevel level, BlockEntity be) {
         org.overengineer.bettacraft.winding.Windable w = be instanceof org.overengineer.bettacraft.winding.Windable x ? x
                 : level == null || be == null ? null : org.overengineer.bettacraft.winding.Winding.find(level, be.getBlockPos());

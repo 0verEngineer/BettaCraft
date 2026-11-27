@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": "bettacraft:filter_inlet_pipe"
+            "items": "bettacraft:stainless_steel_pipe"
           }
         ]
       },

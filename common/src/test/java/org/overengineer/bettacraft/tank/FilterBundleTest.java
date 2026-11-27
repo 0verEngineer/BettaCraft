@@ -5,40 +5,59 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.EnumSet;
 import net.minecraft.core.Direction;
 import org.junit.jupiter.api.Test;
 import org.overengineer.bettacraft.filter.FilterWater;
-import org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipes;
-import org.overengineer.bettacraft.plumbing.PipeLine;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
+import org.overengineer.bettacraft.plumbing.PipeRing;
+import org.overengineer.bettacraft.plumbing.PipeSlots;
 
-/** M40 part b: the packed lines of a pipe bundle, its arms never touch each other, water shared by need. */
+/** M40 part b, M68: the slots of a pipe bundle, the old packed lines, its arms never touch each other, water shared by need. */
 class FilterBundleTest {
     @Test
-    void linesArePackedSeparately() {
-        int a = FilterPipes.PRESENT | FilterPipes.bit(Direction.NORTH) | FilterPipes.bit(Direction.SOUTH);
-        int b = FilterPipes.PRESENT | FilterPipes.JUNCTION | FilterPipes.bit(Direction.UP);
-        int lines = FilterPipes.with(FilterPipes.with(0, PipeLine.INTAKE, a), PipeLine.WASTE, b);
-        assertEquals(a, FilterPipes.slot(lines, PipeLine.INTAKE));
-        assertEquals(0, FilterPipes.slot(lines, PipeLine.RETURN));
-        assertEquals(0, FilterPipes.slot(lines, PipeLine.FRESH));
-        assertEquals(b, FilterPipes.slot(lines, PipeLine.WASTE));
-        assertEquals(EnumSet.of(PipeLine.INTAKE, PipeLine.WASTE), FilterPipes.lines(lines));
-        assertEquals(2, FilterPipes.count(a));
-        assertEquals(2, FilterPipes.limit(a));
-        assertEquals(6, FilterPipes.limit(b));
-        assertTrue(FilterPipes.junction(b) && !FilterPipes.junction(a));
-        assertTrue(FilterPipes.joined(b, Direction.UP) && !FilterPipes.joined(b, Direction.DOWN));
-        // taking a line out leaves the others
-        int out = FilterPipes.with(lines, PipeLine.INTAKE, 0);
-        assertEquals(EnumSet.of(PipeLine.WASTE), FilterPipes.lines(out));
-        assertEquals(b, FilterPipes.slot(out, PipeLine.WASTE));
-        // the order of the lines is saved: never reorder
-        assertEquals(0, PipeLine.INTAKE.ordinal());
-        assertEquals(1, PipeLine.RETURN.ordinal());
-        assertEquals(2, PipeLine.FRESH.ordinal());
-        assertEquals(3, PipeLine.WASTE.ordinal());
+    void slotsKeepTheirBits() {
+        int a = PipeSlots.of(true, PipeSlots.bit(Direction.NORTH) | PipeSlots.bit(Direction.SOUTH), PipeSlots.bit(Direction.UP), PipeRing.INTAKE);
+        assertTrue(PipeSlots.present(a) && PipeSlots.steel(a));
+        assertTrue(PipeSlots.joined(a, Direction.NORTH) && PipeSlots.joined(a, Direction.SOUTH) && !PipeSlots.joined(a, Direction.UP));
+        assertTrue(PipeSlots.closed(a, Direction.UP) && !PipeSlots.closed(a, Direction.DOWN));
+        assertEquals(PipeRing.INTAKE, PipeSlots.ring(a));
+        int b = PipeSlots.withRing(PipeSlots.withClosed(PipeSlots.withSides(a, PipeSlots.bit(Direction.EAST)), 0), PipeRing.SHORT);
+        assertEquals(PipeSlots.bit(Direction.EAST), PipeSlots.sides(b));
+        assertEquals(0, PipeSlots.closed(b));
+        assertEquals(PipeRing.SHORT, PipeSlots.ring(b));
+        assertTrue(PipeSlots.steel(b) && PipeSlots.present(b));
+        assertFalse(PipeSlots.steel(PipeSlots.of(false, 0, 0, PipeRing.NONE)));
+        // the order of the rings is saved: never reorder
+        assertEquals(0, PipeRing.NONE.ordinal());
+        assertEquals(5, PipeRing.SHORT.ordinal());
+    }
+
+    /** M68: an M40 bundle (eight bits per line: present, T-piece, sides) becomes steel slots with exactly its old connections. */
+    @Test
+    void oldBundlesKeepTheirConnections() {
+        int intake = 0x80 | PipeSlots.bit(Direction.WEST) | PipeSlots.bit(Direction.EAST);
+        int waste = 0x80 | 0x40 | PipeSlots.bit(Direction.UP);
+        int[] slots = PipeSlots.fromLegacy(intake | waste << 24);
+        assertEquals(2, PipeSlots.count(slots));
+        assertTrue(PipeSlots.present(slots[0]) && PipeSlots.steel(slots[0]) && !PipeSlots.present(slots[1]) && !PipeSlots.present(slots[2]));
+        assertEquals(PipeSlots.bit(Direction.WEST) | PipeSlots.bit(Direction.EAST), PipeSlots.sides(slots[0]));
+        assertEquals(PipeSlots.SIDES & ~(PipeSlots.bit(Direction.WEST) | PipeSlots.bit(Direction.EAST)), PipeSlots.closed(slots[0]), "every other side closed");
+        assertEquals(PipeSlots.bit(Direction.UP), PipeSlots.sides(slots[3]));
+        assertEquals(PipeRing.NONE, PipeSlots.ring(slots[3]));
+    }
+
+    /** M68: a single pipe meets the slot joined towards it, else the open end (fewest sides) that is not closed there. */
+    @Test
+    void theFacingSlot() {
+        int through = PipeSlots.of(true, PipeSlots.bit(Direction.WEST) | PipeSlots.bit(Direction.EAST), 0, PipeRing.NONE);
+        int end = PipeSlots.of(false, PipeSlots.bit(Direction.UP), 0, PipeRing.NONE);
+        int[] slots = {through, end, 0, 0};
+        assertEquals(0, PipeSlots.facing(slots, Direction.EAST), "joined there");
+        assertEquals(1, PipeSlots.facing(slots, Direction.NORTH), "the open end");
+        slots[1] = PipeSlots.withClosed(end, PipeSlots.bit(Direction.NORTH));
+        assertEquals(0, PipeSlots.facing(slots, Direction.NORTH), "closed: the other one");
+        slots[0] = PipeSlots.withClosed(through, PipeSlots.bit(Direction.NORTH));
+        assertEquals(-1, PipeSlots.facing(slots, Direction.NORTH), "both closed");
     }
 
     private static boolean overlap(float[] a, float[] b) {
@@ -47,23 +66,23 @@ class FilterBundleTest {
 
     @Test
     void theArmsOfTheLinesNeverTouch() {
-        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) {
-            float[] a = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.ARM, 0);
+        for (int l = 0; l < PipeSlots.COUNT; l++) for (Direction d : Direction.values()) {
+            float[] a = PipeBundleBlock.arm(l, d, PipeBundleBlock.ARM, 0);
             // from the manifold to the face, inside the block
             for (int i = 0; i < 3; i++) assertTrue(a[i] >= 0 && a[i + 3] <= 16 && a[i] < a[i + 3], l + " " + d);
-            for (PipeLine m : PipeLine.values()) for (Direction e : Direction.values()) {
+            for (int m = 0; m < PipeSlots.COUNT; m++) for (Direction e : Direction.values()) {
                 if (l == m) continue;
-                float[] b = FilterPipeBundleBlock.arm(m, e, FilterPipeBundleBlock.ARM, 0);
+                float[] b = PipeBundleBlock.arm(m, e, PipeBundleBlock.ARM, 0);
                 assertFalse(overlap(a, b), l + " " + d + " touches " + m + " " + e);
-                // the collars of T-pieces too
-                assertFalse(overlap(FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.COLLAR, 1.5F),
-                        FilterPipeBundleBlock.arm(m, e, FilterPipeBundleBlock.COLLAR, 1.5F)), "collars " + l + " " + d + " " + m + " " + e);
+                // the caps of closed sides too
+                assertFalse(overlap(PipeBundleBlock.arm(l, d, PipeBundleBlock.COLLAR, 1.0F), PipeBundleBlock.arm(m, e, PipeBundleBlock.COLLAR, 1.0F)),
+                        "caps " + l + " " + d + " " + m + " " + e);
             }
         }
-        // a line's arms sit at the same spot of a face in every bundle: east of one bundle meets west of the next
-        for (PipeLine l : PipeLine.values()) {
-            float[] e = FilterPipeBundleBlock.arm(l, Direction.EAST, FilterPipeBundleBlock.ARM, 0), w = FilterPipeBundleBlock.arm(l, Direction.WEST, FilterPipeBundleBlock.ARM, 0);
-            assertArrayEquals(new float[]{e[1], e[2], e[4], e[5]}, new float[]{w[1], w[2], w[4], w[5]}, 1e-6F, l.name());
+        // a slot's arms sit at the same spot of a face in every bundle: east of one bundle meets west of the next
+        for (int l = 0; l < PipeSlots.COUNT; l++) {
+            float[] e = PipeBundleBlock.arm(l, Direction.EAST, PipeBundleBlock.ARM, 0), w = PipeBundleBlock.arm(l, Direction.WEST, PipeBundleBlock.ARM, 0);
+            assertArrayEquals(new float[]{e[1], e[2], e[4], e[5]}, new float[]{w[1], w[2], w[4], w[5]}, 1e-6F, "slot " + l);
         }
     }
 
@@ -84,8 +103,8 @@ class FilterBundleTest {
     /** M65: towards a single pipe a line's arm leaves the middle of the face, exactly where the single pipe (3 px, 6.5..9.5) is. */
     @Test
     void theArmTowardsASinglePipeIsInLineWithIt() {
-        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) {
-            float[] a = FilterPipeBundleBlock.arm(l, d, FilterPipeBundleBlock.ARM, 0, true);
+        for (int l = 0; l < PipeSlots.COUNT; l++) for (Direction d : Direction.values()) {
+            float[] a = PipeBundleBlock.arm(l, d, PipeBundleBlock.ARM, 0, true);
             for (int i = 0; i < 3; i++) {
                 if (i == d.getAxis().ordinal()) {
                     assertTrue(a[i] == 0 || a[i + 3] == 16, "reaches the face " + l + " " + d);

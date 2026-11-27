@@ -34,6 +34,8 @@ public class DeferredRegister<T> {
     private final ResourceKey<? extends Registry<T>> registryKey;
     private final String namespace;
     private final Map<DeferredHolder<T, ? extends T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
+    /** M68: old ids that resolve to an entry of this register (saved worlds, item stacks); from -> to. */
+    private final Map<ResourceLocation, ResourceLocation> aliases = new LinkedHashMap<>();
     private boolean handedOver;
     private boolean frozen;
 
@@ -82,6 +84,21 @@ public class DeferredRegister<T> {
 
     protected <I extends T> DeferredHolder<T, I> createHolder(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation id) {
         return DeferredHolder.create(registryKey, id);
+    }
+
+    /**
+     * M68: an old id ({@code from}, no longer registered) that resolves to {@code to} wherever the game looks an id up: blocks
+     * in saved chunks, item stacks in inventories and containers, block entity types (NeoForge: its registry alias; Fabric: a
+     * mixin on the id lookups of the registries, {@code RegistryAliasMixin}). Both in this register's namespace.
+     */
+    public void addAlias(String from, String to) {
+        if (frozen) throw new IllegalStateException("Cannot add aliases after the registry event: " + from);
+        aliases.put(ResourceLocation.fromNamespaceAndPath(namespace, from), ResourceLocation.fromNamespaceAndPath(namespace, to));
+    }
+
+    /** M68: the aliases of this register (from -> to). */
+    public Map<ResourceLocation, ResourceLocation> aliases() {
+        return Collections.unmodifiableMap(aliases);
     }
 
     /** Hands this register over to the loader (instead of NeoForge's register(IEventBus)); repeated calls do nothing. */

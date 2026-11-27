@@ -33,11 +33,11 @@ import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity;
 import org.overengineer.bettacraft.filter.MultiblockFilter;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity;
-import org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipes;
+import org.overengineer.bettacraft.plumbing.PipeBlockEntity;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
+import org.overengineer.bettacraft.plumbing.PipeSlots;
+import org.overengineer.bettacraft.plumbing.Pipes;
 import org.overengineer.bettacraft.plumbing.PipeCovers;
-import org.overengineer.bettacraft.plumbing.PipeLine;
 import org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModItems;
@@ -71,12 +71,14 @@ public final class PipeCoverGameTests {
         MultiblockFilter.forget();
         InteriorPlumbing.forget();
         FilterPumpHeadBlockEntity head = FilterLinesGameTests.filter(h, new BlockPos(0, 2, 4), Direction.EAST);
-        h.setBlock(new BlockPos(2, 2, 4), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-        h.setBlock(new BlockPos(2, 3, 4), ModBlocks.FILTER_OUTLET_PIPE.get().defaultBlockState());
-        h.setBlock(new BlockPos(3, 3, 4), ModBlocks.FILTER_OUTLET_PIPE.get().defaultBlockState());
+        // M68: steel pipes; the wrench keeps the intake line (y 2) and the return line (y 3) apart where they touch
+        h.setBlock(new BlockPos(2, 2, 4), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        h.setBlock(new BlockPos(2, 3, 4), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        FilterLinesGameTests.apart(h, new BlockPos(2, 2, 4), new BlockPos(2, 3, 4));
         TankBlockEntity t = PlumbingGameTests.tank(h, 4, 2, 4, 2, 1, 2);
-        h.setBlock(new BlockPos(3, 2, 4), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-        if (!FilterPipeBundleBlock.addLine(level, abs(h, 3, 2, 4), PipeLine.RETURN, null, null)) throw new GameTestAssertException("no bundle");
+        h.setBlock(new BlockPos(3, 2, 4), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        if (PipeBundleBlock.addPipe(level, abs(h, 3, 2, 4), true, null, null) != 1) throw new GameTestAssertException("no bundle");
+        h.setBlock(new BlockPos(3, 3, 4), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
         FilterLinesGameTests.guardAll(level, head.getBlockPos());
         return new Rig(head, t, abs(h, 2, 2, 4), abs(h, 3, 2, 4));
     }
@@ -142,7 +144,7 @@ public final class PipeCoverGameTests {
             click(p, r.bundle(), Direction.EAST);
             BlockState log = cover(h, r.bundle());
             h.assertTrue(log != null && log.is(Blocks.OAK_LOG) && log.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.X, "an oak log along x on the bundle: " + log);
-            h.assertTrue(full(h, r.bundle()) && FilterPipes.lines(level, r.bundle()).size() == 2, "a full block, its two lines kept");
+            h.assertTrue(full(h, r.bundle()) && PipeSlots.count(Pipes.slotsAt(level, r.bundle())) == 2, "a full block, its two lines kept");
             // the lines and connections stay: the filter cleans as before
             filters(h, r, "under the covers");
             // a lamp shines
@@ -159,18 +161,18 @@ public final class PipeCoverGameTests {
             h.assertTrue(p.getInventory().countItem(Items.GLOWSTONE) == 1, "the glowstone back");
             h.assertTrue(GameTestCompat.light(level.getBlockState(r.pipe()), level, r.pipe(), 0) == 0, "no light without it");
             // the bundle keeps its cover when a line goes out (a single pipe again) and in again
-            h.assertTrue(FilterPipeBundleBlock.removeLine(level, r.bundle(), PipeLine.RETURN).size() == 1, "the return line out");
-            h.assertTrue(level.getBlockState(r.bundle()).is(ModBlocks.FILTER_INLET_PIPE.get()) && log.equals(cover(h, r.bundle())), "a single pipe, still the log");
-            h.assertTrue(FilterPipeBundleBlock.addLine(level, r.bundle(), PipeLine.RETURN, null, null), "the return line in again");
+            h.assertTrue(PipeBundleBlock.removePipe(level, r.bundle(), 1).size() == 1, "the return line out");
+            h.assertTrue(level.getBlockState(r.bundle()).is(ModBlocks.STAINLESS_STEEL_PIPE.get()) && log.equals(cover(h, r.bundle())), "a single pipe, still the log");
+            h.assertTrue(PipeBundleBlock.addPipe(level, r.bundle(), true, null, null) >= 0, "the return line in again");
             h.assertTrue(log.equals(cover(h, r.bundle())), "a bundle, still the log");
             // breaking gives the pipes and the log
             List<ItemStack> drops = Block.getDrops(level.getBlockState(r.bundle()), level, r.bundle(), level.getBlockEntity(r.bundle()));
             h.assertTrue(drops.size() == 3 && drops.stream().anyMatch(s -> s.is(Items.OAK_LOG)), "drops of the covered bundle: " + drops);
-            h.setBlock(new BlockPos(5, 5, 5), ModBlocks.FILTER_WASTE_PIPE.get().defaultBlockState());
+            h.setBlock(new BlockPos(5, 5, 5), ModBlocks.GLASS_PIPE.get().defaultBlockState());
             BlockPos single = abs(h, 5, 5, 5);
             h.assertTrue(PipeCovers.apply(level, single, Blocks.BRICKS.defaultBlockState(), new ItemStack(Items.BRICKS), null), "bricks on a single pipe");
             List<ItemStack> sd = Block.getDrops(level.getBlockState(single), level, single, level.getBlockEntity(single));
-            h.assertTrue(sd.size() == 2 && sd.stream().anyMatch(s -> s.is(Items.BRICKS)) && sd.stream().anyMatch(s -> s.is(ModItems.FILTER_WASTE_PIPE.get())), "drops of a covered pipe: " + sd);
+            h.assertTrue(sd.size() == 2 && sd.stream().anyMatch(s -> s.is(Items.BRICKS)) && sd.stream().anyMatch(s -> s.is(ModItems.GLASS_PIPE.get())), "drops of a covered pipe: " + sd);
         } finally {
             p.getServer().getPlayerList().remove(p);
         }
@@ -181,8 +183,8 @@ public final class PipeCoverGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m40_covers_off", timeoutTicks = 200)
     public static void pipeCoversOff(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        h.setBlock(new BlockPos(2, 2, 2), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-        h.setBlock(new BlockPos(4, 2, 2), ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
+        h.setBlock(new BlockPos(2, 2, 2), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+        h.setBlock(new BlockPos(4, 2, 2), ModBlocks.GLASS_PIPE.get().defaultBlockState());
         BlockPos a = abs(h, 2, 2, 2), b = abs(h, 4, 2, 2);
         h.assertTrue(PipeCovers.apply(level, b, Blocks.STONE.defaultBlockState(), new ItemStack(Items.STONE), null), "a cover while it is on");
         boolean saved = Features.own(Feature.PIPE_COVERS);
@@ -299,12 +301,11 @@ public final class PipeCoverGameTests {
         ServerLevel level = h.getLevel();
         Rig r = rig(h);
         TagKey<Block> tag = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("cable_facades", "supports_facade"));
-        for (Block b : List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
-                ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get())) {
+        for (Block b : List.of(ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get())) {
             h.assertTrue(b.defaultBlockState().is(tag), BuiltInRegistries.BLOCK.getKey(b) + " is in cable_facades:supports_facade");
         }
         Class<?> config = Class.forName("com.portingdeadmods.cable_facades.CFConfig");
-        h.assertTrue((boolean) config.getMethod("shouldHideWhenFacaded", Block.class).invoke(null, ModBlocks.FILTER_INLET_PIPE.get()),
+        h.assertTrue((boolean) config.getMethod("shouldHideWhenFacaded", Block.class).invoke(null, ModBlocks.STAINLESS_STEEL_PIPE.get()),
                 "our pipes are hidden under its facades (API)");
         Class<?> utils = Class.forName("com.portingdeadmods.cable_facades.utils.FacadeUtils");
         ItemStack facade = new ItemStack(item("cable_facades:facade"), 2);
@@ -332,8 +333,8 @@ public final class PipeCoverGameTests {
     @GameTest(template = EMPTY)
     public static void pipeCoverBasics(GameTestHelper h) {
         h.assertTrue(org.overengineer.bettacraft.config.FeatureContent.ofItem("pipe_cover").contains(Feature.PIPE_COVERS), "pipe_cover belongs to pipes.pipeCovers");
-        h.setBlock(new BlockPos(1, 2, 1), ModBlocks.FILTER_FRESH_PIPE.get().defaultBlockState());
-        h.assertTrue(h.getLevel().getBlockEntity(abs(h, 1, 2, 1)) instanceof FilterPipeBlockEntity, "a block entity for the cover");
+        h.setBlock(new BlockPos(1, 2, 1), ModBlocks.GLASS_PIPE.get().defaultBlockState());
+        h.assertTrue(h.getLevel().getBlockEntity(abs(h, 1, 2, 1)) instanceof PipeBlockEntity, "a block entity for the cover (M68: every pipe)");
         h.succeed();
     }
 }

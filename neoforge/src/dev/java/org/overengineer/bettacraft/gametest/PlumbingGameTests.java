@@ -222,7 +222,7 @@ public final class PlumbingGameTests {
         int moved = batch(h, p);
         h.assertTrue(moved == ServerConfig.PIPE_PUMP_RATE.get() * PipeNetwork.WINDOW, "the pump's full rate: " + moved);
         PipeNetwork net = PipeNetwork.of(h.getLevel(), h.absolutePos(new BlockPos(4, 2, 1)));
-        h.assertTrue(net != null && net.rate() == ServerConfig.PIPE_STEEL_RATE.get() && net.pipes().size() == 6, "one steel network of 6 pipes");
+        h.assertTrue(net != null && net.rate() == ServerConfig.PIPE_STEEL_RATE.get() && net.size() == 6, "one steel network of 6 pipes");
         // one glass pipe in the line: the whole network carries what glass carries
         h.setBlock(new BlockPos(6, 2, 1), ModBlocks.GLASS_PIPE.get().defaultBlockState());
         PipeNetwork mixed = PipeNetwork.of(h.getLevel(), h.absolutePos(new BlockPos(4, 2, 1)));

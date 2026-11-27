@@ -752,10 +752,9 @@
 			rewards: [{ id: "62CC162FFF15E01D", type: "xp", xp: 75 }, { count: 1, id: "2F5E8EEEEF944729", item: { count: 1, id: "bettacraft:intake_guard" }, type: "item" }],
 			tags: ["bettacraft_feature:pipes.filterLines"],
 			tasks: [
-				{ id: "59D5DE93BFA1411F", item: { count: 1, id: "bettacraft:filter_inlet_pipe" }, type: "item" },
-				{ id: "117E314DED29E40F", item: { count: 1, id: "bettacraft:filter_outlet_pipe" }, type: "item" },
-				{ id: "7C992CDEE5456ACE", item: { count: 1, id: "bettacraft:intake_guard" }, type: "item" },
-				{ id: "6DF31B6543BD44CF", item: { count: 1, id: "bettacraft:outlet_guard" }, type: "item" }
+				{ id: "59D5DE93BFA1411F", item: { count: 1, id: "bettacraft:stainless_steel_pipe" }, type: "item" },
+				{ id: "117E314DED29E40F", item: { count: 1, id: "bettacraft:intake_guard" }, type: "item" },
+				{ id: "7C992CDEE5456ACE", item: { count: 1, id: "bettacraft:outlet_guard" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.filter_lines.title\"}",
 			x: 8.8d,
@@ -778,15 +777,14 @@
 		},
 		{
 			dependencies: ["1A4B85F432B08214"],
-			description: ["{\"translate\":\"quest.bettacraft.filter_water.desc\"}"],
-			id: "6F98F06CCF52AFE0",
-			rewards: [{ id: "0C976183E158E118", type: "xp", xp: 75 }],
-			tags: ["bettacraft_feature:pipes.filterWater"],
+			description: ["{\"translate\":\"quest.bettacraft.pipe_wrench.desc\"}"],
+			id: "346F56F4EA67401B",
+			rewards: [{ id: "0015AF7F56AB1503", type: "xp", xp: 50 }],
+			tags: ["bettacraft_feature:pipes.pipeWrench", "bettacraft_feature:pipes.filterLines"],
 			tasks: [
-				{ id: "452E9D124996F6CA", item: { count: 1, id: "bettacraft:filter_fresh_port" }, type: "item" },
-				{ id: "440512EC07DFBCC2", item: { count: 1, id: "bettacraft:filter_waste_port" }, type: "item" }
+				{ id: "68D73D232AB73C2F", item: { count: 1, id: "bettacraft:pipe_wrench" }, type: "item" }
 			],
-			title: "{\"translate\":\"quest.bettacraft.filter_water.title\"}",
+			title: "{\"translate\":\"quest.bettacraft.pipe_wrench.title\"}",
 			x: 8.8d,
 			y: -9.0d
 		},

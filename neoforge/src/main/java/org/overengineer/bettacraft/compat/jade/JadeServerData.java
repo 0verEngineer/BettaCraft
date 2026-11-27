@@ -61,6 +61,21 @@ final class JadeServerData {
         }
     }
 
+    /** M68: what the pipes move now. */
+    static final class Pipe implements IServerDataProvider<BlockAccessor> {
+        static final Pipe INSTANCE = new Pipe();
+
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getLevel() instanceof ServerLevel level) put(data, InfoData.pipe(level, accessor.getPosition()));
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return BettaCraftJadePlugin.PIPE;
+        }
+    }
+
     /** Larva tub and artemia hatchery (M9). */
     static final class Culture implements IServerDataProvider<BlockAccessor> {
         static final Culture INSTANCE = new Culture();

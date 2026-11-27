@@ -78,7 +78,7 @@ public final class PipeCovers {
     @Nullable
     public static BlockState coverAt(@Nullable BlockGetter level, @Nullable BlockPos pos) {
         if (level == null || pos == null) return null;
-        return level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be ? be.cover() : null;
+        return level.getBlockEntity(pos) instanceof PipeBlockEntity be ? be.cover() : null;
     }
 
     /** The shape of a pipe: a full block with a cover, else its own. */
@@ -115,7 +115,7 @@ public final class PipeCovers {
      * no pipe or tank of ours.
      */
     public static boolean fits(BlockState s) {
-        if (s.isAir() || s.getBlock() instanceof EntityBlock || s.getRenderShape() != RenderShape.MODEL || FilterPipes.isPipe(s)) return false;
+        if (s.isAir() || s.getBlock() instanceof EntityBlock || s.getRenderShape() != RenderShape.MODEL || Pipes.isPipe(s)) return false;
         if (!s.getFluidState().isEmpty()) return false;
         return Block.isShapeFullBlock(s.getShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO));
     }
@@ -191,7 +191,7 @@ public final class PipeCovers {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.feature_off").withStyle(ChatFormatting.GOLD), true);
             return false;
         }
-        if (!(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be) || !FilterPipes.isPipe(level.getBlockState(pos))) return false;
+        if (!(level.getBlockEntity(pos) instanceof PipeBlockEntity be) || !Pipes.isPipe(level.getBlockState(pos))) return false;
         if (!fits(cover)) {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.pipe_cover.not_full", cover.getBlock().getName()).withStyle(ChatFormatting.GOLD), true);
             return false;
@@ -207,7 +207,7 @@ public final class PipeCovers {
 
     /** Takes the cover off the pipe at {@code pos}; returns what it came from (empty without a cover). Public for the GameTests. */
     public static ItemStack remove(Level level, BlockPos pos) {
-        if (!(level.getBlockEntity(pos) instanceof FilterPipeBlockEntity be) || be.cover() == null) return ItemStack.EMPTY;
+        if (!(level.getBlockEntity(pos) instanceof PipeBlockEntity be) || be.cover() == null) return ItemStack.EMPTY;
         BlockState c = be.cover();
         ItemStack out = be.coverItem().copy();
         be.setCover(null);
@@ -240,6 +240,6 @@ public final class PipeCovers {
 
     /** What breaking the pipe gives besides its pipes: the item its cover came from. */
     public static void addDrops(java.util.List<ItemStack> drops, @Nullable net.minecraft.world.level.block.entity.BlockEntity be) {
-        if (be instanceof FilterPipeBlockEntity f && f.cover() != null && !f.coverItem().isEmpty()) drops.add(f.coverItem().copy());
+        if (be instanceof PipeBlockEntity f && f.cover() != null && !f.coverItem().isEmpty()) drops.add(f.coverItem().copy());
     }
 }

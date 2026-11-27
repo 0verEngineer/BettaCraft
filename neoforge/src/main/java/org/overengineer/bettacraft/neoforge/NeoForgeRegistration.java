@@ -34,6 +34,7 @@ final class NeoForgeRegistration {
     private static <T> void register(org.overengineer.bettacraft.platform.registry.DeferredRegister<T> reg, IEventBus modBus) {
         DeferredRegister<T> neo = DeferredRegister.create(reg.getRegistryKey(), reg.getNamespace());
         for (Map.Entry<ResourceLocation, Supplier<? extends T>> e : reg.takeEntries().entrySet()) neo.register(e.getKey().getPath(), e.getValue());
+        reg.aliases().forEach(neo::addAlias); // M68: the ids of removed blocks and items resolve to their successors
         neo.register(modBus);
     }
 

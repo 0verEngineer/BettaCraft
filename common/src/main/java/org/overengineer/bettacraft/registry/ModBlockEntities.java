@@ -72,13 +72,10 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity::new, ModBlocks.FILTER_PUMP_HEAD.get()).build(null));
 
     @SuppressWarnings("DataFlowIssue")
-    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity>> FILTER_PIPE = BLOCK_ENTITIES.register("filter_pipe",
-            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity::new, ModBlocks.FILTER_INLET_PIPE.get(),
-                    ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get(),
-                    ModBlocks.FILTER_PIPE_BUNDLE.get()).build(null)); // M40 (part b: the fresh and waste line, the bundle)
-    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPortBlockEntity>> FILTER_PORT = BLOCK_ENTITIES.register("filter_port",
-            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.filter.FilterPortBlockEntity::new, ModBlocks.FILTER_FRESH_PORT.get(),
-                    ModBlocks.FILTER_WASTE_PORT.get()).build(null)); // M40 part b
+    /** M68: every pipe and the bundle; the id of the M40 filter pipes' block entity, so their data loads (the water ports' too). */
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.PipeBlockEntity>> PIPE = BLOCK_ENTITIES.register("filter_pipe",
+            () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.plumbing.PipeBlockEntity::new, ModBlocks.GLASS_PIPE.get(),
+                    ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get()).build(null));
 
     // M25
     @SuppressWarnings("DataFlowIssue")
@@ -129,6 +126,7 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(org.overengineer.bettacraft.monitor.MonitorBlockEntity::new, ModBlocks.MONITOR.get()).build(null)); // M27
 
     public static void register() {
+        BLOCK_ENTITIES.addAlias("filter_port", "filter_pipe"); // M68: the filter's water ports are steel pipes now
         BLOCK_ENTITIES.register();
     }
 

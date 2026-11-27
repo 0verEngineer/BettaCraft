@@ -20,7 +20,6 @@ import org.overengineer.bettacraft.plants.AquaticPlantBlock;
 import org.overengineer.bettacraft.plants.PlantPart;
 import org.overengineer.bettacraft.platform.client.ClientPlatform;
 import org.overengineer.bettacraft.platform.client.DynamicModel;
-import org.overengineer.bettacraft.plumbing.PipeLine;
 import org.overengineer.bettacraft.registry.ModBlocks;
 
 /**
@@ -33,19 +32,15 @@ public final class ModelSwaps {
 
     private ModelSwaps() {}
 
-    /** The extra (standalone) models to load: the arms of the pipe bundle. */
+    /** The extra (standalone) models to load (M68: none; the bundle's arms are made in code, {@link PipeQuads}). */
     public static List<ResourceLocation> extraModels() {
-        List<ResourceLocation> out = new ArrayList<>();
-        for (PipeLine l : PipeLine.values()) for (Direction d : Direction.values()) for (boolean tee : new boolean[]{false, true}) {
-            out.add(FilterBundleModel.armModel(l, d, tee));
-            out.add(FilterBundleModel.armModel(l, d, tee, true)); // M65: the arm in the middle of the face (towards a single pipe)
-        }
-        return out;
+        return new ArrayList<>();
     }
 
     /** Before a new bake: forget sprites and the list (the blocks exist by then). */
     public static void beforeBake() {
         CabinetBakedModel.clearSprites();
+        PipeQuads.clearCache(); // M68: the pipe quads hold the sprites of the old atlas
         org.overengineer.bettacraft.client.tank.TankFlanges.clearCache(); // M65: the bulkhead quads hold the sprite of the old atlas
     }
 
@@ -65,12 +60,11 @@ public final class ModelSwaps {
             m.put(BlockModelShaper.stateToModelLocation(s), b -> new CabinetBakedModel(b, null, null));
         }
         m.put(ModelResourceLocation.inventory(BettaCraft.id("cabinet")), b -> new CabinetBakedModel(b, null, null));
-        for (Block b : List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
-                ModBlocks.FILTER_WASTE_PIPE.get())) {
-            for (BlockState s : b.getStateDefinition().getPossibleStates()) m.put(BlockModelShaper.stateToModelLocation(s), FilterPipeModel::new);
+        for (Block b : List.of(ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get())) { // M68: covers and wrench caps on every pipe
+            for (BlockState s : b.getStateDefinition().getPossibleStates()) m.put(BlockModelShaper.stateToModelLocation(s), PipeModel::new);
         }
         for (BlockState s : ModBlocks.FILTER_PIPE_BUNDLE.get().getStateDefinition().getPossibleStates()) {
-            m.put(BlockModelShaper.stateToModelLocation(s), FilterBundleModel::new);
+            m.put(BlockModelShaper.stateToModelLocation(s), PipeBundleModel::new);
         }
         for (BlockState s : ModBlocks.INTERIOR_FLOOR.get().getStateDefinition().getPossibleStates()) {
             m.put(BlockModelShaper.stateToModelLocation(s), SubstrateFloorModel::new);

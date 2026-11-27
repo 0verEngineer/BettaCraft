@@ -18,8 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
 import org.overengineer.bettacraft.filter.FilterPartBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
-import org.overengineer.bettacraft.plumbing.PipeBlock;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
@@ -172,8 +170,7 @@ public final class TankAnchors {
         if (!level.isLoaded(n)) return true; // unknown: keep it
         BlockState s = level.getBlockState(n);
         Direction back = face.getOpposite();
-        if (org.overengineer.bettacraft.plumbing.FilterPipes.isPipe(s)) return org.overengineer.bettacraft.plumbing.FilterPipes.docksTowards(level, n, s, back); // part b: bundles
-        if (s.getBlock() instanceof PipeBlock) return s.getValue(PipeBlock.SIDES.get(back));
+        if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) return org.overengineer.bettacraft.plumbing.Pipes.joinedTowards(level, n, s, back); // M68: any pipe, also of a bundle
         if (s.getBlock() instanceof FilterPartBlock f) return (f.part() == FilterPartBlock.Part.INLET || f.part() == FilterPartBlock.Part.OUTLET) && s.getValue(FilterPartBlock.FACING) == back;
         return false;
     }

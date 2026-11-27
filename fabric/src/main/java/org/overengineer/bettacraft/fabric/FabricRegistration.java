@@ -31,6 +31,7 @@ final class FabricRegistration {
         for (Registry<?> registry : BuiltInRegistries.REGISTRY) {
             for (DeferredRegister<?> reg : regs) {
                 if (!reg.getRegistryKey().location().equals(registry.key().location())) continue;
+                reg.aliases().forEach((from, to) -> FabricRegistryAliases.add(registry.key().location(), from, to)); // M68
                 for (Map.Entry<ResourceLocation, ? extends Supplier<?>> e : reg.takeEntries().entrySet()) {
                     Object value = e.getValue().get();
                     var holder = Registry.registerForHolder((Registry) registry, e.getKey(), value);

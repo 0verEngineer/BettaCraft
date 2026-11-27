@@ -9,13 +9,13 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "bettacraft:interior_pipe"
+      "item": "bettacraft:glass_pipe"
     },
     {
-      "item": "bettacraft:interior_pipe"
+      "item": "bettacraft:glass_pipe"
     },
     {
-      "item": "bettacraft:interior_pipe"
+      "item": "bettacraft:glass_pipe"
     },
     {
       "tag": "c:nuggets/iron"

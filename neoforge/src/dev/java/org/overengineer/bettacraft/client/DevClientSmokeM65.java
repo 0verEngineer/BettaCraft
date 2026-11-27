@@ -20,9 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.overengineer.bettacraft.client.tank.TankWaterGeometry;
 import org.overengineer.bettacraft.client.tank.TankWaterRenderer;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock;
-import org.overengineer.bettacraft.plumbing.PipeLine;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankInteractions;
@@ -162,27 +160,24 @@ final class DevClientSmokeM65 {
             set(level, o.offset(9, 2, 0), b);
         }
         // the filter lines with T-pieces: four parallel runs (z 8, 11, 14, 17), each with a branch
-        Block[] lines = {ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get()};
+        Block[] lines = {ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get()};
         for (int i = 0; i < lines.length; i++) {
             BlockPos o = y.offset(0, 0, 8 + 3 * i);
             for (int x = 0; x <= 8; x++) set(level, o.offset(x, 0, 0), lines[i]);
             set(level, o.offset(4, 0, 1), lines[i]);
-            FilterPipeBlock.makeJunction(level, o.offset(4, 0, 0));
         }
         // the bundles: the intake runs along x (z 23); the return comes in from the north at x 3, the waste water from the south
         // at x 4; the return leaves to the south at x 7, the waste water at x 9 to the south, the intake goes on east
         BlockPos o = y.offset(0, 0, 23);
-        for (int x = 0; x <= 11; x++) set(level, o.offset(x, 0, 0), ModBlocks.FILTER_INLET_PIPE.get());
-        for (int z = -3; z <= -1; z++) set(level, o.offset(3, 0, z), ModBlocks.FILTER_OUTLET_PIPE.get());
-        for (int z = 1; z <= 3; z++) set(level, o.offset(7, 0, z), ModBlocks.FILTER_OUTLET_PIPE.get());
-        for (int x = 3; x <= 7; x++) FilterPipeBundleBlock.addLine(level, o.offset(x, 0, 0), PipeLine.RETURN, null, null);
-        for (int z = 1; z <= 3; z++) set(level, o.offset(4, 0, z), ModBlocks.FILTER_WASTE_PIPE.get());
-        for (int x = 4; x <= 9; x++) FilterPipeBundleBlock.addLine(level, o.offset(x, 0, 0), PipeLine.WASTE, null, null);
-        for (int z = 1; z <= 3; z++) set(level, o.offset(9, 0, z), ModBlocks.FILTER_WASTE_PIPE.get());
+        for (int x = 0; x <= 11; x++) set(level, o.offset(x, 0, 0), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int z = -3; z <= -1; z++) set(level, o.offset(3, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int z = 1; z <= 3; z++) set(level, o.offset(7, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int x = 3; x <= 7; x++) PipeBundleBlock.addPipe(level, o.offset(x, 0, 0), true, null, null);
+        for (int z = 1; z <= 3; z++) set(level, o.offset(4, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int x = 4; x <= 9; x++) PipeBundleBlock.addPipe(level, o.offset(x, 0, 0), true, null, null);
+        for (int z = 1; z <= 3; z++) set(level, o.offset(9, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
         // a T-piece on the intake line inside a bundle and on a single pipe
-        FilterPipeBlock.makeJunction(level, o.offset(5, 0, 0));
-        FilterPipeBlock.makeJunction(level, o.offset(1, 0, 0));
-        set(level, o.offset(1, 0, -1), ModBlocks.FILTER_INLET_PIPE.get());
+        set(level, o.offset(1, 0, -1), ModBlocks.STAINLESS_STEEL_PIPE.get());
         LOGGER.info("[smoketest] M65 pipe yard at {}", y);
     }
 
@@ -229,9 +224,9 @@ final class DevClientSmokeM65 {
             Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
         BlockPos t = dockTank;
         // north: a filter intake pipe into the first block, a bundle (intake + return) into the second
-        for (int z = -3; z <= -1; z++) set(level, t.offset(0, 0, z), ModBlocks.FILTER_INLET_PIPE.get());
-        for (int z = -3; z <= -1; z++) set(level, t.offset(2, 0, z), ModBlocks.FILTER_OUTLET_PIPE.get());
-        for (int z = -3; z <= -1; z++) FilterPipeBundleBlock.addLine(level, t.offset(2, 0, z), PipeLine.INTAKE, null, null);
+        for (int z = -3; z <= -1; z++) set(level, t.offset(0, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int z = -3; z <= -1; z++) set(level, t.offset(2, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        for (int z = -3; z <= -1; z++) PipeBundleBlock.addPipe(level, t.offset(2, 0, z), true, null, null);
         // east: a stainless steel water pipe, top: a glass pipe coming down
         for (int x = 3; x <= 5; x++) set(level, t.offset(x, 0, 1), ModBlocks.STAINLESS_STEEL_PIPE.get());
         for (int y = 2; y <= 4; y++) set(level, t.offset(1, y, 1), ModBlocks.GLASS_PIPE.get());

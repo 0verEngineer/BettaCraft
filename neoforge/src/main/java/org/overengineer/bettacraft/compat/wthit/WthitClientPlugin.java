@@ -27,8 +27,7 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         registrar.body(new Filter(), ExternalFilterBlock.class);
         registrar.body(new Filter(), CabinetBlock.class);
         registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.PipeBlock.class); // M66
-        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.FilterPipeBlock.class);
-        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.class);
+        registrar.body(new Pipe(), org.overengineer.bettacraft.plumbing.PipeBundleBlock.class);
         registrar.body(new Culture(), org.overengineer.bettacraft.food.CultureTubBlock.class);
         registrar.body(new Betta(), BettaEntity.class);
         registrar.body(new Aquarist(), org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
@@ -91,7 +90,8 @@ public final class WthitClientPlugin implements IWailaClientPlugin {
         @Override
         public void appendBody(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.WTHIT)) return;
-            InfoLines.pipe(accessor.getBlock()).forEach(tooltip::addLine);
+            net.minecraft.nbt.CompoundTag d = accessor.getData().raw().getCompound(InfoData.KEY);
+            InfoLines.pipe(accessor.getWorld(), accessor.getPosition(), accessor.getBlockState(), d.isEmpty() ? null : d).forEach(tooltip::addLine);
         }
     }
 

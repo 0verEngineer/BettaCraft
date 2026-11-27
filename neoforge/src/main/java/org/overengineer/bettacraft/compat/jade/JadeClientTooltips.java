@@ -41,10 +41,9 @@ final class JadeClientTooltips {
         public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.JADE)) return;
             tooltip.remove(snownee.jade.api.JadeIds.UNIVERSAL_FLUID_STORAGE);
-            if (accessor.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
-                tooltip.add(net.minecraft.network.chat.Component.translatable("jade.bettacraft.pipe.rate", String.format(java.util.Locale.ROOT, "%,d", p.rate() * 20))
-                        .withStyle(net.minecraft.ChatFormatting.AQUA));
-            }
+            // M68: its role (ring), throughput and what it moves now (server data)
+            net.minecraft.nbt.CompoundTag d = accessor.getServerData().getCompound(InfoData.KEY);
+            InfoLines.pipe(accessor.getLevel(), accessor.getPosition(), accessor.getBlockState(), d.isEmpty() ? null : d).forEach(tooltip::add);
         }
 
         @Override

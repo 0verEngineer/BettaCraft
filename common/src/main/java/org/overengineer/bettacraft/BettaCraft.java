@@ -67,6 +67,7 @@ public final class BettaCraft {
                 org.overengineer.bettacraft.monitor.MonitorSyncHandlers.class,
                 org.overengineer.bettacraft.plants.PlantEventsHandlers.class,
                 org.overengineer.bettacraft.plants.foreign.ForeignPlantsHandlers.class,
+                org.overengineer.bettacraft.plumbing.PipeUpdates.class,
                 org.overengineer.bettacraft.progression.GuideBookHandlers.class,
                 org.overengineer.bettacraft.reef.ReefEventsHandlers.class,
                 org.overengineer.bettacraft.sources.TraderOffersHandlers.class,

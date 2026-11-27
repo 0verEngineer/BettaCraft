@@ -82,18 +82,11 @@ public class MultiblockFilterScreen extends Screen {
         }
         g.drawString(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, 0xFFFFFF);
         y += 12;
-        if (h.freshPorts() > 0 || h.wastePorts() > 0) { // M40 part b: the water ports
-            // M66: what the filter can use: the ports and the ends of their lines, or tap water from a water source at a port
-            Component fresh = h.freshEndless() ? Component.translatable("gui.bettacraft.mb_filter.tap")
-                    : Component.literal(String.format(java.util.Locale.ROOT, "%,d mB", h.freshMb()));
-            Component w = h.wastePorts() > 0 ? Component.translatable("gui.bettacraft.mb_filter.water", fresh, h.wasteMb())
-                    : Component.translatable("gui.bettacraft.mb_filter.no_waste", fresh);
-            // a long translation takes a second line (it ran out of the window)
-            for (var line : font.split(w.copy().withStyle(ChatFormatting.DARK_AQUA), W - 20)) {
+        if (h.lineLimit() >= 0) { // M68: the lines carry at most what their weakest pipes carry
+            for (var line : font.split(Component.translatable("gui.bettacraft.mb_filter.line_limit", h.lineLimit()).withStyle(ChatFormatting.DARK_AQUA), W - 20)) {
                 g.drawString(font, line, x, y, 0xFFFFFF);
                 y += 10;
             }
-            y += 2;
         }
         // M40: every tank of the filter (A1: its share by water volume), or why the filter does not work for it
         if (h.retrofit() && tanks.stream().anyMatch(t -> t.status().warning())) {

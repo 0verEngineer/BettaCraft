@@ -265,13 +265,44 @@ public final class InfoLines {
         return out;
     }
 
-    /** M66: what a water pipe carries a second (a pipe stores nothing); empty for any other block. */
-    public static List<Component> pipe(net.minecraft.world.level.block.Block block) {
+    /**
+     * M66, M68: what a pipe is and what it carries: its role (from its ring: a plain water line, an intake or return line of a filter,
+     * fresh or waste water, a short circuit), its throughput a second (glass or steel) and, with the server's data ({@code d},
+     * {@link InfoData#pipe}), what it moves now. A bundle: one line per pipe. Empty for any other block.
+     */
+    public static List<Component> pipe(net.minecraft.world.level.BlockGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state,
+                                       @javax.annotation.Nullable CompoundTag d) {
         List<Component> out = new ArrayList<>();
-        if (block instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
-            out.add(Component.translatable("jade.bettacraft.pipe.rate", String.format(java.util.Locale.ROOT, "%,d", p.rate() * 20)).withStyle(ChatFormatting.AQUA));
+        int[] flows = d == null ? new int[0] : d.getIntArray("pipe_flow");
+        if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock p) {
+            pipeLines(out, null, state.getValue(org.overengineer.bettacraft.plumbing.PipeBlock.RING), p.steel(), flows.length > 0 ? flows[0] : -1);
+        } else if (state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBundleBlock) {
+            int[] slots = org.overengineer.bettacraft.plumbing.Pipes.slotsAt(level, pos);
+            int n = 0;
+            for (int i = 0; i < slots.length; i++) {
+                if (!org.overengineer.bettacraft.plumbing.PipeSlots.present(slots[i])) continue;
+                pipeLines(out, ++n, org.overengineer.bettacraft.plumbing.PipeSlots.ring(slots[i]), org.overengineer.bettacraft.plumbing.PipeSlots.steel(slots[i]),
+                        i < flows.length ? flows[i] : -1);
+            }
         }
         return out;
+    }
+
+    private static void pipeLines(List<Component> out, @javax.annotation.Nullable Integer slot, org.overengineer.bettacraft.plumbing.PipeRing ring, boolean steel, int flow) {
+        Component role = Component.translatable("jade.bettacraft.pipe.role." + ring.getSerializedName());
+        Component line = slot == null ? role : Component.translatable("jade.bettacraft.pipe.slot", slot, role);
+        ChatFormatting colour = switch (ring) {
+            case NONE -> ChatFormatting.GRAY;
+            case INTAKE -> ChatFormatting.BLUE;
+            case RETURN -> ChatFormatting.GOLD;
+            case FRESH -> ChatFormatting.GREEN;
+            case WASTE -> ChatFormatting.DARK_RED;
+            case SHORT -> ChatFormatting.RED;
+        };
+        out.add(line.copy().withStyle(colour));
+        String rate = String.format(java.util.Locale.ROOT, "%,d", org.overengineer.bettacraft.plumbing.PipeBlock.rate(steel) * 20);
+        if (flow >= 0) out.add(Component.translatable("jade.bettacraft.pipe.flow", String.format(java.util.Locale.ROOT, "%,d", flow), rate).withStyle(ChatFormatting.AQUA));
+        else out.add(Component.translatable("jade.bettacraft.pipe.rate", rate).withStyle(ChatFormatting.AQUA));
     }
 
     /** Larva tub and artemia hatchery (M9). */

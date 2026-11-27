@@ -510,7 +510,7 @@ final class DevClientSmokeMP {
                     BlockPos b = at.east();
                     var ca = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(mc.level, at);
                     var cb = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(mc.level, b);
-                    int lines = org.overengineer.bettacraft.plumbing.FilterPipes.lines(mc.level, b).size();
+                    int lines = org.overengineer.bettacraft.plumbing.PipeSlots.count(org.overengineer.bettacraft.plumbing.Pipes.slotsAt(mc.level, b));
                     int light = mc.level.getBlockState(b).getLightEmission(mc.level, b);
                     boolean full = net.minecraft.world.level.block.Block.isShapeFullBlock(mc.level.getBlockState(at).getShape(mc.level, at));
                     send((second ? "pipecoveroff " : "pipecover ") + (ca == null ? "none" : net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(ca.getBlock()))
