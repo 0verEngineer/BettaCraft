@@ -77,6 +77,7 @@ final class LangEn {
         LangM41.addAll(a); // M41
         LangM44.addAll(a); // M44
         LangM66.addAll(a); // M66
+        LangM67.addAll(a); // M67
         a.accept("itemGroup.bettacraft", "Bettacraft");
         a.accept("block.bettacraft.tank", "Tank");
         a.accept("block.bettacraft.tank.with_glass", "%s Tank");
@@ -1201,13 +1202,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.mbPerBlockPerDay", "mB per block and day");
         a.accept("bettacraft.configuration.mbPerBlockPerDay.tooltip", "Water (mB) one uncovered top block loses per in-game day at 25 C (warmer water evaporates faster)");
         a.accept("bettacraft.configuration.power", "Power");
-        a.accept("bettacraft.configuration.power.tooltip", "Heaters, coolers, filters and lights can need Forge Energy (FE), stored in the tank");
-        a.accept("bettacraft.configuration.heaterRequiresEnergy", "Heaters need power");
-        a.accept("bettacraft.configuration.heaterRequiresEnergy.tooltip", "Heaters and coolers only work while the tank has enough FE");
-        a.accept("bettacraft.configuration.filterRequiresEnergy", "Filters need power");
-        a.accept("bettacraft.configuration.filterRequiresEnergy.tooltip", "Filters only clean the water while the tank has enough FE");
-        a.accept("bettacraft.configuration.lightRequiresEnergy", "Lights need power");
-        a.accept("bettacraft.configuration.lightRequiresEnergy.tooltip", "Lights on a tank only shine while the tank has enough FE");
+        a.accept("bettacraft.configuration.power.tooltip", "The devices can need Forge Energy (FE) (power.costs); every tank has one energy store for all its devices, charged by cables or the crank");
         a.accept("bettacraft.configuration.heaterFePerBlock", "Heater FE per water block");
         a.accept("bettacraft.configuration.heaterFePerBlock.tooltip", "FE per tick a heater needs for each water block it heats (only while it heats)");
         a.accept("bettacraft.configuration.coolerFePerBlock", "Cooler FE per water block");
@@ -1216,8 +1211,6 @@ final class LangEn {
         a.accept("bettacraft.configuration.filterFePerTick.tooltip", "FE per tick of each filter");
         a.accept("bettacraft.configuration.lightFePerTick", "Light FE per tick");
         a.accept("bettacraft.configuration.lightFePerTick.tooltip", "FE per tick of each lit light block on a tank");
-        a.accept("bettacraft.configuration.bufferFe", "FE storage per tank");
-        a.accept("bettacraft.configuration.bufferFe.tooltip", "FE a tank can store");
         a.accept("bettacraft.configuration.foodBreeding", "Food breeding");
         a.accept("bettacraft.configuration.foodBreeding.tooltip", "Larva tub (mosquito larvae) and artemia hatchery (artemia nauplii)");
         a.accept("bettacraft.configuration.larvaTubDays", "Larva tub days");

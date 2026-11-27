@@ -43,8 +43,6 @@ final class LangM31 {
         a.accept("bettacraft.configuration.harmAfterDays.tooltip", "In-game days a terrarium animal bears a harmful problem (wrong tank, too cold or hot) before it loses health");
         a.accept("bettacraft.configuration.heatMatFePerTick", "Heat mat FE per tick");
         a.accept("bettacraft.configuration.heatMatFePerTick.tooltip", "FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)");
-        a.accept("bettacraft.configuration.misterRequiresEnergy", "Misters need FE");
-        a.accept("bettacraft.configuration.misterRequiresEnergy.tooltip", "Misters only spray while the tank has enough FE");
         a.accept("bettacraft.configuration.misterFePerTick", "Mister FE per tick");
         a.accept("bettacraft.configuration.misterFePerTick.tooltip", "FE per tick a mister needs while it sprays (with misterRequiresEnergy)");
         // blocks, items, the turtle

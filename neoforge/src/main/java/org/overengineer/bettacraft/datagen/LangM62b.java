@@ -7,8 +7,6 @@ final class LangM62b {
     private LangM62b() {}
 
     static void addAll(BiConsumer<String, String> a) {
-        a.accept("jade.bettacraft.spring.shared", "Shared by %s cabinets");
-        a.accept("gui.bettacraft.spring.shared", "One store for the whole under-cabinet (%s cabinets)");
         a.accept("tooltip.bettacraft.external_filter.link", "Also one or two blocks lower beside the tank: sneak-right-click it with an empty hand to choose the tank");
         a.accept("message.bettacraft.filter_link.none", "No tank in reach: put the filter beside a tank or one or two blocks lower beside it");
         a.accept("message.bettacraft.filter_link.none_beside", "No tank beside the filter");

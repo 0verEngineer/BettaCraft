@@ -256,9 +256,13 @@ public final class InfoLines {
         List<Component> out = new ArrayList<>();
         if (d == null || !d.contains("spring")) return out;
         int pct = d.getIntOr("spring", 0);
+        if (d.getBooleanOr("spring_store", false)) { // M67: the tank's one store (cabinet, external filter)
+            out.add(Component.translatable("jade.bettacraft.store", pct, String.format(java.util.Locale.ROOT, "%,d", d.getLongOr("store_fe", 0L)),
+                    String.format(java.util.Locale.ROOT, "%,d", d.getLongOr("store_cap", 0L))).withStyle(ChatFormatting.GOLD));
+            return out;
+        }
         out.add(Component.translatable("jade.bettacraft.spring", pct, d.getStringOr("spring_hours", ""))
                 .withStyle(pct <= 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW));
-        if (d.getIntOr("spring_shared", 0) > 1) out.add(Component.translatable("jade.bettacraft.spring.shared", d.getIntOr("spring_shared", 0)).withStyle(ChatFormatting.GRAY)); // M62
         return out;
     }
 

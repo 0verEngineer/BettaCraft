@@ -28,8 +28,9 @@ import org.overengineer.bettacraft.equipment.DriveSide;
  * load, so it stays overstressed until it has the capacity). The tank wants what fills its buffer again (with a full buffer
  * that is what its devices took); all inputs together give at most that and at most {@code maxFePerTickPerTank}, shared by
  * what each could give.
- * With {@code power.winding} on a cabinet's own shaft winds the cabinet's spring with the rest. Every input costs stress by
- * its load ({@code stressPerFe} SU per FE/t, at least {@code idleStressPerRpm} per RPM); an overstressed input gives nothing.
+ * M67: the cabinets have no spring of their own any more, their shafts fill the tank's one store like the adapters. Every
+ * input costs stress by its load ({@code stressPerFe} SU per FE/t, at least {@code idleStressPerRpm} per RPM); an
+ * overstressed input gives nothing.
  */
 public final class TankDrive {
     private TankDrive() {}
@@ -116,10 +117,6 @@ public final class TankDrive {
         return ServerConfig.getOr(ServerConfig.DRIVE_IDLE_STRESS, 0.5);
     }
 
-    public static double fePerSpringTick() {
-        return ServerConfig.getOr(ServerConfig.DRIVE_FE_PER_SPRING_TICK, 10.0);
-    }
-
     // ------------------------------------------------------------------ pure planning (unit tested)
 
     /** Share of the full power (0 .. 1) at {@code rpm} (absolute; {@code full} RPM and faster = 1). */
@@ -161,7 +158,7 @@ public final class TankDrive {
     /** Most ticks one step gives for (a step after unloaded time: the shafts did not turn meanwhile). */
     static final long MAX_STEP = 40;
 
-    /** One care step of {@code ticks} (after the devices took their FE): plans the inputs of the tank, refills its buffer and winds the cabinets' springs. */
+    /** One care step of {@code ticks} (after the devices took their FE): plans the inputs of the tank and refills its store. */
     public static void step(ServerLevel level, TankBlockEntity c, long ticks) {
         c.driveFe = 0;
         c.driveInputs = 0;
@@ -199,28 +196,14 @@ public final class TankDrive {
         for (int i = 0; i < max.length; i++) max[i] = work(inputs.get(i).speed(), full) * perInput;
         TankData t = c.getTank();
         double want = 0;
-        if (TankPower.anyRequired()) want = Math.max(0, TankPower.capacity() - t.powerBuffer()) / (double) n;
+        long capacity = TankPower.capacity(c);
+        if (TankPower.anyRequired()) want = Math.max(0, capacity - t.powerBuffer()) / (double) n;
         double[] share = shares(max, want, cap);
-        double used = 0;
-        for (double s : share) used += s;
-        // M37 with M41: a cabinet's own shaft winds the cabinet's spring with what the tank does not need
-        double[] spring = new double[inputs.size()];
-        if (TankPower.anyRequired() && org.overengineer.bettacraft.winding.Winding.Device.CABINET.windable()) {
-            double perTick = Math.max(1e-6, fePerSpringTick());
-            for (int i = 0; i < spring.length && used < cap; i++) {
-                CabinetBlockEntity cab = owners.get(i);
-                if (cab == null) continue;
-                var s = cab.windSpring();
-                double room = (s.capacity() - s.ticks()) * perTick / n;
-                spring[i] = Math.max(0, Math.min(Math.min(max[i] - share[i], room), cap - used));
-                used += spring[i];
-            }
-        }
         long buffer = t.powerBuffer();
         double fe = 0;
         for (int i = 0; i < inputs.size(); i++) {
             Input in = inputs.get(i);
-            double load = share[i] + spring[i];
+            double load = share[i];
             boolean delivering = load > 0 && !in.overstressed();
             in.load(load, delivering);
             c.driveInputs++;
@@ -228,11 +211,6 @@ public final class TankDrive {
             if (!delivering) continue;
             fe += load;
             buffer += Math.round(share[i] * n);
-            if (spring[i] > 0) {
-                CabinetBlockEntity cab = owners.get(i);
-                var s = cab.windSpring();
-                s.set(Math.min(s.capacity(), s.ticks() + (long) Math.floor(spring[i] * n / Math.max(1e-6, fePerSpringTick()))));
-            }
         }
         c.driveFe = (int) Math.round(fe);
         for (Input in : inputs) {
@@ -241,7 +219,7 @@ public final class TankDrive {
                 break;
             }
         }
-        buffer = Math.min(buffer, Math.max(TankPower.capacity(), t.powerBuffer())); // rounding
+        buffer = Math.min(buffer, Math.max(capacity, t.powerBuffer())); // rounding
         if (buffer != t.powerBuffer()) {
             t.setPowerBuffer(buffer);
             c.setChanged();

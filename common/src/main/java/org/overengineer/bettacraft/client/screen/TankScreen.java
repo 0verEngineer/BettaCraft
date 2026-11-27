@@ -1347,17 +1347,19 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         }
     }
 
-    /** M66: the groups of the equipment that need power and whether they have it, and the springs that stand in. */
+    /** M66: the groups of the equipment that need power and whether they have it; M67: the one store, how long it lasts, the costs. */
     private static List<Component> powerTooltip(TankView.Water w) {
         List<Component> out = new ArrayList<>();
         out.add(Component.translatable("gui.bettacraft.water.power_tip").withStyle(ChatFormatting.WHITE));
+        out.add(Component.translatable("gui.bettacraft.water.power_store").withStyle(ChatFormatting.GRAY));
+        if (w.demand > 0) out.add(Component.translatable("gui.bettacraft.water.power_hours",
+                String.format(java.util.Locale.ROOT, "%.1f", w.buffer / (double) w.demand / 1000.0)).withStyle(ChatFormatting.GOLD));
+        out.add(Component.translatable("gui.bettacraft.water.power_costs",
+                Component.translatable("gui.bettacraft.power_costs." + (w.costs == 1 ? "easy" : w.costs == 2 ? "hard" : "off"))).withStyle(ChatFormatting.GRAY));
         MutableComponent groups = Component.empty();
         groups.append(powerGroup("power_heat", w.heaterPower, w.heatPowered)).append("  ")
                 .append(powerGroup("power_filter", w.filterPower, w.filterPowered)).append("  ")
                 .append(powerGroup("power_light", w.lightPower, w.lightPowered));
-        // M37: the wound springs (cabinet, external filters) drive devices while the FE is short
-        if (w.springUnits > 0) groups.append("  ").append(Component.translatable("gui.bettacraft.water.power_spring",
-                String.format(java.util.Locale.ROOT, "%.1f", w.springUnits)).withStyle(ChatFormatting.GOLD));
         out.add(groups);
         return out;
     }

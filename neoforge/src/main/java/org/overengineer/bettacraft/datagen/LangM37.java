@@ -16,7 +16,7 @@ final class LangM37 {
         a.accept("fluid_type.bettacraft.fertilizer", "Liquid Fertilizer");
         a.accept("message.bettacraft.crank.nothing", "The crank does not fit here: only devices with a spring can be wound");
         a.accept("message.bettacraft.crank.off", "%s is switched off");
-        a.accept("message.bettacraft.crank.fe_only", "%s runs on FE only (features.power.winding is off)");
+        a.accept("message.bettacraft.crank.fe_only", "%s runs on FE only (features.power.winding or tankCrank is off)");
         a.accept("message.bettacraft.crank.no_need", "%s runs without power: no need to wind it");
         a.accept("message.bettacraft.crank.full", "%s is fully wound");
         a.accept("message.bettacraft.crank.wound", "%s: spring %s%% (%s h of work)");
@@ -24,7 +24,6 @@ final class LangM37 {
         a.accept("tooltip.bettacraft.crank", "Right-click a device with a spring to wind it; hold the button to keep winding");
         a.accept("gui.bettacraft.spring.tooltip", "Spring: %s%% (wind it with the crank)");
         a.accept("gui.bettacraft.food_maker.status.fe_or_wind", "No FE: connect power or wind the spring with the crank");
-        a.accept("gui.bettacraft.water.power_spring", "Spring: %s devices");
         a.accept("jade.bettacraft.spring", "Spring: %s%% (%s h)");
         a.accept("config.jade.plugin_bettacraft.spring", "Bettacraft spring (crank)");
         a.accept("message.bettacraft.fertilizer.off", "Liquid fertilizer is switched off (features.fertilizer.enabled)");
@@ -58,17 +57,13 @@ final class LangM37 {
         a.accept("info.bettacraft.fertilizer_maker", "Mixes a kelp meal and a nutrient salt with 250 mB of water into 250 mB of liquid fertilizer (a bottle). Water comes from a bucket, a pipe or other mods.\nEmpty glass bottles in the bottle slot are filled; otherwise the fertilizer goes into pipes or a tank next to it (a tank takes it only up to 100 %).\nWithout power it runs on a spring: wind it with the crank. With a power option on it takes FE, and its spring when the FE is short; Create's rotation drives it too. Redstone pauses it.");
         a.accept("info.bettacraft.fertilizer_canister", "A canister of liquid fertilizer for the dosing pump (500 mL, two bottles). The pump doses it into fresh and salt water tanks, its mL per day.");
         a.accept("bettacraft.configuration.winding", "Winding with the crank");
-        a.accept("bettacraft.configuration.winding.tooltip", "Winding with the crank (features.power.winding). Without the power options only the food maker and the fertilizer maker have a spring; with a device's power option on the external filter, multiblock filter, reverse osmosis unit, water change controller, water pump and the cabinet under a tank (for every device of its tank) can be wound instead of FE. FE goes first. One charge is one in-game day of one device's work; the spring stands still in unloaded chunks");
+        a.accept("bettacraft.configuration.winding.tooltip", "Winding with the crank (features.power.winding). With power.costs OFF only the food maker and the fertilizer maker have a spring; with EASY or HARD also the multiblock filter, reverse osmosis unit, water change controller and water pump (devices without a tank). The cabinet under a tank and an attached external filter charge the tank's store instead (power.crankFePerClick). FE goes first. One charge is one in-game day of one device's work; the spring stands still in unloaded chunks");
         a.accept("bettacraft.configuration.ticksPerCharge", "Ticks per charge");
         a.accept("bettacraft.configuration.ticksPerCharge.tooltip", "Ticks of one device's work in one charge (24000 = one in-game day)");
         a.accept("bettacraft.configuration.clicksPerCharge", "Crank clicks per charge");
         a.accept("bettacraft.configuration.clicksPerCharge.tooltip", "Clicks with the crank for one charge (holding the crank clicks about five times a second: 25 = 5 seconds)");
-        a.accept("bettacraft.configuration.externalFilterCharges", "External filter charges");
-        a.accept("bettacraft.configuration.externalFilterCharges.tooltip", "Charges the spring of an external filter holds (it also drives the heaters in it)");
         a.accept("bettacraft.configuration.multiblockFilterCharges", "Multiblock filter charges");
         a.accept("bettacraft.configuration.multiblockFilterCharges.tooltip", "Charges the spring of a multiblock filter (its pump head) holds");
-        a.accept("bettacraft.configuration.cabinetCharges", "Cabinet charges");
-        a.accept("bettacraft.configuration.cabinetCharges.tooltip", "Charges the spring of a cabinet under a tank holds (shared by every device of the tank that needs FE)");
         a.accept("bettacraft.configuration.osmosisCharges", "Reverse osmosis charges");
         a.accept("bettacraft.configuration.osmosisCharges.tooltip", "Charges the spring of the pressure pump of a reverse osmosis unit holds");
         a.accept("bettacraft.configuration.waterChangerCharges", "Water change controller charges");

@@ -6,8 +6,7 @@ import org.overengineer.bettacraft.config.ServerConfig;
 
 /**
  * M24: the FE buffer of a water device (water pump, filter pump head, water change controller, level sensor, crucible).
- * Only offered as a capability while it is needed ({@code pipes.pumpsRequireEnergy}; the crucible whenever a power
- * option is on).
+ * Only offered as a capability while it is needed ({@code power.costs} EASY or HARD, M67).
  */
 public class DeviceEnergy extends EnergyStorage {
     private final Runnable changed;
@@ -19,12 +18,12 @@ public class DeviceEnergy extends EnergyStorage {
 
     /** Whether the water devices need FE. */
     public static boolean required() {
-        return org.overengineer.bettacraft.tank.TankPower.power() && ServerConfig.getOr(ServerConfig.POWER_PUMPS, false);
+        return org.overengineer.bettacraft.tank.TankPower.costsOn(); // M67: power.costs (before: pipes.pumpsRequireEnergy)
     }
 
-    /** FE per tick of a pump at 100 %. */
+    /** FE per tick of a pump at 100 % (M67: at the current power.costs, at least 1). */
     public static int pumpFe() {
-        return ServerConfig.getOr(ServerConfig.POWER_PUMP_FE, 8);
+        return Math.max(1, org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.POWER_PUMP_FE, 8)));
     }
 
     @Override
