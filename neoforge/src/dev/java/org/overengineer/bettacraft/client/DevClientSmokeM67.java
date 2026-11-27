@@ -67,16 +67,16 @@ final class DevClientSmokeM67 {
             then(1, () -> {
                 language(code);
                 scale(2);
-                mc.setScreen(null);
+                mc.gui.setScreen(null);
             });
             // the crank at the joined cabinet: the action bar
             then(1, () -> look(cabinet, 0.5, 1.2, -2.2));
             then(10, () -> server(p -> {
                 p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.CRANK.get()));
-                TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+                TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
                 long before = c.getTank().powerBuffer();
                 for (int i = 0; i < 5; i++) {
-                    var r = Winding.wind(p.serverLevel(), joined, p);
+                    var r = Winding.wind(p.level(), joined, p);
                     if (r != Winding.Result.WOUND) problem("the crank at the joined cabinet: " + r);
                 }
                 afterCrank = c.getTank().powerBuffer() - before;
@@ -89,12 +89,12 @@ final class DevClientSmokeM67 {
             near(() -> tank);
             then(1, this::openTank);
             then(25, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.selectTabForTest(0);
                 else problem("no tank screen");
             });
             then(10, () -> shot(code + "_tank_overview"));
             then(1, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showTipForTest(org.overengineer.bettacraft.client.screen.TankScreen.POWER_TIP_FOR_TEST);
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.TankScreen ts) ts.showTipForTest(org.overengineer.bettacraft.client.screen.TankScreen.POWER_TIP_FOR_TEST);
             });
             then(6, () -> shot(code + "_tank_power_tip"));
             closeAll();
@@ -102,25 +102,25 @@ final class DevClientSmokeM67 {
             near(() -> cabinet);
             then(1, () -> openBlock(cabinet));
             then(25, () -> {
-                if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s)) problem("no cabinet screen: " + mc.screen);
+                if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s)) problem("no cabinet screen: " + mc.gui.screen());
                 else if (s.getMenu().energy().capacity() != capacity || s.getMenu().energy().stored() <= 0)
                     problem("the cabinet shows " + s.getMenu().energy().stored() + " / " + s.getMenu().energy().capacity() + ", the store holds " + capacity);
                 shot(code + "_cabinet");
             });
             then(1, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) s.showEnergyTipForTest();
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s) s.showEnergyTipForTest();
             });
             then(6, () -> shot(code + "_cabinet_energy_tip"));
             closeAll();
             near(() -> filter);
             then(1, () -> openBlock(filter));
             then(25, () -> {
-                if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen s)) problem("no filter screen: " + mc.screen);
+                if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen s)) problem("no filter screen: " + mc.gui.screen());
                 else if (s.getMenu().energy().capacity() != capacity) problem("the filter shows the capacity " + s.getMenu().energy().capacity() + ", the store " + capacity);
                 shot(code + "_external_filter");
             });
             then(1, () -> {
-                if (mc.screen instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen s) s.showEnergyTipForTest();
+                if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.ExternalFilterScreen s) s.showEnergyTipForTest();
             });
             then(6, () -> shot(code + "_external_filter_energy_tip"));
             closeAll();
@@ -140,7 +140,7 @@ final class DevClientSmokeM67 {
     // ------------------------------------------------------------------ the scene
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         costs = ServerConfig.POWER_COSTS.get();
         power = Features.own(Feature.POWER);
         winding = Features.own(Feature.WINDING);
@@ -149,8 +149,8 @@ final class DevClientSmokeM67 {
         Features.set(Feature.POWER, true);
         Features.set(Feature.WINDING, true);
         Features.set(Feature.TANK_CRANK, true);
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        DevClientWorldTour.clearWeather(level);
         p.getAbilities().flying = true;
         BlockPos base = p.blockPosition().offset(6, 0, 10);
         for (int x = -3; x <= 8; x++) for (int z = -4; z <= 5; z++) {
@@ -209,12 +209,12 @@ final class DevClientSmokeM67 {
 
     private void closeAll() {
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(3, () -> mc.setScreen(null));
+        then(3, () -> mc.gui.setScreen(null));
     }
 
     private void openTank() {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         });
@@ -222,7 +222,7 @@ final class DevClientSmokeM67 {
 
     private void openBlock(BlockPos at) {
         server(p -> {
-            if (p.serverLevel().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
+            if (p.level().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, buf -> buf.writeBlockPos(at));
             } else {
                 LOGGER.error("[smoketest] M67 no menu at {}", at);
@@ -234,12 +234,12 @@ final class DevClientSmokeM67 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
         mc.options.guiScale().set(s);
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     private void problem(String what) {
@@ -253,7 +253,7 @@ final class DevClientSmokeM67 {
         Vec3 d = c.subtract(eye);
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
-        server(p -> p.teleportTo(p.serverLevel(), eye.x, eye.y - p.getEyeHeight(), eye.z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -265,7 +265,7 @@ final class DevClientSmokeM67 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -284,7 +284,7 @@ final class DevClientSmokeM67 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m67_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.gui.toastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m67_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }

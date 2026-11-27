@@ -87,7 +87,7 @@ public final class TankStore {
     public static long capacity(TankBlockEntity c) {
         if (c.storeCapacity > 0) return c.storeCapacity;
         Level level = c.getLevel();
-        if (level == null || level.isClientSide) return capacity(c.getTank().capacityMb() / (double) TankData.MB_PER_BLOCK, 0);
+        if (level == null || level.isClientSide()) return capacity(c.getTank().capacityMb() / (double) TankData.MB_PER_BLOCK, 0);
         return capacity(level, c);
     }
 

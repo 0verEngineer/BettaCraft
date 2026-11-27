@@ -789,8 +789,8 @@ public final class DevShowcase {
         boolean powah = org.overengineer.bettacraft.platform.Platform.get().isModLoaded("powah");
         if (powah) {
             var reg = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
-            level.setBlockAndUpdate(at3.offset(2, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cable_starter")).defaultBlockState());
-            level.setBlockAndUpdate(at3.offset(3, 0, 0), reg.get(ResourceLocation.parse("powah:energy_cell_creative")).defaultBlockState());
+            level.setBlockAndUpdate(at3.offset(2, 0, 0), reg.getValue(net.minecraft.resources.Identifier.parse("powah:energy_cable_starter")).defaultBlockState());
+            level.setBlockAndUpdate(at3.offset(3, 0, 0), reg.getValue(net.minecraft.resources.Identifier.parse("powah:energy_cell_creative")).defaultBlockState());
         }
         name(level, at3, "FE-Einspeisung");
         // the numbers at EASY and HARD (the devices of tank 2: the filter with its heater in the front cabinet, a light)
