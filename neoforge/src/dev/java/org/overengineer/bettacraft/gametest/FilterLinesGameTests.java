@@ -74,13 +74,13 @@ public final class FilterLinesGameTests {
         for (Direction d : Direction.values()) if (a.relative(d).equals(b)) PipeWrenchItem.setClosed(h.getLevel(), h.absolutePos(a), -1, d, true);
     }
 
-    /** Fits an intake guard behind every dock of the filter's inlet line and an outlet guard behind every dock of its return line. */
+    /** Fits an intake guard behind every dock of the filter's inlet line and an outlet guard behind every dock of its return line (M68 part C: of that line). */
     public static void guardAll(ServerLevel level, BlockPos headPos) {
         for (MultiblockFilter.Link l : MultiblockFilter.links(level, MultiblockFilter.scan(level, headPos))) {
             for (FilterLines.Dock d : l.intakes())
-                TankAnchors.installGuard(level, d.member(), d.face(), null, new ItemStack(ModItems.INTAKE_GUARD.get()), Plumb.INTAKE_GUARD);
+                TankAnchors.installGuard(level, d.member(), d.face(), d.slot(), null, new ItemStack(ModItems.INTAKE_GUARD.get()), Plumb.INTAKE_GUARD);
             for (FilterLines.Dock d : l.returns())
-                TankAnchors.installGuard(level, d.member(), d.face(), null, new ItemStack(ModItems.OUTLET_GUARD.get()), Plumb.OUTLET_GUARD);
+                TankAnchors.installGuard(level, d.member(), d.face(), d.slot(), null, new ItemStack(ModItems.OUTLET_GUARD.get()), Plumb.OUTLET_GUARD);
         }
     }
 
