@@ -1755,6 +1755,7 @@
   "color.bettacraft.white": "Opaque White",
   "color.bettacraft.wine": "Wine",
   "color.bettacraft.yellow": "Yellow",
+  "command.bettacraft.algae.done": "Algae at %s on %s tanks within %s chunks",
   "command.bettacraft.debug.area": "  %s: %s",
   "command.bettacraft.debug.area_command": "  %s: %s (by command until the restart; /bettacraft debug reset)",
   "command.bettacraft.debug.header": "Debug log %s (config debug.logLevel = %s):",
