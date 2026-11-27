@@ -1,7 +1,9 @@
 {
- "comment": "M59: the upgrade reference worlds of this branch are built, not stored. smoketestUpgrade (and runServer -PsmoketestOldWorld) build a missing one in the saves folder of the run with tools/upgrade/<script> from the commit named here (build_reference.sh: that commit's buildShowcase plus DevUpgradeReference). 'default' is the world smoketestUpgrade loads without -PupgradeWorld; the reference of this branch was made with its first version 1.42.0-beta.1.",
+ "comment": "M59: the upgrade reference worlds of this branch are built, not stored. smoketestUpgrade (and runServer -PsmoketestOldWorld) build a missing one in the saves folder of the run with tools/upgrade/<script> from the commit named here (build_reference.sh: that commit's buildShowcase plus DevUpgradeReference). 'default' is the world smoketestUpgrade loads without -PupgradeWorld; the reference of this branch was made with its first version 1.42.0-beta.1. 'crossVersion': worlds of an older Minecraft version that smoketestUpgrade (and the Fabric fabricUpgradeTest) load after the default, built by a commit of that version's branch with its own tools (\"tools\": \"own\").",
  "default": "Bettacraft Referenz 26.1.2",
+ "crossVersion": ["Bettacraft Referenz 1.21.1"],
  "worlds": {
-  "Bettacraft Referenz 26.1.2": {"script": "build_reference.sh", "commit": "c68e112f8731265d917da878bffc361d820d0657", "version": "1.42.0-beta.1"}
+  "Bettacraft Referenz 26.1.2": {"script": "build_reference.sh", "commit": "c68e112f8731265d917da878bffc361d820d0657", "version": "1.42.0-beta.1"},
+  "Bettacraft Referenz 1.21.1": {"script": "build_reference.sh", "commit": "5c4bfe9691c6c35351a71b202dfd91d6f77658c4", "version": "1.54.0-beta.1 (Minecraft 1.21.1, NeoForge)", "tools": "own"}
  }
 }
