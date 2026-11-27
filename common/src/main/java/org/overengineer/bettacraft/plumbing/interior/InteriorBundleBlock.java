@@ -130,7 +130,7 @@ public class InteriorBundleBlock extends PlumbingBlock {
     // ------------------------------------------------------------------ making and taking apart
 
     private static void say(@Nullable Player p, String key) {
-        if (p != null) p.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.GOLD), true);
+        if (p != null) p.sendOverlayMessage(Component.translatable(key).withStyle(ChatFormatting.GOLD));
     }
 
     /** The bundle block of a pipe kind. */
