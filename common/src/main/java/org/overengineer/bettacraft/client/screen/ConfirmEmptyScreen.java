@@ -92,6 +92,11 @@ public final class ConfirmEmptyScreen extends Screen {
         empty.extractRenderState(g, mouseX, mouseY, partialTick);
     }
 
+    /** Smoke test: the last line of the text ends above the buttons. */
+    public boolean textAboveButtons() {
+        return TEXT_TOP + font.split(text(), W - 20).size() * LINE <= boxHeight() - 28;
+    }
+
     @Override
     public boolean isPauseScreen() {
         return false;
