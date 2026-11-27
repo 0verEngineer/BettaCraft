@@ -73,10 +73,10 @@ final class DevClientSmokeM67 {
             then(1, () -> look(cabinet, 0.5, 1.2, -2.2));
             then(10, () -> server(p -> {
                 p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.CRANK.get()));
-                TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+                TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
                 long before = c.getTank().powerBuffer();
                 for (int i = 0; i < 5; i++) {
-                    var r = Winding.wind(p.serverLevel(), joined, p);
+                    var r = Winding.wind(p.level(), joined, p);
                     if (r != Winding.Result.WOUND) problem("the crank at the joined cabinet: " + r);
                 }
                 afterCrank = c.getTank().powerBuffer() - before;
@@ -140,7 +140,7 @@ final class DevClientSmokeM67 {
     // ------------------------------------------------------------------ the scene
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         costs = ServerConfig.POWER_COSTS.get();
         power = Features.own(Feature.POWER);
         winding = Features.own(Feature.WINDING);
@@ -214,7 +214,7 @@ final class DevClientSmokeM67 {
 
     private void openTank() {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tank);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tank);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         });
@@ -222,7 +222,7 @@ final class DevClientSmokeM67 {
 
     private void openBlock(BlockPos at) {
         server(p -> {
-            if (p.serverLevel().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
+            if (p.level().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, buf -> buf.writeBlockPos(at));
             } else {
                 LOGGER.error("[smoketest] M67 no menu at {}", at);
@@ -234,7 +234,7 @@ final class DevClientSmokeM67 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
@@ -253,7 +253,7 @@ final class DevClientSmokeM67 {
         Vec3 d = c.subtract(eye);
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
-        server(p -> p.teleportTo(p.serverLevel(), eye.x, eye.y - p.getEyeHeight(), eye.z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -284,7 +284,7 @@ final class DevClientSmokeM67 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m67_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m67_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
