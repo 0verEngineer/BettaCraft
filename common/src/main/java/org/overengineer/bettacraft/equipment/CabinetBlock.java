@@ -235,7 +235,7 @@ public class CabinetBlock extends BaseEntityBlock implements BlockRemoval, org.o
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CabinetBlockEntity be) {
-            CabinetSprings.handOver(be); // M62: its share of the shared spring stays with the other cabinets
+            org.overengineer.bettacraft.tank.TankStore.handOver(be); // M67: an old world's spring still in it goes into the tank's store
             for (int i = 0; i < be.items().getSlots(); i++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), be.items().getStackInSlot(i));
             }

@@ -145,7 +145,7 @@ public final class InfoData {
         out.putDouble("evaporation", TankWater.evaporationPerDay(level, t));
         if (TankPower.anyRequired()) {
             out.putLong("power", t.powerBuffer());
-            out.putLong("power_cap", TankPower.capacity());
+            out.putLong("power_cap", TankPower.capacity(c));
             out.putInt("demand", c.lastDemand());
             if (c.driveInputs() > 0) { // M41: Create's rotation charges the buffer
                 out.putInt("drive_fe", c.driveFe());
@@ -233,9 +233,17 @@ public final class InfoData {
         int pct = org.overengineer.bettacraft.winding.Winding.shown(w);
         if (pct < 0) return;
         out.putInt("spring", pct);
-        org.overengineer.bettacraft.winding.WindSpring s = w.windStore(); // M62: the store of the whole under-cabinet
-        out.putString("spring_hours", org.overengineer.bettacraft.winding.Winding.hours(s));
-        if (s instanceof org.overengineer.bettacraft.equipment.CabinetSprings.Store store) out.putInt("spring_shared", store.size());
+        if (org.overengineer.bettacraft.tank.TankStore.feedsTank(w)) { // M67: a cabinet or external filter shows the tank's store
+            var c = org.overengineer.bettacraft.tank.TankStore.tankOf(((BlockEntity) w).getLevel(), w);
+            if (c != null) {
+                out.putBoolean("spring_store", true);
+                out.putString("spring_hours", org.overengineer.bettacraft.tank.TankStore.hours(c));
+                out.putLong("store_fe", c.getTank().powerBuffer());
+                out.putLong("store_cap", TankPower.capacity(c));
+            }
+            return;
+        }
+        out.putString("spring_hours", org.overengineer.bettacraft.winding.Winding.hours(w.windStore()));
     }
 
     /** Betta: care state (only meaningful in a tank), stage progress, genotype, generation. */

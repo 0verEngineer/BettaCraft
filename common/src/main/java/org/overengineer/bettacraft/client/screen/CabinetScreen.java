@@ -204,7 +204,6 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         if (!menu.getSlot(CabinetMenu.AIR_PUMP).hasItem()) { // M29.1
             g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.AIR_PUMP_X, topPos + CabinetMenu.AIR_PUMP_Y, 220, 50, 16, 16, 256, 256);
         }
-        SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         if (org.overengineer.bettacraft.equipment.Sump.enabled() || menu.hasSump()) { // M49: the sump slot
             g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CabinetMenu.SUMP_X - 1, topPos + CabinetMenu.SUMP_Y - 1, 220, 0, 18, 18, 256, 256);
             if (!menu.hasSump()) g.fill(leftPos + CabinetMenu.SUMP_X + 2, topPos + CabinetMenu.SUMP_Y + 5, leftPos + CabinetMenu.SUMP_X + 14,
@@ -256,8 +255,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
         }
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
-        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent(), menu.springShared());
-        else if (energyTipForTest || EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, energyTipForTest ? leftPos + 10 : mouseX, energyTipForTest ? topPos + 60 : mouseY, menu.energy(), "gui.bettacraft.filter.energy_tooltip.cabinet");
+        if (energyTipForTest || EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, energyTipForTest ? leftPos + 10 : mouseX, energyTipForTest ? topPos + 60 : mouseY, menu.energy(), "gui.bettacraft.filter.energy_tooltip.cabinet");
     }
 
     private boolean energyTipForTest;
@@ -266,7 +264,4 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     public void showEnergyTipForTest() {
         energyTipForTest = true;
     }
-
-    /** M37: the spring gauge right of the storage. */
-    static final int SPRING_X = 186, SPRING_Y = 17, SPRING_H = 54;
 }

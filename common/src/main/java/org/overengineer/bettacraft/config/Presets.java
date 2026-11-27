@@ -89,12 +89,7 @@ public final class Presets {
         server(r, ServerConfig.SALT_FOREIGN, ServerConfig.ForeignSalinity.REALISTIC);
         server(r, ServerConfig.SALT_VANILLA_CORALS, true);
         server(r, ServerConfig.SALT_REFUSE_DEADLY, false);
-        server(r, ServerConfig.POWER_HEATER, true);
-        server(r, ServerConfig.POWER_FILTER, true);
-        server(r, ServerConfig.POWER_LIGHT, true);
-        server(r, ServerConfig.POWER_AIR_PUMP, true);
-        server(r, ServerConfig.POWER_PUMPS, true);
-        server(r, ServerConfig.POWER_MISTER, true);
+        server(r, ServerConfig.POWER_COSTS, ServerConfig.PowerCosts.HARD); // M67 (before: every *RequiresEnergy on)
         server(r, ServerConfig.HEALTH_DAYS_UNTIL_SICK, 5.0);
         server(r, ServerConfig.HEALTH_DAYS_SICK_UNTIL_DEATH, 10.0);
         server(r, ServerConfig.TEMPERATURE_TOLERATED_MIN, 25.0);

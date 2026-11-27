@@ -253,7 +253,7 @@ public final class TankMultiblock {
             merged.setMagnesium(main.magnesium());
             merged.setTrace(main.trace());
         }
-        merged.setPowerBuffer(Math.min(power, TankPower.capacity()));
+        merged.setPowerBuffer(power); // M67: the store grows with the water blocks, the sum fits
         // equipment of all merged tanks moves into the new one; what does not fit drops
         for (TankData t : olds) {
             merged.inhabitants().addAll(t.inhabitants());

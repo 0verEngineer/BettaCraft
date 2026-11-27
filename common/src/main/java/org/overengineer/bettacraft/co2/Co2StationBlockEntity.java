@@ -128,7 +128,7 @@ public class Co2StationBlockEntity extends BlockEntity {
         double added = 0;
         ItemStack s = items.getStackInSlot(0);
         if (TankCo2.enabled() && !s.isEmpty() && !Co2CylinderItem.full(s) && fires > 0) {
-            int fe = ServerConfig.getOr(ServerConfig.CO2_STATION_FE, 20) * ticks;
+            int fe = org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.CO2_STATION_FE, 20)) * ticks; // M67: power.costs
             if (org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() && !energy.use(fe)) {
                 noPower = true;
             } else {

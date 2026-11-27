@@ -26,6 +26,9 @@ import java.util.Map;
  * <p>
  * M46: a server config still holding the 1.36.0 default sand chance (0.08, written by a version whose default it was) gets
  * the new one (0.04), once; old file kept as {@code bettacraft-server.toml.pre-m46}.
+ * <p>
+ * M67: the switches {@code *RequiresEnergy} of a server config become {@code power.costs} ({@link #migrateServerM67}); old file
+ * kept as {@code bettacraft-server.toml.pre-m67}.
  */
 public final class FeatureMigration {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("bettacraft/config");
@@ -112,10 +115,71 @@ public final class FeatureMigration {
         return done;
     }
 
+    /** M67: the power switches of each device group before M67 (section, key), replaced by {@code power.costs}. */
+    public static final List<List<String>> OLD_POWER_SWITCHES = List.of(List.of("power", "heaterRequiresEnergy"), List.of("power", "filterRequiresEnergy"),
+            List.of("power", "lightRequiresEnergy"), List.of("aeration", "airPumpRequiresEnergy"), List.of("pipes", "pumpsRequireEnergy"),
+            List.of("terrarium", "misterRequiresEnergy"));
+    /** M67: the keys gone with the one store per tank (the fixed buffer, the springs of cabinets and external filters, the shaft's spring rate). */
+    static final List<List<String>> OLD_STORE_KEYS = List.of(List.of("power", "bufferFe"), List.of("winding", "cabinetCharges"),
+            List.of("winding", "externalFilterCharges"), List.of("createDrive", "fePerSpringTick"));
+    static final List<String> POWER_COSTS = List.of("power", "costs");
+
+    /**
+     * M67: the switches {@code *RequiresEnergy} become the one setting {@code power.costs}: any of them on gives HARD (the
+     * consumption they had), none on OFF (the default). A file that already has {@code power.costs} keeps it. The keys of the
+     * fixed buffer and of the cabinet and filter springs are removed. Returns one line per change, empty if the file had none.
+     */
+    public static List<String> migrateServerM67(Config config) {
+        List<String> done = new ArrayList<>();
+        List<String> on = new ArrayList<>();
+        boolean any = false;
+        for (List<String> k : OLD_POWER_SWITCHES) {
+            if (!config.contains(k)) continue;
+            any = true;
+            Object v = config.remove(k);
+            if (Boolean.TRUE.equals(v) || "true".equals(String.valueOf(v))) on.add(String.join(".", k));
+        }
+        for (List<String> k : OLD_STORE_KEYS) {
+            if (!config.contains(k)) continue;
+            Object v = config.remove(k);
+            done.add(String.join(".", k) + " = " + v + " removed (M67: one energy store per tank)");
+        }
+        if (any && !config.contains(POWER_COSTS)) {
+            String costs = on.isEmpty() ? ServerConfig.PowerCosts.OFF.name() : ServerConfig.PowerCosts.HARD.name();
+            config.set(POWER_COSTS, costs);
+            done.add((on.isEmpty() ? "every *RequiresEnergy off" : String.join(" + ", on) + " on") + " -> power.costs = " + costs);
+        } else if (any) {
+            done.add("the old *RequiresEnergy switches removed (power.costs was already set)");
+        }
+        return done;
+    }
+
+    /** Whether a server config file of before M67 asked for power (any {@code *RequiresEnergy} on); null if it has none of them. */
+    @javax.annotation.Nullable
+    public static Boolean oldPowerOn(Path file) {
+        if (!Files.isRegularFile(file)) return null;
+        try {
+            CommentedConfig cfg = TomlFormat.newConfig(java.util.LinkedHashMap::new);
+            TomlFormat.instance().createParser().parse(new java.io.StringReader(Files.readString(file, StandardCharsets.UTF_8)), cfg,
+                    com.electronwill.nightconfig.core.io.ParsingMode.REPLACE);
+            if (cfg.contains(POWER_COSTS)) return null;
+            Boolean out = null;
+            for (List<String> k : OLD_POWER_SWITCHES) {
+                if (!cfg.contains(k)) continue;
+                Object v = cfg.get(k);
+                out = (out != null && out) || Boolean.TRUE.equals(v) || "true".equals(String.valueOf(v));
+            }
+            return out;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /** Migrates the server config file in place (if it exists and has old keys, M35.1); never throws. */
     public static void migrateServerFile(Path file) {
         migrateFile(file, FeatureMigration::migrateServer, ".pre-m35.1", "Migrated {} settings of {} (M35.1):");
         migrateFile(file, c -> migrateServerM46((CommentedConfig) c), ".pre-m46", "Migrated {} settings of {} (M46):");
+        migrateFile(file, FeatureMigration::migrateServerM67, ".pre-m67", "Migrated {} settings of {} (M67, power.costs):");
     }
 
     /** Migrates the common config file in place (if it exists and has old keys); never throws. */

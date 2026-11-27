@@ -154,9 +154,9 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
         setChanged();
     }
 
-    /** FE one portion costs (with {@code pipes.pumpsRequireEnergy}). */
+    /** FE one portion costs (with {@code power.costs} EASY or HARD, M67: EASY a third). */
     public static int fePerPortion() {
-        return ServerConfig.getOr(ServerConfig.LIVE_FOOD_PUMP_FE, 200);
+        return org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.LIVE_FOOD_PUMP_FE, 200));
     }
 
     /** Key of the latest dose at or before {@code dayTime} (see {@link LiveFoodSchedule#eventKey}). */
