@@ -28,9 +28,10 @@ navigation:
 | [Sponge filter](equipment/sponge_filter.md), [corner filter](equipment/corner_filter.md), [intake sponge](equipment/intake_sponge.md) | more internal filters; the sponge protects the fry |
 | [Power regulator](equipment/regulator.md) | 0 to 100 % for filters, pumps and air stones |
 | [Multiblock external filter](equipment/multiblock_filter.md) and [filter media](equipment/filter_media.md) | a big filter of any size; media clog and are washed |
-| [Pipes and water pump](equipment/pipes.md) | carry water with its values; also to the tanks and pipes of other mods |
-| [Bulkhead and interior pipes](equipment/bulkhead.md) | pipes through the floor, outlets inside the aquarium with their own current |
-| [Water change controller](equipment/water_change.md) and [top-off](equipment/top_off.md) | automatic water changes and topping off evaporated water |
+| [Water in the tank: how it all fits together](equipment/water_system.md) | pipes, wrench, bundles, docks and guards, water change and top-off, with example setups |
+| [Pipes and water pump](equipment/pipes.md) | two pipes for everything; a line takes its role from the port it reaches |
+| [Pipe docks and interior pipes](equipment/bulkhead.md) | where lines enter the aquarium; interior pipes and bundles, outlets with their own current |
+| [Water change controller](equipment/water_change.md), [level sensor](equipment/level_sensor.md) and [drain](equipment/drain.md) | automatic water changes through four ports, top-off by the sensor, the end of the waste water |
 | [Crucible and stainless steel](equipment/crucible.md) | the steel for pipes and water devices |
 | [Cabinet](equipment/cabinet.md) | stand for the aquarium with room for a filter and food |
 | [Tank lid](equipment/tank_lid.md) | stops the water from evaporating |

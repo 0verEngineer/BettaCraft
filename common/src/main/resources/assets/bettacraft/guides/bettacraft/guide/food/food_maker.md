@@ -46,7 +46,7 @@ The recipes are data (`bettacraft:food_maker`), so modpacks can add their own; J
 Hoppers, pipes of other mods and the storage mods use the machine without any special setup: items go into the inputs
 from every side and only the food comes out of the output. An **AE2** export bus or interface and an **import bus**, or
 the **importer and exporter of Refined Storage**, fill and empty it; with Automatic chosen, a processing pattern only has
-to put the ingredients in. The [feeder](../equipment/feeder.md) and the [reservoir](../equipment/top_off.md) work with
+to put the ingredients in. The [feeder](../equipment/feeder.md) and the [reservoir](../equipment/reservoir.md) work with
 these mods the same way.
 
 ## Obtaining

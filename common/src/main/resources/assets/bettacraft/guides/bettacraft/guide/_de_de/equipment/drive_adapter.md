@@ -19,7 +19,7 @@ mod: create
 Nur mit **Create**. Der Antriebsadapter macht aus der Drehkraft von Create den [Strom](power.md) eines Aquariums: eine
 Welle daran lädt den FE-Puffer des Beckens, und jedes Gerät, das FE aus dem Becken nimmt, läuft damit, ganz ohne
 FE-Kabel: Filter, Strömungspumpen und Abschäumer, Heizer, Kühler und Heizmatten, Licht, Luftpumpen und Sprühanlagen.
-Freistehende Maschinen (Wasserpumpe, Pumpenkopf des Filters, Wasserwechsel-Steuerung, Niveausensor, Osmoseanlage,
+Freistehende Maschinen (Wasserpumpe, Pumpenkopf des Filters, Wasserwechsel-Steuerung, Osmoseanlage,
 Futtermaschine, Düngermaschine) behalten wie bisher ihre eigene Welle (siehe [Create](../settings/create.md)).
 
 ## Aufstellen

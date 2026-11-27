@@ -79,7 +79,7 @@ Bettas: die Warnungen (unter „Ein Schwarm Beifische ist zu klein“ jeder solc
 die **Zuchtbedingungen** (solange es kein Nest gibt) und darunter das **Schaumnest**; mit der Maus auf „Jungfische frei in x Tagen,
 Pflege n %“ siehst du, woraus sich die Pflege zusammensetzt, was fehlt und wie viele Larven voraussichtlich frei schwimmen; die
 Jungfische; die Eltern und die erwarteten Nachkommen. Eine Warnung erscheint, solange Eier oder Jungtiere da sind und ein Motorfilter
-keinen [Ansaugschutz](../equipment/intake_sponge.md) hat (mit der Maus darauf siehst du, wie man einen anbringt). Siehe [Zucht](../bettas/breeding.md).
+keinen [Ansaugschutz-Schwamm](../equipment/intake_sponge.md) hat (mit der Maus darauf siehst du, wie man einen anbringt). Siehe [Zucht](../bettas/breeding.md).
 
 ## Wasser
 
@@ -100,7 +100,7 @@ Zeilen, als hineinpassen, scrollt (Mausrad, Balken am rechten Rand).
 
 Vier Gruppen mit je einer Überschrift. **Belüftung:** die [Luftpumpen](../equipment/air_pump.md), [Ausströmer](../equipment/air_stone.md) und
 [Schwammfilter](../equipment/sponge_filter.md), wie viel CO2 die Belüftung austreibt. **Filter:** die Motorfilter nach Art (innen, Eck,
-außen, Unterschrank) und wie viele davon einen [Ansaugschutz](../equipment/intake_sponge.md) haben; die Warnung für die ohne zeigt mit
+außen, Unterschrank) und wie viele davon einen [Ansaugschutz-Schwamm](../equipment/intake_sponge.md) haben; die Warnung für die ohne zeigt mit
 der Maus, wie man einen anbringt. **Temperatur:** die Heizer und Kühler. **Licht:** die Lichter des Aquariums mit der Lichtstärke und **Dimmer** und
 **Tageslicht-Timer** mit ihren Knöpfen (siehe [Licht](../equipment/light.md)). Der [Sauerstoff](oxygen.md) ist ein Wasserwert und
 steht im Reiter Wasser.
