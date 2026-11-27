@@ -61,8 +61,33 @@ public final class InteriorPaths {
         @Override public int ny() { return maxCy + 1; }
         @Override public int nz() { return nz; }
 
+        /** M66.5: the answers of {@link #solid} in the current search (cleared when the clearance changes, see {@link #resetSolid}). */
+        private byte[] solidArray;
+        private it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap solidMap;
+
+        void resetSolid() {
+            solidArray = null;
+            solidMap = null;
+        }
+
         @Override
         public boolean solid(int x, int y, int z) {
+            if (!memo || x < 0 || z < 0 || y < 0 || x >= nx || y >= ny || z >= nz) return solidUncached(x, y, z);
+            int key = (y * nz + z) * nx + x;
+            if (solidArray == null && solidMap == null) {
+                if ((long) nx * ny * nz <= 262144) solidArray = new byte[nx * ny * nz];
+                else solidMap = new it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap();
+            }
+            byte v = solidArray != null ? solidArray[key] : solidMap.get(key);
+            if (v == 0) {
+                v = solidUncached(x, y, z) ? (byte) 1 : (byte) 2;
+                if (solidArray != null) solidArray[key] = v;
+                else solidMap.put(key, v);
+            }
+            return v == 1;
+        }
+
+        private boolean solidUncached(int x, int y, int z) {
             if (base(x, y, z)) return true;
             if (inflate && (relaxAt == null || Math.max(Math.abs(x - relaxAt[0]), Math.max(Math.abs(y - relaxAt[1]), Math.abs(z - relaxAt[2]))) > relax)
                     && (base(x - 1, y, z) || base(x + 1, y, z) || base(x, y, z - 1) || base(x, y, z + 1))) return true;
@@ -76,7 +101,34 @@ public final class InteriorPaths {
             return false;
         }
 
+        /**
+         * M66.5: the cells already looked at in this search (1 solid, 2 free). A search asks for the same cell many times (every
+         * neighbour of every expanded cell, the corner checks and the clearance around it): without the memo the path finding
+         * of the big fish was an eighth of the server tick in the showcase.
+         */
+        /** Only a search keeps the memo (a line of sight looks at a few cells and would only pay for the array). */
+        boolean memo;
+        private byte[] seenArray;
+        private it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap seenMap;
+
         private boolean base(int x, int y, int z) {
+            if (!memo || x < 0 || z < 0 || x >= nx || z >= nz || y < 0 || y >= ny) return baseUncached(x, y, z);
+            int key = (y * nz + z) * nx + x;
+            if (seenArray == null && seenMap == null) {
+                // small grids in an array (at most 256 KiB), the big ones of the large tanks in a map of the cells seen
+                if ((long) nx * ny * nz <= 262144) seenArray = new byte[nx * ny * nz];
+                else seenMap = new it.unimi.dsi.fastutil.ints.Int2ByteOpenHashMap();
+            }
+            byte v = seenArray != null ? seenArray[key] : seenMap.get(key);
+            if (v == 0) {
+                v = baseUncached(x, y, z) ? (byte) 1 : (byte) 2;
+                if (seenArray != null) seenArray[key] = v;
+                else seenMap.put(key, v);
+            }
+            return v == 1;
+        }
+
+        private boolean baseUncached(int x, int y, int z) {
             if (x < 0 || z < 0 || x >= nx || z >= nz) return true;
             int c = cell, lx = x * c + c / 2, ly = y * c + c / 2, lz = z * c + c / 2;
             if (!r.inShape(Math.min(lx, r.sizeX() - 1), Math.min(ly, r.sizeY() - 1), Math.min(lz, r.sizeZ() - 1))) return true;
@@ -136,6 +188,7 @@ public final class InteriorPaths {
     public static List<Vec3> swim(MinecraftServer server, TankData tank, Vec3 from, Vec3 to, double topY, double margin, boolean inflate) {
         Grid g = grid(server, tank, topY);
         if (g == null) return null;
+        g.memo = true;
         if (margin > 0 || inflate) {
             g.margin = (int) Math.ceil(margin * Math.max(1, g.r.scale()));
             g.inflate = inflate;
@@ -150,6 +203,7 @@ public final class InteriorPaths {
 
     @Nullable
     private static List<Vec3> swim(Grid g, Vec3 from, Vec3 to) {
+        g.resetSolid(); // the clearance (margin, inflate, relaxAt) may have changed since the last search on this grid
         // an animal on the substrate stands in its cells: start and goal rise out of solid cells (up to a block)
         List<int[]> cells = GridPathfinder.find(g, GridPathfinder.Mode.SWIM, rise(g, g.cellOf(from)), rise(g, g.cellOf(to)), MAX_NODES);
         if (cells == null) return null;
@@ -170,6 +224,7 @@ public final class InteriorPaths {
     public static List<Vec3> walk(MinecraftServer server, TankData tank, Vec3 from, Vec3 to, double topY) {
         Grid g = grid(server, tank, topY);
         if (g == null) return null;
+        g.memo = true;
         List<int[]> cells = GridPathfinder.find(g, GridPathfinder.Mode.WALK, g.cellOf(from.add(0, 0.01, 0)), g.cellOf(to.add(0, 0.01, 0)), MAX_NODES);
         if (cells == null) return null;
         List<Vec3> out = new ArrayList<>(cells.size());
