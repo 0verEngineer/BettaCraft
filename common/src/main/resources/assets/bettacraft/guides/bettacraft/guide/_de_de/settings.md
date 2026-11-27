@@ -382,6 +382,8 @@ Pflanze wo wächst, steht unter [Pflanzen](plants.md).
   Operatoren: `/bettacraft aquarist arrive [Spieler]` lässt sofort einen kommen.
 * Operatoren und der Besitzer einer Einzelspielerwelt: `/bettacraft debug <Bereich|all> <on|off|trace>` schaltet das
   Debug-Log, `/bettacraft report` schreibt einen Fehlerbericht mit dem angeschauten Becken ([Fehler melden](settings/bug_reports.md)).
+* Operatoren: `/bettacraft algae <0..1> [Radius]` setzt die Algen auf dem Glas aller Becken im Umkreis (in Chunks, 16) auf
+  diesen Wert, `0` macht sie sauber (zum Ausprobieren, wie Algen aussehen und was sie kosten).
 
 ## In diesem Kapitel
 
