@@ -34,6 +34,9 @@ import org.overengineer.bettacraft.tank.TankData;
 public final class AlgaeRenderer {
     private AlgaeRenderer() {}
 
+    /** Dev smoke only: film quads drawn by this renderer so far (the travelling tanks' film). */
+    public static volatile int quadsForTest;
+
     public static void render(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         Level level = be.getLevel();
         if (level == null || t.algae().isEmpty() || !(be.onContraption() || TankBlockEntity.DYNAMIC_WATER.test(be))) return;
@@ -70,6 +73,7 @@ public final class AlgaeRenderer {
                     last.normal().transform(normal.set(nx, 0, nz));
                     if (centre.dot(normal) >= 0) return;
                     if (vc[0] == null) vc[0] = buffers.getBuffer(TravelWater.Types.WATER);
+                    quadsForTest++;
                     TextureAtlasSprite sprite = atlas.apply(AlgaeFilm.SPRITES[lvl]);
                     for (int k = 0; k < 4; k++) {
                         int i = rev ? 3 - k : k;
