@@ -170,11 +170,11 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   the tank chosen by sneak-click), cabinets of any wood or stone (a row of cabinets gets one front with drawers and double
   doors; cabinets join to the back too, so even a 10 x 5 tank stands on one under-cabinet, and every cabinet makes the tank's energy store bigger), automatic and clip-on feeders, air pumps with air stones, light bars and LED
   panels in 16 colours with dimmer and daylight timer.
-- **Pipes and the multiblock filter:** glass and stainless steel pipes and pumps carry water with all its values. A
-  multiblock filter of any size with media that clog serves several aquariums: filter pipes with T-pieces dock on any side
-  of a tank, up to four lines run in one pipe bundle, fresh and waste water ports change the water of every tank of the
-  filter, and a pipe cover hides the pipes behind any block. A top-off and a water change controller keep the water
-  for you.
+- **One pipe system and the multiblock filter:** two pipes for everything, glass and stainless steel, carry water with
+  all its values; a line takes its role from the port it reaches (coloured rings, a red short circuit), a pipe wrench keeps
+  lines apart, and up to four lines run in one bundle, with a dock and a guard per line inside the tank. A multiblock filter
+  of any size with media that clog serves several aquariums, and a pipe cover hides the pipes behind any block. A water
+  change controller with four ports changes the water and tops it off by the level sensor; the old water goes to a drain.
 - **Water chemistry:** TDS, pH and hardness from the water, the substrate, driftwood, leaves and CO2, with a range for
   every animal. CO2 cylinders and bio CO2, a reverse osmosis unit, and nitrate that makes water changes matter.
 - **Food:** live food cultures (tubifex, daphnia, mosquito larvae, artemia) that a live food pump sends through the pipes;
@@ -189,7 +189,7 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   **crank** at its cabinet or filter (about 20 seconds for a day of a medium tank on EASY), or with Create's **drive
   adapter** on rotation with real stress.
 
-![One multiblock filter for two tanks: filter pipes with T-pieces, a pipe bundle with four lines, fresh and waste water ports and pipe covers](images/bettacraft-filter-lines.jpg)
+![One multiblock filter for two tanks: its pipe lines, a pipe bundle with four lines and pipe covers](images/bettacraft-filter-lines.jpg)
 
 ![A monitor wall between a betta tank and a reef tank: status, a temperature graph, a salinity alarm, animals, devices and the logbook](images/bettacraft-monitors.jpg)
 
@@ -246,12 +246,12 @@ version; what is missing where is listed after them.
 - **Tech mods:** Mekanism, EnderIO, Create and Thermal make stainless steel; their tanks and pipes connect to Bettacraft
   pipes, aquariums and reservoirs (also AE2 and Refined Storage interfaces; on Fabric through the transfer API and Team
   Reborn Energy); CO2 gas of other mods fills CO2 cylinders.
-  The facades of AE2, EnderIO, Mekanism Covers and Cable Facades hide the filter pipes.
+  The facades of AE2, EnderIO, Mekanism Covers and Cable Facades hide the pipes.
 - **Create and Create Aeronautics:** aquariums travel on contraptions, trains and airships with their animals, cared for on
   the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (115 quests, English and German; quests of switched-off features
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (117 quests, English and German; quests of switched-off features
   hide themselves), KubeJS events (animal born, animal died, monitor alarm), waypoints at tanks with a monitor
   alarm (JourneyMap, Xaero's Minimap, FTB Chunks; for the owner and the listed users), FTB Teams for the hired aquarist, and `/bettacraft foreign list` to see which animals of other mods still need a
   profile.
