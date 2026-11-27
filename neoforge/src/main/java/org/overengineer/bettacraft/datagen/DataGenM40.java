@@ -18,7 +18,6 @@ import org.overengineer.bettacraft.datagen.model.ItemModelProvider;
 import org.overengineer.bettacraft.datagen.model.MultiPartBlockStateBuilder;
 import org.overengineer.bettacraft.platform.Tags;
 import org.overengineer.bettacraft.BettaCraft;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
 import org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock;
 import org.overengineer.bettacraft.plumbing.interior.PlumbingBlock;
@@ -39,22 +38,11 @@ final class DataGenM40 {
         return List.of(ModBlocks.INTAKE_GUARD.get(), ModBlocks.OUTLET_GUARD.get());
     }
 
-    static List<Block> pipes() {
-        return List.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get());
-    }
-
     // ------------------------------------------------------------------ block states
 
     static void blockStates(BlockStateProvider p) {
-        pipe(p, ModBlocks.FILTER_INLET_PIPE.get(), "filter_inlet_pipe");
-        pipe(p, ModBlocks.FILTER_OUTLET_PIPE.get(), "filter_outlet_pipe");
         anchor(p);
         guards(p);
-    }
-
-    /** M65: 4 px thick, textured along the pipe, the T-piece a 6 px steel collar ({@link PipeModels}). */
-    static void pipe(BlockStateProvider p, Block block, String name) {
-        PipeModels.pipe(p, block, name, "solid", true, FilterPipeBlock.JUNCTION);
     }
 
     /** The dock: a flange on the floor with a stub up, turned to the side of the tank it sits on. */
@@ -117,9 +105,6 @@ final class DataGenM40 {
     // ------------------------------------------------------------------ item models
 
     static void itemModels(ItemModelProvider p) {
-        p.withExistingParent("filter_inlet_pipe", p.modLoc("block/filter_inlet_pipe_item"));
-        p.withExistingParent("filter_outlet_pipe", p.modLoc("block/filter_outlet_pipe_item"));
-        p.withExistingParent("pipe_tee", p.mcLoc("item/generated")).texture("layer0", p.modLoc("item/pipe_tee"));
         DataGenM291.block(p, "intake_guard", "intake_guard");
         DataGenM291.block(p, "outlet_guard", "outlet_guard");
     }
@@ -127,26 +112,15 @@ final class DataGenM40 {
     // ------------------------------------------------------------------ recipes
 
     static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasFilter) {
-        Ingredient pipe = Ingredient.of(ModItems.GLASS_PIPE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
-        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_INLET_PIPE.get(), 8)
-                .pattern("PPP").pattern("PDP").pattern("PPP").define('P', pipe).define('D', Tags.Items.DYES_BLUE)
-                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_inlet_pipe")));
-        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_OUTLET_PIPE.get(), 8)
-                .pattern("PPP").pattern("PDP").pattern("PPP").define('P', pipe).define('D', Tags.Items.DYES_ORANGE)
-                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("filter_outlet_pipe")));
-        ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.PIPE_TEE.get(), 2)
-                .pattern(" S ").pattern("SGS").define('S', ModTags.STAINLESS_STEEL_INGOTS).define('G', Tags.Items.INGOTS_GOLD)
-                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("pipe_tee")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_GUARD.get(), 2)
                 .requires(Items.IRON_BARS).requires(Tags.Items.NUGGETS_IRON).requires(Tags.Items.STRINGS)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_guard")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.OUTLET_GUARD.get(), 2)
-                .requires(Items.IRON_BARS).requires(Tags.Items.NUGGETS_IRON).requires(ModItems.INTERIOR_PIPE.get())
+                .requires(Items.IRON_BARS).requires(Tags.Items.NUGGETS_IRON).requires(ModItems.GLASS_PIPE.get())
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("outlet_guard")));
     }
 
     static void blockTags(java.util.function.Function<TagKey<Block>, ObjTags.Appender<Block>> tag) {
-        for (Block b : pipes()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
         for (Block b : blocks()) tag.apply(BlockTags.MINEABLE_WITH_PICKAXE).add(b);
     }
 }

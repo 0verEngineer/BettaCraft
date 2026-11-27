@@ -337,14 +337,19 @@ public final class ModItems {
     public static final DeferredItem<org.overengineer.bettacraft.big.SteelLeaderItem> STEEL_LEADER = ITEMS.register("steel_leader",
             () -> new org.overengineer.bettacraft.big.SteelLeaderItem(new Item.Properties().durability(32)));
     public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE);
-    public static final DeferredItem<BlockItem> GLASS_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.GLASS_PIPE);
-    public static final DeferredItem<BlockItem> STAINLESS_STEEL_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.STAINLESS_STEEL_PIPE);
+    /** M68: the two pipes for everything (sneak + right-click into a pipe: a bundle; in a tank interior: an interior pipe). */
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeItem> GLASS_PIPE = ITEMS.register("glass_pipe",
+            () -> new org.overengineer.bettacraft.plumbing.PipeItem(ModBlocks.GLASS_PIPE.get(), false, new Item.Properties()));
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeItem> STAINLESS_STEEL_PIPE = ITEMS.register("stainless_steel_pipe",
+            () -> new org.overengineer.bettacraft.plumbing.PipeItem(ModBlocks.STAINLESS_STEEL_PIPE.get(), true, new Item.Properties()));
+    /** M68: the pipe wrench (closes or opens a side of a pipe). */
+    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeWrenchItem> PIPE_WRENCH = ITEMS.register("pipe_wrench",
+            () -> new org.overengineer.bettacraft.plumbing.PipeWrenchItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> WATER_PUMP = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_PUMP);
     public static final DeferredItem<BlockItem> RESERVOIR = ITEMS.registerSimpleBlockItem(ModBlocks.RESERVOIR);
     public static final DeferredItem<BlockItem> LEVEL_SENSOR = ITEMS.registerSimpleBlockItem(ModBlocks.LEVEL_SENSOR);
     public static final DeferredItem<BlockItem> WATER_CHANGE_CONTROLLER = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_CHANGE_CONTROLLER);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> BULKHEAD = plumbing(ModBlocks.BULKHEAD, org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
-    public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTERIOR_PIPE = plumbing(ModBlocks.INTERIOR_PIPE, org.overengineer.bettacraft.plumbing.interior.Plumb.PIPE);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> INTAKE_STRAINER = plumbing(ModBlocks.INTAKE_STRAINER, org.overengineer.bettacraft.plumbing.interior.Plumb.STRAINER);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> LILY_PIPE = plumbing(ModBlocks.LILY_PIPE, org.overengineer.bettacraft.plumbing.interior.Plumb.LILY);
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.interior.PlumbingItem> NOZZLE = plumbing(ModBlocks.NOZZLE, org.overengineer.bettacraft.plumbing.interior.Plumb.NOZZLE);
@@ -353,15 +358,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FILTER_PUMP_HEAD = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_PUMP_HEAD);
     public static final DeferredItem<BlockItem> FILTER_INLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET);
     public static final DeferredItem<BlockItem> FILTER_OUTLET = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET);
-    // M40: the filter pipes, the T-piece and the guards
-    public static final DeferredItem<BlockItem> FILTER_INLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_INLET_PIPE);
-    public static final DeferredItem<BlockItem> FILTER_OUTLET_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_OUTLET_PIPE);
-    public static final DeferredItem<BlockItem> FILTER_FRESH_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_FRESH_PIPE); // M40 part b
-    public static final DeferredItem<BlockItem> FILTER_WASTE_PIPE = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_WASTE_PIPE);
-    public static final DeferredItem<BlockItem> FILTER_FRESH_PORT = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_FRESH_PORT);
-    public static final DeferredItem<BlockItem> FILTER_WASTE_PORT = ITEMS.registerSimpleBlockItem(ModBlocks.FILTER_WASTE_PORT);
-    public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeTeeItem> PIPE_TEE = ITEMS.register("pipe_tee",
-            () -> new org.overengineer.bettacraft.plumbing.PipeTeeItem(new Item.Properties()));
+    // M40: the guards (M68: the filter pipes, their T-piece and the water ports are gone, see register())
     /** M40 part c: the pipe cover tool (a block in the off hand draws a filter pipe as that block; not used up). */
     public static final DeferredItem<org.overengineer.bettacraft.plumbing.PipeCoverItem> PIPE_COVER = ITEMS.register("pipe_cover",
             () -> new org.overengineer.bettacraft.plumbing.PipeCoverItem(new Item.Properties().stacksTo(1)));
@@ -477,6 +474,12 @@ public final class ModItems {
     }
 
     public static void register() {
+        // M68: the items of the removed pipes become the two pipes wherever they lie (inventories, chests, other mods' storage):
+        // every filter pipe, the T-piece and the filter's water ports a stainless steel pipe, the interior pipe a glass pipe (1:1)
+        for (String old : java.util.List.of("filter_inlet_pipe", "filter_outlet_pipe", "filter_fresh_pipe", "filter_waste_pipe", "pipe_tee",
+                "filter_fresh_port", "filter_waste_port"))
+            ITEMS.addAlias(old, "stainless_steel_pipe");
+        ITEMS.addAlias("interior_pipe", "glass_pipe");
         ITEMS.register();
     }
 

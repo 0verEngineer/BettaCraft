@@ -7,9 +7,15 @@
   ],
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "bettacraft:interior_pipe",
-    "bettacraft:interior_pipe",
-    "minecraft:glass_bottle"
+    {
+      "item": "bettacraft:glass_pipe"
+    },
+    {
+      "item": "bettacraft:glass_pipe"
+    },
+    {
+      "item": "minecraft:glass_bottle"
+    }
   ],
   "result": {
     "id": "bettacraft:lily_pipe"

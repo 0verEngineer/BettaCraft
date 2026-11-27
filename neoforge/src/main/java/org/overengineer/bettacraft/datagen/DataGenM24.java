@@ -44,9 +44,11 @@ final class DataGenM24 {
 
     static void blockStates(BlockStateProvider p) {
         // M65: 4 px thick, textured along the pipe (PipeModels); the glass pipe has no end faces (they showed through it)
-        PipeModels.pipe(p, ModBlocks.GLASS_PIPE.get(), "glass_pipe", "translucent", false, null);
-        PipeModels.pipe(p, ModBlocks.STAINLESS_STEEL_PIPE.get(), "stainless_steel_pipe", "solid", true, null);
+        // M68: with the ring of the pipe's role (block state RING): one set of parts per ring, in the texture with that ring
+        PipeModels.pipe(p, ModBlocks.GLASS_PIPE.get(), "glass_pipe", "translucent", false, null, PipeBlock.RING);
+        PipeModels.pipe(p, ModBlocks.STAINLESS_STEEL_PIPE.get(), "stainless_steel_pipe", "solid", true, null, PipeBlock.RING);
         pipe(p, ModBlocks.INTERIOR_PIPE.get(), "interior_pipe", 6, 10, "translucent");
+        pipe(p, ModBlocks.INTERIOR_STEEL_PIPE.get(), "interior_steel_pipe", 6, 10, "solid"); // M68: a steel pipe placed in the interior
         waterPump(p);
         crucible(p);
         devices(p);
@@ -56,7 +58,7 @@ final class DataGenM24 {
 
     /** Multipart pipe: the core and one arm per joined side (the arm model points north). */
     private static void pipe(BlockStateProvider p, Block block, String name, float a, float b, String render) {
-        String tex = name.equals("interior_pipe") ? "block/plumbing_glass" : "block/" + name;
+        String tex = name.equals("interior_pipe") ? "block/plumbing_glass" : name.equals("interior_steel_pipe") ? "block/plumbing_steel" : "block/" + name;
         BlockModelBuilder core = p.models().getBuilder(name + "_core").texture("t", p.modLoc(tex)).texture("particle", p.modLoc(tex)).renderType(render);
         core.element().from(a, a, a).to(b, b, b).allFaces((d, f) -> f.texture("#t")).end();
         BlockModelBuilder arm = p.models().getBuilder(name + "_arm").texture("t", p.modLoc(tex)).texture("particle", p.modLoc(tex)).renderType(render);
@@ -228,7 +230,6 @@ final class DataGenM24 {
         }
         // M29.1: the interior plumbing in 3D
         DataGenM291.block(p, "bulkhead", "bulkhead");
-        DataGenM291.block(p, "interior_pipe", "interior_pipe_item");
         for (String s : List.of("intake_strainer", "lily_pipe", "nozzle", "spray_bar")) DataGenM291.block(p, s, s);
         p.withExistingParent("glass_pipe", p.modLoc("block/glass_pipe_item"));
         p.withExistingParent("stainless_steel_pipe", p.modLoc("block/stainless_steel_pipe_item"));
@@ -270,20 +271,17 @@ final class DataGenM24 {
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.BULKHEAD.get())
                 .requires(steel).requires(ModItems.GLASS_PIPE.get()).requires(Items.DRIED_KELP)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("bulkhead")));
-        ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTERIOR_PIPE.get(), 8)
-                .requires(ModItems.GLASS_PIPE.get())
-                .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("interior_pipe")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.INTAKE_STRAINER.get())
-                .requires(ModItems.INTERIOR_PIPE.get()).requires(Items.IRON_BARS)
+                .requires(ModItems.GLASS_PIPE.get()).requires(Items.IRON_BARS)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("intake_strainer")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.LILY_PIPE.get())
-                .requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(Items.GLASS_BOTTLE)
+                .requires(ModItems.GLASS_PIPE.get()).requires(ModItems.GLASS_PIPE.get()).requires(Items.GLASS_BOTTLE)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("lily_pipe")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.NOZZLE.get(), 2)
-                .requires(ModItems.INTERIOR_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
+                .requires(ModItems.GLASS_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("nozzle")));
         ShapelessRecipeBuilder.shapeless(RecipeCompat.items(), RecipeCategory.MISC, ModItems.SPRAY_BAR.get())
-                .requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(ModItems.INTERIOR_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
+                .requires(ModItems.GLASS_PIPE.get()).requires(ModItems.GLASS_PIPE.get()).requires(ModItems.GLASS_PIPE.get()).requires(Tags.Items.NUGGETS_IRON)
                 .unlockedBy("has_filter", hasFilter).save(out, RecipeCompat.key(BettaCraft.id("spray_bar")));
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.MISC, ModItems.FILTER_CHAMBER.get(), 2)
                 .pattern("IGI").pattern("G G").pattern("IGI")

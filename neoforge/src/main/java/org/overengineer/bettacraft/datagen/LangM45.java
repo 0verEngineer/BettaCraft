@@ -77,9 +77,9 @@ final class LangM45 {
         q(a, "auto_water_change", "Hands Free", "A water change controller with pipes to fresh water and a drain changes the water on its own schedule.");
         q(a, "top_off", "Top It Off", "A level sensor tops evaporated water up from a pipe, so the salt and the values stay steady.");
         q(a, "multiblock_filter", "Filter Room", "Build a multiblock filter: a pump head on filter chambers with an inlet and an outlet. Fill the chambers with sponge, rings, carbon or peat.");
-        q(a, "filter_lines", "Filter Lines", "Filter pipes connect the filter to tanks further away. Every place where a line docks on a tank needs a guard against the fish.");
+        q(a, "filter_lines", "Filter Lines", "Pipes at the filter's inlet and outlet become its intake and return line and reach tanks further away. Every place where a line docks on a tank needs a guard against the fish.");
+        q(a, "pipe_wrench", "The Right Tool", "The pipe wrench closes a side of a pipe: two lines side by side stay apart."); // M68
         q(a, "shared_filter", "One Filter for All", "Connect two tanks to the same multiblock filter: the flow and the cleaning are shared by their water volumes.");
-        q(a, "filter_water", "Fresh In, Waste Out", "Fresh water and waste ports let a water change controller and a top-off work on every tank of the filter.");
         q(a, "pipe_covers", "Out of Sight", "Pipe covers hide filter pipes in walls and floors in the look of any block.");
         q(a, "decor", "Interior Design", "Place decoration in the interior: caves, roots, stones and wrecks give the fish cover and the tank character.");
         q(a, "floating_plants", "Floating Carpet", "Floating plants spread on the surface, take up waste and give shade. Bettas build their nests under them.");

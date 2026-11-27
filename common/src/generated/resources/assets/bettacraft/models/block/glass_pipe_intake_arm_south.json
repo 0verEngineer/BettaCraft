@@ -1,0 +1,36 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#t"
+        },
+        "east": {
+          "texture": "#r"
+        },
+        "up": {
+          "texture": "#t"
+        },
+        "west": {
+          "texture": "#r"
+        }
+      },
+      "from": [
+        6.5,
+        6.5,
+        9.5
+      ],
+      "to": [
+        9.5,
+        9.5,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "bettacraft:block/glass_pipe_intake",
+    "r": "bettacraft:block/glass_pipe_intake_r",
+    "t": "bettacraft:block/glass_pipe_intake"
+  }
+}

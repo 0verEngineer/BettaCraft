@@ -39,9 +39,9 @@ import org.overengineer.bettacraft.registry.ModBlockEntities;
  * outlet connectors on the outside (their open side joins the pipes). Right-click a chamber with a medium to put it in,
  * with an empty hand to take it out; the pump head shows the filter.
  */
-public class FilterPartBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockTooltip, BlockRemoval, PipeConnectable {
-    /** M40 part b: FRESH and WASTE are the fresh and waste water ports (F1, {@link FilterPortBlockEntity}). */
-    public enum Part { CHAMBER, PUMP_HEAD, INLET, OUTLET, FRESH, WASTE }
+public class FilterPartBlock extends BaseEntityBlock implements BlockRemoval, PipeConnectable, org.overengineer.bettacraft.plumbing.PipePort {
+    /** M68: the fresh and waste water ports of M40 part b are gone (they load as stainless steel pipes). */
+    public enum Part { CHAMBER, PUMP_HEAD, INLET, OUTLET }
 
     /** Inlet / outlet: the side the pipe joins (pointing away from the filter). */
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
@@ -73,6 +73,14 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
     @Override
     public boolean pipeConnects(BlockState state, Direction face) {
         return (part == Part.INLET || part == Part.OUTLET) && face == state.getValue(FACING);
+    }
+
+    /** M68: the pipe at the inlet is the filter's intake line, at the outlet its return line. */
+    @Nullable
+    @Override
+    public org.overengineer.bettacraft.plumbing.PipeRole pipeRole(net.minecraft.world.level.BlockGetter level, BlockPos pos, BlockState state, Direction face) {
+        if (!state.hasProperty(FACING) || face != state.getValue(FACING)) return null;
+        return part == Part.INLET ? org.overengineer.bettacraft.plumbing.PipeRole.INTAKE : part == Part.OUTLET ? org.overengineer.bettacraft.plumbing.PipeRole.RETURN : null;
     }
 
     @Override
@@ -121,21 +129,15 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
         if (!newState.is(this) && level.getBlockEntity(pos) instanceof FilterChamberBlockEntity ch && !ch.medium().isEmpty()) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), ch.medium().copy());
         }
-        PipeNetwork.invalidate(level);
-        org.overengineer.bettacraft.plumbing.FilterPipeBlock.touch(); // M40: the filter lines look again
+        PipeNetwork.invalidate(level, pos); // M68: the lines at it look again (their role)
+        org.overengineer.bettacraft.plumbing.PipeUpdates.schedule(level, pos, false);
     }
 
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
-        PipeNetwork.invalidate(level);
-        org.overengineer.bettacraft.plumbing.FilterPipeBlock.touch(); // M40: the filter lines look again
-    }
-
-    @Override // BlockTooltip (M52b)
-    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext ctx, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, net.minecraft.world.item.TooltipFlag flag) {
-        List<Component> tooltip = new SinkList<>(tooltipAdder);
-        if (part == Part.FRESH || part == Part.WASTE) tooltip.add(Component.translatable("tooltip.bettacraft.filter_port.usage").withStyle(ChatFormatting.DARK_GRAY)); // M40 part b
+        PipeNetwork.invalidate(level, pos); // M68: the lines at it look again (their role)
+        org.overengineer.bettacraft.plumbing.PipeUpdates.schedule(level, pos, false);
     }
 
     @Nullable
@@ -144,7 +146,6 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
         return switch (part) {
             case CHAMBER -> new FilterChamberBlockEntity(pos, state);
             case PUMP_HEAD -> new FilterPumpHeadBlockEntity(pos, state);
-            case FRESH, WASTE -> new FilterPortBlockEntity(pos, state); // M40 part b
             default -> null;
         };
     }
@@ -152,7 +153,6 @@ public class FilterPartBlock extends BaseEntityBlock implements org.overengineer
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (part == Part.WASTE && !level.isClientSide()) return createTickerHelper(type, ModBlockEntities.FILTER_PORT.get(), FilterPortBlockEntity::serverTick);
         return part == Part.PUMP_HEAD && !level.isClientSide()
                 ? createTickerHelper(type, ModBlockEntities.FILTER_PUMP_HEAD.get(), FilterPumpHeadBlockEntity::serverTick) : null;
     }

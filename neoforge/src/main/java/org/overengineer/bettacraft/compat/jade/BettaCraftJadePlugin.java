@@ -40,6 +40,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.plumbing.WaterPumpBlockEntity.class);
         registration.registerBlockDataProvider(JadeServerData.Spring.INSTANCE, org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity.class);
+        registration.registerBlockDataProvider(JadeServerData.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.PipeBlockEntity.class); // M68: the flow now
     }
 
     @Override
@@ -48,8 +49,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.registerEntityComponent(JadeClientTooltips.Betta.INSTANCE, BettaEntity.class);
         registration.registerEntityComponent(JadeClientTooltips.Aquarist.INSTANCE, org.overengineer.bettacraft.aquarist.AquaristEntity.class); // M51
         registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.PipeBlock.class); // M66
-        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.FilterPipeBlock.class);
-        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.class);
+        registration.registerBlockComponent(JadeClientTooltips.Pipe.INSTANCE, org.overengineer.bettacraft.plumbing.PipeBundleBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.ExternalFilterBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Filter.INSTANCE, org.overengineer.bettacraft.equipment.CabinetBlock.class);
         registration.registerBlockComponent(JadeClientTooltips.Culture.INSTANCE, org.overengineer.bettacraft.food.CultureTubBlock.class);
@@ -65,8 +65,7 @@ public class BettaCraftJadePlugin implements IWailaPlugin {
         registration.addTooltipCollectedCallback((box, accessor) -> {
             if (accessor instanceof snownee.jade.api.BlockAccessor b && (b.getBlock() instanceof TankBlock
                     || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
-                    || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBlock
-                    || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock)) {
+                    || b.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBundleBlock)) {
                 box.getTooltip().remove(snownee.jade.api.JadeIds.UNIVERSAL_FLUID_STORAGE);
             }
         });

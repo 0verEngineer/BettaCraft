@@ -71,10 +71,10 @@ public final class ModBlockEntities {
             () -> new BlockEntityType<>(org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity::new, java.util.Set.of(ModBlocks.FILTER_PUMP_HEAD.get())));
 
     @SuppressWarnings("DataFlowIssue")
-    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity>> FILTER_PIPE = BLOCK_ENTITIES.register("filter_pipe",
-            () -> new BlockEntityType<>(org.overengineer.bettacraft.plumbing.FilterPipeBlockEntity::new, java.util.Set.of(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(), ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get()))); // M40 (part b: the fresh and waste line, the bundle)
-    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.filter.FilterPortBlockEntity>> FILTER_PORT = BLOCK_ENTITIES.register("filter_port",
-            () -> new BlockEntityType<>(org.overengineer.bettacraft.filter.FilterPortBlockEntity::new, java.util.Set.of(ModBlocks.FILTER_FRESH_PORT.get(), ModBlocks.FILTER_WASTE_PORT.get()))); // M40 part b
+    /** M68: every pipe and the bundle; the id of the M40 filter pipes' block entity, so their data loads (the water ports' too). */
+    public static final Supplier<BlockEntityType<org.overengineer.bettacraft.plumbing.PipeBlockEntity>> PIPE = BLOCK_ENTITIES.register("filter_pipe",
+            () -> new BlockEntityType<>(org.overengineer.bettacraft.plumbing.PipeBlockEntity::new, java.util.Set.of(ModBlocks.GLASS_PIPE.get(),
+                    ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get())));
 
     // M25
     @SuppressWarnings("DataFlowIssue")
@@ -125,6 +125,7 @@ public final class ModBlockEntities {
             () -> new BlockEntityType<>(org.overengineer.bettacraft.monitor.MonitorBlockEntity::new, java.util.Set.of(ModBlocks.MONITOR.get()))); // M27
 
     public static void register() {
+        BLOCK_ENTITIES.addAlias("filter_port", "filter_pipe"); // M68: the filter's water ports are steel pipes now
         BLOCK_ENTITIES.register();
     }
 

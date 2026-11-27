@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "bettacraft:interior_pipe"
+          "name": "bettacraft:glass_pipe"
         }
       ],
       "rolls": 1

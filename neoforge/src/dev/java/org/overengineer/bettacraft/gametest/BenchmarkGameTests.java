@@ -178,9 +178,9 @@ public final class BenchmarkGameTests {
         }
         double buildMs = (System.nanoTime() - t0) / 1e6 / builds;
         if (n == null) throw new GameTestFailure("no network");
-        h.assertTrue(n.pipes().size() >= 1000 || n.pipes().size() == PipeNetwork.MAX_PIPES, "1000 pipes in one network: " + n.pipes().size());
+        h.assertTrue(n.size() >= 1000 || n.size() == PipeNetwork.MAX_PIPES, "1000 pipes in one network: " + n.size());
         h.assertTrue(n.tankEnds(level).size() >= 2, "both tanks are ends: " + n.tankEnds(level).size());
-        report("building a network of " + n.pipes().size() + " pipes with " + n.ends().size() + " ends", buildMs, 1);
+        report("building a network of " + n.size() + " pipes with " + n.ends().size() + " ends", buildMs, 1);
         // moving water through it (the cached network), one batch per window as a pump does
         int batches = 50;
         long moved = 0;

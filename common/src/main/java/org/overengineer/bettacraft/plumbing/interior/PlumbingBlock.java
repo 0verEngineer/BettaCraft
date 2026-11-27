@@ -170,6 +170,14 @@ public class PlumbingBlock extends Block {
         return true;
     }
 
+    /** M68: an interior pipe is a glass or steel pipe placed in the interior: picking it gives that pipe. */
+    @Override
+    protected net.minecraft.world.item.ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+        if (kind == Plumb.PIPE) return new net.minecraft.world.item.ItemStack(this == org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_STEEL_PIPE.get()
+                ? org.overengineer.bettacraft.registry.ModItems.STAINLESS_STEEL_PIPE.get() : org.overengineer.bettacraft.registry.ModItems.GLASS_PIPE.get());
+        return super.getCloneItemStack(level, pos, state, includeData);
+    }
+
     /** The stream of a working outlet (in the interior). */
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource r) {

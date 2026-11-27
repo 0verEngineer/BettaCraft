@@ -6,7 +6,6 @@ navigation:
   position: 43
 item_ids:
   - bettacraft:bulkhead
-  - bettacraft:interior_pipe
   - bettacraft:intake_strainer
   - bettacraft:lily_pipe
   - bettacraft:nozzle
@@ -21,7 +20,7 @@ Rohre können **durch den Boden** ins Aquarium und darin weiter laufen:
 
 1. Eine <ItemLink id="bettacraft:bulkhead" /> auf einen **Bodenblock** des Aquariums anwenden (von außen). Ihr Anschluss
    erscheint auf dem [Innenraum](../interior.md)-Boden in der Mitte dieses Blocks.
-2. Im Aquarium davon aus mit <ItemLink id="bettacraft:interior_pipe" /> weiterbauen (einen Innenraum-Block dünn,
+2. Im Aquarium davon aus mit <ItemLink id="bettacraft:glass_pipe" /> oder Edelstahlrohren weiterbauen (im Innenraum gesetzt sind sie Innenraum-Rohre, einen Innenraum-Block dünn,
    draußen in der Miniatur einen Pixel).
 3. Die Rohre enden in **Ausläufen** (sie zeigen beim Setzen in Blickrichtung):
    * <ItemLink id="bettacraft:lily_pipe" />: ein Glas-Auslauf, verteilt das Wasser sanft unter der Oberfläche;
@@ -43,7 +42,6 @@ Rohre am **Glasrand** (an jeder anderen Seite eines Aquariumblocks) nehmen und g
 Herstellung:
 
 <RecipesFor id="bettacraft:bulkhead" />
-<RecipesFor id="bettacraft:interior_pipe" />
 <RecipesFor id="bettacraft:intake_strainer" />
 <RecipesFor id="bettacraft:lily_pipe" />
 <RecipesFor id="bettacraft:nozzle" />

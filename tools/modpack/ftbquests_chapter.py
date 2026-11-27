@@ -154,10 +154,10 @@ QUESTS = [
     ("top_off", [item("level_sensor")], ["pipes"], 7.00, -8.25, 50, None),
     ("multiblock_filter", [item("filter_chamber"), item("filter_pump_head"), item("filter_inlet"), item("filter_outlet")],
      ["cabinet"], 7.25, -6.50, 100, None),
-    ("filter_lines", [item("filter_inlet_pipe"), item("filter_outlet_pipe"), item("intake_guard"), item("outlet_guard")],
+    ("filter_lines", [item("stainless_steel_pipe"), item("intake_guard"), item("outlet_guard")],
      ["multiblock_filter"], 8.75, -7.50, 75, None),
     ("shared_filter", [adv("shared_filter")], ["filter_lines"], 10.75, -7.75, 150, "hexagon"),
-    ("filter_water", [item("filter_fresh_port"), item("filter_waste_port")], ["filter_lines"], 8.75, -9.00, 75, None),
+    ("pipe_wrench", [item("pipe_wrench")], ["filter_lines"], 8.75, -9.00, 50, None),  # M68 (the filter's water ports are gone)
     ("pipe_covers", [item("pipe_cover")], ["filter_lines"], 10.50, -9.50, 25, None),
     # plants and the interior
     ("decor", [adv("decor")], ["interior"], -1.00, -3.50, 25, None),
@@ -253,7 +253,7 @@ OWN_FEATURES = {
     "light_timer": ["LIGHT_TIMER"], "regulator": ["POWER_REGULATOR"], "powered": ["POWER"], "wound_up": ["WINDING"], "tank_cranked": ["TANK_CRANK"],
     "stainless_steel": ["STAINLESS_STEEL"], "pipes": ["PIPES"], "interior_pipes": ["INTERIOR_PIPES"],
     "auto_water_change": ["AUTO_WATER_CHANGE"], "top_off": ["TOP_OFF"], "multiblock_filter": ["MULTIBLOCK_FILTER"],
-    "filter_lines": ["FILTER_LINES"], "filter_water": ["FILTER_WATER"], "pipe_covers": ["PIPE_COVERS"],
+    "filter_lines": ["FILTER_LINES"], "pipe_wrench": ["PIPE_WRENCH"], "pipe_covers": ["PIPE_COVERS"],
     "decor": ["DECOR"], "floating_plants": ["FLOATING_PLANTS"], "algae": ["ALGAE"], "fertilizer": ["FERTILIZER"],
     "fertilizer_dosing": ["FERTILIZER_DOSING"],
     "mosquito_larvae": ["LIVE_FOOD"], "food_bred": ["LIVE_FOOD"], "cultures": ["LIVE_FOOD_CULTURES"],
