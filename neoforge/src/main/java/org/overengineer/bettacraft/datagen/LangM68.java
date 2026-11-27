@@ -19,7 +19,7 @@ final class LangM68 {
         a.accept("tooltip.bettacraft.pipe_wrench.usage", "Right-click a side of a pipe: closes it (the pipe no longer joins what is there) or opens it again");
         a.accept("tooltip.bettacraft.pipe_wrench.bundle", "On a bundle: the pipe you look at; sneaking moves it to the next spot");
         a.accept("tooltip.bettacraft.pipe.rate", "Carries up to %s mB/s");
-        a.accept("tooltip.bettacraft.pipe.usage", "Joins every neighbour that fits; at a filter's inlet or outlet it becomes its intake or return line");
+        a.accept("tooltip.bettacraft.pipe.usage", "Joins every neighbour that fits; at a port of a filter or a water change controller its line takes that port's role");
         a.accept("tooltip.bettacraft.pipe.bundle", "Sneak-right-click a pipe with it: both in one block (up to four); in a tank interior: an interior pipe");
         a.accept("message.bettacraft.pipe_wrench.closed", "Closed: %s");
         a.accept("message.bettacraft.pipe_wrench.opened", "Open: %s");

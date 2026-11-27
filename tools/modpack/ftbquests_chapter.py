@@ -146,7 +146,8 @@ QUESTS = [
     ("stainless_steel", [item("crucible"), item("stainless_steel_ingot")], ["pipes"], 4.50, -5.75, 75, None),
     ("interior_pipes", [item("bulkhead"), item("spray_bar")], ["pipes"], 4.00, -7.75, 50, None),
     ("auto_water_change", [adv("auto_water_change")], ["pipes"], 5.50, -6.75, 100, None),
-    ("top_off", [item("level_sensor")], ["pipes"], 7.00, -8.25, 50, None),
+    ("top_off", [item("level_sensor")], ["auto_water_change"], 7.00, -8.25, 50, None),  # M68: the controller tops off
+    ("drain", [item("drain")], ["pipes"], 5.50, -8.50, 25, None),  # M68
     ("multiblock_filter", [item("filter_chamber"), item("filter_pump_head"), item("filter_inlet"), item("filter_outlet")],
      ["cabinet"], 7.25, -6.50, 100, None),
     ("filter_lines", [item("stainless_steel_pipe"), item("intake_guard"), item("outlet_guard")],
@@ -247,7 +248,7 @@ OWN_FEATURES = {
     "aeration": ["AERATION"], "sponge_filter": ["MORE_INTERNAL_FILTERS"], "led_lights": ["LED_TIERS"],
     "light_timer": ["LIGHT_TIMER"], "regulator": ["POWER_REGULATOR"], "powered": ["POWER"], "wound_up": ["WINDING"], "tank_cranked": ["TANK_CRANK"],
     "stainless_steel": ["STAINLESS_STEEL"], "pipes": ["PIPES"], "interior_pipes": ["INTERIOR_PIPES"],
-    "auto_water_change": ["AUTO_WATER_CHANGE"], "top_off": ["TOP_OFF"], "multiblock_filter": ["MULTIBLOCK_FILTER"],
+    "auto_water_change": ["AUTO_WATER_CHANGE"], "top_off": ["TOP_OFF"], "drain": ["DRAIN"], "multiblock_filter": ["MULTIBLOCK_FILTER"],
     "filter_lines": ["FILTER_LINES"], "pipe_wrench": ["PIPE_WRENCH"], "pipe_covers": ["PIPE_COVERS"],
     "decor": ["DECOR"], "floating_plants": ["FLOATING_PLANTS"], "algae": ["ALGAE"], "fertilizer": ["FERTILIZER"],
     "fertilizer_dosing": ["FERTILIZER_DOSING"],
@@ -303,6 +304,7 @@ REWARDS = {
     "filter_lines": [("intake_guard", 1)],
     "shared_filter": [("ceramic_rings", 2)],
     "pipe_covers": [("pipe_cover", 4)],
+    "drain": [("glass_pipe", 4)],
     "decor": [("decor_driftwood", 1)],
     "floating_plants": [("duckweed", 2)],
     "algae": [("algae_wafer", 4)],
