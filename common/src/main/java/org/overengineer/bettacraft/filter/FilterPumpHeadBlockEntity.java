@@ -494,11 +494,11 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             } catch (IllegalArgumentException x) {
                 st = MultiblockFilter.LinkStatus.OK;
             }
-            BlockPos p = NbtUtils.readBlockPos(e, "pos").orElse(null);
+            BlockPos p = NbtCompat.readBlockPos(e, "pos").orElse(null);
             if (p != null) l.add(new TankLink(p, st, e.getIntOr("flow", 0), e.getDoubleOr("clean", 0d), e.getIntOr("percent", 0), e.getIntOr("blocks", 0)));
         }
         tanks = l;
-        int[] ports = t.getIntArray("ports");
+        int[] ports = t.getIntArray("ports").orElse(new int[0]);
         freshPorts = ports.length >= 4 ? ports[0] : 0;
         wastePorts = ports.length >= 4 ? ports[1] : 0;
         freshMb = ports.length >= 4 ? ports[2] : 0;

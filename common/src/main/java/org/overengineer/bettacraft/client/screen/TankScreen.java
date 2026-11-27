@@ -811,7 +811,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     completeUserName((mods & GLFW.GLFW_MOD_SHIFT) != 0);
                     return true;
                 }
-                box.keyPressed(key, scan, mods);
+                box.keyPressed(event);
                 return true; // never let typing trigger the inventory key
             }
         }
@@ -829,7 +829,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             completionBase = cur;
             List<String> names = new ArrayList<>();
             for (var info : minecraft.getConnection().getOnlinePlayers()) {
-                String n = info.getProfile().getName();
+                String n = info.getProfile().name();
                 if (n.regionMatches(true, 0, completionBase, 0, completionBase.length())) names.add(n);
             }
             names.sort(String.CASE_INSENSITIVE_ORDER);
@@ -981,7 +981,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         pendingTooltip = null;
         if (tab == Tab.DEVICES) placeDeviceWidgets(view());
-        super.render(g, mouseX, mouseY, partialTick);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         if (pendingTooltip != null) {
             if (geneTooltipForTest || showTipForTest >= 0) g.setComponentTooltipForNextFrame(font, pendingTooltip, leftPos + ox + (showTipForTest >= 0 ? 20 : 96), topPos + oy + (showTipForTest >= 0 ? 70 : 22));
             else g.setComponentTooltipForNextFrame(font, pendingTooltip, mouseX, mouseY);
@@ -2038,7 +2038,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             } else {
                 for (var t : types) {
                     if (p.counts[t.ordinal()] <= 0) continue;
-                    Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getDescriptionId());
+                    Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getItem().getDescriptionId());
                     MutableComponent sp = Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()]).withStyle(ChatFormatting.GREEN);
                     if (t == org.overengineer.bettacraft.tank.plants.FloatingPlantType.RED_ROOT_FLOATER) {
                         // red under strong light, green under weak light (drawn in the colour the leaves have in this light)
@@ -2145,7 +2145,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
                     int cnt = a.counts[sp.ordinal()];
                     if (cnt <= 0) continue;
-                    Component name = Component.translatable(org.overengineer.bettacraft.plants.InteriorPlants.item(sp, 0).getDescriptionId());
+                    Component name = Component.translatable(org.overengineer.bettacraft.plants.InteriorPlants.item(sp, 0).getItem().getDescriptionId());
                     int color = org.overengineer.bettacraft.plants.PlantColors.color(sp,
                             sp.red() == org.overengineer.bettacraft.plants.PlantSpecies.Red.TIPS ? org.overengineer.bettacraft.plants.PlantPart.TOP
                                     : org.overengineer.bettacraft.plants.PlantPart.LEAF, a.tints[sp.ordinal()]);

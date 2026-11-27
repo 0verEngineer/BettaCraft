@@ -52,8 +52,8 @@ public class MultiblockFilterScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
         linkTip = null;
         FilterPumpHeadBlockEntity h = be();
         if (h == null) return;

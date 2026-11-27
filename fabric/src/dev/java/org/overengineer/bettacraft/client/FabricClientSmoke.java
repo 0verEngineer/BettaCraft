@@ -124,7 +124,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        if (Boolean.getBooleanOr("bettacraft.smoketest.worldtour", false)) {
+        if (Boolean.getBoolean("bettacraft.smoketest.worldtour")) {
             // M63b: -Psmoketestworldtour: every tank of a copy of the showcase (DevClientWorldTour)
             ClientEvents.SCREEN_OPENING.add(screen -> {
                 if (screen instanceof net.minecraft.client.gui.screens.AccessibilityOnboardingScreen) {
@@ -138,10 +138,10 @@ public final class FabricClientSmoke implements ClientModInitializer {
             });
             DevClientWorldTour.register();
             net.fabricmc.fabric.api.client.screen.v1.ScreenEvents.AFTER_INIT.register((mc, screen, w, h) -> DevClientWorldTour.afterInit(screen));
-        } else if (Boolean.getBooleanOr("bettacraft.smoketest.fabric", false)) {
+        } else if (Boolean.getBoolean("bettacraft.smoketest.fabric")) {
             ClientEvents.SCREEN_OPENING.add(FabricClientSmoke::onScreen);
             ClientEvents.TICK_POST.add(FabricClientSmoke::tick);
-        } else if (Boolean.getBooleanOr("bettacraft.smoketest", false)) {
+        } else if (Boolean.getBoolean("bettacraft.smoketest")) {
             ClientEvents.SCREEN_OPENING.add(screen -> {
                 if (screen instanceof TitleScreen) {
                     LOGGER.info("[smoketest] client reached title screen");
@@ -211,7 +211,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
         if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
         try {
             // -Psmoketestbook: only the handbook (Patchouli) and the recipe viewer, English and German
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.book", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.book")) {
                 stage = 10;
                 book = new BookTour();
             }
@@ -221,7 +221,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 mc.stop();
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m62bonly", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62bonly")) {
                 LOGGER.info("[smoketest] fabric client in world: M62b scene");
                 m62b = new DevClientSmokeM62b();
                 stage = 25;
@@ -235,7 +235,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m62donly", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62donly")) {
                 LOGGER.info("[smoketest] fabric client in world: M62d scene");
                 m62d = new DevClientSmokeM62d();
                 stage = 624;
@@ -244,7 +244,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 if (m62d.tick()) stage = 4;
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m66only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m66only")) {
                 LOGGER.info("[smoketest] fabric client in world: M66 scene");
                 m66 = new DevClientSmokeM66();
                 stage = 66;
@@ -258,7 +258,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m65only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m65only")) {
                 LOGGER.info("[smoketest] fabric client in world: M65 scene");
                 m65 = new DevClientSmokeM65();
                 stage = 65;
@@ -272,7 +272,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m64only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m64only")) {
                 LOGGER.info("[smoketest] fabric client in world: M64 scene");
                 m64 = new DevClientSmokeM64();
                 stage = 64;
@@ -286,7 +286,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m63only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m63only")) {
                 LOGGER.info("[smoketest] fabric client in world: M63 scene");
                 m63 = new DevClientSmokeM63();
                 stage = 63;
@@ -300,7 +300,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m61only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m61only")) {
                 LOGGER.info("[smoketest] fabric client in world: M61 scene");
                 m61 = new DevClientSmokeM61();
                 stage = 24;
@@ -315,7 +315,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m62conly", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62conly")) {
                 LOGGER.info("[smoketest] fabric client in world: M62c scene");
                 m62c = new DevClientSmokeM62c();
                 stage = 62;
@@ -328,7 +328,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m56only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m56only")) {
                 LOGGER.info("[smoketest] fabric client in world: M56 scene");
                 m56 = new DevClientSmokeM56();
                 stage = 23;
@@ -337,7 +337,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 if (m56.tick()) stage = 4;
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m55only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m55only")) {
                 LOGGER.info("[smoketest] fabric client in world: M55 scene");
                 m55 = new DevClientSmokeM55();
                 stage = 22;
@@ -346,7 +346,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 if (m55.tick()) stage = 4;
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m62aonly", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m62aonly")) {
                 LOGGER.info("[smoketest] fabric client in world: M62a scene");
                 m62a = new DevClientSmokeM62a();
                 stage = 620;
@@ -361,7 +361,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 }
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m54only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m54only")) {
                 LOGGER.info("[smoketest] fabric client in world: M54 scene");
                 m54 = new DevClientSmokeM54();
                 stage = 21;
@@ -370,7 +370,7 @@ public final class FabricClientSmoke implements ClientModInitializer {
                 if (m54.tick()) stage = 4;
                 return;
             }
-            if (stage == 0 && ticks == 60 && Boolean.getBooleanOr("bettacraft.smoketest.m53only", false)) {
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m53only")) {
                 LOGGER.info("[smoketest] fabric client in world: M53 scene");
                 m53 = new DevClientSmokeM53();
                 stage = 20;

@@ -263,7 +263,7 @@ final class DevClientSmokeM66 {
 
     private void aquaristShots(String code, String sc) {
         String pre = code + "_" + sc + "_";
-        then(1, () -> server(p -> p.teleportTo(p.serverLevel(), npc.getX() - 2, npc.getY() + 0.5, npc.getZ() - 3, 0F, 10F)));
+        then(1, () -> server(p -> p.teleportTo(p.level(), npc.getX() - 2, npc.getY() + 0.5, npc.getZ() - 3, java.util.Set.of(), 0F, 10F, false)));
         then(10, () -> {});
         then(1, () -> server(p -> AquaristMenu.open(p, npc)));
         then(25, () -> shot(pre + "aquarist_work", false));
@@ -298,17 +298,17 @@ final class DevClientSmokeM66 {
     // ------------------------------------------------------------------ the scene
 
     private void setup(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         powerFilter = ServerConfig.POWER_FILTER.get();
         powerHeater = ServerConfig.POWER_HEATER.get();
         power = Features.own(Feature.POWER);
         ServerConfig.POWER_FILTER.set(true);
         ServerConfig.POWER_HEATER.set(true);
         Features.set(Feature.POWER, true);
-        level.setDayTime(6000);
-        level.setWeatherParameters(24000, 0, false, false);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, level.getServer());
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        DevClientWorldTour.clearWeather(level);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.SPAWN_MOBS, false, level.getServer());
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
         base = p.blockPosition().offset(-8, -1, 6);
@@ -408,7 +408,7 @@ final class DevClientSmokeM66 {
         level.setBlock(pipe, ModBlocks.GLASS_PIPE.get().defaultBlockState(), 3);
         level.setBlock(pipe.east(), ModBlocks.GLASS_PIPE.get().defaultBlockState(), 3);
         level.setBlock(pipe.west(), ModBlocks.RESERVOIR.get().defaultBlockState(), 3);
-        p.teleportTo(level, base.getX() + 2.5, base.getY() + 3, base.getZ() - 6.5, 0F, 20F);
+        p.teleportTo(level, base.getX() + 2.5, base.getY() + 3, base.getZ() - 6.5, java.util.Set.of(), 0F, 20F, false);
         LOGGER.info("[smoketest] M66 scene built at {}", base);
     }
 
@@ -440,7 +440,7 @@ final class DevClientSmokeM66 {
         if (amano != null) t.critterObjects().add(org.overengineer.bettacraft.critters.AmanoLarvae.hatch(amano, t.nextCritterId(), rnd));
         // frogs: a pair, spawn and tadpoles
         for (boolean female : new boolean[]{false, true}) {
-            var f = ModEntities.DWARF_FROG.get().create(level);
+            var f = ModEntities.DWARF_FROG.get().create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
             if (f == null) continue;
             f.setFemale(female);
             var bag = org.overengineer.bettacraft.entity.betta.FishBagItem.fillWith(f);
@@ -476,7 +476,7 @@ final class DevClientSmokeM66 {
     private void terrariumAnimals(ServerLevel level, TankBlockEntity ter) {
         try {
             for (boolean female : new boolean[]{false, true}) {
-                var e = ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO).create(level);
+                var e = ModEntities.herp(org.overengineer.bettacraft.terrarium.HerpSpecies.LEOPARD_GECKO).create(level, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED);
                 e.setFemale(female);
                 ItemStack stack = e.getBucketItemStack();
                 e.saveToBucketTag(stack);
@@ -507,10 +507,10 @@ final class DevClientSmokeM66 {
 
     /** The aquarist himself, after the basin and the bed have their tickets. */
     private void setupAquarist(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         BlockPos h = homeBasin;
         TankBlockEntity rear = TankMultiblock.getController(level, rearing1), rear2 = TankMultiblock.getController(level, rearing2), a = TankMultiblock.getController(level, firstTank);
-        npc = AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().getName(), Vec3.atCenterOf(h.offset(2, 0, 1)));
+        npc = AquaristArrival.spawnHiredHomeless(level, p.getUUID(), p.getGameProfile().name(), Vec3.atCenterOf(h.offset(2, 0, 1)));
         npc.alwaysDay = true;
         npc.setNoAi(true);
         if (!npc.setHome(level, h, h.offset(0, 0, 4))) problem("the aquarist found no home: " + npc.workplace() + " " + npc.bed());
@@ -591,7 +591,7 @@ final class DevClientSmokeM66 {
 
     private void openTank(BlockPos at) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), at);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), at);
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         });
@@ -600,7 +600,7 @@ final class DevClientSmokeM66 {
     /** Opens the menu of a block entity that is a menu provider (cabinet, filter, feeders). */
     private void openBlock(BlockPos at) {
         server(p -> {
-            if (p.serverLevel().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
+            if (p.level().getBlockEntity(at) instanceof net.minecraft.world.MenuProvider mp) {
                 org.overengineer.bettacraft.platform.Platform.get().openMenu(p, mp, buf -> buf.writeBlockPos(at));
             } else {
                 LOGGER.error("[smoketest] M66 no menu at {}", at);
@@ -617,12 +617,12 @@ final class DevClientSmokeM66 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
         mc.options.guiScale().set(s);
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     /** Calls a method that only the new version has (nothing happens in the old one). */
@@ -660,7 +660,7 @@ final class DevClientSmokeM66 {
         Vec3 d = c.subtract(eye);
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
-        server(p -> p.teleportTo(p.serverLevel(), eye.x, eye.y - p.getEyeHeight(), eye.z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -696,7 +696,7 @@ final class DevClientSmokeM66 {
             bad.addAll(ts.textFitForTest());
             if (!bad.isEmpty()) problem(name + ": " + bad);
         }
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m66_" + tag + "_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m66_" + tag + "_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }

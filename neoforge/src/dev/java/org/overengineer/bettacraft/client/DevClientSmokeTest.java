@@ -87,230 +87,230 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM223 m223;
     private static DevClientSmokeM224 m224;
     /** -Psmoketestm23: only the M23 scene (aeration, internal filters, light tiers, timer, menus, handbook). */
-    private static final boolean M23_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m23only", false);
+    private static final boolean M23_ONLY = Boolean.getBoolean("bettacraft.smoketest.m23only");
     private static DevClientSmokeM23 m23;
     /** -Psmoketestm24: only the M24 scene (pipes, multiblock filter, interior pipes, crucible, water devices, menus, handbook). */
-    private static final boolean M24_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m24only", false);
+    private static final boolean M24_ONLY = Boolean.getBoolean("bettacraft.smoketest.m24only");
     /** -Psmoketestm25: only the M25 part b scene (CO2 cylinder, bio CO2, filling station, reverse osmosis unit, regulator, handbook). */
-    private static final boolean M25_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m25only", false);
-    private static final boolean M25C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m25conly", false);
+    private static final boolean M25_ONLY = Boolean.getBoolean("bettacraft.smoketest.m25only");
+    private static final boolean M25C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m25conly");
     /** -Psmoketestreadme: only the README media scene (room with three tanks, frame sequences, menus). */
-    private static final boolean README_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.readmeonly", false);
+    private static final boolean README_ONLY = Boolean.getBoolean("bettacraft.smoketest.readmeonly");
     private static DevClientSmokeReadme readme;
     private static DevClientSmokeM25c m25c;
-    private static final boolean M26_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m26only", false);
+    private static final boolean M26_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26only");
     /** -Psmoketestm26_1: only the M26.1 scene (the mod list with the wide logo). */
-    private static final boolean M26_1_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m26_1only", false);
+    private static final boolean M26_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m26_1only");
     private static DevClientSmokeM261 m26_1;
     private static DevClientSmokeM26 m26;
     /** -Psmoketestm28: only the M28 part a scene (the new plants inside and outside, white Bucephalandras by light). */
-    private static final boolean M28_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m28only", false);
+    private static final boolean M28_ONLY = Boolean.getBoolean("bettacraft.smoketest.m28only");
     private static DevClientSmokeM28 m28;
     /** -Psmoketestm28b: only the M28 part b scene (carpets, mosses, tubers, the Marimo, the corals v1/v3, floating plants). */
-    private static final boolean M28B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m28bonly", false);
+    private static final boolean M28B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m28bonly");
     private static DevClientSmokeM28b m28b;
     /** -Psmoketestm28c: only the M28 part c scene (the new decorations, the leaf litter). */
-    private static final boolean M28C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m28conly", false);
-    private static final boolean M281_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m281only", false);
+    private static final boolean M28C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m28conly");
+    private static final boolean M281_ONLY = Boolean.getBoolean("bettacraft.smoketest.m281only");
     /** -Psmoketestm29: only the M29 part a scene (the cichlids). */
-    private static final boolean M29_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m29only", false);
+    private static final boolean M29_ONLY = Boolean.getBoolean("bettacraft.smoketest.m29only");
     private static DevClientSmokeM29 m29;
     /** -Psmoketestm291: only the M29.1 scene (every block item of the mod in a grid). */
-    private static final boolean M291_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m291only", false);
+    private static final boolean M291_ONLY = Boolean.getBoolean("bettacraft.smoketest.m291only");
     private static DevClientSmokeM291 m291;
     /** -Psmoketestm291b: plants, sound test, air pump in the cabinet, multiblock filter under a tank. */
     private static DevClientSmokeM291b m291b;
     /** -Psmoketestm30a: big tanks, dolphins, the pangasius, the transport tub. */
-    private static final boolean M30A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m30aonly", false);
+    private static final boolean M30A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m30aonly");
     private static DevClientSmokeM30a m30a;
     /** -Psmoketestm30b: the freshwater giants (arapaima, redtail catfish, wels, motoro stingrays). */
-    private static final boolean M30B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m30bonly", false);
+    private static final boolean M30B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m30bonly");
     private static DevClientSmokeM30b m30b;
     /** -Psmoketestm31c: dart frogs in a paludarium, geckos (one on the glass), corn snakes, horned frogs (one buried). */
-    private static final boolean M31C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m31conly", false);
+    private static final boolean M31C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31conly");
     private static DevClientSmokeM31c m31c;
     /** -Psmoketestm31d: mobs in glass (drowned in an aquarium, a spider on the glass, slimes), the mob jar. */
-    private static final boolean M31D_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m31donly", false);
+    private static final boolean M31D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31donly");
     /** -Pcreate -Psmoketestm32b: a tank travelling on a Create bearing and on a Sable airship (M32 part b). */
-    private static final boolean M32B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m32bonly", false);
+    private static final boolean M32B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32bonly");
     private static DevClientSmokeM32b m32b;
     /** -Pcreate -Psmoketestm32c: a Display Link writes tank values onto a sign (M32 part c). */
-    private static final boolean M32C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m32conly", false);
+    private static final boolean M32C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32conly");
     /** -Pmaps -Psmoketestm32d: a monitor alarm puts a JourneyMap waypoint at its tank (M32 part d). */
-    private static final boolean M32D_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m32donly", false);
+    private static final boolean M32D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m32donly");
     private static DevClientSmokeM32d m32d;
     /** -Psmoketestm33b: the creative tab and the handbook with the tankmates and salt water off (M33 part b). */
-    private static final boolean M33B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m33bonly", false);
+    private static final boolean M33B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m33bonly");
     /** -Psmoketestm331: the tank type switch in the climate tab and the overview (M33.1). */
-    private static final boolean M331_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m331only", false);
+    private static final boolean M331_ONLY = Boolean.getBoolean("bettacraft.smoketest.m331only");
     private static DevClientSmokeM331 m331;
     /** -Psmoketestm35a: alligators, tortoises and sea turtles in their big terraria and paludaria (M35 part a). */
-    private static final boolean M35A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m35aonly", false);
+    private static final boolean M35A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35aonly");
     private static DevClientSmokeM35a m35a;
     /** -Psmoketestm36: the size setting of the bettas (Normal / Large), with -Pcompare next to one of DragN's bettas (M36). */
-    private static final boolean M36_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m36only", false);
+    private static final boolean M36_ONLY = Boolean.getBoolean("bettacraft.smoketest.m36only");
     private static DevClientSmokeM36 m36;
     /** -Psmoketestm38: plants and corals of Minecraft and other mods in two tanks, swaying, the plants tab (M38). */
-    private static final boolean M38_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m38only", false);
+    private static final boolean M38_ONLY = Boolean.getBoolean("bettacraft.smoketest.m38only");
     private static DevClientSmokeM38 m38;
     /** -Psmoketestm37: the fertilizer maker, the crank and the cabinet's spring, the water tab (M37). */
-    private static final boolean M37_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m37only", false);
+    private static final boolean M37_ONLY = Boolean.getBoolean("bettacraft.smoketest.m37only");
     /** -Pintegration -Psmoketestm42: JEI recipe screens and the handbook with every integrated mod loaded (M42). */
-    private static final boolean M42_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m42only", false);
+    private static final boolean M42_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42only");
     private static DevClientSmokeM42 m42;
     /** -Pzoo -Psmoketestm42b: the miniature with animals and plants of mods we do not integrate (M42 part b). */
-    private static final boolean M42B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m42bonly", false);
+    private static final boolean M42B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m42bonly");
     private static DevClientSmokeM42b m42b;
     /** -Psmoketestm46: the heat mat icon, the wild carpets, the herps from all sides, the critter spawn pass (M46). */
-    private static final boolean M46_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m46only", false);
+    private static final boolean M46_ONLY = Boolean.getBoolean("bettacraft.smoketest.m46only");
     private static DevClientSmokeM46 m46;
     /** -Psmoketestm47: the aquarist villager in a village and his trade menu, the ram forms, the frog breeding (M47). */
-    private static final boolean M47_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m47only", false);
-    private static final boolean M48_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m48only", false);
-    private static final boolean M49_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m49only", false);
+    private static final boolean M47_ONLY = Boolean.getBoolean("bettacraft.smoketest.m47only");
+    private static final boolean M48_ONLY = Boolean.getBoolean("bettacraft.smoketest.m48only");
+    private static final boolean M49_ONLY = Boolean.getBoolean("bettacraft.smoketest.m49only");
     private static DevClientSmokeM49 m49;
     /** -Pcreate -Psmoketestm50: tanks on a turning bearing, a minecart contraption in a curve and an airship (M50). */
-    private static final boolean M50_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m50only", false);
+    private static final boolean M50_ONLY = Boolean.getBoolean("bettacraft.smoketest.m50only");
     /** -Psmoketestm55: the wild carpets, every wild plant and the container icons of every animal (M55). */
-    private static final boolean M55_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m55only", false);
+    private static final boolean M55_ONLY = Boolean.getBoolean("bettacraft.smoketest.m55only");
     private static DevClientSmokeM55 m55;
-    private static final boolean M56_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m56only", false);
+    private static final boolean M56_ONLY = Boolean.getBoolean("bettacraft.smoketest.m56only");
     /** M62 part 4: -Psmoketestm62c (every tab of the tank menu, en/de, GUI scales 1, 2 and 4). */
-    private static final boolean M62C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m62conly", false);
+    private static final boolean M62C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62conly");
     private static DevClientSmokeM62c m62c;
     /** M62 parts 5 and 6: -Psmoketestm62d (the Tylomelania shell, every plant icon, the clear glass tank icon). */
-    private static final boolean M62D_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m62donly", false);
+    private static final boolean M62D_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62donly");
     private static DevClientSmokeM62d m62d;
     /** M61: -Psmoketestm61 [-Ppipes] (block changes without states, Modern Dynamics pipes, leaving and joining the world). */
-    private static final boolean M61_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m61only", false);
+    private static final boolean M61_ONLY = Boolean.getBoolean("bettacraft.smoketest.m61only");
     /** M63: -Psmoketestm63 [-Pshaders] [-Pm63packs=none,...] [-Pm63tag=before|after] (the tank water with every shader pack). */
-    private static final boolean M63_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m63only", false);
+    private static final boolean M63_ONLY = Boolean.getBoolean("bettacraft.smoketest.m63only");
     private static DevClientSmokeM63 m63;
     /** M66: -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes] (every menu of the UI overhaul). */
-    private static final boolean M66_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m66only", false);
+    private static final boolean M66_ONLY = Boolean.getBoolean("bettacraft.smoketest.m66only");
     private static DevClientSmokeM66 m66;
     /** M65: -Psmoketestm65 [-Pshaders] [-Pm65packs=none,...] [-Pm65tag=before|after] [-Pm65parts=pipes,wall]. */
-    private static final boolean M65_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m65only", false);
+    private static final boolean M65_ONLY = Boolean.getBoolean("bettacraft.smoketest.m65only");
     private static DevClientSmokeM65 m65;
     /** M64: -Psmoketestm64 [-Pshaders] [-Pm64packs=none,...] [-Pm64tag=before|after] [-Pm64parts=glass,hose,coral,float,lid]. */
-    private static final boolean M64_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m64only", false);
+    private static final boolean M64_ONLY = Boolean.getBoolean("bettacraft.smoketest.m64only");
     private static DevClientSmokeM64 m64;
-    private static final boolean M62B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m62bonly", false);
+    private static final boolean M62B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62bonly");
     private static DevClientSmokeM62b m62b;
     private static DevClientSmokeM61 m61;
     private static DevClientSmokeM56 m56;
     /** M62 part 1: -Psmoketestm62a [-Pm62aparts=school,step,wall,water] (schools, steps, walls, under water in the world). */
-    private static final boolean M62A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m62aonly", false);
+    private static final boolean M62A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m62aonly");
     private static DevClientSmokeM62a m62a;
     /** -Psmoketestm54: the movement of the animals (M54). */
-    private static final boolean M54_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m54only", false);
+    private static final boolean M54_ONLY = Boolean.getBoolean("bettacraft.smoketest.m54only");
     private static DevClientSmokeM54 m54;
     /** -Psmoketestm53: users tab, gear, map mods, interior brightness, every animal from six sides (M53). */
-    private static final boolean M53_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m53only", false);
+    private static final boolean M53_ONLY = Boolean.getBoolean("bettacraft.smoketest.m53only");
     private static DevClientSmokeM53 m53;
     /** -Psmoketestm51: the hired aquarist comes, is hired, works; his menu, the tank menu button, his looks, asleep (M51). */
-    private static final boolean M51_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m51only", false);
+    private static final boolean M51_ONLY = Boolean.getBoolean("bettacraft.smoketest.m51only");
     private static DevClientSmokeM51 m51;
     private static DevClientSmokeM50 m50;
     private static DevClientSmokeM47 m47;
     private static DevClientSmokeM48 m48;
     /** -Pquests -Pkubejs -Psmoketestm45: the quest chapter in the quest book, English and German (M45). */
-    private static final boolean M45_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m45only", false);
+    private static final boolean M45_ONLY = Boolean.getBoolean("bettacraft.smoketest.m45only");
     private static DevClientSmokeM45 m45;
     /** -Psmoketestm44: the walk animation in tanks and the cabinet fronts (M44). */
-    private static final boolean M44_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m44only", false);
+    private static final boolean M44_ONLY = Boolean.getBoolean("bettacraft.smoketest.m44only");
     private static DevClientSmokeM44 m44;
     /** -Pcreate -Psmoketestm41: a tank powered by Create's rotation through a drive adapter and a cabinet shaft (M41). */
-    private static final boolean M41_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m41only", false);
+    private static final boolean M41_ONLY = Boolean.getBoolean("bettacraft.smoketest.m41only");
     private static DevClientSmokeM41 m41;
     private static DevClientSmokeM37 m37;
     /** -Psmoketestm39a: big fish of other mods in a big tank, sea animals of other mods, the Aquaculture turtles (M39 part a). */
-    private static final boolean M39A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m39aonly", false);
+    private static final boolean M39A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39aonly");
     private static DevClientSmokeM39a m39a;
     /** -Psmoketestm39b: insects, mammals and birds of other mods in terraria, the komodo dragon, fireflies at night (M39 part b). */
-    private static final boolean M39B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m39bonly", false);
+    private static final boolean M39B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39bonly");
     private static DevClientSmokeM39b m39b;
     /** -Psmoketestm40a: one multiblock filter for three tanks, the pipe docks and guards inside (M40 part a). */
-    private static final boolean M40A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m40aonly", false);
+    private static final boolean M40A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40aonly");
     private static DevClientSmokeM40a m40a;
     /** -Psmoketestm40b: a row of pipe bundles with all four lines, the filter with its fresh and waste water ports (M40 part b). */
-    private static final boolean M40B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m40bonly", false);
+    private static final boolean M40B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40bonly");
     private static DevClientSmokeM40b m40b;
     /** -Psmoketestm40c: the bundles of part b under our covers and the facades of other mods (M40 part c). */
-    private static final boolean M40C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m40conly", false);
+    private static final boolean M40C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m40conly");
     private static DevClientSmokeM40c m40c;
     /** -Psmoketestm39c: the peaceful animals of Minecraft as terrarium pets (M39 part c, optional feature #25). */
-    private static final boolean M39C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m39conly", false);
+    private static final boolean M39C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m39conly");
     private static DevClientSmokeM39c m39c;
     /** -Psmoketestm35b: lizard, snake and scorpions in a terrarium, fish in a paludarium's water part with a crab, dragonflies (M35 part b). */
-    private static final boolean M35B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m35bonly", false);
+    private static final boolean M35B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m35bonly");
     private static DevClientSmokeM35b m35b;
     private static DevClientSmokeM33b m33b;
     private static DevClientSmokeM31d m31d;
     /** -Psmoketestm31b: the turtles, a clutch of eggs and hatchlings, Hermann's tortoises, the climate tab with the eggs. */
-    private static final boolean M31B_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m31bonly", false);
+    private static final boolean M31B_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31bonly");
     private static DevClientSmokeM31b m31b;
     /** -Psmoketestm31a: terrarium and paludarium with the devices and two musk turtles, the climate tab. */
-    private static final boolean M31A_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m31aonly", false);
+    private static final boolean M31A_ONLY = Boolean.getBoolean("bettacraft.smoketest.m31aonly");
     private static DevClientSmokeM31a m31a;
     /** -Psmoketestm30c: the sea giants (sharks, rays, moray) and the bamboo shark's egg cases. */
-    private static final boolean M30C_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m30conly", false);
+    private static final boolean M30C_ONLY = Boolean.getBoolean("bettacraft.smoketest.m30conly");
     private static DevClientSmokeM30c m30c;
     /** -Psmoketestm29d: the big crayfish and the axolotls. */
     private static DevClientSmokeM29d m29d;
     private static DevClientSmokeM281 m281;
     private static DevClientSmokeM28c m28c;
     /** -Psmoketestm27: only the M27 scene (monitor screens). */
-    private static final boolean M27_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m27only", false);
+    private static final boolean M27_ONLY = Boolean.getBoolean("bettacraft.smoketest.m27only");
     private static DevClientSmokeM27 m27;
     private static DevClientSmokeM25 m25;
     private static DevClientSmokeM24 m24;
     /** -Psmoketestm22_4: only the M22.4 scene (the four outlet sides of the cabinet filter, the cabinet menu, the handbook plant sources). */
-    private static final boolean M22_4_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m22_4only", false);
+    private static final boolean M22_4_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_4only");
     /** -Psmoketestm22_3: only the M22.3 scene (wild fish and small animals, wild corals, magnifier, single animals, bucket tooltips). */
-    private static final boolean M22_3_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m22_3only", false);
+    private static final boolean M22_3_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_3only");
     /** -Psmoketestm22_2: only the M22.2 scene (species gallery for the handbook, the handbook with its navigation en + de). */
-    private static final boolean M22_2_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m22_2only", false);
+    private static final boolean M22_2_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_2only");
     /** -Psmoketestm22_1: only the M22.1 scene (every plant and coral with its shape, swaying water plants, emptying containers). */
-    private static final boolean M22_1_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m22_1only", false);
+    private static final boolean M22_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m22_1only");
     /** -Psmoketestm21_8: only the M21.8 scene (seahorses, cyst stacks, clear glass icon). */
-    private static final boolean M21_8_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21_8only", false);
+    private static final boolean M21_8_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_8only");
     /** -Psmoketestm21_7: only the M21.7 scene (stone cabinets). */
-    private static final boolean M21_7_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21_7only", false);
+    private static final boolean M21_7_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_7only");
     /** -Psmoketestm21_6: only the M21.6 scene (guppy and endler genetics). */
-    private static final boolean M21_6_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21_6only", false);
+    private static final boolean M21_6_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_6only");
     /** -Psmoketestm21_5: only the M21.5 scene (smooth swimming, colours, cabinets, decor, clip-on feeder, protection, handbook). */
-    private static final boolean M21_5_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21_5only", false);
+    private static final boolean M21_5_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_5only");
     /** -Psmoketestm21_1: only the M21.1 scene (plant meshes outside, Rotala stems, Vallisneria ribbons, lily pads). */
-    private static final boolean M21_1_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21_1only", false);
+    private static final boolean M21_1_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21_1only");
     /** -Psmoketestm21: only the M21 scene (plant prototype old/new, new fish buckets). */
-    private static final boolean M21_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m21only", false);
+    private static final boolean M21_ONLY = Boolean.getBoolean("bettacraft.smoketest.m21only");
     /** -Psmoketestm20: only the M20 scene (reef tank, corals, reef animals, water colours, menus, items). */
-    private static final boolean M20_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m20only", false);
+    private static final boolean M20_ONLY = Boolean.getBoolean("bettacraft.smoketest.m20only");
     /** -Psmoketestm19: only the M19 scene (tankmates, their breeding, menus, items). */
-    private static final boolean M19_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m19only", false);
+    private static final boolean M19_ONLY = Boolean.getBoolean("bettacraft.smoketest.m19only");
     /** -Psmoketestm18: only the M18 scene (coloured lights, young bettas in the stocking). */
-    private static final boolean M18_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m18only", false);
+    private static final boolean M18_ONLY = Boolean.getBoolean("bettacraft.smoketest.m18only");
     /** -Psmoketestm16: only the M16 scene (water animals of other mods, refusals, no tank inside a tank). */
-    private static final boolean M16_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m16only", false);
+    private static final boolean M16_ONLY = Boolean.getBoolean("bettacraft.smoketest.m16only");
     /** -Psmoketestm15: only the M15 scene (name sign, domed nest, interior leave hint). */
-    private static final boolean M15_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m15only", false);
+    private static final boolean M15_ONLY = Boolean.getBoolean("bettacraft.smoketest.m15only");
     /** -Psmoketestm14: only the M14 scene (shrimp, crayfish, snails, frogs, algae). */
-    private static final boolean M14_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m14only", false);
+    private static final boolean M14_ONLY = Boolean.getBoolean("bettacraft.smoketest.m14only");
     /** -Psmoketestm13: only the M13 scene (aquarium plants). */
-    private static final boolean M13_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m13only", false);
+    private static final boolean M13_ONLY = Boolean.getBoolean("bettacraft.smoketest.m13only");
     /** -Psmoketestm12: only the M12 scene (floating plants). */
-    private static final boolean M12_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m12only", false);
+    private static final boolean M12_ONLY = Boolean.getBoolean("bettacraft.smoketest.m12only");
     /** -Psmoketestm11: only the M11 scene (tank styles, connected glass, edges, water seam, mirror stick). */
-    private static final boolean M11_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m11only", false);
+    private static final boolean M11_ONLY = Boolean.getBoolean("bettacraft.smoketest.m11only");
     /** -Psmoketestm10: only the M10 scene (free tank shapes). */
-    private static final boolean M10_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m10only", false);
+    private static final boolean M10_ONLY = Boolean.getBoolean("bettacraft.smoketest.m10only");
     /** -Psmoketestm9: only the M9 scene (water care, coolers, breeders). */
-    private static final boolean M9_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m9only", false);
+    private static final boolean M9_ONLY = Boolean.getBoolean("bettacraft.smoketest.m9only");
     /** -Psmoketestm7: only the M7 compat scene (faster when iterating on it). */
-    private static final boolean M7_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m7only", false);
+    private static final boolean M7_ONLY = Boolean.getBoolean("bettacraft.smoketest.m7only");
     /** -Psmoketestm8: only the M8 info overlay scene (Jade, The One Probe, WTHIT). */
-    private static final boolean M8_ONLY = Boolean.getBooleanOr("bettacraft.smoketest.m8only", false);
+    private static final boolean M8_ONLY = Boolean.getBoolean("bettacraft.smoketest.m8only");
 
     private DevClientSmokeTest() {}
 
@@ -323,8 +323,8 @@ final class DevClientSmokeTest {
                 LevelSettings settings = new LevelSettings("bettacraft_smoketest_" + System.currentTimeMillis(), GameType.CREATIVE,
                         new LevelSettings.DifficultySettings(Difficulty.PEACEFUL, false, false), true, WorldDataConfiguration.DEFAULT);
                 // M46: -Psmoketestm46 needs real biomes (rivers, swamps, jungles): a normal world of the same seed
-                var preset = Boolean.getBooleanOr("bettacraft.smoketest.normalworld", false) ? WorldPresets.NORMAL : WorldPresets.FLAT;
-                mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, Boolean.getBooleanOr("bettacraft.smoketest.structures", false), false),
+                var preset = Boolean.getBoolean("bettacraft.smoketest.normalworld") ? WorldPresets.NORMAL : WorldPresets.FLAT;
+                mc.createWorldOpenFlows().createFreshLevel(settings.levelName(), settings, new WorldOptions(42L, Boolean.getBoolean("bettacraft.smoketest.structures"), false),
                         ra -> ra.lookupOrThrow(Registries.WORLD_PRESET).getOrThrow(preset).value().createWorldDimensions(),
                         screen);
             }
@@ -782,7 +782,7 @@ final class DevClientSmokeTest {
                 }
                 return;
             }
-            if (M291_ONLY && Boolean.getBooleanOr("bettacraft.smoketest.m291b", false)) {
+            if (M291_ONLY && Boolean.getBoolean("bettacraft.smoketest.m291b")) {
                 if (ticks == 60) m291b = new DevClientSmokeM291b();
                 if (m291b != null && m291b.tick()) {
                     m291b = null;
@@ -800,7 +800,7 @@ final class DevClientSmokeTest {
                 }
                 return;
             }
-            if (M29_ONLY && Boolean.getBooleanOr("bettacraft.smoketest.m29d", false)) {
+            if (M29_ONLY && Boolean.getBoolean("bettacraft.smoketest.m29d")) {
                 if (ticks == 60) m29d = new DevClientSmokeM29d();
                 if (m29d != null && m29d.tick()) {
                     m29d = null;
@@ -810,7 +810,7 @@ final class DevClientSmokeTest {
                 return;
             }
             if (M29_ONLY) {
-                if (ticks == 60) m29 = new DevClientSmokeM29(Boolean.getBooleanOr("bettacraft.smoketest.m29b", false), Boolean.getBooleanOr("bettacraft.smoketest.m29c", false));
+                if (ticks == 60) m29 = new DevClientSmokeM29(Boolean.getBoolean("bettacraft.smoketest.m29b"), Boolean.getBoolean("bettacraft.smoketest.m29c"));
                 if (m29 != null && m29.tick()) {
                     m29 = null;
                     LOGGER.info("[smoketest] client world test finished (M29 only)");

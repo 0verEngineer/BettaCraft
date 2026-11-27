@@ -402,7 +402,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
         boolean wasController = isController();
-        if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+        if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
@@ -410,8 +410,19 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
         boolean wasController = isController();
-        loadWithComponents(tag, registries); // NeoForge's default
+        loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle, wasController);
+    }
+
+    /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
+    public void handleUpdateTag(net.minecraft.world.level.storage.ValueInput input) {
+        handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
+    /** M52b: NeoForge 21.11 hands the update packet's data over as a value input. */
+    public void onDataPacket(Connection net, net.minecraft.world.level.storage.ValueInput input) {
+        net.minecraft.nbt.CompoundTag tag = org.overengineer.bettacraft.util.NbtCompat.read(input);
+        if (!tag.isEmpty()) handleUpdateTag(tag, org.overengineer.bettacraft.util.NbtCompat.registries(this));
     }
 
     private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle, boolean wasController) {

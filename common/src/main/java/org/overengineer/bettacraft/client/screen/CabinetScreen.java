@@ -27,9 +27,7 @@ public class CabinetScreen extends AbstractContainerScreen<CabinetMenu> {
     private TankScreen.FitButton outletButton;
 
     public CabinetScreen(CabinetMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = CabinetMenu.WIDTH; // M66: bigger: the front button's text fits, the energy shows
-        imageHeight = CabinetMenu.HEIGHT;
+        super(menu, inv, title, CabinetMenu.WIDTH, CabinetMenu.HEIGHT); // M66: bigger: the front button's text fits, the energy shows
         inventoryLabelX = CabinetMenu.INV_X;
         inventoryLabelY = CabinetMenu.INV_Y - 11;
     }

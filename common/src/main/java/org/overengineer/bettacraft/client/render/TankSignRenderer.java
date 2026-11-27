@@ -132,14 +132,14 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
     }
 
     /**
-     * Only the controller draws (the whole tank). M66: every tank block used to say yes here, so the chunk mesher put every block
-     * entity of every tank into the list drawn every frame whether its section is in view or not (Sodium: also in the Iris shadow
-     * pass): thousands of calls per frame that only returned, most of them from the large tanks. Whether a block is the controller
-     * is known when its section is built (the chunk packet carries it; a change rebuilds the section, TankBlockEntity).
+     * Only the controller draws (the whole tank). M66 (1.21.1): there the chunk mesher asks this per block entity and only the
+     * controller is drawn off screen. Port: on 26.1.2 the question has no block entity (ClientLevel keeps the answer once per block
+     * entity type), so every tank block stays in the list drawn every frame as before; {@link #shouldRender} says no at once for
+     * every block but the controller.
      */
     @Override
-    public boolean shouldRenderOffScreen(TankBlockEntity be) {
-        return be.isController();
+    public boolean shouldRenderOffScreen() {
+        return true;
     }
 
     public AABB getRenderBoundingBox(TankBlockEntity be) {
@@ -162,7 +162,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
     public boolean shouldRender(TankBlockEntity be, net.minecraft.world.phys.Vec3 cam) {
         if (!be.isController()) return false; // only the controller draws (render returns at once for the others)
         TankData t = be.getTank();
-        if (t == null || TravellingTankRenderer.travelling(be)) return BlockEntityRenderer.super.shouldRender(be, cam);
+        if (t == null || TravellingTankRenderer.travelling(be)) return super.shouldRender(be, cam);
         BlockPos mn = t.min(), mx = t.max();
         double dx = Math.max(0, Math.max(mn.getX() - cam.x, cam.x - (mx.getX() + 1)));
         double dy = Math.max(0, Math.max(mn.getY() - cam.y, cam.y - (mx.getY() + 1)));

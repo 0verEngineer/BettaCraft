@@ -22,9 +22,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     private static final int ENERGY_X = 8, ENERGY_Y = 78, ENERGY_W = 200;
 
     public ExternalFilterScreen(ExternalFilterMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = ExternalFilterMenu.WIDTH;
-        imageHeight = ExternalFilterMenu.HEIGHT;
+        super(menu, inv, title, ExternalFilterMenu.WIDTH, ExternalFilterMenu.HEIGHT);
         inventoryLabelX = ExternalFilterMenu.INV_X;
         inventoryLabelY = ExternalFilterMenu.INV_Y - 11;
     }
@@ -64,8 +62,8 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     }
 
     @Override
-    protected void renderLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
-        super.renderLabels(g, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractLabels(g, mouseX, mouseY);
         // the hint under the slots, wrapped (a longer translation takes a third line, drawn smaller)
         Component hint = Component.translatable("gui.bettacraft.filter.heaters_hint");
         var lines = font.split(hint, imageWidth - 48); // right of the spring gauge

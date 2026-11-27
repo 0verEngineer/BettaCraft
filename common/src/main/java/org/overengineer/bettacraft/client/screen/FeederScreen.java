@@ -19,9 +19,7 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
     private Button cycle;
 
     public FeederScreen(FeederMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        imageWidth = FeederMenu.WIDTH;
-        imageHeight = FeederMenu.HEIGHT;
+        super(menu, inv, title, FeederMenu.WIDTH, FeederMenu.HEIGHT);
         inventoryLabelX = FeederMenu.INV_X;
         inventoryLabelY = FeederMenu.INV_Y - 11;
     }
@@ -44,7 +42,8 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor g, float partialTick, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         for (int i = 0; i < menu.slotCount(); i++) {
             int[] at = FeederMenu.slotAt(menu.slotCount(), i);
@@ -53,8 +52,8 @@ public class FeederScreen extends AbstractContainerScreen<FeederMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
-        super.renderLabels(g, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractLabels(g, mouseX, mouseY);
         // small and grey under the slots: it also takes food from a cabinet under the tank
         var lines = font.split(Component.translatable("gui.bettacraft.feeder.cabinet_hint"), (int) ((imageWidth - 16) / 0.8F));
         g.pose().pushMatrix();

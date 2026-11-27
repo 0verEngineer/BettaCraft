@@ -65,7 +65,7 @@ public final class AquaristAssign {
 
     /** Assigns the block at {@code pos}; returns the reason when it does not fit, null when done (the menu opens again). */
     public static Component assign(ServerLevel level, ServerPlayer p, AquaristEntity npc, BlockPos pos, Kind kind) {
-        if (!p.getUUID().equals(npc.employer()) && !p.hasPermissions(2)) return Component.translatable("message.bettacraft.aquarist.not_yours");
+        if (!p.getUUID().equals(npc.employer()) && !org.overengineer.bettacraft.util.Perms.has(p, 2)) return Component.translatable("message.bettacraft.aquarist.not_yours");
         BlockPos from = npc.workplace() != null ? npc.workplace() : npc.blockPosition();
         int r = ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32);
         if (pos.distSqr(from) > (double) r * r) return Component.translatable("message.bettacraft.aquarist.assign_far", r);
