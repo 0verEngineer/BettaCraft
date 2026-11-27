@@ -8,7 +8,7 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="${mod_authors}"
-displayURL="https://github.com/0verEngineer/BettaCraft"
+displayURL="${mod_homepage}"
 # wide pixel-art banner (tools/assetgen/preview.py make_banner) in the mod list; the square icon bettacraft.png stays the
 # mod / project icon. No blur when scaled.
 logoFile="bettacraft_logo.png"
