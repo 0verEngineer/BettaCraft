@@ -554,6 +554,7 @@ def replaceProperties = [
         mod_license    : mod_license,
         mod_authors    : mod_authors,
         mod_description: mod_description,
+        mod_homepage   : mod_homepage,
         minecraft_version: minecraft_version,
         fabric_loader_version: fabric_loader_version,
         fabric_minecraft_dependency: fabric_minecraft_dependency,
