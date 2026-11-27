@@ -258,6 +258,7 @@ public final class ClientSetup {
         org.overengineer.bettacraft.platform.client.ClientEvents.TICK_POST.add(org.overengineer.bettacraft.client.tank.TankLightTint::tick);
         org.overengineer.bettacraft.platform.client.ClientEvents.TICK_POST.add(org.overengineer.bettacraft.client.map.AlarmWaypoints::tick); // M53: map mod switches
         // M21: plant prototype (Rotala, Vallisneria, Anubias with real leaves in the interior), then the miniatures and the decor preview
+        org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.render.BlockEntityCull::onRenderStage); // M66.5
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.interior.PlantMeshRenderer::onRenderStage);
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.interior.MiniatureRenderer::onRenderStage);
         org.overengineer.bettacraft.platform.client.ClientEvents.RENDER_LEVEL.add(org.overengineer.bettacraft.client.decor.DecorPreview::onRenderStage);
