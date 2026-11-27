@@ -86,8 +86,11 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   every frame, also behind the camera (a third of the render thread in the showcase). Our renderers now test their box against the camera
   view themselves (not in a shader pack's shadow pass); filter hoses and jets are drawn up to `render.tankDetailDistance` (48) like the
   other tank details; the boxes of cabinets, filters and tanks are worked out once a second instead of every frame (finding a cabinet's
-  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks (measured on 1.21.1): Sodium 206 -> 285 fps,
-  Complementary Reimagined 88 -> 122 fps. On 26.x a tank or filter out of view is not even prepared for drawing that frame.
+  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks (measured on 1.21.1): without Sodium 198 -> 258
+  fps, Sodium 206 -> 452 fps, Complementary Reimagined 88 -> 152 fps. On 26.x a tank or filter out of view is not even prepared for
+  drawing that frame.
+- **Polyps of the miniature corals:** how far a polyp is closed was worked out for every vertex every frame; now once per polyp, and not
+  at all while no fish swims by.
 - **Server tick with many large fish:** the path finding of the large tankmates looked at the same cells many times per search; each cell
   is looked at once per search now (the path finding took about a third less of the server tick in the showcase).
 - **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
