@@ -70,6 +70,8 @@ public final class PipeNetwork {
     @Nullable
     private final PipeRole role;
     private final boolean shortCircuit;
+    /** Every port it touches is a filter connector (with the filter lines off it is a plain pipe). */
+    private final boolean filterPortsOnly;
     /** Built while a neighbour chunk was not loaded (see {@link #INCOMPLETE_TICKS}), and when. */
     private final boolean incomplete;
     private final long built;
@@ -94,6 +96,9 @@ public final class PipeNetwork {
         EnumSet<PipeRole> roles = EnumSet.noneOf(PipeRole.class);
         for (Port p : ports) roles.add(p.role());
         this.shortCircuit = roles.size() > 1;
+        boolean f = true;
+        for (PipeRole r : roles) f &= r.filterLine();
+        this.filterPortsOnly = f;
         this.role = roles.size() == 1 ? roles.iterator().next() : null;
     }
 
@@ -134,8 +139,14 @@ public final class PipeNetwork {
     /** M68: the ring its pipes show. */
     public PipeRing ring() { return shortCircuit ? PipeRing.SHORT : role == null ? PipeRing.NONE : role.ring(); }
 
-    /** M68: whether pumps and other mods' pipes move water through it (a plain line or a line of a role that carries water). */
-    public boolean carriesWater() { return !shortCircuit && (role == null || role.carriesWater()); }
+    /**
+     * M68: whether pumps and other mods' pipes move water through it (a plain line or a line of a role that carries water). With
+     * {@code features.pipes.filterLines} off the filter's lines are plain pipes again (the filter works as before M40, through them).
+     */
+    public boolean carriesWater() {
+        if (filterPortsOnly && !ports.isEmpty() && !Features.enabled(Feature.FILTER_LINES)) return true;
+        return !shortCircuit && (role == null || role.carriesWater());
+    }
 
     /** mB per tick (its weakest pipe). */
     public int rate() { return rate; }
