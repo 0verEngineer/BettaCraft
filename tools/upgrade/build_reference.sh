@@ -8,6 +8,10 @@
 # version's DevShowcase (an extra row after the showcase rows, the manifest after saving), runs its buildShowcase (a
 # dedicated server without a window) and moves the world to run/saves/<world name> of this repo. The world folder then
 # holds bettacraft_reference.json, which `gradlew smoketestUpgrade` compares against.
+# Cross-version references (references.json "tools": "own", e.g. a world of the 1.21.1 branch loaded on a port branch):
+# UPGRADE_OWN_TOOLS=1 takes the commit's own tools/upgrade/DevUpgradeReference.java (this branch's one is written against
+# another Minecraft), UPGRADE_SAVES is the saves folder of this checkout the world goes to (the old commit's run folder
+# is another one).
 set -euo pipefail
 COMMIT="${1:-909d12a}"
 NAME="${2:-Bettacraft Referenz 1.13.1}"
@@ -27,7 +31,16 @@ if grep -q "run/26.1.2" "$WT/neoforge/build.gradle" 2>/dev/null; then SAVES_REL=
 if grep -q 'run/${minecraft_version}' "$WT/neoforge/build.gradle" 2>/dev/null; then
   SAVES_REL="run/$(grep '^minecraft_version=' "$WT/gradle.properties" | cut -d= -f2 | tr -d "\r")/saves"
 fi
-cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
+if [ "${UPGRADE_OWN_TOOLS:-0}" = 1 ]; then
+  # the commit's maintained manifest writer is the loader-free one of its Fabric save/load test (its tools/upgrade copy is
+  # kept for the old 1.x commits); under the name the hook below calls
+  OWN="$WT/fabric/src/dev/java/org/overengineer/bettacraft/command/FabricUpgradeReference.java"
+  if [ -f "$OWN" ]; then sed 's/FabricUpgradeReference/DevUpgradeReference/g' "$OWN" > "$CMD/DevUpgradeReference.java"
+  else cp "$WT/tools/upgrade/DevUpgradeReference.java" "$CMD/"; fi
+else
+  cp "$REPO/tools/upgrade/DevUpgradeReference.java" "$CMD/"
+fi
+DEST="${UPGRADE_SAVES:-$REPO/$SAVES_REL}"
 # M62: the old version's server takes this branch's port (never 25565, never the port hard-coded in that commit)
 . "$REPO/tools/upgrade/server_port.sh"
 pin_server_port "$WT" "${SAVES_REL%/saves}"
@@ -65,10 +78,10 @@ PY
 (cd "$WT" && ./gradlew buildShowcase --no-configuration-cache -q) || { check_server_log "$WT/build/showcase/server.log"; exit 1; }
 check_server_log "$WT/build/showcase/server.log"
 grep -q "MANIFEST WRITTEN" "$WT/build/showcase/server.log" || { echo "no manifest, see $WT/build/showcase/server.log"; exit 1; }
-rm -rf "$REPO/$SAVES_REL/$NAME"
-mkdir -p "$REPO/$SAVES_REL"
-cp -r "$WT/$SAVES_REL/Bettacraft Schaukasten" "$REPO/$SAVES_REL/$NAME"
-rm -f "$REPO/$SAVES_REL/$NAME/session.lock"
-echo "commit $COMMIT built $(date)" > "$REPO/$SAVES_REL/$NAME/bettacraft_reference_version.txt"
+rm -rf "$DEST/$NAME"
+mkdir -p "$DEST"
+cp -r "$WT/$SAVES_REL/Bettacraft Schaukasten" "$DEST/$NAME"
+rm -f "$DEST/$NAME/session.lock"
+echo "commit $COMMIT built $(date)" > "$DEST/$NAME/bettacraft_reference_version.txt"
 git -C "$REPO" worktree remove --force "$WT"
-echo "reference world: $REPO/$SAVES_REL/$NAME"
+echo "reference world: $DEST/$NAME"
