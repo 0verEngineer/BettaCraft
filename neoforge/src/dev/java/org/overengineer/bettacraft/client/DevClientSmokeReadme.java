@@ -555,7 +555,7 @@ final class DevClientSmokeReadme {
         then(1, () -> showcaseShot("mobs_in_glass", 0F, 10F, 0.8, "Mobs im Glas: Spinne, Skelett"));
         then(1, () -> showcaseShot("sea_giants", 0F, 14F, 0.8, "Riesen des Meeres"));
         then(1, () -> showcaseShot("fresh_giants", 0F, 14F, 0.8, "Süßwasser-Riesen"));
-        then(1, () -> showcaseShot("filter_lines", -25F, 38F, 0.85, "Ein Filter, zwei Becken", "Rohrbündel mit vier Leitungen"));
+        then(1, () -> showcaseShot("filter_lines", -25F, 38F, 0.85, "Ein Filter, zwei Becken", "Rohrbündel: Zulauf und Rücklauf"));
         then(1, () -> {
             if (showcaseOrigin == null) return;
             look(showcaseOrigin.getX() + 70, showcaseGround + 44, showcaseOrigin.getZ() - 20, 0F, 50F);
