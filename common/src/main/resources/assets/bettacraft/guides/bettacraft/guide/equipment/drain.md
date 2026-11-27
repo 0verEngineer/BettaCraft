@@ -25,6 +25,8 @@ takes all the water that comes down the pipe and **discards** it. It holds nothi
   get rid of it.
 * Other mods' pipes may use it as a sink too. It takes water (with its values), no other fluid.
 
+![A drain at the end of the waste water pipe of a controller](../images/drain.png)
+
 With `features.pipes.drain = false` it takes no water (pipes still join it).
 
 ## Obtaining

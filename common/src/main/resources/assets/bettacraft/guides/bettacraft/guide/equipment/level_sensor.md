@@ -24,6 +24,8 @@ it, like a float switch:
   for your own circuits or the pumps of other mods. Otherwise it is quiet.
 * It **only measures**: no pipe joins it, it moves no water and needs no power.
 
+![A level sensor at an aquarium that lacks water: its redstone signal lights a lamp](../images/level_sensor_lamp.png)
+
 ## Top-off
 
 A [water change controller](water_change.md) that fills this aquarium (touching it, through its fresh water line or through

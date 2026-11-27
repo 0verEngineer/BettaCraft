@@ -46,7 +46,7 @@ run filters, lights, CO2 and reef dosing, and breed new colours with real Mendel
     <td><img src="docs/images/bettacraft-monitors.jpg" alt="A monitor wall with a dashboard between a betta tank and a reef tank"></td>
   </tr>
   <tr>
-    <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for two tanks with its pipe lines, a pipe bundle and pipe covers"></td>
+    <td><img src="docs/images/bettacraft-filter-lines.jpg" alt="One multiblock filter for three tanks: its blue intake line and orange return line branch to every tank"></td>
     <td><img src="docs/images/bettacraft-aquarium-room-shaders.jpg" alt="The aquarium room with Complementary Reimagined shaders"></td>
   </tr>
 </table>

@@ -39,6 +39,8 @@ Wofür sie da ist:
 * **Vorbeiführen:** eine normale Wasserleitung, die an einer Filterkammer, einem Gerät oder einem Aquarium vorbeiläuft,
   verbindet sich damit; diese Seite schließen, und die Leitung läuft vorbei.
 
+![Eine Zulauf- und eine Rücklaufleitung übereinander: die Kappen der Zange halten sie getrennt](../images/pipe_wrench_caps.png)
+
 Mit `features.pipes.pipeWrench = false` tut die Zange nichts; geschlossene Seiten bleiben zu.
 
 ## Bezug
