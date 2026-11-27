@@ -213,12 +213,18 @@ def cory():
                                                                                                     horizontal=True)
 
 
+#: M67.5: how far a sucker mouth stands out of a flat belly (px), so the two faces never share a plane
+MOUTH_PROUD = 0.3
+
+
 def pleco():
     p = Plan("pleco", -15, 9, 6.0, 10.0, 0.62, 0.34, 0.3, flat_belly=True, belly=0.0, nseg=9)
     body = Group("body", (0, 0, 0))
     body.boxes += p.segments()
     body.boxes += eyes(p, 0.18, up=0.05, size=2, inset=1.6)
-    body.boxes.append(box("mouth", "mouth", (0, -0.5, -12.5), (5, 1, 4)))
+    # M67.5: the sucker mouth stands 0.3 px proud of the flat belly (it lay in the belly's plane and flickered against it,
+    # on the glass right in front of the viewer)
+    body.boxes.append(box("mouth", "mouth", (0, MOUTH_PROUD - 0.5, -12.5), (5, 1, 4)))
     body.boxes.append(box("adipose", "adipose", (0, p.top(0.86) - 0.5, p.snout + 0.86 * 24), (0, 2, 2), fin="round_small"))
     body.boxes += pair("pelvic", "pelvic", (2.8, -0.4, p.snout + 0.6 * 24), (4, 0, 4), (0, 20, -6), "pec_flat")
     male = Group("male", (0, 0, 0))
@@ -233,7 +239,7 @@ def oto():
     body = Group("body", (0, 0, 0))
     body.boxes += p.segments()
     body.boxes += eyes(p, 0.14, up=0.15, size=2, inset=0.7)
-    body.boxes.append(box("mouth", "mouth", (0, -0.5, -13.5), (3, 1, 3)))
+    body.boxes.append(box("mouth", "mouth", (0, MOUTH_PROUD - 0.5, -13.5), (3, 1, 3)))
     body.boxes += pair("pelvic", "pelvic", (1.5, -0.4, p.snout + 0.58 * 24), (3, 0, 3), (0, 20, -6), "pec_flat")
     return p, [body, caudal(p, 7, 9, "fork"), dorsal_fin(p, 0.36, 4, 5, "tri", lean=-8)] + pectorals(p, 0.26, 4, 3, spread=25, droop=6,
                                                                                                   up=0.95, horizontal=True)
@@ -445,6 +451,35 @@ def apisto():
     return p, [body, caudal(p, 9, 12, "lyre"), dorsal_fin(p, 0.2, 15, 8, "crest", lean=-2)] + pectorals(p, 0.24, 4, 3)
 
 
+def rooted_fin(plan: Plan, fin: Box, up: bool, sink: float = 0.6) -> Box:
+    """M67.5: a swept fin (a plane tilted about X) whose base reaches into the body: the box grows at its base end (its far
+    edge, the fin's tip, stays where it is) until the whole base edge lies at least ``sink`` px inside the body's back
+    (``up``) or belly. A tilted fin of fixed height left its base edge in the water above or below the curved body (the
+    angelfish's sails floated next to the disc)."""
+    sgn = 1 if up else -1
+    a = math.radians(fin.rot[0])
+    ca, sa = math.cos(a), math.sin(a)
+    w, h, length = fin.size
+    cx, cy, cz = fin.center
+    for _ in range(24):
+        ok = True
+        for zz in (-length / 2, 0.0, length / 2):
+            ly = sgn * h / 2
+            y = cy + ly * ca - zz * sa
+            z = cz + ly * sa + zz * ca
+            t = max(0.0, min(1.0, plan.t_of(z)))
+            edge = plan.top(t) if up else plan.bottom(t)
+            if (y - edge) * sgn < sink:
+                ok = False
+        if ok:
+            break
+        # one px longer towards the base: the centre moves half a px along the fin's own axis
+        h += 1
+        cy += sgn * 0.5 * ca
+        cz += sgn * 0.5 * sa
+    return Box(fin.name, fin.part, (cx, cy, cz), (w, h, length), fin.rot, fin.fin)
+
+
 def angel():
     """M29 angelfish: a tall, flat disc with huge swept-back dorsal and anal fins, long pelvic threads and a lyre tail.
     The body sits high so the anal fin ends at y = 0."""
@@ -452,11 +487,11 @@ def angel():
     body = Group("body", (0, 0, 0))
     body.boxes += p.segments()
     body.boxes += eyes(p, 0.2, up=0.33)
-    body.boxes.append(box("anal", "anal", (0, p.bottom(0.5) + 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (28, 0, 0), fin="tri_down"))
+    body.boxes.append(rooted_fin(p, box("anal", "anal", (0, p.bottom(0.5) + 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (28, 0, 0), fin="tri_down"), False))
     fil = Group("filaments", (0, p.bottom(0.3) + 0.5, p.snout + 0.3 * 19))
     fil.boxes += pair("filament", "filament", (0.6, p.bottom(0.3) + 5.0, p.snout + 0.3 * 19 + 1.5), (1, 11, 1), (-12, 0, 6), None)
     dorsal = Group("dorsal", (0, p.top(0.4), p.snout + 0.38 * 19))
-    dorsal.boxes.append(box("dorsal", "dorsal", (0, p.top(0.45) - 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (-28, 0, 0), fin="tri_up"))
+    dorsal.boxes.append(rooted_fin(p, box("dorsal", "dorsal", (0, p.top(0.45) - 5.5, p.snout + 0.42 * 19 + 5), (0, 12, 9), (-28, 0, 0), fin="tri_up"), True))
     return p, [body, fil, dorsal, caudal(p, 9, 13, "lyre")] + pectorals(p, 0.26, 4, 3)
 
 
