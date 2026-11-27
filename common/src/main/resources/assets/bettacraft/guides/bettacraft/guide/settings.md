@@ -367,6 +367,8 @@ features to the tags of the waters above, so the biomes of biome mods count; whi
   `/bettacraft aquarist arrive [player]` lets one come now.
 * Operators and the owner of a single player world: `/bettacraft debug <area|all> <on|off|trace>` switches the debug log,
   `/bettacraft report` writes a bug report with the tank you look at ([Reporting bugs](settings/bug_reports.md)).
+* Operators: `/bettacraft algae <0..1> [radius]` sets the algae on the glass of every tank within the radius (in chunks,
+  16) to that level, `0` cleans them (for trying how algae look and what they cost).
 
 ## In this chapter
 
