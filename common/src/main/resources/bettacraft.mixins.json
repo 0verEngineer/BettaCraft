@@ -40,6 +40,7 @@
   "client": [
     "client.BackgroundMouseMixin",
     "client.BackgroundSoundMixin",
+    "client.BackgroundVsyncMixin",
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
