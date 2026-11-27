@@ -139,7 +139,7 @@ loom {
             // [-PtourRadius=<chunks>] [-PtourLimit=<tanks>] [-PtourBaseline]: the real-world tour (DevClientWorldTour, see neoforge/build.gradle)
             if (project.hasProperty('smoketestworldtour')) {
                 property 'bettacraft.smoketest.worldtour', 'true'
-                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls', 'tourAlgaeMode': 'algaemode'].each { k, v ->
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls', 'tourAlgaeMode': 'algaemode', 'tourStrollSpeed': 'strollspeed'].each { k, v ->
                     if (project.hasProperty(k)) property "bettacraft.tour.${v}", project.property(k).toString()
                 }
                 if (project.hasProperty('tourBaseline')) property 'bettacraft.tour.baseline', 'true'
@@ -724,7 +724,7 @@ def prodProps = { boolean client ->
         // M63b: the real-world tour in production (the shader packs of Fabric 1.21.1 need it, see above)
         if (project.hasProperty('smoketestworldtour')) {
             l << '-Dbettacraft.smoketest.worldtour=true'
-            ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls', 'tourAlgaeMode': 'algaemode'].each { k, v ->
+            ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls', 'tourAlgaeMode': 'algaemode', 'tourStrollSpeed': 'strollspeed'].each { k, v ->
                 if (project.hasProperty(k)) l << "-Dbettacraft.tour.${v}=${project.property(k)}".toString()
             }
             if (project.hasProperty('tourBaseline')) l << '-Dbettacraft.tour.baseline=true'
