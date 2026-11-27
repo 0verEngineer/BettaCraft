@@ -524,7 +524,8 @@ public final class TankAnchors {
      * to the line that sucks (a filter intake, the waste water line of a water change controller), outlet guards and the outlets
      * (lily pipe, nozzle, spray bar) to the line that brings water in (filter return, fresh water); single pieces move to the new dock
      * of their line, interior pipes stay and keep the old dock (now theirs, where it is). Returns false (nothing changed, the old dock
-     * stays shared) when interior pipes behind it lead to both kinds or to two lines, or another dock touches it.
+     * stays shared) when interior pipes behind it lead to both kinds or to two lines, another dock touches it, or nothing behind it
+     * belongs to a line (lines without a role: plain water pipes).
      */
     static boolean split(ServerLevel level, TankBlockEntity c, InteriorRegion r, BlockPos member, Direction face, long old) {
         var eq = r.equipment();
@@ -585,6 +586,12 @@ public final class TankAnchors {
             if (need > 1 || need == 1 && keeper > 0 && keeper != to) conflict = true;
             else if (need == 1) keeper = to;
         }
+        final int kept = keeper;
+        moves.removeIf(mv -> mv[1] == kept); // they stay at the old dock, which is their line's now
+        boolean behind = false;
+        for (Direction d : Direction.values()) behind |= m.containsKey(offset(old, d));
+        // nothing behind it belongs to one of the lines (lines without a role, outlets of no line): it stays as it is, shared
+        if (!conflict && behind && moves.isEmpty() && keeper < 0) conflict = true;
         if (conflict) {
             synchronized (failed) {
                 failed.put(old, eq.plumbingVersion());
