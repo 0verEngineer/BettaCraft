@@ -145,10 +145,10 @@ final class DevClientSmokeM68 {
     // ------------------------------------------------------------------ the scene
 
     private void build(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
+        ServerLevel level = p.level();
         costs = ServerConfig.POWER_COSTS.get();
         ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.OFF);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         DevClientWorldTour.clearWeather(level);
         level.setDayTime(6000);
         p.getAbilities().flying = true;
@@ -264,7 +264,7 @@ final class DevClientSmokeM68 {
 
     private void openTank(BlockPos tankPos) {
         server(p -> {
-            TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), tankPos);
+            TankBlockEntity c = TankMultiblock.getController(p.level(), tankPos);
             if (c == null) {
                 LOGGER.error("[smoketest] M68 FAIL: no tank at {}", tankPos);
                 return;
@@ -280,7 +280,7 @@ final class DevClientSmokeM68 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
@@ -298,8 +298,8 @@ final class DevClientSmokeM68 {
         float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
         float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.hypot(d.x, d.z)));
         server(p -> {
-            ServerLevel to = interior ? InteriorManager.interiorLevel(p.server) : p.server.overworld();
-            p.teleportTo(to, eye.x, eye.y - p.getEyeHeight(), eye.z, yaw, pitch);
+            ServerLevel to = interior ? InteriorManager.interiorLevel(p.level().getServer()) : p.level().getServer().overworld();
+            p.teleportTo(to, eye.x, eye.y - p.getEyeHeight(), eye.z, java.util.Set.of(), yaw, pitch, false);
         });
     }
 
@@ -334,7 +334,7 @@ final class DevClientSmokeM68 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m68_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m68_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
