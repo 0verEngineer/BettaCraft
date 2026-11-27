@@ -60,17 +60,18 @@ public final class EquipmentGameTests {
 
     /**
      * M52c: the item of a block with a tooltip ({@code BlockTooltip}) shows the block's lines exactly once (an inject into
-     * {@code Item#appendHoverText}; the method once added to {@code BlockItem} clashed with other mods in ATM11).
+     * {@code Item#appendHoverText}; the method once added to {@code BlockItem} clashed with other mods in ATM11). M68: the filter
+     * pipe, the last block with such lines, is gone; the pipe's lines come from its item ({@code PipeItem}) and must still show once.
      */
     @GameTest(template = EMPTY)
     public static void blockItemsShowTheirBlockTooltipOnce(GameTestHelper h) {
-        net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(ModBlocks.FILTER_INLET_PIPE.get().asItem());
+        net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(ModBlocks.STAINLESS_STEEL_PIPE.get().asItem());
         List<net.minecraft.network.chat.Component> lines = new ArrayList<>();
         stack.getItem().appendHoverText(stack, Item.TooltipContext.of(h.getLevel()), net.minecraft.world.item.component.TooltipDisplay.DEFAULT,
                 lines::add, net.minecraft.world.item.TooltipFlag.NORMAL);
         long usage = lines.stream().filter(c -> c.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
-                && t.getKey().equals("tooltip.bettacraft.filter_pipe.usage")).count();
-        h.assertTrue(usage == 1, "the filter pipe usage line once, got " + lines);
+                && t.getKey().equals("tooltip.bettacraft.pipe.usage")).count();
+        h.assertTrue(usage == 1, "the pipe usage line once, got " + lines);
         h.succeed();
     }
 

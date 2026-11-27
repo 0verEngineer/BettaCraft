@@ -317,7 +317,7 @@ final class DevClientSmokeM24 {
         for (int i = 0; i < hotbar.length; i++) p.getInventory().setItem(i, hotbar[i]);
         ItemStack[] more = {new ItemStack(ModItems.CRUCIBLE.get()), new ItemStack(ModItems.FILTER_CHAMBER.get(), 4), new ItemStack(ModItems.FILTER_INLET.get()),
                 new ItemStack(ModItems.FILTER_OUTLET.get()), new ItemStack(ModItems.ACTIVATED_CARBON.get()), new ItemStack(ModItems.FILTER_PEAT.get()),
-                new ItemStack(ModItems.INTERIOR_PIPE.get(), 32), new ItemStack(ModItems.INTAKE_STRAINER.get()), new ItemStack(ModItems.LILY_PIPE.get()),
+                new ItemStack(ModItems.GLASS_PIPE.get(), 32), new ItemStack(ModItems.INTAKE_STRAINER.get()), new ItemStack(ModItems.LILY_PIPE.get()),
                 new ItemStack(ModItems.SPRAY_BAR.get()), new ItemStack(ModItems.RESERVOIR.get()), new ItemStack(ModItems.LEVEL_SENSOR.get()),
                 new ItemStack(ModItems.WATER_CHANGE_CONTROLLER.get())};
         for (int i = 0; i < more.length; i++) p.getInventory().setItem(9 + i, more[i]);

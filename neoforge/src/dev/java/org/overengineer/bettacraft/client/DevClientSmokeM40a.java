@@ -20,7 +20,6 @@ import org.overengineer.bettacraft.filter.FilterPartBlock;
 import org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity;
 import org.overengineer.bettacraft.filter.MultiblockFilter;
 import org.overengineer.bettacraft.plumbing.FilterLines;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
 import org.overengineer.bettacraft.plumbing.interior.Plumb;
 import org.overengineer.bettacraft.plumbing.interior.PlumbingBlock;
 import org.overengineer.bettacraft.plumbing.interior.TankAnchors;
@@ -115,11 +114,10 @@ final class DevClientSmokeM40a {
         level.setBlock(base.offset(6, 0, 4), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
         level.setBlock(base.offset(6, 1, 4), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
         // the inlet line along z = 3 at the floor, T-pieces at the connector and at tank B
-        Block inlet = ModBlocks.FILTER_INLET_PIPE.get(), outlet = ModBlocks.FILTER_OUTLET_PIPE.get();
+        Block inlet = ModBlocks.STAINLESS_STEEL_PIPE.get(), outlet = ModBlocks.STAINLESS_STEEL_PIPE.get();
         line(level, inlet, base, new int[]{1, 0, 2});
         for (int x = 1; x <= 17; x++) line(level, inlet, base, new int[]{x, 0, 3});
         line(level, inlet, base, new int[]{9, 0, 2}, new int[]{17, 0, 2});
-        for (int x : new int[]{6, 9}) FilterPipeBlock.makeJunction(level, base.offset(x, 0, 3));
         // the return line at y = 2: down to the front of A, onto the top of B, down to the front of C
         line(level, outlet, base, new int[]{2, 1, 2}, new int[]{2, 1, 3});
         for (int x = 2; x <= 6; x++) line(level, outlet, base, new int[]{x, 2, 3});
@@ -128,7 +126,6 @@ final class DevClientSmokeM40a {
         line(level, outlet, base, new int[]{10, 2, 2}, new int[]{10, 2, 1});
         for (int x = 11; x <= 16; x++) line(level, outlet, base, new int[]{x, 2, 3});
         line(level, outlet, base, new int[]{16, 1, 3}, new int[]{16, 1, 2});
-        for (int x : new int[]{6, 10}) FilterPipeBlock.makeJunction(level, base.offset(x, 2, 3));
         // the guards: A and B (B's return dock on the top leads on through interior pipes to an outlet guard), not C
         MultiblockFilter.Structure s = MultiblockFilter.scan(level, head);
         List<MultiblockFilter.Link> links = MultiblockFilter.links(level, s);

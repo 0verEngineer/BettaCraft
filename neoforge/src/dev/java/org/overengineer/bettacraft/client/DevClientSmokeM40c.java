@@ -20,10 +20,10 @@ import org.overengineer.bettacraft.filter.FilterChamberBlockEntity;
 import org.overengineer.bettacraft.filter.FilterPartBlock;
 import org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity;
 import org.overengineer.bettacraft.filter.MultiblockFilter;
-import org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipes;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
+import org.overengineer.bettacraft.plumbing.PipeSlots;
+import org.overengineer.bettacraft.plumbing.Pipes;
 import org.overengineer.bettacraft.plumbing.LevelSensorBlockEntity;
-import org.overengineer.bettacraft.plumbing.PipeLine;
 import org.overengineer.bettacraft.plumbing.ReservoirBlockEntity;
 import org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity;
 import org.overengineer.bettacraft.plumbing.WaterPumpBlock;
@@ -108,8 +108,8 @@ final class DevClientSmokeM40c {
         level.setBlock(head, ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(base.offset(10, 0, 6), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
         level.setBlock(base.offset(10, 1, 6), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
-        level.setBlock(base.offset(11, 0, 5), ModBlocks.FILTER_FRESH_PORT.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
-        level.setBlock(base.offset(11, 0, 7), ModBlocks.FILTER_WASTE_PORT.get().defaultBlockState().setValue(FilterPartBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
+        level.setBlock(base.offset(11, 0, 5), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(base.offset(11, 0, 7), ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(base.offset(12, 0, 6), ModBlocks.LEVEL_SENSOR.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(base.offset(12, 1, 6), ModBlocks.WATER_CHANGE_CONTROLLER.get().defaultBlockState(), Block.UPDATE_ALL);
         // the west end: water pump (pushing south) on its reservoir, the waste reservoir
@@ -118,7 +118,7 @@ final class DevClientSmokeM40c {
         level.setBlock(base.offset(3, 0, 8), ModBlocks.RESERVOIR.get().defaultBlockState(), Block.UPDATE_ALL);
         if (level.getBlockEntity(base.offset(3, 0, 3)) instanceof ReservoirBlockEntity r)
             r.water().fill(new org.overengineer.bettacraft.platform.fluid.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 12000), IFluidHandler.FluidAction.EXECUTE);
-        Block in = ModBlocks.FILTER_INLET_PIPE.get(), out = ModBlocks.FILTER_OUTLET_PIPE.get(), fresh = ModBlocks.FILTER_FRESH_PIPE.get(), waste = ModBlocks.FILTER_WASTE_PIPE.get();
+        Block in = ModBlocks.STAINLESS_STEEL_PIPE.get(), out = ModBlocks.STAINLESS_STEEL_PIPE.get(), fresh = ModBlocks.STAINLESS_STEEL_PIPE.get(), waste = ModBlocks.STAINLESS_STEEL_PIPE.get();
         // the intake line: from the tank's front glass down the run to the inlet
         line(level, in, base, new int[]{2, 0, 4}, new int[]{2, 0, 5}, new int[]{2, 0, 6});
         for (int x = 3; x <= 9; x++) line(level, in, base, new int[]{x, 0, 6});
@@ -133,15 +133,15 @@ final class DevClientSmokeM40c {
         line(level, waste, base, new int[]{11, 0, 8}, new int[]{10, 0, 8}, new int[]{9, 0, 8}, new int[]{8, 0, 8}, new int[]{8, 0, 7});
         // the bundles: (3..8, 0, 6) carry all four lines
         for (int x = 3; x <= 8; x++)
-            for (PipeLine l : new PipeLine[]{PipeLine.RETURN, PipeLine.FRESH, PipeLine.WASTE}) FilterPipeBundleBlock.addLine(level, base.offset(x, 0, 6), l, null, null);
+            for (int l = 0; l < 3; l++) PipeBundleBlock.addPipe(level, base.offset(x, 0, 6), true, null, null);
         for (int x = 3; x <= 8; x++) {
-            var lines = FilterPipes.lines(level, base.offset(x, 0, 6));
-            if (lines.size() != 4) LOGGER.error("[smoketest] M40c bundle at x {} carries {}", x, lines);
+            int lines = PipeSlots.count(Pipes.slotsAt(level, base.offset(x, 0, 6)));
+            if (lines != 4) LOGGER.error("[smoketest] M40c bundle at x {} carries {}", x, lines);
         }
         MultiblockFilter.Structure s = MultiblockFilter.scan(level, head);
         List<MultiblockFilter.Link> links = MultiblockFilter.links(level, s);
-        LOGGER.info("[smoketest] M40c filter {}: {} tanks, fresh ports {}, waste ports {}", s.problem(), links.size(), s.fresh().size(), s.waste().size());
-        if (links.size() != 1 || s.fresh().size() != 1 || s.waste().size() != 1) LOGGER.error("[smoketest] M40c the filter does not reach its tank and ports");
+        LOGGER.info("[smoketest] M40c filter {}: {} tanks", s.problem(), links.size());
+        if (links.size() != 1) LOGGER.error("[smoketest] M40c the filter does not reach its tank and ports");
         org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, head);
         if (level.getBlockEntity(head) instanceof FilterPumpHeadBlockEntity h) {
             // fresh water: the pump fills the port through the bundles, the sensor on the filter tops the tank off from it

@@ -129,9 +129,8 @@ public final class ClientSetup {
             if (level == null || pos == null) return -1;
             var c = org.overengineer.bettacraft.plumbing.PipeCovers.coverAt(level, pos);
             return c == null ? -1 : net.minecraft.client.Minecraft.getInstance().getBlockColors().getColor(c, level, pos, tint);
-        }, org.overengineer.bettacraft.registry.ModBlocks.FILTER_INLET_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_OUTLET_PIPE.get(),
-                org.overengineer.bettacraft.registry.ModBlocks.FILTER_FRESH_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.FILTER_WASTE_PIPE.get(),
-                org.overengineer.bettacraft.registry.ModBlocks.FILTER_PIPE_BUNDLE.get());
+        }, org.overengineer.bettacraft.registry.ModBlocks.GLASS_PIPE.get(), org.overengineer.bettacraft.registry.ModBlocks.STAINLESS_STEEL_PIPE.get(),
+                org.overengineer.bettacraft.registry.ModBlocks.FILTER_PIPE_BUNDLE.get()); // M68: every pipe
         event.register((state, level, pos, tint) -> tint == 0 ? LARVA_WATER : 0xFFFFFFFF, org.overengineer.bettacraft.registry.ModBlocks.LARVA_TUB.get());
         // the interior floor is tinted like its substrate
         event.register(org.overengineer.bettacraft.client.interior.SubstrateFloorModel::blockColor, org.overengineer.bettacraft.registry.ModBlocks.INTERIOR_FLOOR.get());

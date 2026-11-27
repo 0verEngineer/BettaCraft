@@ -286,10 +286,10 @@ public final class ModBlocks {
                     .lightLevel(s -> s.getValue(org.overengineer.bettacraft.crucible.CrucibleBlock.LIT) ? 9 : 0)));
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.PipeBlock> GLASS_PIPE = BLOCKS.register("glass_pipe",
             () -> new org.overengineer.bettacraft.plumbing.PipeBlock(false, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+                    .mapColor(MapColor.NONE).strength(0.3F).sound(SoundType.GLASS).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.PipeBlock> STAINLESS_STEEL_PIPE = BLOCKS.register("stainless_steel_pipe",
             () -> new org.overengineer.bettacraft.plumbing.PipeBlock(true, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((s, l, p) -> false)));
+                    .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.WaterPumpBlock> WATER_PUMP = BLOCKS.register("water_pump",
             () -> new org.overengineer.bettacraft.plumbing.WaterPumpBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL)));
@@ -304,7 +304,10 @@ public final class ModBlocks {
                     BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5F).sound(SoundType.METAL).noOcclusion()));
     // the plumbing of the tank interior
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> BULKHEAD = plumbing("bulkhead", org.overengineer.bettacraft.plumbing.interior.Plumb.PORT);
+    /** M68: a glass pipe placed in a tank interior (no item of its own: it drops the glass pipe). */
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTERIOR_PIPE = plumbing("interior_pipe", org.overengineer.bettacraft.plumbing.interior.Plumb.PIPE);
+    /** M68: a stainless steel pipe placed in a tank interior (drops the stainless steel pipe). */
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTERIOR_STEEL_PIPE = plumbing("interior_steel_pipe", org.overengineer.bettacraft.plumbing.interior.Plumb.PIPE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> INTAKE_STRAINER = plumbing("intake_strainer", org.overengineer.bettacraft.plumbing.interior.Plumb.STRAINER);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> LILY_PIPE = plumbing("lily_pipe", org.overengineer.bettacraft.plumbing.interior.Plumb.LILY);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PlumbingBlock> NOZZLE = plumbing("nozzle", org.overengineer.bettacraft.plumbing.interior.Plumb.NOZZLE);
@@ -314,17 +317,10 @@ public final class ModBlocks {
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_PUMP_HEAD = filterPart("filter_pump_head", org.overengineer.bettacraft.filter.FilterPartBlock.Part.PUMP_HEAD);
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_INLET = filterPart("filter_inlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.INLET);
     public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_OUTLET = filterPart("filter_outlet", org.overengineer.bettacraft.filter.FilterPartBlock.Part.OUTLET);
-    // M40: the filter pipes (intake and return line), the dock of a pipe in the interior and the guards
-    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_INLET_PIPE = filterPipe("filter_inlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.INTAKE);
-    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_OUTLET_PIPE = filterPipe("filter_outlet_pipe", org.overengineer.bettacraft.plumbing.PipeLine.RETURN);
-    // M40 part b: the fresh and waste water line, the pipe bundle (2 to 4 lines in one block, no item), the water ports of the filter
-    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_FRESH_PIPE = filterPipe("filter_fresh_pipe", org.overengineer.bettacraft.plumbing.PipeLine.FRESH);
-    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> FILTER_WASTE_PIPE = filterPipe("filter_waste_pipe", org.overengineer.bettacraft.plumbing.PipeLine.WASTE);
-    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock> FILTER_PIPE_BUNDLE = BLOCKS.register("filter_pipe_bundle",
-            () -> new org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock(BlockBehaviour.Properties.of()
+    // M40 part b: the pipe bundle (2 to 4 pipes in one block, no item); M68: any glass and steel pipes, the id stays
+    public static final DeferredBlock<org.overengineer.bettacraft.plumbing.PipeBundleBlock> FILTER_PIPE_BUNDLE = BLOCKS.register("filter_pipe_bundle",
+            () -> new org.overengineer.bettacraft.plumbing.PipeBundleBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
-    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_FRESH_PORT = filterPart("filter_fresh_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.FRESH);
-    public static final DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> FILTER_WASTE_PORT = filterPart("filter_waste_port", org.overengineer.bettacraft.filter.FilterPartBlock.Part.WASTE);
     public static final DeferredBlock<org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock> PIPE_ANCHOR = BLOCKS.register("pipe_anchor",
             () -> new org.overengineer.bettacraft.plumbing.interior.PipeAnchorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).noLootTable().sound(SoundType.METAL).noOcclusion()
@@ -440,18 +436,16 @@ public final class ModBlocks {
                 .isRedstoneConductor((s, l, p) -> false)));
     }
 
-    private static DeferredBlock<org.overengineer.bettacraft.plumbing.FilterPipeBlock> filterPipe(String id, org.overengineer.bettacraft.plumbing.PipeLine line) {
-        // M40 part c: dynamic shape (a cover makes it a full block, from the block entity)
-        return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.FilterPipeBlock(line, BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL).strength(1.0F, 6.0F).sound(SoundType.METAL).noOcclusion().dynamicShape().isRedstoneConductor((s, l, p) -> false)));
-    }
-
     private static DeferredBlock<org.overengineer.bettacraft.filter.FilterPartBlock> filterPart(String id, org.overengineer.bettacraft.filter.FilterPartBlock.Part part) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.filter.FilterPartBlock(part, BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL).strength(1.5F, 6.0F).sound(SoundType.METAL).noOcclusion()));
     }
 
     public static void register() {
+        // M68: the M40 filter pipes (all four lines) and the filter's fresh and waste water ports are stainless steel pipes now: placed
+        // ones load as such with their sides (PipeBlockEntity keeps exactly their old connections)
+        for (String old : java.util.List.of("filter_inlet_pipe", "filter_outlet_pipe", "filter_fresh_pipe", "filter_waste_pipe", "filter_fresh_port", "filter_waste_port"))
+            BLOCKS.addAlias(old, "stainless_steel_pipe");
         BLOCKS.register();
     }
 

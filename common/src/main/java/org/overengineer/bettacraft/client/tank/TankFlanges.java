@@ -12,12 +12,11 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.platform.client.QuadBaker;
-import org.overengineer.bettacraft.plumbing.FilterPipeBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock;
-import org.overengineer.bettacraft.plumbing.FilterPipes;
 import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
 import org.overengineer.bettacraft.plumbing.PipeCovers;
-import org.overengineer.bettacraft.plumbing.PipeLine;
+import org.overengineer.bettacraft.plumbing.PipeSlots;
+import org.overengineer.bettacraft.plumbing.Pipes;
 import org.overengineer.bettacraft.tank.TankBlock;
 
 /**
@@ -56,14 +55,14 @@ public final class TankFlanges {
     /** The bits of one side: the pipe at {@code n} joined towards the tank ({@code back}). */
     private static int side(BlockAndTintGetter level, BlockPos n, Direction back) {
         BlockState s = level.getBlockState(n);
-        if (s.getBlock() instanceof PipeBlock) return s.getValue(PipeBlock.SIDES.get(back)) ? 1 : 0;
-        if (s.getBlock() instanceof FilterPipeBlock || s.getBlock() instanceof FilterPipeBundleBlock) {
+        if (s.getBlock() instanceof PipeBlock || s.getBlock() instanceof PipeBundleBlock) {
             if (PipeCovers.coverAt(level, n) != null) return 0; // a covered pipe is a full block: no flange on it
-            int lines = FilterPipes.packed(level, n, s);
+            if (s.getBlock() instanceof PipeBlock) return s.getValue(PipeBlock.SIDES.get(back)) ? 1 : 0;
+            int[] slots = Pipes.slotsAt(level, n);
             int bits = 0, count = 0;
-            for (PipeLine l : PipeLine.values()) {
-                if (FilterPipes.joined(FilterPipes.slot(lines, l), back)) {
-                    bits |= 1 << (1 + l.ordinal());
+            for (int i = 0; i < slots.length; i++) {
+                if (PipeSlots.present(slots[i]) && PipeSlots.joined(slots[i], back)) {
+                    bits |= 1 << (1 + i);
                     count++;
                 }
             }
@@ -85,10 +84,10 @@ public final class TankFlanges {
             int bits = (mask >>> (d.ordinal() * 5)) & 31;
             if (bits == 0) continue;
             if ((bits & 1) != 0) flange(out, sprite, d, 8, 8, FLANGE);
-            for (PipeLine l : PipeLine.values()) {
-                if ((bits & (1 << (1 + l.ordinal()))) == 0) continue;
-                // the spot of the line's arm on the bundle's face towards the tank (the same in-plane box on the tank's face)
-                float[] a = FilterPipeBundleBlock.arm(l, d.getOpposite(), FilterPipeBundleBlock.ARM, 0);
+            for (int l = 0; l < PipeSlots.COUNT; l++) {
+                if ((bits & (1 << (1 + l))) == 0) continue;
+                // the spot of the slot's arm on the bundle's face towards the tank (the same in-plane box on the tank's face)
+                float[] a = PipeBundleBlock.arm(l, d.getOpposite(), PipeBundleBlock.ARM, 0);
                 int[] ax = inPlane(d);
                 flange(out, sprite, d, (a[ax[0]] + a[ax[0] + 3]) / 2, (a[ax[1]] + a[ax[1] + 3]) / 2, SMALL);
             }

@@ -17,16 +17,25 @@ public final class PipeFluid implements IFluidHandler {
     private final BlockPos pos;
     @Nullable
     private final BlockPos from;
+    @Nullable
+    private final Direction side;
 
     public PipeFluid(Level level, BlockPos pos, @Nullable Direction side) {
         this.level = level;
         this.pos = pos.immutable();
+        this.side = side;
         this.from = side == null ? null : pos.relative(side).immutable();
     }
 
+    /** M68: the network of the pipe (a bundle: the pipe joined on this face; none joined there: its first pipe). */
     @Nullable
     private PipeNetwork net() {
-        return level.isClientSide() ? null : PipeNetwork.of(level, pos);
+        if (level.isClientSide()) return null;
+        if (side != null && level.getBlockState(pos).getBlock() instanceof PipeBundleBlock) {
+            PipeNetwork n = PipeNetwork.towards(level, pos, side);
+            if (n != null) return n;
+        }
+        return PipeNetwork.of(level, pos);
     }
 
     /**

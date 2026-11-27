@@ -1278,9 +1278,9 @@ public final class DevSmokeMP {
         steps.add(new Step("pipe covers", () -> {
             ServerLevel level = server.overworld();
             BlockPos a = base.offset(-29, 0, 16), b = base.offset(-28, 0, 16);
-            level.setBlockAndUpdate(a, ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-            level.setBlockAndUpdate(b, ModBlocks.FILTER_INLET_PIPE.get().defaultBlockState());
-            org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock.addLine(level, b, org.overengineer.bettacraft.plumbing.PipeLine.RETURN, null, null);
+            level.setBlockAndUpdate(a, ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+            level.setBlockAndUpdate(b, ModBlocks.STAINLESS_STEEL_PIPE.get().defaultBlockState());
+            org.overengineer.bettacraft.plumbing.PipeBundleBlock.addPipe(level, b, false, null, null); // M68: a glass pipe into the steel pipe
             check("cover on the pipe", org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, a, net.minecraft.world.level.block.Blocks.STONE_BRICKS.defaultBlockState(),
                     new ItemStack(net.minecraft.world.item.Items.STONE_BRICKS), null));
             check("cover on the bundle", org.overengineer.bettacraft.plumbing.PipeCovers.apply(level, b, net.minecraft.world.level.block.Blocks.GLOWSTONE.defaultBlockState(),
