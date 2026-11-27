@@ -47,11 +47,19 @@ public final class AlgaeRenderer {
     /** Longest water path counted (blocks). */
     private static final int MAX_PATH = 48;
 
+    /** Dev tour only (M66 v6, the proof of the causes): "nodepth" = the film without depth writes, "off" = no film; empty = normal. */
+    public static volatile String testMode = "";
+
     private AlgaeRenderer() {}
+
+    private static RenderType type() {
+        // Port (26.x): render types are built from render pipelines here; the "nodepth" proof switch of 1.21.1 draws the normal film
+        return net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(TEXTURE);
+    }
 
     public static void render(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         Level level = be.getLevel();
-        if (level == null || t.algae().isEmpty()) return;
+        if (level == null || t.algae().isEmpty() || "off".equals(testMode)) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera().position();
@@ -77,7 +85,7 @@ public final class AlgaeRenderer {
                     }
                     light = net.minecraft.util.LightCoordsUtil.getLightCoords(level, p);
                 }
-                if (vc == null) vc = buffers.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(TEXTURE));
+                if (vc == null) vc = buffers.getBuffer(type());
                 // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
                 int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
                 boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);
