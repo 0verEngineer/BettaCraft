@@ -49,7 +49,7 @@ public final class ItemHints {
             // M24: stainless steel, pipes, the multiblock filter, the water devices
             "stainless_steel_ingot", "crucible", "glass_pipe", "stainless_steel_pipe", "water_pump", "pipe_wrench", "bulkhead", "intake_strainer",
             "lily_pipe", "nozzle", "spray_bar", "filter_chamber", "filter_pump_head", "filter_inlet", "filter_outlet", "filter_foam", "ceramic_rings",
-            "activated_carbon", "filter_peat", "reservoir", "level_sensor", "water_change_controller",
+            "activated_carbon", "filter_peat", "reservoir", "level_sensor", "water_change_controller", "drain",
             // M40 part a: the filter pipes, the T-piece and the guards
             "filter_inlet_pipe", "filter_outlet_pipe", "pipe_tee", "intake_guard", "outlet_guard",
             // M40 part b: the fresh and waste water line and the water ports of the filter

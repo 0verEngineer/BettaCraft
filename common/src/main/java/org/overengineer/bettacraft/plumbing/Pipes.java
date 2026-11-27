@@ -111,4 +111,17 @@ public final class Pipes {
         }
         return false;
     }
+
+    /**
+     * M68 part B: the network of the pipe next to a device at {@code device} on its side {@code d}: a single pipe, or the pipe of a
+     * bundle that is joined towards the device (else the bundle's first pipe); null without a pipe there. For the devices that work the
+     * pipes next to them themselves (the live food pump, the dosing pump, the calcium reactor, the fertilizer maker).
+     */
+    @javax.annotation.Nullable
+    public static PipeNetwork networkNextTo(net.minecraft.world.level.Level level, BlockPos device, Direction d) {
+        BlockPos n = device.relative(d);
+        if (!level.isLoaded(n) || !isPipe(level.getBlockState(n))) return null;
+        PipeNetwork net = PipeNetwork.towards(level, n, d.getOpposite());
+        return net != null ? net : PipeNetwork.of(level, n);
+    }
 }

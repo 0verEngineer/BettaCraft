@@ -1407,6 +1407,7 @@ public final class ModDataGen {
             dropSelf(ModBlocks.REEF_ROCK.get());
             dropSelf(ModBlocks.LIVE_ROCK.get());
             for (Block b : m24Blocks()) dropSelf(b); // M24
+            dropSelf(ModBlocks.DRAIN.get()); // M68 part B
             // M25: the cylinder keeps its gas and its solenoid valve
             dropSelf(ModBlocks.BIO_CO2.get());
             dropSelf(ModBlocks.CO2_STATION.get());
@@ -1459,6 +1460,7 @@ public final class ModDataGen {
                     .stream().collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), l -> {
                         for (var b : ModBlocks.WILD_CORALS.values()) l.add(b.get());
                         l.addAll(m24Blocks());
+                        l.add(ModBlocks.DRAIN.get()); // M68 part B
                         l.addAll(DataGenM25b.blocks()); // M25
                         l.addAll(DataGenM25c.blocks());
                         l.addAll(DataGenM31.blocks()); // M31 part a

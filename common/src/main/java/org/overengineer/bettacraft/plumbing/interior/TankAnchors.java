@@ -171,6 +171,8 @@ public final class TankAnchors {
         BlockState s = level.getBlockState(n);
         Direction back = face.getOpposite();
         if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) return org.overengineer.bettacraft.plumbing.Pipes.joinedTowards(level, n, s, back); // M68: any pipe, also of a bundle
+        // M68 part B: a water change controller against the tank drains it there (its intake needs a guard like a waste water line)
+        if (s.getBlock() instanceof org.overengineer.bettacraft.plumbing.WaterDeviceBlock w && w.kind() == org.overengineer.bettacraft.plumbing.WaterDeviceBlock.Kind.WATER_CHANGER) return true;
         if (s.getBlock() instanceof FilterPartBlock f) return (f.part() == FilterPartBlock.Part.INLET || f.part() == FilterPartBlock.Part.OUTLET) && s.getValue(FilterPartBlock.FACING) == back;
         return false;
     }
