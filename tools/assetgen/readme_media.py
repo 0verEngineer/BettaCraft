@@ -42,7 +42,6 @@ STILLS = {
     'readme_mobs_in_glass': ('bettacraft-mobs-in-glass', None, 1280),
     'readme_sea_giants': ('bettacraft-sea-giants', None, 1280),
     'readme_fresh_giants': ('bettacraft-freshwater-giants', None, 1280),
-    'readme_filter_lines': ('bettacraft-filter-lines', None, 1280),
     'readme_showcase_overview': ('bettacraft-showcase-overview', None, 1280),
     # M58: the tanks, animals and devices that were missing (part m58 of the media run; part create with -Pcreate)
     'readme_m58_paludarium': ('bettacraft-paludarium-frogs', None, 1280),
@@ -62,6 +61,9 @@ STILLS = {
     'readme_m58_monitors': ('bettacraft-monitors', None, 1280),
     'readme_m58_wild_plants': ('bettacraft-wild-plants', None, 1280),
     'readme_m58_create_cart': ('bettacraft-create-cart', (0.15, 0.05, 0.85, 0.75), 1280),
+    # M68: the one pipe system (gradlew runClient -Psmoketestm68, a 1280x960 shot): one multiblock filter for three tanks, its
+    # intake and return lines and the water change controller at the filter chamber (showcase row 22)
+    'bettacraft_m68_changer_at_filter_back': ('bettacraft-filter-lines', (0.0, 0.15, 1.0, 0.9), 1280),
 }
 # M43: every still of the room and the showcase also with Complementary Reimagined (suffix _shaders)
 for _k, (_n, _b, _w) in list(STILLS.items()):
