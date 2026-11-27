@@ -18,13 +18,15 @@ item_ids:
 </GameScene>
 
 Offene Aquarien verlieren Wasser durch Verdunstung (ein Deckel hilft). Der <ItemLink id="bettacraft:level_sensor" />
-füllt es nach:
+misst das:
 
-* **Neben ein Aquarium** stellen (oder an einen [Multiblock-Filter](multiblock_filter.md): dann füllt er das Aquarium
-  nach, das der Filter reinigt).
-* Ist das Wasser etwas unter sein **Ziel** gesunken (100 %; Rechtsklick: 95, 90, 80, 70, 60, 50 %), füllt er aus dem
-  nach, was **daneben** steht: ein <ItemLink id="bettacraft:reservoir" />, ein [Rohr](pipes.md), der Tank einer anderen
-  Mod (auch AE2 oder RS über ihre Schnittstellen) oder eine Wasserquelle.
+* **Neben ein Aquarium** stellen (daneben oder darauf). Er misst nur, wie ein Schwimmerschalter; kein Rohr verbindet sich
+  mit ihm.
+* Ist das Wasser etwas unter sein **Ziel** gesunken (100 %; Rechtsklick: 95, 90, 80, 70, 60, 50 %), meldet er das und
+  gibt ein **Redstone-Signal**.
+* Eine [Wasserwechsel-Steuerung](water_change.md), die dieses Aquarium versorgt, liest ihn ohne Kabel und **füllt nach**,
+  über ihre Frischwasserleitung (aus einem <ItemLink id="bettacraft:reservoir" />, einer Pumpe an einer Wasserquelle oder
+  dem Tank einer anderen Mod).
 * **Nur Süßwasser.** Verdunstet Wasser, bleibt das Salz eines [Riffbeckens](../saltwater.md) zurück; Nachfüllen mit
   Süßwasser bringt den Salzgehalt genau dorthin zurück, wo er war. Eine salzige Quelle wird abgelehnt.
 

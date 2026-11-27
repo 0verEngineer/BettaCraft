@@ -52,6 +52,7 @@ public final class FeatureContent {
         put(Feature.PIPES, "glass_pipe", "stainless_steel_pipe", "water_pump", "reservoir");
         put(Feature.TOP_OFF, "level_sensor");
         put(Feature.AUTO_WATER_CHANGE, "water_change_controller");
+        put(Feature.DRAIN, "drain"); // M68 part B
         put(Feature.INTERIOR_PIPES, "bulkhead", "intake_strainer", "lily_pipe", "nozzle", "spray_bar");
         put(Feature.FILTER_LINES, "intake_guard", "outlet_guard"); // M40 (M68: the filter pipes and the T-piece are gone)
         put(Feature.PIPE_COVERS, "pipe_cover"); // M40 part c

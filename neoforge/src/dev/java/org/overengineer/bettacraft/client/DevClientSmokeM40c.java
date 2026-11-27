@@ -144,21 +144,11 @@ final class DevClientSmokeM40c {
         if (links.size() != 1) LOGGER.error("[smoketest] M40c the filter does not reach its tank and ports");
         org.overengineer.bettacraft.gametest.FilterLinesGameTests.guardAll(level, head);
         if (level.getBlockEntity(head) instanceof FilterPumpHeadBlockEntity h) {
-            // fresh water: the pump fills the port through the bundles, the sensor on the filter tops the tank off from it
-            if (level.getBlockEntity(base.offset(3, 0, 4)) instanceof WaterPumpBlockEntity pump) for (int i = 0; i < 3; i++) pump.pump(level, pump.getBlockPos(), pump.getBlockState());
-            TankInteractions.changeWater(level, a, -800);
-            int topped = level.getBlockEntity(base.offset(12, 0, 6)) instanceof LevelSensorBlockEntity ls ? ls.check(level) : 0;
-            int changed = 0, wasted = 0;
-            if (level.getBlockEntity(base.offset(12, 1, 6)) instanceof WaterChangerBlockEntity wc) {
-                changed = wc.check(level, true);
-                wasted = wc.lastWasteMb();
-            }
+            // M68 part B: the sensor only measures and the controller works through its own pipe ports (the station is rebuilt
+            // in part E); here only the filter runs
             int moved = h.run(level, true);
-            int wasteRes = level.getBlockEntity(base.offset(3, 0, 8)) instanceof ReservoirBlockEntity r ? r.water().amount() : -1;
-            LOGGER.info("[smoketest] M40c topped off {} mB, changed {} mB, {} mB old water out ({} in the waste reservoir), filter moved {}: {}",
-                    topped, changed, wasted, wasteRes, moved, h.tanks());
-            if (topped != 800 || changed <= 0 || wasted != changed || wasteRes != changed || moved <= 0)
-                LOGGER.error("[smoketest] M40c fresh/waste water through the bundles does not work");
+            LOGGER.info("[smoketest] M40c filter moved {}: {}", moved, h.tanks());
+            if (moved <= 0) LOGGER.error("[smoketest] M40c the filter does not run");
         }
         covers(level, p);
         if (level.getBlockEntity(head) instanceof FilterPumpHeadBlockEntity h) {

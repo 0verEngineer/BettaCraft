@@ -230,8 +230,8 @@ public class FertilizerMakerBlockEntity extends BlockEntity implements MenuProvi
             BlockState s = level.getBlockState(n);
             FluidStack f = Fertilizer.fluid(Math.min(fertilizer, Fertilizer.BATCH_MB));
             int took = 0;
-            if (s.getBlock() instanceof PipeBlock) {
-                PipeNetwork net = PipeNetwork.of(level, n);
+            if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) { // M68 part B: also a pipe of a bundle
+                PipeNetwork net = org.overengineer.bettacraft.plumbing.Pipes.networkNextTo(level, worldPosition, d);
                 if (net != null) took = net.fill(level, f, IFluidHandler.FluidAction.EXECUTE, worldPosition);
             } else if (s.getBlock() instanceof TankBlock) {
                 IFluidHandler h = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, n, d.getOpposite());
