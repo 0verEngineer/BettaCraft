@@ -23,6 +23,9 @@ import org.overengineer.bettacraft.registry.ModEntities;
  * (biome modifiers, loot modifiers, trades: {@link FabricWorld}).
  */
 public final class BettaCraftFabric implements ModInitializer {
+    /** Our block entities loaded since the last tick start, waiting for their onLoad (see onInitialize). */
+    private static final java.util.List<net.minecraft.world.level.block.entity.BlockEntity> PENDING_LOAD = new java.util.ArrayList<>();
+
     @Override
     public void onInitialize() {
         // the configs first: the feature switches decide registration details and the conditions
@@ -61,9 +64,31 @@ public final class BettaCraftFabric implements ModInitializer {
             if (config.getSpec() == CommonConfig.SPEC) server.execute(() -> BettaCraft.onCommonConfigReloaded(server));
             else if (config.getSpec() == ServerConfig.SPEC) server.execute(() -> BettaCraft.onServerConfigReloaded(server));
         });
-        // NeoForge's onLoad / onChunkUnloaded of our block entities
+        // NeoForge's onLoad / onChunkUnloaded of our block entities. Fabric's load event fires while the chunk is still being
+        // loaded (before it ticks: a tick scheduled there is dropped with an error); NeoForge calls onLoad when the level next
+        // ticks its block entities, so the calls wait for the start of the next server tick.
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, level) -> {
-            if (be instanceof org.overengineer.bettacraft.platform.BlockEntityLifecycle l) l.onLoad();
+            if (be instanceof org.overengineer.bettacraft.platform.BlockEntityLifecycle) {
+                synchronized (PENDING_LOAD) {
+                    PENDING_LOAD.add(be);
+                }
+            }
+        });
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.START_SERVER_TICK.register(s -> {
+            java.util.List<net.minecraft.world.level.block.entity.BlockEntity> due;
+            synchronized (PENDING_LOAD) {
+                if (PENDING_LOAD.isEmpty()) return;
+                due = java.util.List.copyOf(PENDING_LOAD);
+                PENDING_LOAD.clear();
+            }
+            for (var be : due) {
+                if (!be.isRemoved() && be instanceof org.overengineer.bettacraft.platform.BlockEntityLifecycle l) l.onLoad();
+            }
+        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
+            synchronized (PENDING_LOAD) {
+                PENDING_LOAD.clear();
+            }
         });
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, level) -> {
             if (be instanceof org.overengineer.bettacraft.platform.BlockEntityLifecycle l) l.onChunkUnloaded();
