@@ -150,7 +150,7 @@ final class DevClientSmokeM68 {
         ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.OFF);
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         DevClientWorldTour.clearWeather(level);
-        level.setDayTime(6000);
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         p.getAbilities().flying = true;
         BlockPos base = p.blockPosition().offset(12, 1, 24);
         clear(level, base.offset(-8, 0, -5), 100, 12);
@@ -285,7 +285,7 @@ final class DevClientSmokeM68 {
 
     private void scale(int s) {
         mc.options.guiScale().set(s);
-        mc.resizeDisplay();
+        mc.resizeGui();
     }
 
     private void problem(String what) {
