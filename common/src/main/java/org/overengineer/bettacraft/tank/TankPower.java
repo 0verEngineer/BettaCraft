@@ -11,49 +11,83 @@ import org.overengineer.bettacraft.equipment.TankLightBlock;
 import org.overengineer.bettacraft.registry.ModBlocks;
 
 /**
- * Optional power (M9, PLAN 11 {@code power.*}): every tank stores Forge Energy for its equipment. Heaters and coolers,
- * filters and the lights on the tank each need FE per tick while the matching config switch is on (all off by
- * default). FE comes in through the energy capability of any tank block, of an attached external filter or cabinet
- * and of a light on the tank ({@link Storage}); every FE mod can deliver it. Without enough FE the group stops: heaters
- * and coolers do not change the temperature, filters do not clean, lights go dark. Priority: filters, then heaters /
- * coolers, then lights.
+ * Optional power (M9, PLAN 11 {@code power.*}): every tank has one energy store for its equipment (M67, {@link TankStore}).
+ * With {@code power.costs} EASY or HARD (M67; before: one {@code *RequiresEnergy} switch per device group) heaters and
+ * coolers, filters, air pumps, misters, heat mats and the lights on the tank need FE per tick (EASY a third of the
+ * {@code *Fe*} values). The store is charged by the energy capability of any tank block, of an attached external filter or
+ * cabinet and of a light on the tank ({@link Storage}), by Create's rotation ({@link TankDrive}) and by the crank at a cabinet
+ * or an attached external filter ({@link TankStore#crank}). Without enough FE a group stops: heaters and coolers do not
+ * change the temperature, filters do not clean, lights go dark. Priority: filters, air pumps, heaters / coolers, lights,
+ * misters.
  */
 public final class TankPower {
     private TankPower() {}
 
-    /** M33 part b: {@code features.power.enabled}: off, no device needs FE (as with every power option off). */
+    /** M33 part b: {@code features.power.enabled}: off, no device needs FE (as with {@code power.costs} OFF). */
     public static boolean power() {
         return org.overengineer.bettacraft.config.Features.enabled(org.overengineer.bettacraft.config.Feature.POWER);
     }
 
+    /** M67: {@code power.costs} (OFF while {@code features.power.enabled} is off). */
+    public static ServerConfig.PowerCosts costs() {
+        if (!power()) return ServerConfig.PowerCosts.OFF;
+        return ServerConfig.getOr(ServerConfig.POWER_COSTS, ServerConfig.PowerCosts.OFF);
+    }
+
+    /** M67: whether the devices need FE at all ({@code power.costs} EASY or HARD). */
+    public static boolean costsOn() {
+        return costs() != ServerConfig.PowerCosts.OFF;
+    }
+
+    /** M67: the share of the FE values the devices take: 0 (OFF), 1/3 (EASY), 1 (HARD). */
+    public static double factor() {
+        return switch (costs()) {
+            case OFF -> 0.0;
+            case EASY -> 1.0 / 3.0;
+            case HARD -> 1.0;
+        };
+    }
+
+    /** M67: an FE value of the config ({@code *Fe*}, the HARD value) at the current costs. */
+    public static double fe(double hard) {
+        return hard * factor();
+    }
+
+    /** M67: an FE per tick at the current costs, rounded up (at least 1 while the HARD value is above 0 and costs are on). */
+    public static int feInt(double hard) {
+        if (hard <= 0 || !costsOn()) return 0;
+        return Math.max(1, (int) Math.ceil(fe(hard) - 1e-9));
+    }
+
     public static boolean heaterRequired() {
-        return power() && ServerConfig.getOr(ServerConfig.POWER_HEATER, false);
+        return costsOn();
     }
 
     public static boolean filterRequired() {
-        return power() && ServerConfig.getOr(ServerConfig.POWER_FILTER, false);
+        return costsOn();
     }
 
     public static boolean lightRequired() {
-        return power() && ServerConfig.getOr(ServerConfig.POWER_LIGHT, false);
+        return costsOn();
     }
 
     /** M23: air pumps need FE. */
     public static boolean airRequired() {
-        return power() && ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP, false);
+        return costsOn();
     }
 
     /** M31: misters need FE. */
     public static boolean misterRequired() {
-        return power() && ServerConfig.getOr(ServerConfig.POWER_MISTER, false);
+        return costsOn();
     }
 
     public static boolean anyRequired() {
-        return heaterRequired() || filterRequired() || lightRequired() || airRequired() || misterRequired();
+        return costsOn();
     }
 
-    public static long capacity() {
-        return ServerConfig.getOr(ServerConfig.POWER_BUFFER, 100000);
+    /** M67: the capacity of the tank's store ({@link TankStore}: grows with the tank and its cabinets). */
+    public static long capacity(TankBlockEntity c) {
+        return TankStore.capacity(c);
     }
 
     /** FE per tick the heaters or coolers need: only the type that works now, only for the water they handle. */
@@ -65,12 +99,12 @@ public final class TankPower {
         if (cap <= 0) return matDemand(c);
         double perBlock = heating ? ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0)
                 : ServerConfig.getOr(ServerConfig.POWER_COOLER_FE_PER_BLOCK, 8.0);
-        return (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock) + matDemand(c);
+        return feInt(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock) + matDemand(c);
     }
 
     /** M31: FE per tick of the heat mats that heat (their duty of the last climate step). */
     public static int matDemand(TankBlockEntity c) {
-        return c.climateMats <= 0 ? 0 : (int) Math.ceil(c.climateMats * ServerConfig.getOr(ServerConfig.POWER_HEAT_MAT_FE, 4.0) - 1e-9);
+        return c.climateMats <= 0 ? 0 : feInt(c.climateMats * ServerConfig.getOr(ServerConfig.POWER_HEAT_MAT_FE, 4.0));
     }
 
     /** Light blocks on top of the tank that are on or want to be on (not switched off by redstone). */
@@ -84,22 +118,21 @@ public final class TankPower {
         return n;
     }
 
-    /** One care step of {@code ticks} game ticks: decides which groups are powered and takes their FE. */
+    /** One care step of {@code ticks} game ticks: decides which groups are powered and takes their FE from the store. */
     public static void step(ServerLevel level, TankBlockEntity c, long ticks) {
         boolean wasLight = c.lightPowered;
-        c.springFilters.clear(); // M37
-        c.springHeat.clear();
-        c.springUnits = 0;
+        TankStore.migrateSprings(level, c); // M67: the springs of an older world go into the store, once
+        TankStore.capacity(level, c); // M67: the capacity of this step (water blocks, cabinets)
         if (!anyRequired()) {
             c.heatPowered = c.filterPowered = c.lightPowered = c.airPowered = c.misterPowered = true;
             c.lastDemand = 0;
         } else {
             TankData t = c.getTank();
             // M23: each filter by its power regulator
-            int filterFe = filterRequired() ? (int) Math.ceil(TankWater.filterLoad(level, c) * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10) - 1e-9) : 0;
-            int airFe = airRequired() ? (int) Math.ceil(TankAeration.airDemand(level, c) * ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP_FE, 2.0) - 1e-9) : 0;
-            int heatFe = heaterRequired() ? heaterDemand(level, c) : 0;
-            int lightFe = lightRequired() ? lightsWanting(level, t) * ServerConfig.getOr(ServerConfig.POWER_LIGHT_FE, 4) : 0;
+            int filterFe = feInt(TankWater.filterLoad(level, c) * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10));
+            int airFe = feInt(TankAeration.airDemand(level, c) * ServerConfig.getOr(ServerConfig.POWER_AIR_PUMP_FE, 2.0));
+            int heatFe = heaterDemand(level, c);
+            int lightFe = feInt(lightsWanting(level, t) * (double) ServerConfig.getOr(ServerConfig.POWER_LIGHT_FE, 4));
             long buf = t.powerBuffer();
             long n = Math.max(1, ticks);
             c.filterPowered = filterFe <= 0 || buf >= filterFe * n;
@@ -111,7 +144,7 @@ public final class TankPower {
             c.lightPowered = lightFe <= 0 || buf >= lightFe * n;
             if (lightFe > 0 && c.lightPowered) buf -= lightFe * n;
             // M31: the misters that want to spray, last
-            int mistFe = misterRequired() ? (int) Math.ceil(c.climateMistWant * ServerConfig.getOr(ServerConfig.POWER_MISTER_FE, 6.0) - 1e-9) : 0;
+            int mistFe = feInt(c.climateMistWant * ServerConfig.getOr(ServerConfig.POWER_MISTER_FE, 6.0));
             c.misterPowered = mistFe <= 0 || buf >= mistFe * n;
             if (mistFe > 0 && c.misterPowered) buf -= mistFe * n;
             c.lastDemand = filterFe + airFe + heatFe + lightFe + mistFe;
@@ -119,92 +152,18 @@ public final class TankPower {
                 t.setPowerBuffer(buf);
                 c.setChanged();
             }
-            // M37: where the FE is short, the wound springs (time in unloaded chunks does not run them down)
-            if (org.overengineer.bettacraft.winding.Winding.enabled()) {
-                springs(level, c, Math.min(n, org.overengineer.bettacraft.winding.Winding.MAX_STEP), filterFe, airFe, heatFe, lightFe, mistFe);
-            }
         }
         if (wasLight != c.lightPowered) updateLights(level, c.getTank());
     }
 
-    // ------------------------------------------------------------------ M37: wound springs
-
-    /**
-     * M37: the springs stand in for the FE that is short ({@code n} ticks). First the wound cabinets under the tank: they
-     * power a whole group (filters, air pumps, heaters / coolers and heat mats, lights, misters) for one device-tick per
-     * working device and tick, the more devices the faster they run down. Then each wound external filter runs itself
-     * and the heaters or coolers in it ({@link TankBlockEntity#springFilters}, {@link TankBlockEntity#springHeat}).
-     */
-    static void springs(ServerLevel level, TankBlockEntity c, long n, int filterFe, int airFe, int heatFe, int lightFe, int mistFe) {
-        java.util.List<org.overengineer.bettacraft.equipment.CabinetBlockEntity> cabs = new java.util.ArrayList<>();
-        if (org.overengineer.bettacraft.winding.Winding.Device.CABINET.windable()) {
-            // M62: with the shared store also the cabinets joined to them (beyond the tank), all kept evenly wound
-            for (var cab : org.overengineer.bettacraft.equipment.CabinetSprings.union(level, TankEquipment.cabinets(level, c))) {
-                if (!cab.windSpring().empty()) cabs.add(cab);
-            }
-        }
-        if (!cabs.isEmpty()) {
-            if (filterFe > 0 && !c.filterPowered) c.filterPowered = fromCabinets(c, cabs, TankWater.filterLoad(level, c), n);
-            if (airFe > 0 && !c.airPowered) {
-                double perPump = Math.max(1, ServerConfig.getOr(ServerConfig.AIR_OUTLETS_PER_PUMP, 4));
-                c.airPowered = fromCabinets(c, cabs, Math.max(1.0, TankAeration.airDemand(level, c) / perPump), n);
-            }
-            if (heatFe > 0 && !c.heatPowered) c.heatPowered = fromCabinets(c, cabs, heatUnits(level, c), n);
-            if (lightFe > 0 && !c.lightPowered) c.lightPowered = fromCabinets(c, cabs, lightsWanting(level, c.getTank()), n);
-            if (mistFe > 0 && !c.misterPowered) c.misterPowered = fromCabinets(c, cabs, c.climateMistWant, n);
-            if (org.overengineer.bettacraft.equipment.CabinetSprings.shared()) org.overengineer.bettacraft.equipment.CabinetSprings.level(cabs);
-        }
-        boolean filters = filterFe > 0 && !c.filterPowered, heat = heatFe > 0 && !c.heatPowered;
-        if (!filters && !heat || !org.overengineer.bettacraft.winding.Winding.Device.EXTERNAL_FILTER.windable()) return;
-        TankData t = c.getTank();
-        Boolean heating = t.waterMb() > 0 ? TankTemperature.heating(TankCare.ambient(level, t), t.targetTemp()) : null;
-        for (var f : TankEquipment.filters(level, c)) {
-            if (!(f instanceof org.overengineer.bettacraft.equipment.ExternalFilterBlockEntity e) || e.windSpring().empty()) continue;
-            int heaters = !heat || heating == null ? 0 : heating ? f.heaterCount() - f.coolerCount() : f.coolerCount();
-            double units = (filters ? f.powerShare() : 0) + heaters;
-            if (units <= 0) continue;
-            if (!e.windSpring().use((long) Math.ceil(units * n - 1e-9))) continue;
-            if (filters) c.springFilters.add(f);
-            if (heaters > 0) c.springHeat.add(f);
-            c.springUnits += units;
-        }
-    }
-
-    /** Takes {@code units} device-ticks for {@code n} ticks from the cabinets' springs (all or nothing). */
-    private static boolean fromCabinets(TankBlockEntity c, java.util.List<org.overengineer.bettacraft.equipment.CabinetBlockEntity> cabs, double units, long n) {
-        if (units <= 0) return true;
-        long need = (long) Math.ceil(units * n - 1e-9), have = 0;
-        for (var cab : cabs) have += cab.windSpring().ticks();
-        if (have < need) return false;
-        for (var cab : cabs) need -= cab.windSpring().drain(need);
-        c.springUnits += units;
-        return true;
-    }
-
-    /** M37: the heating (or cooling) devices that work now: heaters / coolers in the filters and in the interior, the heat mats. */
-    static double heatUnits(ServerLevel level, TankBlockEntity c) {
-        TankData t = c.getTank();
-        double n = c.climateMats;
-        Boolean heating = t.waterMb() > 0 ? TankTemperature.heating(TankCare.ambient(level, t), t.targetTemp()) : null;
-        if (heating != null) {
-            for (var f : TankEquipment.filters(level, c)) n += heating ? f.heaterCount() - f.coolerCount() : f.coolerCount();
-            var r = org.overengineer.bettacraft.tank.interior.InteriorRegions.get(level.getServer()).get(t.regionId());
-            if (r != null && r.built()) {
-                var eq = org.overengineer.bettacraft.tank.interior.InteriorManager.equipment(level.getServer(), r);
-                n += heating ? eq.heaters().size() : eq.coolers().size();
-            }
-        }
-        return Math.max(1.0, n);
-    }
-
-    /** M37: whether this filter cleans now: the tank's filters have FE (or need none), or its own spring drives it. */
+    /** Whether this filter cleans now: the tank's filters have FE (or need none). M67: the springs of the filters are gone. */
     public static boolean filterRuns(TankBlockEntity c, org.overengineer.bettacraft.equipment.FilterHost f) {
-        return c.filterPowered || c.springFilters.contains(f);
+        return c.filterPowered;
     }
 
-    /** M37: whether any attached filter runs now. */
+    /** Whether any attached filter runs now. */
     public static boolean anyFilterRuns(TankBlockEntity c) {
-        return c.filterPowered || !c.springFilters.isEmpty();
+        return c.filterPowered;
     }
 
     /**
@@ -282,7 +241,7 @@ public final class TankPower {
             TankBlockEntity c = controller();
             if (c == null) return 0;
             TankData t = c.getTank();
-            long n = Math.min(max, Math.max(0, capacity() - t.powerBuffer()));
+            long n = Math.min(max, Math.max(0, capacity(c) - t.powerBuffer()));
             if (!simulate && n > 0) {
                 t.setPowerBuffer(t.powerBuffer() + n);
                 c.setChanged();
@@ -303,7 +262,8 @@ public final class TankPower {
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) Math.min(Integer.MAX_VALUE, capacity());
+            TankBlockEntity c = controller();
+            return c == null ? 0 : (int) Math.min(Integer.MAX_VALUE, capacity(c));
         }
 
         @Override

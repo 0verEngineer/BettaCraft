@@ -66,7 +66,7 @@ public class ExternalFilterBlockEntity extends BlockEntity implements MenuProvid
         return heaters;
     }
 
-    /** M37: the spring the crank winds (the filter and the heaters in it run on it while the tank's FE is short). */
+    /** M37: the spring of the filter. M67: only an older world's winding is left in it (the tank's store takes it); the crank charges the tank's store. */
     private final org.overengineer.bettacraft.winding.WindSpring spring =
             org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.EXTERNAL_FILTER, this::setChanged);
 

@@ -90,8 +90,6 @@ final class LangM23 {
         a.accept("bettacraft.configuration.aeration.tooltip", "Air pump with air stones in the tank interior: bubble columns, more oxygen (off: they cannot be placed and placed ones do nothing)");
         a.accept("bettacraft.configuration.useVanilla", "Minecraft sounds");
         a.accept("bettacraft.configuration.useVanilla.tooltip", "Use Minecraft's own sounds for the devices (bubble columns, water, beacon hum, clicks) instead of the Bettacraft sounds of the filters, air pump, air stones, sponge filter, flow pump and feeder");
-        a.accept("bettacraft.configuration.airPumpRequiresEnergy", "Air pumps need energy");
-        a.accept("bettacraft.configuration.airPumpRequiresEnergy.tooltip", "Air pumps only run while the tank has enough FE (airPumpFePerOutlet for every air stone and sponge filter they drive; off: they run without power like the filters without power mods)");
         a.accept("bettacraft.configuration.airPumpFePerOutlet", "Air pump FE per air stone");
         a.accept("bettacraft.configuration.airPumpFePerOutlet.tooltip", "FE per tick an air pump needs for each air stone or sponge filter it drives (times its power regulator)");
         a.accept("bettacraft.configuration.outletsPerPump", "Air stones per pump");

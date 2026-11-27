@@ -188,7 +188,7 @@ public class CrucibleBlockEntity extends BlockEntity implements MenuProvider {
         boolean ready = r != null && fits(r.value().result());
         Heat now = Heat.NONE;
         if (ready) {
-            int fe = ServerConfig.getOr(ServerConfig.CRUCIBLE_FE, 20);
+            int fe = org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.CRUCIBLE_FE, 20)); // M67: power.costs
             if (lavaBelow(level, pos)) now = Heat.LAVA;
             else if (energyOffered() && energy.getEnergyStored() >= fe) {
                 energy.use(fe);

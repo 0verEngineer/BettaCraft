@@ -140,7 +140,7 @@ public final class MonitorDetail {
         dl.add(dev("air_pump", pumps.size(), running, -1, !airOff));
         out.put("dev", dl);
         out.putLong("e", t.powerBuffer());
-        out.putLong("ec", TankPower.anyRequired() ? TankPower.capacity() : 0);
+        out.putLong("ec", TankPower.anyRequired() ? TankPower.capacity(c) : 0);
         out.putInt("ed", c.lastDemand());
         // ---- log
         ListTag lg = new ListTag();

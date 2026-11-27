@@ -112,20 +112,6 @@ public class CabinetMenu extends AbstractContainerMenu {
                 outlet.set(v);
             }
         });
-        addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(cabinet)); // M37
-        addDataSlot(springShared = new net.minecraft.world.inventory.DataSlot() { // M62: cabinets sharing the store
-            private int client = 1;
-
-            @Override
-            public int get() {
-                return cabinet == null ? client : cabinet.windStore() instanceof CabinetSprings.Store s ? s.size() : 1;
-            }
-
-            @Override
-            public void set(int v) {
-                client = v;
-            }
-        });
         frontSlot.set(cabinet == null ? -1 : frontValue(cabinet)); // M44
         addDataSlot(new net.minecraft.world.inventory.DataSlot() {
             @Override
@@ -207,20 +193,6 @@ public class CabinetMenu extends AbstractContainerMenu {
             if (org.overengineer.bettacraft.tank.TankDrive.sideAllowed(s)) return s;
         }
         return DriveSide.NONE;
-    }
-
-    /** M37: the spring of the cabinet in percent (-1: not windable now). */
-    private net.minecraft.world.inventory.DataSlot spring;
-
-    public int springPercent() {
-        return spring.get();
-    }
-
-    /** M62: the cabinets that share the spring store of this one (1: it stands alone). */
-    private net.minecraft.world.inventory.DataSlot springShared;
-
-    public int springShared() {
-        return springShared.get();
     }
 
     private static int outletValue(CabinetBlockEntity c) {
