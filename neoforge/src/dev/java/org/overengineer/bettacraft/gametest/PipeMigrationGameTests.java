@@ -64,10 +64,10 @@ public final class PipeMigrationGameTests {
     /** The block state an old save has: {@code id} with these properties (an alias resolves the id). */
     static BlockState oldState(ServerLevel level, String id, Map<String, String> props) {
         CompoundTag t = new CompoundTag();
-        t.putString("Name", BettaCraft.id(id).toString());
+        t.putString("id", BettaCraft.id(id).toString()); // 26.3 block state keys (id, properties)
         CompoundTag p = new CompoundTag();
         props.forEach(p::putString);
-        t.put("Properties", p);
+        t.put("properties", p);
         return NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), t);
     }
 
