@@ -4348,6 +4348,7 @@
   "message.bettacraft.mangrove.off": "Mangroves are switched off (features.brackish.mangroves)",
   "message.bettacraft.mangrove.planted": "The propagule takes root on the floor of the tank",
   "message.bettacraft.mb_filter.retrofit": "Bettacraft update: the multiblock filter at %s %s %s stopped filtering. Every pipe that docks on a tank now needs a guard inside (intake guard or intake strainer on the inlet line, outlet guard or an outlet on the return line). Use the guard on the glass where the pipe docks.",
+  "message.bettacraft.mb_filter.short_circuit": "The multiblock filter at %s %s %s stopped: one of its lines also touches a port of another role (a short circuit, red rings). Keep the lines apart with the pipe wrench.",
   "message.bettacraft.media.cleaned": "%s washed clean",
   "message.bettacraft.media.not_cleanable": "Carbon and peat are used up, not cleaned: put in fresh ones",
   "message.bettacraft.mister.no_tank": "no terrarium",
