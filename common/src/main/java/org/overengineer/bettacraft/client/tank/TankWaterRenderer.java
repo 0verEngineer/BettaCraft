@@ -49,6 +49,13 @@ public final class TankWaterRenderer {
      */
     public interface FaceSink {
         void face(Direction d, float[] corners, int argb, boolean reversed);
+
+        /**
+         * M66 v6: the algae film on the water side face just passed to {@link #face} (the same corners, so it sorts with that
+         * face): {@code level} 1..{@link AlgaeFilm#LEVELS} ({@link AlgaeFilm#SPRITES}), {@code reversed} = the back film, seen
+         * from inside the tank.
+         */
+        default void film(Direction d, float[] corners, int level, boolean reversed) {}
     }
 
     public static void render(BlockAndTintGetter level, BlockPos pos, VertexConsumer vc, BlockState state) {
@@ -63,9 +70,17 @@ public final class TankWaterRenderer {
         long light = TankWaterLight.corners(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
-        faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), (d, c, col, rev) -> {
-            int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
-            emit(vc, d, c, ox, oy, oz, d.getAxis() == Direction.Axis.Y ? still : side, r, g, b, a, light, rev);
+        faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), AlgaeFilm.at(pos), new FaceSink() {
+            @Override
+            public void face(Direction d, float[] c, int col, boolean rev) {
+                int a = (col >>> 24) & 0xFF, r = (col >> 16) & 0xFF, g = (col >> 8) & 0xFF, b = col & 0xFF;
+                emit(vc, d, c, ox, oy, oz, d.getAxis() == Direction.Axis.Y ? still : side, r, g, b, a, light, rev);
+            }
+
+            @Override
+            public void film(Direction d, float[] c, int lvl, boolean rev) {
+                emitFilm(vc, d, c, ox, oy, oz, atlas.apply(AlgaeFilm.SPRITES[lvl]), pos, light, rev);
+            }
         });
     }
 
@@ -108,6 +123,11 @@ public final class TankWaterRenderer {
 
     /** All water faces of one tank block; M18: {@code light} = RGB of the tank's coloured lights (0 = none). */
     public static void faces(BlockState state, boolean waterAbove, int gapMask, int light, FaceSink sink) {
+        faces(state, waterAbove, gapMask, light, 0, sink);
+    }
+
+    /** M66 v6: and the algae film of every side face ({@code film}: {@link AlgaeFilm#at}). */
+    public static void faces(BlockState state, boolean waterAbove, int gapMask, int light, int film, FaceSink sink) {
         int fill = state.getValue(TankBlock.FILL);
         if (fill <= 0) return;
         TankWaterGeometry.Body body = TankWaterGeometry.body(TankBlock.connectionMask(state), fill, waterAbove);
@@ -121,12 +141,36 @@ public final class TankWaterRenderer {
             sink.face(d, c, col, false);
             // visible from below the surface too (swimming players)
             if (d == Direction.UP) sink.face(d, c, col, true);
+            // M66 v6: the algae on the glass in front of this face (right after it: equal corners sort in the order drawn)
+            if (film != 0 && !m10Look) {
+                int front = AlgaeFilm.front(film, d), back = AlgaeFilm.back(film, d);
+                if (front > 0) sink.film(d, c, front, false);
+                if (back > 0) sink.film(d, c, back, true);
+            }
         }
         for (Direction d : Direction.Plane.HORIZONTAL) {
             if ((gapMask & (1 << d.get2DDataValue())) == 0) continue;
             // as wide as the water of this block (inset at the outer sides, like the faces)
             BoxFaces.corners(d, body.x0(), 1 - INSET, body.z0(), body.x1(), 1, body.z1(), c);
             sink.face(d, c, color(false, light), false);
+        }
+    }
+
+    /** M66 v6: one algae film quad (white, the density is in the texture's alpha; shader packs ignore the vertex alpha). */
+    private static void emitFilm(VertexConsumer vc, Direction d, float[] c, float ox, float oy, float oz, TextureAtlasSprite sprite, BlockPos pos,
+                                 long light, boolean reversed) {
+        float nx = d.getStepX(), nz = d.getStepZ();
+        if (reversed) {
+            nx = -nx; nz = -nz;
+        }
+        for (int k = 0; k < 4; k++) {
+            int i = reversed ? 3 - k : k;
+            float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
+            vc.addVertex(ox + x, oy + y, oz + z)
+                    .setColor(255, 255, 255, 255)
+                    .setUv(sprite.getU(AlgaeFilm.u(d, pos, x, y, z)), sprite.getV(AlgaeFilm.v(pos, y)))
+                    .setLight(TankWaterLight.at(light, x, y, z))
+                    .setNormal(nx, 0, nz);
         }
     }
 
