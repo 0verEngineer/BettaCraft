@@ -77,7 +77,10 @@ final class DevClientSmokeM24 {
             shot("scene");
         });
         then(1, () -> look(base.getX() + 6.5, base.getY() + 4.2, base.getZ() - 4.5, -35F, 22F));
-        then(60, () -> shot("multiblock_filter"));
+        then(60, () -> {
+            checkHead(); // M68: a step after check(): the server ran the filter there, its state reached the client since
+            shot("multiblock_filter");
+        });
         then(1, () -> look(base.getX() + SPACING + 2.0, base.getY() + 1.4, base.getZ() - 3.0, 0F, 8F));
         then(60, () -> shot("pipes_under"));
         then(1, () -> look(base.getX() + SPACING + 2.0, base.getY() + 3.6, base.getZ() - 2.6, 0F, 10F));
@@ -294,6 +297,14 @@ final class DevClientSmokeM24 {
         var under = mc.level.getBlockState(base.offset(SPACING + 2, 1, 1));
         if (!(under.getBlock() instanceof PipeBlock) || !under.getValue(PipeBlock.SIDES.get(Direction.UP)) || !under.getValue(PipeBlock.SIDES.get(Direction.DOWN)))
             LOGGER.error("[smoketest] M24 the pipe under the tank does not join up and down: {}", under);
+    }
+
+    /**
+     * The pump head runs on the client too. M68: asked one step after {@link #check} (which only queues the guards and the run on the
+     * server thread; reading the client in the same step raced with them: the head was still idle there).
+     */
+    private void checkHead() {
+        if (mc.level == null) return;
         var head = mc.level.getBlockState(base.offset(5, 3, 0));
         if (!head.hasProperty(FilterPartBlock.ACTIVE) || !head.getValue(FilterPartBlock.ACTIVE)) LOGGER.error("[smoketest] M24 the client pump head is not active");
         var lit = mc.level.getBlockState(base.offset(2 * SPACING + 5, 1, 1));

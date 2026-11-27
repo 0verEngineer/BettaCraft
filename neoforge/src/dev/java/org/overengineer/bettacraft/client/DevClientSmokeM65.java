@@ -46,7 +46,10 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * <ul><li>{@code dock} (Nachtrag 2): a tank with pipes docking on its glass (a filter intake pipe, a bundle with two lines, a steel
  * water pipe, a glass pipe from above) and guards put on from outside: the glass bulkheads outside and inside, and inside the
- * interior the guards joined to their docks.</li></ul>
+ * interior the guards joined to their docks. M68 part C: the two-line bundle is a filter's intake and return line (a dock per
+ * line, blue and orange, each with its own guard put on at its flange); a bundle of four plain lines docks on the east glass of
+ * the upper block, two of its lines run on inside in an interior bundle (along x) and part at its far end (a nozzle, a spray
+ * bar), the other two get guards from outside. Views {@code lines_*}: the docks inside, the interior bundle, the miniature.</li></ul>
  * Screenshots {@code bettacraft_m65_<tag>_<pack>_<view>.png} ({@code -Pm65tag}, default {@code run}), packs {@code -Pm65packs}
  * (default none and Complementary Reimagined when Iris is there), summary {@code bettacraft_m65_<tag>_summary.txt}.
  */
@@ -222,6 +225,27 @@ final class DevClientSmokeM65 {
             p.teleportTo(InteriorManager.interiorLevel(p.server), a.getX() - 2.5, a.getY() + 2.5 - p.getEyeHeight(), a.getZ() + 3.5, -140F, 30F);
         }));
         then(40, () -> shot(pack, "dock_interior_b"));
+        // M68 part C: the line docks of the filter bundle (north face of the third block) and of the four-line bundle (east, upper block)
+        then(1, () -> server(p -> inside(p, 40.5, 10.5, 6.5, 39.5, 9.0, 0.0)));
+        then(80, () -> shot(pack, "lines_filter_docks"));
+        then(1, () -> server(p -> inside(p, 41.0, 27.5, 13.5, 45.5, 24.0, 7.5)));
+        then(40, () -> shot(pack, "lines_interior_bundle"));
+        then(1, () -> server(p -> inside(p, 38.0, 25.5, 2.5, 46.0, 23.5, 8.0)));
+        then(40, () -> shot(pack, "lines_east_docks"));
+        // back outside: the four flanges on the east glass and the miniature behind it
+        then(1, () -> lookAt(t[0].getX() + 4.3, t[0].getY() + 2.6, t[0].getZ() - 1.2, new Vec3(t[0].getX() + 3.0, t[0].getY() + 1.5, t[0].getZ() + 0.5)));
+        then(80, () -> shot(pack, "lines_east_flanges"));
+        then(1, () -> lookAt(t[0].getX() + 2.85, t[0].getY() + 2.4, t[0].getZ() + 0.45, new Vec3(t[0].getX() + 2.85, t[0].getY() + 1.5, t[0].getZ() + 0.45)));
+        then(40, () -> shot(pack, "lines_miniature_top"));
+    }
+
+    /** Puts the player into the dock tank's interior at local (x, y, z) (eye height), looking at local (tx, ty, tz). */
+    private void inside(ServerPlayer p, double x, double y, double z, double tx, double ty, double tz) {
+        BlockPos o = dockRegion.toWorld(0, 0, 0);
+        double dx = tx - x, dy = ty - y, dz = tz - z;
+        float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+        float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        p.teleportTo(InteriorManager.interiorLevel(p.server), o.getX() + x, o.getY() + y - p.getEyeHeight(), o.getZ() + z, yaw, pitch);
     }
 
     private void buildDock(ServerPlayer p, ServerLevel level, ServerLevel in, BlockPos base) {
@@ -234,19 +258,81 @@ final class DevClientSmokeM65 {
         for (int x = 0; x < r.sizeX(); x++) for (int z = 0; z < r.sizeZ(); z++)
             Substrate.set(in, new BlockPos(r.originX() + x, InteriorRegion.FLOOR_Y, r.originZ() + z), Blocks.SAND.defaultBlockState(), false);
         BlockPos t = dockTank;
-        // north: a filter intake pipe into the first block, a bundle (intake + return) into the second
+        // north: a filter intake pipe into the first block
         for (int z = -3; z <= -1; z++) set(level, t.offset(0, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
-        for (int z = -3; z <= -1; z++) set(level, t.offset(2, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
-        for (int z = -3; z <= -1; z++) PipeBundleBlock.addPipe(level, t.offset(2, 0, z), true, null, null);
+        // M68 part C: a filter north of the third block, its intake line (y 0) and return line (y 1) end in one bundle at its glass
+        BlockPos ch = t.offset(2, 0, -4);
+        level.setBlock(ch, ModBlocks.FILTER_CHAMBER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(ch.above(), ModBlocks.FILTER_CHAMBER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(ch.above(2), ModBlocks.FILTER_PUMP_HEAD.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(ch.south(), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
+        level.setBlock(ch.above().south(), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(org.overengineer.bettacraft.filter.FilterPartBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
+        for (int z = -2; z <= -1; z++) for (int y = 0; y <= 1; y++) set(level, t.offset(2, y, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        org.overengineer.bettacraft.plumbing.PipeWrenchItem.setClosed(level, t.offset(2, 0, -2), -1, Direction.UP, true);
+        org.overengineer.bettacraft.plumbing.PipeWrenchItem.setClosed(level, t.offset(2, 1, -1), -1, Direction.SOUTH, true); // the return line docks below, in the bundle
+        PipeBundleBlock.addPipe(level, t.offset(2, 0, -1), true, null, null);
+        org.overengineer.bettacraft.plumbing.PipeWrenchItem.setClosed(level, t.offset(2, 0, -1), 0, Direction.UP, true);
+        // M68 part C: a bundle of four plain lines into the east glass of the upper block (x 3..5)
+        for (int x = 3; x <= 5; x++) {
+            set(level, t.offset(x, 1, 0), ModBlocks.STAINLESS_STEEL_PIPE.get());
+            for (int i = 0; i < 3; i++) PipeBundleBlock.addPipe(level, t.offset(x, 1, 0), i != 1, null, null);
+        }
         // east: a stainless steel water pipe, top: a glass pipe coming down
         for (int x = 3; x <= 5; x++) set(level, t.offset(x, 0, 1), ModBlocks.STAINLESS_STEEL_PIPE.get());
         for (int y = 2; y <= 4; y++) set(level, t.offset(1, y, 1), ModBlocks.GLASS_PIPE.get());
         // the guards behind the filter docks (put on from outside, like a player does)
         org.overengineer.bettacraft.plumbing.interior.TankAnchors.installGuard(level, t, Direction.NORTH, null,
                 new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.INTAKE_GUARD.get()), org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD);
-        org.overengineer.bettacraft.plumbing.interior.TankAnchors.installGuard(level, t.offset(2, 0, 0), Direction.NORTH, null,
-                new net.minecraft.world.item.ItemStack(org.overengineer.bettacraft.registry.ModItems.OUTLET_GUARD.get()), org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD);
+        org.overengineer.bettacraft.plumbing.PipeUpdates.flush(level);
+        // M68 part C: a guard per line at its flange (slot 0 the intake line, slot 1 the return line)
+        guard(level, t.offset(2, 0, 0), Direction.NORTH, 0, true);
+        guard(level, t.offset(2, 0, 0), Direction.NORTH, 1, false);
+        buildLines(level, in, r, c, t.offset(2, 1, 0));
         LOGGER.info("[smoketest] M65 dock tank at {}", t);
+    }
+
+    private static void guard(ServerLevel level, BlockPos member, Direction face, int slot, boolean intake) {
+        var kind = intake ? org.overengineer.bettacraft.plumbing.interior.Plumb.INTAKE_GUARD : org.overengineer.bettacraft.plumbing.interior.Plumb.OUTLET_GUARD;
+        var item = intake ? org.overengineer.bettacraft.registry.ModItems.INTAKE_GUARD.get() : org.overengineer.bettacraft.registry.ModItems.OUTLET_GUARD.get();
+        var res = org.overengineer.bettacraft.plumbing.interior.TankAnchors.installGuard(level, member, face, slot, null, new net.minecraft.world.item.ItemStack(item), kind);
+        if (!res.consumesAction()) LOGGER.error("[smoketest] M68 no guard behind slot {} at {} {}", slot, member, face);
+    }
+
+    /**
+     * M68 part C: the four line docks on the east glass of {@code member}; lines 1 and 2 run on in an interior bundle along x (lanes:
+     * line 1 the middle one, line 2 the top one) and part at its west end (a nozzle, a spray bar); lines 3 and 4 get guards from
+     * outside.
+     */
+    private void buildLines(ServerLevel level, ServerLevel in, InteriorRegion r, TankBlockEntity c, BlockPos member) {
+        long[] d = new long[4];
+        for (int i = 0; i < 4; i++) d[i] = org.overengineer.bettacraft.plumbing.interior.TankAnchors.ensure(level, c, member, Direction.EAST, i);
+        for (int i = 0; i < 4; i++) if (d[i] == Long.MIN_VALUE) LOGGER.error("[smoketest] M68 no dock for line {}", i + 1);
+        LOGGER.info("[smoketest] M68 east line docks {} {} {} {}", BlockPos.of(d[0]), BlockPos.of(d[1]), BlockPos.of(d[2]), BlockPos.of(d[3]));
+        BlockState glass = ModBlocks.INTERIOR_PIPE.get().defaultBlockState();
+        int x = BlockPos.getX(d[0]), ya = BlockPos.getY(d[0]), za = BlockPos.getZ(d[0]), yb = BlockPos.getY(d[1]), zb = BlockPos.getZ(d[1]);
+        int ry = ya - 1, rz = za + 1; // the run: one below line 1's dock, between the docks
+        int x0 = x - 7, x1 = x - 2;
+        for (int rx = x0; rx <= x1; rx++) in.setBlock(r.toWorld(rx, ry, rz), glass, Block.UPDATE_ALL);
+        for (int rx = x0; rx <= x1; rx++)
+            for (int k = 0; k < 2; k++)
+                if (org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock.addPipe(in, r.toWorld(rx, ry, rz), false, null, null, Direction.WEST) < 0)
+                    LOGGER.error("[smoketest] M68 no interior bundle at {}", rx);
+        // line 1: from its dock down to the run's east end (the middle lane), out of the west end into a nozzle
+        in.setBlock(r.toWorld(x - 1, ya, za), glass, Block.UPDATE_ALL);
+        in.setBlock(r.toWorld(x - 1, ry, za), glass, Block.UPDATE_ALL);
+        in.setBlock(r.toWorld(x - 1, ry, rz), glass, Block.UPDATE_ALL);
+        in.setBlock(r.toWorld(x0 - 1, ry, rz), glass, Block.UPDATE_ALL);
+        in.setBlock(r.toWorld(x0 - 2, ry, rz), ModBlocks.NOZZLE.get().defaultBlockState().setValue(org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        // line 2: along z to above the run, into its top lane; out of the top at the west end into a spray bar
+        for (int xx = x - 1; xx >= x - 3; xx--) in.setBlock(r.toWorld(xx, yb, zb), glass, Block.UPDATE_ALL);
+        for (int zz = zb - 1; zz >= rz; zz--) in.setBlock(r.toWorld(x - 3, yb, zz), glass, Block.UPDATE_ALL);
+        in.setBlock(r.toWorld(x0, ry + 1, rz), ModBlocks.SPRAY_BAR.get().defaultBlockState().setValue(org.overengineer.bettacraft.plumbing.interior.PlumbingBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        var n1 = org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.net(r, d[0]);
+        var n2 = org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.net(r, d[1]);
+        if (n1.outflows().size() != 1 || n2.outflows().size() != 1 || n1.passThrough() || n2.passThrough())
+            LOGGER.error("[smoketest] M68 the interior bundle does not carry the two lines apart: {} / {}", n1, n2);
+        guard(level, member, Direction.EAST, 2, true);
+        guard(level, member, Direction.EAST, 3, false);
     }
 
     // ------------------------------------------------------------------ water at blocks against the glass
