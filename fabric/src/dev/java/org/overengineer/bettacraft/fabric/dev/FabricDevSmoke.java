@@ -29,6 +29,9 @@ public final class FabricDevSmoke implements ModInitializer {
         if (Integer.getInteger("bettacraft.smoketest.upgrade", 0) > 0) {
             net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(org.overengineer.bettacraft.command.DevSmokeUpgrade::onTick);
         }
+        if (org.overengineer.bettacraft.command.DevSmokeCrossLoad.ENABLED) { // a world of the other loader (fabricCrossLoadTest)
+            net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(org.overengineer.bettacraft.command.DevSmokeCrossLoad::onTick);
+        }
         if (!Boolean.getBoolean("bettacraft.smoketest")) return;
         // M52b: built once the server ticks (like the NeoForge smoke), checked 40 ticks later
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(s -> {
