@@ -56,7 +56,7 @@ public final class ClientConfig {
                 + "miniature (off: the old block look, only for you; the pack switch features.visuals.plantMeshes turns it off for everyone)").define("plantMeshes", true);
         SWAYING_PLANTS = b.comment("Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank, the roots of the floating plants in the water (off: they stand still, only "
                 + "for you; the pack switch features.visuals.swayingForeignPlants turns it off for everyone)").define("swayingPlants", true);
-        TANK_DETAIL_DISTANCE = b.comment("Distance (blocks) up to which the name sign, bubble nest, floating plants, small animals and algae of a tank are drawn")
+        TANK_DETAIL_DISTANCE = b.comment("Distance (blocks) up to which the name sign, bubble nest, floating plants, small animals, algae and filter hoses of a tank are drawn")
                 .defineInRange("tankDetailDistance", 48, 8, 256);
         CONNECTED_GLASS = b.comment("Connected glass textures on textured tanks: the frame of the glass texture only along the outer edges of the whole tank (off: every block shows its own frame)")
                 .define("connectedGlass", true);

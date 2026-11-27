@@ -114,7 +114,7 @@ der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePla
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
 der Kantenlinien (`render.tankEdgeWidth`, in Pixeln zu 1/16 Block, 0,1 bis 1, Standard 0,25; 0 = keine), die Größe des
 Namensschilds (`render.signScale`, 0,5- bis 2-fache der Standardhöhe von 0,12 Blöcken), die Entfernung, bis zu der
-Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere und Algen gezeichnet werden (`render.tankDetailDistance`, 48), wie
+Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere, Algen und Filterschläuche gezeichnet werden (`render.tankDetailDistance`, 48), wie
 stark farbige Lichter das Wasser tönen (`render.lightTint`, 0 bis 1, Standard 0,6; 0 = die Farbe zeigt sich nur an der
 Lampe), die Beinbewegung der Mobs und Haustiere, die im Becken gehen (`render.walkAnimationBoost`: `auto` passt sie an
 ihre Größe an, ein Faktor von 0,1 bis 10, 0 = Vanilla), den Verlassen-Hinweis im Innenraum (`hud.interiorLeaveHint`) und die Alarm-Wegpunkte aller Becken auf der eigenen Karte (`map.showAlarmWaypoints`, je Karten-Mod `map.journeyMap`, `map.xaerosMinimap`, `map.ftbChunks`; auch hinter dem Zahnrad im Becken-Menü).

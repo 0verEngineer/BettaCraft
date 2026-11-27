@@ -1610,7 +1610,7 @@
   "bettacraft.configuration.preparationBudgetMs": "Innenraum-Bau pro Tick (ms)",
   "bettacraft.configuration.preparationBudgetMs.tooltip": "Serverzeit pro Tick in Millisekunden, um neue Innenräume im Hintergrund zu bauen (mehr = schneller fertig, weniger = gleichmäßigere Ticks)",
   "bettacraft.configuration.tankDetailDistance": "Detail-Entfernung der Aquarien",
-  "bettacraft.configuration.tankDetailDistance.tooltip": "Entfernung in Blöcken, bis zu der Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere und Algen eines Aquariums gezeichnet werden",
+  "bettacraft.configuration.tankDetailDistance.tooltip": "Entfernung in Blöcken, bis zu der Namensschild, Schaumnest, Schwimmpflanzen, Kleintiere, Algen und Filterschläuche eines Aquariums gezeichnet werden",
   "log.bettacraft.tadpole_left": "%s wurde zum Frosch und ist hinausgehüpft",
   "log.bettacraft.outgrown": "%s ist zu groß für das Aquarium geworden und wartet in einer Fischtüte davor",
   "bettacraft.configuration.outgrown": "Zu groß gewordene Tiere",
