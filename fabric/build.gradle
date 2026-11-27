@@ -941,3 +941,44 @@ tasks.register('fabricSaveLoadTest') {
         logger.lifecycle('fabricSaveLoadTest PASSED')
     }
 }
+
+// gradlew fabricCrossLoadTest [-PcrossLoadWorld=<world dir>] : a world saved by NeoForge (default: the showcase that
+// `gradlew buildShowcase` made, run/saves/Bettacraft Schaukasten) loaded by a dedicated Fabric server (a copy in
+// run-fabric/crossload): every animal a tank lists still has its tank (and a mob in glass its data) right after loading
+// (DevSmokeCrossLoad). Never the original world. Log: build/crossload-fabric/server.log.
+tasks.register('fabricCrossLoadTest') {
+    group = 'verification'
+    notCompatibleWithConfigurationCache('starts the game processes of the run task')
+    dependsOn 'classes', 'devClasses', 'processDevResources', 'configureLaunch'
+    doLast {
+        def src = project.hasProperty('crossLoadWorld') ? file(project.property('crossLoadWorld').toString()) : rootProject.file('run/saves/Bettacraft Schaukasten')
+        if (!new File(src, 'level.dat').exists()) throw new GradleException("fabricCrossLoadTest: no world at ${src} (gradlew buildShowcase, or -PcrossLoadWorld=<dir>)")
+        def srv = tasks.named('runFabricServer').get()
+        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+        def logs = rootProject.file('build/crossload-fabric')
+        logs.deleteDir(); logs.mkdirs()
+        def dir = rootProject.file('run-fabric/crossload')
+        def world = new File(dir, 'world')
+        fabricDeleteWorlds('before the run', [world])
+        dir.mkdirs()
+        java.nio.file.Files.walk(src.toPath()).forEach { from ->
+            def to = world.toPath().resolve(src.toPath().relativize(from))
+            if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+            else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+        }
+        new File(dir, 'eula.txt').text = 'eula=true\n'
+        new File(dir, 'server.properties').text = ['online-mode=false', 'spawn-protection=0', 'spawn-animals=true', "server-port=${fabricDevPort}".toString(),
+                'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
+        fabricCheckServerPort(dir, 'fabricCrossLoadTest')
+        def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + ['-Xmx8G', '-Dbettacraft.smoketest.crossload=true',
+                '-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
+        def log = new File(logs, 'server.log')
+        def p = new ProcessBuilder(cmd).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
+        if (!p.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)) { p.destroyForcibly(); throw new GradleException("fabricCrossLoadTest: timeout, see ${log}") }
+        def text = log.text
+        text.readLines().findAll { it.contains('crossload') || it.contains('CROSSLOAD') }.take(30).each { logger.lifecycle("  ${it}") }
+        if (!text.contains('CROSSLOAD PASSED')) throw new GradleException("fabricCrossLoadTest failed, see ${log}")
+        if (!fabricKeepWorld) fabricDeleteWorlds('after the run', [world])
+        logger.lifecycle('fabricCrossLoadTest PASSED')
+    }
+}
