@@ -71,7 +71,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientWorldTour', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientWorldTour', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -143,6 +143,12 @@ loom {
                     if (project.hasProperty(k)) property "bettacraft.tour.${v}", project.property(k).toString()
                 }
                 if (project.hasProperty('tourBaseline')) property 'bettacraft.tour.baseline', 'true'
+            }
+            // M67: -Psmoketestm67: one energy store per tank (the crank, the tank overview, the cabinet and the external filter)
+            if (project.hasProperty('smoketestm67')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m67only', 'true'
             }
             // M66: -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the menus of the UI overhaul
             if (project.hasProperty('smoketestm66')) {
