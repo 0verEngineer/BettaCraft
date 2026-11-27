@@ -1461,7 +1461,7 @@ public final class ModDataGen {
             for (int n = 2; n <= 4; n++)
                 item.apply(net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.setCount(ConstantValue.exactly(n))
                         .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
+                                .setProperties(net.minecraft.advancements.predicates.StatePropertiesPredicate.Builder.properties()
                                         .hasProperty(org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock.LANES, n))));
             add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(item))));
         }
