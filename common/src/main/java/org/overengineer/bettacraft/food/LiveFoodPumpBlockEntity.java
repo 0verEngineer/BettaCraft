@@ -246,8 +246,8 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
     private boolean pipesFull(ServerLevel level) {
         for (Direction d : Direction.values()) {
             BlockPos n = worldPosition.relative(d);
-            if (!level.isLoaded(n) || !(level.getBlockState(n).getBlock() instanceof PipeBlock)) continue;
-            PipeNetwork net = PipeNetwork.of(level, n);
+            if (!level.isLoaded(n) || !org.overengineer.bettacraft.plumbing.Pipes.isPipe(level.getBlockState(n))) continue; // M68 part B: bundles too
+            PipeNetwork net = org.overengineer.bettacraft.plumbing.Pipes.networkNextTo(level, worldPosition, d);
             if (net != null && !net.tankEnds(level).isEmpty() && net.room(level) < LiveFood.PORTION_MB) return true;
         }
         return false;
@@ -264,7 +264,7 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
         BlockPos n = worldPosition.relative(d);
         if (!level.isLoaded(n)) return null;
         BlockState s = level.getBlockState(n);
-        if (s.getBlock() instanceof PipeBlock || s.getBlock() instanceof TankBlock || s.getBlock() instanceof LiveFoodPumpBlock) return null;
+        if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s) || s.getBlock() instanceof TankBlock || s.getBlock() instanceof LiveFoodPumpBlock) return null;
         return org.overengineer.bettacraft.platform.Platform.get().itemHandler(level, n, d.getOpposite());
     }
 
@@ -275,8 +275,8 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
             if (!level.isLoaded(n)) continue;
             BlockState s = level.getBlockState(n);
             int took = 0;
-            if (s.getBlock() instanceof PipeBlock) {
-                PipeNetwork net = PipeNetwork.of(level, n);
+            if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) { // M68 part B: bundles too
+                PipeNetwork net = org.overengineer.bettacraft.plumbing.Pipes.networkNextTo(level, worldPosition, d);
                 if (net != null) took = net.fill(level, f.copy(), action, worldPosition);
             } else if (s.getBlock() instanceof TankBlock) {
                 IFluidHandler h = org.overengineer.bettacraft.platform.Platform.get().fluidHandler(level, n, d.getOpposite());
@@ -302,8 +302,8 @@ public class LiveFoodPumpBlockEntity extends BlockEntity implements MenuProvider
             BlockPos n = worldPosition.relative(d);
             if (!level.isLoaded(n)) continue;
             BlockState s = level.getBlockState(n);
-            if (s.getBlock() instanceof PipeBlock) {
-                PipeNetwork net = PipeNetwork.of(level, n);
+            if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) { // M68 part B: bundles too
+                PipeNetwork net = org.overengineer.bettacraft.plumbing.Pipes.networkNextTo(level, worldPosition, d);
                 if (net != null) for (BlockPos p : net.tankEnds(level)) tanks.add(controllerPos(level, p));
             } else if (s.getBlock() instanceof TankBlock) {
                 tanks.add(controllerPos(level, n));

@@ -37,7 +37,9 @@ public record WaterChangerPayload(BlockPos pos, int interval, int share, boolean
         be.set(p.interval(), p.share(), p.enabled());
         if (p.changeNow() && be.manualChangeAllowed(player.level().getGameTime())) {
             int mb = be.check(player.level(), true);
-            player.sendOverlayMessage(Component.translatable(mb > 0 ? "message.bettacraft.water_changer.changed" : "message.bettacraft.water_changer.not_changed", mb));
+            // M68 part B: a change through pipes runs in steps; the first one is done now
+            String key = mb <= 0 ? "message.bettacraft.water_changer.not_changed" : be.pendingMb() > 0 ? "message.bettacraft.water_changer.started" : "message.bettacraft.water_changer.changed";
+            player.sendOverlayMessage(Component.translatable(key, mb));
         }
     }
 }

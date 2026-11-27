@@ -7,10 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.overengineer.bettacraft.platform.fluid.FluidStack;
 import org.overengineer.bettacraft.config.Feature;
 import org.overengineer.bettacraft.config.Features;
-import org.overengineer.bettacraft.plumbing.WaterSources;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 
 /**
@@ -19,9 +17,10 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
  * the filter's return line. When the water is short, every tank gets its part of what there is by what it needs
  * ({@link #distribute}): the share of a water change is a share of each tank's volume, so the bigger tank gets more.
  * <p>
- * M68: the filter's fresh and waste water ports are gone (they load as stainless steel pipes). The devices take their water from
- * what is next to them ({@link #supply}) and the old water of a water change is discarded ({@link #dispose}); part B gives the
- * water change controller its own fresh and waste water ports (pipe roles) and serves the filter's tanks through them.
+ * M68: the filter's fresh and waste water ports are gone (they load as stainless steel pipes). Part B: the water change controller
+ * serves the filter's tanks when it touches a part of the filter ({@link #filterNextTo}) or when its fresh or waste water line ends
+ * at a part of it ({@link #filterAt}; pipes join the chamber and the pump head on every face): the fresh water goes in with the
+ * filter's return, the old water out with its intake (the filter's intake guards keep the young in). The level sensor only measures.
  */
 public final class FilterWater {
     private FilterWater() {}
@@ -39,6 +38,14 @@ public final class FilterWater {
         return null;
     }
 
+    /** M68 part B: the pump head of the multiblock filter whose part is at {@code part}, or null (or with the switch off). */
+    @Nullable
+    public static FilterPumpHeadBlockEntity filterAt(Level level, BlockPos part) {
+        if (!Features.enabled(Feature.FILTER_WATER) || !level.isLoaded(part) || !(level.getBlockState(part).getBlock() instanceof FilterPartBlock)) return null;
+        BlockPos head = MultiblockFilter.headNear(level, part);
+        return head != null && level.getBlockEntity(head) instanceof FilterPumpHeadBlockEntity h ? h : null;
+    }
+
     /** The tanks of a formed filter its water reaches: every tank both lines reach that is guarded (or only empty). */
     public static List<TankBlockEntity> tanks(ServerLevel level, FilterPumpHeadBlockEntity head) {
         List<TankBlockEntity> out = new ArrayList<>();
@@ -48,16 +55,6 @@ public final class FilterWater {
             if (!MultiblockFilter.status(level, l).warning()) out.add(l.tank());
         }
         return out;
-    }
-
-    /** Where a device on the filter gets water: what is next to it (M68: the filter has no fresh water port any more). */
-    public static WaterSources.Supply supply(ServerLevel level, BlockPos device, FilterPumpHeadBlockEntity head) {
-        return new WaterSources.Supply(WaterSources.endless(level, device), new ArrayList<>(WaterSources.handlers(level, device)));
-    }
-
-    /** Old water of a water change through the filter: discarded (M68: no waste water port any more). Returns the mB kept: 0. */
-    public static int dispose(ServerLevel level, FilterPumpHeadBlockEntity head, FluidStack old) {
-        return 0;
     }
 
     /**

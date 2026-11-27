@@ -122,6 +122,12 @@ final class BreedingLines {
             out.add(w);
             tips.put(w, List.of(Component.translatable("gui.bettacraft.devices.fry_tip", sponge).withStyle(ChatFormatting.WHITE)));
         }
+        // M68 part B: a water change controller that drains the tank without an intake guard sucks in the young as well
+        if (v.tech.fry && v.tech.changeYoung > 0 && youngAround(b)) {
+            Component w = TankScreen.changeYoungLine(v.tech);
+            out.add(w);
+            tips.put(w, List.of(Component.translatable("gui.bettacraft.devices.change_young_tip").withStyle(ChatFormatting.WHITE)));
+        }
         if (group == Group.TANKMATES) {
             sep(out);
             tankmates(b, out);

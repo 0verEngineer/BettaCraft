@@ -86,6 +86,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         return withExistingParent(name, BLOCK_FOLDER + "/cube_column").texture("side", side).texture("end", end);
     }
 
+    public T cubeBottomTop(String name, Identifier side, Identifier bottom, Identifier top) {
+        return withExistingParent(name, BLOCK_FOLDER + "/cube_bottom_top").texture("side", side).texture("bottom", bottom).texture("top", top);
+    }
+
     public T cross(String name, Identifier cross) {
         return singleTexture(name, mcLoc(BLOCK_FOLDER + "/cross"), "cross", cross);
     }

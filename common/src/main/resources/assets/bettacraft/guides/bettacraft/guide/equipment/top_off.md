@@ -17,13 +17,14 @@ item_ids:
   <Block id="bettacraft:reservoir" x="2" p:fill="6" />
 </GameScene>
 
-Open aquariums lose water to evaporation (a lid helps). The <ItemLink id="bettacraft:level_sensor" /> tops it off:
+Open aquariums lose water to evaporation (a lid helps). The <ItemLink id="bettacraft:level_sensor" /> measures it:
 
-* Place it **next to an aquarium** (or at a [multiblock filter](multiblock_filter.md): then it tops off the aquarium
-  the filter cleans).
-* When the water has dropped a little below its **target** (100 %; right-click: 95, 90, 80, 70, 60, 50 %), it fills
-  up from what is **next to it**: a <ItemLink id="bettacraft:reservoir" />, a [pipe](pipes.md), another mod's tank
-  (also AE2 or RS through their interfaces) or a water source block.
+* Place it **next to an aquarium** (beside or on it). It only measures, like a float switch; no pipe joins it.
+* When the water has dropped a little below its **target** (100 %; right-click: 95, 90, 80, 70, 60, 50 %), it says so
+  and gives a **redstone signal**.
+* A [water change controller](water_change.md) that fills this aquarium reads it without a cable and **tops it off**
+  through its fresh water line (from a <ItemLink id="bettacraft:reservoir" />, a pump at a water source or another mod's
+  tank).
 * **Fresh water only.** When water evaporates, the salt of a [reef tank](../saltwater.md) stays behind; topping off with
   fresh water brings the salinity back exactly where it was. A salty source is refused.
 

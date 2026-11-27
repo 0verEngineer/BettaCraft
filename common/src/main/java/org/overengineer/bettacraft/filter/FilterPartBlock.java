@@ -79,6 +79,9 @@ public class FilterPartBlock extends BaseEntityBlock implements BlockRemoval, Pi
 
     @Override
     public boolean pipeConnects(BlockState state, Direction face) {
+        // M68 part B: a pipe joins the chamber and the pump head on every face: the water change controller's line that ends there
+        // serves the filter's tanks (the part is a plain end of the line, no port)
+        if (part == Part.CHAMBER || part == Part.PUMP_HEAD) return true;
         return (part == Part.INLET || part == Part.OUTLET) && face == state.getValue(FACING);
     }
 
