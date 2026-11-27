@@ -4,6 +4,91 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.57.0-beta.1] - 2026-11-27
+
+One pipe system: glass and stainless steel pipes for everything, a pipe wrench, lines that take their role from the port they
+reach, pipe bundles inside and outside the tank with a dock per line, and a water change controller with four pipe ports that
+also tops off.
+
+### Changed
+- **Two pipes for everything.** The glass pipe (50 mB/t) and the stainless steel pipe (250 mB/t) are the plain water pipes, the
+  filter lines and the lines of the water change controller, outside and inside the tank. The filter pipes (intake, return, fresh
+  and waste water), the T-piece and the interior pipe item are gone.
+- **Pipes join every neighbour that fits, on every side** (pipes, bundles, tank blocks, reservoirs, drains, filter parts, the ports
+  of the filter and the controller, devices, other mods' fluid handlers): lines branch by themselves.
+- **A line takes its role from the port it reaches:** the filter's inlet makes it an intake line (blue rings), its outlet a return
+  line (orange), the controller's fresh water ports a fresh water line (green), its waste water ports a waste water line (brown);
+  no port: a plain water line without a ring. A line at ports of two roles is a **short circuit** (red rings): the filter or the
+  controller stops and says so in its screen and in Jade / The One Probe / WTHIT, and players nearby get a chat note. Several ports
+  of the same role on one line are fine.
+- **Flow by pipes:** a line carries at most what its weakest pipe carries; the multiblock filter (100 mB/t) runs at half on a glass
+  line, several intake and return lines add up (two glass lines each way give it its full flow). The filter screen shows "Its lines
+  carry at most ... mB/t". Jade, The One Probe and WTHIT show a pipe's role and its line's flow.
+- **Pipe bundles hold 2 to 4 pipes of any role** (also two lines of the same role, glass and steel mixed): sneak + right-click a
+  pipe with a pipe; sneak + right-click with an empty hand takes the pipe you look at out. Bundle to bundle the pipes keep their
+  corners; a single pipe, port or device meets one pipe of the bundle; at the glass all pipes dock side by side, each with its own
+  flange.
+- **A dock per line inside the tank:** each line of a bundle docked on the glass gets its own pipe dock behind its flange, with the
+  ring of its line, and its own guard. A guard used from outside goes to the dock of the line whose flange you click.
+- **Interior pipes are the normal pipes:** a glass or stainless steel pipe placed in the tank interior is an interior pipe there
+  (glass or steel to look at). New **interior bundles**: sneak + right-click an interior pipe with a pipe, up to four lanes of one
+  kind; the middle lane runs straight through, the side lanes leave on their own side, bundles of one direction join lane by lane.
+- **The multiblock filter has no fresh or waste water ports any more.** Pipes join its chambers and pump head on every face (plain
+  ends without a role); a water change controller serves the filter's tanks.
+- **Water change controller with four ports** (seen from the front): fresh water in (left), fresh water out to the tanks (back),
+  waste water in from the tanks (top), waste water out (right). Placed against a tank or a multiblock filter, the touch stands for
+  the two tank-side ports, then two pipes do. Standing free (a central technical room) all four run through pipes; both tank-side
+  lines may dock on the same tank block (as a bundle, or on two faces of an edge block). A water change runs in steps of what its
+  lines carry (glass 500 mB, steel 2,500 mB per half second) and only drains what fresh water came. It serves every tank of a
+  multiblock filter it touches or whose chamber or pump head its lines reach (`features.pipes.filterWater`, now "Water change at
+  the filter"). Its screen shows the tanks it serves, the level sensors it reads, its ports, stores and warnings.
+- **The controller does the top-off too:** between water changes it tops off every tank it fills that has a level sensor (fresh
+  water only, up to 1,000 mB a step).
+- **The level sensor only measures:** placed at a tank it reports "below the target" and gives a redstone signal (15) for your own
+  circuits; no pipe joins it, it moves no water and needs no power. The controller that fills its tank reads it without a cable.
+- **Fresh water always comes through a pipe:** a reservoir, a water pump at a water source, a reverse osmosis unit or another mod's
+  tank at the end of the controller's fresh water line. **Topping off now needs a water change controller and a fresh water pipe;
+  a source "next to" the level sensor or the controller no longer counts.** The old water goes out through the waste water outlet
+  (a drain, a reservoir or another mod's tank, right at the port or through a pipe).
+- **The waste water line sucks in young animals without an intake guard:** a water change through a dock without an intake guard
+  (or where the controller touches the tank) takes the drained share of the fry, young shrimp and tadpoles (25 % change: about a
+  quarter; no snails, no adults; only with `features.breeding.fryIntake` and a care mode in which animals die). Warnings in the
+  controller's screen, the tank menu (devices and breeding tabs) and the overlays; the tank log notes it.
+- Devices that take a pipe (live food pump, dosing pump, calcium reactor, fertilizer maker) also work with a bundle next to them.
+- Handbook: the pipe chapter rewritten ("Water in the tank: how it all fits together" with example setups for a single tank, one
+  filter for several tanks and a central technical room; pages for the pipe wrench, guards, level sensor, drain and reservoir);
+  en and de. The level sensor is no longer listed among the devices driven by FE or Create's rotation.
+
+### Added
+- **Pipe wrench:** right-click a side of a pipe to close it (a cap shows it; the pipe no longer joins what is there) or open it
+  again, also on one pipe of a bundle; sneak + right-click on a bundle moves the pipe to the next spot. Switch
+  `features.pipes.pipeWrench`.
+- **Drain:** the end of a waste water line, a pipe joins it on every side and it discards the water. Switch `features.pipes.drain`.
+- Quest "Down the Drain" (craft a drain); "Top It Off" now follows "Hands Free"; "The Right Tool" (pipe wrench) replaces the quest
+  of the filter's water ports.
+
+### Removed
+- Items and blocks: filter intake, return, fresh water and waste water pipes, the T-piece, the filter's fresh and waste water ports,
+  the interior pipe item (the intake strainer, lily pipe, nozzle, spray bar and outlet guard are made with glass pipes now).
+- The level sensor's FE buffer and its own pumping.
+
+### Migration
+- **Worlds and items are converted when they load, nothing is lost:** the old filter pipes of all four kinds, T-pieces and the
+  filter's fresh and waste water ports become stainless steel pipes with exactly the connections they had (the other sides closed,
+  as with the wrench); bundles keep their lines in their old spots; the old interior pipe becomes a glass pipe inside. The old ids are
+  registry aliases of the new ones (NeoForge `addAlias`, a registry alias on Fabric), so the old items turn into stainless steel
+  pipes (the interior pipe into a glass pipe) everywhere: inventories, ender chests, chests, cabinets, AE2 and RS storage, other
+  mods' backpacks.
+- Old docks shared by the lines of a bundle split into one dock per line, and their guards move to the line they belong to (intake
+  guard and strainer to the sucking line, outlet guard, lily pipe, nozzle and spray bar to the line that brings water); where the
+  interior pipes behind a dock lead to both kinds, the old dock stays shared and works as before. Old filters keep filtering.
+- **No migration for the level sensor and the water change controller:** a controller or sensor that took its water from a
+  reservoir, a water source or a tank next to it does nothing until it gets a fresh water pipe (and a sensor tops off only through a
+  controller that fills its tank).
+- Known caveats: the water stored in the old fresh and waste water ports of a filter (up to 8 buckets) is lost. Plain glass or steel
+  pipes from before the filter lines (1.32) that run from the filter's inlet and outlet and touch each other are one line at two
+  ports now: a short circuit (red); separate them with the pipe wrench.
+
 ## [1.56.0-beta.1] - 2026-11-27
 
 One energy store per tank: FE cables and the crank charge the same store, it grows with the tank and its cabinets, and one setting,

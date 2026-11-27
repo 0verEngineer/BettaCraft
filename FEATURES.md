@@ -269,13 +269,26 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   cabinets join to the back as well, so a 10 x 5 tank stands on one under-cabinet, the middle may be normal blocks),
   automatic and clip-on feeders, air pumps with air stones (bubble columns), light bar (also lying directly on a lid), LED panel and high-power LED in 16
   colours with dimmer and daylight timer.
-- **Pipes and water changes:** glass and stainless steel pipes and a water pump carry water with all its values, a
-  bulkhead leads to interior pipes, a multiblock filter of any size with media that clog; nitrate makes water changes
-  matter, a water change controller and a top-off do them for you.
-- **One filter, many aquariums:** filter pipes with T-pieces dock on any side of a tank (guards inside keep the animals
-  out), up to four lines run in one pipe bundle, fresh and waste water ports do the water changes of every tank of the
-  filter, and a pipe cover (or the facades of AE2, EnderIO, Mekanism Covers and Cable Facades) hides the pipes behind any
-  block.
+- **One pipe system:** two pipes for everything, glass (50 mB/t) and stainless steel (250 mB/t), carry water with all its
+  values. A pipe joins every neighbour that fits, on every side, so lines branch by themselves; the **pipe wrench** closes
+  single sides, so lines side by side stay apart. A line takes its **role from the port it reaches** (filter inlet: intake
+  line, blue rings; outlet: return line, orange; the controller's fresh water ports green, its waste water ports brown; no
+  port: a plain water line), and a line at ports of two roles is a **short circuit** (red) that stops the filter or the
+  controller. A line carries what its weakest pipe carries; several lines of one role add up. Jade, The One Probe and WTHIT
+  show every line's role and flow.
+- **Bundles and the interior:** two to four pipes of any role in one block, each its own line; where a bundle docks on a
+  tank, every line gets its own flange and its own dock inside, with its own guard (also put on from outside onto the
+  clicked flange). Glass and steel pipes placed inside a tank are its interior pipes, also as interior bundles of up to four
+  lanes; a bulkhead leads through the floor; lily pipes, nozzles, spray bars and intake strainers make their own currents.
+- **One filter, many aquariums:** a multiblock filter of any size with media that clog serves every tank its intake and
+  return lines reach (guards inside keep the animals out), the cleaning and flow shared by water volume; a pipe cover (or
+  the facades of AE2, EnderIO, Mekanism Covers and Cable Facades) hides the pipes behind any block.
+- **Water changes and top-off:** nitrate makes water changes matter. The **water change controller** has four ports (fresh
+  water in and out, waste water in and out); against a tank or a multiblock filter two pipes do, standing free in a central
+  technical room all four run through pipes. Fresh water always comes through a pipe (reservoir, a pump at a water source,
+  the reverse osmosis unit, another mod's tank), the old water goes to a **drain**. The **level sensor** only measures and
+  gives a redstone signal; the controller reads it and tops off evaporated water. Without an intake guard the waste water
+  line sucks in the drained share of the young animals.
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
 - **Power, your choice:** by default nothing needs energy; one setting, `power.costs` (OFF / EASY / HARD), says what the
@@ -290,7 +303,7 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   a drive adapter that turns with the trip or FE batteries of the contraption); on Create Aeronautics airships the animals
   stay real and everything runs as on the ground. The water sloshes in curves and when a contraption stops.
 
-![One multiblock filter for two tanks with filter pipes, T-pieces, a pipe bundle and pipe covers](docs/images/bettacraft-filter-lines.jpg)
+![One multiblock filter for two tanks with its pipe lines, a pipe bundle and pipe covers](docs/images/bettacraft-filter-lines.jpg)
 
 ![A planted tank with two bettas on a Create minecart contraption: the water sloshes in the curve](docs/images/bettacraft-create-cart.jpg)
 
@@ -342,7 +355,7 @@ feature is on every Minecraft version and loader unless the README's "What is mi
 - 368 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
   (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
   Modonomicon book (1.21.11 and 26.x), converted at build time. 72 advancements, information pages in JEI (and REI and
-  EMI on Fabric), tooltips, and an FTB Quests chapter of 115 quests for modpacks.
+  EMI on Fabric), tooltips, and an FTB Quests chapter of 117 quests for modpacks.
 - Every feature has its own switch (`features.<group>.enabled` and sub-switches, 144 in all): off, it loses its recipes,
   trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
 - Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
