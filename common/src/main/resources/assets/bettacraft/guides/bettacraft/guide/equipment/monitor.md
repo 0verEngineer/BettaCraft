@@ -28,7 +28,7 @@ right-click to see its size and how many tanks it found.
 * The values only travel to players who can see the monitor (within their render distance); they come every second.
 * Every tank keeps a record of its values for the last 7 in-game days (one point per in-game hour), also while no
   monitor looks at it, so a new monitor shows the past right away.
-* With a power option on (see [Power](power.md)) a monitor needs **1 FE per tick and block** (`monitor.fePerBlock`);
+* With power costs on (see [Power](power.md)) a monitor needs **1 FE per tick and block** (`monitor.fePerBlock`);
   without FE it shows "No power". Any block of the screen takes FE.
 
 ## Widgets
@@ -39,7 +39,7 @@ right-click to see its size and how many tanks it found.
 | **Traffic light** | the state of a tank in green, yellow or red with the warnings of its menu: little or bad water, no filter, nitrate, devices without power, overcrowded, sick animals, an empty feeder and the breeding warnings |
 | **Graph** | one to three values of a tank over 1 to 7 in-game days, each line in its own colour and scaled to its own range, with the latest values above it; a faint line marks every day |
 | **Animals** | how many animals of each species live in the tank (young in brackets), then the bubble nest, eggs, young and berried small animals |
-| **Devices** | filters, heaters, coolers, light (with the dimmer), CO2 and air pumps: how many run, red when they lack power; the tank's energy buffer while a power option is on |
+| **Devices** | filters, heaters, coolers, light (with the dimmer), CO2 and air pumps: how many run, red when they lack power; the tank's energy buffer while power costs are on |
 | **Alarm** | a value with a limit: the tile blinks red while the value is above (or below) it. It can give a redstone signal (see below) |
 | **Log** | the latest logbook entries of one tank or of **all tanks** of the screen, newest on top, with the day |
 

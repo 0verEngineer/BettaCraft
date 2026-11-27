@@ -33,7 +33,7 @@ and sponge filters).
 * **Power regulator:** right-click it (or sneak + mouse wheel while looking at it) to set 0 to 100 %. Less power gives
   less air, needs less energy and is quieter (see [Power regulator](regulator.md)).
 * **Energy:** without power mods it simply runs. A server can make it need FE
-  (`aeration.airPumpRequiresEnergy`): 2 FE/t per air stone, delivered like for the other equipment (see
+  (`power.costs`): 2 FE/t per air stone, delivered like for the other equipment (see
   [Power](power.md)).
 
 The <ItemLink id="bettacraft:air_hose" /> is only a crafting part (dried kelp or slime balls).

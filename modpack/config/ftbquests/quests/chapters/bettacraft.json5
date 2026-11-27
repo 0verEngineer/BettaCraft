@@ -648,6 +648,20 @@
 			y: -4.4
 		},
 		{
+			dependencies: ["470E699F3A213CE3"],
+			description: ["{\"translate\":\"quest.bettacraft.tank_cranked.desc\"}"],
+			id: "3B31ABC9A7845BAE",
+			optional: true,
+			rewards: [{ id: "2581756A362C975C", type: "xp", xp: 50 }],
+			tags: ["bettacraft_feature:power.tankCrank", "bettacraft_feature:power.regulator", "bettacraft_feature:equipment.moreInternalFilters", "bettacraft_needs:power", "bettacraft_optional"],
+			tasks: [
+				{ advancement: "bettacraft:tank_cranked", criterion: "", id: "7AFBD5BD890C7439", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.tank_cranked.title\"}",
+			x: 16.8d,
+			y: -4.4d
+		},
+		{
 			dependencies: ["488926E66E35A9EC"],
 			description: ["{\"translate\":\"quest.bettacraft.pipes.desc\"}"],
 			id: "75F7A0B9785676A9",

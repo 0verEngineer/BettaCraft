@@ -76,7 +76,7 @@ solange das Feuer brennt: etwa ein Tag Brennen für eine volle Flasche, mehr Feu
 
 * Rechtsklick mit einer Flasche setzt sie ein, die leere Hand nimmt sie heraus, Schleichen zeigt den Zustand.
 * Trichter setzen leere Flaschen ein und holen nur volle heraus; ein Komparator liest den Füllstand.
-* Mit einer [Strom-Option](power.md) braucht ihr **Kompressor FE** (`stationFe`, 20 FE/t beim Füllen).
+* Mit [Stromkosten](power.md) braucht ihr **Kompressor FE** (`stationFe`, 20 FE/t beim Füllen).
 * CO2-Gas anderer Mods (Fluid-Tag `#bettacraft:co2_gas`, mit `#c:carbon_dioxide`) kommt über Rohre: 1000 mB füllen
   eine Flasche (`foreignCo2Mb`).
 

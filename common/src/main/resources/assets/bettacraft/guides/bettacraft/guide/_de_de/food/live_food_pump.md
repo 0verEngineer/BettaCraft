@@ -32,7 +32,7 @@ Rechtsklick öffnet ihr Fenster:
 Ein Becken nimmt die Suspension nur, wenn dort jemand dieses Futter frisst (erwachsene Bettas zum Beispiel keine
 Artemia-Nauplien); dann bleibt das Futter in der Zuchtanlage. Eine Gabe, die nicht hinaus kann, wartet bis zur nächsten,
 sie sammelt sich nie an. Die leere Flasche eines Flaschenfutters (Artemia-Nauplien) geht zurück in das Zuchtbecken, das
-sie für die nächste Runde braucht. Ein Redstone-Signal pausiert die Pumpe; mit `pipes.pumpsRequireEnergy` braucht jede
+sie für die nächste Runde braucht. Ein Redstone-Signal pausiert die Pumpe; mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht jede
 Portion FE (`liveFood.pumpFePerPortion`). Tanks und Speicher anderer Mods (AE2, Refined Storage) halten die Suspension wie
 jedes Fluid.
 

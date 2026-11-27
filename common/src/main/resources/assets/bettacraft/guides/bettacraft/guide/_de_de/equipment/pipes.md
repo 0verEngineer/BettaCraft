@@ -42,7 +42,7 @@ Meerwasser und Lebendfutter-Suspension). Wasser aus einem Eimer oder einer Wasse
 
 **Wasserpumpe:** zieht Wasser aus dem Block dahinter und drückt es in den Block davor, **200 mB pro Tick**. Beim Setzen
 dorthin schauen, wohin das Wasser soll. Rechtsklick oder Schleichen + Mausrad: [Leistungsregler](regulator.md).
-Redstone hält sie an. Mit `pipes.pumpsRequireEnergy` braucht sie FE (`pumpFePerTick` 8).
+Redstone hält sie an. Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht sie FE (`pumpFePerTick` 8).
 
 Ein Aquariumblock nimmt Wasser aus einem Rohr an jeder Seite. Von **unten** lässt ein Bodenblock mit
 [Bodendurchführung](bulkhead.md) es durch Ausläufe herein, die du im Aquarium setzt.

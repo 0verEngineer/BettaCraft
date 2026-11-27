@@ -54,17 +54,18 @@ navigation:
 | `osmosis.roRate`, `roPumpBoost`, `roPumpFe`, `roWastePerPart`, `roMembraneBuckets`, `roPrefilterBuckets` | 1, 4, 20, 3, 128, 32 | [reverse osmosis unit](equipment/reverse_osmosis.md): mB per tick, how much faster with FE, FE per tick, waste water per part, life of membrane and prefilter |
 | `dosing.calciumPerMl`, `alkalinityPerMl`, `magnesiumPerMl`, `tracePerMl`, `magnesiumDropPerDay`, `traceUsePerDay`, `canisterMl`, `maxMlPerDay` | 2, 0.07, 4, 0.15, 1, 0.04, 500, 100 | [dosing pump](saltwater/dosing_pump.md) and [reef chemistry](saltwater/reef_chemistry.md): what one mL adds to a water block, magnesium loss and trace element use per day, mL of a canister, most mL per day of a channel |
 | `pipes.glassPipeRate`, `steelPipeRate`, `pumpRate` | 50, 250, 200 | [pipes and the water pump](equipment/pipes.md) in mB per tick |
-| `pipes.pumpsRequireEnergy`, `pumpFePerTick` | false, 8 | water pumps, filter pump heads, water change controllers and level sensors need FE |
+| `pipes.pumpFePerTick` | 8 | FE of water pumps, filter pump heads, water change controllers and level sensors (with `power.costs`) |
 | `crucible.meltTicks`, `fePerTick` | 200, 20 | [crucible](equipment/crucible.md): time of a melt, FE instead of fuel |
 | `multiblockFilter.spongeBlocks`, `ceramicBlocks`, `carbonBlocks`, `peatBlocks`, `dirtPerDay`, `maxChambers` | 12, 24, 16, 6, 0.04, 16 | [multiblock filter](equipment/multiblock_filter.md): water blocks per medium, how fast media clog, chambers at most |
-| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy` | false | equipment needs FE |
-| `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick`, `bufferFe` | 8, 8, 10, 4, 100000 | FE use and storage |
+| `power.costs` | OFF | [power](equipment/power.md): OFF (no device needs FE), EASY (a third of the FE values), HARD (the FE values) |
+| `power.heaterFePerBlock`, `coolerFePerBlock`, `filterFePerTick`, `lightFePerTick` | 8, 8, 10, 4 | FE use (HARD; EASY a third) |
+| `power.storePerWaterBlock`, `storePerCabinet`, `crankFePerClick` | 80000, 20000, 6500 | the tank's one energy store: per water block, per cabinet, FE of one crank click |
 | `foodBreeding.*` | | larva tub (`larvaTubDays` 2, `larvaTubYield` 3) and artemia hatchery (`hatcheryDays` 1, `hatcheryYield` 2); at most 16 per batch |
 | `liveFood.*` | | [tubifex dish](food/tubifex_dish.md) (`tubifexDays` 4, `tubifexRoom` 8, `tubifexConditioning` 2, `poorTubifexStress` 0.5), [daphnia barrel](food/daphnia_barrel.md) (`daphniaDays` 3, `daphniaRoom` 16, `crowdedDays` 1, `bottleDaphniaChance` 0.08), [live food pump](food/live_food_pump.md) (`pumpFePerPortion` 200) |
 | `foodMaking.*` | | [food maker](food/food_maker.md): `ticksPerBatch` 200, `springTicks` 24000 (a full spring), `windsToFull` 25 (crank clicks), `makerFePerTick` 10 |
-| `winding.*` | | [crank](equipment/crank.md): `ticksPerCharge` 24000 (one charge = a day of one device), `clicksPerCharge` 25 (5 seconds), the charges of each device (`externalFilterCharges` 1, `multiblockFilterCharges` 6, `cabinetCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
+| `winding.*` | | [crank](equipment/crank.md): `ticksPerCharge` 24000 (one charge = a day of one device), `clicksPerCharge` 25 (5 seconds), the charges of each device (`multiblockFilterCharges` 6, `osmosisCharges`, `waterChangerCharges`, `waterPumpCharges`, `fertilizerMakerCharges` 1) |
 | `fertilizer.*` | | [liquid fertilizer](plants/fertilizer.md): `portionWaterBlocks` 4, `growthBoost` 0.5, `plantUsePerDay` 0.5, `fertilizerDecayPerDay` 0.05, `overdoseAt` 1.5, `overdoseAlgae` 3, `pipeUpTo` 1; [fertilizer maker](plants/fertilizer_maker.md) `fertilizerTicksPerBatch` 200, `fertilizerFePerTick` 10 |
-| `monitor.*` | | [monitors](equipment/monitor.md): `range` 32 (blocks to the tanks), `fePerBlock` 1 (FE per tick and block while a power option is on) |
+| `monitor.*` | | [monitors](equipment/monitor.md): `range` 32 (blocks to the tanks), `fePerBlock` 1 (FE per tick and block while power costs are on) |
 | `diet.*` | | [food variety](food/food_variety.md): `varietyDays` 3, `varietyGroups` 3, `varietyRecovery` 1.5, `poorFoodFedDays` 0.5, `shrimpFoodFactor` 2 |
 | `floatingPlants.growthSpeed`, `maxCoverage`, `denseCoverFrom`, `maxPerTank` | 1, 0.6, 0.5, 256 | [floating plants](plants/floating_plants.md): growth (0 = none), the most of the surface they cover, dense cover from, plants per aquarium |
 | `floatingPlants.wasteUptake`, `breedingBonus`, `pelletsOnLeaves` | 0.04, 1.15, 0.25 | waste they take up, faster nest under them, share of pellets that stay on the leaves |
@@ -147,8 +148,9 @@ another group (reef fish and seahorses need the tankmates, corals need salt wate
 | `frogs.enabled` | dwarf frogs neither get hungry nor need air |
 | `tankmates.enabled` (and each group, `saltwater.reefFish`) | their care, shoals, fights and breeding |
 | `saltwater.enabled` | salinity harms nobody |
-| `power.enabled` | no device needs FE (as with every power option off) |
-| `power.winding` | with the power options on, the food maker and the fertilizer maker run on FE only and no other device takes the crank |
+| `power.enabled` | no device needs FE (as with `power.costs` OFF) |
+| `power.winding` | with power costs, the food maker and the fertilizer maker run on FE only and no other device takes the crank |
+| `power.tankCrank` | the crank at a cabinet or an external filter charges no tank (only FE does) |
 | `fertilizer.enabled` (`fertilizer.dosing`) | the fertilizer does nothing (the level stays), the fertilizer maker stands still (the dosing pump skips fertilizer canisters) |
 | `liveFood.enabled` | breeders and cultures stand still |
 | `sounds.enabled` | the device sounds are silent |
@@ -193,7 +195,7 @@ config of every world:
 | `saltwater.foreignAnimals` | LENIENT |  | REALISTIC |  |
 | `saltwater.vanillaCoralsNeedSalt` | false |  | true |  |
 | `saltwater.refuseDeadlyWater` | true |  | false |  |
-| `power.heaterRequiresEnergy`, `filterRequiresEnergy`, `lightRequiresEnergy`, `aeration.airPumpRequiresEnergy`, `pipes.pumpsRequireEnergy`, `terrarium.misterRequiresEnergy` | false |  | true |  |
+| `power.costs` | OFF |  | HARD |  |
 | `tankmates.behaviour.shoalStress` | true | false |  |  |
 | `frogs.frogStarveDays` | 4 | 8 |  |  |
 | `bigAnimalRules.dolphinHungryDays` | 2 | 4 |  |  |
