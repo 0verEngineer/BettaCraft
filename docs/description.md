@@ -189,7 +189,7 @@ All features in detail: [FEATURES.md on GitHub](../FEATURES.md).
   **crank** at its cabinet or filter (about 20 seconds for a day of a medium tank on EASY), or with Create's **drive
   adapter** on rotation with real stress.
 
-![One multiblock filter for two tanks: its pipe lines, a pipe bundle with four lines and pipe covers](images/bettacraft-filter-lines.jpg)
+![One multiblock filter for three tanks: its blue intake line and orange return line branch to every tank](images/bettacraft-filter-lines.jpg)
 
 ![A monitor wall between a betta tank and a reef tank: status, a temperature graph, a salinity alarm, animals, devices and the logbook](images/bettacraft-monitors.jpg)
 

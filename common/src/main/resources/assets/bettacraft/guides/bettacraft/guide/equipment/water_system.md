@@ -70,6 +70,8 @@ aquarium-side ports, so it needs only two pipes:
 
 A filter of your choice keeps the water clean: an internal or external filter, or a multiblock filter.
 
+![A controller with its back against an aquarium: a pipe from a reservoir to its fresh water inlet, a pipe to a drain from its waste water outlet, a level sensor with a lamp](../images/water_example_single.png)
+
 ## Example: one filter, several aquariums
 
 1. Build a [multiblock filter](multiblock_filter.md) and lay a pipe from its **inlet** and one from its **outlet** to every
@@ -82,6 +84,8 @@ A filter of your choice keeps the water clean: an internal or external filter, o
    tops off those with a level sensor. The fresh water goes in over the filter's return.
 
 Do not join the controller's lines to the filter's inlet or outlet: that is a short circuit.
+
+![One multiblock filter for three aquariums, its intake and return lines branching to each, and a controller against the filter chamber](../images/water_example_filter.png)
 
 ## Example: a central technical room
 
@@ -97,5 +101,7 @@ Everything stands in one room, the aquariums elsewhere in the house:
 * **Keep lines apart:** where two lines touch, close the side with the [pipe wrench](pipe_wrench.md); a red ring tells you
   where two roles met.
 * Jade, The One Probe and WTHIT show the role and the flow of every line you look at.
+
+![A free-standing controller in a technical room: fresh water from a reservoir and a reverse osmosis unit, green and brown lines to two aquariums, a drain](../images/water_example_room.png)
 
 <SubPages icons={true} />

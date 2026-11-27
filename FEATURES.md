@@ -303,7 +303,7 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   a drive adapter that turns with the trip or FE batteries of the contraption); on Create Aeronautics airships the animals
   stay real and everything runs as on the ground. The water sloshes in curves and when a contraption stops.
 
-![One multiblock filter for two tanks with its pipe lines, a pipe bundle and pipe covers](docs/images/bettacraft-filter-lines.jpg)
+![One multiblock filter for three tanks: its blue intake line and orange return line branch to every tank](docs/images/bettacraft-filter-lines.jpg)
 
 ![A planted tank with two bettas on a Create minecart contraption: the water sloshes in the curve](docs/images/bettacraft-create-cart.jpg)
 
