@@ -84,6 +84,9 @@ final class DevClientSmokeM68 {
         world("bundle_at_glass_wide", () -> c("lines_bundle").add(1.5, 0.5, 0), new Vec3(1.0, 2.6, -5.0));
         inside("lines_inside_docks", "lines_dock", new Vec3(-3.5, 1.5, -4.0), new Vec3(-0.5, -0.5, 1.5));
         inside("lines_inside_bundle", "lines_run", new Vec3(-1.0, 3.5, 6.5), new Vec3(0.5, 0, 0));
+        // the same from above, the substrate behind it (the handbook picture of the interior bundle)
+        inside("lines_inside_above", "lines_run", new Vec3(-2.0, 9.0, 5.0), new Vec3(1.0, -1.0, 0));
+        inside("lines_inside_above_steep", "lines_run", new Vec3(0.5, 12.0, 3.0), new Vec3(0.5, 0, 0));
         world("lines_miniature", () -> c("lines_tank").add(2.2, 1.05, -0.05), new Vec3(-0.2, 0.7, -0.15));
         // ---- the water row
         world("changer_at_tank", () -> c("contact_changer").add(-0.5, 0, 0), new Vec3(1.6, 2.6, -4.8));
