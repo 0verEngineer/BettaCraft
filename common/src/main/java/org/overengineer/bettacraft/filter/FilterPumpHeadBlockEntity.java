@@ -279,7 +279,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
     /** M68: the players near a filter whose lines make a short circuit hear once (per server run) why it stopped. */
     private void tellShort(ServerLevel level) {
         for (var p : level.players()) {
-            if (p.distanceToSqr(worldPosition.getCenter()) > 32 * 32 || !toldShort.add(p.getUUID())) continue;
+            if (p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(worldPosition)) > 32 * 32 || !toldShort.add(p.getUUID())) continue;
             p.sendSystemMessage(Component.translatable("message.bettacraft.mb_filter.short_circuit", worldPosition.getX(), worldPosition.getY(), worldPosition.getZ())
                     .withStyle(net.minecraft.ChatFormatting.RED));
         }

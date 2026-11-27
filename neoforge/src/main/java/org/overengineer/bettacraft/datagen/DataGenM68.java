@@ -20,7 +20,7 @@ final class DataGenM68 {
         p.withExistingParent("pipe_wrench", p.mcLoc("item/handheld")).texture("layer0", p.modLoc("item/pipe_wrench"));
     }
 
-    static void recipes(RecipeOutput out, net.minecraft.advancements.Criterion<?> hasPipe) {
+    static void recipes(RecipeOutput out, net.minecraft.advancements.triggers.Criterion<?> hasPipe) {
         ShapedRecipeBuilder.shaped(RecipeCompat.items(), RecipeCategory.TOOLS, ModItems.PIPE_WRENCH.get())
                 .pattern(" S ").pattern(" IS").pattern("I  ").define('S', ModTags.STAINLESS_STEEL_INGOTS).define('I', Items.IRON_INGOT)
                 .unlockedBy("has_pipe", hasPipe).save(out, RecipeCompat.key(BettaCraft.id("pipe_wrench")));
