@@ -448,6 +448,14 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestm675')) {
+                // gradlew runClient -Psmoketestm675 [-Pm675parts=animals,algae,screens,cabinet,bigtank,create] (create: with -Pcreate): the
+                // points of M67.5 (animals at the glass, algae pattern, release confirmation, cabinet hose, big tank haze and under water,
+                // algae on a contraption with its guard; run/screenshots/bettacraft_m675_<shot>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m675only', 'true'
+                if (project.hasProperty('m675parts')) systemProperty 'bettacraft.smoketest.m675parts', project.property('m675parts').toString()
+            }
             if (project.hasProperty('smoketestm67')) {
                 // gradlew runClient -Psmoketestm67: the M67 scene (one energy store per tank on EASY: the crank at a joined cabinet, the tank
                 // overview and its power tooltip, the cabinet and the external filter, en and de; run/screenshots/bettacraft_m67_<lang>_<shot>.png)

@@ -191,6 +191,8 @@ final class DevClientSmokeTest {
     private static DevClientSmokeM66 m66;
     /** M67: -Psmoketestm67 (one energy store per tank: the crank, the tank overview, the cabinet and the external filter). */
     private static final boolean M67_ONLY = Boolean.getBoolean("bettacraft.smoketest.m67only");
+    private static final boolean M675_ONLY = Boolean.getBoolean("bettacraft.smoketest.m675only");
+    private static DevClientSmokeM675 m675;
     private static DevClientSmokeM67 m67;
     /** M65: -Psmoketestm65 [-Pshaders] [-Pm65packs=none,...] [-Pm65tag=before|after] [-Pm65parts=pipes,wall]. */
     private static final boolean M65_ONLY = Boolean.getBoolean("bettacraft.smoketest.m65only");
@@ -501,6 +503,16 @@ final class DevClientSmokeTest {
                     LOGGER.info("[smoketest] client world test finished (M62b only)");
                     LOGGER.info(m62b.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M62b");
                     m62b = null;
+                    mc.stop();
+                }
+                return;
+            }
+            if (M675_ONLY) {
+                if (ticks == 60) m675 = new DevClientSmokeM675();
+                if (m675 != null && m675.tick()) {
+                    LOGGER.info("[smoketest] client world test finished (M67.5 only)");
+                    LOGGER.info(m675.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M67.5");
+                    m675 = null;
                     mc.stop();
                 }
                 return;
