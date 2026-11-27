@@ -258,6 +258,15 @@ public final class PlantMeshRenderer {
             dist[i * 4 + 3] = time;
         }
 
+        /** M66.5: whether any disturbance still closes polyps now ({@link #closed} is 0 everywhere otherwise). */
+        boolean anyDisturbance(float time) {
+            for (int i = 0; i < distCount; i++) {
+                float age = time - dist[i * 4 + 3];
+                if (age >= 0 && age <= CLOSE + OPEN) return true;
+            }
+            return false;
+        }
+
         /** How far the polyp anchored at (x, y, z) is closed (0 open .. 1 closed). */
         float closed(float x, float y, float z, float time) {
             float c = 0;
@@ -521,6 +530,9 @@ public final class PlantMeshRenderer {
         PoseStack.Pose pose = ps.last();
         Matrix4f mat = pose.pose();
         double w = 0.045 * Math.PI * 2;
+        // M66.5: the vertices of one polyp share its anchor: how far it is closed is worked out once per anchor, not per vertex
+        float lastAx = Float.NaN, lastAy = Float.NaN, lastAz = Float.NaN, lastClosed = 0;
+        boolean polypsMove = m.anyDisturbance(time);
         for (int t = 0; t < PlantTex.ALL.length; t++) {
             Layer l = m.layers[t];
             if (l.light.isEmpty()) continue;
@@ -546,7 +558,13 @@ public final class PlantMeshRenderer {
                             }
                             case ANIM_POLYP -> {
                                 amp = 0.08F;
-                                scale = 1 - 0.8F * m.closed(ax, ay, az, time);
+                                if (polypsMove && (ax != lastAx || ay != lastAy || az != lastAz)) {
+                                    lastAx = ax;
+                                    lastAy = ay;
+                                    lastAz = az;
+                                    lastClosed = m.closed(ax, ay, az, time);
+                                }
+                                scale = 1 - 0.8F * (polypsMove ? lastClosed : 0);
                             }
                             case ANIM_PULSE -> {
                                 amp = 0.22F;
