@@ -341,6 +341,7 @@ public final class ModDataGen {
             DataGenM23.blockStates(this); // M23
             DataGenM24.blockStates(this); // M24
             DataGenM40.blockStates(this); // M40 part a
+            DataGenM68.blockStates(this); // M68 part C: the interior bundles
             DataGenM40b.blockStates(this); // M40 part b
             DataGenM25b.blockStates(this); // M25 part b
             DataGenM25c.blockStates(this); // M25 part c
@@ -1405,6 +1406,9 @@ public final class ModDataGen {
             // M68: a glass or steel pipe placed in a tank interior gives that pipe back
             dropOther(ModBlocks.INTERIOR_PIPE.get(), ModItems.GLASS_PIPE.get());
             dropOther(ModBlocks.INTERIOR_STEEL_PIPE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
+            // M68 part C: an interior bundle gives one pipe per lane
+            interiorBundle(ModBlocks.INTERIOR_PIPE_BUNDLE.get(), ModItems.GLASS_PIPE.get());
+            interiorBundle(ModBlocks.INTERIOR_STEEL_PIPE_BUNDLE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
             dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
@@ -1432,6 +1436,17 @@ public final class ModDataGen {
                                     .include(ModDataComponents.CABINET_FRONT.get()).include(ModDataComponents.CABINET_JOINTS.get()))))));
         }
 
+        /** M68 part C: as many pipes as the bundle has lanes. */
+        private void interiorBundle(Block block, net.minecraft.world.item.Item pipe) {
+            var item = LootItem.lootTableItem(pipe);
+            for (int n = 2; n <= 4; n++)
+                item.apply(net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.setCount(ConstantValue.exactly(n))
+                        .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
+                                        .hasProperty(org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock.LANES, n))));
+            add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(item))));
+        }
+
         @Override
         protected Iterable<Block> getKnownBlocks() {
             return List.of(ModBlocks.TANK.get(), ModBlocks.FEEDER.get(), ModBlocks.CLIP_FEEDER.get(), ModBlocks.TANK_LIGHT.get(), ModBlocks.EXTERNAL_FILTER.get(), ModBlocks.CABINET.get(),
@@ -1452,6 +1467,8 @@ public final class ModDataGen {
                         l.addAll(DataGenM40.blocks()); // M40 part a
                         l.add(ModBlocks.INTERIOR_PIPE.get()); // M68
                         l.add(ModBlocks.INTERIOR_STEEL_PIPE.get());
+                        l.add(ModBlocks.INTERIOR_PIPE_BUNDLE.get()); // M68 part C
+                        l.add(ModBlocks.INTERIOR_STEEL_PIPE_BUNDLE.get());
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d

@@ -77,22 +77,71 @@ public final class InteriorPlumbing {
 
     /** Pure: the outlets joined to the piece at {@code start} (pieces join their six neighbours; outlets end a line). */
     public static Net search(Long2IntOpenHashMap plumbing, long start) {
+        return search(plumbing, start, -1, Long.MIN_VALUE);
+    }
+
+    /** M68 part C: the same from lane {@code lane} of the interior bundle at {@code start} (-1: a single piece). */
+    public static Net search(Long2IntOpenHashMap plumbing, long start, int lane) {
+        return search(plumbing, start, lane, Long.MIN_VALUE);
+    }
+
+    /**
+     * Pure: the outlets joined to lane {@code startLane} of the piece at {@code start} (-1 for a single piece), never through
+     * {@code exclude}. Single pieces join every single neighbour; M68 part C: an interior bundle ({@link Plumb#BUNDLE}) joins a
+     * single neighbour with one of its lanes only ({@link InteriorBundleBlock#laneOn}) and the next bundle of its run lane by lane,
+     * so the lines in it stay apart.
+     */
+    public static Net search(Long2IntOpenHashMap plumbing, long start, int startLane, long exclude) {
         LongArrayList out = new LongArrayList(), in = new LongArrayList(), ports = new LongArrayList();
         LongOpenHashSet seen = new LongOpenHashSet();
-        ArrayDeque<Long> queue = new ArrayDeque<>();
-        queue.add(start);
-        seen.add(start);
+        it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap lanesSeen = new it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap();
+        ArrayDeque<long[]> queue = new ArrayDeque<>();
+        queue.add(new long[]{start, startLane});
+        if (startLane < 0) seen.add(start);
+        else lanesSeen.put(start, 1 << startLane);
+        if (exclude != Long.MIN_VALUE) seen.add(exclude);
+        int count = 1;
         while (!queue.isEmpty()) {
-            long k = queue.poll();
+            long[] e = queue.poll();
+            long k = e[0];
+            int lane = (int) e[1];
             int x = BlockPos.getX(k), y = BlockPos.getY(k), z = BlockPos.getZ(k);
+            int code = lane >= 0 && plumbing.containsKey(k) ? plumbing.get(k) : 0;
+            Direction.Axis axis = lane >= 0 ? InteriorLanes.axisOf(code) : null;
             for (Direction d : Direction.values()) {
+                if (lane >= 0) {
+                    // a lane goes on along its run and (side lanes) to its own side; the middle lane also into single pieces at the ends
+                    boolean along = d.getAxis() == axis;
+                    if (!along && (lane == 0 || InteriorLanes.laneSide(axis, lane) != d)) continue;
+                }
                 long n = BlockPos.asLong(x + d.getStepX(), y + d.getStepY(), z + d.getStepZ());
-                if (!plumbing.containsKey(n) || seen.contains(n) || seen.size() >= MAX_PIECES) continue;
+                if (!plumbing.containsKey(n) || count >= MAX_PIECES) continue;
+                int nc = plumbing.get(n);
+                Plumb p = Plumb.kind(nc);
+                if (p == Plumb.BUNDLE) {
+                    int nl;
+                    if (lane >= 0) {
+                        // bundle to bundle: the same lane, along the same axis only
+                        if (d.getAxis() != axis || InteriorLanes.axisOf(nc) != axis || lane >= Plumb.extra(nc)) continue;
+                        nl = lane;
+                    } else {
+                        nl = InteriorLanes.laneOn(nc, d.getOpposite());
+                    }
+                    if (nl < 0) continue;
+                    int mask = lanesSeen.get(n);
+                    if ((mask & 1 << nl) != 0) continue;
+                    lanesSeen.put(n, mask | 1 << nl);
+                    count++;
+                    queue.add(new long[]{n, nl});
+                    continue;
+                }
+                if (lane >= 0 && d.getAxis() == axis && lane != 0) continue; // a side lane meets a single piece only on its side
+                if (seen.contains(n)) continue;
                 seen.add(n);
-                Plumb p = Plumb.kind(plumbing.get(n));
+                count++;
                 if (p.outflow()) out.add(n);
                 else if (p.intake()) in.add(n);
-                else if (p == Plumb.PIPE) queue.add(n);
+                else if (p == Plumb.PIPE) queue.add(new long[]{n, -1});
                 else if (p.port()) ports.add(n); // M40: another connection to the outside
             }
         }
@@ -234,7 +283,7 @@ public final class InteriorPlumbing {
         InteriorManager.equipment(level.getServer(), r);
         for (int code : r.equipment().plumbing().values()) {
             Plumb p = Plumb.kind(code);
-            n[p.port() ? 0 : p == Plumb.PIPE ? 1 : 2]++;
+            n[p.port() ? 0 : p.conduit() ? 1 : 2]++;
         }
         return n;
     }

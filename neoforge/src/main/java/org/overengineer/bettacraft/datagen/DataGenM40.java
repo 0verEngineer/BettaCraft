@@ -69,6 +69,7 @@ final class DataGenM40 {
             mp.part().modelFile(m).rotationX(x).rotationY(y).addModel().condition(PipeAnchorBlock.MOUNT, f).end();
         }
         DataGenM24.interiorArms(p, mp);
+        DataGenM68.anchorRings(p, mp); // M68 part C: the ring colour of its line
     }
 
     private static void guards(BlockStateProvider p) {

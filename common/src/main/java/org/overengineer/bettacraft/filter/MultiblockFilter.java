@@ -296,12 +296,12 @@ public final class MultiblockFilter {
         if (TankAnchors.required(level)) {
             boolean pass = false, intake = false, outlet = false;
             for (FilterLines.Dock d : l.intakes()) {
-                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), true);
+                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), d.slot(), true);
                 pass |= g == TankAnchors.Guard.PASS_THROUGH;
                 intake |= g == TankAnchors.Guard.OPEN;
             }
             for (FilterLines.Dock d : l.returns()) {
-                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), false);
+                TankAnchors.Guard g = TankAnchors.guardOf(level, l.tank(), d.member(), d.face(), d.slot(), false);
                 pass |= g == TankAnchors.Guard.PASS_THROUGH;
                 outlet |= g == TankAnchors.Guard.OPEN;
             }
