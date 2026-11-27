@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from common import ITEM_TEX, JAVA_SRC, TEX, save_png
+from common import BLOCK_TEX, ITEM_TEX, JAVA_SRC, TEX, save_png
 
 CRIT_TEX = TEX / "entity" / "critters"
 ALGAE_TEX = TEX / "entity" / "algae"
@@ -615,6 +615,44 @@ def algae(stage: int) -> np.ndarray:
     return img
 
 
+FILM_LEVELS = 8
+FILM_SIZE = 64  # one texture over 4x4 blocks (16 px per block), tiles without a seam
+
+
+def _film_field() -> np.ndarray:
+    """The film's threshold field: smooth, periodic blobs, ranked to 0..1 (a pixel is covered from the level whose coverage
+    passes its value on, so every level covers the pixels of the lower ones plus more)."""
+    rng = np.random.default_rng(6606)
+    s = FILM_SIZE
+    # periodic noise: white noise low-pass filtered in the frequency domain (wraps at the borders)
+    f = np.fft.fft2(rng.random((s, s)))
+    ky, kx = np.meshgrid(np.fft.fftfreq(s), np.fft.fftfreq(s), indexing="ij")
+    k = np.sqrt(kx * kx + ky * ky)
+    coarse = np.real(np.fft.ifft2(f * np.exp(-(k / 0.09) ** 2)))
+    fine = np.real(np.fft.ifft2(np.fft.fft2(rng.random((s, s))) * np.exp(-(k / 0.25) ** 2)))
+    field = (coarse - coarse.mean()) / coarse.std() + 0.45 * (fine - fine.mean()) / fine.std()
+    order = field.flatten().argsort().argsort()
+    return order.reshape(s, s) / (s * s - 1.0)
+
+
+def algae_film(level: int) -> np.ndarray:
+    """M66 v6: the algae film on the glass, density level 1..8 (block atlas, see AlgaeFilm): green spots that grow into a
+    film, light enough to see the tank through (the earlier film was up to 80 % opaque)."""
+    t = _film_field()
+    cover = 0.9 * level / FILM_LEVELS  # share of the pixels covered
+    depth = np.clip((cover - t) / 0.3, 0, 1)  # how far inside a spot a pixel is
+    on = t < cover
+    img = np.zeros((FILM_SIZE, FILM_SIZE, 4))
+    green = np.array([0.36, 0.58, 0.20])
+    dark = np.array([0.20, 0.38, 0.11])
+    rng = np.random.default_rng(6607)
+    shade = 0.94 + 0.12 * rng.random((FILM_SIZE, FILM_SIZE))  # the same speckle on every level
+    col = (green[None, None, :] * (1 - depth[..., None]) + dark[None, None, :] * depth[..., None]) * shade[..., None]
+    img[..., :3] = np.where(on[..., None], col, 0)
+    img[..., 3] = np.where(on, 0.12 + 0.26 * depth, 0)
+    return img
+
+
 def _px(img, x, y, col):
     img[y, x] = col
 
@@ -705,7 +743,11 @@ def write_all() -> list:
     written.append(write_java(models, sizes))
     # M66: the four stages side by side in one texture (one render type: the film quads of every stage are drawn in one batch,
     # sorted back to front; four textures were four batches whose order hid back-wall algae behind front-wall algae)
-    written.append(save_png(np.concatenate([algae(st) for st in range(1, 5)], axis=1), ALGAE_TEX / "algae.png"))
+    # M66 v6: the film of a tank in the world is part of its chunk mesh: block textures, one per density level (AlgaeFilm);
+    # the four stages side by side stay for the block entity film of travelling tanks (levels 2, 4, 6, 8 of the same film)
+    for lv in range(1, FILM_LEVELS + 1):
+        written.append(save_png(algae_film(lv), BLOCK_TEX / f"algae_film_{lv}.png"))
+    written.append(save_png(np.concatenate([algae_film(2 * st) for st in range(1, 5)], axis=1), ALGAE_TEX / "algae.png"))
     written.append(save_png(scraper_icon(), ITEM_TEX / "algae_scraper.png"))
     written.append(save_png(frog_brood(), CRIT_TEX / "frog_brood.png"))  # M47 part c
     # the frog bucket: buckets.py (M21, in the style of the active bucket variant)
