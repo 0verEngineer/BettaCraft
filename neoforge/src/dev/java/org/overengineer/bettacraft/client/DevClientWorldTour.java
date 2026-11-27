@@ -217,8 +217,8 @@ final class DevClientWorldTour {
         then(40, () -> {
             org.overengineer.bettacraft.client.DevHud.setHidden(mc, true);
             // M66 v6: -PtourAlgaeMode=off: no algae film drawn (the algae stay in the data): frame times with and without it
-            if ("off".equals(System.getProperty("bettacraft.tour.algaemode"))) org.overengineer.bettacraft.client.tank.AlgaeFilm.hiddenForTest = true;
-            if (VIEWS.contains("perf")) { // M66: frame times need the frame rate uncapped
+            if ("off".equals(System.getProperty("bettacraft.tour.algaemode"))) setStatic("org.overengineer.bettacraft.client.tank.AlgaeFilm", "hiddenForTest", true);
+            if (VIEWS.contains("perf") || VIEWS.contains("stroll")) { // M66: frame times need the frame rate uncapped (M66.5: the stroll too)
                 mc.options.framerateLimit().set(260);
                 mc.options.enableVsync().set(false);
             }
@@ -276,7 +276,7 @@ final class DevClientWorldTour {
                                 java.util.Random rnd = new java.util.Random(7);
                                 for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) if (algaeWall(t, f.dir())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
                             }
-                            org.overengineer.bettacraft.client.tank.AlgaeFilm.update(be); // M66 v6: the film is in the chunk mesh
+                            callStatic("org.overengineer.bettacraft.client.tank.AlgaeFilm", "update", be); // M66 v6: the film is in the chunk mesh
                         }
                     }
                 });
@@ -297,6 +297,7 @@ final class DevClientWorldTour {
             // shader compile and the rebuild of the chunks and miniatures
             then(240, () -> logPack(pack));
             if (first) then(0, () -> {});
+            if (VIEWS.contains("stroll")) strollViews(pn, list, gy);
             for (Tank t : list) {
                 if (!ONLY.isEmpty() && !ONLY.contains(t.id())) continue;
                 for (String v : VIEWS.split(",")) {
@@ -305,6 +306,7 @@ final class DevClientWorldTour {
                         breakViews(pn, t, list);
                         continue;
                     }
+                    if (view.equals("stroll")) continue; // M66.5: one walk through all rows, see strollViews
                     if (view.equals("perf")) { // M66: the frame rate in front of the tank (three one second samples), perf.tsv
                         double[] pc = clear(camera(t, "front"), list, t);
                         if (pc == null) continue;
@@ -321,9 +323,9 @@ final class DevClientWorldTour {
                         }
                         // M66 v4: the same view without the miniatures (what they cost) and a picture of the view
                         int[] noMini = new int[1];
-                        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = true);
+                        then(1, () -> hideMiniatures(true, false));
                         then(44, () -> noMini[0] = mc.getFps());
-                        then(1, () -> org.overengineer.bettacraft.client.interior.MiniatureRenderer.hiddenForTest = false);
+                        then(1, () -> hideMiniatures(false, false));
                         thenAt(SETTLE, () -> shot(pn, t.id() + "_perf"));
                         then(1, () -> perf(pn, t, fps, ft, noMini[0]));
                         continue;
@@ -403,7 +405,7 @@ final class DevClientWorldTour {
             double[][] spots = {{x0 - 10, gy + 4, z0 - 10}, {x1 + 10, gy + 4, z0 - 10}, {x0 - 10, gy + 4, z1 + 10}, {x1 + 10, gy + 4, z1 + 10},
                     {(x0 + x1) / 2.0, gy + 40, (z0 + z1) / 2.0}};
             // M63d: a run of only the break view leaves out the sweeps
-            for (int s = 0; SWEEPS && s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().equals("pop") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") || VIEWS.trim().startsWith("edge") ? 0 : spots.length); s++) {
+            for (int s = 0; SWEEPS && s < (VIEWS.trim().equals("break") || VIEWS.trim().equals("perf") || VIEWS.trim().equals("stroll") || VIEWS.trim().equals("pop") || VIEWS.trim().startsWith("jitter") || VIEWS.trim().startsWith("walk") || VIEWS.trim().startsWith("edge") ? 0 : spots.length); s++) {
                 double[] sp = spots[s];
                 for (int yaw = 0; yaw < 360; yaw += 45) {
                     for (float pitch : new float[]{-20F, 25F}) {
@@ -744,14 +746,37 @@ final class DevClientWorldTour {
     /** Shows or hides the miniatures (by reflection: an old release has no switch); {@code probe}: only whether it can. */
     private static boolean hideMiniatures(boolean hide, boolean probe) {
         if (BASELINE && probe) return false;
+        return setStatic("org.overengineer.bettacraft.client.interior.MiniatureRenderer", "hiddenForTest", hide, probe);
+    }
+
+    /** M66.5: sets a static boolean switch by reflection (an old release may lack it); {@code probe}: only whether it exists. */
+    private static boolean setStatic(String cls, String field, boolean value) {
+        return setStatic(cls, field, value, false);
+    }
+
+    private static boolean setStatic(String cls, String field, boolean value, boolean probe) {
         try {
-            var f = org.overengineer.bettacraft.client.interior.MiniatureRenderer.class.getField("hiddenForTest");
-            if (!probe) f.setBoolean(null, hide);
+            var f = Class.forName(cls).getField(field);
+            if (!probe) f.setBoolean(null, value);
             return true;
         } catch (ReflectiveOperationException e) {
             return false;
         }
     }
+
+    /** M66.5: calls a static one-argument method by reflection when it exists (an old release may lack it). */
+    private static void callStatic(String cls, String method, Object arg) {
+        try {
+            for (var m : Class.forName(cls).getMethods())
+                if (m.getName().equals(method) && m.getParameterCount() == 1 && m.getParameterTypes()[0].isInstance(arg)) {
+                    m.invoke(null, arg);
+                    return;
+                }
+        } catch (ReflectiveOperationException e) {
+            LOGGER.warn("[smoketest] world tour: {}.{}: {}", cls, method, e.toString());
+        }
+    }
+
 
     /**
      * Guard: the view with the miniatures, without them and with them again; outside the screen boxes of the tanks (with a margin),
@@ -1215,4 +1240,130 @@ final class DevClientWorldTour {
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
         level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_WEATHER, false, level.getServer());
     }
+
+    // ------------------------------------------------------------------ M66.5: the stroll
+
+    /**
+     * M66.5 (view {@code stroll}, {@code -PtourViews=stroll}): the camera walks like a player through the whole tank area, row by
+     * row (rows = tanks whose min z lies within 3 blocks), at eye height in the aisle 2.5 blocks before each row, looking half
+     * ahead and half at the row, {@code bettacraft.tour.strollspeed} blocks per tick (default 0.4 = 8 blocks a second, flying). The
+     * client moves itself (like a player; the server follows its movement packets). Every 20 ticks a line in stroll.tsv: pack,
+     * row, x, z, fps, frame time mean/p99/max ms of the last second, server tick ms (mean of the last 100 ticks), client tick
+     * ms. With {@code -PtourFreeze=false} the world ticks like in a game.
+     */
+    private void strollViews(String pn, List<Tank> list, int gy) {
+        java.util.TreeMap<Integer, int[]> rows = new java.util.TreeMap<>();
+        for (Tank t : list) {
+            Integer key = null;
+            for (Integer z : rows.keySet()) if (Math.abs(z - t.min().getZ()) <= 3) { key = z; break; }
+            if (key == null) rows.put(t.min().getZ(), new int[]{t.min().getX(), t.min().getX() + t.sx()});
+            else {
+                int[] r = rows.get(key);
+                r[0] = Math.min(r[0], t.min().getX());
+                r[1] = Math.max(r[1], t.min().getX() + t.sx());
+            }
+        }
+        double speed = Double.parseDouble(System.getProperty("bettacraft.tour.strollspeed", "0.4"));
+        double eye = gy + 1.62 + 0.2;
+        List<double[]> path = new ArrayList<>(); // x, z, yaw, row
+        boolean east = true;
+        Double lastX = null, lastZ = null;
+        for (var e : rows.entrySet()) {
+            double z = e.getKey() - 2.5;
+            double xa = e.getValue()[0] - 4, xb = e.getValue()[1] + 4;
+            double from = east ? xa : xb, to = east ? xb : xa;
+            if (lastX != null) { // across to the next aisle, looking ahead
+                double dz = z - lastZ;
+                int n = (int) Math.ceil(Math.abs(dz) / speed);
+                for (int i = 1; i <= n; i++) path.add(new double[]{lastX + (from - lastX) * i / n, lastZ + dz * i / n, 0, e.getKey()});
+            }
+            int n = (int) Math.ceil(Math.abs(to - from) / speed);
+            for (int i = 0; i <= n; i++) path.add(new double[]{from + (to - from) * i / n, z, east ? -45 : 45, e.getKey()});
+            lastX = to;
+            lastZ = z;
+            east = !east;
+        }
+        LOGGER.info("[smoketest] world tour stroll: {} rows {}, {} steps", rows.size(), rows.keySet(), path.size());
+        if (path.isEmpty()) return;
+        double[] p0 = path.getFirst();
+        then(1, () -> look(p0[0], eye, p0[1], (float) p0[2], 15F));
+        thenAt(SETTLE + 40, () -> {});
+        then(0, () -> strollHeader());
+        for (int i = 0; i < path.size(); i++) {
+            double[] p = path.get(i);
+            boolean sample = i % 20 == 19;
+            if (i == path.size() - 1) then(0, this::strollHeader);
+            then(0, () -> {
+                if (mc.player == null) return;
+                target = null;
+                mc.player.setPos(p[0], eye - mc.player.getEyeHeight(), p[1]);
+                mc.player.setYRot((float) p[2]);
+                mc.player.setYHeadRot((float) p[2]);
+                mc.player.setXRot(15F);
+                if (sample) strollSample(pn, (int) p[3], p[0], p[1]);
+            });
+        }
+    }
+
+    private long strollLastClientTick = System.nanoTime();
+
+    private void strollHeader() {
+        strollLastClientTick = System.nanoTime();
+        // the loaded chunks of every level (the server ticks them all), the block entities ticking there and the entities
+        server(p -> {
+            for (ServerLevel l : p.level().getServer().getAllLevels()) {
+                int entities = 0;
+                for (var e : l.getAllEntities()) entities++;
+                LOGGER.info("[smoketest] world tour stroll: level {}: {} chunks loaded, {} entities, tickets {}", l.dimension().identifier(), l.getChunkSource().getLoadedChunksCount(), entities, tickets(l));
+            }
+        });
+    }
+
+    /** M66.5: the chunk tickets of a level by type (by reflection: the distance manager keeps them private). */
+    private static String tickets(ServerLevel l) {
+        try {
+            Object dm = null;
+            for (var f : net.minecraft.server.level.ChunkMap.class.getDeclaredFields()) {
+                if (!net.minecraft.server.level.DistanceManager.class.isAssignableFrom(f.getType())) continue;
+                f.setAccessible(true);
+                dm = f.get(l.getChunkSource().chunkMap);
+            }
+            if (dm == null) return "?";
+            java.util.Map<String, Integer> byType = new java.util.TreeMap<>();
+            for (var f : net.minecraft.server.level.DistanceManager.class.getDeclaredFields()) {
+                if (!it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap.class.isAssignableFrom(f.getType())) continue;
+                f.setAccessible(true);
+                Object map = f.get(dm);
+                for (Object set : ((it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<?>) map).values()) {
+                    if (!(set instanceof Iterable<?> it)) continue;
+                    for (Object t : it) if (t instanceof net.minecraft.server.level.Ticket tk) byType.merge(tk.getType().toString(), 1, Integer::sum);
+                }
+                if (!byType.isEmpty()) break;
+            }
+            return byType.toString();
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return e.toString();
+        }
+    }
+
+    private void strollSample(String pn, int row, double x, double z) {
+        int fps = mc.getFps();
+        long[] ft = frameTimes();
+        int n = Math.min(ft.length, Math.max(1, fps));
+        long[] last = ft.length == 0 ? ft : java.util.Arrays.copyOfRange(ft, ft.length - n, ft.length);
+        var server = mc.getSingleplayerServer();
+        double mspt = server == null ? -1 : server.getAverageTickTimeNanos() / 1e6;
+        long now = System.nanoTime();
+        double wall = (now - strollLastClientTick) / 1e6 / 20.0; // ms per client tick over the last 20 ticks (50 = on time)
+        strollLastClientTick = now;
+        String line = String.format(Locale.ROOT, "%s\t%d\t%.1f\t%.1f\t%d\t%s\t%.2f\t%.1f", pn, row, x, z, fps, frameStats(last), mspt, wall);
+        try {
+            out.mkdirs();
+            Files.writeString(new File(out, "stroll.tsv").toPath(), line + "\n", StandardCharsets.UTF_8,
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            LOGGER.warn("[smoketest] stroll.tsv: {}", e.toString());
+        }
+    }
+
 }
