@@ -69,6 +69,8 @@ Anschlüsse, sie braucht also nur zwei Rohre:
 
 Ein Filter nach Wahl hält das Wasser sauber: ein Innen- oder Außenfilter oder ein Multiblock-Filter.
 
+![Eine Steuerung mit dem Rücken am Aquarium: ein Rohr vom Vorratsbehälter zum Frischwasser-Einlass, ein Rohr vom Abwasser-Ausgang zu einem Abfluss, ein Niveausensor mit Lampe](../images/water_example_single.png)
+
 ## Beispiel: ein Filter, mehrere Aquarien
 
 1. Einen [Multiblock-Filter](multiblock_filter.md) bauen und von seinem **Einlass** und seinem **Auslass** je ein Rohr zu
@@ -81,6 +83,8 @@ Ein Filter nach Wahl hält das Wasser sauber: ein Innen- oder Außenfilter oder 
    Aquarien des Filters** und füllt die mit Niveausensor nach. Das Frischwasser geht über den Rücklauf des Filters hinein.
 
 Die Leitungen der Steuerung nicht an Einlass oder Auslass des Filters anschließen: das ist ein Kurzschluss.
+
+![Ein Multiblock-Filter für drei Aquarien, seine Zulauf- und Rücklaufleitung verzweigen zu jedem, und eine Steuerung an der Filterkammer](../images/water_example_filter.png)
 
 ## Beispiel: ein zentraler Technikraum
 
@@ -97,5 +101,7 @@ Alles steht in einem Raum, die Aquarien woanders im Haus:
 * **Leitungen getrennt halten:** wo sich zwei Leitungen berühren, die Seite mit der [Rohrzange](pipe_wrench.md) schließen;
   ein roter Ring zeigt, wo zwei Aufgaben aufeinandertreffen.
 * Jade, The One Probe und WTHIT zeigen Aufgabe und Durchfluss jeder Leitung, die du ansiehst.
+
+![Eine frei stehende Steuerung im Technikraum: Frischwasser von Vorratsbehälter und Umkehrosmose-Anlage, grüne und braune Leitungen zu zwei Aquarien, ein Abfluss](../images/water_example_room.png)
 
 <SubPages icons={true} />

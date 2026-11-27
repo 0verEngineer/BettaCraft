@@ -30,6 +30,8 @@ Ein Rohr verbindet sich mit jedem passenden Nachbarn, so **verzweigt** jede Leit
 erreicht. Ein Aquarium zählt für den Filter, wenn **beide Leitungen** an ihm andocken (direkt, an jeder Seite, oben oder
 unten), oder wenn Einlass und Auslass es direkt berühren.
 
+![Ein Multiblock-Filter mit blauer Zulauf- und oranger Rücklaufleitung, die zu drei Aquarien verzweigen](../images/filter_lines.png)
+
 ## Teilen
 
 Reinigung und Durchfluss des Filters werden **nach dem Wasservolumen** seiner Aquarien aufgeteilt: ein großer Filter reicht
@@ -60,6 +62,8 @@ sagt es in seinem Fenster und in Jade / The One Probe / WTHIT. Benachbarte Leitu
 auseinander. Dasselbe passiert, wenn eine Leitung einer [Wasserwechsel-Steuerung](water_change.md) den Einlass oder Auslass
 des Filters erreicht: die Leitungen der Steuerung stattdessen an eine **Kammer oder den Pumpenkopf** anschließen (Rohre
 verbinden sich dort mit jeder Fläche, ohne Aufgabe).
+
+![Ein Kurzschluss: eine Leitung verbindet Einlass und Auslass des Filters, ihre Ringe werden rot](../images/filter_short_circuit.png)
 
 Mit `features.pipes.filterLines = false` versorgt ein Filter wie früher ein Aquarium, ohne Schutzaufsätze, und seine Rohre
 sind normale Wasserrohre.

@@ -37,6 +37,8 @@ What it is for:
 * **Passing by:** a plain water line that runs past a filter chamber, a device or an aquarium joins it; close that side and
   the line passes by.
 
+![An intake line and a return line one above the other: the caps of the wrench keep them apart](../images/pipe_wrench_caps.png)
+
 With `features.pipes.pipeWrench = false` the wrench does nothing; closed sides stay closed.
 
 ## Obtaining

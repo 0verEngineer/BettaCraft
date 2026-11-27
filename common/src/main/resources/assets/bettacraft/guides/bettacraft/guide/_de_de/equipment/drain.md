@@ -26,6 +26,8 @@ Seite mit ihm, und er nimmt alles Wasser, das durch das Rohr kommt, und **entsor
   Abfluss ist der einfache Weg, es loszuwerden.
 * Rohre anderer Mods dürfen ihn auch als Senke nutzen. Er nimmt Wasser (mit seinen Werten), keine andere Flüssigkeit.
 
+![Ein Abfluss am Ende des Abwasserrohrs einer Steuerung](../images/drain.png)
+
 Mit `features.pipes.drain = false` nimmt er kein Wasser (Rohre verbinden sich trotzdem).
 
 ## Bezug

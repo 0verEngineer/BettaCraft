@@ -25,6 +25,8 @@ Offene Aquarien verlieren Wasser durch Verdunstung (eine [Abdeckung](tank_lid.md
   für eigene Schaltungen oder die Pumpen anderer Mods. Sonst ist er still.
 * Er **misst nur**: kein Rohr verbindet sich mit ihm, er bewegt kein Wasser und braucht keinen Strom.
 
+![Ein Niveausensor an einem Aquarium, dem Wasser fehlt: sein Redstone-Signal lässt eine Lampe leuchten](../images/level_sensor_lamp.png)
+
 ## Nachfüllen
 
 Eine [Wasserwechsel-Steuerung](water_change.md), die dieses Aquarium befüllt (durch Berührung, über ihre
