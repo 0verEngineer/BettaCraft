@@ -1178,7 +1178,7 @@ ensureReferenceWorld = { String name, File saves ->
     if (w == null) throw new GradleException("reference world missing: ${new File(saves, name)}; tools/upgrade/references.json does not say how to build it")
     if (w.from) ensureReferenceWorld(w.from.toString(), saves)
     def chain = w.script == 'chain.sh'
-    def args = chain ? [w.commit, w.from, name] : [w.commit, name]
+    def args = chain ? [w.commit, w.from, name] : [w.commit, name] + (w['class'] ? [w['class']] : []) // M68: the old-side class
     def log = rootProject.file("build/upgrade-reference/${name.replaceAll(/[^A-Za-z0-9._-]/, '_')}.log")
     log.parentFile.mkdirs()
     logger.lifecycle("building the reference world '${name}' with commit ${w.commit} (tools/upgrade/${w.script}, several minutes), log ${log}")
@@ -1209,6 +1209,11 @@ ensureReferenceWorld = { String name, File saves ->
 }
 def defaultReference = {
     referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).default?.toString() : null
+}
+// M68: the worlds smoketestUpgrade loads without -PupgradeWorld ('suite' of references.json, else the default one)
+def referenceSuite = {
+    def suite = referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).suite : null
+    suite ? suite.collect { it.toString() } : [defaultReference() ?: 'Bettacraft Referenz 1.13.1']
 }
 
 // M63b: -Psmoketestworldtour: a fresh copy "Bettacraft Rundgang" of -PtourSource (default: the showcase "Bettacraft Schaukasten" when
@@ -1435,6 +1440,8 @@ tasks.register('buildShowcase') {
 // commit 909d12a) to run/upgrade/saves, runs a dedicated server without a window on it twice (stage 1: compare with the
 // reference manifest the old version wrote, save, snapshot; stage 2: load the saved world again and compare with the
 // snapshot) and fails on a difference or on an ERROR / exception line in the logs. Logs: build/upgrade/stage{1,2}.log.
+// M68: without -PupgradeWorld every world of 'suite' in tools/upgrade/references.json runs one after another (the 1.13.1 reference
+// and "Bettacraft Rohre 1.56.0", the M67 world with the old pipe system); logs then build/upgrade/<world>/stage{1,2}.log.
 tasks.register('smoketestUpgrade') {
     group = 'verification'
     description = 'Loads the reference world of an older version and checks that nothing is lost (dedicated server, no window)'
@@ -1443,51 +1450,55 @@ tasks.register('smoketestUpgrade') {
     dependsOn { tasks.named('runServer').get().classpathProvider }
     doLast {
         // M59: the default reference of this branch is named in tools/upgrade/references.json and built when missing
-        def worldName = (project.findProperty('upgradeWorld') ?: defaultReference() ?: 'Bettacraft Referenz 1.13.1').toString()
-        def src = rootProject.file("run/saves/${worldName}")
-        ensureReferenceWorld(worldName, src.parentFile)
-        def srv = tasks.named('runServer').get()
-        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
-        def logs = rootProject.file('build/upgrade')
-        logs.deleteDir()
-        logs.mkdirs()
-        def dir = rootProject.file('run/upgrade')
-        def saves = new File(dir, 'saves')
-        def world = new File(saves, 'upgrade_check')
-        world.deleteDir()
-        saves.mkdirs()
-        java.nio.file.Files.walk(src.toPath()).forEach { from ->
-            def to = world.toPath().resolve(src.toPath().relativize(from))
-            if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
-            else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
-        }
-        new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
-        new File(dir, 'server.properties').write(['online-mode=false', "server-port=${devServerPort}".toString(), 'spawn-protection=0', 'spawn-animals=true',
-                'spawn-npcs=true', 'max-players=1'].join('\n') + '\n', 'UTF-8')
-        checkServerPort(dir, 'smoketestUpgrade')
-        def cp = new File(logs, 'classpath.txt')
-        cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
-        // vanilla noise of the dev runtime (translations of other mods' blocks) is not an error of the upgrade
-        def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/]
-        for (stage in [1, 2]) {
-            def command = ([java] + srv.allJvmArgs + ["-Dbettacraft.smoketest.upgrade=${stage}".toString(), "@${cp.absolutePath}".toString(), srv.mainClass.get()]
-                    + srv.args + ['--universe', saves.absolutePath, '--world', 'upgrade_check']).collect { it.toString() }
-            def log = new File(logs, "stage${stage}.log")
-            def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
-            logger.lifecycle("upgrade stage ${stage}: server started (pid ${p.pid()}), log ${log}")
-            if (!p.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)) {
-                p.destroyForcibly()
-                throw new GradleException("smoketestUpgrade: stage ${stage} did not finish in 15 minutes, see ${log}")
+        def worldNames = project.hasProperty('upgradeWorld') ? [project.property('upgradeWorld').toString()] : referenceSuite()
+        def logRoot = rootProject.file('build/upgrade')
+        logRoot.deleteDir()
+        for (worldName in worldNames) {
+            def src = rootProject.file("run/saves/${worldName}")
+            ensureReferenceWorld(worldName, src.parentFile)
+            def srv = tasks.named('runServer').get()
+            def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+            def logs = worldNames.size() == 1 ? logRoot : new File(logRoot, worldName.replaceAll(/[^A-Za-z0-9._-]/, '_'))
+            logs.mkdirs()
+            logger.lifecycle("upgrade test of '${worldName}'")
+            def dir = rootProject.file('run/upgrade')
+            def saves = new File(dir, 'saves')
+            def world = new File(saves, 'upgrade_check')
+            world.deleteDir()
+            saves.mkdirs()
+            java.nio.file.Files.walk(src.toPath()).forEach { from ->
+                def to = world.toPath().resolve(src.toPath().relativize(from))
+                if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+                else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
             }
-            def text = log.getText('UTF-8')
-            text.readLines().findAll { it.contains('[smoketest] upgrade') || it.contains('UPGRADE STAGE') }.each { logger.lifecycle("  ${it}") }
-            def errors = text.readLines().findAll { (it.contains('/ERROR]') || it ==~ /^(Caused by:|java\.|net\.minecraft|org\.overengineer).*/) && !allowed.any { a -> it =~ a } }
-            errors.take(20).each { logger.lifecycle("  LOG: ${it}") }
-            if (!text.contains("UPGRADE STAGE ${stage} PASSED")) throw new GradleException("smoketestUpgrade: stage ${stage} failed, see ${log}")
-            if (!errors.isEmpty()) throw new GradleException("smoketestUpgrade: ${errors.size()} error line(s) in ${log}")
+            new File(dir, 'eula.txt').write('eula=true\n', 'UTF-8')
+            new File(dir, 'server.properties').write(['online-mode=false', "server-port=${devServerPort}".toString(), 'spawn-protection=0', 'spawn-animals=true',
+                    'spawn-npcs=true', 'max-players=1'].join('\n') + '\n', 'UTF-8')
+            checkServerPort(dir, 'smoketestUpgrade')
+            def cp = new File(logs, 'classpath.txt')
+            cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
+            // vanilla noise of the dev runtime (translations of other mods' blocks) is not an error of the upgrade
+            def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/]
+            for (stage in [1, 2]) {
+                def command = ([java] + srv.allJvmArgs + ["-Dbettacraft.smoketest.upgrade=${stage}".toString(), "@${cp.absolutePath}".toString(), srv.mainClass.get()]
+                        + srv.args + ['--universe', saves.absolutePath, '--world', 'upgrade_check']).collect { it.toString() }
+                def log = new File(logs, "stage${stage}.log")
+                def p = new ProcessBuilder(command).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
+                logger.lifecycle("upgrade stage ${stage}: server started (pid ${p.pid()}), log ${log}")
+                if (!p.waitFor(15, java.util.concurrent.TimeUnit.MINUTES)) {
+                    p.destroyForcibly()
+                    throw new GradleException("smoketestUpgrade: stage ${stage} did not finish in 15 minutes, see ${log}")
+                }
+                def text = log.getText('UTF-8')
+                text.readLines().findAll { it.contains('[smoketest] upgrade') || it.contains('UPGRADE STAGE') }.each { logger.lifecycle("  ${it}") }
+                def errors = text.readLines().findAll { (it.contains('/ERROR]') || it ==~ /^(Caused by:|java\.|net\.minecraft|org\.overengineer).*/) && !allowed.any { a -> it =~ a } }
+                errors.take(20).each { logger.lifecycle("  LOG: ${it}") }
+                if (!text.contains("UPGRADE STAGE ${stage} PASSED")) throw new GradleException("smoketestUpgrade: stage ${stage} failed, see ${log}")
+                if (!errors.isEmpty()) throw new GradleException("smoketestUpgrade: ${errors.size()} error line(s) in ${log}")
+            }
+            if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${world}") else deleteWorlds('after the run', [world])
+            logger.lifecycle("UPGRADE TEST PASSED (${worldName})")
         }
-        if (keepWorld) logger.lifecycle("-PkeepWorld: kept ${world}") else deleteWorlds('after the run', [world])
-        logger.lifecycle("UPGRADE TEST PASSED (${worldName})")
     }
 }
 
