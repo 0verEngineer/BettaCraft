@@ -70,6 +70,7 @@ public final class TankWaterRenderer {
         long light = TankWaterLight.corners(level, pos);
         // Section-relative coordinates, like vanilla LiquidBlockRenderer.
         float ox = pos.getX() & 15, oy = pos.getY() & 15, oz = pos.getZ() & 15;
+        int filmSeed = AlgaeFilm.seed(pos); // M67.5: where the film's texture lies on this tank's walls
         faces(state, waterAbove(level, pos, state), gapMask(level, pos, state), TankLightTint.colorAt(level, pos), AlgaeFilm.at(pos), new FaceSink() {
             @Override
             public void face(Direction d, float[] c, int col, boolean rev) {
@@ -79,7 +80,7 @@ public final class TankWaterRenderer {
 
             @Override
             public void film(Direction d, float[] c, int lvl, boolean rev) {
-                emitFilm(vc, d, c, ox, oy, oz, atlas.apply(AlgaeFilm.SPRITES[lvl]), pos, light, rev);
+                emitFilm(vc, d, c, ox, oy, oz, atlas.apply(AlgaeFilm.SPRITES[lvl]), pos, filmSeed, light, rev);
             }
         });
     }
@@ -158,7 +159,7 @@ public final class TankWaterRenderer {
 
     /** M66 v6: one algae film quad (white, the density is in the texture's alpha; shader packs ignore the vertex alpha). */
     private static void emitFilm(VertexConsumer vc, Direction d, float[] c, float ox, float oy, float oz, TextureAtlasSprite sprite, BlockPos pos,
-                                 long light, boolean reversed) {
+                                 int seed, long light, boolean reversed) {
         float nx = d.getStepX(), nz = d.getStepZ();
         if (reversed) {
             nx = -nx; nz = -nz;
@@ -168,7 +169,7 @@ public final class TankWaterRenderer {
             float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
             vc.addVertex(ox + x, oy + y, oz + z)
                     .setColor(255, 255, 255, 255)
-                    .setUv(sprite.getU(AlgaeFilm.u(d, pos, x, y, z)), sprite.getV(AlgaeFilm.v(pos, y)))
+                    .setUv(sprite.getU(AlgaeFilm.u(d, pos, seed, x, y, z)), sprite.getV(AlgaeFilm.v(pos, seed, d, y)))
                     .setLight(TankWaterLight.at(light, x, y, z))
                     .setNormal(nx, 0, nz);
         }
