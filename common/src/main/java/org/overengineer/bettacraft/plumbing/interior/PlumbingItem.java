@@ -52,7 +52,9 @@ public class PlumbingItem extends BlockItem {
         // M40: a guard used on the glass where a filter pipe docks goes behind that connection in the interior
         if ((kind == Plumb.INTAKE_GUARD || kind == Plumb.OUTLET_GUARD) && level.getBlockState(ctx.getClickedPos()).getBlock() instanceof TankBlock) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
-            return TankAnchors.installGuard((ServerLevel) level, ctx.getClickedPos(), ctx.getClickedFace(), ctx.getPlayer(), ctx.getItemInHand(), kind);
+            // M68 part C: behind the line whose flange was clicked
+            int slot = TankAnchors.slotAt(level, ctx.getClickedPos(), ctx.getClickedFace(), ctx.getClickLocation());
+            return TankAnchors.installGuard((ServerLevel) level, ctx.getClickedPos(), ctx.getClickedFace(), slot, ctx.getPlayer(), ctx.getItemInHand(), kind);
         }
         return super.useOn(ctx);
     }

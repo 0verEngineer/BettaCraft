@@ -227,7 +227,7 @@ public final class WaterChangeGameTests {
     // ------------------------------------------------------------------ both lines into one tank block
 
     /** The common part of the one-block layouts: the controller at (8,2,8) facing west, its fresh water inlet and the drain. */
-    private static WaterChangerBlockEntity westChanger(GameTestHelper h) {
+    static WaterChangerBlockEntity westChanger(GameTestHelper h) {
         WaterChangerBlockEntity wc = changer(h, 8, 2, 8, Direction.WEST); // back east: fresh out; top: waste in; left north: fresh in; right south: waste out
         pipes(h, true, new int[]{8, 2, 7}, new int[]{8, 2, 6});
         reservoir(h, 8, 2, 5, 4000);
@@ -254,9 +254,11 @@ public final class WaterChangeGameTests {
         PipeUpdates.flush(level);
         var out = line(h, wc, PipeRole.FRESH_OUT).network();
         var in = line(h, wc, PipeRole.WASTE_IN).network();
-        PipeNetwork.Dock dock = new PipeNetwork.Dock(abs(h, 12, 2, 8), Direction.WEST);
-        h.assertTrue(out != null && out != in && !out.shortCircuit() && out.docks().equals(List.of(dock)), "fresh water through the bundle: " + (out == null ? null : out.docks()));
-        h.assertTrue(in != null && !in.shortCircuit() && in.docks().equals(List.of(dock)), "waste water through the bundle, the same face: " + (in == null ? null : in.docks()));
+        // M68 part C: each dock knows its slot of the bundle (its own dock inside)
+        h.assertTrue(out != null && out != in && !out.shortCircuit() && out.docks().equals(List.of(new PipeNetwork.Dock(abs(h, 12, 2, 8), Direction.WEST, 0))),
+                "fresh water through the bundle: " + (out == null ? null : out.docks()));
+        h.assertTrue(in != null && !in.shortCircuit() && in.docks().equals(List.of(new PipeNetwork.Dock(abs(h, 12, 2, 8), Direction.WEST, 1))),
+                "waste water through the bundle, the same face: " + (in == null ? null : in.docks()));
         wc.set(7, 25, true);
         int changed = wc.check(level, true);
         h.assertTrue(changed == 2000 && near(c.getTank().nitrate(), 30, 0.01), "changed through one face: " + changed + " " + c.getTank().nitrate());

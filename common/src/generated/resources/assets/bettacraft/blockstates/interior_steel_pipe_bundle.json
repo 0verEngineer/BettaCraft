@@ -1,0 +1,442 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x0_rod"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x0_end_neg"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "2|3|4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x0_end_pos"
+      },
+      "when": {
+        "axis": "x",
+        "east": "true",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x1_rod"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x1_end_neg"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "2|3|4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x1_end_pos"
+      },
+      "when": {
+        "axis": "x",
+        "east": "true",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x1_arm"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "2|3|4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x2_rod"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x2_end_neg"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "3|4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x2_end_pos"
+      },
+      "when": {
+        "axis": "x",
+        "east": "true",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x2_arm"
+      },
+      "when": {
+        "axis": "x",
+        "down": "true",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x3_rod"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x3_end_neg"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "4",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x3_end_pos"
+      },
+      "when": {
+        "axis": "x",
+        "east": "true",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_x3_arm"
+      },
+      "when": {
+        "axis": "x",
+        "lanes": "4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y0_rod"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y0_end_neg"
+      },
+      "when": {
+        "axis": "y",
+        "down": "true",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y0_end_pos"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "2|3|4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y1_rod"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y1_end_neg"
+      },
+      "when": {
+        "axis": "y",
+        "down": "true",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y1_end_pos"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "2|3|4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y1_arm"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "2|3|4",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y2_rod"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y2_end_neg"
+      },
+      "when": {
+        "axis": "y",
+        "down": "true",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y2_end_pos"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "3|4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y2_arm"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "3|4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y3_rod"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y3_end_neg"
+      },
+      "when": {
+        "axis": "y",
+        "down": "true",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y3_end_pos"
+      },
+      "when": {
+        "axis": "y",
+        "lanes": "4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_y3_arm"
+      },
+      "when": {
+        "axis": "y",
+        "east": "true",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z0_rod"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z0_end_neg"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z0_end_pos"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z1_rod"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z1_end_neg"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z1_end_pos"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z1_arm"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "2|3|4",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z2_rod"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z2_end_neg"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "3|4",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z2_end_pos"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "3|4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z2_arm"
+      },
+      "when": {
+        "axis": "z",
+        "down": "true",
+        "lanes": "3|4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z3_rod"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z3_end_neg"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "4",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z3_end_pos"
+      },
+      "when": {
+        "axis": "z",
+        "lanes": "4",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/interior_steel_pipe_bundle_z3_arm"
+      },
+      "when": {
+        "axis": "z",
+        "east": "true",
+        "lanes": "4"
+      }
+    }
+  ]
+}

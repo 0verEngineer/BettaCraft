@@ -1,0 +1,35 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#t"
+        },
+        "east": {
+          "texture": "#t"
+        },
+        "up": {
+          "texture": "#t"
+        },
+        "west": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        11,
+        6.5,
+        13
+      ],
+      "to": [
+        14,
+        9.5,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "bettacraft:block/plumbing_glass",
+    "t": "bettacraft:block/plumbing_glass"
+  }
+}
