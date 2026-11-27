@@ -6,7 +6,6 @@ navigation:
   position: 43
 item_ids:
   - bettacraft:bulkhead
-  - bettacraft:interior_pipe
   - bettacraft:intake_strainer
   - bettacraft:lily_pipe
   - bettacraft:nozzle
@@ -21,7 +20,7 @@ Pipes can run **through the floor** into the aquarium and on inside it:
 
 1. Use a <ItemLink id="bettacraft:bulkhead" /> on a **floor block** of the aquarium (from outside). Its connection
    appears on the [interior](../interior.md) floor in the middle of that block.
-2. Inside the aquarium, build on from it with <ItemLink id="bettacraft:interior_pipe" /> (one interior block thin,
+2. Inside the aquarium, build on from it with <ItemLink id="bettacraft:glass_pipe" /> or stainless steel pipes (placed in the interior they are interior pipes, one interior block thin,
    one pixel in the miniature outside).
 3. End the pipes in **outlets** (they point the way you look when you place them):
    * <ItemLink id="bettacraft:lily_pipe" />: a glass outlet that spreads the water softly under the surface;
@@ -42,7 +41,6 @@ Pipes at the **glass rim** (any other side of an aquarium block) still take and 
 Crafting:
 
 <RecipesFor id="bettacraft:bulkhead" />
-<RecipesFor id="bettacraft:interior_pipe" />
 <RecipesFor id="bettacraft:intake_strainer" />
 <RecipesFor id="bettacraft:lily_pipe" />
 <RecipesFor id="bettacraft:nozzle" />

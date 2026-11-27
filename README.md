@@ -310,9 +310,9 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | `features.pipes.autoWaterChange` | Hands Free |
 | `features.pipes.enabled` | Pipework |
 | `features.pipes.filterLines` | Filter Lines, One Filter for All |
-| `features.pipes.filterWater` | Fresh In, Waste Out |
 | `features.pipes.interiorPipes` | Through the Glass |
 | `features.pipes.pipeCovers` | Out of Sight |
+| `features.pipes.pipeWrench` | The Right Tool |
 | `features.pipes.topOff` | Top It Off |
 | `features.power.enabled` | Plugged In (needs a power option; optional) |
 | `features.power.regulator` | Turn It Down |

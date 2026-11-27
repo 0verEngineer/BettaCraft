@@ -1,13 +1,11 @@
 ---
 navigation:
   title: Filter lines and guards
-  icon: bettacraft:filter_inlet_pipe
+  icon: bettacraft:stainless_steel_pipe
   parent: equipment/multiblock_filter.md
   position: 1
 item_ids:
-  - bettacraft:filter_inlet_pipe
-  - bettacraft:filter_outlet_pipe
-  - bettacraft:pipe_tee
+  - bettacraft:pipe_wrench
   - bettacraft:intake_guard
   - bettacraft:outlet_guard
 ---
@@ -15,27 +13,31 @@ item_ids:
 # Filter lines and guards
 
 <GameScene zoom="3" interactive={true}>
-  <Block id="bettacraft:filter_inlet_pipe" p:west="true" p:east="true" />
-  <Block id="bettacraft:filter_inlet_pipe" x="1" p:west="true" p:east="true" p:up="true" p:junction="true" />
-  <Block id="bettacraft:filter_inlet_pipe" x="2" p:west="true" p:east="true" />
-  <Block id="bettacraft:filter_inlet_pipe" x="1" y="1" p:down="true" p:up="true" />
-  <Block id="bettacraft:filter_outlet_pipe" z="1" p:west="true" p:east="true" />
-  <Block id="bettacraft:filter_outlet_pipe" x="1" z="1" p:west="true" p:east="true" />
-  <Block id="bettacraft:filter_outlet_pipe" x="2" z="1" p:west="true" p:east="true" />
+  <Block id="bettacraft:stainless_steel_pipe" p:west="true" p:east="true" p:ring="intake" />
+  <Block id="bettacraft:stainless_steel_pipe" x="1" p:west="true" p:east="true" p:up="true" p:ring="intake" />
+  <Block id="bettacraft:stainless_steel_pipe" x="2" p:west="true" p:east="true" p:ring="intake" />
+  <Block id="bettacraft:stainless_steel_pipe" x="1" y="1" p:down="true" p:up="true" p:ring="intake" />
+  <Block id="bettacraft:glass_pipe" z="1" p:west="true" p:east="true" p:ring="return" />
+  <Block id="bettacraft:glass_pipe" x="1" z="1" p:west="true" p:east="true" p:ring="return" />
+  <Block id="bettacraft:glass_pipe" x="2" z="1" p:west="true" p:east="true" p:ring="return" />
 </GameScene>
 
-![One multiblock filter for three aquariums: the blue intake line and the orange return line with T-pieces](../images/filter_lines.png)
+![One multiblock filter for three aquariums: the blue intake line and the orange return line branch to every aquarium](../images/filter_lines.png)
 
-One [multiblock filter](multiblock_filter.md) serves **several aquariums** through its own pipes:
+One [multiblock filter](multiblock_filter.md) serves **several aquariums** through [pipes](pipes.md). There are no special
+filter pipes: any glass or stainless steel pipe that reaches the filter's **inlet** is its **intake line** (blue rings at the
+block borders), any that reaches its **outlet** is its **return line** (orange rings). The role comes from the connector the
+line reaches; a pipe without one is a plain water line without a ring.
 
-* <ItemLink id="bettacraft:filter_inlet_pipe" /> (blue): the **intake line**, from the aquariums to the filter's inlet.
-* <ItemLink id="bettacraft:filter_outlet_pipe" /> (orange): the **return line**, from the filter's outlet back into the
-  aquariums.
+A pipe joins **every neighbour that fits, on every side**, so a line branches by itself to every aquarium it reaches. Where
+two lines run next to each other, keep them apart with the <ItemLink id="bettacraft:pipe_wrench" />: right-click the side of
+a pipe to close it (a closed side shows a cap; right-click again to open it). A line that reaches the inlet **and** the
+outlet is a **short circuit** (red rings): the filter stops and says so in its screen and in Jade / The One Probe / WTHIT.
 
-A filter pipe joins only pipes of its own line, its connector on the filter and aquarium blocks. A plain pipe joins **at
-most two neighbours** (a straight run or a bend; first the block you place it against). Use a
-<ItemLink id="bettacraft:pipe_tee" /> on a pipe to make it a **branch**: it then joins every neighbour of its line, up to all
-six sides, so one filter reaches several aquariums. Breaking a branch gives the pipe and the T-piece back.
+A line carries at most what its **weakest pipe** carries: a glass pipe 50 mB/t, a stainless steel pipe 250 mB/t. The pump
+head moves up to 100 mB/t, so on glass lines the filter runs at half. Several intake and return lines (more inlets and
+outlets on the filter) **add up**: two glass lines each way give it its full flow again. Two lines may also run through one
+block, a [pipe bundle](pipe_bundle.md).
 
 An aquarium counts for the filter when **both lines** reach it. The filter's cleaning and its flow are **shared by the
 water volume** of its aquariums: a big filter is enough for several small aquariums. Each aquarium keeps its own water; the
@@ -74,15 +76,18 @@ the update an old filter keeps its media, regulator and power, but **stops filte
 guards**; players nearby get a chat message with its position, and the filter screen shows a red note. Fit an intake
 guard and an outlet guard where its pipes enter the aquarium, and it filters again.
 
+The filter pipes of older versions (all four lines), their T-pieces and the filter's fresh and waste water ports are
+**stainless steel pipes** now, with exactly the connections they had (the sides they were not joined on are closed, as with
+the wrench); bundles keep their lines. In inventories and chests they turn into stainless steel pipes, the interior pipe into
+a glass pipe.
+
 Server owners who do not want this can switch the filter lines off: `features.pipes.filterLines = false` in the common
-config. Then a filter serves one aquarium as before, without guards, and the filter pipes carry nothing.
+config. Then a filter serves one aquarium as before, without guards, and its pipes are plain water pipes.
 
 ## Obtaining
 
 Crafting:
 
-<RecipesFor id="bettacraft:filter_inlet_pipe" />
-<RecipesFor id="bettacraft:filter_outlet_pipe" />
-<RecipesFor id="bettacraft:pipe_tee" />
+<RecipesFor id="bettacraft:pipe_wrench" />
 <RecipesFor id="bettacraft:intake_guard" />
 <RecipesFor id="bettacraft:outlet_guard" />

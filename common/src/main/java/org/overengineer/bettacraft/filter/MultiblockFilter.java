@@ -16,8 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.overengineer.bettacraft.config.CommonConfig;
 import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.plumbing.FilterLines;
-import org.overengineer.bettacraft.plumbing.PipeBlock;
-import org.overengineer.bettacraft.plumbing.PipeLine;
 import org.overengineer.bettacraft.plumbing.interior.TankAnchors;
 import org.overengineer.bettacraft.plumbing.PipeNetwork;
 import org.overengineer.bettacraft.tank.TankBlock;
@@ -41,15 +39,11 @@ import org.overengineer.bettacraft.tank.TankMultiblock;
 public final class MultiblockFilter {
     private MultiblockFilter() {}
 
-    public enum Problem { NONE, NO_HEAD, TWO_HEADS, NO_CHAMBER, TOO_MANY, NO_INLET, NO_OUTLET }
+    /** M68: SHORT_CIRCUIT: a line of the filter also touches a port of another role (set by the pump head, not by {@link #scan}). */
+    public enum Problem { NONE, NO_HEAD, TWO_HEADS, NO_CHAMBER, TOO_MANY, NO_INLET, NO_OUTLET, SHORT_CIRCUIT }
 
-    /** The parts of one filter (part b: with its fresh and waste water ports, which are optional). */
-    public record Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, List<BlockPos> fresh,
-                            List<BlockPos> waste, Problem problem) {
-        public Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, Problem problem) {
-            this(head, chambers, inlets, outlets, List.of(), List.of(), problem);
-        }
-
+    /** The parts of one filter (M68: the fresh and waste water ports of M40 part b are gone). */
+    public record Structure(BlockPos head, List<BlockPos> chambers, List<BlockPos> inlets, List<BlockPos> outlets, Problem problem) {
         public boolean formed() {
             return problem == Problem.NONE;
         }
@@ -65,7 +59,7 @@ public final class MultiblockFilter {
 
     /** Scans the filter around the pump head at {@code head}. */
     public static Structure scan(Level level, BlockPos head) {
-        List<BlockPos> chambers = new ArrayList<>(), inlets = new ArrayList<>(), outlets = new ArrayList<>(), fresh = new ArrayList<>(), waste = new ArrayList<>();
+        List<BlockPos> chambers = new ArrayList<>(), inlets = new ArrayList<>(), outlets = new ArrayList<>();
         int heads = 0;
         int limit = maxChambers();
         java.util.Set<BlockPos> seen = new java.util.HashSet<>();
@@ -92,15 +86,12 @@ public final class MultiblockFilter {
                 } else if ((is(ns, FilterPartBlock.Part.INLET) || is(ns, FilterPartBlock.Part.OUTLET)) && ns.getValue(FilterPartBlock.FACING) == d) {
                     seen.add(n.immutable());
                     (is(ns, FilterPartBlock.Part.INLET) ? inlets : outlets).add(n.immutable());
-                } else if ((is(ns, FilterPartBlock.Part.FRESH) || is(ns, FilterPartBlock.Part.WASTE)) && ns.getValue(FilterPartBlock.FACING) == d) {
-                    seen.add(n.immutable()); // part b: the fresh and the waste water port
-                    (is(ns, FilterPartBlock.Part.FRESH) ? fresh : waste).add(n.immutable());
                 }
             }
         }
         Problem pr = heads > 1 ? Problem.TWO_HEADS : chambers.isEmpty() ? Problem.NO_CHAMBER : tooMany || chambers.size() > limit ? Problem.TOO_MANY
                 : inlets.isEmpty() ? Problem.NO_INLET : outlets.isEmpty() ? Problem.NO_OUTLET : Problem.NONE;
-        return new Structure(head.immutable(), chambers, inlets, outlets, fresh, waste, pr);
+        return new Structure(head.immutable(), chambers, inlets, outlets, pr);
     }
 
     /** The pump head of the filter the part at {@code pos} belongs to, or null. */
@@ -135,8 +126,8 @@ public final class MultiblockFilter {
         if (s.getBlock() instanceof TankBlock) {
             TankBlockEntity c = TankMultiblock.getController(level, n);
             if (c != null) out.add(c);
-        } else if (s.getBlock() instanceof PipeBlock) {
-            PipeNetwork net = PipeNetwork.of(level, n);
+        } else if (org.overengineer.bettacraft.plumbing.Pipes.isPipe(s)) {
+            PipeNetwork net = PipeNetwork.towards(level, n, facing.getOpposite());
             if (net != null) for (BlockPos p : net.tankEnds(level)) {
                 TankBlockEntity c = TankMultiblock.getController(level, p);
                 if (c != null && !out.contains(c)) out.add(c);
@@ -240,11 +231,12 @@ public final class MultiblockFilter {
         Map<BlockPos, List<FilterLines.Dock>> in = new HashMap<>(), out = new HashMap<>();
         for (int role = 0; role < 2; role++) {
             List<BlockPos> connectors = role == 0 ? s.inlets() : s.outlets();
-            PipeLine line = role == 0 ? PipeLine.INTAKE : PipeLine.RETURN;
             Map<BlockPos, List<FilterLines.Dock>> into = role == 0 ? in : out;
             for (BlockPos p : connectors) {
                 Direction f = level.getBlockState(p).getValue(FilterPartBlock.FACING);
-                for (FilterLines.Dock d : FilterLines.docks(level, p, f, line)) {
+                // M68: a line that is a short circuit leads nowhere for the filter
+                if (org.overengineer.bettacraft.plumbing.PipePorts.line(level, p, f).shortCircuit()) continue;
+                for (FilterLines.Dock d : FilterLines.docks(level, p, f)) {
                     TankBlockEntity c = TankMultiblock.getController(level, d.member());
                     if (c == null) continue;
                     tanks.putIfAbsent(c.getBlockPos(), c);
@@ -259,6 +251,44 @@ public final class MultiblockFilter {
             if (i != null && o != null) links.add(new Link(e.getValue(), i, o));
         }
         return links;
+    }
+
+    /**
+     * M68: what the filter's lines carry: the intake lines together ({@code intake}, mB per tick: the sum of the rates of the
+     * different pipe networks at its inlets, {@link org.overengineer.bettacraft.plumbing.PipePorts#UNLIMITED} where an inlet touches
+     * the tank directly), the return lines ({@code ret}) the same; and whether a line at the filter is a short circuit (it also
+     * touches a port of another role: the filter does not filter, its menu and the overlays warn).
+     */
+    public record Flow(long intake, long ret, boolean shortCircuit, List<PipeNetwork> intakes, List<PipeNetwork> returns) {
+        /** mB per tick the lines let through (the weaker side). */
+        public long limit() {
+            return Math.min(intake, ret);
+        }
+    }
+
+    /** M68: the flow limit of the filter's lines ({@link Flow}). */
+    public static Flow flow(Level level, Structure s) {
+        long[] sum = new long[2];
+        boolean sc = false;
+        List<List<PipeNetwork>> nets = List.of(new ArrayList<>(), new ArrayList<>());
+        for (int role = 0; role < 2; role++) {
+            for (BlockPos p : role == 0 ? s.inlets() : s.outlets()) {
+                Direction f = level.getBlockState(p).getValue(FilterPartBlock.FACING);
+                org.overengineer.bettacraft.plumbing.PipePorts.Line l = org.overengineer.bettacraft.plumbing.PipePorts.line(level, p, f);
+                if (l.shortCircuit()) {
+                    sc = true;
+                    continue;
+                }
+                if (l.network() != null) {
+                    boolean seen = false;
+                    for (PipeNetwork n : nets.get(role)) seen |= n == l.network();
+                    if (seen) continue;
+                    nets.get(role).add(l.network());
+                }
+                sum[role] = Math.min(org.overengineer.bettacraft.plumbing.PipePorts.UNLIMITED, sum[role] + l.rate());
+            }
+        }
+        return new Flow(sum[0], sum[1], sc, List.copyOf(nets.get(0)), List.copyOf(nets.get(1)));
     }
 
     /** M40: whether the filter works for this tank: every dock of its lines guarded, no pipe through the tank, water in it. */

@@ -37,7 +37,6 @@ final class DataGenM40c {
     }
 
     static void blockTags(java.util.function.Function<TagKey<Block>, net.minecraft.data.tags.TagAppender<Block, Block>> tag) {
-        tag.apply(CABLE_FACADES_SUPPORTS).add(ModBlocks.FILTER_INLET_PIPE.get(), ModBlocks.FILTER_OUTLET_PIPE.get(), ModBlocks.FILTER_FRESH_PIPE.get(),
-                ModBlocks.FILTER_WASTE_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get());
+        tag.apply(CABLE_FACADES_SUPPORTS).add(ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.FILTER_PIPE_BUNDLE.get()); // M68: every pipe
     }
 }

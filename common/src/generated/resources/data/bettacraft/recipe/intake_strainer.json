@@ -8,8 +8,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "bettacraft:interior_pipe",
-    "minecraft:iron_bars"
+    {
+      "item": "bettacraft:glass_pipe"
+    },
+    {
+      "item": "minecraft:iron_bars"
+    }
   ],
   "result": {
     "id": "bettacraft:intake_strainer"

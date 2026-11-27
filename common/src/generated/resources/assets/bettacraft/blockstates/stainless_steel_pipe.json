@@ -5,7 +5,8 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_down"
       },
       "when": {
-        "down": "true"
+        "down": "true",
+        "ring": "none"
       }
     },
     {
@@ -13,6 +14,7 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_up"
       },
       "when": {
+        "ring": "none",
         "up": "true"
       }
     },
@@ -21,7 +23,8 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_north"
       },
       "when": {
-        "north": "true"
+        "north": "true",
+        "ring": "none"
       }
     },
     {
@@ -29,6 +32,7 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_south"
       },
       "when": {
+        "ring": "none",
         "south": "true"
       }
     },
@@ -37,6 +41,7 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_west"
       },
       "when": {
+        "ring": "none",
         "west": "true"
       }
     },
@@ -45,7 +50,8 @@
         "model": "bettacraft:block/stainless_steel_pipe_arm_east"
       },
       "when": {
-        "east": "true"
+        "east": "true",
+        "ring": "none"
       }
     },
     {
@@ -56,15 +62,18 @@
         "OR": [
           {
             "down": "false",
+            "ring": "none",
             "south": "true"
           },
           {
             "down": "false",
-            "north": "true"
+            "north": "true",
+            "ring": "none"
           },
           {
             "down": "false",
             "east": "false",
+            "ring": "none",
             "west": "false"
           }
         ]
@@ -80,11 +89,13 @@
             "down": "false",
             "east": "true",
             "north": "false",
+            "ring": "none",
             "south": "false"
           },
           {
             "down": "false",
             "north": "false",
+            "ring": "none",
             "south": "false",
             "west": "true"
           }
@@ -98,15 +109,18 @@
       "when": {
         "OR": [
           {
+            "ring": "none",
             "south": "true",
             "up": "false"
           },
           {
             "north": "true",
+            "ring": "none",
             "up": "false"
           },
           {
             "east": "false",
+            "ring": "none",
             "up": "false",
             "west": "false"
           }
@@ -122,11 +136,13 @@
           {
             "east": "true",
             "north": "false",
+            "ring": "none",
             "south": "false",
             "up": "false"
           },
           {
             "north": "false",
+            "ring": "none",
             "south": "false",
             "up": "false",
             "west": "true"
@@ -142,15 +158,18 @@
         "OR": [
           {
             "north": "false",
+            "ring": "none",
             "up": "true"
           },
           {
             "down": "true",
-            "north": "false"
+            "north": "false",
+            "ring": "none"
           },
           {
             "east": "false",
             "north": "false",
+            "ring": "none",
             "west": "false"
           }
         ]
@@ -166,11 +185,13 @@
             "down": "false",
             "east": "true",
             "north": "false",
+            "ring": "none",
             "up": "false"
           },
           {
             "down": "false",
             "north": "false",
+            "ring": "none",
             "up": "false",
             "west": "true"
           }
@@ -184,15 +205,18 @@
       "when": {
         "OR": [
           {
+            "ring": "none",
             "south": "false",
             "up": "true"
           },
           {
             "down": "true",
+            "ring": "none",
             "south": "false"
           },
           {
             "east": "false",
+            "ring": "none",
             "south": "false",
             "west": "false"
           }
@@ -208,11 +232,13 @@
           {
             "down": "false",
             "east": "true",
+            "ring": "none",
             "south": "false",
             "up": "false"
           },
           {
             "down": "false",
+            "ring": "none",
             "south": "false",
             "up": "false",
             "west": "true"
@@ -227,15 +253,18 @@
       "when": {
         "OR": [
           {
+            "ring": "none",
             "up": "true",
             "west": "false"
           },
           {
             "down": "true",
+            "ring": "none",
             "west": "false"
           },
           {
             "north": "false",
+            "ring": "none",
             "south": "false",
             "west": "false"
           }
@@ -250,6 +279,7 @@
         "OR": [
           {
             "down": "false",
+            "ring": "none",
             "south": "true",
             "up": "false",
             "west": "false"
@@ -257,6 +287,7 @@
           {
             "down": "false",
             "north": "true",
+            "ring": "none",
             "up": "false",
             "west": "false"
           }
@@ -271,15 +302,18 @@
         "OR": [
           {
             "east": "false",
+            "ring": "none",
             "up": "true"
           },
           {
             "down": "true",
-            "east": "false"
+            "east": "false",
+            "ring": "none"
           },
           {
             "east": "false",
             "north": "false",
+            "ring": "none",
             "south": "false"
           }
         ]
@@ -294,6 +328,7 @@
           {
             "down": "false",
             "east": "false",
+            "ring": "none",
             "south": "true",
             "up": "false"
           },
@@ -301,6 +336,1717 @@
             "down": "false",
             "east": "false",
             "north": "true",
+            "ring": "none",
+            "up": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_down"
+      },
+      "when": {
+        "down": "true",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_up"
+      },
+      "when": {
+        "ring": "intake",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_north"
+      },
+      "when": {
+        "north": "true",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_south"
+      },
+      "when": {
+        "ring": "intake",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_west"
+      },
+      "when": {
+        "ring": "intake",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_arm_east"
+      },
+      "when": {
+        "east": "true",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_down_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "intake",
+            "south": "true"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "intake"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "intake",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_down_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "intake",
+            "south": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "intake",
+            "south": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_up_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "intake",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "true",
+            "ring": "intake",
+            "up": "false"
+          },
+          {
+            "east": "false",
+            "ring": "intake",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_up_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "ring": "intake",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "ring": "intake",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_north_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false",
+            "ring": "intake",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "north": "false",
+            "ring": "intake"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "intake",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_north_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "intake",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "intake",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_south_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "intake",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "ring": "intake",
+            "south": "false"
+          },
+          {
+            "east": "false",
+            "ring": "intake",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_south_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "ring": "intake",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "ring": "intake",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_west_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "intake",
+            "up": "true",
+            "west": "false"
+          },
+          {
+            "down": "true",
+            "ring": "intake",
+            "west": "false"
+          },
+          {
+            "north": "false",
+            "ring": "intake",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_west_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "intake",
+            "south": "true",
+            "up": "false",
+            "west": "false"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "intake",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_east_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false",
+            "ring": "intake",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "east": "false",
+            "ring": "intake"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "intake",
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_intake_core_east_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "intake",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "north": "true",
+            "ring": "intake",
+            "up": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_down"
+      },
+      "when": {
+        "down": "true",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_up"
+      },
+      "when": {
+        "ring": "return",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_north"
+      },
+      "when": {
+        "north": "true",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_south"
+      },
+      "when": {
+        "ring": "return",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_west"
+      },
+      "when": {
+        "ring": "return",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_arm_east"
+      },
+      "when": {
+        "east": "true",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_down_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "return",
+            "south": "true"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "return"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "return",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_down_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "return",
+            "south": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "return",
+            "south": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_up_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "return",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "true",
+            "ring": "return",
+            "up": "false"
+          },
+          {
+            "east": "false",
+            "ring": "return",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_up_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "ring": "return",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "ring": "return",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_north_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false",
+            "ring": "return",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "north": "false",
+            "ring": "return"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "return",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_north_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "return",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "return",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_south_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "return",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "ring": "return",
+            "south": "false"
+          },
+          {
+            "east": "false",
+            "ring": "return",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_south_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "ring": "return",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "ring": "return",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_west_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "return",
+            "up": "true",
+            "west": "false"
+          },
+          {
+            "down": "true",
+            "ring": "return",
+            "west": "false"
+          },
+          {
+            "north": "false",
+            "ring": "return",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_west_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "return",
+            "south": "true",
+            "up": "false",
+            "west": "false"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "return",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_east_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false",
+            "ring": "return",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "east": "false",
+            "ring": "return"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "return",
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_return_core_east_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "return",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "north": "true",
+            "ring": "return",
+            "up": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_down"
+      },
+      "when": {
+        "down": "true",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_up"
+      },
+      "when": {
+        "ring": "fresh",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_north"
+      },
+      "when": {
+        "north": "true",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_south"
+      },
+      "when": {
+        "ring": "fresh",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_west"
+      },
+      "when": {
+        "ring": "fresh",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_arm_east"
+      },
+      "when": {
+        "east": "true",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_down_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "fresh",
+            "south": "true"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "fresh"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "fresh",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_down_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "fresh",
+            "south": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "fresh",
+            "south": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_up_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "fresh",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "true",
+            "ring": "fresh",
+            "up": "false"
+          },
+          {
+            "east": "false",
+            "ring": "fresh",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_up_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "ring": "fresh",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "ring": "fresh",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_north_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false",
+            "ring": "fresh",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "north": "false",
+            "ring": "fresh"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "fresh",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_north_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "fresh",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "fresh",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_south_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "fresh",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "ring": "fresh",
+            "south": "false"
+          },
+          {
+            "east": "false",
+            "ring": "fresh",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_south_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "ring": "fresh",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "ring": "fresh",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_west_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "fresh",
+            "up": "true",
+            "west": "false"
+          },
+          {
+            "down": "true",
+            "ring": "fresh",
+            "west": "false"
+          },
+          {
+            "north": "false",
+            "ring": "fresh",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_west_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "fresh",
+            "south": "true",
+            "up": "false",
+            "west": "false"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "fresh",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_east_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false",
+            "ring": "fresh",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "east": "false",
+            "ring": "fresh"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "fresh",
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_fresh_core_east_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "fresh",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "north": "true",
+            "ring": "fresh",
+            "up": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_down"
+      },
+      "when": {
+        "down": "true",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_up"
+      },
+      "when": {
+        "ring": "waste",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_north"
+      },
+      "when": {
+        "north": "true",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_south"
+      },
+      "when": {
+        "ring": "waste",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_west"
+      },
+      "when": {
+        "ring": "waste",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_arm_east"
+      },
+      "when": {
+        "east": "true",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_down_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "waste",
+            "south": "true"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "waste"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "waste",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_down_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "waste",
+            "south": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "waste",
+            "south": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_up_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "waste",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "true",
+            "ring": "waste",
+            "up": "false"
+          },
+          {
+            "east": "false",
+            "ring": "waste",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_up_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "ring": "waste",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "ring": "waste",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_north_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false",
+            "ring": "waste",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "north": "false",
+            "ring": "waste"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "waste",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_north_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "waste",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "waste",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_south_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "waste",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "ring": "waste",
+            "south": "false"
+          },
+          {
+            "east": "false",
+            "ring": "waste",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_south_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "ring": "waste",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "ring": "waste",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_west_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "waste",
+            "up": "true",
+            "west": "false"
+          },
+          {
+            "down": "true",
+            "ring": "waste",
+            "west": "false"
+          },
+          {
+            "north": "false",
+            "ring": "waste",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_west_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "waste",
+            "south": "true",
+            "up": "false",
+            "west": "false"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "waste",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_east_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false",
+            "ring": "waste",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "east": "false",
+            "ring": "waste"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "waste",
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_waste_core_east_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "waste",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "north": "true",
+            "ring": "waste",
+            "up": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_down"
+      },
+      "when": {
+        "down": "true",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_up"
+      },
+      "when": {
+        "ring": "short",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_north"
+      },
+      "when": {
+        "north": "true",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_south"
+      },
+      "when": {
+        "ring": "short",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_west"
+      },
+      "when": {
+        "ring": "short",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_arm_east"
+      },
+      "when": {
+        "east": "true",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_down_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "short",
+            "south": "true"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "short"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "short",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_down_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "short",
+            "south": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "short",
+            "south": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_up_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "short",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "true",
+            "ring": "short",
+            "up": "false"
+          },
+          {
+            "east": "false",
+            "ring": "short",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_up_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "ring": "short",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "ring": "short",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_north_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "north": "false",
+            "ring": "short",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "north": "false",
+            "ring": "short"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "short",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_north_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "north": "false",
+            "ring": "short",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "north": "false",
+            "ring": "short",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_south_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "short",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "ring": "short",
+            "south": "false"
+          },
+          {
+            "east": "false",
+            "ring": "short",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_south_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "true",
+            "ring": "short",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "ring": "short",
+            "south": "false",
+            "up": "false",
+            "west": "true"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_west_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "ring": "short",
+            "up": "true",
+            "west": "false"
+          },
+          {
+            "down": "true",
+            "ring": "short",
+            "west": "false"
+          },
+          {
+            "north": "false",
+            "ring": "short",
+            "south": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_west_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "ring": "short",
+            "south": "true",
+            "up": "false",
+            "west": "false"
+          },
+          {
+            "down": "false",
+            "north": "true",
+            "ring": "short",
+            "up": "false",
+            "west": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_east_t"
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "false",
+            "ring": "short",
+            "up": "true"
+          },
+          {
+            "down": "true",
+            "east": "false",
+            "ring": "short"
+          },
+          {
+            "east": "false",
+            "north": "false",
+            "ring": "short",
+            "south": "false"
+          }
+        ]
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/stainless_steel_pipe_short_core_east_r"
+      },
+      "when": {
+        "OR": [
+          {
+            "down": "false",
+            "east": "false",
+            "ring": "short",
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "down": "false",
+            "east": "false",
+            "north": "true",
+            "ring": "short",
             "up": "false"
           }
         ]

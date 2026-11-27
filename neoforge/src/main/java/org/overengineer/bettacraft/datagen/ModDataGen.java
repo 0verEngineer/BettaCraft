@@ -719,8 +719,8 @@ public final class ModDataGen {
             DataGenM23.itemModels(this); // M23
             DataGenM24.itemModels(this); // M24
             DataGenM40.itemModels(this); // M40 part a
-            DataGenM40b.itemModels(this); // M40 part b
             DataGenM40c.itemModels(this); // M40 part c
+            DataGenM68.itemModels(this); // M68
             DataGenM25.itemModels(this); // M25
             DataGenM25b.itemModels(this);
             DataGenM25c.itemModels(this);
@@ -1203,8 +1203,8 @@ public final class ModDataGen {
             DataGenM23.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get()), hasIt(ModItems.TANK_LIGHT.get())); // M23
             DataGenM24.recipes(output, hasIt(ModItems.INTERNAL_FILTER.get())); // M24
             DataGenM40.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part a
-            DataGenM40b.recipes(output, hasIt(ModItems.FILTER_PUMP_HEAD.get())); // M40 part b
-            DataGenM40c.recipes(output, hasIt(ModItems.FILTER_INLET_PIPE.get())); // M40 part c
+            DataGenM40c.recipes(output, hasIt(ModItems.STAINLESS_STEEL_PIPE.get())); // M40 part c
+            DataGenM68.recipes(output, hasIt(ModItems.STAINLESS_STEEL_PIPE.get())); // M68: the pipe wrench
             DataGenM25.recipes(output, hasIt(ModItems.TANK.get())); // M25
             DataGenM25b.recipes(output, hasIt(ModItems.TANK.get()));
             DataGenM25c.recipes(output, hasIt(ModItems.TANK.get()));
@@ -1399,16 +1399,10 @@ public final class ModDataGen {
             for (Block b : DataGenM26.blocks()) dropSelf(b); // M26 part a
             for (Block b : DataGenM37.blocks()) dropSelf(b); // M37
             for (Block b : DataGenM40.blocks()) dropSelf(b); // M40 part a
-            for (Block b : DataGenM40b.blocks()) dropSelf(b); // M40 part b
             for (Block b : DataGenM49.blocks()) dropSelf(b); // M49
-            for (Block b : java.util.stream.Stream.concat(DataGenM40.pipes().stream(), DataGenM40b.pipes().stream()).toList()) { // M40: a filter pipe, and its T-piece back from a branch
-                add(b, LootTable.lootTable()
-                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(b))))
-                        .withPool(applyExplosionCondition(b, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(ModItems.PIPE_TEE.get()))
-                                .when(net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties(b)
-                                        .setProperties(net.minecraft.advancements.criterion.StatePropertiesPredicate.Builder.properties()
-                                                .hasProperty(org.overengineer.bettacraft.plumbing.FilterPipeBlock.JUNCTION, true))))));
-            }
+            // M68: a glass or steel pipe placed in a tank interior gives that pipe back
+            dropOther(ModBlocks.INTERIOR_PIPE.get(), ModItems.GLASS_PIPE.get());
+            dropOther(ModBlocks.INTERIOR_STEEL_PIPE.get(), ModItems.STAINLESS_STEEL_PIPE.get());
             for (Block b : DataGenM27.blocks()) dropSelf(b); // M27
             dropOther(ModBlocks.ALMOND_LEAF_LITTER.get(), ModItems.ALMOND_LEAF.get()); // M28 part c
             dropOther(ModBlocks.ALDER_CONES.get(), ModItems.ALDER_CONE.get());
@@ -1453,9 +1447,8 @@ public final class ModDataGen {
                         l.addAll(DataGenM26.blocks()); // M26 part a
                         l.addAll(DataGenM37.blocks()); // M37
                         l.addAll(DataGenM40.blocks()); // M40 part a
-                        l.addAll(DataGenM40.pipes());
-                        l.addAll(DataGenM40b.blocks()); // M40 part b
-                        l.addAll(DataGenM40b.pipes());
+                        l.add(ModBlocks.INTERIOR_PIPE.get()); // M68
+                        l.add(ModBlocks.INTERIOR_STEEL_PIPE.get());
                         l.addAll(DataGenM27.blocks()); // M27
                         l.addAll(DataGenM28.blocks()); // M28 part c
                         l.add(ModBlocks.ACTIVE_SOIL.get()); // M25 part d
@@ -1470,7 +1463,7 @@ public final class ModDataGen {
     static List<Block> m24Blocks() {
         return List.of(ModBlocks.CRUCIBLE.get(), ModBlocks.GLASS_PIPE.get(), ModBlocks.STAINLESS_STEEL_PIPE.get(), ModBlocks.WATER_PUMP.get(),
                 ModBlocks.RESERVOIR.get(), ModBlocks.LEVEL_SENSOR.get(), ModBlocks.WATER_CHANGE_CONTROLLER.get(), ModBlocks.BULKHEAD.get(),
-                ModBlocks.INTERIOR_PIPE.get(), ModBlocks.INTAKE_STRAINER.get(), ModBlocks.LILY_PIPE.get(), ModBlocks.NOZZLE.get(), ModBlocks.SPRAY_BAR.get(),
+                ModBlocks.INTAKE_STRAINER.get(), ModBlocks.LILY_PIPE.get(), ModBlocks.NOZZLE.get(), ModBlocks.SPRAY_BAR.get(),
                 ModBlocks.FILTER_CHAMBER.get(), ModBlocks.FILTER_PUMP_HEAD.get(), ModBlocks.FILTER_INLET.get(), ModBlocks.FILTER_OUTLET.get());
     }
 

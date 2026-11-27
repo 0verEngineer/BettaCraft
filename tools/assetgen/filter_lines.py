@@ -1,6 +1,7 @@
-"""M40 assets: the filter pipes (intake and return line), the pipe T-piece, the guards and the pipe dock in the interior.
-Part b: the fresh water (green) and waste water (brown) line, their ports on the filter and the steel manifold of the pipe
-bundle (up to four lines in one block).
+"""M40 assets: the guards and the pipe dock in the interior, the collar steel (the caps and flanges), the steel manifold of the
+pipe bundle. M68: the filter pipes, their T-piece and the filter's water ports are gone; the glass and the steel pipe come with
+the ring of every role of their network instead (blue: intake to a filter's inlet, orange: return from its outlet, green: fresh
+water, brown: waste water, red: a short circuit), and the pipe wrench.
 
 Block textures: brushed steel pipes with a coloured band per line (blue: the intake to the filter's inlet, orange: the
 return from its outlet, the colours of the connectors), the brass collar of a T-piece, the fine mesh of the intake guard,
@@ -17,12 +18,14 @@ import numpy as np
 
 from common import BLOCK_TEX, ITEM_TEX, save_png
 from icons import grid
-from plumbing import S, _img, _rgb, steel, steel_pipe_tex, transposed
+from plumbing import S, _img, _rgb, glass_pipe_tex, steel, steel_pipe_tex, transposed
 
 INTAKE = "#3a8ad8"
 RETURN = "#e08a30"
 FRESH = "#4cb85a"
 WASTE = "#7a5234"
+SHORT = "#d8343a"
+RINGS = {"intake": INTAKE, "return": RETURN, "fresh": FRESH, "waste": WASTE, "short": SHORT}
 
 
 def line_pipe(colour, seed):
@@ -33,6 +36,18 @@ def line_pipe(colour, seed):
     for x in range(S):
         for y in (0, 15):
             img[y, x, :3] = np.clip(c * (0.9 + 0.1 * (x in (7, 8))), 0, 255).astype(np.uint8)
+    return img
+
+
+def ring_pipe(base, colour, glass):
+    """M68: a glass or steel pipe texture with a ring of its role's colour at both ends of every block (rows 0 and 15)."""
+    img = base.copy()
+    c = _rgb(colour)
+    for x in range(S):
+        for y in (0, 15):
+            img[y, x, :3] = np.clip(c * (0.9 + 0.1 * (x in (7, 8))), 0, 255).astype(np.uint8)
+            if glass:
+                img[y, x, 3] = 235
     return img
 
 
@@ -130,6 +145,28 @@ TEE = [
 TEE_P = {"b": "#5c646c", "S": "#d0d8e0", "s": "#9aa4ae", "c": "#6c757e", "C": "#b9c1ca"}  # M65: a steel collar (was brass)
 
 
+# M68: the pipe wrench, a stainless steel pipe wrench with an adjustable jaw and a dark grip
+WRENCH = [
+    "................",
+    "........bbb.....",
+    ".......bSSSb....",
+    "......bSssSb....",
+    "......bSbbbb....",
+    ".......bSSSb....",
+    "........bSsb....",
+    ".......bSsb.....",
+    "......bSsb......",
+    ".....bgGb.......",
+    "....bgGb........",
+    "...bgGb.........",
+    "..bgGb..........",
+    "..bGb...........",
+    "...b............",
+    "................",
+]
+WRENCH_P = {"b": "#3c4248", "S": "#d4dbe2", "s": "#98a2ac", "g": "#2a2f35", "G": "#5a3a2a"}
+
+
 # M40 part c: the pipe cover, a steel trowel with a brick-faced plate on its blade (the cover it puts on)
 COVER = [
     "................",
@@ -155,16 +192,20 @@ COVER_P = {"b": "#4c545c", "R": "#b65a3c", "r": "#d8cfc0", "s": "#9aa4ae", "S": 
 def write_all():
     out = []
     blocks = {
-        "filter_inlet_pipe": line_pipe(INTAKE, 4001), "filter_outlet_pipe": line_pipe(RETURN, 4002),
-        "filter_fresh_pipe": line_pipe(FRESH, 4003), "filter_waste_pipe": line_pipe(WASTE, 4004),
-        "filter_inlet_pipe_r": transposed(line_pipe(INTAKE, 4001)), "filter_outlet_pipe_r": transposed(line_pipe(RETURN, 4002)),
-        "filter_fresh_pipe_r": transposed(line_pipe(FRESH, 4003)), "filter_waste_pipe_r": transposed(line_pipe(WASTE, 4004)),
-        "filter_fresh_port": port(FRESH), "filter_waste_port": port(WASTE), "filter_pipe_bundle": manifold(),
+        "filter_pipe_bundle": manifold(),
         "pipe_tee": tee_collar(), "intake_guard": mesh(True), "outlet_guard": mesh(False), "pipe_anchor": flange(),
     }
+    # M68: the rings of the roles on both pipes (and the transposed copies, see plumbing.py)
+    for name, col in RINGS.items():
+        g = ring_pipe(glass_pipe_tex(), col, True)
+        st = ring_pipe(steel_pipe_tex(), col, False)
+        blocks[f"glass_pipe_{name}"] = g
+        blocks[f"glass_pipe_{name}_r"] = transposed(g)
+        blocks[f"stainless_steel_pipe_{name}"] = st
+        blocks[f"stainless_steel_pipe_{name}_r"] = transposed(st)
     for name, img in blocks.items():
         out.append(save_png(img, BLOCK_TEX / f"{name}.png"))
-    out.append(save_png(grid(TEE, TEE_P), ITEM_TEX / "pipe_tee.png"))
+    out.append(save_png(grid(WRENCH, WRENCH_P), ITEM_TEX / "pipe_wrench.png"))
     out.append(save_png(grid(COVER, COVER_P), ITEM_TEX / "pipe_cover.png"))
     return out
 

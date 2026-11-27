@@ -8,9 +8,15 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    "minecraft:iron_bars",
-    "#c:nuggets/iron",
-    "bettacraft:interior_pipe"
+    {
+      "item": "minecraft:iron_bars"
+    },
+    {
+      "tag": "c:nuggets/iron"
+    },
+    {
+      "item": "bettacraft:glass_pipe"
+    }
   ],
   "result": {
     "count": 2,
