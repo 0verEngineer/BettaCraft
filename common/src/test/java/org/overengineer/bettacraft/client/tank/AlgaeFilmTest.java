@@ -49,4 +49,32 @@ class AlgaeFilmTest {
             assertEquals(0, Math.floorMod(Math.round((top - bottomAbove) * 64), 64), "layer " + y);
         }
     }
+
+    /** M67.5: every tank and wall places the texture differently, still without a seam between the blocks of a wall. */
+    @Test
+    void placementPerTankAndWall() {
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int c = 0; c < 40; c++) {
+            int seed = AlgaeFilm.seedOf(new BlockPos(c * 37, 64, -c * 11));
+            org.junit.jupiter.api.Assertions.assertNotEquals(0, seed);
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                boolean alongX = d.getAxis() == Direction.Axis.Z;
+                for (int b = -3; b < 20; b++) {
+                    BlockPos p0 = alongX ? new BlockPos(b, 0, 0) : new BlockPos(0, 0, b), p1 = alongX ? new BlockPos(b + 1, 0, 0) : new BlockPos(0, 0, b + 1);
+                    float end = alongX ? AlgaeFilm.u(d, p0, seed, 1, 0.5F, 0) : AlgaeFilm.u(d, p0, seed, 0, 0.5F, 1);
+                    float start = AlgaeFilm.u(d, p1, seed, 0, 0.5F, 0);
+                    assertEquals(0, Math.floorMod(Math.round((end - start) * 256), 256), d + " block " + b);
+                    float a0 = alongX ? AlgaeFilm.u(d, p0, seed, 0, 0, 0) : AlgaeFilm.u(d, p0, seed, 0, 0, 0);
+                    float a1 = alongX ? AlgaeFilm.u(d, p0, seed, 1, 0, 0) : AlgaeFilm.u(d, p0, seed, 0, 0, 1);
+                    assertEquals(1F / AlgaeFilm.TILE, Math.abs(a1 - a0), 1e-6, "one block, no wrap inside a face");
+                }
+                for (int y = -3; y < 20; y++) {
+                    float top = AlgaeFilm.v(new BlockPos(0, y, 0), seed, d, 1), bottomAbove = AlgaeFilm.v(new BlockPos(0, y + 1, 0), seed, d, 0);
+                    assertEquals(0, Math.floorMod(Math.round((top - bottomAbove) * 256), 256), "layer " + y);
+                }
+                seen.add(Math.round(AlgaeFilm.u(d, BlockPos.ZERO, seed, 0, 0, 0) * 256) + "/" + Math.round(AlgaeFilm.v(BlockPos.ZERO, seed, d, 0) * 256));
+            }
+        }
+        org.junit.jupiter.api.Assertions.assertTrue(seen.size() > 100, "placements differ between tanks and walls: " + seen.size());
+    }
 }
