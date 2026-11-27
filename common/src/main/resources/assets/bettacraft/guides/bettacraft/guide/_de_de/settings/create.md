@@ -100,8 +100,8 @@ Eine drehende Create-Welle, ein Zahnrad, Getriebe oder Motor, dessen Welle auf e
 
 * **64 U/min** (in jede Richtung) ist volle Leistung, langsamer anteilig: 32 U/min sind der halbe Durchfluss, der halbe
   Schub.
-* Pumpen und Steuerungen brauchen die Rotation nur dort, wo ein Server sie FE brauchen lässt (`pipes.pumpsRequireEnergy`).
-* Die Osmoseanlage bekommt den Schub ihrer Druckpumpe durch Rotation auch ohne die Strom-Optionen.
+* Pumpen und Steuerungen brauchen die Rotation nur dort, wo ein Server sie FE brauchen lässt (`power.costs`).
+* Die Osmoseanlage bekommt den Schub ihrer Druckpumpe durch Rotation auch ohne Stromkosten.
 * Die Futtermaschine mit FE läuft mit der Rotation; ohne FE zieht die Rotation ihre Feder auf (bei voller Drehzahl
   doppelt so schnell, wie die Maschine sie verbraucht), die Kurbel braucht es nicht.
 * Die Geräte kosten **keine Belastung (Stress)**: sie gehören nicht zu Creates Netz, sie nehmen nur die Drehzahl der

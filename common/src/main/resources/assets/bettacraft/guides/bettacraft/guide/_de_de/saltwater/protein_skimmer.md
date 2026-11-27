@@ -14,7 +14,7 @@ item_ids:
 
 Wird wie der [Außenfilter](../equipment/filters.md) an eine Seite des Beckens gehängt. Im Salzwasser schäumt er den
 Abfall aus: ein zusätzlicher Filter für 48 Wasserblöcke (Config `saltwater.skimmerBlocks`). Im Süßwasser schäumt nichts,
-und er tut nichts. Mit `power.filterRequiresEnergy` braucht er Strom wie ein Filter.
+und er tut nichts. Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht er Strom wie ein Filter.
 
 ## Bezug
 

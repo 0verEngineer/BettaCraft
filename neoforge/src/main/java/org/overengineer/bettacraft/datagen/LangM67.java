@@ -31,5 +31,10 @@ final class LangM67 {
         a.accept("gui.bettacraft.power_costs.off", "off");
         a.accept("gui.bettacraft.power_costs.easy", "easy");
         a.accept("gui.bettacraft.power_costs.hard", "hard");
+        // ---- advancement and quest
+        a.accept("advancements.bettacraft.tank_cranked.title", "Muscle Power");
+        a.accept("advancements.bettacraft.tank_cranked.description", "Charge the energy store of a tank with the crank at its cabinet or external filter");
+        a.accept("quest.bettacraft.tank_cranked.title", "Muscle Power");
+        a.accept("quest.bettacraft.tank_cranked.desc", "Optional, only when the pack makes devices use energy: every tank has one energy store for all its devices. Charge it with the crank at a cabinet under the tank or at its external filter: about 20 seconds of cranking run a medium tank for a day on EASY. More cabinets under the tank make the store bigger.");
     }
 }

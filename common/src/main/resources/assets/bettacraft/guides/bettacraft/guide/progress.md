@@ -81,6 +81,7 @@ big animals and the technology. Every advancement below also shows what it is fo
 | <ItemImage id="bettacraft:sponge_filter" /> | ↳ **Turn It Down** | Turn a filter, an air pump or a flow pump below 100 % with its power regulator |
 | <ItemImage id="minecraft:redstone" /> | ↳ **Plugged In** | Open the menu of a tank with energy in its buffer while devices need power |
 | <ItemImage id="bettacraft:crank" /> | ↳ **Wound Up** | Wind a device with the crank |
+| <ItemImage id="bettacraft:cabinet" /> | ↳ **Muscle Power** | Charge the energy store of a tank with the crank at its cabinet or external filter |
 | <ItemImage id="bettacraft:filter_pump_head" /> | ↳ **One Filter for All** | A multiblock filter cleans the water of two tanks at once |
 | <ItemImage id="minecraft:name_tag" /> | ↳ **Open House** | Add another player to the users of a tank (users tab of the tank menu) |
 | <ItemImage id="bettacraft:sump" /> | ↳ **Below Deck** | Put a sump into a cabinet under a tank |

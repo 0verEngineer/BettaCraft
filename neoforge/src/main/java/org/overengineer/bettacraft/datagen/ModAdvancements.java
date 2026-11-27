@@ -49,7 +49,9 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
             // M53
             "shared_tank",
             // M56
-            "terrarium_plant_grown", "bromeliad_tadpole"};
+            "terrarium_plant_grown", "bromeliad_tadpole",
+            // M67
+            "tank_cranked"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -194,7 +196,8 @@ final class ModAdvancements implements net.minecraft.data.advancements.Advanceme
         AdvancementHolder reg = event(tank, "regulator", ModItems.SPONGE_FILTER.get(), AdvancementType.TASK, Progress.REGULATOR);
         event(tank, "light_timer", ModItems.LED_PANEL.get(), AdvancementType.TASK, Progress.LIGHT_TIMER);
         event(reg, "powered", Items.REDSTONE, AdvancementType.TASK, Progress.POWERED);
-        event(reg, "wound_up", ModItems.CRANK.get(), AdvancementType.TASK, Progress.WOUND);
+        AdvancementHolder wound = event(reg, "wound_up", ModItems.CRANK.get(), AdvancementType.TASK, Progress.WOUND);
+        event(wound, "tank_cranked", ModItems.CABINET.get(), AdvancementType.TASK, Progress.TANK_CRANKED); // M67
         event(tank, "create_drive", Items.PISTON, AdvancementType.TASK, Progress.CREATE_DRIVE);
         AdvancementHolder travelled = event(tank, "travelling_tank", Items.MINECART, AdvancementType.GOAL, Progress.TRAVELLED);
         event(travelled, "powered_trip", Items.REDSTONE_TORCH, AdvancementType.GOAL, Progress.POWERED_TRIP); // M50

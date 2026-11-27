@@ -42,7 +42,7 @@ sea water and live food suspensions). Water from a bucket or a water source is f
 
 **Water pump:** pulls water from the block behind it and pushes it into the block in front of it, **200 mB per
 tick**. When you place it, look where the water should go. Right-click or sneak + mouse wheel: [power
-regulator](regulator.md). Redstone stops it. With `pipes.pumpsRequireEnergy` it needs FE (`pumpFePerTick` 8).
+regulator](regulator.md). Redstone stops it. With power costs (`power.costs` `EASY` or `HARD`) it needs FE (`pumpFePerTick` 8).
 
 An aquarium block takes water from a pipe on any side. From **below**, a floor block with a
 [bulkhead](bulkhead.md) lets it in through outlets you place inside the aquarium.

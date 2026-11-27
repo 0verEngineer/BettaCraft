@@ -38,7 +38,7 @@ Wasserblöcke), weniger je schmutziger das Medium, mal Leistungsregler. Verstopf
 
 Rechtsklick auf den Pumpenkopf (oder mit leerer Hand auf eine Kammer): das Filter-Fenster mit Größe, Problemen, dem
 gereinigten Aquarium, Durchfluss und dem Medium jeder Kammer samt Schmutz. Schleichen + Mausrad:
-[Leistungsregler](regulator.md). Mit `pipes.pumpsRequireEnergy` braucht der Pumpenkopf FE. Ein
+[Leistungsregler](regulator.md). Mit Stromkosten (`power.costs` `EASY` oder `HARD`) braucht der Pumpenkopf FE. Ein
 [Niveausensor](top_off.md) kann auch am Filter sitzen.
 
 **Unter dem Aquarium:** Der Filter kann auch direkt unter seinem Aquarium stehen, wie ein Schrankfilter: Kammern am

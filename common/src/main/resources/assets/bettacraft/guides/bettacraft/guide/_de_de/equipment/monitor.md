@@ -31,7 +31,7 @@ seine Größe und wie viele Becken er gefunden hat.
 * Die Werte gehen nur an Spieler, die den Monitor sehen können (innerhalb ihrer Sichtweite); sie kommen jede Sekunde.
 * Jedes Becken zeichnet seine Werte der letzten 7 Spieltage auf (ein Punkt pro Spielstunde), auch wenn kein Monitor
   hinschaut; ein neuer Monitor zeigt also sofort die Vergangenheit.
-* Mit einer Strom-Option (siehe [Strom](power.md)) braucht ein Monitor **1 FE pro Tick und Block**
+* Mit Stromkosten (siehe [Strom](power.md)) braucht ein Monitor **1 FE pro Tick und Block**
   (`monitor.fePerBlock`); ohne FE zeigt er „Kein Strom“. Jeder Block des Bildschirms nimmt FE an.
 
 ## Kacheln
@@ -42,7 +42,7 @@ seine Größe und wie viele Becken er gefunden hat.
 | **Ampel** | den Zustand eines Beckens in Grün, Gelb oder Rot mit den Warnungen aus seinem Menü: wenig oder schlechtes Wasser, kein Filter, Nitrat, Geräte ohne Strom, Überbesatz, kranke Tiere, leerer Futterautomat und die Zucht-Warnungen |
 | **Verlauf** | ein bis drei Werte eines Beckens über 1 bis 7 Spieltage, jede Linie in eigener Farbe und auf ihren eigenen Bereich skaliert, darüber die letzten Werte; eine schwache Linie markiert jeden Tag |
 | **Tiere** | wie viele Tiere jeder Art im Becken leben (Jungtiere in Klammern), danach Schaumnest, Eier, Jungtiere und Kleintiere mit Eiern |
-| **Geräte** | Filter, Heizer, Kühler, Licht (mit Dimmer), CO2 und Luftpumpen: wie viele laufen, rot ohne Strom; der Energiespeicher des Beckens, solange eine Strom-Option an ist |
+| **Geräte** | Filter, Heizer, Kühler, Licht (mit Dimmer), CO2 und Luftpumpen: wie viele laufen, rot ohne Strom; der Energiespeicher des Beckens, solange Stromkosten an sind |
 | **Alarm** | ein Wert mit Grenzwert: Die Kachel blinkt rot, solange der Wert darüber (oder darunter) liegt. Sie kann ein Redstone-Signal geben (siehe unten) |
 | **Logbuch** | die letzten Logbuch-Einträge eines Beckens oder **aller Becken** des Bildschirms, die neuesten oben, mit dem Tag |
 

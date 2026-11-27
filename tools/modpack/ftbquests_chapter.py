@@ -141,6 +141,7 @@ QUESTS = [
     ("regulator", [adv("regulator")], ["sponge_filter"], 13.25, -2.90, 25, None),
     ("powered", [adv("powered")], ["regulator"], 15.25, -2.90, 50, None),
     ("wound_up", [adv("wound_up")], ["regulator"], 14.75, -4.40, 50, None),
+    ("tank_cranked", [adv("tank_cranked")], ["wound_up"], 16.75, -4.40, 50, None),  # M67
     ("pipes", [item("water_pump"), item("glass_pipe")], ["cabinet"], 6.00, -4.75, 50, None),
     ("stainless_steel", [item("crucible"), item("stainless_steel_ingot")], ["pipes"], 4.50, -5.75, 75, None),
     ("interior_pipes", [item("bulkhead"), item("spray_bar")], ["pipes"], 4.00, -7.75, 50, None),
@@ -244,7 +245,7 @@ OWN_FEATURES = {
     "terrarium": ["HERPS"], "terrarium_gear": ["TERRARIUM_DEVICES"],
     "varied_diet": ["FOOD_VARIETY"], "magnifier": ["MAGNIFIER"],
     "aeration": ["AERATION"], "sponge_filter": ["MORE_INTERNAL_FILTERS"], "led_lights": ["LED_TIERS"],
-    "light_timer": ["LIGHT_TIMER"], "regulator": ["POWER_REGULATOR"], "powered": ["POWER"], "wound_up": ["WINDING"],
+    "light_timer": ["LIGHT_TIMER"], "regulator": ["POWER_REGULATOR"], "powered": ["POWER"], "wound_up": ["WINDING"], "tank_cranked": ["TANK_CRANK"],
     "stainless_steel": ["STAINLESS_STEEL"], "pipes": ["PIPES"], "interior_pipes": ["INTERIOR_PIPES"],
     "auto_water_change": ["AUTO_WATER_CHANGE"], "top_off": ["TOP_OFF"], "multiblock_filter": ["MULTIBLOCK_FILTER"],
     "filter_lines": ["FILTER_LINES"], "filter_water": ["FILTER_WATER"], "pipe_covers": ["PIPE_COVERS"],
@@ -273,9 +274,9 @@ OWN_FEATURES = {
 
 # Other mods a quest needs (hidden without them) and quests that only work with a power option of the server config on.
 MODS = {"travelling_tank": ["create"], "create_drive": ["create"], "powered_trip": ["create"]}
-NEEDS_POWER = {"powered", "wound_up", "powered_trip"}
+NEEDS_POWER = {"powered", "wound_up", "tank_cranked", "powered_trip"}
 # Optional by design: they never block the chapter (Create, power, the fight, a second player).
-OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "fight", "powered_trip",
+OPTIONAL = {"travelling_tank", "create_drive", "powered", "wound_up", "tank_cranked", "fight", "powered_trip",
             "shared_tank"}  # M54: needs a second player on the server
 
 # Item rewards besides the xp (C2): small and of the quest's own features (QuestChapterTest checks that).

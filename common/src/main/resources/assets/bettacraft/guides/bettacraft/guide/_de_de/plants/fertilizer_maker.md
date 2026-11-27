@@ -26,7 +26,7 @@ und 250 mB Wasser** zu **250 mB [Flüssigdünger](fertilizer.md)** (eine Flasche
 * **Rohre:** solange keine Flasche wartet, geht der Dünger von selbst in ein Rohr oder ein Aquarium daneben; ein Aquarium
   nimmt ihn nur bis 100 %. Rohre und Tanks anderer Mods können ihn auch abpumpen (Flüssigkeit `bettacraft:fertilizer`).
 * **Antrieb:** ohne Strom läuft sie mit einer Feder: mit der [Kurbel](../equipment/crank.md) aufziehen (fünf Sekunden für
-  einen Tag). Mit einer Strom-Option braucht sie beim Arbeiten `fertilizer.fertilizerFePerTick` FE pro Tick und, wenn das
+  einen Tag). Mit Stromkosten braucht sie beim Arbeiten `fertilizer.fertilizerFePerTick` FE pro Tick und, wenn das
   FE fehlt, ihre Feder. Auch eine Welle von **Create**, die auf sie zeigt, treibt sie an (64 U/min für volle Arbeit).
 * Ein Redstone-Signal pausiert sie; ein Komparator liest, wie voll der Düngertank ist. Trichter, AE2 und Refined Storage
   legen Seetangmehl, Nährsalz und Flaschen hinein und nehmen die vollen Flaschen heraus.

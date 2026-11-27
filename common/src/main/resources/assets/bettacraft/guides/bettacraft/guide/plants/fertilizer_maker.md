@@ -26,7 +26,7 @@ and 250 mB of water** into **250 mB of [liquid fertilizer](fertilizer.md)** (a b
 * **Pipes:** while no bottle waits, the fertilizer goes by itself into a pipe or a tank next to it; a tank takes it only up
   to 100 %. Pipes and tanks of other mods may also drain it (fluid `bettacraft:fertilizer`).
 * **Drive:** without power it runs on a spring: wind it with the [crank](../equipment/crank.md) (five seconds for a day).
-  With a power option on it takes `fertilizer.fertilizerFePerTick` FE per tick while it works, and its spring when the FE
+  With power costs on it takes `fertilizer.fertilizerFePerTick` FE per tick while it works, and its spring when the FE
   is short. A shaft of **Create** pointing at it drives it too (64 RPM for full work).
 * A redstone signal pauses it; a comparator reads how full the fertilizer tank is. Hoppers, AE2 and Refined Storage put
   kelp meal, nutrient salt and bottles in and take the filled bottles out.

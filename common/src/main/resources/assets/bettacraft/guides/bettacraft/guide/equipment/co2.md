@@ -74,7 +74,7 @@ fire burns: about a day of burning for a full cylinder, more fires fill faster (
 
 * Right-click with a cylinder puts it in, an empty hand takes it out, sneaking shows what it does.
 * Hoppers put empty cylinders in and take only full ones out; a comparator reads how full it is.
-* With a [power option](power.md) on, its **compressor needs FE** (`stationFe`, 20 FE/t while it fills).
+* With [power costs](power.md) on, its **compressor needs FE** (`stationFe`, 20 FE/t while it fills).
 * CO2 gas of other mods (fluid tag `#bettacraft:co2_gas`, with `#c:carbon_dioxide`) goes in through pipes:
   1000 mB fill a cylinder (`foreignCo2Mb`).
 

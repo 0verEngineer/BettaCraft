@@ -4,6 +4,47 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.56.0-beta.1] - 2026-11-27
+
+One energy store per tank: FE cables and the crank charge the same store, it grows with the tank and its cabinets, and one setting,
+`power.costs` (OFF / EASY / HARD), says what the devices cost.
+
+### Changed
+- **One energy store per tank.** The fixed FE buffer of a tank (`power.bufferFe`, 100,000 FE) and the springs of its cabinets and
+  external filters are one store now. FE cables (at a tank block, an external filter, a cabinet or a light), Create's rotation (drive
+  adapter, cabinet shaft) and the crank charge it, and every device of the tank (filters, heaters and coolers, heat mats, lights, air
+  pumps, misters) draws from it. The tank menu, the cabinet and the external filter show the same store with one bar; the overview's
+  tooltip says how many hours it lasts at the tank's demand and which costs are set. Jade, The One Probe and WTHIT show the tank's store
+  at a cabinet or an external filter.
+- **The crank at a cabinet under a tank or at an attached external filter charges the tank's store** (`power.crankFePerClick`, 6,500 FE a
+  click): about 100 clicks (20 seconds of holding) run a medium tank (2 x 2 x 2 with a filter, a light and a heater that heats) one
+  in-game day on EASY. It works without any power mod. A cabinet or filter without a tank has nothing to charge.
+- **The store grows with the tank:** 80,000 FE per water block (`power.storePerWaterBlock`) and 20,000 FE per cabinet block under the
+  tank (`power.storePerCabinet`), so "a day on EASY" holds for every tank size. Cabinets joined to the ones under the tank (side by side,
+  under no other tank) count too and take the crank; one between two tanks belongs to the nearer one
+  (`features.power.cabinetSharedSpring`, now "Joined cabinets add to the tank's store").
+- **`power.costs` = OFF / EASY / HARD (default OFF)** replaces the switches `power.heaterRequiresEnergy`, `filterRequiresEnergy`,
+  `lightRequiresEnergy`, `aeration.airPumpRequiresEnergy`, `pipes.pumpsRequireEnergy` and `terrarium.misterRequiresEnergy`. HARD is the
+  consumption so far (filter 10 FE/t, light 4 per block, heater or cooler 8 per water block, air pump 2 per outlet, heat mat 4, mister 6,
+  pumps 8, ...), EASY a third of it for every consumer (tank devices and the devices without a tank), OFF: no device needs power. The
+  single FE values stay for fine tuning (0 = that device needs nothing). The realistic preset sets HARD.
+- The devices without a tank (food maker, fertilizer maker, reverse osmosis unit, water pump, water change controller, multiblock filter)
+  keep their own spring.
+- A cabinet's Create shaft only charges the tank's store (it no longer winds the cabinet's spring; `createDrive.fePerSpringTick` is gone).
+
+### Added
+- Feature switch `features.power.tankCrank` (the crank charges a tank's store; off: only FE does).
+- Advancement and quest "Muscle Power": charge a tank's store with the crank (optional, only with power costs).
+
+### Migration
+- **Config:** a server config with one of the old `*RequiresEnergy` switches on becomes `power.costs = HARD`, all off become OFF; the
+  old file is kept as `bettacraft-server.toml.pre-m67`. A world with its own server config is migrated once when it starts (from the
+  backup the loader keeps before it drops the old keys). `power.bufferFe`, `winding.cabinetCharges`, `winding.externalFilterCharges` and
+  `createDrive.fePerSpringTick` are gone.
+- **Worlds:** the wound springs of cabinets and external filters become FE in their tank's store the first time the tank runs (10 FE for
+  every device-tick they held), also beyond the capacity: nothing is lost, the surplus simply runs down first. A cabinet broken before
+  that hands its spring to its tank.
+
 ## [1.55.0-beta.1] - 2026-11-25
 
 UI overhaul: the tank menu in groups, bigger cabinet and filter menus with their energy, a menu for the clip-on feeder, an aquarist

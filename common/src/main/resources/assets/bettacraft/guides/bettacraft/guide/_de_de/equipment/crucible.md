@@ -24,7 +24,7 @@ nicht gibt; Bettacraft schmilzt ihn im <ItemLink id="bettacraft:crucible" /> aus
 Die Zutaten kommen in die vier Felder links (Reihenfolge egal), dazu braucht er Hitze:
 
 * **Lava** (eine Lavaquelle, ein Lavakessel oder ein Magmablock) **direkt darunter** heizt kostenlos;
-* **FE**, solange eine Strom-Option an ist (Strom-Mods; `crucible.fePerTick` 20 FE/t);
+* **FE**, solange Stromkosten an sind (Strom-Mods; `crucible.fePerTick` 20 FE/t);
 * sonst **Brennstoff** im Brennstofffeld: ein Lavaeimer (100 s, der Eimer bleibt), eine Lohenrute (12 s) oder Lohenstaub (6 s).
 
 Er glüht und raucht, während er schmilzt. Trichter füllen ihn von oben und den Seiten (Lavaeimer, Lohenruten und Lohenstaub
