@@ -269,8 +269,9 @@ final class DevClientWorldTour {
                         }
                     }
                 });
-                // M66 v4: with running ticks (-PtourFreeze=false) the server's copy too, or its next update takes the algae away again
-                if (!FREEZE) then(1, () -> server(p -> {
+                // M66 v4: the server's copy too, or its next update takes the algae away again (v6: always; on Fabric the client gets
+                // the tanks' block entity data again after the tour set its algae)
+                then(1, () -> server(p -> {
                     for (Tank t : list) {
                         if (org.overengineer.bettacraft.tank.TankMultiblock.getController(p.serverLevel(), t.min()) instanceof TankBlockEntity be && be.getTank() != null) {
                             be.getTank().algae().clear();
