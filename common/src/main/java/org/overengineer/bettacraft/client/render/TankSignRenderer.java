@@ -53,7 +53,7 @@ public class TankSignRenderer implements BlockEntityRenderer<TankBlockEntity> {
     public void render(TankBlockEntity be, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         TankData t = be.getTank();
         if (t == null || !be.isController()) return;
-        if (BlockEntityCull.outside(getRenderBoundingBox(be))) return; // M66.5: Sodium draws the global list without a view test
+        if (!TravellingTankRenderer.travelling(be) && BlockEntityCull.outside(getRenderBoundingBox(be))) return; // M66.5: Sodium draws the global list without a view test (a travelling tank is drawn at its ship)
         TravellingTankRenderer.render(be, t, partialTick, pose, buffers, light); // M32 part b: on a contraption or an airship
         if (t.nest() != null) NestRenderer.render(be, t.nest(), partialTick, pose, buffers); // M15: domed
         FloatingPlantRenderer.render(be, t, partialTick, pose, buffers); // M12
