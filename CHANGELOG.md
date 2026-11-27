@@ -52,6 +52,8 @@ One energy store per tank: FE cables and the crank charge the same store, it gro
   animals on the land became free animals (a crested gecko then climbed out over an open top), the tank menu listed no animals and
   the mobs in glass lost their data. Both places are read now. A world already opened on the other loader with an older version has
   lost those bindings; load it from a copy saved before. Dev check: `gradlew :fabric:fabricCrossLoadTest` / `smoketestCrossLoad`.
+- Fabric: a cabinet loaded with its chunk no longer logs "Trying to schedule tick in not loaded position" (once per cabinet when a
+  world loads), and the front of a cabinet from an older version is set again: our block entities start a tick later, as on NeoForge.
 
 ## [1.55.0-beta.1] - 2026-11-25
 
