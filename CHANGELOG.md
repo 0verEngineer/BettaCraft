@@ -80,6 +80,15 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 - **Frame rate in worlds with many or large tanks:** every block of every tank was in the list of block entities drawn every frame, in view
   or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. Now only the
   controllers are.
+- **Frame rate with Sodium and shader packs (M66.5):** Sodium draws the always-drawn block entities without testing them against the view, so
+  every filter hose and water jet within 96 blocks and the small animals, floating plants and nests of every tank within 48 blocks were built
+  every frame, also behind the camera (a third of the render thread in the showcase). Our renderers now test their box against the camera
+  view themselves (not in a shader pack's shadow pass); filter hoses and jets are drawn up to `render.tankDetailDistance` (48) like the
+  other tank details; the boxes of cabinets, filters and tanks are worked out once a second instead of every frame (finding a cabinet's
+  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks: Sodium 206 -> 285 fps, Complementary Reimagined
+  88 -> 122 fps.
+- **Server tick with many large fish:** the path finding of the large tankmates looked at the same cells many times per search; each cell
+  is looked at once per search now (the path finding took about a third less of the server tick in the showcase).
 - **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
   (snails and grown animals never), not only fry. The same switch and rate (`features.breeding.fryIntake`, `internalFilters.fryIntakePerDay`).
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
