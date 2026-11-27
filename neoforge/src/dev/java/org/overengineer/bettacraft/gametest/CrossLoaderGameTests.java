@@ -65,10 +65,10 @@ public final class CrossLoaderGameTests {
         TankBlockEntity glass = MobsInGlassGameTests.terrarium(h, 14, 2);
         HerpEntity leo = HerpGameTests.put(h, terra, HerpSpecies.LEOPARD_GECKO, true, 0);
         HerpEntity crested = HerpGameTests.put(h, terra, HerpSpecies.CRESTED_GECKO, false, 0);
-        var zombie = MobsInGlassGameTests.put(h, glass, EntityType.ZOMBIE);
+        var zombie = MobsInGlassGameTests.put(h, glass, net.minecraft.world.entity.EntityTypes.ZOMBIE);
         List<Entity> back = List.of(reloadFromOtherLoader(h, leo), reloadFromOtherLoader(h, crested), reloadFromOtherLoader(h, zombie));
         for (Entity e : back) {
-            TankBlockEntity c = e.getType() == EntityType.ZOMBIE ? glass : terra;
+            TankBlockEntity c = e.getType() == net.minecraft.world.entity.EntityTypes.ZOMBIE ? glass : terra;
             h.assertTrue(TankInhabitants.hasTankRef(e) && ModAttachments.TANK_REF.get(e).tankId().equals(c.getTank().id()),
                     e.getType() + " lost its tank in a world of the other loader");
             h.assertTrue(TankInhabitants.resolveController(level, e) == c, e.getType() + " not bound to its tank");
