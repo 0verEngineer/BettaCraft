@@ -143,6 +143,12 @@ loom {
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
             }
+            // M67: -Psmoketestm67: one energy store per tank (the crank, the tank overview, the cabinet and the external filter)
+            if (project.hasProperty('smoketestm67')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m67only', 'true'
+            }
             // M66: -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the menus of the UI overhaul
             if (project.hasProperty('smoketestm66')) {
                 property 'bettacraft.smoketest.world', 'true'

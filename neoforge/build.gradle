@@ -446,6 +446,12 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestm67')) {
+                // gradlew runClient -Psmoketestm67: the M67 scene (one energy store per tank on EASY: the crank at a joined cabinet, the tank
+                // overview and its power tooltip, the cabinet and the external filter, en and de; run/screenshots/bettacraft_m67_<lang>_<shot>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m67only', 'true'
+            }
             if (project.hasProperty('smoketestm66')) {
                 // gradlew runClient -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the M66 scene (every menu the UI
                 // overhaul changed, en and de, a roomy and a cramped GUI scale; run/screenshots/bettacraft_m66_<tag>_<lang>_<scale>_<shot>.png)
