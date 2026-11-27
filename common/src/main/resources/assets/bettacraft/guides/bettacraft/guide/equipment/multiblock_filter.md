@@ -38,7 +38,7 @@ blocks), less the dirtier the medium is, times the power regulator. Clogged spon
 
 Right-click the pump head (or a chamber with an empty hand): the filter's screen with its size, problems, the aquarium
 it cleans, the flow and every chamber's medium with its dirt. Sneak + mouse wheel: [power regulator](regulator.md).
-With power costs (`power.costs` `EASY` or `HARD`) the pump head needs FE. A [level sensor](top_off.md) can sit at the filter too.
+With power costs (`power.costs` `EASY` or `HARD`) the pump head needs FE.
 
 **Under the aquarium:** the filter may also stand directly under its aquarium, like a cabinet filter: chambers on the
 floor, the inlet and the outlet on top of them with their sockets facing up into the aquarium's floor (or chambers
@@ -48,20 +48,22 @@ places the block instead of opening the screen, so you can build the aquarium on
 The old one-block [external filter](filters.md) stays the small variant.
 
 
-## Several aquariums: filter lines
+## Several aquariums, pipes and water changes
 
-Since version 1.32 one filter serves **several aquariums** through its own pipes, and up to four lines run in one block:
+* [Filter lines](filter_lines.md): pipes at the inlet are its intake line (blue), at the outlet its return line (orange);
+  they branch to every aquarium they reach, and each aquarium needs an intake and an outlet [guard](guards.md) inside. The
+  screen says "Serves 3 tanks:" above the list of its aquariums.
+* **Flow:** the pump head moves up to 100 mB/t, but never more than its lines carry (glass 50, stainless steel 250 mB/t;
+  several lines add up).
+* **Other pipes:** pipes join the chambers and the pump head on every face as plain ends without a role. A pipe at the inlet
+  or outlet that also reaches another port is a short circuit.
+* **Water changes:** the filter has no fresh or waste water ports. A [water change controller](water_change.md) placed
+  against a chamber or the pump head (or with its fresh water out and waste water in lines ending at one) changes the
+  water of all the filter's aquariums and tops off those with a [level sensor](level_sensor.md).
+* [Water in the tank](water_system.md): example setups with one filter for several aquariums and a central technical room.
 
-* [Filter lines and guards](filter_lines.md): the intake and return pipes, T-pieces, docking on any side, the guards.
-* The filter's menu says "Serves 3 tanks:" above the list of its tanks, and its **fresh water** is what it can use: the water in its fresh
-  water ports plus what lies at the ends of their lines (a [reservoir](top_off.md), another mod's tank), or "tap water, unlimited" when a
-  water source block touches a port.
-* [Pipe bundles, fresh and waste water](pipe_bundle.md): four lines in one block, water changes and top-off for every
-  aquarium of the filter.
-* [Pipe cover and facades](pipe_cover.md): hide the pipes behind any full block.
-
-**Important for old worlds:** every multiblock filter now needs an **intake guard and an outlet guard** in each of its
-aquariums, also filters built before the update. Until they are fitted the filter **does not filter** (red note in its
+**Important for old worlds:** every multiblock filter needs an **intake guard and an outlet guard** in each of its
+aquariums, also filters built before guards existed. Until they are fitted the filter **does not filter** (red note in its
 screen and in the aquarium menu). Servers can keep the old way with `features.pipes.filterLines = false`.
 
 <SubPages icons={true} />

@@ -19,7 +19,7 @@ mod: create
 Only with **Create**. The drive adapter turns Create's rotation into the [power](power.md) of an aquarium: a shaft at it
 charges the tank's FE buffer, and every device that takes the tank's FE runs on it, without a single FE cable: filters,
 flow pumps and skimmers, heaters, coolers and heat mats, lights, air pumps and misters. Machines that stand on their own
-(water pump, filter pump head, water change controller, level sensor, reverse osmosis unit, food maker, fertilizer
+(water pump, filter pump head, water change controller, reverse osmosis unit, food maker, fertilizer
 maker) keep their own shaft as before (see [Create](../settings/create.md)).
 
 ## Placing

@@ -1,6 +1,6 @@
 ---
 navigation:
-  title: Ansaugschutz
+  title: Ansaugschutz-Schwamm
   icon: bettacraft:intake_sponge
   parent: equipment.md
   position: 36

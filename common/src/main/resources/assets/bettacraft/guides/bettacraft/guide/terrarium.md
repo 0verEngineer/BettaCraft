@@ -33,7 +33,7 @@ button **Type** (in the overview tab next to the target temperature, and at the 
 * **Terrarium**: the tank stays a terrarium and takes **no water at all** (for a water dish leave the type on automatic).
 
 The limit holds for every way water comes in: buckets, pipes and pumps (also of other mods such as Create: they get the
-part that fits), the reservoir, the top-off of the level sensor and the water an animal brings along. A water change only
+part that fits), the reservoir, the top-off of the water change controller and the water an animal brings along. A water change only
 replaces the water it took out, and rain never fills a tank. Instead of the water you get a message ("Terrarium: no water",
 "Paludarium: water only up to 1.8 blocks high").
 
