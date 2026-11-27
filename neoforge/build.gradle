@@ -1505,7 +1505,8 @@ tasks.register('smoketestUpgrade') {
             def cp = new File(logs, 'classpath.txt')
             cp.write('-cp\n' + srv.classpathProvider.files.collect { it.absolutePath.replace('\\', '/') }.join(File.pathSeparator) + '\n', 'UTF-8')
             // vanilla noise of the dev runtime (translations of other mods' blocks) is not an error of the upgrade
-            def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/]
+            // a world of an older Minecraft version: game rules of mods that are not loaded (1.21.1 kept every rule as text) are dropped
+            def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/, ~/Failed to parse saved data for 'SavedDataType.minecraft:game_rules/]
             for (stage in [1, 2]) {
                 def command = ([java] + srv.allJvmArgs + ["-Dbettacraft.smoketest.upgrade=${stage}".toString(), "@${cp.absolutePath}".toString(), srv.mainClass.get()]
                         + srv.args + ['--universe', saves.absolutePath, '--world', 'upgrade_check']).collect { it.toString() }

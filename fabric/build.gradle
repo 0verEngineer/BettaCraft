@@ -1016,7 +1016,8 @@ tasks.register('fabricUpgradeTest') {
         new File(dir, 'server.properties').text = ['online-mode=false', 'spawn-protection=0', 'spawn-animals=true', 'spawn-npcs=true', 'max-players=1',
                 "server-port=${fabricDevPort}".toString(), 'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
         fabricCheckServerPort(dir, 'fabricUpgradeTest')
-        def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/]
+        // a world of an older Minecraft version: game rules of mods that are not loaded (1.21.1 kept every rule as text) are dropped
+        def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/, ~/Failed to parse saved data for 'SavedDataType.minecraft:game_rules/]
         for (stage in [1, 2]) {
             def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + ['-Xmx8G', "-Dbettacraft.smoketest.upgrade=${stage}".toString(),
                     '-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
