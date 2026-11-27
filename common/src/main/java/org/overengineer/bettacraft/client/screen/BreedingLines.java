@@ -267,7 +267,7 @@ final class BreedingLines {
     private static Object[] args(CompoundTag l) {
         ListTag a = l.getListOrEmpty("a");
         Object[] out = new Object[a.size()];
-        for (int i = 0; i < out.length; i++) out[i] = a.getString(i);
+        for (int i = 0; i < out.length; i++) out[i] = a.getStringOr(i, "");
         return out;
     }
 
