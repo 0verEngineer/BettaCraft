@@ -717,17 +717,30 @@
 			y: -6.8d
 		},
 		{
-			dependencies: ["75F7A0B9785676A9"],
+			dependencies: ["42BEF0FC5132BF87"],
 			description: ["{\"translate\":\"quest.bettacraft.top_off.desc\"}"],
 			id: "216DE45855BE76D6",
 			rewards: [{ id: "19ADEE7F5958E452", type: "xp", xp: 50 }],
-			tags: ["bettacraft_feature:pipes.topOff"],
+			tags: ["bettacraft_feature:pipes.topOff", "bettacraft_feature:pipes.autoWaterChange"],
 			tasks: [
 				{ id: "75E4440D64B10009", item: { count: 1, id: "bettacraft:level_sensor" }, type: "item" }
 			],
 			title: "{\"translate\":\"quest.bettacraft.top_off.title\"}",
 			x: 7.0d,
 			y: -8.2d
+		},
+		{
+			dependencies: ["75F7A0B9785676A9"],
+			description: ["{\"translate\":\"quest.bettacraft.drain.desc\"}"],
+			id: "7D7304C896116F06",
+			rewards: [{ id: "4A4C30120E95E3E7", type: "xp", xp: 25 }, { count: 4, id: "49C32B240C493F15", item: { count: 1, id: "bettacraft:glass_pipe" }, type: "item" }],
+			tags: ["bettacraft_feature:pipes.drain"],
+			tasks: [
+				{ id: "29576E8D11D19BA1", item: { count: 1, id: "bettacraft:drain" }, type: "item" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.drain.title\"}",
+			x: 5.5d,
+			y: -8.5d
 		},
 		{
 			dependencies: ["488926E66E35A9EC"],
