@@ -147,10 +147,8 @@ final class DevClientSmokeM8 {
             i++;
         }
         c.markTankChanged();
-        // The One Probe shows its extended information with the probe in the main hand (default needsProbe = 3)
-        if (org.overengineer.bettacraft.platform.Platform.get().isModLoaded("theoneprobe")) {
-            p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("theoneprobe", "probe"))));
-        }
+        // M67.5: no probe in the hand (TOP's default needsProbe = 3 gives its extended mode only with one): sneaking alone must
+        // show our details, as the hint says
         // hover without flying: sneaking crouches (details in Jade/WTHIT) instead of flying down
         p.getAbilities().flying = false;
         p.onUpdateAbilities();
