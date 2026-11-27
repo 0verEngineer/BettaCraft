@@ -42,6 +42,11 @@ public class PipeItem extends BlockItem {
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();
+        // M68 part C: in a tank interior, sneak + pipe on an interior pipe or bundle makes it an interior bundle (one more lane)
+        if (ctx.isSecondaryUseActive() && org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock.steelOf(level.getBlockState(pos)) != null) {
+            if (!level.isClientSide()) org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock.addPipe(level, pos, steel, ctx.getPlayer(), ctx.getItemInHand(), ctx.getClickedFace());
+            return InteractionResult.SUCCESS;
+        }
         if (ctx.isSecondaryUseActive() && Pipes.isPipe(level.getBlockState(pos))) {
             if (!level.isClientSide()) PipeBundleBlock.addPipe(level, pos, steel, ctx.getPlayer(), ctx.getItemInHand());
             return InteractionResult.SUCCESS;

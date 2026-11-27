@@ -108,6 +108,316 @@
       "when": {
         "east": "true"
       }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake"
+      },
+      "when": {
+        "mount": "down",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake",
+        "x": 180
+      },
+      "when": {
+        "mount": "up",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake",
+        "x": 270
+      },
+      "when": {
+        "mount": "north",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "mount": "south",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "mount": "west",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_intake",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "mount": "east",
+        "ring": "intake"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return"
+      },
+      "when": {
+        "mount": "down",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return",
+        "x": 180
+      },
+      "when": {
+        "mount": "up",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return",
+        "x": 270
+      },
+      "when": {
+        "mount": "north",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "mount": "south",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "mount": "west",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_return",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "mount": "east",
+        "ring": "return"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh"
+      },
+      "when": {
+        "mount": "down",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh",
+        "x": 180
+      },
+      "when": {
+        "mount": "up",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh",
+        "x": 270
+      },
+      "when": {
+        "mount": "north",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "mount": "south",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "mount": "west",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_fresh",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "mount": "east",
+        "ring": "fresh"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste"
+      },
+      "when": {
+        "mount": "down",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste",
+        "x": 180
+      },
+      "when": {
+        "mount": "up",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste",
+        "x": 270
+      },
+      "when": {
+        "mount": "north",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "mount": "south",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "mount": "west",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_waste",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "mount": "east",
+        "ring": "waste"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short"
+      },
+      "when": {
+        "mount": "down",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short",
+        "x": 180
+      },
+      "when": {
+        "mount": "up",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short",
+        "x": 270
+      },
+      "when": {
+        "mount": "north",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "mount": "south",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "mount": "west",
+        "ring": "short"
+      }
+    },
+    {
+      "apply": {
+        "model": "bettacraft:block/pipe_anchor_ring_short",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "mount": "east",
+        "ring": "short"
+      }
     }
   ]
 }

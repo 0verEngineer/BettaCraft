@@ -23,9 +23,9 @@ import org.overengineer.bettacraft.tank.TankInhabitants;
  * young shrimp, tadpoles; never snails, never adults), as many as the drained share of the water (a 25 % change takes about a
  * quarter of them). The fresh water line needs no guard.
  * <p>
- * The guard of a dock is looked up in {@link #guarded} only: today every face of a tank block has one connection in the interior
- * (its anchor, {@link TankAnchors}), shared by every line that docks there; part C gives every line of a bundle its own anchor and
- * switches this lookup to the anchor of the waste water line.
+ * The guard of a dock is looked up in {@link #guarded} only. Part C: every line of a bundle has its own dock inside
+ * ({@link TankAnchors}), so only a guard behind the waste water line's own dock counts (an outlet guard on the fresh water line
+ * beside it does not).
  */
 public final class ChangeIntake {
     private ChangeIntake() {}
@@ -33,7 +33,7 @@ public final class ChangeIntake {
     /** Whether the dock {@code d} of tank {@code c} has an intake guard behind it (true when guards cannot be asked for at all). */
     public static boolean guarded(ServerLevel level, TankBlockEntity c, PipeNetwork.Dock d) {
         if (!TankAnchors.required(level)) return true;
-        return TankAnchors.guardOf(level, c, d.member(), d.face(), true) == TankAnchors.Guard.OK;
+        return TankAnchors.guardOf(level, c, d.member(), d.face(), d.slot(), true) == TankAnchors.Guard.OK;
     }
 
     /** The share (0..1) of the waste water docks on tank {@code c} without an intake guard. */
