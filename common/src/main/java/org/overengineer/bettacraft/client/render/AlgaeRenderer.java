@@ -49,11 +49,30 @@ public final class AlgaeRenderer {
     /** Longest water path counted (blocks). */
     private static final int MAX_PATH = 48;
 
+    /** Dev tour only (M66 v6, the proof of the causes): "nodepth" = the film without depth writes, "off" = no film; empty = normal. */
+    public static volatile String testMode = "";
+    private static RenderType noDepth;
+
     private AlgaeRenderer() {}
+
+    private static RenderType type() {
+        if (!"nodepth".equals(testMode)) return RenderType.entityTranslucent(TEXTURE);
+        if (noDepth == null) noDepth = RenderType.create("bettacraft_algae_nodepth", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
+                com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1536, true, true, RenderType.CompositeState.builder()
+                        .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+                        .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(TEXTURE, false, false))
+                        .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                        .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
+                        .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
+                        .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
+                        .setWriteMaskState(net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE)
+                        .createCompositeState(true));
+        return noDepth;
+    }
 
     public static void render(TankBlockEntity be, TankData t, PoseStack pose, MultiBufferSource buffers) {
         Level level = be.getLevel();
-        if (level == null || t.algae().isEmpty()) return;
+        if (level == null || t.algae().isEmpty() || "off".equals(testMode)) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
@@ -79,7 +98,7 @@ public final class AlgaeRenderer {
                     }
                     light = LevelRenderer.getLightColor(level, p);
                 }
-                if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
+                if (vc == null) vc = buffers.getBuffer(type());
                 // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
                 int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
                 boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);

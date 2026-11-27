@@ -428,7 +428,7 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.worldtour', 'true'
                 // M66 v4: -PtourJfr=<file.jfr>: a Java Flight Recording of the whole run (profile settings), for frame time hunts
                 if (project.hasProperty('tourJfr')) jvmArgument "-XX:StartFlightRecording=filename=${project.property('tourJfr')},settings=profile"
-                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls'].each { k, v ->
+                ['tourPacks': 'packs', 'tourViews': 'views', 'tourTag': 'tag', 'tourRadius': 'radius', 'tourLimit': 'limit', 'tourSettle': 'settle', 'tourNames': 'names', 'tourAlgae': 'algae', 'tourMinVolume': 'minvolume', 'tourFreeze': 'freeze', 'tourAlgaeWalls': 'algaewalls', 'tourAlgaeMode': 'algaemode'].each { k, v ->
                     if (project.hasProperty(k)) systemProperty "bettacraft.tour.${v}", project.property(k).toString()
                 }
                 if (project.hasProperty('tourBaseline')) systemProperty 'bettacraft.tour.baseline', 'true'
