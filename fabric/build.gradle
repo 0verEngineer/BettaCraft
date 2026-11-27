@@ -73,7 +73,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM68', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -141,6 +141,12 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
+            }
+            // M68: -Psmoketestm68: the one pipe system (the showcase stations, the menus and their warnings)
+            if (project.hasProperty('smoketestm68')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m68only', 'true'
             }
             // M67: -Psmoketestm67: one energy store per tank (the crank, the tank overview, the cabinet and the external filter)
             if (project.hasProperty('smoketestm67')) {
@@ -720,6 +726,10 @@ def prodProps = { boolean client ->
             if (project.hasProperty('m63packs')) l << "-Dbettacraft.smoketest.m63packs=${project.property('m63packs')}".toString()
             if (project.hasProperty('m63tag')) l << "-Dbettacraft.smoketest.m63tag=${project.property('m63tag')}".toString()
             if (project.hasProperty('m63parts')) l << "-Dbettacraft.smoketest.m63parts=${project.property('m63parts')}".toString()
+        }
+        // M68: the one pipe system in production
+        if (project.hasProperty('smoketestm68')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m68only=true']
         }
         // M67: one energy store per tank in production
         if (project.hasProperty('smoketestm67')) {
