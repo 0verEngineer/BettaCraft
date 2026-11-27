@@ -81,6 +81,12 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
         return true;
     }
 
+    /** Port (26.x): the view test before the extraction (vanilla's distance test kept), not only in render. */
+    @Override
+    public boolean shouldRender(T be, net.minecraft.world.phys.Vec3 cam) {
+        return super.shouldRender(be, cam) && !BlockEntityCull.outside(getRenderBoundingBox(be));
+    }
+
     @Override
     public int getViewDistance() {
         // M66.5: like the tank's details (was 96: every hose and jet of the rows far behind was built every frame)

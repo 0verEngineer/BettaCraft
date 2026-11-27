@@ -173,7 +173,8 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
         double dy = Math.max(0, Math.max(mn.getY() - cam.y, cam.y - (mx.getY() + 1)));
         double dz = Math.max(0, Math.max(mn.getZ() - cam.z, cam.z - (mx.getZ() + 1)));
         double d = getViewDistance();
-        return dx * dx + dy * dy + dz * dz < d * d;
+        // Port (26.x): the view test here too, so that a tank out of view is not even extracted and submitted this frame
+        return dx * dx + dy * dy + dz * dz < d * d && !BlockEntityCull.outside(getRenderBoundingBox(be));
     }
 
     @Override
