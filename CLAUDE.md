@@ -100,7 +100,8 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 
 - **Dev clients are silent** (M54, `BackgroundSoundMixin`): every `runClient` / `runFabricClient` / `prodFabricClient`, all
   `-Psmoketest*` and `-Pbackground` runs and the multiplayer test clients play no sound (the volumes read 0, the saved options
-  are not changed); `-Psound` to hear a dev client. M54 client smoke `-Psmoketestm54` (`-Pm54parts=world,actions,tank,critters`):
+  are not changed); `-Psound` to hear a dev client. M67.5: they also run without VSync (`BackgroundVsyncMixin`, the saved option
+  stays; `-Pvsync` to keep it). M54 client smoke `-Psmoketestm54` (`-Pm54parts=world,actions,tank,critters`):
   the movement of the animals as frame sequences.
 - M53 client smoke `-Psmoketestm53` (both loaders, `runClient` / `runFabricClient`; `-Pm53parts=render,users,maps,interior,animals,critters`):
   users tab, gear + client config, waypoints in every map mod, interior brightness check (the 26.x black interior), every
