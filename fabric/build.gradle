@@ -1024,3 +1024,57 @@ tasks.register('fabricCrossLoadTest') {
         logger.lifecycle('fabricCrossLoadTest PASSED')
     }
 }
+
+// gradlew fabricUpgradeTest [-PupgradeWorld=<name>] : the upgrade test on Fabric. A reference world of an older Minecraft version
+// (tools/upgrade/references.json "crossVersion", default the first: a 1.21.1 world; built in the NeoForge run's saves when
+// missing, like smoketestUpgrade does) is copied to <fabricRunRoot>/upgrade/world and loaded by a dedicated Fabric server twice
+// (DevSmokeUpgrade stage 1: everything of the old version's manifest is there, tank interiors included; stage 2: saved and
+// loaded again). Never the original world. Logs: build/upgrade-fabric/stage{1,2}.log.
+tasks.register('fabricUpgradeTest') {
+    group = 'verification'
+    notCompatibleWithConfigurationCache('starts the game processes of the run task')
+    dependsOn 'classes', 'devClasses', 'processDevResources', 'configureLaunch'
+    doLast {
+        def nf = project(':neoforge')
+        def worldName = (project.findProperty('upgradeWorld') ?: nf.ext.crossVersionReferences().find()).toString()
+        if (worldName == null || worldName == 'null') throw new GradleException('fabricUpgradeTest: tools/upgrade/references.json names no crossVersion world (or give -PupgradeWorld)')
+        def saves = rootProject.file((project.findProperty('runDir') ?: fabricRunRoot.replaceAll('/fabric$', '')) + '/saves')
+        nf.ext.ensureReferenceWorld(worldName, saves)
+        def src = new File(saves, worldName)
+        def srv = tasks.named('runFabricServer').get()
+        def java = srv.javaLauncher.get().executablePath.asFile.absolutePath
+        def logs = rootProject.file('build/upgrade-fabric')
+        logs.deleteDir(); logs.mkdirs()
+        def dir = rootProject.file("${fabricRunRoot}/upgrade")
+        def world = new File(dir, 'world')
+        fabricDeleteWorlds('before the run', [world])
+        dir.mkdirs()
+        java.nio.file.Files.walk(src.toPath()).forEach { from ->
+            def to = world.toPath().resolve(src.toPath().relativize(from))
+            if (java.nio.file.Files.isDirectory(from)) java.nio.file.Files.createDirectories(to)
+            else if (from.fileName.toString() != 'session.lock') java.nio.file.Files.copy(from, to)
+        }
+        new File(dir, 'eula.txt').text = 'eula=true\n'
+        new File(dir, 'server.properties').text = ['online-mode=false', 'spawn-protection=0', 'spawn-animals=true', 'spawn-npcs=true', 'max-players=1',
+                "server-port=${fabricDevPort}".toString(), 'max-tick-time=-1'].join(System.lineSeparator()) + System.lineSeparator()
+        fabricCheckServerPort(dir, 'fabricUpgradeTest')
+        // a world of an older Minecraft version: game rules of mods that are not loaded (1.21.1 kept every rule as text) are dropped
+        def allowed = [~/Missing translations/, ~/Mismatch in destroy block pos/, ~/Ambiguity between arguments/, ~/Failed to parse saved data for 'SavedDataType.minecraft:game_rules/]
+        for (stage in [1, 2]) {
+            def cmd = [java] + srv.allJvmArgs.findAll { !it.startsWith('-Dbettacraft.') && !it.startsWith('@') } + ['-Xmx8G', "-Dbettacraft.smoketest.upgrade=${stage}".toString(),
+                    '-cp', srv.classpath.asPath, srv.mainClass.get()] + srv.args
+            def log = new File(logs, "stage${stage}.log")
+            def p = new ProcessBuilder(cmd).directory(dir).redirectErrorStream(true).redirectOutput(log).start()
+            logger.lifecycle("fabricUpgradeTest stage ${stage} (${worldName}): server started (pid ${p.pid()}), log ${log}")
+            if (!p.waitFor(20, java.util.concurrent.TimeUnit.MINUTES)) { p.destroyForcibly(); throw new GradleException("fabricUpgradeTest: stage ${stage} timeout, see ${log}") }
+            def text = log.text
+            text.readLines().findAll { it.contains('[smoketest] upgrade') || it.contains('UPGRADE STAGE') }.each { logger.lifecycle("  ${it}") }
+            def errors = text.readLines().findAll { (it.contains('/ERROR]') || it ==~ /^(Caused by:|java\.|net\.minecraft|org\.overengineer).*/) && !allowed.any { a -> it =~ a } }
+            errors.take(20).each { logger.lifecycle("  LOG: ${it}") }
+            if (!text.contains("UPGRADE STAGE ${stage} PASSED")) throw new GradleException("fabricUpgradeTest: stage ${stage} failed, see ${log}")
+            if (!errors.isEmpty()) throw new GradleException("fabricUpgradeTest: ${errors.size()} error line(s) in ${log}")
+        }
+        if (!fabricKeepWorld) fabricDeleteWorlds('after the run', [world])
+        logger.lifecycle("fabricUpgradeTest PASSED (${worldName})")
+    }
+}
