@@ -1211,32 +1211,30 @@ final class DevClientWorldTour {
         strollLastClientTick = System.nanoTime();
         // the loaded chunks of every level (the server ticks them all), the block entities ticking there and the entities
         server(p -> {
-            for (ServerLevel l : p.getServer().getAllLevels()) {
+            for (ServerLevel l : p.level().getServer().getAllLevels()) {
                 int entities = 0;
                 for (var e : l.getAllEntities()) entities++;
-                LOGGER.info("[smoketest] world tour stroll: level {}: {} chunks loaded, {} entities, tickets {}", l.dimension().location(), l.getChunkSource().getLoadedChunksCount(), entities, tickets(l));
+                LOGGER.info("[smoketest] world tour stroll: level {}: {} chunks loaded, {} entities, tickets {}", l.dimension().identifier(), l.getChunkSource().getLoadedChunksCount(), entities, tickets(l));
             }
         });
     }
 
-    /** M66.5: the chunk tickets of a level by type (by reflection: the distance manager keeps them private). */
+    /**
+     * M66.5: the chunk tickets of a level by type (by reflection: kept private). Port: 1.21.5+ keeps them in the level's
+     * ticket storage (saved data), as lists per chunk.
+     */
     private static String tickets(ServerLevel l) {
         try {
-            Object dm = null;
-            for (var f : net.minecraft.server.level.ChunkMap.class.getDeclaredFields()) {
-                if (!net.minecraft.server.level.DistanceManager.class.isAssignableFrom(f.getType())) continue;
-                f.setAccessible(true);
-                dm = f.get(l.getChunkSource().chunkMap);
-            }
-            if (dm == null) return "?";
             java.util.Map<String, Integer> byType = new java.util.TreeMap<>();
-            for (var f : net.minecraft.server.level.DistanceManager.class.getDeclaredFields()) {
+            Object storage = l.getDataStorage().get(net.minecraft.world.level.TicketStorage.TYPE);
+            if (storage == null) return "?";
+            for (var f : net.minecraft.world.level.TicketStorage.class.getDeclaredFields()) {
                 if (!it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap.class.isAssignableFrom(f.getType())) continue;
                 f.setAccessible(true);
-                Object map = f.get(dm);
+                Object map = f.get(storage);
                 for (Object set : ((it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<?>) map).values()) {
                     if (!(set instanceof Iterable<?> it)) continue;
-                    for (Object t : it) if (t instanceof net.minecraft.server.level.Ticket<?> tk) byType.merge(tk.getType().toString(), 1, Integer::sum);
+                    for (Object t : it) if (t instanceof net.minecraft.server.level.Ticket tk) byType.merge(tk.getType().toString(), 1, Integer::sum);
                 }
                 if (!byType.isEmpty()) break;
             }
