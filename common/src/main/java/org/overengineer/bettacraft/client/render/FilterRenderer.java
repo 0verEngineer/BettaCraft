@@ -48,8 +48,9 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
         if (level == null) return;
         if (BlockEntityCull.outside(getRenderBoundingBox(be))) return; // M66.5: Sodium draws the global list without a view test
         if (be instanceof CabinetBlockEntity drive) DriveRender.cabinetCoupling(drive, ps, buffers, light); // M41: the flange of the Create shaft
-        // M29.1: the air pump in the cabinet: its hose beside the filter hose (also without a filter)
-        if (be instanceof CabinetBlockEntity cab && cab.hasAirPump()) AirHoseRenderer.renderCabinet(cab, ps, buffers);
+        // M29.1: the air pump in the cabinet: its hose beside the filter hose. M67.5: only with a filter in the cabinet (alone it
+        // looked like the hose of a filter that is not there; the air stones bubble without it)
+        if (be instanceof CabinetBlockEntity cab && cab.hasAirPump() && cab.hasFilter()) AirHoseRenderer.renderCabinet(cab, ps, buffers);
         FilterFlow.Path p = path(level, be);
         if (p == null) return;
         BlockPos pos = be.getBlockPos();
