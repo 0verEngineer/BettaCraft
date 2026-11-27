@@ -78,15 +78,16 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   `render.tankDetailDistance` (48) blocks away, but that was measured from the controller block at one corner of the tank: on a large tank
   they vanished with its near end only about 20 blocks away and came back a step closer. The distance is now measured to the nearest point of the tank.
 - **Frame rate in worlds with many or large tanks:** every block of every tank was in the list of block entities drawn every frame, in view
-  or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. Now only the
-  controllers are.
+  or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. On Minecraft
+  26.x a renderer can no longer say this per block, so every tank block stays in that list; the blocks that are no controller are turned
+  away at the first test, before anything is built for them.
 - **Frame rate with Sodium and shader packs (M66.5):** Sodium draws the always-drawn block entities without testing them against the view, so
   every filter hose and water jet within 96 blocks and the small animals, floating plants and nests of every tank within 48 blocks were built
   every frame, also behind the camera (a third of the render thread in the showcase). Our renderers now test their box against the camera
   view themselves (not in a shader pack's shadow pass); filter hoses and jets are drawn up to `render.tankDetailDistance` (48) like the
   other tank details; the boxes of cabinets, filters and tanks are worked out once a second instead of every frame (finding a cabinet's
-  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks: Sodium 206 -> 285 fps, Complementary Reimagined
-  88 -> 122 fps.
+  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks (measured on 1.21.1): Sodium 206 -> 285 fps,
+  Complementary Reimagined 88 -> 122 fps. On 26.x a tank or filter out of view is not even prepared for drawing that frame.
 - **Server tick with many large fish:** the path finding of the large tankmates looked at the same cells many times per search; each cell
   is looked at once per search now (the path finding took about a third less of the server tick in the showcase).
 - **Filters and young animals:** a motor filter without an intake sponge sucks in young shrimp and the tadpoles of the dwarf clawed frogs too
@@ -94,8 +95,12 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
 - **Multiblock filter, fresh water 0 mB:** the menu counted only the water in the fresh water ports; a reservoir at the end of the fresh
   water line and a water source block at a port (tap water) were not shown. It adds the water at the line ends now ("tap water, unlimited"
   for a source).
+- **Tank menu, scrolling text tabs (26.x):** the scroll area is clipped in the menu's own coordinates (Minecraft 26.x moves the clip box
+  with the drawing position; it would have been shifted twice).
 - **Aquarist, tank list:** without a workplace he cares for no tank, but the list still showed the tanks around him as ones he works at
   ("0 of at most 16 tanks" over a list of them). The list shows the tanks around his workplace only.
+- Development: the world tour switch `-PtourAlgaeMode=nodepth` (the old film without depth writes, a proof of the cause) draws the normal
+  film on Minecraft 26.x (render types are built from render pipelines there); `-PtourAlgaeMode=off` works.
 
 ## [1.54.0-beta.1] - 2026-11-25
 
