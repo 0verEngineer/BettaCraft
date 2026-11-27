@@ -66,6 +66,8 @@ public class TankBakedModel implements DynamicModel {
     public static final ModelKey<Boolean> WATER_SMOOTH = new ModelKey<>("tank_water_smooth");
     /** M65: the glass bulkheads of the pipes joined to this block ({@link TankFlanges#mask}); absent = none. */
     public static final ModelKey<Integer> FLANGES = new ModelKey<>("tank_flanges");
+    /** M66 v6: the algae film of the block ({@link AlgaeFilm#at}) plus its position modulo {@link AlgaeFilm#TILE} in bits 32..37 (the film's texture runs over several blocks). */
+    public static final ModelKey<Long> FILM = new ModelKey<>("tank_algae_film");
 
     private final TextureAtlasSprite edge;
     /** M21.8: the faint glass of the clear glass tank's item icon (the placed block has no glass quads). */
@@ -83,6 +85,9 @@ public class TankBakedModel implements DynamicModel {
     private static final int GAP_SHIFT = 24;
     /** Water quads drawn by the model while a shader pack is in use, by (fill, connection mask, water above, gaps). */
     private final Map<Long, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
+    /** M66 v6: the water quads with algae film quads, by (water key, film). */
+    private record FilmKey(long water, long film) {}
+    private final Map<FilmKey, List<BakedQuad>> filmCache = new ConcurrentHashMap<>();
     /** Connected / cut glass quads: original quad -> (hidden slots, water behind it) -> the pieces. */
     private final Map<BakedQuad, Map<Integer, BakedQuad[]>> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
@@ -236,6 +241,8 @@ public class TankBakedModel implements DynamicModel {
         int flanges = TankFlanges.mask(level, pos, state);
         if (concave == 0 && corners == 0 && light == 0 && !water && flanges == 0) return modelData;
         var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
+        int film = water && !waterInModel(modelData) ? AlgaeFilm.at(pos) : 0; // a contraption has its own film (AlgaeRenderer)
+        if (film != 0) b.with(FILM, (film & 0xFFFFFFFFL) | (long) ((pos.getX() & 3) | (pos.getY() & 3) << 2 | (pos.getZ() & 3) << 4) << 32);
         if (flanges != 0) b.with(FLANGES, flanges);
         if (light != 0) b.with(LIGHT, light);
         if (water) b.with(WATER_SMOOTH, true);
@@ -262,15 +269,49 @@ public class TankBakedModel implements DynamicModel {
         long key = (state.getValue(TankBlock.FILL) | TankBlock.connectionMask(state) << 5 | (above ? 1 << 11 : 0) | gaps << 12)
                 | (long) light << 16 | (light == 0 ? 0L : (long) Math.round(TankLightTint.strength() * 100) << 48) // M20: the salt byte reaches bit 46
                 | (TankWaterGeometry.oldSideInsetForTest ? 1L << 62 : 0L); // M65: the guard's old way
-        List<BakedQuad> plain = waterCache.computeIfAbsent(key, k -> {
-            var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
+        Long fd = data.get(FILM);
+        long film = fd == null || TankWaterRenderer.m10Look ? 0 : fd;
+        java.util.function.Function<Long, List<BakedQuad>> build = k -> {
+            var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
+            // only the position modulo AlgaeFilm.TILE matters for the film's texture
+            int par = (int) (film >>> 32);
+            net.minecraft.core.BlockPos parity = new net.minecraft.core.BlockPos(par & 3, par >> 2 & 3, par >> 4 & 3);
             List<BakedQuad> list = new ArrayList<>();
-            TankWaterRenderer.faces(state, above, gaps, light, (d, c, col, rev) ->
-                    list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite)));
+            TankWaterRenderer.faces(state, above, gaps, light, (int) film, new TankWaterRenderer.FaceSink() {
+                @Override
+                public void face(Direction d, float[] c, int col, boolean rev) {
+                    list.add(bakeWater(d, c, col, rev, d.getAxis() == Direction.Axis.Y ? still : sideSprite));
+                }
+
+                @Override
+                public void film(Direction d, float[] c, int lvl, boolean rev) {
+                    list.add(bakeFilm(d, c, rev, atlas.apply(AlgaeFilm.SPRITES[lvl]), parity));
+                }
+            });
             return List.copyOf(list);
-        });
-        return plain;
+        };
+        List<BakedQuad> plain = film == 0 ? waterCache.computeIfAbsent(key, build) : filmCache.computeIfAbsent(new FilmKey(key, film), k -> build.apply(key));
+        Long corners = data.get(WATER_LIGHT);
+        return corners == null ? plain : lit(plain, corners);
+    }
+
+    /**
+     * M63: copies of the water quads with the light of their corners in the vertices ({@link TankWaterLight}); the chunk
+     * renderer keeps the brighter of that and the block's own light, which the corner light always is.
+     */
+    private static List<BakedQuad> lit(List<BakedQuad> quads, long corners) {
+        List<BakedQuad> out = new ArrayList<>(quads.size());
+        for (BakedQuad q : quads) {
+            int[] v = q.getVertices().clone();
+            int stride = v.length / 4;
+            for (int i = 0; i < 4; i++) {
+                int o = i * stride;
+                v[o + 6] = TankWaterLight.at(corners, Float.intBitsToFloat(v[o]), Float.intBitsToFloat(v[o + 1]), Float.intBitsToFloat(v[o + 2]));
+            }
+            out.add(ClientPlatform.get().quad(v, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade(), false));
+        }
+        return out;
     }
 
     private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
@@ -283,6 +324,18 @@ public class TankBakedModel implements DynamicModel {
             int i = reversed ? 3 - k : k;
             float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
             q.vertex(x, y, z, argb, sprite.getU(BoxFaces.u(d, x, y, z)), sprite.getV(BoxFaces.v(d, x, y, z)), nx, ny, nz);
+        }
+        return q.bake();
+    }
+
+    /** M66 v6: one algae film quad (see {@link AlgaeFilm}), white: its density is the texture's alpha. */
+    private static BakedQuad bakeFilm(Direction d, float[] c, boolean reversed, TextureAtlasSprite sprite, net.minecraft.core.BlockPos parity) {
+        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1);
+        float nx = reversed ? -d.getStepX() : d.getStepX(), nz = reversed ? -d.getStepZ() : d.getStepZ();
+        for (int k = 0; k < 4; k++) {
+            int i = reversed ? 3 - k : k;
+            float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
+            q.vertex(x, y, z, 0xFFFFFFFF, sprite.getU(AlgaeFilm.u(d, parity, x, y, z)), sprite.getV(AlgaeFilm.v(parity, y)), nx, 0, nz);
         }
         return q.bake();
     }

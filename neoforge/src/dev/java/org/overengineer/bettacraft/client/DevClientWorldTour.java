@@ -205,8 +205,8 @@ final class DevClientWorldTour {
         out = new File(mc.gameDirectory, "tour/" + TAG);
         then(40, () -> {
             mc.options.hideGui = true;
-            // M66 v6: -PtourAlgaeMode=nodepth|off: the proof switches of the algae film (AlgaeRenderer.testMode)
-            org.overengineer.bettacraft.client.render.AlgaeRenderer.testMode = System.getProperty("bettacraft.tour.algaemode", "");
+            // M66 v6: -PtourAlgaeMode=off: no algae film drawn (the algae stay in the data): frame times with and without it
+            if ("off".equals(System.getProperty("bettacraft.tour.algaemode"))) org.overengineer.bettacraft.client.tank.AlgaeFilm.hiddenForTest = true;
             if (VIEWS.contains("perf")) { // M66: frame times need the frame rate uncapped
                 mc.options.framerateLimit().set(260);
                 mc.options.enableVsync().set(false);
@@ -265,6 +265,7 @@ final class DevClientWorldTour {
                                 java.util.Random rnd = new java.util.Random(7);
                                 for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) if (algaeWall(t, f.dir())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());
                             }
+                            org.overengineer.bettacraft.client.tank.AlgaeFilm.update(be); // M66 v6: the film is in the chunk mesh
                         }
                     }
                 });
