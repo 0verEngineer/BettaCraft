@@ -219,6 +219,7 @@ public final class Winding {
         }
         w.onWound();
         org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WOUND); // M45
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.TANK_CRANKED); // M67
         int pct = org.overengineer.bettacraft.tank.TankStore.percent(c);
         float pitch = 0.7F + 0.5F * pct / 100F;
         if (ModSounds.devices()) level.playSound(null, at, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);

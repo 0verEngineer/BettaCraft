@@ -14,45 +14,57 @@ item_ids:
 
 ![Die Kurbel zieht einen Unterschrank unter einem Aquarium auf](../images/crank.png)
 
-Die Kurbel zieht Geräte mit einer **Feder** auf. Rechtsklicke das Gerät mit der Kurbel in der Hand: jeder Klick zieht
-ein Stück auf und die Ratsche klickt etwas höher. **Taste halten** zieht weiter auf: eine **Ladung** (ein Spieltag
-Arbeit eines Geräts) dauert etwa **fünf Sekunden**. Die Aktionsleiste zeigt, wie weit die Feder aufgezogen ist.
+Die Kurbel zieht Geräte mit einer **Feder** auf, und sie lädt den **Energiespeicher eines Beckens**. Mit der Kurbel in der
+Hand rechtsklicken: jeder Klick zieht einen Schritt auf, und die Ratsche klickt etwas höher. **Taste halten**, um weiter
+aufzuziehen (etwa fünf Klicks pro Sekunde). Die Aktionsleiste zeigt, wie weit es aufgezogen ist.
 
-## Welche Geräte die Kurbel nehmen
+## Ein Becken: Unterschrank und Außenfilter
 
-**Ohne Strom-Optionen** brauchen sie nur zwei Maschinen: sie haben keinen anderen Antrieb.
+Die Kurbel an einem [Unterschrank](cabinet.md) unter einem Becken oder an einem angeschlossenen [Außenfilter](filters.md)
+lädt den **einen Energiespeicher** des Beckens (siehe [Strom](power.md)), denselben Speicher, den FE-Kabel laden. Alle
+Geräte des Beckens laufen damit: Filter, Heizer und Kühler, Heizmatten, Lichter, Luftpumpen, Sprühanlagen.
 
-* [Futtermaschine](../food/food_maker.md) und [Düngermaschine](../plants/fertilizer_maker.md): eine volle Feder arbeitet einen Tag.
-* Alle anderen Geräte laufen einfach, ohne Strom und ohne Aufziehen.
+* Jeder Klick gibt **6.500 FE** in den Speicher (`power.crankFePerClick`). Etwa **100 Klicks, 20 Sekunden** Halten,
+  betreiben ein mittleres Becken (2 x 2 x 2 mit Filter, Licht und Heizer) **einen Spieltag** auf `power.costs` `EASY`; auf
+  `HARD` dauert dasselbe dreimal so lange, und der Speicher reicht ein Drittel Tag.
+* Die Aktionsleiste zeigt den Speicher in Prozent, sein FE und wie viele Stunden er beim Verbrauch des Beckens reicht.
+  Ist er voll, sagt sie es.
+* Ein Schrank, der unter keinem Becken steht (und an keine Schränke eines Beckens angebaut ist), und ein Filter, der an
+  keinem Becken hängt, haben nichts zu laden.
+* Mit `power.costs` `OFF` braucht kein Gerät Strom, und die Kurbel hat dort nichts zu tun.
 
-**Mit einer Strom-Option** (siehe [Strom](power.md)) lässt sich jedes Gerät, das FE braucht, stattdessen auch aufziehen
-(`features.power.winding`): so hältst du ein Aquarium ganz ohne Stromerzeuger.
+## Geräte mit eigener Feder
 
-| Gerät | Strom-Option | Feder |
-|---|---|---|
-| [Futtermaschine](../food/food_maker.md), [Düngermaschine](../plants/fertilizer_maker.md) | jede | 1 Ladung; erst FE, dann die Feder |
-| [Außenfilter](filters.md) | `power.filterRequiresEnergy` oder `heaterRequiresEnergy` | 1 Ladung; treibt auch die Heizer und Kühler darin an |
-| [Multiblock-Filter](multiblock_filter.md) (an jedem Teil aufziehen) | `pipes.pumpsRequireEnergy` | 6 Ladungen, sechsmal so langes Aufziehen |
-| [Unterschrank](cabinet.md) unter einem Aquarium | jede `power.*`-Option | 6 Ladungen für **alle Geräte seines Aquariums** |
-| [Osmoseanlage](reverse_osmosis.md) | jede | 1 Ladung für die Druckpumpe (viermal so viel Wasser) |
-| [Wasserwechsel-Steuerung](water_change.md), [Wasserpumpe](pipes.md) | `pipes.pumpsRequireEnergy` | 1 Ladung: ein Tag Pumpenarbeit |
+**Mit `power.costs` `OFF`** brauchen sie nur zwei Maschinen: sie haben keinen anderen Antrieb.
 
-Innen- und Eckfilter, Lichter, Futterautomat, Dosierer, Sprühanlagen und Heizmatten haben keine eigene Feder: zieh den
-**Unterschrank** unter dem Aquarium auf. Er speichert das Aufziehen und gibt es an alle Geräte seines Aquariums, die FE
-brauchen: seinen Filter und seine Luftpumpe, Außen- und Innenfilter, Heizer und Kühler, Heizmatten, Sprühanlagen, Lichter
-und Luftpumpen. Jedes arbeitende Gerät verbraucht pro Tick einen Geräte-Tick, also **je mehr Geräte, desto schneller ist
-er leer**: ein Filter läuft mit einem vollen Schrank sechs Tage, sechs Geräte einen Tag. Mehrere Schränke unter einem
-Becken teilen sich **einen Speicher**, der mit jedem Schrankblock wächst, und ein Klick an einem beliebigen zieht ihn auf
-(siehe [Schrank](cabinet.md)).
+* [Futtermaschine](../food/food_maker.md) und [Düngermaschine](../plants/fertilizer_maker.md): eine volle Feder arbeitet
+  einen Tag.
+* Jedes andere Gerät läuft einfach, ohne Strom und ohne Aufziehen.
 
-* **FE geht immer vor.** Die Feder läuft nur, solange FE fehlt; Akku und Feder ergänzen sich.
-* Eine Feder läuft nur, solange ihr Chunk geladen ist; Zeit in nicht geladenen Chunks zählt nicht.
-* Ohne FE und ohne aufgezogene Feder reinigt ein Filter nicht, die Tiere leben aber weiter (wie immer ohne Strom).
-* Das Fenster des [Außenfilters](filters.md), des Unterschranks und der Maschinen zeigt die Feder als Messinganzeige; auch
-  Jade, The One Probe und WTHIT zeigen sie. Der Tab **Wasser** sagt, wie viele Geräte die Federn gerade antreiben.
+**Mit `power.costs` `EASY` oder `HARD`** lassen sich die Geräte ohne Becken statt mit FE aufziehen
+(`features.power.winding`):
 
-Die Einstellungen stehen in der Server-Config unter `winding`: `ticksPerCharge` (24000), `clicksPerCharge` (25) und die
-Ladungen jedes Geräts (`externalFilterCharges` 1, `multiblockFilterCharges` 6, `cabinetCharges` 6, ...).
+| Gerät | Feder |
+|---|---|
+| [Futtermaschine](../food/food_maker.md), [Düngermaschine](../plants/fertilizer_maker.md) | 1 Ladung; erst FE, dann die Feder |
+| [Multiblock-Filter](multiblock_filter.md) (an jedem Teil aufziehen) | 6 Ladungen, sechsmal so lange zum Aufziehen |
+| [Osmoseanlage](reverse_osmosis.md) | 1 Ladung für die Druckpumpe (viermal so viel Wasser) |
+| [Wasserwechsel-Steuerung](water_change.md), [Wasserpumpe](pipes.md) | 1 Ladung: ein Tag Arbeit einer Pumpe |
+
+Eine Ladung ist ein Spieltag Arbeit eines Geräts und braucht etwa fünf Sekunden Aufziehen.
+
+* **FE geht immer vor.** Eine Feder läuft nur, solange FE fehlt, so sichern sich Akku und Feder gegenseitig ab.
+* Eine Feder läuft nur in geladenen Chunks ab; Zeit in nicht geladenen Chunks zählt nicht.
+* Die Fenster der Maschinen zeigen die Feder als Messinganzeige; Jade, The One Probe und WTHIT zeigen sie auch (an einem
+  Unterschrank oder Außenfilter: den Speicher des Beckens).
+
+**Ältere Welten:** Federn, die Unterschränke und Außenfilter früher aufgezogen hatten, werden beim ersten Lauf des Beckens
+zu FE in seinem Speicher (10 FE für jeden Tick Arbeit eines Geräts, den sie hielten), auch über die Kapazität des
+Speichers hinaus: nichts geht verloren.
+
+Die Einstellungen stehen in der Server-Config: `power.crankFePerClick` (6500) für die Becken, und im Abschnitt `winding`
+`ticksPerCharge` (24000), `clicksPerCharge` (25) und die Ladungen jedes Geräts (`multiblockFilterCharges` 6, ...). Der
+Schalter `features.power.tankCrank` schaltet die Kurbel an Becken ab (dann lädt sie nur FE).
 
 ## Bezug
 

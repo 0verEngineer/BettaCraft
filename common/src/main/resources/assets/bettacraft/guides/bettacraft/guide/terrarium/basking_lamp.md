@@ -16,7 +16,7 @@ item_ids:
 
 The <ItemLink id="bettacraft:basking_lamp" /> is a heat and UV lamp in a reflector dome. Put it on a **top block** of the
 tank (or hang it under a ceiling block right above it). It is a light like the [aquarium lights](../equipment/light.md):
-light 15, the tank's **dimmer and daylight timer**, redstone switches it off, and with `power.lightRequiresEnergy` it
+light 15, the tank's **dimmer and daylight timer**, redstone switches it off, and with power costs (`power.costs` `EASY` or `HARD`) it
 needs the tank's FE.
 
 On a [terrarium or paludarium](../terrarium.md), while it is lit:

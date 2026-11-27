@@ -1,0 +1,30 @@
+{
+  "parent": "bettacraft:wound_up",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "tank_cranked"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.bettacraft.tank_cranked.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "bettacraft:cabinet"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.tank_cranked.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

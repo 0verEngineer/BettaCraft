@@ -38,7 +38,7 @@ blocks), less the dirtier the medium is, times the power regulator. Clogged spon
 
 Right-click the pump head (or a chamber with an empty hand): the filter's screen with its size, problems, the aquarium
 it cleans, the flow and every chamber's medium with its dirt. Sneak + mouse wheel: [power regulator](regulator.md).
-With `pipes.pumpsRequireEnergy` the pump head needs FE. A [level sensor](top_off.md) can sit at the filter too.
+With power costs (`power.costs` `EASY` or `HARD`) the pump head needs FE. A [level sensor](top_off.md) can sit at the filter too.
 
 **Under the aquarium:** the filter may also stand directly under its aquarium, like a cabinet filter: chambers on the
 floor, the inlet and the outlet on top of them with their sockets facing up into the aquarium's floor (or chambers

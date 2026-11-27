@@ -278,11 +278,13 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   block.
 - **Water chemistry:** TDS, pH and hardness from water, substrate (active soil), driftwood, leaves and CO2, with a range
   for every animal; CO2 cylinders and bio CO2, a reverse osmosis unit, and RO and sea water as fluids for other mods.
-- **Power, your choice:** by default nothing needs energy. Optional Forge Energy (Team Reborn Energy on Fabric) for the
-  equipment, a power regulator, own procedural sounds. No generator? A **crank** winds the filters, the water devices and
-  the cabinet under a tank, which then powers every device of its tank; all cabinets under a tank share one spring store
-  (also two that do not touch), one crank at any of them winds it. With **Create** a drive adapter on the tank (or a
-  shaft on its cabinet) powers every device of the tank from rotation, with real stress.
+- **Power, your choice:** by default nothing needs energy; one setting, `power.costs` (OFF / EASY / HARD), says what the
+  devices cost. Every tank has **one energy store** for all its devices, charged by Forge Energy (Team Reborn Energy on
+  Fabric) at any tank block, filter, cabinet or light; it grows with the tank's water blocks and the cabinets under it. A
+  power regulator, own procedural sounds. No generator? The **crank** at a cabinet or the external filter charges the
+  tank's store (about 20 seconds for a day of a medium tank on EASY), and it winds the springs of the water devices and
+  machines. With **Create** a drive adapter on the tank (or a shaft on its cabinet) charges the store from rotation,
+  with real stress.
 - **Tanks on the road** (Create, NeoForge 1.21.1): on Create contraptions, carts and trains the care goes on with the
   tank's data (hunger, temperature, water quality, the filters and heaters that travel along, powered by the tank's buffer,
   a drive adapter that turns with the trip or FE batteries of the contraption); on Create Aeronautics airships the animals

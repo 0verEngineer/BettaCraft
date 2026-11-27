@@ -28,7 +28,7 @@ gives any hardness you want.
   **water source block next to it** (endless, like a tap).
 * **It simply runs**, without power and without water pressure, slowly: 1 mB of RO water per tick
   (`osmosis.roRate`).
-* **With a [power option](power.md) on and FE** its pressure pump makes it **four times faster** (`roPumpBoost`,
+* **With [power costs](power.md) on and FE** its pressure pump makes it **four times faster** (`roPumpBoost`,
   `roPumpFe` 20 FE/t). Without FE it keeps running at the slow rate.
 * **Yield**: for each part of RO water three parts of **waste water** leave (`roWastePerPart`). It goes into a pipe or
   a tank of another mod **below** the unit, otherwise down the drain.

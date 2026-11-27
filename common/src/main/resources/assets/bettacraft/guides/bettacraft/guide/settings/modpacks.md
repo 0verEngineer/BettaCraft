@@ -41,7 +41,7 @@ branches from the first tank:
 10. **Technology:** the cabinet, coolers, aeration, sponge filters, LED lights and the daylight timer, the power
     regulator, pipes, stainless steel, bulkheads, the water change controller, the top-off, the multiblock filter with
     filter lines, ports and pipe covers, a filter for two tanks.
-11. **Optional:** with a power option on, energy in a tank and the crank; with Create, the drive adapter and a travelling
+11. **Optional:** with power costs on, energy in a tank and the crank; with Create, the drive adapter and a travelling
     tank.
 
 The tasks are Bettacraft [advancements](../progress.md) and items, the rewards some experience and small items: plant

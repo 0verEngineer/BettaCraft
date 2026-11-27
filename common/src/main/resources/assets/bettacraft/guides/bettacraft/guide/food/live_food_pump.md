@@ -31,7 +31,7 @@ Right-click opens its window:
 A tank only takes the suspension when somebody there eats that food (adult bettas no artemia nauplii, for example); then
 the pump keeps the food in the breeder. A dose that cannot go out waits until the next one, it never piles up. The empty
 bottle of a bottled food (artemia nauplii) goes back into the hatchery, which needs it for the next batch. A redstone
-signal pauses the pump; with `pipes.pumpsRequireEnergy` each portion needs FE (`liveFood.pumpFePerPortion`).
+signal pauses the pump; with power costs (`power.costs` `EASY` or `HARD`) each portion needs FE (`liveFood.pumpFePerPortion`).
 Other mods' tanks and storage (AE2, Refined Storage) keep the suspension like any fluid.
 
 ## Obtaining

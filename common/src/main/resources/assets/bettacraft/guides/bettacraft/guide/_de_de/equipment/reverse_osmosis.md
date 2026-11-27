@@ -27,7 +27,7 @@ gemischt ergibt es jede gewünschte Härte.
 * **Wasser hinein**: über Rohre an jeder Seite, einen Wassereimer (oder Meerwasser: Die Membran hält das Salz zurück)
   oder einen **Wasserquellblock daneben** (endlos, wie ein Wasserhahn).
 * **Sie läuft einfach**, ohne Strom und ohne Wasserdruck, langsam: 1 mB Osmosewasser pro Tick (`osmosis.roRate`).
-* **Mit einer [Strom-Option](power.md) und FE** macht ihre Druckpumpe sie **viermal schneller** (`roPumpBoost`,
+* **Mit [Stromkosten](power.md) und FE** macht ihre Druckpumpe sie **viermal schneller** (`roPumpBoost`,
   `roPumpFe` 20 FE/t). Ohne FE läuft sie langsam weiter.
 * **Ausbeute**: Für jeden Teil Osmosewasser fließen drei Teile **Abwasser** ab (`roWastePerPart`). Es geht in ein Rohr
   oder einen Tank einer anderen Mod **unter** der Anlage, sonst in den Abfluss.
