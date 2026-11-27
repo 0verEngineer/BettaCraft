@@ -54,7 +54,7 @@ navigation:
 | `osmosis.roRate`, `roPumpBoost`, `roPumpFe`, `roWastePerPart`, `roMembraneBuckets`, `roPrefilterBuckets` | 1, 4, 20, 3, 128, 32 | [Osmoseanlage](equipment/reverse_osmosis.md): mB pro Tick, wie viel schneller mit FE, FE pro Tick, Abwasser je Teil, Lebensdauer von Membran und Vorfilter |
 | `dosing.calciumPerMl`, `alkalinityPerMl`, `magnesiumPerMl`, `tracePerMl`, `magnesiumDropPerDay`, `traceUsePerDay`, `canisterMl`, `maxMlPerDay` | 2, 0.07, 4, 0.15, 1, 0.04, 500, 100 | [Dosierpumpe](saltwater/dosing_pump.md) und [Riffchemie](saltwater/reef_chemistry.md): was ein mL einem Wasserblock zugibt, Magnesiumverlust und Spurenelement-Verbrauch pro Tag, mL eines Kanisters, höchstens mL pro Tag eines Kanals |
 | `pipes.glassPipeRate`, `steelPipeRate`, `pumpRate` | 50, 250, 200 | [Rohre und Wasserpumpe](equipment/pipes.md) in mB pro Tick |
-| `pipes.pumpFePerTick` | 8 | FE von Wasserpumpen, Filter-Pumpenköpfen, Wasserwechsel-Steuerungen und Niveausensoren (mit `power.costs`) |
+| `pipes.pumpFePerTick` | 8 | FE von Wasserpumpen, Filter-Pumpenköpfen und Wasserwechsel-Steuerungen (mit `power.costs`) |
 | `crucible.meltTicks`, `fePerTick` | 200, 20 | [Schmelztiegel](equipment/crucible.md): Dauer eines Schmelzvorgangs, FE statt Brennstoff |
 | `multiblockFilter.spongeBlocks`, `ceramicBlocks`, `carbonBlocks`, `peatBlocks`, `dirtPerDay`, `maxChambers` | 12, 24, 16, 6, 0,04, 16 | [Multiblock-Filter](equipment/multiblock_filter.md): Wasserblöcke je Medium, wie schnell Medien verschmutzen, höchstens Kammern |
 | `power.costs` | OFF | [Strom](equipment/power.md): OFF (kein Gerät braucht FE), EASY (ein Drittel der FE-Werte), HARD (die FE-Werte) |

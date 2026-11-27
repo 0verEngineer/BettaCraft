@@ -31,7 +31,7 @@ läuft über einen Überlauf hinunter, eine Rücklaufpumpe bringt es wieder hoch
 | Filtermedien | zwei [Filtermedien](filter_media.md); sie setzen sich zu und werden ausgewaschen wie im Multiblock-Filter |
 | [Refugium](refugium.md) | Chaetomorpha und ein Beckenlicht: nimmt Nitrat auf |
 
-* **Geräte neben dem Unterschrank:** Ein [Niveausensor](top_off.md) oder eine [Dosierpumpe](../saltwater/dosing_pump.md)
+* **Geräte neben dem Unterschrank:** Ein [Niveausensor](level_sensor.md) oder eine [Dosierpumpe](../saltwater/dosing_pump.md)
   neben dem Unterschrank eines Technikbeckens versorgt das Becken darüber, ebenso ein
   [Kalkreaktor](../saltwater/calcium_reactor.md): Sie brauchen keinen Platz am Becken.
 * Das Beckenmenü bekommt den Tab **Sump**: das Wasser der Technikbecken, die Pumpe, die Kammern, das Refugium und die Geräte

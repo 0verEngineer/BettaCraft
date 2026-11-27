@@ -48,7 +48,7 @@ Trichter, Rohre anderer Mods und die Lager-Mods nutzen die Maschine ohne besonde
 allen Seiten in die Eingänge und nur das Futter kommt aus der Ausgabe. Ein **Export-Bus** oder Interface von **AE2** und
 ein **Import-Bus** oder der **Importer und Exporter von Refined Storage** befüllen und leeren sie; steht sie auf
 Automatisch, muss ein Verarbeitungsmuster nur die Zutaten hineinlegen. Der [Futterautomat](../equipment/feeder.md) und der
-[Vorratsbehälter](../equipment/top_off.md) funktionieren mit diesen Mods genauso.
+[Vorratsbehälter](../equipment/reservoir.md) funktionieren mit diesen Mods genauso.
 
 ## Bezug
 
