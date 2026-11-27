@@ -177,12 +177,9 @@ public final class DevShowcase {
         rules.getRule(GameRules.RULE_DO_TRADER_SPAWNING).set(false, server);
         level.setDayTime(6000);
         level.setWeatherParameters(120000, 0, false, false);
-        // M21.5: power off in this world (filters, heaters and pumps run without FE)
-        for (var v : List.of(org.overengineer.bettacraft.config.ServerConfig.POWER_HEATER, org.overengineer.bettacraft.config.ServerConfig.POWER_FILTER,
-                org.overengineer.bettacraft.config.ServerConfig.POWER_LIGHT)) {
-            v.set(false);
-            v.save();
-        }
+        // M21.5: power off in this world (filters, heaters and pumps run without FE); M67: power.costs OFF
+        org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.set(org.overengineer.bettacraft.config.ServerConfig.PowerCosts.OFF);
+        org.overengineer.bettacraft.config.ServerConfig.POWER_COSTS.save();
         BlockPos spawn = level.getSharedSpawnPos();
         int ground = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, spawn.getX(), spawn.getZ());
         origin = new BlockPos(spawn.getX() + 3, ground, spawn.getZ() + 6);

@@ -50,7 +50,8 @@ final class DevClientSmokeM62b {
     private int problems;
     private volatile BlockPos home;
     private volatile BlockPos big, square, ring, pair, below1, below2, unlinked, choice;
-    private boolean powerFilter, power, winding;
+    private ServerConfig.PowerCosts powerFilter;
+    private boolean power, winding;
     private String lang;
 
     DevClientSmokeM62b() {
@@ -110,10 +111,10 @@ final class DevClientSmokeM62b {
     private void setup(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
         lang = mc.options.languageCode;
-        powerFilter = ServerConfig.POWER_FILTER.get();
+        powerFilter = ServerConfig.POWER_COSTS.get();
         power = Features.own(Feature.POWER);
         winding = Features.own(Feature.WINDING);
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         Features.set(Feature.POWER, true);
         Features.set(Feature.WINDING, true);
         level.setDayTime(6000);
@@ -233,7 +234,7 @@ final class DevClientSmokeM62b {
     }
 
     private void restore() {
-        ServerConfig.POWER_FILTER.set(powerFilter);
+        ServerConfig.POWER_COSTS.set(powerFilter);
         Features.set(Feature.POWER, power);
         Features.set(Feature.WINDING, winding);
     }

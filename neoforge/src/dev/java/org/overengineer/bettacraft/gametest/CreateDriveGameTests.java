@@ -53,20 +53,17 @@ public final class CreateDriveGameTests {
     // ------------------------------------------------------------------ config
 
     /** Power options and the drive settings, restored after a test. */
-    record Saved(boolean heater, boolean filter, boolean light, boolean air, boolean power, boolean winding, boolean drive, boolean cabinetDrive,
+    record Saved(ServerConfig.PowerCosts costs, boolean power, boolean winding, boolean drive, boolean cabinetDrive,
                  int fullSpeed, int fe, int max, double perFe, double idle, List<? extends String> sides) {
         static Saved current() {
-            return new Saved(ServerConfig.POWER_HEATER.get(), ServerConfig.POWER_FILTER.get(), ServerConfig.POWER_LIGHT.get(), ServerConfig.POWER_AIR_PUMP.get(),
+            return new Saved(ServerConfig.POWER_COSTS.get(),
                     Features.own(Feature.POWER), Features.own(Feature.WINDING), Features.own(Feature.CREATE_DRIVE), Features.own(Feature.CREATE_CABINET_DRIVE),
                     ServerConfig.DRIVE_FULL_SPEED.get(), ServerConfig.DRIVE_FE.get(), ServerConfig.DRIVE_MAX_FE.get(), ServerConfig.DRIVE_STRESS_PER_FE.get(),
                     ServerConfig.DRIVE_IDLE_STRESS.get(), List.copyOf(ServerConfig.DRIVE_CABINET_SIDES.get()));
         }
 
         void apply() {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
-            ServerConfig.POWER_LIGHT.set(light);
-            ServerConfig.POWER_AIR_PUMP.set(air);
+            ServerConfig.POWER_COSTS.set(costs);
             Features.set(Feature.POWER, power);
             Features.set(Feature.WINDING, winding);
             Features.set(Feature.CREATE_DRIVE, drive);
@@ -81,10 +78,7 @@ public final class CreateDriveGameTests {
 
         /** Every tank device needs FE, the drive at its defaults, winding as given. */
         static void powered(boolean winding) {
-            ServerConfig.POWER_HEATER.set(true);
-            ServerConfig.POWER_FILTER.set(true);
-            ServerConfig.POWER_LIGHT.set(true);
-            ServerConfig.POWER_AIR_PUMP.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             Features.set(Feature.POWER, true);
             Features.set(Feature.WINDING, winding);
             Features.set(Feature.CREATE_DRIVE, true);
@@ -238,7 +232,7 @@ public final class CreateDriveGameTests {
                 h.assertTrue(c.filterPowered() && c.heatPowered() && c.lightPowered(), "every group runs on the rotation");
                 h.assertTrue(c.lastDemand() > 0, "the devices took FE: " + c.lastDemand());
                 // a full buffer: only what the devices took (the care step: the devices first, then the drive)
-                c.getTank().setPowerBuffer(TankPower.capacity());
+                c.getTank().setPowerBuffer(TankPower.capacity(c));
                 TankPower.step(level, c, 20);
                 long low = drive(level, c);
                 float lowImpact = in.stressImpact();
@@ -248,12 +242,12 @@ public final class CreateDriveGameTests {
                 h.setBlock(new BlockPos(5, 2, 6), ModBlocks.EXTERNAL_FILTER.get().defaultBlockState().setValue(ExternalFilterBlock.FACING, Direction.NORTH));
                 ((ExternalFilterBlockEntity) be(h, new BlockPos(5, 2, 6))).insertHeater(new ItemStack(ModItems.HEATER_LARGE.get()));
                 TankEquipment.invalidate(c);
-                c.getTank().setPowerBuffer(TankPower.capacity());
+                c.getTank().setPowerBuffer(TankPower.capacity(c));
                 int before = c.lastDemand();
                 TankPower.step(level, c, 20);
                 h.assertTrue(c.lastDemand() > before, "the second filter needs more: " + before + " -> " + c.lastDemand());
                 drive(level, c);
-                h.assertTrue(c.getTank().powerBuffer() == TankPower.capacity(), "the buffer is full again");
+                h.assertTrue(c.getTank().powerBuffer() == TankPower.capacity(c), "the buffer is full again");
                 h.assertTrue(in.stressImpact() > lowImpact, "more load, more stress: " + lowImpact + " -> " + in.stressImpact());
                 h.assertTrue(Math.abs(in.stressImpact() * 64F - c.lastDemand() * 2F) < 1F || in.stressImpact() * 64F <= 32.01F,
                         "2 SU per FE/t: " + in.stressImpact() * 64F + " SU for " + c.lastDemand() + " FE/t");
@@ -405,11 +399,11 @@ public final class CreateDriveGameTests {
     }
 
     /**
-     * M37 with M41: a cabinet's shaft fills the buffer first and winds the cabinet's spring with the rest; an adapter winds no
-     * spring; the crank still winds the cabinet; without rotation the spring stands in for the missing FE.
+     * M67 (was M37 with M41): a cabinet's shaft fills the tank's one store and nothing else (the cabinet has no spring of its
+     * own any more); the crank at the cabinet charges the same store; without rotation the store runs the devices.
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m41_winding", timeoutTicks = 200)
-    public static void cabinetShaftWindsTheSpring(GameTestHelper h) {
+    public static void cabinetShaftFillsTheTankStore(GameTestHelper h) {
         if (!create()) {
             h.succeed();
             return;
@@ -426,44 +420,26 @@ public final class CreateDriveGameTests {
         TankEquipment.invalidate(c);
         h.runAfterDelay(10, () -> {
             try {
-                cab.windSpring().set(0);
-                c.getTank().setPowerBuffer(TankPower.capacity());
+                c.getTank().setPowerBuffer(TankPower.capacity(c));
                 TankPower.step(level, c, 20); // the devices take their FE
                 int demand = c.lastDemand();
                 h.assertTrue(demand > 0 && demand < 256, "the tank's demand: " + demand);
                 drive(level, c);
-                h.assertTrue(c.getTank().powerBuffer() == TankPower.capacity(), "the buffer is full again first");
-                long wound = cab.windSpring().ticks();
-                // the rest of 256 FE/t after the demand winds the spring: (256 - demand) * 20 / 10 device-ticks
-                long expect = (long) Math.floor((256 - demand) * 20 / 10.0);
-                h.assertTrue(wound > 0 && Math.abs(wound - expect) <= 2, "the rest winds the spring: " + wound + " (expected " + expect + ", demand " + demand + ")");
-                h.assertTrue(Math.abs(networkStress(be(h, motor)) - 512F) < 1F, "winding is load too: " + networkStress(be(h, motor)));
-                // the crank still winds it
-                long w0 = cab.windSpring().ticks();
-                h.assertTrue(Winding.wind(level, cab.getBlockPos(), null) == Winding.Result.WOUND && cab.windSpring().ticks() > w0, "the crank winds it too");
-                // a full spring and a full buffer: only the demand
-                cab.windSpring().set(cab.windSpring().capacity());
-                c.getTank().setPowerBuffer(TankPower.capacity());
-                TankPower.step(level, c, 20);
-                drive(level, c);
-                h.assertTrue(Math.abs(networkStress(be(h, motor)) - Math.max(32F, demand * 2F)) < 1F, "full spring: only the demand: "
+                h.assertTrue(c.getTank().powerBuffer() == TankPower.capacity(c), "the store is full again");
+                h.assertTrue(cab.windSpring().empty(), "the cabinet winds no spring of its own");
+                h.assertTrue(Math.abs(networkStress(be(h, motor)) - Math.max(32F, demand * 2F)) < 1F, "only the demand is load: "
                         + networkStress(be(h, motor)) + " for " + demand + " FE/t");
-                // power.winding off: the shaft only fills the buffer
-                Features.set(Feature.WINDING, false);
-                cab.windSpring().set(0);
-                c.getTank().setPowerBuffer(TankPower.capacity());
-                TankPower.step(level, c, 20);
-                drive(level, c);
-                h.assertTrue(cab.windSpring().ticks() == 0, "no winding with power.winding off");
-                Features.set(Feature.WINDING, true);
-                // the rotation stops: the wound spring powers the tank while its FE is short
-                h.setBlock(motor, Blocks.AIR.defaultBlockState());
-                cab.windSpring().set(cab.windSpring().capacity());
+                // the crank charges the same store
                 c.getTank().setPowerBuffer(0);
-                long s0 = cab.windSpring().ticks();
+                h.assertTrue(Winding.wind(level, cab.getBlockPos(), null) == Winding.Result.WOUND
+                        && c.getTank().powerBuffer() == org.overengineer.bettacraft.tank.TankStore.fePerClick(), "the crank charges the store: " + c.getTank().powerBuffer());
+                // the rotation stops: the store runs the devices
+                h.setBlock(motor, Blocks.AIR.defaultBlockState());
+                c.getTank().setPowerBuffer(TankPower.capacity(c));
+                long s0 = c.getTank().powerBuffer();
                 TankDrive.step(level, c, 20);
                 TankPower.step(level, c, 20);
-                h.assertTrue(c.filterPowered() && cab.windSpring().ticks() < s0, "without rotation the spring stands in");
+                h.assertTrue(c.filterPowered() && c.getTank().powerBuffer() < s0, "without rotation the store runs the tank");
             } finally {
                 saved.apply();
             }

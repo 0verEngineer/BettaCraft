@@ -88,7 +88,8 @@ final class DevClientSmokeM66 {
     private volatile AquaristEntity npc;
     private String lang;
     private int guiScale;
-    private boolean powerFilter, powerHeater, power;
+    private ServerConfig.PowerCosts powerFilter;
+    private boolean power;
 
     DevClientSmokeM66() {
         then(1, () -> {
@@ -299,11 +300,9 @@ final class DevClientSmokeM66 {
 
     private void setup(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
-        powerFilter = ServerConfig.POWER_FILTER.get();
-        powerHeater = ServerConfig.POWER_HEATER.get();
+        powerFilter = ServerConfig.POWER_COSTS.get();
         power = Features.own(Feature.POWER);
-        ServerConfig.POWER_FILTER.set(true);
-        ServerConfig.POWER_HEATER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         Features.set(Feature.POWER, true);
         level.setDayTime(6000);
         level.setWeatherParameters(24000, 0, false, false);
@@ -557,8 +556,7 @@ final class DevClientSmokeM66 {
     }
 
     private void restore() {
-        ServerConfig.POWER_FILTER.set(powerFilter);
-        ServerConfig.POWER_HEATER.set(powerHeater);
+        ServerConfig.POWER_COSTS.set(powerFilter);
         Features.set(Feature.POWER, power);
     }
 

@@ -126,10 +126,7 @@ class PresetsTest {
         for (Feature f : Feature.values()) assertTrue(on(p, f), "everything on: " + f.path());
         assertEquals(ServerConfig.ForeignSalinity.REALISTIC, value(p, ServerConfig.SALT_FOREIGN));
         assertEquals(ServerConfig.WaterChangeDifficulty.REALISTIC, value(p, ServerConfig.WATER_CHANGE_DIFFICULTY));
-        for (var power : List.of(ServerConfig.POWER_HEATER, ServerConfig.POWER_FILTER, ServerConfig.POWER_LIGHT, ServerConfig.POWER_AIR_PUMP,
-                ServerConfig.POWER_PUMPS, ServerConfig.POWER_MISTER)) {
-            assertTrue(value(p, power), Presets.path(power));
-        }
+        assertEquals(ServerConfig.PowerCosts.HARD, value(p, ServerConfig.POWER_COSTS)); // M67
         assertTrue(value(p, ServerConfig.HEALTH_DAYS_UNTIL_SICK) < ServerConfig.HEALTH_DAYS_UNTIL_SICK.getDefault());
     }
 

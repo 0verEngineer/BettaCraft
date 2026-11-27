@@ -52,7 +52,7 @@ final class DevClientSmokeM37 {
     private final Deque<Step> steps = new ArrayDeque<>();
     private final BlockPos base;
     private final String lang = Minecraft.getInstance().options.languageCode;
-    private final boolean heater = ServerConfig.POWER_HEATER.get(), filter = ServerConfig.POWER_FILTER.get(), light = ServerConfig.POWER_LIGHT.get();
+    private final ServerConfig.PowerCosts costs = ServerConfig.POWER_COSTS.get();
     private int wait;
 
     DevClientSmokeM37() {
@@ -100,7 +100,7 @@ final class DevClientSmokeM37 {
         }));
         then(30, () -> {
             if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.CabinetScreen s)) LOGGER.error("[smoketest] M37 no cabinet screen");
-            else if (s.getMenu().springPercent() <= 0) LOGGER.error("[smoketest] M37 the cabinet shows no spring: {}", s.getMenu().springPercent());
+            else if (s.getMenu().energy().stored() <= 0) LOGGER.error("[smoketest] M37 the cabinet shows no energy in the tank's store: {}", s.getMenu().energy().stored());
             shot("cabinet_menu");
         });
         then(1, () -> quickLanguage("de_de"));
@@ -112,8 +112,8 @@ final class DevClientSmokeM37 {
         then(1, () -> server(p -> {
             TankBlockEntity c = TankMultiblock.getController(p.serverLevel(), base.offset(0, 1, 2));
             org.overengineer.bettacraft.tank.TankCare.care(p.serverLevel(), c, 20);
-            if (!c.filterPowered() || c.springUnits() <= 0) LOGGER.error("[smoketest] M37 the cabinet does not power the tank: filter {}, devices {}",
-                    c.filterPowered(), c.springUnits());
+            if (!c.filterPowered() || c.getTank().powerBuffer() <= 0) LOGGER.error("[smoketest] M37 the crank does not power the tank: filter {}, store {}",
+                    c.filterPowered(), c.getTank().powerBuffer());
             org.overengineer.bettacraft.platform.Platform.get().openMenu(p, new net.minecraft.world.SimpleMenuProvider((id, inv, pl) -> new org.overengineer.bettacraft.tank.menu.TankMenu(id, inv, c),
                     Component.translatable("gui.bettacraft.tank.title")), buf -> buf.writeBlockPos(c.getBlockPos()));
         }));
@@ -128,17 +128,13 @@ final class DevClientSmokeM37 {
         then(1, () -> server(ServerPlayer::closeContainer));
         then(5, () -> mc.setScreen(null));
         then(1, () -> {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
-            ServerConfig.POWER_LIGHT.set(light);
+            ServerConfig.POWER_COSTS.set(costs);
         });
     }
 
     private void build(ServerPlayer p) {
         ServerLevel level = p.serverLevel();
-        ServerConfig.POWER_HEATER.set(true);
-        ServerConfig.POWER_FILTER.set(true);
-        ServerConfig.POWER_LIGHT.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         if (!Features.enabled(Feature.WINDING) || !Features.enabled(Feature.FERTILIZER)) LOGGER.error("[smoketest] M37 winding or fertilizer is off");
         for (int x = -4; x <= 10; x++)
             for (int z = -6; z <= 8; z++) {

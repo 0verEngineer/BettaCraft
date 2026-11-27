@@ -221,4 +221,51 @@ class FeatureMigrationTest {
         assertTrue(FeatureMigration.migrateServerM46(bare).isEmpty(), "no default comment: someone wrote it, it stays");
         assertEquals(0.04, ServerConfig.ARTEMIA_SAND_CHANCE, 1e-9, "the new default");
     }
+
+    /** M67: the *RequiresEnergy switches become power.costs (any on: HARD, all off: OFF); the old store keys go; a set value stays. */
+    @Test
+    void powerSwitchesBecomePowerCosts() throws IOException {
+        String toml = """
+                [power]
+                heaterRequiresEnergy = false
+                filterRequiresEnergy = true
+                lightRequiresEnergy = false
+                filterFePerTick = 12
+                bufferFe = 100000
+                [aeration]
+                airPumpRequiresEnergy = false
+                [winding]
+                cabinetCharges = 6.0
+                clicksPerCharge = 25
+                """;
+        Path file = dir.resolve("bettacraft-server.toml");
+        Files.writeString(file, toml, StandardCharsets.UTF_8);
+        assertEquals(Boolean.TRUE, FeatureMigration.oldPowerOn(file), "the old file asked for power");
+        FeatureMigration.migrateServerFile(file);
+        CommentedConfig c = parse(Files.readString(file, StandardCharsets.UTF_8));
+        assertEquals("HARD", String.valueOf(at(c, "power.costs")), "a switch was on: HARD");
+        for (String k : List.of("power.heaterRequiresEnergy", "power.filterRequiresEnergy", "power.lightRequiresEnergy", "aeration.airPumpRequiresEnergy",
+                "power.bufferFe", "winding.cabinetCharges")) assertNull(at(c, k), "gone: " + k);
+        assertEquals(12, ((Number) at(c, "power.filterFePerTick")).intValue(), "the FE values stay (fine tuning)");
+        assertEquals(25, ((Number) at(c, "winding.clicksPerCharge")).intValue(), "the rest stays");
+        assertTrue(Files.exists(dir.resolve("bettacraft-server.toml.pre-m67")), "the old file is kept");
+        assertNull(FeatureMigration.oldPowerOn(file), "migrated: nothing old left");
+        String once = Files.readString(file, StandardCharsets.UTF_8);
+        FeatureMigration.migrateServerFile(file);
+        assertEquals(once, Files.readString(file, StandardCharsets.UTF_8), "only once");
+        // all off: OFF
+        CommentedConfig off = parse("[power]\nheaterRequiresEnergy = false\n[pipes]\npumpsRequireEnergy = false\n[terrarium]\nmisterRequiresEnergy = false\n");
+        assertFalse(FeatureMigration.migrateServerM67(off).isEmpty());
+        assertEquals("OFF", String.valueOf(at(off, "power.costs")));
+        // only the pumps or the misters on: HARD as well
+        CommentedConfig pumps = parse("[pipes]\npumpsRequireEnergy = true\n");
+        FeatureMigration.migrateServerM67(pumps);
+        assertEquals("HARD", String.valueOf(at(pumps, "power.costs")));
+        // power.costs already set: it wins
+        CommentedConfig set = parse("[power]\ncosts = \"EASY\"\nheaterRequiresEnergy = true\n");
+        FeatureMigration.migrateServerM67(set);
+        assertEquals("EASY", String.valueOf(at(set, "power.costs")), "a set value stays");
+        // a new file: nothing to do
+        assertTrue(FeatureMigration.migrateServerM67(parse("[power]\ncosts = \"OFF\"\n")).isEmpty());
+    }
 }

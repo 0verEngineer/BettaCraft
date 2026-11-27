@@ -123,9 +123,9 @@ public final class FoodMakerGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m26b_fe", timeoutTicks = 100)
     public static void foodMakerRunsOnFe(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean pumps = ServerConfig.POWER_PUMPS.get();
+        ServerConfig.PowerCosts pumps = ServerConfig.POWER_COSTS.get();
         try {
-            ServerConfig.POWER_PUMPS.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             FoodMakerBlockEntity m = maker(h, new BlockPos(2, 1, 2));
             // M37: with features.power.winding the crank winds it on FE too (FE first, then the spring)
             boolean winding = org.overengineer.bettacraft.winding.Winding.enabled();
@@ -143,7 +143,7 @@ public final class FoodMakerGameTests {
             h.assertTrue(m.items().getStackInSlot(FoodMakerBlockEntity.OUTPUT).is(ModItems.FRY_POWDER.get()), "fry powder: " + m.items().getStackInSlot(FoodMakerBlockEntity.OUTPUT));
             h.assertTrue(m.energy().getEnergyStored() == 0, "used the FE: " + m.energy().getEnergyStored());
         } finally {
-            ServerConfig.POWER_PUMPS.set(pumps);
+            ServerConfig.POWER_COSTS.set(pumps);
         }
         h.succeed();
     }

@@ -23,7 +23,6 @@ import org.overengineer.bettacraft.config.ServerConfig;
 import org.overengineer.bettacraft.equipment.CabinetBlock;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
 import org.overengineer.bettacraft.equipment.CabinetFront;
-import org.overengineer.bettacraft.equipment.CabinetSprings;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.registry.ModItems;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
@@ -142,120 +141,6 @@ public final class CabinetAreaGameTests {
         } finally {
             Features.set(Feature.CABINET_AREA, was);
             CabinetBlockEntity.refreshAllFronts();
-        }
-        h.succeed();
-    }
-
-    // ------------------------------------------------------------------ A2: the shared spring
-
-    private static void power(boolean on) {
-        ServerConfig.POWER_FILTER.set(on);
-        Features.set(Feature.POWER, true);
-        Features.set(Feature.WINDING, true);
-    }
-
-    /**
-     * A 4 x 1 tank with a cabinet at each end (they do not touch) and one more joined to the right one beyond the tank: one
-     * store of three; a click at one winds all of them evenly; the store's capacity is the sum.
-     */
-    @GameTest(template = EMPTY, batch = "bettacraft_m62_cabinet_spring", timeoutTicks = 100)
-    public static void separateCabinetsUnderOneTankShareTheSpring(GameTestHelper h) {
-        boolean filter = ServerConfig.POWER_FILTER.get(), pw = Features.own(Feature.POWER), wind = Features.own(Feature.WINDING), shared = Features.own(Feature.CABINET_SHARED_SPRING);
-        try {
-            power(true);
-            Features.set(Feature.CABINET_SHARED_SPRING, true);
-            TankBlockEntity c = AerationGameTests.tank(h, 2, 2, 2, 4, 1, 1);
-            h.setBlock(new BlockPos(2, 1, 2), cabinet(Direction.NORTH));
-            h.setBlock(new BlockPos(5, 1, 2), cabinet(Direction.NORTH));
-            h.setBlock(new BlockPos(6, 1, 2), cabinet(Direction.NORTH)); // beyond the tank, joined to the right one
-            TankEquipment.invalidate(c);
-            CabinetBlockEntity a = cab(h, 2, 2), b = cab(h, 5, 2), x = cab(h, 6, 2);
-            WindSpring store = a.windStore();
-            h.assertTrue(store instanceof CabinetSprings.Store s && s.size() == 3, "one store of 3: " + store);
-            long one = a.windSpring().capacity();
-            h.assertTrue(store.capacity() == 3 * one, "capacity grows with every block");
-            h.assertTrue(Winding.wind(h.getLevel(), b.getBlockPos(), null) == Winding.Result.WOUND, "the crank winds at any of them");
-            long step = a.windSpring().step();
-            h.assertTrue(a.windStore().ticks() == step, "one click = one block's step: " + a.windStore().ticks());
-            long lo = Math.min(a.windSpring().ticks(), Math.min(b.windSpring().ticks(), x.windSpring().ticks()));
-            long hi = Math.max(a.windSpring().ticks(), Math.max(b.windSpring().ticks(), x.windSpring().ticks()));
-            h.assertTrue(hi - lo <= 1, "spread evenly: " + a.windSpring().ticks() + "/" + b.windSpring().ticks() + "/" + x.windSpring().ticks());
-            // the percent shown is that of the store, the same at every cabinet
-            h.assertTrue(Winding.shown(a) == Winding.shown(x), "every cabinet shows the store");
-            // the tank draws from the store evenly (a filter in a cabinet, no FE)
-            a.items().setStackInSlot(CabinetBlockEntity.FILTER_SLOT, new ItemStack(ModItems.EXTERNAL_FILTER.get()));
-            TankEquipment.invalidate(c);
-            c.getTank().setPowerBuffer(0);
-            a.windStore().set(a.windStore().capacity());
-            TankPower.step(h.getLevel(), c, 20);
-            h.assertTrue(c.filterPowered(), "the filter runs on the store");
-            h.assertTrue(a.windStore().ticks() == 3 * one - 20, "20 device-ticks from the store: " + (3 * one - a.windStore().ticks()));
-            lo = Math.min(a.windSpring().ticks(), Math.min(b.windSpring().ticks(), x.windSpring().ticks()));
-            hi = Math.max(a.windSpring().ticks(), Math.max(b.windSpring().ticks(), x.windSpring().ticks()));
-            h.assertTrue(hi - lo <= 1, "still even after the drain");
-        } finally {
-            ServerConfig.POWER_FILTER.set(filter);
-            Features.set(Feature.POWER, pw);
-            Features.set(Feature.WINDING, wind);
-            Features.set(Feature.CABINET_SHARED_SPRING, shared);
-        }
-        h.succeed();
-    }
-
-    /** The per-block springs of an older world form the store (the sum stays); a broken cabinet hands its share over. */
-    @GameTest(template = EMPTY, batch = "bettacraft_m62_cabinet_spring", timeoutTicks = 100)
-    public static void oldSpringsAndBreaking(GameTestHelper h) {
-        boolean filter = ServerConfig.POWER_FILTER.get(), pw = Features.own(Feature.POWER), wind = Features.own(Feature.WINDING), shared = Features.own(Feature.CABINET_SHARED_SPRING);
-        try {
-            power(true);
-            Features.set(Feature.CABINET_SHARED_SPRING, true);
-            for (int x = 2; x <= 4; x++) h.setBlock(new BlockPos(x, 1, 2), cabinet(Direction.NORTH));
-            CabinetBlockEntity a = cab(h, 2, 2), b = cab(h, 3, 2), d = cab(h, 4, 2);
-            long cap = a.windSpring().capacity();
-            // as an older world left them: one full, one half, one empty (each its own spring)
-            a.windSpring().set(cap);
-            b.windSpring().set(cap / 2);
-            d.windSpring().set(0);
-            long sum = cap + cap / 2;
-            h.assertTrue(a.windStore().ticks() == sum, "nothing lost: the store is the sum " + a.windStore().ticks());
-            CabinetSprings.level(CabinetSprings.store(a));
-            h.assertTrue(a.windSpring().ticks() + b.windSpring().ticks() + d.windSpring().ticks() == sum, "levelling keeps the sum");
-            h.assertTrue(Math.abs(a.windSpring().ticks() - d.windSpring().ticks()) <= 1, "levelled");
-            // broken: its share goes to the other two (they have room)
-            long before = a.windStore().ticks();
-            h.getLevel().destroyBlock(d.getBlockPos(), false);
-            h.assertTrue(a.windStore().ticks() == before, "the share of the broken cabinet stays: " + a.windStore().ticks() + " of " + before);
-            // full store, one broken: the rest stays full, the part that does not fit goes with the block
-            a.windStore().set(a.windStore().capacity());
-            h.getLevel().destroyBlock(b.getBlockPos(), false);
-            h.assertTrue(a.windSpring().full(), "the last one is full");
-        } finally {
-            ServerConfig.POWER_FILTER.set(filter);
-            Features.set(Feature.POWER, pw);
-            Features.set(Feature.WINDING, wind);
-            Features.set(Feature.CABINET_SHARED_SPRING, shared);
-        }
-        h.succeed();
-    }
-
-    /** {@code features.power.cabinetSharedSpring} off: every cabinet winds and shows its own spring. */
-    @GameTest(template = EMPTY, batch = "bettacraft_m62_cabinet_spring_off", timeoutTicks = 100)
-    public static void sharedSpringSwitchedOff(GameTestHelper h) {
-        boolean filter = ServerConfig.POWER_FILTER.get(), pw = Features.own(Feature.POWER), wind = Features.own(Feature.WINDING), shared = Features.own(Feature.CABINET_SHARED_SPRING);
-        try {
-            power(true);
-            Features.set(Feature.CABINET_SHARED_SPRING, false);
-            h.setBlock(new BlockPos(2, 1, 2), cabinet(Direction.NORTH));
-            h.setBlock(new BlockPos(3, 1, 2), cabinet(Direction.NORTH));
-            CabinetBlockEntity a = cab(h, 2, 2), b = cab(h, 3, 2);
-            h.assertTrue(a.windStore() == a.windSpring(), "its own spring");
-            Winding.wind(h.getLevel(), a.getBlockPos(), null);
-            h.assertTrue(a.windSpring().ticks() > 0 && b.windSpring().ticks() == 0, "only the cabinet clicked");
-        } finally {
-            ServerConfig.POWER_FILTER.set(filter);
-            Features.set(Feature.POWER, pw);
-            Features.set(Feature.WINDING, wind);
-            Features.set(Feature.CABINET_SHARED_SPRING, shared);
         }
         h.succeed();
     }

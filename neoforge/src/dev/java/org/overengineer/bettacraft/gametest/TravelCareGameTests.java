@@ -71,10 +71,10 @@ public final class TravelCareGameTests {
 
     @GameTest(template = EMPTY, batch = "bettacraft_m50_travel", timeoutTicks = 100)
     public static void travelCareWithAndWithoutPower(GameTestHelper h) {
-        boolean heater = ServerConfig.POWER_HEATER.get(), filter = ServerConfig.POWER_FILTER.get(), power = Features.own(Feature.POWER);
+        ServerConfig.PowerCosts heater = ServerConfig.POWER_COSTS.get(), filter = heater;
+        boolean power = Features.own(Feature.POWER);
         try {
-            ServerConfig.POWER_HEATER.set(true);
-            ServerConfig.POWER_FILTER.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             Features.set(Feature.POWER, true);
             ServerLevel level = h.getLevel();
             CompoundTag on = packed(h, 2, 2), off = packed(h, 10, 2);
@@ -106,8 +106,8 @@ public final class TravelCareGameTests {
                 h.assertTrue(TravelCare.satiation(st.getCompound(i)) < 0.01F, "starving: " + care);
             }
         } finally {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
+            ServerConfig.POWER_COSTS.set(heater);
+            ServerConfig.POWER_COSTS.set(filter);
             Features.set(Feature.POWER, power);
         }
         h.succeed();
@@ -116,18 +116,17 @@ public final class TravelCareGameTests {
     /** Without the power options the devices that travel along simply run (as on the ground), nothing is taken from batteries. */
     @GameTest(template = EMPTY, batch = "bettacraft_m50_travel", timeoutTicks = 100)
     public static void travelCareWithoutPowerOptions(GameTestHelper h) {
-        boolean heater = ServerConfig.POWER_HEATER.get(), filter = ServerConfig.POWER_FILTER.get();
+        ServerConfig.PowerCosts heater = ServerConfig.POWER_COSTS.get(), filter = heater;
         try {
-            ServerConfig.POWER_HEATER.set(false);
-            ServerConfig.POWER_FILTER.set(false);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.OFF);
             CompoundTag nbt = packed(h, 2, 12);
             TravelCare.Result r = null;
             for (int i = 0; i < 24; i++) r = TravelCare.step(h.getLevel(), nbt, env(false), 1000);
             h.assertTrue(r != null && r.filterPowered() && r.heatPowered() && r.demand() == 0 && r.fromBattery() == 0, "no FE needed: " + r);
             h.assertTrue(TankData.load(nbt.getCompound("tank")).waterTemp() > 25F, "the heater runs");
         } finally {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
+            ServerConfig.POWER_COSTS.set(heater);
+            ServerConfig.POWER_COSTS.set(filter);
         }
         h.succeed();
     }

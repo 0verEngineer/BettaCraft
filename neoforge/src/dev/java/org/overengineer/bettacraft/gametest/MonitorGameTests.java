@@ -174,9 +174,9 @@ public final class MonitorGameTests {
     /** With a power option on the screen needs FE; any block takes it into the controller's buffer. */
     @GameTest(template = EMPTY, batch = "bettacraft_m27_fe", timeoutTicks = 40)
     public static void monitorsNeedFeWithPower(GameTestHelper h) {
-        boolean pumps = ServerConfig.POWER_PUMPS.get();
+        ServerConfig.PowerCosts pumps = ServerConfig.POWER_COSTS.get();
         try {
-            ServerConfig.POWER_PUMPS.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             BlockPos tl = new BlockPos(10, 2, 8);
             wall(h, tl, 2, 1);
             MonitorBlockEntity c = be(h, tl);
@@ -191,7 +191,7 @@ public final class MonitorGameTests {
             h.assertTrue(c.status() == MonitorBlockEntity.ON, "on: " + c.status());
             h.assertTrue(c.energy().getEnergyStored() == need * 2, "used 1 FE/t per block: " + c.energy().getEnergyStored());
         } finally {
-            ServerConfig.POWER_PUMPS.set(pumps);
+            ServerConfig.POWER_COSTS.set(pumps);
         }
         h.succeed();
     }
