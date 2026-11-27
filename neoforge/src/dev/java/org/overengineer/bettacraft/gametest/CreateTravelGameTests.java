@@ -239,18 +239,18 @@ public final class CreateTravelGameTests {
             h.succeed();
             return;
         }
-        boolean heater = ServerConfig.POWER_HEATER.get(), filter = ServerConfig.POWER_FILTER.get(), power = Features.own(Feature.POWER),
+        ServerConfig.PowerCosts heater = ServerConfig.POWER_COSTS.get(), filter = heater;
+        boolean power = Features.own(Feature.POWER),
                 drive = Features.own(Feature.CREATE_DRIVE);
         double speed = ServerConfig.TRAVEL_DYNAMO_SPEED.get();
         atEnd(h, () -> {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
+            ServerConfig.POWER_COSTS.set(heater);
+            ServerConfig.POWER_COSTS.set(filter);
             Features.set(Feature.POWER, power);
             Features.set(Feature.CREATE_DRIVE, drive);
             ServerConfig.TRAVEL_DYNAMO_SPEED.set(speed);
         });
-        ServerConfig.POWER_HEATER.set(true);
-        ServerConfig.POWER_FILTER.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         Features.set(Feature.POWER, true);
         Features.set(Feature.CREATE_DRIVE, true);
         ServerConfig.TRAVEL_DYNAMO_SPEED.set(0.5);

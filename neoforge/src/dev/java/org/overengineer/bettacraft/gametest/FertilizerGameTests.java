@@ -307,9 +307,10 @@ public final class FertilizerGameTests {
     @GameTest(template = EMPTY, batch = "bettacraft_m37_fert_fe", timeoutTicks = 200)
     public static void fertilizerMakerOnFeOrTheSpring(GameTestHelper h) {
         ServerLevel level = h.getLevel();
-        boolean pumps = ServerConfig.POWER_PUMPS.get(), winding = Features.own(Feature.WINDING);
+        ServerConfig.PowerCosts pumps = ServerConfig.POWER_COSTS.get();
+        boolean winding = Features.own(Feature.WINDING);
         try {
-            ServerConfig.POWER_PUMPS.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             Features.set(Feature.WINDING, true);
             FertilizerMakerBlockEntity m = maker(h, new BlockPos(2, 1, 2));
             m.items().setStackInSlot(FertilizerMakerBlockEntity.MEAL, new ItemStack(ModItems.KELP_MEAL.get(), 4));
@@ -333,7 +334,7 @@ public final class FertilizerGameTests {
             h.assertTrue(m.status() == FertilizerMakerBlockEntity.NO_POWER, "FE only: " + m.status());
             h.assertTrue(Winding.wind(level, m.getBlockPos(), null) == Winding.Result.REFUSED, "no crank");
         } finally {
-            ServerConfig.POWER_PUMPS.set(pumps);
+            ServerConfig.POWER_COSTS.set(pumps);
             Features.set(Feature.WINDING, winding);
         }
         h.succeed();

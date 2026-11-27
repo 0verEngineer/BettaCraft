@@ -245,12 +245,21 @@ public final class FeatureRestGameTests {
             return off != none ? "small animal breeding rates " + TankCritters.breeding() : null;
         });
         PROBES.put(Feature.POWER, (h, s, off) -> {
-            boolean was = ServerConfig.POWER_HEATER.get();
-            ServerConfig.POWER_HEATER.set(true);
+            ServerConfig.PowerCosts was = ServerConfig.POWER_COSTS.get();
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             try {
-                return off == TankPower.anyRequired() ? (off ? "devices still need FE" : "the heater option has no effect") : null;
+                return off == TankPower.anyRequired() ? (off ? "devices still need FE" : "power.costs has no effect") : null;
             } finally {
-                ServerConfig.POWER_HEATER.set(was);
+                ServerConfig.POWER_COSTS.set(was);
+            }
+        });
+        PROBES.put(Feature.TANK_CRANK, (h, s, off) -> { // M67
+            ServerConfig.PowerCosts was = ServerConfig.POWER_COSTS.get();
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.EASY);
+            try {
+                return off == org.overengineer.bettacraft.tank.TankStore.crankEnabled() ? (off ? "the crank still charges tanks" : "the crank charges no tank") : null;
+            } finally {
+                ServerConfig.POWER_COSTS.set(was);
             }
         });
         PROBES.put(Feature.SALTWATER, (h, s, off) ->
