@@ -63,9 +63,13 @@ public class MultiblockFilterScreen extends Screen {
         y += 16;
         MultiblockFilter.Problem p = h.problem();
         if (p != MultiblockFilter.Problem.NONE) {
-            g.text(font, Component.translatable("gui.bettacraft.mb_filter.problem." + p.name().toLowerCase(java.util.Locale.ROOT),
-                    MultiblockFilter.maxChambers()).withStyle(ChatFormatting.GOLD), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-            y += 12;
+            // M68 part E: wrapped (the short circuit warning is longer than the window)
+            for (var line : font.split(Component.translatable("gui.bettacraft.mb_filter.problem." + p.name().toLowerCase(java.util.Locale.ROOT),
+                    MultiblockFilter.maxChambers()).withStyle(ChatFormatting.GOLD), W - 20)) {
+                g.text(font, line, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+                y += 10;
+            }
+            y += 2;
         }
         g.text(font, Component.translatable("gui.bettacraft.mb_filter.size", h.chambers(), h.inlets(), h.outlets()), x, y, 0xFFE0E0E0);
         y += 12;
@@ -77,8 +81,11 @@ public class MultiblockFilterScreen extends Screen {
         } else if (tanks.isEmpty()) {
             Component tank = h.servedTank() == null ? Component.translatable("gui.bettacraft.mb_filter.no_tank").withStyle(ChatFormatting.GOLD)
                     : Component.translatable("gui.bettacraft.mb_filter.tank", h.servedTank().getX(), h.servedTank().getY(), h.servedTank().getZ()).withStyle(ChatFormatting.GREEN);
-            g.text(font, tank, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-            y += 12;
+            for (var line : font.split(tank, W - 20)) {
+                g.text(font, line, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+                y += 10;
+            }
+            y += 2;
         }
         g.text(font, Component.translatable("gui.bettacraft.mb_filter.flow", h.flow(), Math.round(h.cleanBlocks())).withStyle(ChatFormatting.AQUA), x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         y += 12;

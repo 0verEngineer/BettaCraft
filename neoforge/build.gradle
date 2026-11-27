@@ -446,6 +446,13 @@ neoForge {
                 if (project.hasProperty('m62dparts')) systemProperty 'bettacraft.smoketest.m62dparts', project.property('m62dparts').toString()
                 if (project.hasProperty('m62dtag')) systemProperty 'bettacraft.smoketest.m62dtag', project.property('m62dtag').toString()
             }
+            if (project.hasProperty('smoketestm68')) {
+                // gradlew runClient -Psmoketestm68: the M68 scene (the one pipe system: the stations of the showcase rows "Rohrsystem" and
+                // "Nachfüllen und Wasserwechsel", the filter and controller menus and the tank menu warnings, en and de;
+                // run/screenshots/bettacraft_m68_<shot>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m68only', 'true'
+            }
             if (project.hasProperty('smoketestm67')) {
                 // gradlew runClient -Psmoketestm67: the M67 scene (one energy store per tank on EASY: the crank at a joined cabinet, the tank
                 // overview and its power tooltip, the cabinet and the external filter, en and de; run/screenshots/bettacraft_m67_<lang>_<shot>.png)

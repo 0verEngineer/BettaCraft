@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevHud', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM62a', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM68'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -142,6 +142,12 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
+            }
+            // M68: -Psmoketestm68: the one pipe system (the showcase stations, the menus and their warnings)
+            if (project.hasProperty('smoketestm68')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m68only', 'true'
             }
             // M67: -Psmoketestm67: one energy store per tank (the crank, the tank overview, the cabinet and the external filter)
             if (project.hasProperty('smoketestm67')) {
@@ -664,6 +670,10 @@ def prodProps = { boolean client ->
         if (!project.hasProperty('sound')) l << '-Dbettacraft.silent=true'
         if (project.hasProperty('smoketestfabric')) l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true']
         if (project.hasProperty('smoketestbook')) l << '-Dbettacraft.smoketest.book=true'
+        // M68: the one pipe system in production
+        if (project.hasProperty('smoketestm68')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m68only=true']
+        }
         // M63c: the shader water scene and the real-world tour in production as well (the closed-pass path of LevelDraws differs
         // there: the private flag of the render pass cannot be read, the exception is caught)
         if (project.hasProperty('smoketestm63')) {
