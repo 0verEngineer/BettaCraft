@@ -183,7 +183,7 @@ public class FertilizerMakerBlockEntity extends BlockEntity implements MenuProvi
         if (fertilizer + Fertilizer.BATCH_MB > TANK_MB) return FULL;
         if ((level.getGameTime() + pos.asLong()) % 20 == 0) turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, pos);
         if (powered()) {
-            int fe = ServerConfig.getOr(ServerConfig.FERT_MAKER_FE, 10);
+            int fe = org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.FERT_MAKER_FE, 10)); // M67: power.costs
             if (turned > 0F) energy.drive(level, pos, fe); // Create's rotation instead of FE
             if (!energy.use(fe)) {
                 if (!Winding.enabled()) return NO_POWER;

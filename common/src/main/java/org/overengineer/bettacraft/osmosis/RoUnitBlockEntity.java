@@ -159,11 +159,11 @@ public class RoUnitBlockEntity extends BlockEntity implements org.overengineer.b
         else if (!endless && feed < 1 + waste) stop = "no_water";
         else {
             double rate = ServerConfig.getOr(ServerConfig.RO_RATE, 1.0);
-            int fe = ServerConfig.getOr(ServerConfig.RO_FE, 20) * ticks;
+            int fe = org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.RO_FE, 20)) * ticks; // M67: power.costs
             // M32 part c: Create's rotation drives the pressure pump (the boost) like FE, also without the power options
             boolean turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, worldPosition) > 0F;
             if (turned) energy.drive(level, worldPosition, fe);
-            int fePerTick = ServerConfig.getOr(ServerConfig.RO_FE, 20);
+            int fePerTick = Math.max(1, org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.RO_FE, 20)));
             if ((org.overengineer.bettacraft.crucible.CrucibleBlockEntity.energyOffered() || turned) && org.overengineer.bettacraft.winding.Winding.canPay(energy, this, fe, fePerTick)) {
                 org.overengineer.bettacraft.winding.Winding.pay(energy, this, fe, fePerTick); // M37: FE, else the spring
                 rate *= ServerConfig.getOr(ServerConfig.RO_BOOST, 4.0);

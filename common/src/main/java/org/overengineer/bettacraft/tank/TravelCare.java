@@ -223,15 +223,15 @@ public final class TravelCare {
         // power: what the devices that travel along need, as on the ground (TankPower.step)
         boolean anyPower = TankPower.anyRequired();
         int filterFe = anyPower && TankPower.filterRequired() && env.filterLoad() > 0
-                ? (int) Math.ceil(env.filterLoad() * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10) - 1e-9) : 0;
+                ? TankPower.feInt(env.filterLoad() * ServerConfig.getOr(ServerConfig.POWER_FILTER_FE, 10)) : 0;
         Boolean heating = t.waterMb() > 0 ? TankTemperature.heating(env.ambient(), t.targetTemp()) : null;
         int heatFe = 0;
         if (anyPower && TankPower.heaterRequired() && heating != null) {
             double cap = heating ? env.heatBlocks() : env.coolBlocks();
             double perBlock = heating ? ServerConfig.getOr(ServerConfig.POWER_HEATER_FE_PER_BLOCK, 8.0) : ServerConfig.getOr(ServerConfig.POWER_COOLER_FE_PER_BLOCK, 8.0);
-            if (cap > 0) heatFe = (int) Math.ceil(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock);
+            if (cap > 0) heatFe = TankPower.feInt(Math.min(cap, Math.max(1.0, t.waterBlocks())) * perBlock);
         }
-        long cap = TankPower.capacity();
+        long cap = TankStore.capacity(t.capacityMb() / (double) TankData.MB_PER_BLOCK, 0); // M67: the cabinets stay behind
         long buf = t.powerBuffer();
         long dyn = 0;
         if (env.dynamoFe() > 0 && TankPower.power()) {

@@ -18,20 +18,19 @@ import org.overengineer.bettacraft.tank.TankPower;
 /**
  * M37: winding devices with the crank instead of FE.
  * <p>
- * <b>Power options off</b> ({@code features.power.enabled} or the device's {@code *RequiresEnergy} off): only the food
- * maker and the fertilizer maker have a spring (they need it); every other device simply works, without power and
- * without winding.
+ * <b>{@code power.costs} OFF</b> (or {@code features.power.enabled} off): only the food maker and the fertilizer maker
+ * have a spring (they need it); every other device simply works, without power and without winding.
  * <p>
- * <b>Power option of a device on</b>: the food maker and the fertilizer maker run on FE or their spring. With
- * {@code features.power.winding} also the external filter (it drives the heaters in it too), the multiblock filter (its
- * pump head), the reverse osmosis unit (its pressure pump), the water change controller and the water pump can be wound,
- * and the cabinet under a tank: it stores the winding and gives it to every device of its tank that needs FE (its
- * filter and air pump, the external and internal filters, heaters and coolers, heat mats, misters, lights, air pumps,
- * skimmers and flow pumps), the more devices the faster. FE always goes first; the spring only runs while FE is short.
+ * <b>{@code power.costs} EASY or HARD</b>: the food maker and the fertilizer maker run on FE or their spring. With
+ * {@code features.power.winding} also the multiblock filter (its pump head), the reverse osmosis unit (its pressure pump),
+ * the water change controller and the water pump can be wound. M67: the cabinet under a tank and an external filter
+ * attached to one have no spring of their own any more: the crank at them charges the tank's one energy store
+ * ({@link org.overengineer.bettacraft.tank.TankStore}, {@code features.power.tankCrank}), which runs every device of the
+ * tank. FE always goes first; a spring only runs while FE is short.
  * <p>
- * Capacity: one charge ({@code winding.ticksPerCharge}, one in-game day) of one device's work; the multiblock filter and
- * the cabinet hold six charges ({@code winding.*Charges}, per device). One charge takes {@code winding.clicksPerCharge}
- * clicks (about five seconds of holding the crank), six charges six times as long. Unloaded chunks stand still.
+ * Capacity: one charge ({@code winding.ticksPerCharge}, one in-game day) of one device's work; the multiblock filter holds
+ * six charges ({@code winding.*Charges}, per device). One charge takes {@code winding.clicksPerCharge} clicks (about five
+ * seconds of holding the crank), six charges six times as long. Unloaded chunks stand still.
  */
 public final class Winding {
     private Winding() {}
@@ -57,9 +56,8 @@ public final class Winding {
             return switch (this) {
                 case FOOD_MAKER -> ServerConfig.getOr(ServerConfig.FOOD_MAKER_SPRING_TICKS, 24000) / (double) ticksPerCharge();
                 case FERTILIZER_MAKER -> ServerConfig.getOr(ServerConfig.WIND_FERTILIZER_MAKER, 1.0);
-                case EXTERNAL_FILTER -> ServerConfig.getOr(ServerConfig.WIND_EXTERNAL_FILTER, 1.0);
+                case EXTERNAL_FILTER, CABINET -> 1.0; // M67: they charge the tank's store (only an old world's spring is left)
                 case MULTIBLOCK_FILTER -> ServerConfig.getOr(ServerConfig.WIND_MULTIBLOCK_FILTER, 6.0);
-                case CABINET -> ServerConfig.getOr(ServerConfig.WIND_CABINET, 6.0);
                 case OSMOSIS -> ServerConfig.getOr(ServerConfig.WIND_OSMOSIS, 1.0);
                 case WATER_CHANGER -> ServerConfig.getOr(ServerConfig.WIND_WATER_CHANGER, 1.0);
                 case WATER_PUMP -> ServerConfig.getOr(ServerConfig.WIND_WATER_PUMP, 1.0);
@@ -83,8 +81,7 @@ public final class Winding {
             return switch (this) {
                 case FOOD_MAKER -> Features.enabled(Feature.FOOD_MACHINE) && (!machinePowered() || enabled());
                 case FERTILIZER_MAKER -> Features.enabled(Feature.FERTILIZER) && (!machinePowered() || enabled());
-                case EXTERNAL_FILTER -> enabled() && (TankPower.filterRequired() || TankPower.heaterRequired());
-                case CABINET -> enabled() && TankPower.anyRequired();
+                case EXTERNAL_FILTER, CABINET -> org.overengineer.bettacraft.tank.TankStore.crankEnabled() && TankPower.anyRequired(); // M67
                 case MULTIBLOCK_FILTER -> enabled() && DeviceEnergy.required() && Features.enabled(Feature.MULTIBLOCK_FILTER);
                 case OSMOSIS -> enabled() && machinePowered() && Features.enabled(Feature.OSMOSIS);
                 case WATER_CHANGER -> enabled() && DeviceEnergy.required() && Features.enabled(Feature.AUTO_WATER_CHANGE);
@@ -112,8 +109,7 @@ public final class Winding {
         public boolean needsPower() {
             return switch (this) {
                 case FOOD_MAKER, FERTILIZER_MAKER, OSMOSIS -> machinePowered();
-                case EXTERNAL_FILTER -> TankPower.filterRequired() || TankPower.heaterRequired();
-                case CABINET -> TankPower.anyRequired();
+                case EXTERNAL_FILTER, CABINET -> TankPower.anyRequired();
                 case MULTIBLOCK_FILTER, WATER_CHANGER, WATER_PUMP -> DeviceEnergy.required();
             };
         }
@@ -192,6 +188,7 @@ public final class Winding {
             if (player != null) player.displayClientMessage(Component.translatable(d.refusal(), name), true);
             return Result.REFUSED;
         }
+        if (org.overengineer.bettacraft.tank.TankStore.feedsTank(w)) return windTank(level, at, w, name, player); // M67
         WindSpring s = w.windStore(); // M62: the cabinets share one store
         if (!s.windStep()) {
             if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.full", name), true);
@@ -205,9 +202,41 @@ public final class Winding {
         return Result.WOUND;
     }
 
-    /** What a window or overlay shows of a spring: its fill in percent, -1 while it may not be wound (and is empty). */
+    /**
+     * M67: a click at a cabinet or an attached external filter: charges the tank's one store ({@code power.crankFePerClick}).
+     * Without a tank it says so; a full store says it is full.
+     */
+    private static Result windTank(Level level, BlockPos at, Windable w, Component name, @Nullable Player player) {
+        var c = org.overengineer.bettacraft.tank.TankStore.tankOf(level, w);
+        if (c == null) {
+            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.no_tank", name), true);
+            return Result.REFUSED;
+        }
+        long added = org.overengineer.bettacraft.tank.TankStore.crank(c);
+        if (added <= 0) {
+            if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.store_full", name), true);
+            return Result.FULL;
+        }
+        w.onWound();
+        org.overengineer.bettacraft.progression.Progress.award(player, org.overengineer.bettacraft.progression.Progress.WOUND); // M45
+        int pct = org.overengineer.bettacraft.tank.TankStore.percent(c);
+        float pitch = 0.7F + 0.5F * pct / 100F;
+        if (ModSounds.devices()) level.playSound(null, at, ModSounds.pick(ModSounds.FOOD_MAKER_WIND, ModSounds.FOOD_MAKER_WIND_VANILLA), SoundSource.BLOCKS, 0.7F, pitch);
+        if (player != null) player.displayClientMessage(Component.translatable("message.bettacraft.crank.store", name, pct,
+                String.format(java.util.Locale.ROOT, "%,d", c.getTank().powerBuffer()), org.overengineer.bettacraft.tank.TankStore.hours(c)), true);
+        return Result.WOUND;
+    }
+
+    /**
+     * What a window or overlay shows of a spring: its fill in percent, -1 while it may not be wound (and is empty). M67: for a
+     * cabinet or an attached external filter the fill of the tank's store (-1 without a tank).
+     */
     public static int shown(@Nullable Windable w) {
         if (w == null) return -1;
+        if (org.overengineer.bettacraft.tank.TankStore.feedsTank(w)) {
+            var c = org.overengineer.bettacraft.tank.TankStore.tankOf(((BlockEntity) w).getLevel(), w);
+            return c == null || !w.windDevice().windable() ? -1 : org.overengineer.bettacraft.tank.TankStore.percent(c);
+        }
         WindSpring s = w.windStore(); // M62
         return w.windDevice().windable() || !s.empty() ? s.percent() : -1;
     }

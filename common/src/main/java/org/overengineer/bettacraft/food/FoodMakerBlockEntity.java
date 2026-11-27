@@ -240,7 +240,7 @@ public class FoodMakerBlockEntity extends BlockEntity implements MenuProvider, o
         if (!fits(r.result())) return OUTPUT_FULL;
         if ((level.getGameTime() + pos.asLong()) % 20 == 0) turned = org.overengineer.bettacraft.compat.create.CreateKinetics.drive(level, pos);
         if (powered()) {
-            int fe = ServerConfig.getOr(ServerConfig.FOOD_MAKER_FE, 10);
+            int fe = org.overengineer.bettacraft.tank.TankPower.feInt(ServerConfig.getOr(ServerConfig.FOOD_MAKER_FE, 10)); // M67: power.costs
             if (turned > 0F) energy.drive(level, pos, fe); // M32 part c: Create's rotation instead of FE
             if (!energy.use(fe)) {
                 // M37: FE first, then the spring (features.power.winding)

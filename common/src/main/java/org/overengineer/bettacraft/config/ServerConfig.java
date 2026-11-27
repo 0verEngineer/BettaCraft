@@ -25,6 +25,11 @@ public final class ServerConfig {
      * DECOR = no needs at all: never hungry, never sick, nothing dies (decoration tanks). Only a player or /kill kills.
      */
     public enum CareMode { NORMAL, NO_DEATH, DECOR }
+    /**
+     * M67: what the devices cost in FE. OFF = no device needs power (the devices simply run); EASY = a third of the values
+     * below (every consumer); HARD = the values below as they are (the consumption before M67).
+     */
+    public enum PowerCosts { OFF, EASY, HARD }
 
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.BooleanValue PROTECT_FROM_EXPLOSIONS_AND_PISTONS;
@@ -156,14 +161,14 @@ public final class ServerConfig {
     public static final ModConfigSpec.DoubleValue EVAPORATION_MB_PER_DAY;
 
     // power (M9)
-    public static final ModConfigSpec.BooleanValue POWER_HEATER;
-    public static final ModConfigSpec.BooleanValue POWER_FILTER;
-    public static final ModConfigSpec.BooleanValue POWER_LIGHT;
+    /** M67: one setting for every device (replaces the old *RequiresEnergy switches). */
+    public static final ModConfigSpec.EnumValue<PowerCosts> POWER_COSTS;
     public static final ModConfigSpec.DoubleValue POWER_HEATER_FE_PER_BLOCK;
     public static final ModConfigSpec.DoubleValue POWER_COOLER_FE_PER_BLOCK;
     public static final ModConfigSpec.IntValue POWER_FILTER_FE;
     public static final ModConfigSpec.IntValue POWER_LIGHT_FE;
-    public static final ModConfigSpec.IntValue POWER_BUFFER;
+    /** M67: the tank's one energy store: per water block of the tank, per cabinet of it, FE of one click of the crank. */
+    public static final ModConfigSpec.IntValue POWER_STORE_PER_BLOCK, POWER_STORE_PER_CABINET, POWER_CRANK_FE;
 
     // food breeding (M9)
     public static final ModConfigSpec.DoubleValue CULTURE_LARVA_DAYS;
@@ -187,11 +192,11 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue FOOD_MAKER_FE;
     // M37: winding with the crank, liquid fertilizer and the fertilizer maker
     public static final ModConfigSpec.IntValue WIND_TICKS_PER_CHARGE, WIND_CLICKS_PER_CHARGE;
-    public static final ModConfigSpec.DoubleValue WIND_EXTERNAL_FILTER, WIND_MULTIBLOCK_FILTER, WIND_CABINET, WIND_OSMOSIS, WIND_WATER_CHANGER,
+    public static final ModConfigSpec.DoubleValue WIND_MULTIBLOCK_FILTER, WIND_OSMOSIS, WIND_WATER_CHANGER,
             WIND_WATER_PUMP, WIND_FERTILIZER_MAKER;
     // M41: Create's rotation for the tank's FE buffer (drive adapter, shaft on the cabinet)
     public static final ModConfigSpec.IntValue DRIVE_FULL_SPEED, DRIVE_FE, DRIVE_MAX_FE;
-    public static final ModConfigSpec.DoubleValue DRIVE_STRESS_PER_FE, DRIVE_IDLE_STRESS, DRIVE_FE_PER_SPRING_TICK;
+    public static final ModConfigSpec.DoubleValue DRIVE_STRESS_PER_FE, DRIVE_IDLE_STRESS;
     public static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> DRIVE_CABINET_SIDES;
     /** M50: the care of tanks on Create contraptions (features.compat.create.travelCare). */
     public static final ModConfigSpec.DoubleValue TRAVEL_DYNAMO_SPEED;
@@ -313,7 +318,6 @@ public final class ServerConfig {
     /** M46: the small animals' own limit of the spawn pass (they no longer share {@link #WILD_PASS_PER_PLAYER} with the fish). */
     public static final ModConfigSpec.IntValue WILD_PASS_CRITTERS_PER_PLAYER;
     // M23: aeration, oxygen, internal filters, lights
-    public static final ModConfigSpec.BooleanValue POWER_AIR_PUMP;
     public static final ModConfigSpec.DoubleValue POWER_AIR_PUMP_FE;
     public static final ModConfigSpec.IntValue AIR_OUTLETS_PER_PUMP;
     public static final ModConfigSpec.DoubleValue OXYGEN_AIR_STONE;
@@ -353,7 +357,6 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue RO_FE;
     public static final ModConfigSpec.IntValue PIPE_STEEL_RATE;
     public static final ModConfigSpec.IntValue PIPE_PUMP_RATE;
-    public static final ModConfigSpec.BooleanValue POWER_PUMPS;
     public static final ModConfigSpec.IntValue POWER_PUMP_FE;
     public static final ModConfigSpec.IntValue CRUCIBLE_TICKS;
     public static final ModConfigSpec.IntValue CRUCIBLE_FE;
@@ -377,7 +380,6 @@ public final class ServerConfig {
     // M31 part d: mobs in glass
     public static final ModConfigSpec.DoubleValue TERRA_MOB_CATCH_HEALTH;
     public static final ModConfigSpec.BooleanValue TERRA_MOB_UNDEAD_BURN, TERRA_MOB_BREEDING;
-    public static final ModConfigSpec.BooleanValue POWER_MISTER;
     public static final ModConfigSpec.IntValue BIG_MAX_SIZE_X, BIG_MAX_SIZE_Y, BIG_MAX_SIZE_Z, INTERIOR_SCALE8_ABOVE, INTERIOR_SCALE4_ABOVE;
     public static final ModConfigSpec.DoubleValue BIG_LONG_SIDE, BIG_SHORT_SIDE, BIG_HEIGHT, BIG_WATER, BIG_DOLPHIN_HUNGRY_DAYS, BIG_SPAWN_CHANCE,
             BIG_TUB_SLOWNESS, BIG_NET_CHANCE, BIG_LEADER_CHANCE;
@@ -612,11 +614,13 @@ public final class ServerConfig {
                 .defineInRange("mbPerBlockPerDay", 20.0, 0.0, 1000.0);
         b.pop();
 
-        b.comment("Power: heaters, coolers, filters and lights can need Forge Energy (FE). A tank stores FE for its equipment;",
-                "connect any FE cable or generator to a tank block, an external filter, a cabinet under the tank or a light on it.").push("power");
-        POWER_HEATER = b.comment("Heaters and coolers only work while the tank has enough FE").define("heaterRequiresEnergy", false);
-        POWER_FILTER = b.comment("Filters only clean the water while the tank has enough FE").define("filterRequiresEnergy", false);
-        POWER_LIGHT = b.comment("Lights on a tank only shine while the tank has enough FE").define("lightRequiresEnergy", false);
+        b.comment("Power: the devices can need Forge Energy (FE). Every tank has one energy store for all its devices; it is charged by",
+                "any FE cable or generator at a tank block, an external filter, a cabinet under the tank or a light on it, or with the crank",
+                "at a cabinet under the tank or an attached external filter (no power mod needed).").push("power");
+        POWER_COSTS = b.comment("What the devices cost: OFF = no device needs power, EASY = a third of the FE values (all consumers),",
+                "HARD = the FE values as they are. Replaces the old switches heaterRequiresEnergy, filterRequiresEnergy, lightRequiresEnergy,",
+                "airPumpRequiresEnergy, pumpsRequireEnergy and misterRequiresEnergy (an old config with any of them on becomes HARD)")
+                .defineEnum("costs", PowerCosts.OFF);
         POWER_HEATER_FE_PER_BLOCK = b.comment("FE per tick a heater needs for each water block it heats (only while it heats;",
                         "heating water costs far more than running a filter or a light)")
                 .defineInRange("heaterFePerBlock", 8.0, 0.0, 1000.0);
@@ -624,13 +628,17 @@ public final class ServerConfig {
                 .defineInRange("coolerFePerBlock", 8.0, 0.0, 1000.0);
         POWER_FILTER_FE = b.comment("FE per tick of each filter").defineInRange("filterFePerTick", 10, 0, 100000);
         POWER_LIGHT_FE = b.comment("FE per tick of each lit light block on a tank").defineInRange("lightFePerTick", 4, 0, 100000);
-        POWER_BUFFER = b.comment("FE a tank can store").defineInRange("bufferFe", 100000, 1000, 100000000);
+        POWER_STORE_PER_BLOCK = b.comment("FE the tank's store holds per water block of the tank (80000: a full store runs a 2x2x2 tank with filter,",
+                        "light and a heater that heats one in-game day on EASY)").defineInRange("storePerWaterBlock", 80000, 1000, 100000000);
+        POWER_STORE_PER_CABINET = b.comment("FE every cabinet block under the tank (and every cabinet joined to them) adds to the tank's store")
+                .defineInRange("storePerCabinet", 20000, 0, 100000000);
+        POWER_CRANK_FE = b.comment("FE one click of the crank at a cabinet or an attached external filter puts into the tank's store",
+                        "(holding the crank clicks about five times a second: 6500 = about 20 seconds for one day of a 2x2x2 tank on EASY)")
+                .defineInRange("crankFePerClick", 6500, 1, 10000000);
         b.pop();
 
         // M23
         b.comment("Air pumps, air stones and the oxygen in the water (features.equipment.aeration, features.waterChemistry.oxygen)").push("aeration");
-        POWER_AIR_PUMP = b.comment("Air pumps only run while the tank has enough FE (power.airPumpFePerOutlet for every air stone and sponge filter they",
-                "drive; off: they run without power like the filters without power mods)").define("airPumpRequiresEnergy", false);
         POWER_AIR_PUMP_FE = b.comment("FE per tick an air pump needs for each air stone or sponge filter it drives (times its power regulator)")
                 .defineInRange("airPumpFePerOutlet", 2.0, 0.0, 10000.0);
         AIR_OUTLETS_PER_PUMP = b.comment("Air stones and sponge filters one air pump drives at full strength (more share its air and bubble less)")
@@ -737,8 +745,6 @@ public final class ServerConfig {
         PIPE_STEEL_RATE = b.comment("mB per tick a stainless steel pipe network carries (a network of both kinds carries what its weakest pipe carries)")
                 .defineInRange("steelPipeRate", 250, 1, 1000000);
         PIPE_PUMP_RATE = b.comment("mB per tick a water pump moves at 100 %").defineInRange("pumpRate", 200, 1, 1000000);
-        POWER_PUMPS = b.comment("Water pumps, the pump head of the multiblock filter, the water change controller and the level sensor need FE",
-                "(off: they run without power)").define("pumpsRequireEnergy", false);
         POWER_PUMP_FE = b.comment("FE per tick of a running water pump or filter pump head at 100 % (a water change costs this per 100 mB)")
                 .defineInRange("pumpFePerTick", 8, 0, 100000);
         b.pop();
@@ -796,20 +802,17 @@ public final class ServerConfig {
                 .defineInRange("makerFePerTick", 10, 0, 100000);
         b.pop();
 
-        b.comment("M37: winding with the crank (features.power.winding). Without the power options only the food maker and the fertilizer maker",
-                "have a spring; with a device's power option on the external filter, multiblock filter, reverse osmosis unit, water change",
-                "controller, water pump and the cabinet under a tank (for every device of its tank) can be wound instead of FE. FE goes first.",
-                "One charge is one in-game day of one device's work; the spring stands still in unloaded chunks").push("winding");
+        b.comment("M37: winding with the crank (features.power.winding). With power.costs OFF only the food maker and the fertilizer maker",
+                "have a spring; with EASY or HARD also the multiblock filter, reverse osmosis unit, water change controller and water pump",
+                "(devices without a tank). The cabinet under a tank and an attached external filter charge the tank's store instead",
+                "(power.crankFePerClick). FE goes first. One charge is one in-game day of one device's work; the spring stands still in",
+                "unloaded chunks").push("winding");
         WIND_TICKS_PER_CHARGE = b.comment("Ticks of one device's work in one charge (24000 = one in-game day)")
                 .defineInRange("ticksPerCharge", 24000, 20, 1000000);
         WIND_CLICKS_PER_CHARGE = b.comment("Clicks with the crank for one charge (holding the crank clicks about five times a second: 25 = 5 seconds)")
                 .defineInRange("clicksPerCharge", 25, 1, 1000);
-        WIND_EXTERNAL_FILTER = b.comment("Charges the spring of an external filter holds (it also drives the heaters in it)")
-                .defineInRange("externalFilterCharges", 1.0, 0.05, 64.0);
         WIND_MULTIBLOCK_FILTER = b.comment("Charges the spring of a multiblock filter (its pump head) holds")
                 .defineInRange("multiblockFilterCharges", 6.0, 0.05, 64.0);
-        WIND_CABINET = b.comment("Charges the spring of a cabinet under a tank holds (shared by every device of the tank that needs FE)")
-                .defineInRange("cabinetCharges", 6.0, 0.05, 64.0);
         WIND_OSMOSIS = b.comment("Charges the spring of the pressure pump of a reverse osmosis unit holds")
                 .defineInRange("osmosisCharges", 1.0, 0.05, 64.0);
         WIND_WATER_CHANGER = b.comment("Charges the spring of a water change controller holds (a charge is a day of a pump's work)")
@@ -833,9 +836,6 @@ public final class ServerConfig {
                 .defineInRange("stressPerFe", 2.0, 0.0, 1000000.0);
         DRIVE_IDLE_STRESS = b.comment("Stress units per RPM an input costs while it turns without load (0.5: 32 SU at 64 RPM)")
                 .defineInRange("idleStressPerRpm", 0.5, 0.0, 1000000.0);
-        DRIVE_FE_PER_SPRING_TICK = b.comment("With power.winding on, a cabinet's shaft winds the cabinet's spring with the FE the tank does not need:",
-                        "this many FE wind one device-tick")
-                .defineInRange("fePerSpringTick", 10.0, 0.1, 100000.0);
         DRIVE_CABINET_SIDES = b.comment("Sides of a cabinet that may take the shaft (back, left, right, front, bottom; seen from the cabinet's door).",
                         "Empty: no cabinet takes a shaft (features.compat.create.cabinetDrive switches it off as a whole)")
                 .defineListAllowEmpty("cabinetSides", java.util.List.of("back", "left", "right", "front", "bottom"), () -> "back",
@@ -1188,10 +1188,9 @@ public final class ServerConfig {
         TERRA_BOX_ALLOW = b.comment("M35: land animals of other mods without a terrarium profile that the terrarium box catches all the same (\"modid:name\",",
                         "\"modid:*\"); they live in terraria and paludaria without our care, moved by our walker, small ones only (inhabitants.maxHitbox)")
                 .defineListAllowEmpty("boxAllow", java.util.List.of(), () -> "modid:name", org.overengineer.bettacraft.tank.InhabitantRules::validPattern);
-        POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.heaterRequiresEnergy)")
+        POWER_HEAT_MAT_FE = b.comment("FE per tick a heat mat needs while it heats (with power.costs EASY or HARD)")
                 .defineInRange("heatMatFePerTick", 4.0, 0.0, 100000.0);
-        POWER_MISTER = b.comment("Misters only spray while the tank has enough FE").define("misterRequiresEnergy", false);
-        POWER_MISTER_FE = b.comment("FE per tick a mister needs while it sprays (with misterRequiresEnergy)")
+        POWER_MISTER_FE = b.comment("FE per tick a mister needs while it sprays (with power.costs EASY or HARD)")
                 .defineInRange("misterFePerTick", 6.0, 0.0, 100000.0);
         b.pop();
 

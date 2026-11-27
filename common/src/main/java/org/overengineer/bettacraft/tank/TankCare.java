@@ -171,11 +171,7 @@ public final class TankCare {
      */
     public static double heaterBlocks(ServerLevel level, TankData tank) {
         TankBlockEntity c = controllerOf(level, tank);
-        if (c != null && !c.heatPowered) {
-            double wound = 0; // M37: heaters in an external filter wound with the crank
-            for (var f : c.springHeat) wound += f.heaterBlocks();
-            return wound;
-        }
+        if (c != null && !c.heatPowered) return 0;
         return rawHeaterBlocks(level, tank);
     }
 
@@ -187,11 +183,7 @@ public final class TankCare {
     /** Cooling capacity that works now (M9): coolers in attached filters and cooler rods under water in the interior. */
     public static double coolerBlocks(ServerLevel level, TankData tank) {
         TankBlockEntity c = controllerOf(level, tank);
-        if (c != null && !c.heatPowered) {
-            double wound = 0; // M37: coolers in an external filter wound with the crank
-            for (var f : c.springHeat) wound += f.coolerBlocks();
-            return wound;
-        }
+        if (c != null && !c.heatPowered) return 0;
         return rawCoolerBlocks(level, tank);
     }
 

@@ -53,7 +53,6 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         g.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         for (int i = 0; i < FilterHeaters.SLOTS; i++) {
             if (!menu.getSlot(i).hasItem()) {
                 g.blit(TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 220, 18, 16, 16);
@@ -66,7 +65,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         super.renderLabels(g, mouseX, mouseY);
         // the hint under the slots, wrapped (a longer translation takes a third line, drawn smaller)
         Component hint = Component.translatable("gui.bettacraft.filter.heaters_hint");
-        var lines = font.split(hint, imageWidth - 48); // right of the spring gauge
+        var lines = font.split(hint, imageWidth - 48);
         int y = 56;
         for (var l : lines) {
             if (y > 66) break;
@@ -81,8 +80,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         if (powerBtn != null) powerBtn.setMessage(Component.translatable("gui.bettacraft.regulator.button", menu.power() * 10));
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
-        if (SpringGauge.over(mouseX, mouseY, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H)) SpringGauge.tooltip(g, font, mouseX, mouseY, menu.springPercent());
-        else if (energyTipForTest || EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, energyTipForTest ? leftPos + 10 : mouseX, energyTipForTest ? topPos + 60 : mouseY, menu.energy(), "gui.bettacraft.filter.energy_tooltip");
+        if (energyTipForTest || EnergyRow.over(mouseX - leftPos, mouseY - topPos, ENERGY_X, ENERGY_Y, ENERGY_W)) EnergyRow.tooltip(g, font, energyTipForTest ? leftPos + 10 : mouseX, energyTipForTest ? topPos + 60 : mouseY, menu.energy(), "gui.bettacraft.filter.energy_tooltip");
     }
 
     private boolean energyTipForTest;
@@ -91,7 +89,4 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
     public void showEnergyTipForTest() {
         energyTipForTest = true;
     }
-
-    /** M37: the spring gauge on the left. */
-    static final int SPRING_X = 12, SPRING_Y = 18, SPRING_H = 52;
 }

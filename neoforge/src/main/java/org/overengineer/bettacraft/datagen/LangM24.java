@@ -157,8 +157,6 @@ final class LangM24 {
         a.accept("bettacraft.configuration.steelPipeRate.tooltip", "mB per tick a stainless steel pipe network carries (a network of both kinds carries what its weakest pipe carries)");
         a.accept("bettacraft.configuration.pumpRate", "Water pump rate");
         a.accept("bettacraft.configuration.pumpRate.tooltip", "mB per tick a water pump moves at 100 %");
-        a.accept("bettacraft.configuration.pumpsRequireEnergy", "Water devices need energy");
-        a.accept("bettacraft.configuration.pumpsRequireEnergy.tooltip", "Water pumps, the pump head of the multiblock filter, the water change controller and the level sensor need FE (off: they run without power)");
         a.accept("bettacraft.configuration.pumpFePerTick", "Water pump FE");
         a.accept("bettacraft.configuration.pumpFePerTick.tooltip", "FE per tick of a running water pump or filter pump head at 100 % (a water change costs this per 100 mB)");
         a.accept("bettacraft.configuration.crucible", "Crucible");

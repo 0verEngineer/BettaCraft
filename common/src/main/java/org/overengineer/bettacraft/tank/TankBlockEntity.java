@@ -102,18 +102,8 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
      * coolers, filters and lights have the FE they need (always true while the config does not require power).
      */
     boolean heatPowered = true, filterPowered = true, lightPowered = true;
-    /**
-     * M37 (transient, set by {@link TankPower#step}): the external filters that clean on their own spring while the tank's
-     * FE is short, those whose heaters / coolers run on it, and the devices the springs drove in the last care step.
-     */
-    final java.util.Set<org.overengineer.bettacraft.equipment.FilterHost> springFilters = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()),
-            springHeat = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
-    double springUnits;
-
-    /** M37: devices the wound springs drove in the last care step (0: none or all on FE). */
-    public double springUnits() { return springUnits; }
-
-    public java.util.Set<org.overengineer.bettacraft.equipment.FilterHost> springHeat() { return springHeat; }
+    /** M67 (transient, set by every care step, {@link TankStore#capacity}): the capacity of the tank's store. */
+    long storeCapacity;
     /** M23: air pumps next to the tank (positions), whether they have FE, and the light factor (dimmer x daylight curve) last applied to the lights. */
     java.util.List<BlockPos> airPumpCache = java.util.List.of();
     /** M25: CO2 sources (bio CO2 bottles, gas cylinders) that serve this tank. */

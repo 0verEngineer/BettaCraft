@@ -132,8 +132,9 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     }
 
     /**
-     * M37: the spring the crank winds: it stores the winding and gives it to every device of the tank above that needs FE
-     * while the tank's FE is short ({@link org.overengineer.bettacraft.tank.TankPower}), the more devices the faster.
+     * M37: the spring of a cabinet. M67: only what an older world had wound is left in it; the next care step of the tank
+     * moves it into the tank's store ({@link org.overengineer.bettacraft.tank.TankStore#migrateSprings}). The crank at the
+     * cabinet charges that store directly.
      */
     private final org.overengineer.bettacraft.winding.WindSpring spring =
             org.overengineer.bettacraft.winding.WindSpring.of(org.overengineer.bettacraft.winding.Winding.Device.CABINET, this::setChanged);
@@ -146,12 +147,6 @@ public class CabinetBlockEntity extends BlockEntity implements MenuProvider, Fil
     @Override
     public org.overengineer.bettacraft.winding.Winding.Device windDevice() {
         return org.overengineer.bettacraft.winding.Winding.Device.CABINET;
-    }
-
-    /** M62: the store this cabinet shares with the whole under-cabinet ({@link CabinetSprings}); its own spring alone. */
-    @Override
-    public org.overengineer.bettacraft.winding.WindSpring windStore() {
-        return CabinetSprings.of(this);
     }
 
     /** Storage slots only (capability for hoppers and pipes). */

@@ -977,6 +977,8 @@ public final class TankView {
         public final List<String> filterWarnings = new ArrayList<>();
         public boolean heaterPower, filterPower, lightPower, heatPowered = true, filterPowered = true, lightPowered = true;
         public long buffer, bufferCap;
+        /** M67: power.costs (0 OFF, 1 EASY, 2 HARD). */
+        public int costs;
         public int demand;
         /** M20: salinity (ppt), calcium (mg/L), skimmers, flow pumps, flow (1 = strong), live rock blocks, light spectrum for corals. */
         public float salinity, calcium;
@@ -1062,6 +1064,7 @@ public final class TankView {
             t.putBoolean("ok_light", lightPowered);
             t.putLong("buffer", buffer);
             t.putLong("buffer_cap", bufferCap);
+            t.putInt("costs", costs);
             t.putInt("demand", demand);
             t.putFloat("no3", nitrate);
             t.putDouble("no3_rate", nitrateRate);
@@ -1160,6 +1163,7 @@ public final class TankView {
             lightPowered = t.getBoolean("ok_light");
             buffer = t.getLong("buffer");
             bufferCap = t.getLong("buffer_cap");
+            costs = t.getInt("costs");
             demand = t.getInt("demand");
         }
 
@@ -1371,7 +1375,8 @@ public final class TankView {
         w.filterPowered = c.filterPowered();
         w.lightPowered = c.lightPowered();
         w.buffer = t.powerBuffer();
-        w.bufferCap = org.overengineer.bettacraft.tank.TankPower.capacity();
+        w.bufferCap = org.overengineer.bettacraft.tank.TankPower.capacity(c);
+        w.costs = org.overengineer.bettacraft.tank.TankPower.costs().ordinal();
         w.demand = c.lastDemand();
         // M20: salt water values and the reef technique
         w.salinity = t.salinity();
@@ -1383,7 +1388,6 @@ public final class TankView {
         w.fertilizerOn = org.overengineer.bettacraft.fertilizer.Fertilizer.enabled(); // M37
         w.fertilizer = t.fertilizer();
         w.fertilizerOver = (float) org.overengineer.bettacraft.fertilizer.Fertilizer.overdoseAt();
-        w.springUnits = c.springUnits();
         w.skimmers = org.overengineer.bettacraft.reef.TankReef.skimmerCount(level, c);
         w.pumps = org.overengineer.bettacraft.reef.TankReef.pumps(level, t);
         w.liveRock = org.overengineer.bettacraft.reef.TankReef.liveRock(level, t);

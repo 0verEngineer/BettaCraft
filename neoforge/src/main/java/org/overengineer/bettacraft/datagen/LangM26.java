@@ -51,7 +51,7 @@ final class LangM26 {
         a.accept("gui.bettacraft.live_food_pump.no_food", "The breeder has no food ready");
         a.accept("gui.bettacraft.live_food_pump.no_target", "No tank reached (pipes or a tank next to it)");
         a.accept("gui.bettacraft.live_food_pump.nobody_eats", "Nobody in the tanks eats this food now");
-        a.accept("gui.bettacraft.live_food_pump.no_power", "Needs FE (pipes.pumpsRequireEnergy)");
+        a.accept("gui.bettacraft.live_food_pump.no_power", "Needs FE (power.costs)");
         a.accept("gui.bettacraft.live_food_pump.bottles_full", "Full of empty bottles: take them out");
         a.accept("gui.bettacraft.live_food_pump.off", "The live food pump is switched off (features.liveFood.pump)");
         a.accept("gui.bettacraft.live_food_pump.paused", "Paused by a redstone signal");
