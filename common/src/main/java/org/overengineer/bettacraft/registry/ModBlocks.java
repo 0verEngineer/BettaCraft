@@ -444,7 +444,7 @@ public final class ModBlocks {
 
     private static DeferredBlock<org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock> interiorBundle(String id, boolean steel) {
         return BLOCKS.register(id, () -> new org.overengineer.bettacraft.plumbing.interior.InteriorBundleBlock(steel, BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL).strength(0.3F).sound(steel ? SoundType.METAL : SoundType.GLASS).noOcclusion().pushReaction(PushReaction.DESTROY)
+                .mapColor(MapColor.METAL).strength(0.3F).sound(steel ? SoundType.METAL : SoundType.GLASS).noOcclusion().pushReaction(PushReaction.POPPED)
                 .isRedstoneConductor((s, l, p) -> false)));
     }
 

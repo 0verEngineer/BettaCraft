@@ -225,7 +225,7 @@ public class InteriorBundleBlock extends PlumbingBlock {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!InteriorManager.canBuild(player, pos)) return InteractionResult.FAIL;
         ItemStack out = removeLane(level, pos);
-        if (!out.isEmpty() && !player.getAbilities().instabuild && !player.getInventory().add(out)) player.drop(out, false);
+        if (!out.isEmpty() && !player.getAbilities().instabuild && !player.getInventory().add(out)) player.drop(out, false, net.minecraft.util.Prediction.SERVER_ONLY);
         return InteractionResult.CONSUME;
     }
 }
