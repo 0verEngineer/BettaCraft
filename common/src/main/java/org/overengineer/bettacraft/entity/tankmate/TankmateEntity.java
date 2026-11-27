@@ -379,9 +379,13 @@ public class TankmateEntity extends AbstractFish {
     /** Distance the centre keeps from the glass: half the body (rendered length) or the hitbox, plus the glass. */
     public double sideMargin() {
         // M21.8: a seahorse stands upright (its length is its height; the snout and the curled tail reach a little forward)
-        double half = Math.max(getBbWidth() * 0.5, Math.min(0.45, species.length() * lifeStage().scale() * (species.seahorse() ? 0.18 : 0.4)));
+        // M67.5: half the length as drawn (the model is snout to tail tip, with the sex and hybrid scale of the renderer): with
+        // 0.4 of the species length a fish that turned towards the glass put its snout through it (a female livebearer, 1.2
+        // times as long, by a third of its body)
+        double drawn = species.length() * lifeStage().scale() * TankmateExtents.sexScale(species, isFemale()) * TankmateExtents.hybridScale(this);
+        double half = Math.max(getBbWidth() * 0.5, Math.min(0.45, drawn * (species.seahorse() ? 0.2 : 0.5)));
         // M30: a big animal keeps half its body length from the glass (it turns in wide curves, the head must not poke out)
-        if (species.isLarge()) half = Math.max(getBbWidth() * 0.5, species.length() * lifeStage().scale() * 0.42);
+        if (species.isLarge()) half = Math.max(getBbWidth() * 0.5, drawn * 0.5);
         return half + 1.0 / 16 + 0.005;
     }
 
