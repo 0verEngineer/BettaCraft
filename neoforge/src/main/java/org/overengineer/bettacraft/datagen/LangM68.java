@@ -10,6 +10,7 @@ final class LangM68 {
     private LangM68() {}
 
     static void addAll(BiConsumer<String, String> a) {
+        a.accept("message.bettacraft.mb_filter.short_circuit", "The multiblock filter at %s %s %s stopped: one of its lines also touches a port of another role (a short circuit, red rings). Keep the lines apart with the pipe wrench.");
         a.accept("block.bettacraft.interior_steel_pipe", "Interior Pipe (Stainless Steel)");
         a.accept("item.bettacraft.pipe_wrench", "Pipe Wrench");
         a.accept("tooltip.bettacraft.pipe_wrench.usage", "Right-click a side of a pipe: closes it (the pipe no longer joins what is there) or opens it again");
