@@ -5252,5 +5252,6 @@
   "gui.bettacraft.mb_filter.line_limit": "Seine Leitungen tragen höchstens %s mB/t",
   "info.bettacraft.pipe_wrench": "Die Rohrzange schließt und öffnet die Seiten eines Rohrs: Rechtsklick auf eine Seite (einen Arm des Rohrs, oder die Fläche seiner Mitte, wo eine Seite zu ist). Eine geschlossene Seite verbindet nichts und zeigt eine Kappe; so laufen zwei Leitungen nebeneinander, ohne sich zu verbinden, und Verbindungen lassen sich umlegen. Bei einem Bündel wirkt sie auf das Rohr, auf das man schaut; Schleichen + Rechtsklick setzt dieses Rohr auf den nächsten Platz des Bündels, damit es zum nächsten Bündel passt. Sie wird nicht verbraucht.",
   "quest.bettacraft.pipe_wrench.title": "Das richtige Werkzeug",
-  "quest.bettacraft.pipe_wrench.desc": "Die Rohrzange schließt eine Seite eines Rohrs: zwei Leitungen nebeneinander bleiben getrennt."
+  "quest.bettacraft.pipe_wrench.desc": "Die Rohrzange schließt eine Seite eines Rohrs: zwei Leitungen nebeneinander bleiben getrennt.",
+  "message.bettacraft.mb_filter.short_circuit": "Der Multiblock-Filter bei %s %s %s steht still: eine seiner Leitungen berührt auch einen Anschluss einer anderen Aufgabe (ein Kurzschluss, rote Ringe). Die Leitungen mit der Rohrzange trennen."
 }

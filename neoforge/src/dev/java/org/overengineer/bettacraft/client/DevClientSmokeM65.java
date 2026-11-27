@@ -166,6 +166,14 @@ final class DevClientSmokeM65 {
             for (int x = 0; x <= 8; x++) set(level, o.offset(x, 0, 0), lines[i]);
             set(level, o.offset(4, 0, 1), lines[i]);
         }
+        // M68: the rings of the roles: an inlet at the east end of the first run (intake, blue), an outlet at the second (return,
+        // orange), both at the third (a short circuit, red); the fourth stays plain, its branch closed with the wrench (a cap)
+        var facing = org.overengineer.bettacraft.filter.FilterPartBlock.FACING;
+        level.setBlock(y.offset(9, 0, 8), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(facing, net.minecraft.core.Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(y.offset(9, 0, 11), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(facing, net.minecraft.core.Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(y.offset(9, 0, 14), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(facing, net.minecraft.core.Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(y.offset(-1, 0, 14), ModBlocks.FILTER_OUTLET.get().defaultBlockState().setValue(facing, net.minecraft.core.Direction.EAST), Block.UPDATE_ALL);
+        org.overengineer.bettacraft.plumbing.PipeWrenchItem.setClosed(level, y.offset(4, 0, 17), -1, net.minecraft.core.Direction.SOUTH, true);
         // the bundles: the intake runs along x (z 23); the return comes in from the north at x 3, the waste water from the south
         // at x 4; the return leaves to the south at x 7, the waste water at x 9 to the south, the intake goes on east
         BlockPos o = y.offset(0, 0, 23);
@@ -174,10 +182,13 @@ final class DevClientSmokeM65 {
         for (int z = 1; z <= 3; z++) set(level, o.offset(7, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
         for (int x = 3; x <= 7; x++) PipeBundleBlock.addPipe(level, o.offset(x, 0, 0), true, null, null);
         for (int z = 1; z <= 3; z++) set(level, o.offset(4, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
-        for (int x = 4; x <= 9; x++) PipeBundleBlock.addPipe(level, o.offset(x, 0, 0), true, null, null);
+        for (int x = 4; x <= 9; x++) PipeBundleBlock.addPipe(level, o.offset(x, 0, 0), false, null, null); // M68: a glass pipe in the bundles
         for (int z = 1; z <= 3; z++) set(level, o.offset(9, 0, z), ModBlocks.STAINLESS_STEEL_PIPE.get());
         // a T-piece on the intake line inside a bundle and on a single pipe
         set(level, o.offset(1, 0, -1), ModBlocks.STAINLESS_STEEL_PIPE.get());
+        // M68: the line along the bundles is an intake line (an inlet at its west end): blue rings on the bundles' arms too
+        level.setBlock(o.offset(-1, 0, 0), ModBlocks.FILTER_INLET.get().defaultBlockState().setValue(facing, net.minecraft.core.Direction.EAST), Block.UPDATE_ALL);
+        org.overengineer.bettacraft.plumbing.PipeUpdates.flush(level);
         LOGGER.info("[smoketest] M65 pipe yard at {}", y);
     }
 

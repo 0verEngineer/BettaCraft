@@ -241,6 +241,7 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
             out.add(new TankLink(l.tank().getBlockPos(), x, w < 0 ? 0 : flows[w] / PipeNetwork.WINDOW, w < 0 ? 0 : cleans[w],
                     w < 0 ? 0 : (int) Math.round(part[w] * 100), (int) Math.round(l.tank().getTank().waterBlocks())));
         }
+        if (shortCircuit) tellShort(level); // M68: an old filter whose two lines touched, or a new mistake
         if (retrofit && allOk) {
             retrofit = false; // D2: retrofitted
             setChanged();
@@ -274,6 +275,17 @@ public class FilterPumpHeadBlockEntity extends BlockEntity implements Regulator.
         double flowFactor = 1 - 0.6 * (sponges == 0 ? 0 : spongeDirt / sponges);
         return (int) Math.round(ServerConfig.getOr(ServerConfig.PIPE_PUMP_RATE, 200) / 2.0 * PipeNetwork.WINDOW * share * flowFactor);
     }
+
+    /** M68: the players near a filter whose lines make a short circuit hear once (per server run) why it stopped. */
+    private void tellShort(ServerLevel level) {
+        for (var p : level.players()) {
+            if (p.distanceToSqr(worldPosition.getCenter()) > 32 * 32 || !toldShort.add(p.getUUID())) continue;
+            p.sendSystemMessage(Component.translatable("message.bettacraft.mb_filter.short_circuit", worldPosition.getX(), worldPosition.getY(), worldPosition.getZ())
+                    .withStyle(net.minecraft.ChatFormatting.RED));
+        }
+    }
+
+    private final java.util.Set<java.util.UUID> toldShort = new java.util.HashSet<>();
 
     /** D2: the players near a filter from before M40 hear once (per server run) why it stopped. */
     private void tellRetrofit(ServerLevel level) {
