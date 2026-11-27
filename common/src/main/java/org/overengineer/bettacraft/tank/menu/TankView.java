@@ -515,7 +515,7 @@ public final class TankView {
         }
 
         void load(CompoundTag t) {
-            long[] fx = t.getLongArray("fx");
+            long[] fx = t.getLongArray("fx").orElse(new long[0]);
             if (fx.length == effects.length) for (int i = 0; i < fx.length; i++) effects[i] = Double.longBitsToDouble(fx[i]);
             int[] fo = t.getIntArray("foreign").orElse(new int[0]);
             if (fo.length == 2) {
@@ -1110,7 +1110,7 @@ public final class TankView {
             tannin = t.getDoubleOr("tannin", 0d);
             wood = t.getDoubleOr("wood", 0d);
             chemOff = new ArrayList<>();
-            for (net.minecraft.nbt.Tag x : t.getListOrEmpty("chem_off")) chemOff.add(x.getAsString());
+            for (net.minecraft.nbt.Tag x : t.getListOrEmpty("chem_off")) chemOff.add(NbtCompat.asString(x));
             co2On = t.getBooleanOr("co2_on", false);
             co2Bubbles = t.getDoubleOr("co2_bubbles", 0d);
             co2Target = t.getDoubleOr("co2_target", 0d);

@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.overengineer.bettacraft.BettaCraft;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
@@ -39,7 +39,7 @@ import org.overengineer.bettacraft.tank.algae.AlgaeSim;
 public final class AlgaeFilm {
     /** Number of film textures (density levels). The front film of stage s uses level 2s. */
     public static final int LEVELS = 8;
-    public static final ResourceLocation[] SPRITES = new ResourceLocation[LEVELS + 1];
+    public static final Identifier[] SPRITES = new Identifier[LEVELS + 1];
 
     static {
         for (int i = 1; i <= LEVELS; i++) SPRITES[i] = BettaCraft.id("block/algae_film_" + i);

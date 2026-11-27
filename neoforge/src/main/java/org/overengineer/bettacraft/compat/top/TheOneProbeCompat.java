@@ -40,8 +40,9 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
     public Void apply(ITheOneProbe probe) {
         probe.registerProvider(new Blocks());
         probe.registerEntityProvider(new Bettas());
-        // M66: TOP's own tank gauge (the tank's pipe connection as stored water, in the sneak view) is switched off for the tank;
-        // the water is in the menu
+        // M52 (1.21.11): The One Probe 1.21.11_neo-13.0.0 crashes the client when it draws its own fluid bar (it asks for the
+        // block atlas by its pre-1.21.9 id): no fluid bar of TOP on our blocks, our own lines show the water anyway (M66 on
+        // 1.21.1 switches it off for the tank and the pipes only; here it stays off for every block of the mod)
         probe.registerProbeConfigProvider(new mcjty.theoneprobe.api.IProbeConfigProvider() {
             @Override
             public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, Entity entity, IProbeHitEntityData data) {
@@ -49,10 +50,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
 
             @Override
             public void getProbeConfig(mcjty.theoneprobe.api.IProbeConfig config, Player player, Level world, BlockState state, IProbeHitData data) {
-                // also when another overlay carries our lines, and for the pipes (their connection is a pass-through, not stored water)
-                if (state.getBlock() instanceof TankBlock || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.PipeBlock
-                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBlock
-                        || state.getBlock() instanceof org.overengineer.bettacraft.plumbing.FilterPipeBundleBlock) {
+                if (BettaCraft.MOD_ID.equals(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace())) {
                     config.showTankSetting(mcjty.theoneprobe.api.IProbeConfig.ConfigMode.NOT);
                 }
             }

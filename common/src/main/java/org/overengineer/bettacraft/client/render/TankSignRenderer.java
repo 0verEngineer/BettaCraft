@@ -138,8 +138,19 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
      * is known when its section is built (the chunk packet carries it; a change rebuilds the section, TankBlockEntity).
      */
     @Override
-    public boolean shouldRenderOffScreen(TankBlockEntity be) {
-        return be.isController();
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    /**
+     * M66 (port): this version decides "always drawn" per renderer, when the block entity is added to the client level, and
+     * keeps those block entities in {@link net.minecraft.client.multiplayer.ClientLevel#getGloballyRenderedBlockEntities}
+     * (iterated every frame); only the controllers stay in it (called whenever a tank block learns whether it is the controller).
+     */
+    public static void drawAlways(TankBlockEntity be, boolean always) {
+        if (!(be.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel cl)) return;
+        if (always) cl.getGloballyRenderedBlockEntities().add(be);
+        else cl.getGloballyRenderedBlockEntities().remove(be);
     }
 
     public AABB getRenderBoundingBox(TankBlockEntity be) {
@@ -162,7 +173,7 @@ public class TankSignRenderer extends org.overengineer.bettacraft.client.render.
     public boolean shouldRender(TankBlockEntity be, net.minecraft.world.phys.Vec3 cam) {
         if (!be.isController()) return false; // only the controller draws (render returns at once for the others)
         TankData t = be.getTank();
-        if (t == null || TravellingTankRenderer.travelling(be)) return BlockEntityRenderer.super.shouldRender(be, cam);
+        if (t == null || TravellingTankRenderer.travelling(be)) return net.minecraft.world.phys.Vec3.atCenterOf(be.getBlockPos()).closerThan(cam, getViewDistance());
         BlockPos mn = t.min(), mx = t.max();
         double dx = Math.max(0, Math.max(mn.getX() - cam.x, cam.x - (mx.getX() + 1)));
         double dy = Math.max(0, Math.max(mn.getY() - cam.y, cam.y - (mx.getY() + 1)));

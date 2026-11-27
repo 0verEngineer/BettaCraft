@@ -61,7 +61,7 @@ public final class AlgaeRenderer {
         if (level == null || t.algae().isEmpty() || !(be.onContraption() || TankBlockEntity.DYNAMIC_WATER.test(be))) return;
         BlockPos origin = be.getBlockPos();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
-        net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        net.minecraft.world.phys.Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().position();
         // one batch for the whole tank (see TEXTURE): one draw call, sorted back to front
         VertexConsumer vc = null;
         for (var e : t.algae().long2ObjectEntrySet()) {
@@ -84,7 +84,7 @@ public final class AlgaeRenderer {
                     }
                     light = LevelRenderer.getLightColor(level, p);
                 }
-                if (vc == null) vc = buffers.getBuffer(RenderType.entityTranslucent(TEXTURE));
+                if (vc == null) vc = buffers.getBuffer(RenderTypes.entityTranslucent(TEXTURE));
                 // along a flat wall the film runs on into the next block (no seam); at a corner it stops at the glass
                 int ax = d == 0 || d == 2 ? 1 : 0, az = 1 - ax;
                 boolean neg = wallAt(t, p.getX() - ax, p.getY(), p.getZ() - az, d), pos = wallAt(t, p.getX() + ax, p.getY(), p.getZ() + az, d);

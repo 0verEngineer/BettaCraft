@@ -25,14 +25,14 @@ final class EnergyRow {
                     String.format(java.util.Locale.ROOT, "%,d", cap));
         }
         int tw = font.width(text);
-        if (tw <= room) g.drawString(font, text, x, y, 0x404040, false);
+        if (tw <= room) g.drawString(font, text, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
         else {
             float s = Math.max(0.5F, room / (float) tw);
-            g.pose().pushPose();
-            g.pose().translate(x, y + (1 - s) * 4, 0);
-            g.pose().scale(s, s, 1);
-            g.drawString(font, text, 0, 0, 0x404040, false);
-            g.pose().popPose();
+            g.pose().pushMatrix();
+            g.pose().translate(x, (float) (y + (1 - s) * 4));
+            g.pose().scale(s, s);
+            g.drawString(font, text, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x404040), false);
+            g.pose().popMatrix();
         }
         int bx = x + w - BAR_W;
         g.fill(bx - 1, y, bx + BAR_W + 1, y + 8, 0xFF555555);
@@ -52,6 +52,6 @@ final class EnergyRow {
         List<FormattedCharSequence> lines = font.split(Component.translatable(key), 200);
         if (!TankPower.anyRequired()) lines = new java.util.ArrayList<>(lines);
         if (!TankPower.anyRequired()) lines.addAll(font.split(Component.translatable("gui.bettacraft.filter.energy_off").withStyle(net.minecraft.ChatFormatting.GRAY), 200));
-        g.renderTooltip(font, lines, mx, my);
+        g.setTooltipForNextFrame(font, lines, mx, my);
     }
 }

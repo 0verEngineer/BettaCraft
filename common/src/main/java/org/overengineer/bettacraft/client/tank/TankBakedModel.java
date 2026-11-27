@@ -271,7 +271,7 @@ public class TankBakedModel implements DynamicModel {
         Long fd = data.get(FILM);
         long film = fd == null || TankWaterRenderer.m10Look ? 0 : fd;
         java.util.function.Function<Long, List<BakedQuad>> build = k -> {
-            var atlas = Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS);
+            var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             // only the position modulo AlgaeFilm.TILE matters for the film's texture
             int par = (int) (film >>> 32);
@@ -291,26 +291,7 @@ public class TankBakedModel implements DynamicModel {
             return List.copyOf(list);
         };
         List<BakedQuad> plain = film == 0 ? waterCache.computeIfAbsent(key, build) : filmCache.computeIfAbsent(new FilmKey(key, film), k -> build.apply(key));
-        Long corners = data.get(WATER_LIGHT);
-        return corners == null ? plain : lit(plain, corners);
-    }
-
-    /**
-     * M63: copies of the water quads with the light of their corners in the vertices ({@link TankWaterLight}); the chunk
-     * renderer keeps the brighter of that and the block's own light, which the corner light always is.
-     */
-    private static List<BakedQuad> lit(List<BakedQuad> quads, long corners) {
-        List<BakedQuad> out = new ArrayList<>(quads.size());
-        for (BakedQuad q : quads) {
-            int[] v = q.getVertices().clone();
-            int stride = v.length / 4;
-            for (int i = 0; i < 4; i++) {
-                int o = i * stride;
-                v[o + 6] = TankWaterLight.at(corners, Float.intBitsToFloat(v[o]), Float.intBitsToFloat(v[o + 1]), Float.intBitsToFloat(v[o + 2]));
-            }
-            out.add(ClientPlatform.get().quad(v, q.getTintIndex(), q.getDirection(), q.getSprite(), q.isShade(), false));
-        }
-        return out;
+        return plain;
     }
 
     private static BakedQuad bakeWater(Direction d, float[] c, int argb, boolean reversed, TextureAtlasSprite sprite) {
@@ -327,9 +308,12 @@ public class TankBakedModel implements DynamicModel {
         return q.bake();
     }
 
-    /** M66 v6: one algae film quad (see {@link AlgaeFilm}), white: its density is the texture's alpha. */
+    /**
+     * M66 v6: one algae film quad (see {@link AlgaeFilm}), white: its density is the texture's alpha. Port: smooth light like
+     * the water face it lies on (this version lights the model's water by the chunk renderer, not by corner light values).
+     */
     private static BakedQuad bakeFilm(Direction d, float[] c, boolean reversed, TextureAtlasSprite sprite, net.minecraft.core.BlockPos parity) {
-        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1);
+        QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1).ao(true);
         float nx = reversed ? -d.getStepX() : d.getStepX(), nz = reversed ? -d.getStepZ() : d.getStepZ();
         for (int k = 0; k < 4; k++) {
             int i = reversed ? 3 - k : k;

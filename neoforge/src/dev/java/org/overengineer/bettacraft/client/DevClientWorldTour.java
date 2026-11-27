@@ -274,7 +274,7 @@ final class DevClientWorldTour {
                 // the tanks' block entity data again after the tour set its algae)
                 then(1, () -> server(p -> {
                     for (Tank t : list) {
-                        if (org.overengineer.bettacraft.tank.TankMultiblock.getController(p.serverLevel(), t.min()) instanceof TankBlockEntity be && be.getTank() != null) {
+                        if (org.overengineer.bettacraft.tank.TankMultiblock.getController(p.level(), t.min()) instanceof TankBlockEntity be && be.getTank() != null) {
                             be.getTank().algae().clear();
                             java.util.Random rnd = new java.util.Random(7);
                             if (lvl != 0) for (var f : org.overengineer.bettacraft.tank.algae.TankAlgae.wetFaces(be.getTank())) org.overengineer.bettacraft.tank.algae.AlgaeSim.set(be.getTank().algae(), f.pos(), f.dir(), lvl > 0 ? lvl : 0.15F + 0.85F * rnd.nextFloat());

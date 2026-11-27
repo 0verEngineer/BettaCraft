@@ -82,13 +82,13 @@ public final class AquaristMenu {
         if (npc.chest() != null) v.putLong("chest", npc.chest().asLong()); // M66: assigned (else automatic)
         v.putInt("home_radius", ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32));
         if (npc.offerUntil() != Long.MAX_VALUE) v.putLong("offer_left", Math.max(0, npc.offerUntil() - level.getServer().overworld().getGameTime()));
-        if (npc.rearingTank() != null) v.putUUID("rearing", npc.rearingTank());
+        if (npc.rearingTank() != null) NbtCompat.putUUID(v, "rearing", npc.rearingTank());
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         // M66: the rearing tanks in order, each with its species
         ListTag rear = new ListTag();
         for (AquaristEntity.RearingTank r : npc.rearingTanks()) {
             CompoundTag t = new CompoundTag();
-            t.putUUID("id", r.tank());
+            NbtCompat.putUUID(t, "id", r.tank());
             AquaristRecords.TankEntry e = rec.tank(r.tank());
             TankBlockEntity c = e == null ? null : rec.resolve(level.getServer(), e);
             if (e != null) t.putLong("pos", e.pos().asLong());

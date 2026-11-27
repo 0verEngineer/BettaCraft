@@ -402,7 +402,7 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
         boolean wasController = isController();
-        if (!pkt.getTag().isEmpty()) loadWithComponents(pkt.getTag(), registries); // NeoForge's default
+        if (!pkt.getTag().isEmpty()) loadWithComponents(NbtCompat.input(registries, pkt.getTag())); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
@@ -410,19 +410,32 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         Identifier oldGlass = glass;
         TankStyle oldStyle = style;
         boolean wasController = isController();
-        loadWithComponents(tag, registries); // NeoForge's default
+        loadWithComponents(NbtCompat.input(registries, tag)); // NeoForge's default
         afterClientUpdate(oldGlass, oldStyle, wasController);
     }
 
+    /** M52b: NeoForge 21.11 hands the client update over as a value input (the same handling as the compound). */
+    public void handleUpdateTag(net.minecraft.world.level.storage.ValueInput input) {
+        handleUpdateTag(org.overengineer.bettacraft.util.NbtCompat.read(input), org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
+    /** M52b: NeoForge 21.11 hands the update packet's data over as a value input. */
+    public void onDataPacket(Connection net, net.minecraft.world.level.storage.ValueInput input) {
+        net.minecraft.nbt.CompoundTag tag = org.overengineer.bettacraft.util.NbtCompat.read(input);
+        if (!tag.isEmpty()) handleUpdateTag(tag, org.overengineer.bettacraft.util.NbtCompat.registries(this));
+    }
+
     private void afterClientUpdate(Identifier oldGlass, TankStyle oldStyle, boolean wasController) {
-        if (level != null && level.isClientSide) {
+        if (level != null && level.isClientSide()) {
             updateClientControllerSet();
-            // M66: only the controller's renderer draws (TankSignRenderer.shouldRenderOffScreen); the chunk mesher sorts the block
-            // entities into "always" and "when the section is visible" when it builds the section, so a new or former controller
-            // gets its section built again
+            // M66: only the controller's renderer draws (TankSignRenderer.shouldRender); port: this version keeps the always-drawn
+            // block entities in a set of the client level, filled when a block entity is added (updateClientControllerSet keeps
+            // only the controllers in it)
             boolean looks = !oldGlass.equals(glass) || oldStyle != style;
-            if (looks) org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
-            if (looks || wasController != isController()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+            if (looks) {
+                org.overengineer.bettacraft.platform.Platform.get().requestModelDataUpdate(this);
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+            }
             // M66 v6: the algae film is part of the chunk mesh; the sections whose film changed are meshed again
             org.overengineer.bettacraft.client.tank.AlgaeFilm.update(this);
         }
@@ -478,12 +491,12 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
     public void setRemoved() {
         super.setRemoved();
         CLIENT_CONTROLLERS.remove(this);
-        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
+        if (level != null && level.isClientSide()) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     public void onChunkUnloaded() {
         CLIENT_CONTROLLERS.remove(this);
-        if (level != null && level.isClientSide) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
+        if (level != null && level.isClientSide()) org.overengineer.bettacraft.client.tank.AlgaeFilm.remove(this); // M66 v6
     }
 
     private void updateClientControllerSet() {
@@ -492,5 +505,6 @@ public class TankBlockEntity extends BlockEntity implements org.overengineer.bet
         } else {
             CLIENT_CONTROLLERS.remove(this);
         }
+        org.overengineer.bettacraft.client.render.TankSignRenderer.drawAlways(this, isController() && !isRemoved()); // M66 (port)
     }
 }

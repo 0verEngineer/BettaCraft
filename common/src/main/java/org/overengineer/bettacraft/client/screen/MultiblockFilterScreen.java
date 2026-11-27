@@ -142,7 +142,7 @@ public class MultiblockFilterScreen extends Screen {
         if (linkTip != null) {
             List<net.minecraft.util.FormattedCharSequence> lines = new java.util.ArrayList<>();
             for (Component c : linkTip) lines.addAll(font.split(c, 220));
-            g.renderTooltip(font, lines, tipForTest ? left + 20 : mouseX, tipForTest ? top + 150 : mouseY);
+            g.setTooltipForNextFrame(font, lines, tipForTest ? left + 20 : mouseX, tipForTest ? top + 150 : mouseY);
         }
     }
 

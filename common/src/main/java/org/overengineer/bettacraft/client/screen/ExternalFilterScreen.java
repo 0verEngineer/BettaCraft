@@ -57,7 +57,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         SpringGauge.draw(g, leftPos + SPRING_X, topPos + SPRING_Y, SPRING_H, menu.springPercent()); // M37
         for (int i = 0; i < FilterHeaters.SLOTS; i++) {
             if (!menu.getSlot(i).hasItem()) {
-                g.blit(TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 220, 18, 16, 16);
+                g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + ExternalFilterMenu.SLOT_X + i * 18, topPos + ExternalFilterMenu.SLOT_Y, 220, 18, 16, 16, 256, 256);
             }
         }
     }
@@ -71,7 +71,7 @@ public class ExternalFilterScreen extends AbstractContainerScreen<ExternalFilter
         int y = 56;
         for (var l : lines) {
             if (y > 66) break;
-            g.drawString(font, l, (imageWidth - font.width(l)) / 2, y, 0x606060, false);
+            g.drawString(font, l, (imageWidth - font.width(l)) / 2, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0x606060), false);
             y += 9;
         }
         EnergyRow.draw(g, font, ENERGY_X, ENERGY_Y, ENERGY_W, menu.energy());

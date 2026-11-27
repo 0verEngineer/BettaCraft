@@ -134,9 +134,9 @@ public class ClipFeederBlock extends BaseEntityBlock implements BlockRemoval {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(ModTags.BETTA_FOOD)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(ModTags.BETTA_FOOD)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ClipFeederBlockEntity be) {
             ItemStack rest = org.overengineer.bettacraft.platform.item.ItemHandlerHelper.insertItemStacked(be.items(), stack.copy(), false);
             int moved = stack.getCount() - rest.getCount();
             if (moved > 0 && !player.getAbilities().instabuild) stack.shrink(moved);

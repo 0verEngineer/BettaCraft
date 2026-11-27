@@ -69,7 +69,7 @@ public class AquaristScreen extends Screen {
             s.refresh();
             return;
         }
-        if (mc.screen instanceof AquaristSpeciesScreen sp && sp.parent().view.getInt("id") == view.getInt("id")) {
+        if (mc.screen instanceof AquaristSpeciesScreen sp && sp.parent().view.getIntOr("id", 0) == view.getIntOr("id", 0)) {
             sp.parent().view = view;
             sp.parent().refresh();
             return;
@@ -86,7 +86,7 @@ public class AquaristScreen extends Screen {
     }
 
     private boolean boss() {
-        return view.getBoolean("boss");
+        return view.getBooleanOr("boss", false);
     }
 
     /** Dev smoke test only: the tab (0 work, 1 rearing tanks, 2 tanks). */
@@ -98,8 +98,8 @@ public class AquaristScreen extends Screen {
 
     /** Dev smoke test only: selects the first tank of the list on the tanks tab. */
     public void selectFirstTankForTest() {
-        var list = view.getList("tanks", Tag.TAG_COMPOUND);
-        if (!list.isEmpty()) selectedTank = list.getCompound(0).getUUID("id");
+        var list = view.getListOrEmpty("tanks");
+        if (!list.isEmpty()) selectedTank = NbtCompat.getUUID(list.getCompoundOrEmpty(0), "id");
         refresh();
     }
 
@@ -176,7 +176,7 @@ public class AquaristScreen extends Screen {
         nextButton = addRenderableWidget(Button.builder(Component.literal(">"), b -> moveCandidate(1)).bounds(left + 26, top + H - 56, 16, 14).build());
         addButton = addRenderableWidget(Button.builder(Component.literal("✔").withStyle(ChatFormatting.GREEN), b -> {
             CompoundTag c = candidateTank();
-            if (c != null) send(AquaristMenu.ADD_REARING, 0, c.getUUID("id").toString());
+            if (c != null) send(AquaristMenu.ADD_REARING, 0, NbtCompat.getUUID(c, "id").toString());
         }).bounds(left + W - 8 - 20, top + H - 56, 20, 14).build());
         addButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.rearing.add_tooltip")));
         rearingButtons.add(prevButton);
@@ -189,8 +189,8 @@ public class AquaristScreen extends Screen {
             tankTaskButtons[i] = addRenderableWidget(new TankScreen.FitButton(left + 8 + col * 168, top + H - 72 + row * 15, 160, 14, Component.empty(), b -> {
                 CompoundTag c = selectedTankTag();
                 if (c == null) return;
-                boolean off = (c.getInt("off") & (1 << i)) != 0; // switched off now: switch on
-                send(AquaristMenu.SET_TANK_TASK, i * 2 + (off ? 1 : 0), c.getUUID("id").toString());
+                boolean off = (c.getIntOr("off", 0) & (1 << i)) != 0; // switched off now: switch on
+                send(AquaristMenu.SET_TANK_TASK, i * 2 + (off ? 1 : 0), NbtCompat.getUUID(c, "id").toString());
             }));
             tankButtons.add(tankTaskButtons[i]);
         }
@@ -213,7 +213,7 @@ public class AquaristScreen extends Screen {
             send(assign, 0, "");
             onClose();
         }));
-        a.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.assign." + what + ".tooltip", view.getInt("home_radius"))));
+        a.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.assign." + what + ".tooltip", view.getIntOr("home_radius", 0))));
         Button u = addRenderableWidget(new TankScreen.FitButton(x + 82, y, 36, 14, Component.translatable("gui.bettacraft.aquarist.auto"), b -> send(auto, 0, "")));
         u.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.auto." + what + ".tooltip")));
         workButtons.add(a);
@@ -263,13 +263,13 @@ public class AquaristScreen extends Screen {
             levelButtons[i].setTooltip(Tooltip.create(on ? Component.translatable(t.translationKey() + ".level" + lv[i]) : Component.translatable("gui.bettacraft.aquarist.task_off")));
         }
         // the rearing rows
-        var rear = view.getList("rearing_tanks", Tag.TAG_COMPOUND);
+        var rear = view.getListOrEmpty("rearing_tanks");
         for (int i = 0; i < REARING_ROWS; i++) {
             boolean row = tab == Tab.REARING && !offer && i < rear.size();
             speciesButtons[i].visible = row;
             removeButtons[i].visible = row;
             if (!row) continue;
-            int n = rear.getCompound(i).getList("species", Tag.TAG_STRING).size();
+            int n = rear.getCompoundOrEmpty(i).getListOrEmpty("species").size();
             speciesButtons[i].setMessage(n == 0 ? Component.translatable("gui.bettacraft.aquarist.rearing.species_all")
                     : Component.translatable("gui.bettacraft.aquarist.rearing.species_n", n));
             speciesButtons[i].setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.rearing.species_tooltip")));
@@ -283,10 +283,10 @@ public class AquaristScreen extends Screen {
         if (sel != null) {
             for (AquaristTask t : AquaristTask.ALL) {
                 Button b = tankTaskButtons[t.ordinal()];
-                boolean on = (sel.getInt("off") & (1 << t.ordinal())) == 0;
+                boolean on = (sel.getIntOr("off", 0) & (1 << t.ordinal())) == 0;
                 b.setMessage(Component.literal(on ? "☑ " : "☐ ").append(Component.translatable(t.translationKey())).withStyle(on ? ChatFormatting.WHITE : ChatFormatting.GRAY));
                 b.setTooltip(Tooltip.create(Component.translatable(t.translationKey() + ".tooltip")));
-                b.active = boss && works(sel.getString("verdict"));
+                b.active = boss && works(sel.getStringOr("verdict", ""));
             }
         }
     }
@@ -308,9 +308,9 @@ public class AquaristScreen extends Screen {
     /** The workable tanks that are no rearing tank yet (the choice for the next one). */
     private List<CompoundTag> candidates() {
         List<UUID> have = new ArrayList<>();
-        for (Tag t : view.getListOrEmpty("rearing_tanks")) have.add(((CompoundTag) t).getUUID("id"));
+        for (Tag t : view.getListOrEmpty("rearing_tanks")) have.add(NbtCompat.getUUID(((CompoundTag) t), "id"));
         List<CompoundTag> out = new ArrayList<>();
-        for (CompoundTag c : workable()) if (!have.contains(c.getUUID("id"))) out.add(c);
+        for (CompoundTag c : workable()) if (!have.contains(NbtCompat.getUUID(c, "id"))) out.add(c);
         return out;
     }
 
@@ -328,13 +328,13 @@ public class AquaristScreen extends Screen {
     @Nullable
     private UUID rearingId(int row) {
         var rear = view.getListOrEmpty("rearing_tanks");
-        return row >= 0 && row < rear.size() ? rear.getCompound(row).getUUID("id") : null;
+        return row >= 0 && row < rear.size() ? NbtCompat.getUUID(rear.getCompoundOrEmpty(row), "id") : null;
     }
 
     @Nullable
     private CompoundTag selectedTankTag() {
         if (selectedTank == null) return null;
-        for (Tag t : view.getListOrEmpty("tanks")) if (((CompoundTag) t).getUUID("id").equals(selectedTank)) return (CompoundTag) t;
+        for (Tag t : view.getListOrEmpty("tanks")) if (NbtCompat.getUUID(((CompoundTag) t), "id").equals(selectedTank)) return (CompoundTag) t;
         return null;
     }
 
@@ -366,13 +366,15 @@ public class AquaristScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx, double my, int button) {
-        if (super.mouseClicked(mx, my, button)) return true;
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+        double mx = event.x(), my = event.y();
+        int button = event.button();
         if (!offering() && tab == Tab.TANKS && button == 0) {
-            var list = view.getList("tanks", Tag.TAG_COMPOUND);
+            var list = view.getListOrEmpty("tanks");
             for (int i = 0; i < TANK_ROWS && scroll + i < list.size(); i++) {
                 if (mx >= left + 8 && mx < left + W - 12 && my >= rowTop(i) && my < rowTop(i) + 12) {
-                    selectedTank = list.getCompound(scroll + i).getUUID("id");
+                    selectedTank = NbtCompat.getUUID(list.getCompoundOrEmpty(scroll + i), "id");
                     refresh();
                     return true;
                 }
@@ -418,7 +420,7 @@ public class AquaristScreen extends Screen {
         int y = top + 26;
         Component text = Component.translatable("gui.bettacraft.aquarist.offer_text", view.getStringOr("employer", ""));
         for (FormattedCharSequence line : font.split(text, W - 20)) {
-            g.drawString(font, line, left + 10, y, TEXT);
+            g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT));
             y += 10;
         }
         y += 6;
@@ -458,13 +460,13 @@ public class AquaristScreen extends Screen {
                 : Component.translatable("gui.bettacraft.aquarist.no_workplace").withStyle(ChatFormatting.RED);
         Component bed = view.contains("bed") ? Component.translatable("gui.bettacraft.aquarist.bed", pos(view.getLongOr("bed", 0L)))
                 : Component.translatable("gui.bettacraft.aquarist.no_bed").withStyle(ChatFormatting.RED);
-        Component chest = view.contains("chest") ? Component.translatable("gui.bettacraft.aquarist.chest_assigned", pos(view.getLong("chest")))
+        Component chest = view.contains("chest") ? Component.translatable("gui.bettacraft.aquarist.chest_assigned", pos(view.getLongOr("chest", 0L)))
                 : Component.translatable("gui.bettacraft.aquarist.chest_auto");
         fit(g, wp, left + 8, top + 41, room);
         fit(g, bed, left + 8, top + 57, room);
         fit(g, chest, left + 8, top + 73, room);
-        Component stock = view.getInt("chests") == 0 ? Component.translatable("gui.bettacraft.aquarist.no_chest").withStyle(ChatFormatting.GOLD)
-                : view.getBoolean("food") ? Component.translatable("gui.bettacraft.aquarist.chest_food").withStyle(ChatFormatting.GRAY)
+        Component stock = view.getIntOr("chests", 0) == 0 ? Component.translatable("gui.bettacraft.aquarist.no_chest").withStyle(ChatFormatting.GOLD)
+                : view.getBooleanOr("food", false) ? Component.translatable("gui.bettacraft.aquarist.chest_food").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("gui.bettacraft.aquarist.chest_no_food").withStyle(ChatFormatting.GOLD);
         fit(g, stock, left + 8, top + 89, W - 16);
         Component wage;
@@ -486,7 +488,7 @@ public class AquaristScreen extends Screen {
             g.drawString(font, Component.translatable("gui.bettacraft.aquarist.rearing.none").withStyle(ChatFormatting.GRAY), left + 12, top + 64, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
         for (int i = 0; i < Math.min(REARING_ROWS, rear.size()); i++) {
-            CompoundTag c = rear.getCompound(i);
+            CompoundTag c = rear.getCompoundOrEmpty(i);
             MutableComponent name = Component.literal((i + 1) + ". " + name(c));
             if (!c.getBooleanOr("ok", false)) name.withStyle(ChatFormatting.RED).append(Component.literal(" ")).append(Component.translatable("gui.bettacraft.aquarist.rearing.not_his"));
             fit(g, name, left + 8, top + 62 + i * 16 + 2, W - 8 - 16 - 2 - 110 - 8 - 6);
@@ -505,10 +507,10 @@ public class AquaristScreen extends Screen {
         var list = view.getListOrEmpty("tanks");
         g.fill(left + 6, rowTop(0) - 1, left + W - 6, rowTop(TANK_ROWS), 0x30000000);
         for (int i = scroll; i < Math.min(list.size(), scroll + TANK_ROWS); i++) {
-            CompoundTag c = list.getCompound(i);
+            CompoundTag c = list.getCompoundOrEmpty(i);
             String v = c.getStringOr("verdict", "");
             int y = rowTop(i - scroll);
-            if (c.getUUID("id").equals(selectedTank)) g.fill(left + 7, y, left + W - 12, y + 12, 0x60FFFFFF);
+            if (NbtCompat.getUUID(c, "id").equals(selectedTank)) g.fill(left + 7, y, left + W - 12, y + 12, 0x60FFFFFF);
             fit(g, Component.literal(name(c)), left + 10, y + 2, 170);
             int off = Integer.bitCount(c.getIntOr("off", 0));
             Component verdict = Component.translatable("gui.bettacraft.aquarist.tank." + v).withStyle(verdictColor(v));
@@ -517,7 +519,7 @@ public class AquaristScreen extends Screen {
         }
         if (list.isEmpty()) {
             g.drawString(font, Component.translatable(view.contains("workplace") ? "gui.bettacraft.aquarist.no_tanks" : "gui.bettacraft.aquarist.no_tanks_no_workplace")
-                    .withStyle(ChatFormatting.GRAY), left + 12, rowTop(0) + 2, 0xFFFFFF);
+                    .withStyle(ChatFormatting.GRAY), left + 12, rowTop(0) + 2, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
         if (list.size() > TANK_ROWS) {
             int h = TANK_ROWS * 12, bh = Math.max(8, h * TANK_ROWS / list.size());
@@ -542,15 +544,15 @@ public class AquaristScreen extends Screen {
     private void fit(GuiGraphics g, Component c, int x, int y, int room) {
         int w = font.width(c);
         if (w <= room) {
-            g.drawString(font, c, x, y, TEXT);
+            g.drawString(font, c, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT));
             return;
         }
         float s = Math.max(0.6F, room / (float) w);
-        g.pose().pushPose();
-        g.pose().translate(x, y + (1 - s) * 4, 0);
-        g.pose().scale(s, s, 1);
-        g.drawString(font, c, 0, 0, TEXT);
-        g.pose().popPose();
+        g.pose().pushMatrix();
+        g.pose().translate(x, (float) (y + (1 - s) * 4));
+        g.pose().scale(s, s);
+        g.drawString(font, c, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT));
+        g.pose().popMatrix();
     }
 
     @Override

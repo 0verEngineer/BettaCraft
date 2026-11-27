@@ -1,5 +1,7 @@
 package org.overengineer.bettacraft.client.screen;
 
+import org.overengineer.bettacraft.util.NbtCompat;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,18 +40,18 @@ public class AquaristSpeciesScreen extends Screen {
     /** The species keys that are ticked for this tank now (from the latest view). */
     private Set<String> ticked() {
         Set<String> out = new HashSet<>();
-        for (Tag t : parent.view().getList("rearing_tanks", Tag.TAG_COMPOUND)) {
+        for (Tag t : parent.view().getListOrEmpty("rearing_tanks")) {
             CompoundTag c = (CompoundTag) t;
-            if (!c.getUUID("id").equals(tank)) continue;
-            for (Tag k : c.getList("species", Tag.TAG_STRING)) out.add(k.getAsString());
+            if (!NbtCompat.getUUID(c, "id").equals(tank)) continue;
+            for (Tag k : c.getListOrEmpty("species")) out.add(NbtCompat.asString(k));
         }
         return out;
     }
 
     private String tankName() {
-        for (Tag t : parent.view().getList("rearing_tanks", Tag.TAG_COMPOUND)) {
+        for (Tag t : parent.view().getListOrEmpty("rearing_tanks")) {
             CompoundTag c = (CompoundTag) t;
-            if (c.getUUID("id").equals(tank)) return c.getString("name").isEmpty() ? net.minecraft.core.BlockPos.of(c.getLong("pos")).toShortString() : c.getString("name");
+            if (NbtCompat.getUUID(c, "id").equals(tank)) return c.getStringOr("name", "").isEmpty() ? net.minecraft.core.BlockPos.of(c.getLongOr("pos", 0L)).toShortString() : c.getStringOr("name", "");
         }
         return "";
     }
@@ -59,9 +61,9 @@ public class AquaristSpeciesScreen extends Screen {
         left = (width - W) / 2;
         top = (height - H) / 2;
         options.clear();
-        for (Tag t : parent.view().getList("species_options", Tag.TAG_COMPOUND)) {
+        for (Tag t : parent.view().getListOrEmpty("species_options")) {
             CompoundTag c = (CompoundTag) t;
-            options.add(new String[]{c.getString("k"), Component.translatable(c.getString("t")).getString()});
+            options.add(new String[]{c.getStringOr("k", ""), Component.translatable(c.getStringOr("t", "")).getString()});
         }
         options.sort((a, b) -> a[1].compareToIgnoreCase(b[1]));
         addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.aquarist.species.all"), b -> parent.send(AquaristMenu.CLEAR_SPECIES, 0, tank.toString()))
@@ -95,8 +97,10 @@ public class AquaristSpeciesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx, double my, int button) {
-        if (super.mouseClicked(mx, my, button)) return true;
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        if (super.mouseClicked(event, doubleClick)) return true;
+        double mx = event.x(), my = event.y();
+        int button = event.button();
         int i = index(mx, my);
         if (i < 0 || button != 0) return false;
         parent.send(AquaristMenu.TOGGLE_SPECIES, 0, tank + "|" + options.get(i)[0]);
@@ -106,10 +110,10 @@ public class AquaristSpeciesScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
-        g.drawCenteredString(font, Component.translatable("gui.bettacraft.aquarist.species.title", tankName()).withStyle(ChatFormatting.AQUA), left + W / 2, top + 6, 0xFFFFFF);
+        g.drawCenteredString(font, Component.translatable("gui.bettacraft.aquarist.species.title", tankName()).withStyle(ChatFormatting.AQUA), left + W / 2, top + 6, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         int y = top + 20;
         for (var line : font.split(Component.translatable("gui.bettacraft.aquarist.species.hint").withStyle(ChatFormatting.GRAY), W - 16)) {
-            g.drawString(font, line, left + 8, y, 0xFFFFFF);
+            g.drawString(font, line, left + 8, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         Set<String> on = ticked();
@@ -122,7 +126,7 @@ public class AquaristSpeciesScreen extends Screen {
                 if (i == hover) g.fill(x - 1, yy - 1, x + COL_W - 4, yy + ROW_H - 1, 0x40FFFFFF);
                 boolean ticked = on.contains(options.get(i)[0]);
                 String name = font.plainSubstrByWidth(options.get(i)[1], COL_W - 20);
-                g.drawString(font, (ticked ? "☑ " : "☐ ") + name, x, yy + 1, ticked ? 0xFFFFFF : 0xA0A0A0);
+                g.drawString(font, (ticked ? "☑ " : "☐ ") + name, x, yy + 1, org.overengineer.bettacraft.client.ClientCompat.textColor(ticked ? 0xFFFFFF : 0xA0A0A0));
             }
         }
         if (rowsTotal() > ROWS) {
@@ -132,7 +136,7 @@ public class AquaristSpeciesScreen extends Screen {
             g.fill(left + W - 8, by, left + W - 6, by + bh, 0xFFA0A0A0);
         }
         Component state = on.isEmpty() ? Component.translatable("gui.bettacraft.aquarist.rearing.species_all") : Component.translatable("gui.bettacraft.aquarist.rearing.species_n", on.size());
-        g.drawCenteredString(font, state, left + W / 2, top + H - 19, 0xA0FFA0);
+        g.drawCenteredString(font, state, left + W / 2, top + H - 19, org.overengineer.bettacraft.client.ClientCompat.textColor(0xA0FFA0));
     }
 
     @Override

@@ -66,30 +66,30 @@ final class BreedingLines {
         CompoundTag b = v.breeding;
         List<Group> out = new ArrayList<>();
         int bettas = 0;
-        for (int x : b.getIntArray("stages")) bettas += x;
-        if (bettas > 0 || b.contains("nest", Tag.TAG_COMPOUND)) out.add(Group.BETTAS);
-        if (!b.getList("tankmates", Tag.TAG_COMPOUND).isEmpty() || b.getBoolean("box")) out.add(Group.TANKMATES);
-        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) if (b.contains(g.listKey(), Tag.TAG_LIST)) out.add(g);
+        for (int x : b.getIntArray("stages").orElse(new int[0])) bettas += x;
+        if (bettas > 0 || NbtCompat.has(b, "nest", Tag.TAG_COMPOUND)) out.add(Group.BETTAS);
+        if (!b.getListOrEmpty("tankmates").isEmpty() || b.getBooleanOr("box", false)) out.add(Group.TANKMATES);
+        for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) if (NbtCompat.has(b, g.listKey(), Tag.TAG_LIST)) out.add(g);
         if (out.isEmpty()) out.add(Group.BETTAS);
         return out;
     }
 
     /** Whether eggs, larvae or young animals of any group are in the tank (then a filter without an intake sponge is a danger). */
     private static boolean youngAround(CompoundTag b) {
-        int[] st = b.getIntArray("stages");
+        int[] st = b.getIntArray("stages").orElse(new int[0]);
         if (st.length == LifeStage.values().length && st[LifeStage.FRY.ordinal()] + st[LifeStage.JUVENILE.ordinal()] > 0) return true;
-        if (b.contains("nest", Tag.TAG_COMPOUND) && b.getCompound("nest").getInt("eggs") > 0) return true;
-        ListTag tm = b.getList("tankmates", Tag.TAG_COMPOUND);
+        if (NbtCompat.has(b, "nest", Tag.TAG_COMPOUND) && b.getCompoundOrEmpty("nest").getIntOr("eggs", 0) > 0) return true;
+        ListTag tm = b.getListOrEmpty("tankmates");
         for (int i = 0; i < tm.size(); i++) {
-            CompoundTag d = tm.getCompound(i);
-            if (d.getInt("young") > 0 || !d.getList("clutches", Tag.TAG_COMPOUND).isEmpty()) return true;
+            CompoundTag d = tm.getCompoundOrEmpty(i);
+            if (d.getIntOr("young", 0) > 0 || !d.getListOrEmpty("clutches").isEmpty()) return true;
         }
         for (Group g : new Group[]{Group.SMALL, Group.FROGS, Group.HERPS, Group.FOREIGN}) {
-            ListTag l = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+            ListTag l = b.getListOrEmpty(g.listKey());
             for (int i = 0; i < l.size(); i++) {
-                CompoundTag e = l.getCompound(i);
-                int[] c = e.getIntArray("c");
-                if (c.length == 3 && c[2] > 0 || !e.getList("st", Tag.TAG_COMPOUND).isEmpty()) return true;
+                CompoundTag e = l.getCompoundOrEmpty(i);
+                int[] c = e.getIntArray("c").orElse(new int[0]);
+                if (c.length == 3 && c[2] > 0 || !e.getListOrEmpty("st").isEmpty()) return true;
             }
         }
         return false;
@@ -228,14 +228,14 @@ final class BreedingLines {
     /** M66: how the care of the eggs is made up now, what is missing and how many larvae will probably swim free. */
     private static List<Component> careTip(CompoundTag n) {
         List<Component> t = new ArrayList<>();
-        int temp = n.getInt("temp_state");
-        boolean crowded = n.getBoolean("crowded"), fed = n.getBoolean("father_fed");
+        int temp = n.getIntOr("temp_state", 0);
+        boolean crowded = n.getBooleanOr("crowded", false), fed = n.getBooleanOr("father_fed", false);
         t.add(Component.translatable("gui.bettacraft.breeding.care_tip").withStyle(ChatFormatting.WHITE));
         t.add(check(temp == 0, Component.translatable("gui.bettacraft.breeding.care_tip.temp." + temp)));
         t.add(check(!crowded, Component.translatable("gui.bettacraft.breeding.care_tip.crowded")));
         t.add(check(fed, Component.translatable("gui.bettacraft.breeding.care_tip.fed")));
-        float lo = n.getFloat("surv_lo"), hi = n.getFloat("surv_hi"), care = n.getFloat("care");
-        int eggs = n.getInt("eggs");
+        float lo = n.getFloatOr("surv_lo", 0f), hi = n.getFloatOr("surv_hi", 0f), care = n.getFloatOr("care", 0f);
+        int eggs = n.getIntOr("eggs", 0);
         double surv = lo + (hi - lo) * Math.max(0, Math.min(1, care));
         t.add(Component.translatable("gui.bettacraft.breeding.care_tip.survival", Math.round(lo * 100), Math.round(hi * 100), Math.round(surv * 100),
                 Math.round(eggs * surv), eggs).withStyle(ChatFormatting.AQUA));
@@ -244,28 +244,28 @@ final class BreedingLines {
 
     /** M66: the entries of a group of the small animals, frogs, terrarium animals and animals of other mods. */
     private static void entries(CompoundTag b, Group g, List<Component> out) {
-        ListTag list = b.getList(g.listKey(), Tag.TAG_COMPOUND);
+        ListTag list = b.getListOrEmpty(g.listKey());
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag e = list.getCompound(i);
-            int[] c = e.getIntArray("c");
+            CompoundTag e = list.getCompoundOrEmpty(i);
+            int[] c = e.getIntArray("c").orElse(new int[0]);
             if (i > 0) out.add(SEPARATOR);
-            out.add(header("gui.bettacraft.breeding.g.header", Component.translatable(e.getString("n")), c.length == 3 ? c[0] : 0, c.length == 3 ? c[1] : 0,
+            out.add(header("gui.bettacraft.breeding.g.header", Component.translatable(e.getStringOr("n", "")), c.length == 3 ? c[0] : 0, c.length == 3 ? c[1] : 0,
                     c.length == 3 ? c[2] : 0));
-            ListTag cond = e.getList("cond", Tag.TAG_COMPOUND);
+            ListTag cond = e.getListOrEmpty("cond");
             for (int k = 0; k < cond.size(); k++) {
-                CompoundTag l = cond.getCompound(k);
-                out.add(check(l.getBoolean("ok"), Component.translatable("gui.bettacraft.breeding.c." + l.getString("k"), args(l))));
+                CompoundTag l = cond.getCompoundOrEmpty(k);
+                out.add(check(l.getBooleanOr("ok", false), Component.translatable("gui.bettacraft.breeding.c." + l.getStringOr("k", ""), args(l))));
             }
-            ListTag st = e.getList("st", Tag.TAG_COMPOUND);
+            ListTag st = e.getListOrEmpty("st");
             for (int k = 0; k < st.size(); k++) {
-                CompoundTag l = st.getCompound(k);
-                out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.s." + l.getString("k"), args(l))).withStyle(ChatFormatting.AQUA));
+                CompoundTag l = st.getCompoundOrEmpty(k);
+                out.add(Component.literal("  ").append(Component.translatable("gui.bettacraft.breeding.s." + l.getStringOr("k", ""), args(l))).withStyle(ChatFormatting.AQUA));
             }
         }
     }
 
     private static Object[] args(CompoundTag l) {
-        ListTag a = l.getList("a", Tag.TAG_STRING);
+        ListTag a = l.getListOrEmpty("a");
         Object[] out = new Object[a.size()];
         for (int i = 0; i < out.length; i++) out[i] = a.getString(i);
         return out;

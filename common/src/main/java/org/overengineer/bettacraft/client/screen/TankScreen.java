@@ -813,7 +813,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                     completeUserName((mods & GLFW.GLFW_MOD_SHIFT) != 0);
                     return true;
                 }
-                box.keyPressed(key, scan, mods);
+                box.keyPressed(event);
                 return true; // never let typing trigger the inventory key
             }
         }
@@ -831,7 +831,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             completionBase = cur;
             List<String> names = new ArrayList<>();
             for (var info : minecraft.getConnection().getOnlinePlayers()) {
-                String n = info.getProfile().getName();
+                String n = info.getProfile().name();
                 if (n.regionMatches(true, 0, completionBase, 0, completionBase.length())) names.add(n);
             }
             names.sort(String.CASE_INSENSITIVE_ORDER);
@@ -984,8 +984,8 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         if (tab == Tab.DEVICES) placeDeviceWidgets(view());
         super.render(g, mouseX, mouseY, partialTick);
         if (pendingTooltip != null) {
-            if (geneTooltipForTest || showTipForTest >= 0) g.renderComponentTooltip(font, pendingTooltip, leftPos + ox + (showTipForTest >= 0 ? 20 : 96), topPos + oy + (showTipForTest >= 0 ? 70 : 22));
-            else g.renderComponentTooltip(font, pendingTooltip, mouseX, mouseY);
+            if (geneTooltipForTest || showTipForTest >= 0) g.setComponentTooltipForNextFrame(font, pendingTooltip, leftPos + ox + (showTipForTest >= 0 ? 20 : 96), topPos + oy + (showTipForTest >= 0 ? 70 : 22));
+            else g.setComponentTooltipForNextFrame(font, pendingTooltip, mouseX, mouseY);
         } else {
             renderTooltip(g, mouseX, mouseY);
         }
@@ -1089,13 +1089,13 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             drawBottom = 0;
             int[] pb = panelBounds();
             g.enableScissor(pb[0] + CONTENT_X + 1, pb[1] + CONTENT_Y + 1, pb[0] + CONTENT_X + cw - 1, pb[1] + viewBottom() + 1);
-            g.pose().pushPose();
-            g.pose().translate(0, -textScroll, 0);
+            g.pose().pushMatrix();
+            g.pose().translate((float) (0), (float) (-textScroll));
             mouseY += textScroll;
         }
         drawTabBody(g, v, mouseX, mouseY);
         if (scroll) {
-            g.pose().popPose();
+            g.pose().popMatrix();
             g.disableScissor();
             scrollbar(g, drawBottom + 2 - CONTENT_Y, viewBottom() - CONTENT_Y, textScroll, false);
         }
@@ -1106,7 +1106,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             drawBottom = saved;
         }
         // lock symbol left of the interior button (not on its label)
-        if (v.locked && tab == Tab.OVERVIEW) g.blit(TEXTURE, enterButton.getX() - leftPos - ox - 12, 125 + ch - CONTENT_H, 16, 232, 10, 10);
+        if (v.locked && tab == Tab.OVERVIEW) g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, TEXTURE, enterButton.getX() - leftPos - ox - 12, 125 + ch - CONTENT_H, 16, 232, 10, 10, 256, 256);
     }
 
     private void drawTabBody(GuiGraphics g, TankView v, int mouseX, int mouseY) {
@@ -1424,11 +1424,11 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         Component label = Component.translatable(key);
         float s = 0.75F;
         int w = Math.round(font.width(label) * s);
-        g.pose().pushPose();
-        g.pose().translate(11, y + 1, 0);
-        g.pose().scale(s, s, 1);
-        g.drawString(font, label, 0, 0, 0x8FB8C8, false);
-        g.pose().popPose();
+        g.pose().pushMatrix();
+        g.pose().translate((float) (11), (float) (y + 1));
+        g.pose().scale(s, s);
+        g.drawString(font, label, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0x8FB8C8), false);
+        g.pose().popMatrix();
         g.fill(11 + w + 4, y + 4, cw + 5, y + 5, 0x55FFFFFF);
     }
 
@@ -1758,9 +1758,9 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
         line(g, Component.translatable("gui.bettacraft.devices.dimmer"), x, ly + 25, TEXT_LIGHT);
         g.drawCenteredString(font, t.dimmer + " %", 94, ly + 25, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         line(g, Component.translatable("gui.bettacraft.devices.on"), x, ly + 41, TEXT_LIGHT);
-        g.drawCenteredString(font, clock(t.lightOn), 78, ly + 41, t.timer ? 0xFFFFFF : 0x808080);
+        g.drawCenteredString(font, clock(t.lightOn), 78, ly + 41, org.overengineer.bettacraft.client.ClientCompat.textColor(t.timer ? 0xFFFFFF : 0x808080));
         line(g, Component.translatable("gui.bettacraft.devices.off"), 128, ly + 41, TEXT_LIGHT);
-        g.drawCenteredString(font, clock(t.lightOff), 200, ly + 41, t.timer ? 0xFFFFFF : 0x808080);
+        g.drawCenteredString(font, clock(t.lightOff), 200, ly + 41, org.overengineer.bettacraft.client.ClientCompat.textColor(t.timer ? 0xFFFFFF : 0x808080));
         fitLine(g, Component.translatable("gui.bettacraft.devices.now", Math.round(t.factor * 100)).withStyle(ChatFormatting.GRAY), x, ly + 55, TEXT_LIGHT, tw());
         drawBottom = Math.max(drawBottom, ly + 68);
     }
@@ -2040,7 +2040,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             } else {
                 for (var t : types) {
                     if (p.counts[t.ordinal()] <= 0) continue;
-                    Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getDescriptionId());
+                    Component name = Component.translatable(org.overengineer.bettacraft.tank.plants.TankPlants.item(t).getItem().getDescriptionId());
                     MutableComponent sp = Component.translatable("gui.bettacraft.plants.species", name, p.counts[t.ordinal()]).withStyle(ChatFormatting.GREEN);
                     if (t == org.overengineer.bettacraft.tank.plants.FloatingPlantType.RED_ROOT_FLOATER) {
                         // red under strong light, green under weak light (drawn in the colour the leaves have in this light)
@@ -2147,7 +2147,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
                 for (var sp : org.overengineer.bettacraft.plants.PlantSpecies.values()) {
                     int cnt = a.counts[sp.ordinal()];
                     if (cnt <= 0) continue;
-                    Component name = Component.translatable(org.overengineer.bettacraft.plants.InteriorPlants.item(sp, 0).getDescriptionId());
+                    Component name = Component.translatable(org.overengineer.bettacraft.plants.InteriorPlants.item(sp, 0).getItem().getDescriptionId());
                     int color = org.overengineer.bettacraft.plants.PlantColors.color(sp,
                             sp.red() == org.overengineer.bettacraft.plants.PlantSpecies.Red.TIPS ? org.overengineer.bettacraft.plants.PlantPart.TOP
                                     : org.overengineer.bettacraft.plants.PlantPart.LEAF, a.tints[sp.ordinal()]);
@@ -3004,7 +3004,7 @@ public class TankScreen extends AbstractContainerScreen<TankMenu> {
             BreedRow row = rows.get(idx);
             if (row.text() == null) g.fill(9, y + r * 10 + 4, cw + 5, y + r * 10 + 5, 0x55FFFFFF);
             else {
-                g.drawString(font, row.text(), x + row.indent(), y + r * 10, TEXT_LIGHT, false);
+                g.drawString(font, row.text(), x + row.indent(), y + r * 10, org.overengineer.bettacraft.client.ClientCompat.textColor(TEXT_LIGHT), false);
                 // M66: tooltips of single lines (the care of the eggs, the filter without an intake sponge)
                 if (row.tip() != null && mx >= x && mx <= cw + 3 && my >= y + r * 10 - 1 && my < y + r * 10 + 9) pendingTooltip = new ArrayList<>(row.tip());
             }

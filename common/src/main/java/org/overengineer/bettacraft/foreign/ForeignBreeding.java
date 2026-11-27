@@ -218,9 +218,9 @@ public final class ForeignBreeding {
                 }
                 if (ready(e, p)) ready++;
                 CompoundTag d = org.overengineer.bettacraft.platform.Platform.get().persistentData(e);
-                if (d.contains(BROOD, Tag.TAG_COMPOUND)) {
+                if (NbtCompat.has(d, BROOD, Tag.TAG_COMPOUND)) {
                     double days = Math.max(1e-6, p.breeding().days());
-                    brood = Math.max(brood, d.getCompound(BROOD).getDouble("age") / days);
+                    brood = Math.max(brood, d.getCompoundOrEmpty(BROOD).getDoubleOr("age", 0d) / days);
                 }
             }
             var entry = org.overengineer.bettacraft.tank.BreedingOverview.entry(en.getKey().getDescriptionId(), males, females, young);
