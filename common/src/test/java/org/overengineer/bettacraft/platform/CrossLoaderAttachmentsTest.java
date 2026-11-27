@@ -3,7 +3,7 @@ package org.overengineer.bettacraft.platform;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
+import java.util.Set;
 import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class CrossLoaderAttachmentsTest {
         container.put("bettacraft:glass_mob", new CompoundTag());
         container.put("othermod:data", new CompoundTag());
         var ours = CrossLoaderAttachments.ours(container);
-        assertEquals(List.of("bettacraft:tank_ref", "bettacraft:glass_mob"), List.copyOf(ours.keySet()));
+        assertEquals(Set.of("bettacraft:tank_ref", "bettacraft:glass_mob"), ours.keySet());
         assertEquals(ref, ours.get("bettacraft:tank_ref"));
     }
 
