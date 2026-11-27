@@ -50,11 +50,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * M37 GameTests: the crank. Without the power options only the food maker and the fertilizer maker take it; with them the
- * external filter (and its heaters), the multiblock filter, the cabinet (for every device of its tank), the reverse osmosis
- * unit, the water change controller and the water pump; other devices never. Wound springs stand in for the FE that is
- * short (FE first), run down by the devices they drive and stand still for unloaded time. Keeping fish without a generator
- * over several in-game weeks. Every test changes the power config and has its own batch; the config is restored.
+ * M37 GameTests: the crank. With power.costs OFF only the food maker and the fertilizer maker take it; with EASY or HARD
+ * also the multiblock filter, the reverse osmosis unit, the water change controller and the water pump (own springs), and
+ * (M67) the cabinet under a tank and an attached external filter, which charge the tank's one store. Wound springs stand in
+ * for the FE that is short (FE first), run down by the devices they drive and stand still for unloaded time. Keeping fish
+ * without a generator over several in-game weeks. Every test changes the power config and has its own batch; the config
+ * is restored.
  */
 @GameTestHolder(BettaCraft.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -67,25 +68,21 @@ public final class CrankGameTests {
     // ------------------------------------------------------------------ helpers
 
     /** The power settings, restored after a test. */
-    record Power(boolean heater, boolean filter, boolean light, boolean pumps, boolean air, boolean mister, boolean power, boolean winding) {
+    record Power(ServerConfig.PowerCosts costs, boolean power, boolean winding, boolean tankCrank) {
         static Power current() {
-            return new Power(ServerConfig.POWER_HEATER.get(), ServerConfig.POWER_FILTER.get(), ServerConfig.POWER_LIGHT.get(), ServerConfig.POWER_PUMPS.get(),
-                    ServerConfig.POWER_AIR_PUMP.get(), ServerConfig.POWER_MISTER.get(), Features.own(Feature.POWER), Features.own(Feature.WINDING));
+            return new Power(ServerConfig.POWER_COSTS.get(), Features.own(Feature.POWER), Features.own(Feature.WINDING), Features.own(Feature.TANK_CRANK));
         }
 
         void apply() {
-            ServerConfig.POWER_HEATER.set(heater);
-            ServerConfig.POWER_FILTER.set(filter);
-            ServerConfig.POWER_LIGHT.set(light);
-            ServerConfig.POWER_PUMPS.set(pumps);
-            ServerConfig.POWER_AIR_PUMP.set(air);
-            ServerConfig.POWER_MISTER.set(mister);
+            ServerConfig.POWER_COSTS.set(costs);
             Features.set(Feature.POWER, power);
             Features.set(Feature.WINDING, winding);
+            Features.set(Feature.TANK_CRANK, tankCrank);
         }
 
+        /** M67: power.costs HARD (on) or OFF, winding as given. */
         static void all(boolean on, boolean winding) {
-            new Power(on, on, on, on, on, on, true, winding).apply();
+            new Power(on ? ServerConfig.PowerCosts.HARD : ServerConfig.PowerCosts.OFF, true, winding, true).apply();
         }
     }
 
@@ -174,8 +171,9 @@ public final class CrankGameTests {
     }
 
     /**
-     * With the power options on every device with a power option takes the crank; a charge is 25 clicks, the cabinet and
-     * the multiblock filter hold six (150 clicks); a part of the multiblock filter winds its pump head.
+     * With power costs every device with a spring takes the crank; a charge is 25 clicks, the multiblock filter holds six
+     * (150 clicks); a part of the multiblock filter winds its pump head. M67: the cabinet and the attached external filter
+     * charge the tank's store, power.crankFePerClick a click, until it is full.
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m37_crank_on", timeoutTicks = 100)
     public static void withPowerEveryPoweredDeviceTakesTheCrank(GameTestHelper h) {
@@ -187,11 +185,11 @@ public final class CrankGameTests {
             for (BlockEntity b : List.<BlockEntity>of(d.food(), d.fert(), d.filter(), d.cabinet(), d.pump(), d.ro(), d.changer(), d.head())) {
                 h.assertTrue(crank(h, b) == Winding.Result.WOUND, "winds: " + b.getType());
             }
-            h.assertTrue(d.filter().windSpring().capacity() == day && d.ro().windSpring().capacity() == day && d.pump().windSpring().capacity() == day
+            h.assertTrue(d.ro().windSpring().capacity() == day && d.pump().windSpring().capacity() == day
                     && d.changer().windSpring().capacity() == day, "one charge each");
-            h.assertTrue(d.cabinet().windSpring().capacity() == 6L * day && d.head().windSpring().capacity() == 6L * day, "cabinet and multiblock filter: six charges");
-            h.assertTrue(Winding.Device.CABINET.clicksToFull() == 6 * perCharge && Winding.Device.EXTERNAL_FILTER.clicksToFull() == perCharge,
-                    "six times as long to wind");
+            h.assertTrue(d.head().windSpring().capacity() == 6L * day && Winding.Device.MULTIBLOCK_FILTER.clicksToFull() == 6 * perCharge,
+                    "multiblock filter: six charges, six times as long to wind");
+            h.assertTrue(d.filter().windSpring().empty() && d.cabinet().windSpring().empty(), "M67: the cabinet and the filter wind no spring of their own");
             // a click on a chamber winds the pump head
             long before = d.head().windSpring().ticks();
             h.assertTrue(crank(h, d.chamber()) == Winding.Result.WOUND && d.head().windSpring().ticks() > before, "a chamber winds its pump head");
@@ -200,11 +198,16 @@ public final class CrankGameTests {
             h.assertTrue(Winding.wind(h.getLevel(), d.pump().getBlockPos(), sp) == Winding.Result.WOUND, "the player winds the pump");
             QuestAdv.check(h, sp, "wound_up");
             QuestAdv.gone(h, sp);
-            // the cabinet to full
-            int clicks = 1;
+            // M67: the tank's store to full, at the cabinet
+            TankBlockEntity tank = org.overengineer.bettacraft.tank.TankStore.tankOf(h.getLevel(), d.cabinet());
+            h.assertTrue(tank != null && tank == org.overengineer.bettacraft.tank.TankStore.tankOf(h.getLevel(), d.filter()), "cabinet and filter charge the same tank");
+            tank.getTank().setPowerBuffer(0);
+            long cap = TankPower.capacity(tank), per = org.overengineer.bettacraft.tank.TankStore.fePerClick();
+            int clicks = 0;
             while (crank(h, d.cabinet()) == Winding.Result.WOUND) clicks++;
-            h.assertTrue(clicks == 6 * perCharge && d.cabinet().windSpring().full(), "cabinet full after " + clicks + " clicks");
-            h.assertTrue(crank(h, d.cabinet()) == Winding.Result.FULL, "full: no more");
+            h.assertTrue(clicks == (int) ((cap + per - 1) / per) && tank.getTank().powerBuffer() == cap, "store full after " + clicks + " clicks: "
+                    + tank.getTank().powerBuffer() + " of " + cap);
+            h.assertTrue(crank(h, d.cabinet()) == Winding.Result.FULL && crank(h, d.filter()) == Winding.Result.FULL, "full: no more");
             // power.winding off: only the two machines, and only without FE options ... with them FE only
             Features.set(Feature.WINDING, false);
             for (BlockEntity b : List.<BlockEntity>of(d.food(), d.fert(), d.filter(), d.cabinet(), d.pump(), d.ro(), d.changer(), d.head())) {
@@ -219,11 +222,12 @@ public final class CrankGameTests {
     // ------------------------------------------------------------------ springs stand in for FE
 
     /**
-     * No FE: a wound external filter cleans and its heater heats; the spring runs down by both (2 device-ticks a tick),
-     * stands still for unloaded time; with FE the spring is kept. Unwound: no cleaning, no heating.
+     * M67: the crank at an external filter attached to a tank charges the tank's store; with it the filter cleans and its heater
+     * heats, the devices take their FE from the store. Unwound and without FE: no cleaning, no heating. An external filter
+     * without a tank refuses the crank.
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m37_filter", timeoutTicks = 100)
-    public static void woundExternalFilterCleansAndHeats(GameTestHelper h) {
+    public static void crankAtTheExternalFilterChargesTheStore(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         Power saved = Power.current();
         try {
@@ -234,24 +238,20 @@ public final class CrankGameTests {
             TankEquipment.invalidate(c);
             c.getTank().setTargetTemp(34F); // it must heat
             TankPower.step(level, c, 20);
-            h.assertTrue(!c.filterPowered() && TankWater.filterBlocks(level, c) == 0 && TankCare.heaterBlocks(level, c.getTank()) == 0, "unwound, no FE: nothing");
-            f.windSpring().set(f.windSpring().capacity());
-            long full = f.windSpring().ticks();
+            h.assertTrue(!c.filterPowered() && TankWater.filterBlocks(level, c) == 0 && TankCare.heaterBlocks(level, c.getTank()) == 0, "no FE: nothing");
+            for (int i = 0; i < 10; i++) h.assertTrue(crank(h, f) == Winding.Result.WOUND, "the crank charges the store");
+            long fe = c.getTank().powerBuffer();
+            h.assertTrue(fe == 10 * org.overengineer.bettacraft.tank.TankStore.fePerClick(), "10 clicks: " + fe);
             TankPower.step(level, c, 20);
-            h.assertTrue(TankPower.filterRuns(c, f) && c.springHeat().contains(f), "runs on its spring");
+            h.assertTrue(c.filterPowered() && c.heatPowered(), "the filter and its heater run on the store");
             double ext = ServerConfig.getOr(ServerConfig.WATER_QUALITY_EXTERNAL_FILTER_BLOCKS, 32);
             h.assertTrue(TankWater.filterBlocks(level, c) == ext && TankCare.heaterBlocks(level, c.getTank()) > 0, "cleans " + TankWater.filterBlocks(level, c)
                     + ", heats " + TankCare.heaterBlocks(level, c.getTank()));
-            h.assertTrue(full - f.windSpring().ticks() == 40, "filter + heater: 2 x 20 device-ticks, took " + (full - f.windSpring().ticks()));
-            // a long gap (an unloaded chunk): at most a few seconds count
-            long s = f.windSpring().ticks();
-            TankPower.step(level, c, 100_000);
-            h.assertTrue(s - f.windSpring().ticks() == 2 * Winding.MAX_STEP, "unloaded time does not run it down: " + (s - f.windSpring().ticks()));
-            // FE first: the spring stays
-            c.getTank().setPowerBuffer(1_000_000);
-            s = f.windSpring().ticks();
-            TankPower.step(level, c, 20);
-            h.assertTrue(c.filterPowered() && f.windSpring().ticks() == s, "on FE the spring is kept");
+            h.assertTrue(fe - c.getTank().powerBuffer() == 20L * c.lastDemand() && c.lastDemand() > 0, "the demand comes from the store: "
+                    + (fe - c.getTank().powerBuffer()) + " for " + c.lastDemand() + " FE/t");
+            // a filter that hangs on no tank: nothing to charge
+            ExternalFilterBlockEntity lone = filter(h, new BlockPos(12, 1, 12), Direction.WEST);
+            h.assertTrue(crank(h, lone) == Winding.Result.REFUSED, "no tank: refused");
         } finally {
             saved.apply();
         }
@@ -259,43 +259,36 @@ public final class CrankGameTests {
     }
 
     /**
-     * No FE: a wound cabinet powers every device of its tank (its filter, a filter block, a light, the heater); the more
-     * devices, the faster it runs down. With power.winding off it does nothing.
+     * M67: the crank at a cabinet charges the store of its tank, which runs every device of the tank (the cabinet's filter, a
+     * filter block, a light, the heater). With features.power.tankCrank off the crank is refused and only FE charges it.
      */
     @GameTest(template = EMPTY, batch = "bettacraft_m37_cabinet", timeoutTicks = 100)
-    public static void woundCabinetPowersItsTank(GameTestHelper h) {
+    public static void crankAtTheCabinetPowersTheWholeTank(GameTestHelper h) {
         ServerLevel level = h.getLevel();
         Power saved = Power.current();
         try {
             Power.all(true, true);
             TankBlockEntity c = tank(h, 2, 2, 2, 2, 2, 2);
             CabinetBlockEntity cab = cabinet(h, new BlockPos(2, 1, 2), true);
-            TankEquipment.invalidate(c);
-            cab.windSpring().set(cab.windSpring().capacity());
-            long s0 = cab.windSpring().ticks();
-            TankPower.step(level, c, 20);
-            h.assertTrue(c.filterPowered(), "the cabinet's filter runs on the cabinet");
-            long one = s0 - cab.windSpring().ticks();
-            h.assertTrue(one == 20, "one device: 20 device-ticks, took " + one);
-            // more devices: a filter block, a lit light on the tank, a heater that heats
             ExternalFilterBlockEntity f = filter(h, new BlockPos(4, 2, 2), Direction.WEST);
             f.insertHeater(new ItemStack(ModItems.HEATER_SMALL.get()));
             h.setBlock(new BlockPos(2, 4, 2), ModBlocks.TANK_LIGHT.get().defaultBlockState().setValue(TankLightBlock.LIT, true));
             TankEquipment.invalidate(c);
             c.getTank().setTargetTemp(34F);
-            long s1 = cab.windSpring().ticks();
+            for (int i = 0; i < 20; i++) crank(h, cab);
+            h.assertTrue(c.getTank().powerBuffer() == 20 * org.overengineer.bettacraft.tank.TankStore.fePerClick(), "20 clicks in the store");
             TankPower.step(level, c, 20);
-            long more = s1 - cab.windSpring().ticks();
-            h.assertTrue(c.filterPowered() && c.heatPowered() && c.lightPowered(), "every group runs on the cabinet");
-            h.assertTrue(more >= 3 * one && c.springUnits() >= 3, "more devices, faster: " + more + " (" + c.springUnits() + " devices)");
-            h.assertTrue(f.windSpring().empty(), "the filter block's own spring is not needed");
-            // a full cabinet runs one device six days
-            h.assertTrue(cab.windSpring().capacity() == 6L * Winding.ticksPerCharge(), "six charges");
-            // power.winding off: the cabinet's spring is not used
-            Features.set(Feature.WINDING, false);
-            long s2 = cab.windSpring().ticks();
-            TankPower.step(level, c, 20);
-            h.assertTrue(!c.filterPowered() && cab.windSpring().ticks() == s2, "no winding: FE only");
+            h.assertTrue(c.filterPowered() && c.heatPowered() && c.lightPowered(), "every group runs on the store the crank filled");
+            // the capacity: 8 water blocks and one cabinet
+            long cap = TankPower.capacity(c);
+            h.assertTrue(cap == 8 * org.overengineer.bettacraft.tank.TankStore.perWaterBlock() + org.overengineer.bettacraft.tank.TankStore.perCabinet(),
+                    "store of 8 water blocks + 1 cabinet: " + cap);
+            // features.power.tankCrank off: refused, the store stays
+            Features.set(Feature.TANK_CRANK, false);
+            long s = c.getTank().powerBuffer();
+            h.assertTrue(crank(h, cab) == Winding.Result.REFUSED && crank(h, f) == Winding.Result.REFUSED && c.getTank().powerBuffer() == s,
+                    "tankCrank off: FE only");
+            h.assertTrue(Winding.Device.CABINET.refusal().equals("message.bettacraft.crank.fe_only"), "says why");
         } finally {
             saved.apply();
         }
@@ -380,9 +373,9 @@ public final class CrankGameTests {
     }
 
     /**
-     * M37 question 3: with every power option on and no generator (no FE at all), can fish be kept for weeks? Tank A only
+     * M37 question 3: with power costs (M67: EASY) and no generator (no FE at all), can fish be kept for weeks? Tank A only
      * gets a weekly water change (and no winding: the state before M37), tank B the same with an external filter and a
-     * heater that the crank winds every day, tank P is densely planted with floating plants (no water change, no filter).
+     * heater whose tank store the crank at the filter fills every day, tank P is densely planted with floating plants (no water change, no filter).
      * 28 days. All keep their fish healthy; the wound filter keeps the water cleanest and its heater holds a target above
      * the room (without power a heater cannot: the temperature stays at the room's).
      */
@@ -395,6 +388,7 @@ public final class CrankGameTests {
         org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
         try {
             Power.all(true, true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.EASY); // M67: the store is sized for a day on EASY
             TankBlockEntity a = tank(h, 2, 1, 2, 3, 2, 2), b = tank(h, 2, 1, 10, 3, 2, 2), p = tank(h, 2, 1, 18, 3, 2, 2);
             ExternalFilterBlockEntity f = filter(h, new BlockPos(5, 1, 10), Direction.WEST);
             f.insertHeater(new ItemStack(ModItems.HEATER_MEDIUM.get()));
@@ -414,7 +408,7 @@ public final class CrankGameTests {
             double minQp = 1, maxNp = 0;
             double minQa = 1, minQb = 1, maxNa = 0, maxNb = 0, minTb = 99, maxTb = 0;
             for (int d = 1; d <= 28; d++) {
-                f.windSpring().set(f.windSpring().capacity()); // the keeper winds the filter once a day
+                while (crank(h, f) == Winding.Result.WOUND) { } // M67: the keeper cranks the tank's store full once a day, at the filter
                 day(level, a, fa);
                 day(level, b, fb);
                 day(level, p, fp);
@@ -448,7 +442,7 @@ public final class CrankGameTests {
                     minQb, maxNb, minTb, maxTb, aliveB, fb.stream().map(x -> x.health().isSick()).toList());
             h.assertTrue(aliveB && fb.stream().noneMatch(x -> x.health().isSick()), "B: the bettas are fine");
             h.assertTrue(minQb >= minQa && minQb > 0.5, "B: the wound filter keeps the water clean: " + minQb + " (A " + minQa + ")");
-            h.assertTrue(Math.abs(minTb - b.getTank().targetTemp()) < 1.5 && Math.abs(maxTb - b.getTank().targetTemp()) < 1.5, "B: the heater on the spring holds "
+            h.assertTrue(Math.abs(minTb - b.getTank().targetTemp()) < 1.5 && Math.abs(maxTb - b.getTank().targetTemp()) < 1.5, "B: the heater on the cranked store holds "
                     + b.getTank().targetTemp() + ": " + minTb + ".." + maxTb);
             h.assertTrue(aliveA, "A: water changes alone keep them alive (ambient " + ambient + " °C)");
             h.assertTrue(aliveP && fp.stream().noneMatch(x -> x.health().isSick()) && minQp > 0.4, "P: dense floating plants alone keep the water: " + minQp);

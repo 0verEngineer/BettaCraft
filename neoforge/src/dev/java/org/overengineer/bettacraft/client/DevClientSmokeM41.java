@@ -124,9 +124,7 @@ final class DevClientSmokeM41 {
             LOGGER.error("[smoketest] M41 needs Create (-Pcreate)");
             return;
         }
-        ServerConfig.POWER_HEATER.set(true);
-        ServerConfig.POWER_FILTER.set(true);
-        ServerConfig.POWER_LIGHT.set(true);
+        ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
         Features.set(Feature.POWER, true);
         for (int x = -4; x <= 6; x++) for (int z = -2; z <= 3; z++) level.setBlock(base.offset(x, -2, z), Blocks.STONE_BRICKS.defaultBlockState(), 2);
         // the cabinets, a tank on them, a filter in the right cabinet, a light on top

@@ -75,17 +75,17 @@ public final class PresetGameTests {
     // ------------------------------------------------------------------ config save / restore
 
     /** The values these tests change, read raw (past the preset) and set back afterwards. */
-    private record Saved(Preset preset, List<? extends String> keep, ServerConfig.CareMode care, boolean heater, double sick, boolean hunt) {
+    private record Saved(Preset preset, List<? extends String> keep, ServerConfig.CareMode care, ServerConfig.PowerCosts heater, double sick, boolean hunt) {
         static Saved take() {
             return new Saved(CommonConfig.PRESET.get(), CommonConfig.PRESET_KEEP.get(), ServerConfig.CARE_MODE.get(),
-                    ServerConfig.POWER_HEATER.get(), ServerConfig.HEALTH_DAYS_UNTIL_SICK.get(), ServerConfig.CRITTERS_BETTAS_HUNT.get());
+                    ServerConfig.POWER_COSTS.get(), ServerConfig.HEALTH_DAYS_UNTIL_SICK.get(), ServerConfig.CRITTERS_BETTAS_HUNT.get());
         }
 
         void restore() {
             CommonConfig.PRESET.set(preset);
             CommonConfig.PRESET_KEEP.set(keep);
             ServerConfig.CARE_MODE.set(care);
-            ServerConfig.POWER_HEATER.set(heater);
+            ServerConfig.POWER_COSTS.set(heater);
             ServerConfig.HEALTH_DAYS_UNTIL_SICK.set(sick);
             ServerConfig.CRITTERS_BETTAS_HUNT.set(hunt);
         }
@@ -198,7 +198,7 @@ public final class PresetGameTests {
             check(h, !Features.enabled(Feature.WATER_CHEMISTRY) && !TankChemistry.enabled() && !Features.enabled(Feature.CO2), "no water chemistry, no CO2");
             check(h, TankNitrate.difficulty() == ServerConfig.WaterChangeDifficulty.OFF, "no forced water changes");
             // a device option asking for FE has no effect: power is off
-            ServerConfig.POWER_HEATER.set(true);
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.HARD);
             check(h, !TankPower.anyRequired(), "no FE needed with power off");
             check(h, BettaCare.params().daysUntilSick() == 14.0, "gentler: sick after 14 days");
             // the tank: acid, hard water and much nitrate stress nobody (the bettas do not hunt the shrimp here)
@@ -255,9 +255,10 @@ public final class PresetGameTests {
             b.health().feed();
             BettaCare.advance(level, s.tank(), b, 5.5);
             check(h, b.isAlive() && b.health().isSick(), "sick after 5.5 hungry days");
-            // kept: the heater runs without FE again
-            CommonConfig.PRESET_KEEP.set(List.of("power.heaterRequiresEnergy"));
-            check(h, !TankPower.heaterRequired() && TankPower.filterRequired(), "the kept heater option");
+            // kept: power.costs keeps its file value (M67: OFF, the devices run without FE again)
+            ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.OFF);
+            CommonConfig.PRESET_KEEP.set(List.of("power.costs"));
+            check(h, !TankPower.heaterRequired() && !TankPower.filterRequired(), "the kept power.costs");
             h.succeed();
         } finally {
             saved.restore();
