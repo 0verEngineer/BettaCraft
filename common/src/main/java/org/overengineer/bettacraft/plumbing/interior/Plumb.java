@@ -1,8 +1,10 @@
 package org.overengineer.bettacraft.plumbing.interior;
 
 /**
- * M24: the kinds of plumbing pieces in a tank interior. Their code in the equipment index is {@code ordinal * 8 + facing}
- * (2D data value of the horizontal facing; 0 for pieces without one).
+ * M24: the kinds of plumbing pieces in a tank interior. Their code in the equipment index is {@code (ordinal + 1) * 8 + facing}
+ * (2D data value of the horizontal facing; 0 for pieces without one) in the low byte. M68 part C: the bits above it carry
+ * {@link #extra}: the line of a pipe dock ({@link #ANCHOR}: 0 = the dock of a single pipe, 1..4 = slot 0..3 of a bundle) and
+ * the lane count of an interior bundle ({@link #BUNDLE}). Codes are saved with the region (append kinds only, never reorder).
  */
 public enum Plumb {
     PORT(0, 0), PIPE(0, 0),
@@ -23,7 +25,13 @@ public enum Plumb {
     /** M40: intake guard: the mesh over a filter intake that keeps the animals out (water leaves the tank here). */
     INTAKE_GUARD(0, 0.15),
     /** M40: outlet guard: the mesh cap on a filter outlet (water comes in here, a soft current). */
-    OUTLET_GUARD(1, 0.4);
+    OUTLET_GUARD(1, 0.4),
+    /**
+     * M68 part C: an interior pipe bundle: 2 to 4 separate lanes in one block along an axis (facing = axis ordinal, extra = lane
+     * count). A lane continues into the next bundle of the same axis and joins one single piece on its own side
+     * ({@link InteriorBundleBlock#laneSide}).
+     */
+    BUNDLE(0, 0);
 
     private final int out;
     private final double strength;
@@ -60,8 +68,23 @@ public enum Plumb {
         return (p.ordinal() + 1) * 8 + (facing2d & 7);
     }
 
+    /** M68 part C: a code with {@link #extra} bits (the line of a dock, the lanes of a bundle). */
+    public static int code(Plumb p, int facing, int extra) {
+        return code(p, facing) | (extra & 0xFF) << 8;
+    }
+
     public static Plumb kind(int code) {
-        return values()[code / 8 - 1];
+        return values()[(code & 0xFF) / 8 - 1];
+    }
+
+    /** M68 part C: the bits above the kind and facing (0 in codes of earlier versions). */
+    public static int extra(int code) {
+        return (code >>> 8) & 0xFF;
+    }
+
+    /** M68 part C: interior pipes and bundles: pieces a line runs through. */
+    public boolean conduit() {
+        return this == PIPE || this == BUNDLE;
     }
 
     public static int facing(int code) {

@@ -1,0 +1,41 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#t"
+        },
+        "east": {
+          "texture": "#t"
+        },
+        "north": {
+          "texture": "#t"
+        },
+        "south": {
+          "texture": "#t"
+        },
+        "up": {
+          "texture": "#t"
+        },
+        "west": {
+          "texture": "#t"
+        }
+      },
+      "from": [
+        6.5,
+        3,
+        11
+      ],
+      "to": [
+        9.5,
+        13,
+        14
+      ]
+    }
+  ],
+  "render_type": "minecraft:solid",
+  "textures": {
+    "particle": "bettacraft:block/plumbing_steel",
+    "t": "bettacraft:block/plumbing_steel"
+  }
+}
