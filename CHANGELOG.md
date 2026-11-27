@@ -79,13 +79,13 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   they vanished with its near end only about 20 blocks away and came back a step closer. The distance is now measured to the nearest point of the tank.
 - **Frame rate in worlds with many or large tanks:** every block of every tank was in the list of block entities drawn every frame, in view
   or not (and again in a shader pack's shadow pass), although only the controller draws: thousands of empty calls per frame. Now only the
-  controllers are.
+  controllers are (on 26.2 see Version gaps: the other tank blocks stay in that list, but return at once).
 - **Frame rate with Sodium and shader packs (M66.5):** Sodium draws the always-drawn block entities without testing them against the view, so
   every filter hose and water jet within 96 blocks and the small animals, floating plants and nests of every tank within 48 blocks were built
   every frame, also behind the camera (a third of the render thread in the showcase). Our renderers now test their box against the camera
   view themselves (not in a shader pack's shadow pass); filter hoses and jets are drawn up to `render.tankDetailDistance` (48) like the
   other tank details; the boxes of cabinets, filters and tanks are worked out once a second instead of every frame (finding a cabinet's
-  tank every frame for every cabinet cost up to 15 %). Showcase walk with running ticks: Sodium 206 -> 285 fps, Complementary Reimagined
+  tank every frame for every cabinet cost up to 15 %). Showcase walk (measured on 1.21.1) with running ticks: Sodium 206 -> 285 fps, Complementary Reimagined
   88 -> 122 fps.
 - **Server tick with many large fish:** the path finding of the large tankmates looked at the same cells many times per search; each cell
   is looked at once per search now (the path finding took about a third less of the server tick in the showcase).
@@ -96,6 +96,16 @@ with tabs (several rearing tanks, chest and bed to assign, what he does per tank
   for a source).
 - **Aquarist, tank list:** without a workplace he cares for no tank, but the list still showed the tanks around him as ones he works at
   ("0 of at most 16 tanks" over a list of them). The list shows the tanks around his workplace only.
+
+### Version gaps (26.2)
+- **Always-drawn tank blocks:** on Minecraft 26.x the block entity renderer's "draw off screen" switch is asked once per renderer, not per block
+  entity, so every tank block stays in the always-drawn list (1.21.x: only the controllers). The renderer turns the other blocks away at
+  once in its view test (no work, no allocation per frame), the controller draws as on 1.21.1.
+- **View test of the always-drawn renderers:** the camera view is taken from the frame's render stage like on 1.21.1; on 26.x the block
+  entities can be queued before that stage, then they are tested against the view of the frame before (at most one frame late at the screen edge).
+- Development only: the proof switch `-PtourAlgaeMode=nodepth` of the 1.21.1 algae analysis has no counterpart on 26.2 (the old film's
+  render type cannot be rebuilt without depth writes there); `off` works. The tour's stroll view lists no chunk tickets by type on 26.2
+  (the ticket store moved).
 
 ## [1.54.0-beta.1] - 2026-11-25
 
