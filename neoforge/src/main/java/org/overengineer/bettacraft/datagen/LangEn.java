@@ -310,7 +310,7 @@ final class LangEn {
         a.accept("bettacraft.configuration.preparationBudgetMs", "Interior building per tick (ms)");
         a.accept("bettacraft.configuration.preparationBudgetMs.tooltip", "Server time per tick in milliseconds for building new interiors in the background (more = ready sooner, less = smoother ticks)");
         a.accept("bettacraft.configuration.tankDetailDistance", "Tank detail distance");
-        a.accept("bettacraft.configuration.tankDetailDistance.tooltip", "Distance in blocks up to which the name sign, bubble nest, floating plants, small animals and algae of a tank are drawn");
+        a.accept("bettacraft.configuration.tankDetailDistance.tooltip", "Distance in blocks up to which the name sign, bubble nest, floating plants, small animals, algae and filter hoses of a tank are drawn");
         a.accept("log.bettacraft.tadpole_left", "%s grew into a frog and hopped out");
         a.accept("log.bettacraft.outgrown", "%s grew too big for the aquarium and waits in a fish bag in front of it");
         a.accept("bettacraft.configuration.outgrown", "Animals that grew too big");

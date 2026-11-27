@@ -24,6 +24,12 @@ public interface FilterHost {
     /** Puts a heater into a free slot; false if there is none (or no filter). */
     boolean insertHeater(ItemStack heater);
 
+    /** M66.5: the client's render box of the filter's hose, worked out once a second (null: every frame). */
+    @Nullable
+    default org.overengineer.bettacraft.util.RenderBoxCache renderBoxCache() {
+        return null;
+    }
+
     /** Tank block the filter's pipe goes into, or null. */
     @Nullable
     BlockPos tankBlockPos();

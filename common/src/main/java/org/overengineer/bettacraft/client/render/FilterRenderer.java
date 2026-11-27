@@ -46,6 +46,7 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
     public void render(T be, float partialTick, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         Level level = be.getLevel();
         if (level == null) return;
+        if (BlockEntityCull.outside(getRenderBoundingBox(be))) return; // M66.5: Sodium draws the global list without a view test
         if (be instanceof CabinetBlockEntity drive) DriveRender.cabinetCoupling(drive, ps, buffers, light); // M41: the flange of the Create shaft
         // M29.1: the air pump in the cabinet: its hose beside the filter hose (also without a filter)
         if (be instanceof CabinetBlockEntity cab && cab.hasAirPump()) AirHoseRenderer.renderCabinet(cab, ps, buffers);
@@ -83,10 +84,19 @@ public class FilterRenderer<T extends BlockEntity & FilterHost> extends org.over
 
     @Override
     public int getViewDistance() {
-        return 96;
+        // M66.5: like the tank's details (was 96: every hose and jet of the rows far behind was built every frame)
+        return org.overengineer.bettacraft.config.ClientConfig.TANK_DETAIL_DISTANCE.get();
     }
 
     public AABB getRenderBoundingBox(T be) {
+        // M66.5: asked every frame for every cabinet and filter of the world (they are all in the global list): the tank's
+        // controller is looked up once a second, not every frame
+        Level level = be.getLevel();
+        if (level != null && be instanceof FilterHost host && host.renderBoxCache() != null) return host.renderBoxCache().get(level.getGameTime(), () -> renderBox(be));
+        return renderBox(be);
+    }
+
+    private AABB renderBox(T be) {
         BlockPos pos = be.getBlockPos();
         Level level = be.getLevel();
         AABB own = new AABB(pos);
