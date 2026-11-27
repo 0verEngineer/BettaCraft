@@ -19,7 +19,7 @@ final class LangM66 {
         // ---- cabinet and external filter
         a.accept("gui.bettacraft.filter.energy", "Energy: %s / %s FE");
         a.accept("gui.bettacraft.filter.energy_none", "Energy: not attached to a tank");
-        a.accept("gui.bettacraft.filter.energy_tooltip", "Takes power (for example by cable) and passes it to the store of the tank it is attached to; the bar shows that store. All the devices of that tank draw from there.");
+        a.accept("gui.bettacraft.filter.energy_tooltip", "Takes power (by cable, or the crank right here) and passes it to the one store of the tank it is attached to; the bar shows that store. All the devices of that tank draw from there.");
         a.accept("gui.bettacraft.filter.energy_off", "No device needs power at the moment (config).");
         // ---- feeders
         a.accept("gui.bettacraft.feeder.cabinet_hint", "Also takes food from a cabinet under the tank.");
@@ -162,7 +162,7 @@ final class LangM66 {
         a.accept("gui.bettacraft.breeding.care_tip.fed", "Father not hungry (25 %)");
         a.accept("gui.bettacraft.breeding.care_tip.survival", "Expected: about %4$s of %5$s larvae swim free (%3$s %% survive now; between %1$s and %2$s %%)");
         a.accept("jade.bettacraft.tank.title_quality", "%s %% (%s)");
-        a.accept("gui.bettacraft.filter.energy_tooltip.cabinet", "Takes power (for example by cable) and passes it on to the store of the tank above; the bar shows that store.");
+        a.accept("gui.bettacraft.filter.energy_tooltip.cabinet", "Takes power (by cable, a Create shaft, or the crank right here) and passes it to the one store of the tank above; the bar shows that store. Every cabinet under the tank makes the store bigger, and all the devices of the tank draw from it.");
         a.accept("gui.bettacraft.mb_filter.link_tip", "Cleans %1$s water blocks of this tank (tank: %2$s) · share %3$s %% of the filter's power · %4$s mB/t flow");
         a.accept("gui.bettacraft.mb_filter.link_tip_off", "Does not clean this tank: %s");
         a.accept("log.bettacraft.fry_intake.tadpole", "A tadpole");

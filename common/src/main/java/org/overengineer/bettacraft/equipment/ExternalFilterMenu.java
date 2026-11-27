@@ -52,7 +52,6 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
         addPowerSlot(filter);
         energy = new MenuEnergy(filter); // M66: the tank's store
         for (var s : energy.slots()) addDataSlot(s);
-        addDataSlot(spring = org.overengineer.bettacraft.winding.Winding.slot(filter)); // M37
     }
 
     private final MenuEnergy energy;
@@ -60,13 +59,6 @@ public class ExternalFilterMenu extends AbstractContainerMenu {
     /** M66: the energy of the tank this filter feeds. */
     public MenuEnergy energy() {
         return energy;
-    }
-
-    /** M37: the spring of the filter in percent (-1: not windable now). */
-    private net.minecraft.world.inventory.DataSlot spring;
-
-    public int springPercent() {
-        return spring.get();
     }
 
     @Override

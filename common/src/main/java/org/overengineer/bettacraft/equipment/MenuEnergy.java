@@ -8,7 +8,8 @@ import org.overengineer.bettacraft.tank.TankPower;
 
 /**
  * M66: the stored energy a filter menu (external filter, cabinet) shows. A filter keeps no energy of its own: what flows in
- * through it goes into the store of the tank it is attached to, and every device of that tank draws from there. The values
+ * through it (FE, M67 also the crank) goes into the one store of the tank it is attached to, and every device of that tank
+ * draws from there. The values
  * travel in four data slots (a menu data slot carries 16 bits: stored and capacity as a low and a high word each).
  */
 public final class MenuEnergy {
@@ -59,7 +60,7 @@ public final class MenuEnergy {
             TankBlockEntity t = FilterHost.tankOf(level, f.tankBlockPos());
             if (t != null) {
                 cachedStored = Math.max(0, Math.min(Integer.MAX_VALUE, t.getTank().powerBuffer()));
-                cachedCap = Math.max(0, Math.min(Integer.MAX_VALUE, TankPower.capacity()));
+                cachedCap = Math.max(0, Math.min(Integer.MAX_VALUE, TankPower.capacity(t)));
             }
         }
     }

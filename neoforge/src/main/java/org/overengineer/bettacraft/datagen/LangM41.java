@@ -38,8 +38,6 @@ final class LangM41 {
         a.accept("bettacraft.configuration.stressPerFe.tooltip", "Stress units (SU) an input costs for every FE per tick it gives (2: 128 FE/t cost 256 SU)");
         a.accept("bettacraft.configuration.idleStressPerRpm", "Idle stress per RPM");
         a.accept("bettacraft.configuration.idleStressPerRpm.tooltip", "Stress units per RPM an input costs while it turns without load (0.5: 32 SU at 64 RPM)");
-        a.accept("bettacraft.configuration.fePerSpringTick", "FE per spring tick");
-        a.accept("bettacraft.configuration.fePerSpringTick.tooltip", "With power.winding on, a cabinet's shaft winds the cabinet's spring with the FE the tank does not need: this many FE wind one device-tick");
         a.accept("bettacraft.configuration.cabinetSides", "Cabinet sides for the shaft");
         a.accept("bettacraft.configuration.cabinetSides.tooltip", "Sides of a cabinet that may take the shaft (back, left, right, front, bottom; seen from the cabinet's door). Empty: no cabinet takes a shaft");
     }
