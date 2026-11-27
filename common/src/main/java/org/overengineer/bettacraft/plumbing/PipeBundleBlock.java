@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.plumbing;
 
-import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -54,7 +53,6 @@ import org.overengineer.bettacraft.registry.ModItems;
  * ({@link #centredSides}). A cover ({@link PipeCovers}) draws it as a full block.
  */
 public class PipeBundleBlock extends BaseEntityBlock implements org.overengineer.bettacraft.util.BlockRemoval, org.overengineer.bettacraft.platform.PickableBlock, org.overengineer.bettacraft.platform.PositionalBlock.Sound {
-    public static final MapCodec<PipeBundleBlock> CODEC = simpleCodec(PipeBundleBlock::new);
     /** The manifold in the middle (in pixels). */
     public static final float HUB_MIN = 4.625F, HUB_MAX = 11.375F;
     /** Half the width of an arm and of a cap, the distance of an arm from the middle of its face. */
@@ -64,11 +62,6 @@ public class PipeBundleBlock extends BaseEntityBlock implements org.overengineer
 
     public PipeBundleBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -369,7 +362,7 @@ public class PipeBundleBlock extends BaseEntityBlock implements org.overengineer
             if (slot < 0) return InteractionResult.FAIL;
             for (ItemStack it : removePipe(level, pos, slot)) {
                 if (player.getAbilities().instabuild) continue;
-                if (!player.addItem(it)) player.drop(it, false);
+                if (!player.addItem(it)) player.drop(it, false, net.minecraft.util.Prediction.SERVER_ONLY);
             }
         }
         return InteractionResult.SUCCESS;
