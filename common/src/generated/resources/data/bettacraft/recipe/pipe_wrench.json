@@ -8,12 +8,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "S": {
-      "tag": "c:ingots/stainless_steel"
-    }
+    "I": "minecraft:iron_ingot",
+    "S": "#c:ingots/stainless_steel"
   },
   "pattern": [
     " S ",
