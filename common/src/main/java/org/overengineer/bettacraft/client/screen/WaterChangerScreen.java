@@ -21,7 +21,7 @@ import org.overengineer.bettacraft.plumbing.WaterChangerBlockEntity;
  * ports as seen from the front.
  */
 public class WaterChangerScreen extends Screen {
-    private static final int W = 300, H = 214;
+    private static final int W = 300, H = 224;
     private final BlockPos pos;
     private int left, top;
     private Button toggle;
@@ -83,15 +83,20 @@ public class WaterChangerScreen extends Screen {
         y = text(g, ChangerTexts.lines(w.flags()), x, y, tw);
         y = text(g, ChangerTexts.stores(w.shownFresh(), w.shownWaste(), w.toppedTotal()), x, y, tw);
         for (Component c : ChangerTexts.warnings(w.flags(), w.tanks())) y = text(g, c, x, y, tw);
-        y = Math.max(y + 2, top + H - 24);
+        y += 3;
         text(g, Component.translatable("gui.bettacraft.water_changer.hint").withStyle(net.minecraft.ChatFormatting.GRAY), x, y, tw);
     }
 
-    /** Draws {@code c} wrapped to {@code width}; returns the y below it. */
+    /** Draws {@code c} at 0.75 scale wrapped to {@code width} (the screen must fit a small window); returns the y below it. */
     private int text(GuiGraphics g, Component c, int x, int y, int width) {
-        for (FormattedCharSequence l : font.split(c, width)) {
-            g.drawString(font, l, x, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
-            y += 10;
+        float k = 0.75F;
+        for (FormattedCharSequence l : font.split(c, (int) (width / k))) {
+            g.pose().pushMatrix();
+            g.pose().translate(x, y);
+            g.pose().scale(k, k);
+            g.drawString(font, l, 0, 0, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
+            g.pose().popMatrix();
+            y += 8;
         }
         return y + 1;
     }
