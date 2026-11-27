@@ -228,9 +228,7 @@ public final class WaterGameTests {
     // ------------------------------------------------------------------ power
 
     private static void power(boolean heater, boolean filter, boolean light) {
-        ServerConfig.POWER_HEATER.set(heater);
-        ServerConfig.POWER_FILTER.set(filter);
-        ServerConfig.POWER_LIGHT.set(light);
+        ServerConfig.POWER_COSTS.set(heater || filter || light ? ServerConfig.PowerCosts.HARD : ServerConfig.PowerCosts.OFF); // M67: one setting
     }
 
     @GameTest(template = EMPTY, batch = POWER_BATCH)
@@ -271,7 +269,10 @@ public final class WaterGameTests {
             // FE from any side: tank block, filter and light all fill the same buffer
             int in = tankEnergy.receiveEnergy(50000, false) + filterEnergy.receiveEnergy(30000, false) + lightEnergy.receiveEnergy(20000, false);
             h.assertTrue(in == 100000 && t.powerBuffer() == 100000, "100000 FE stored, got " + t.powerBuffer());
-            h.assertTrue(tankEnergy.receiveEnergy(10, true) == 0, "buffer full");
+            long cap = TankPower.capacity(c); // M67: grows with the tank: 8 water blocks
+            h.assertTrue(cap == 8 * org.overengineer.bettacraft.tank.TankStore.perWaterBlock(), "8 water blocks of store: " + cap);
+            h.assertTrue(tankEnergy.receiveEnergy(Integer.MAX_VALUE, false) == cap - 100000 && tankEnergy.receiveEnergy(10, true) == 0, "store full");
+            t.setPowerBuffer(100000);
             TankPower.step(level, c, 20);
             h.assertTrue(c.heatPowered() && c.filterPowered() && c.lightPowered(), "powered with FE");
             int demand = 8 * 8 + 10 + 4; // heater for 8 water blocks at 8 FE/t each, one filter, one light block
