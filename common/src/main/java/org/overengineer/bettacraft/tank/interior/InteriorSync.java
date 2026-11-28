@@ -283,7 +283,9 @@ public final class InteriorSync {
         if (req.knownVersion() == st.version && !st.all && st.dirty.isEmpty()) return;
         // M17: one full send per player and region per REQUEST_COOLDOWN ticks; a client asking again and again (or with a
         // made-up version) cannot make the server send megabytes every tick. Changes still arrive through flush().
-        long now = server.overworld().getGameTime();
+        // M67.5: in real time (ticks of 50 ms), not game time: with the ticks frozen (/tick freeze, the dev tour) the game time stands
+        // still and a region the client had dropped and asked for again was never sent (its miniature stayed away)
+        long now = net.minecraft.util.Util.getMillis() / 50L;
         long last = st.lastRequested.getOrDefault(player.getUUID(), Long.MIN_VALUE);
         if (last != Long.MIN_VALUE && now - last >= 0 && now - last < REQUEST_COOLDOWN) return;
         st.lastRequested.put(player.getUUID(), now);
