@@ -158,7 +158,11 @@ public final class MiniatureRenderer {
             MiniatureSway.beginFrame();
             uploadResults();
             boolean pack = IrisCompat.shaderPackInUse();
-            for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
+            // M67.5 (point 16): the nearest tanks first. After a shader pack switch every tank in range is meshed again; in an
+            // unordered pass the tank in front of the camera waited behind hundreds of others and stayed empty for a long time
+            List<TankBlockEntity> byDistance = new ArrayList<>(TankBlockEntity.CLIENT_CONTROLLERS);
+            byDistance.sort(java.util.Comparator.comparingDouble(be -> be.getBlockPos().distToCenterSqr(cam)));
+            for (TankBlockEntity be : byDistance) {
                 TankData t = be.getTank();
                 if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
                 if (org.overengineer.bettacraft.client.render.TravellingTankRenderer.travelling(be)) continue; // M32 part b: drawn at the ship's pose
@@ -352,7 +356,13 @@ public final class MiniatureRenderer {
         private static void add(Map<ChunkSectionLayer, ByteBufferBuilder> mems, Map<ChunkSectionLayer, BufferBuilder> bbs, ChunkSectionLayer layer, int size) {
             ByteBufferBuilder mem = new ByteBufferBuilder(size);
             mems.put(layer, mem);
-            bbs.put(layer, new BufferBuilder(mem, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK));
+            // M67.5 (point 16): exactly the vertex format of the pipeline that draws the layer now (drawFormat): Iris extends a
+            // block-format builder while a pack is in use, but the pipelines keep the format they had when the game started; after
+            // a pack was switched on in a running game every mesh came out extended against a plain pipeline, was taken for stale,
+            // rebuilt and never drawn
+            boolean extend = !drawFormat(layer).equals(DefaultVertexFormat.BLOCK);
+            BufferBuilder bb = IrisCompat.withExtension(extend, () -> new BufferBuilder(mem, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK));
+            bbs.put(layer, bb);
         }
 
         List<ByteBufferBuilder> memory() {
