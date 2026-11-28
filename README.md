@@ -464,6 +464,20 @@ git clone https://github.com/0verEngineer/BettaCraft.git && cd BettaCraft
 ./gradlew runMultiplayerTest --no-configuration-cache             # dedicated server + two background clients
 ```
 
+`tools/test-matrix.sh` runs the whole set that must be green for every change of a branch, one step after the other with a
+log each in `build/test-matrix/` and a `summary.txt`, exit code 0 only when everything is green: `runData` (the generated
+resources must not change), `build` and `:fabric:build`, the GameTests and the server smokes of both loaders, then the
+client smokes of `tools/test-matrix.txt` and of the arguments, never two clients at a time (background windows, muted).
+Every step has a timeout and a client that fails to load is stopped at once. `--parallel` runs the two GameTest suites
+and then the two server smokes side by side; `tools/test-matrix.sh quick <gametest-prefixes>` only compiles and runs
+those GameTests on both loaders.
+
+```
+bash tools/test-matrix.sh                                              # the full matrix of this branch
+bash tools/test-matrix.sh --parallel "runClient -Psmoketestm69"        # with a milestone's client smoke
+bash tools/test-matrix.sh quick hiredaquaristgametests                 # while working
+```
+
 **Other mods are not shipped with the repository.** Their jars are downloaded from their official sources (Modrinth,
 CurseForge through CurseMaven, the FTB Maven) the first time a run needs them, checked against the SHA-1 and SHA-256 in
 `gradle/dev-mods.json` (a mismatch stops the build) and kept in the Gradle cache (afterwards `--offline` works). A build without a
