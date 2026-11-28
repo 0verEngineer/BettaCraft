@@ -21,7 +21,8 @@ The <ItemLink id="bettacraft:air_pump" /> is a small membrane pump. Place it **n
 **on its top**: its air hose runs over the glass rim into the water. It drives the [air stones](air_stone.md) and the
 [sponge filters](sponge_filter.md) in the [interior](../interior.md) of that aquarium. It can also sit **in the
 [aquarium cabinet](cabinet.md)** under the aquarium (its own slot in the cabinet menu): its hose then goes up together
-with the filter hose at the cabinet's outlet side.
+with the filter hose at the cabinet's outlet side. Without an external filter in the cabinet no hose is drawn (the air stones
+bubble all the same).
 
 The hose runs down the inside of the glass to the floor and ends there (it does not lie across the floor to the air stones
 and sponge filters).

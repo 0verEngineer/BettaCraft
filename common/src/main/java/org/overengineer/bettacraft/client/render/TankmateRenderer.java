@@ -138,7 +138,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
         }
         // M30 part b: a ray lies flat out of the water and swims with its disc (no body sway)
         boolean ray = fish.species().large() != null && fish.species().large().ray();
-        if (!fish.isInWater()) {
+        if (FishFlop.outOfWater(fish)) {
             if (ray) return;
             pose.translate(0.05F, 0.05F, -0.05F);
             pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
@@ -183,7 +183,7 @@ public class TankmateRenderer extends MobRenderer<TankmateEntity, MobState<Tankm
             float pitch = (float) Mth.clamp(Math.toDegrees(Math.atan2(vy, Math.max(h, 0.01))), -35, 35);
             pose.mulPose(Axis.XP.rotationDegrees(pitch));
         }
-        if (!fish.isInWater()) {
+        if (FishFlop.outOfWater(fish)) {
             pose.translate(0.05F, 0.05F, -0.05F);
             pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
         }

@@ -92,7 +92,7 @@ public class AirHoseRenderer extends org.overengineer.bettacraft.client.render.L
      */
     public static void renderCabinet(CabinetBlockEntity cab, PoseStack ps, MultiBufferSource buffers) {
         Level level = cab.getLevel();
-        if (level == null || !cab.hasAirPump() || !(cab.getBlockState().getBlock() instanceof CabinetBlock)) return;
+        if (level == null || !cab.hasAirPump() || !cab.hasFilter() || !(cab.getBlockState().getBlock() instanceof CabinetBlock)) return; // M67.5
         TankBlockEntity c = FilterHost.tankOf(level, cab.tankBlockPos());
         if (c == null || c.getTank() == null) return;
         TankData t = c.getTank();
