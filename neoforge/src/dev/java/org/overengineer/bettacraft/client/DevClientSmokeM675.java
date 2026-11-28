@@ -1,6 +1,5 @@
 package org.overengineer.bettacraft.client;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -117,10 +116,10 @@ final class DevClientSmokeM675 {
     }
 
     private void ground(ServerPlayer p) {
-        ServerLevel level = p.serverLevel();
-        level.setDayTime(6000);
-        level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-        level.setWeatherParameters(24000, 0, false, false);
+        ServerLevel level = p.level();
+        org.overengineer.bettacraft.gametest.framework.DevTime.set(level, 6000);
+        level.getGameRules().set(net.minecraft.world.level.gamerules.GameRules.ADVANCE_TIME, false, level.getServer());
+        DevClientWorldTour.clearWeather(level);
         p.getAbilities().flying = true;
         p.onUpdateAbilities();
         base = p.blockPosition().offset(4, 0, 12);
@@ -130,7 +129,7 @@ final class DevClientSmokeM675 {
 
     private void animals() {
         then(1, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             animals = base;
             clear(level, animals.offset(-2, -1, -4), animals.offset(7, 4, 5));
             TankBlockEntity c = tank(level, animals, 5, 2, 3, Blocks.SAND.defaultBlockState());
@@ -152,7 +151,7 @@ final class DevClientSmokeM675 {
             TankCritters.sync(level, c);
         }));
         then(40, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             TankBlockEntity c = TankMultiblock.getController(level, animals);
             TankCritters.sync(level, c);
             var w = new org.overengineer.bettacraft.tank.TankWaterVolume(c.getTank());
@@ -199,7 +198,7 @@ final class DevClientSmokeM675 {
 
     private static void pose(TankmateEntity m, double x, double y, double z, float yaw, int flags) {
         SmokeFreeze.freeze(m, true);
-        m.moveTo(x, y, z, yaw, 0F);
+        m.snapTo(x, y, z, yaw, 0F);
         m.setDeltaMovement(Vec3.ZERO);
         m.setYRot(yaw);
         m.yBodyRot = yaw;
@@ -211,7 +210,7 @@ final class DevClientSmokeM675 {
 
     private void algae() {
         then(1, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             algaeTank = base.offset(14, 0, 0);
             clear(level, algaeTank.offset(-2, -1, -6), algaeTank.offset(17, 5, 5));
             tank(level, algaeTank, 14, 3, 2, Blocks.SAND.defaultBlockState());
@@ -221,7 +220,7 @@ final class DevClientSmokeM675 {
         then(1, () -> mc.options.hideGui = true);
         then(1, () -> look(algaeTank.getX() + 7.0, algaeTank.getY() + 1.6, algaeTank.getZ() - 7.5, 0F, 4F));
         for (float lvl : new float[]{0.35F, 0.65F, 1F}) {
-            then(1, () -> server(p -> setAlgae(p.serverLevel(), lvl, algaeTank, algaeTank.offset(0, 0, 3))));
+            then(1, () -> server(p -> setAlgae(p.level(), lvl, algaeTank, algaeTank.offset(0, 0, 3))));
             then(60, () -> shot("algae_" + Math.round(lvl * 100)));
         }
         // close: the film continues over the block borders
@@ -263,7 +262,7 @@ final class DevClientSmokeM675 {
 
     private void cabinet() {
         then(1, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             cabAir = base.offset(0, 0, 16);
             cabFilter = cabAir.offset(5, 0, 0);
             clear(level, cabAir.offset(-2, -1, -5), cabAir.offset(9, 5, 4));
@@ -297,7 +296,7 @@ final class DevClientSmokeM675 {
 
     private void bigTank() {
         then(1, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             big = base.offset(0, 1, 30);
             clear(level, big.offset(-4, -2, -14), big.offset(28, 8, 16));
             TankBlockEntity c = tank(level, big, 24, 6, 12, Blocks.SAND.defaultBlockState());
@@ -345,7 +344,20 @@ final class DevClientSmokeM675 {
 
     // ------------------------------------------------------------------ algae on a contraption (P12)
 
-    private final NativeImage[] createShots = new NativeImage[3];
+    private final int[][] createShots = new int[3][];
+    private int shotW, shotH;
+
+    /** Port: the picture arrives in a callback; its pixels (ARGB) are copied. */
+    private void grabPixels(int i) {
+        Screenshot.takeScreenshot(mc.getMainRenderTarget(), 1, img -> {
+            int w = img.getWidth(), h = img.getHeight();
+            int[] px = new int[w * h];
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) px[y * w + x] = img.getPixel(x, y);
+            shotW = w;
+            shotH = h;
+            createShots[i] = px;
+        });
+    }
 
     private void create() {
         if (!org.overengineer.bettacraft.platform.Platform.get().isModLoaded("create")) {
@@ -353,10 +365,10 @@ final class DevClientSmokeM675 {
             return;
         }
         then(1, () -> server(p -> {
-            ServerLevel level = p.serverLevel();
+            ServerLevel level = p.level();
             bearingPos = base.offset(40, 6, 0);
             clear(level, bearingPos.offset(-3, -7, -8), bearingPos.offset(6, 5, 6));
-            var bearingBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse("create:mechanical_bearing"));
+            var bearingBlock = BuiltInRegistries.BLOCK.getValue(Identifier.parse("create:mechanical_bearing"));
             for (int y = 1; y < 7; y++) level.setBlock(bearingPos.below(y), Blocks.STONE_BRICKS.defaultBlockState(), 2);
             level.setBlock(bearingPos, with(bearingBlock.defaultBlockState(), "facing", Direction.UP), 3);
             bearing = level.getBlockEntity(bearingPos);
@@ -386,20 +398,20 @@ final class DevClientSmokeM675 {
         // contraption settling) are left out of the guard
         then(1, () -> AlgaeFilm.hiddenForTest = true);
         then(3, () -> {
-            createShots[1] = Screenshot.takeScreenshot(mc.getMainRenderTarget());
+            grabPixels(1);
             shot("create_nofilm");
             AlgaeFilm.hiddenForTest = false;
         });
         then(3, () -> {
-            createShots[0] = Screenshot.takeScreenshot(mc.getMainRenderTarget());
+            grabPixels(0);
             shot("create_film");
             AlgaeFilm.hiddenForTest = true;
         });
         then(3, () -> {
-            createShots[2] = Screenshot.takeScreenshot(mc.getMainRenderTarget());
+            grabPixels(2);
             AlgaeFilm.hiddenForTest = false;
-            guardCreate();
         });
+        then(3, this::guardCreate);
         then(1, () -> mc.options.hideGui = false);
     }
 
@@ -435,22 +447,22 @@ final class DevClientSmokeM675 {
      * film (the water's and the sand's animation) are left out. Fails when more than 0.3 % of the picture differs too much.
      */
     private void guardCreate() {
-        NativeImage a = createShots[0], b = createShots[1], c = createShots[2];
+        int[] a = createShots[0], b = createShots[1], c = createShots[2];
         if (a == null || b == null || c == null) {
             problem("create guard: no pictures");
             return;
         }
-        int w = Math.min(a.getWidth(), b.getWidth()), h = Math.min(a.getHeight(), b.getHeight());
+        int w = shotW, h = shotH;
         int bad = 0, changed = 0;
         float[] green = {0.36F, 0.58F, 0.20F};
         for (int y = 0; y < h; y += 2) {
             for (int x = 0; x < w; x += 2) {
-                int pa = a.getPixelRGBA(x, y), pb = b.getPixelRGBA(x, y), pc = c.getPixelRGBA(x, y); // ABGR
+                int pa = a[y * w + x], pb = b[y * w + x], pc = c[y * w + x]; // ARGB
                 int noise = 0;
                 for (int k = 0; k < 24; k += 8) noise = Math.max(noise, Math.abs((pb >> k & 255) - (pc >> k & 255)));
                 if (noise > 12) continue;
-                float[] ca = {(pa & 255) / 255F, (pa >> 8 & 255) / 255F, (pa >> 16 & 255) / 255F};
-                float[] cb = {(pb & 255) / 255F, (pb >> 8 & 255) / 255F, (pb >> 16 & 255) / 255F};
+                float[] ca = {(pa >> 16 & 255) / 255F, (pa >> 8 & 255) / 255F, (pa & 255) / 255F};
+                float[] cb = {(pb >> 16 & 255) / 255F, (pb >> 8 & 255) / 255F, (pb & 255) / 255F};
                 float diff = 0, span = 0;
                 for (int k = 0; k < 3; k++) {
                     diff = Math.max(diff, Math.abs(ca[k] - cb[k]));
@@ -468,9 +480,6 @@ final class DevClientSmokeM675 {
         // of its own, changed 1.4 % of this picture, the new one about 12 %)
         if (changed < total * 0.04) problem("create guard: the film is not drawn on the contraption (or too faint): " + changed + " pixels");
         if (share > 0.003) problem("create guard: holes behind the film");
-        a.close();
-        b.close();
-        c.close();
     }
 
     private void assemble() {
@@ -547,7 +556,7 @@ final class DevClientSmokeM675 {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void problem(String what) {
@@ -556,7 +565,7 @@ final class DevClientSmokeM675 {
     }
 
     private void look(double x, double eyeY, double z, float yaw, float pitch) {
-        server(p -> p.teleportTo(p.serverLevel(), x, eyeY - p.getEyeHeight(), z, yaw, pitch));
+        server(p -> p.teleportTo(p.level(), x, eyeY - p.getEyeHeight(), z, java.util.Set.of(), yaw, pitch, false));
     }
 
     private void then(int delay, Runnable action) {
@@ -592,7 +601,7 @@ final class DevClientSmokeM675 {
     }
 
     private void shot(String name) {
-        mc.getToasts().clear();
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m675_" + name + ".png", mc.getMainRenderTarget(), c -> {});
+        mc.getToastManager().clear();
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m675_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
     }
 }
