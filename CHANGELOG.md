@@ -89,6 +89,11 @@ also tops off.
   pipes from before the filter lines (1.32) that run from the filter's inlet and outlet and touch each other are one line at two
   ports now: a short circuit (red); separate them with the pipe wrench.
 
+### Fixed
+- A world from Minecraft 1.21.1 no longer hangs the server when a new tank interior chunk is made next to its old interior
+  chunks ("Requested chunk unavailable during world generation"): Minecraft blends new chunks into the chunks of older versions,
+  which the void interior does not need; interior chunks are made without it. Found by the 1.21.1 reference world of the upgrade test.
+
 ## [1.56.0-beta.1] - 2026-11-27
 
 One energy store per tank: FE cables and the crank charge the same store, it grows with the tank and its cabinets, and one setting,
