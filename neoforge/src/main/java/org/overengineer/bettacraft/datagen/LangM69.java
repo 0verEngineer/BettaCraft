@@ -44,7 +44,7 @@ final class LangM69 {
         // the menu
         a.accept("gui.bettacraft.aquarist.tab.team", "Team");
         a.accept("gui.bettacraft.aquarist.tab.friend", "Friend");
-        a.accept("gui.bettacraft.aquarist.status.waiting_home", "waits for a bed and a basin");
+        a.accept("gui.bettacraft.aquarist.status.waiting_home", "waits for a home");
         a.accept("gui.bettacraft.aquarist.status.unloaded", "far away");
         a.accept("gui.bettacraft.aquarist.tank.other", "%s looks after it");
         a.accept("gui.bettacraft.aquarist.team.title", "Team: %s of %s aquarists");
@@ -63,6 +63,8 @@ final class LangM69 {
         a.accept("gui.bettacraft.aquarist.friend.full", "Team full (%s/%s)");
         a.accept("gui.bettacraft.aquarist.friend.full_text", "Every place in the team is taken (hiredAquarist.maxAquarists in the server config).");
         a.accept("gui.bettacraft.aquarist.friend.offer_text", "My friend %s is looking for work and would like to work for you too. He brings his own bed, breeding basin and chests and takes his own wage; every tank goes to the one of us whose basin is nearest.");
+        a.accept("gui.bettacraft.aquarist.friend.wage", "He wants %s emerald a day, or %s pieces of food (bread, cooked fish ...), from a chest next to his own workplace.");
+        a.accept("gui.bettacraft.aquarist.friend.free", "He would do it for nothing, like me.");
         a.accept("gui.bettacraft.aquarist.friend.home_text", "He needs a free bed and a free breeding basin near here. Until you have built them he waits next to me and does not work yet.");
         a.accept("gui.bettacraft.aquarist.friend.team_after", "The team after hiring him: %s/%s");
         a.accept("gui.bettacraft.aquarist.friend.intro", "A friend of mine could work for you too, as soon as:");

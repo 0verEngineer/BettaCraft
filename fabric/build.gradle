@@ -74,7 +74,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1 or 1.21.11)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests', 'CreateDeviceGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM675', 'DevClientSmokeM68', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM675', 'DevClientSmokeM68', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d', 'DevClientSmokeM69'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -165,6 +165,12 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m67only', 'true'
+            }
+            // M69: -Psmoketestm69: the menus of a team of aquarists (tabs Friend and Team), en and de
+            if (project.hasProperty('smoketestm69')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m69only', 'true'
             }
             // M66: -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the menus of the UI overhaul
             if (project.hasProperty('smoketestm66')) {
@@ -684,6 +690,9 @@ def prodProps = { boolean client ->
             l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m68only=true']
         }
         // M66: the menus of the UI overhaul in production
+        if (project.hasProperty('smoketestm69')) {
+            l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m69only=true']
+        }
         if (project.hasProperty('smoketestm66')) {
             l += ['-Dbettacraft.smoketest.fabric=true', '-Dbettacraft.smoketest.world=true', '-Dbettacraft.smoketest.m66only=true']
             if (project.hasProperty('m66tag')) l << "-Dbettacraft.smoketest.m66tag=${project.property('m66tag')}".toString()

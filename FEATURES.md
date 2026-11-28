@@ -343,6 +343,10 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   moving young into a rearing tank and warnings in the chat (map waypoints); six tasks with three levels each in his
   menu. Multiplayer: each player has his own; he works only at his employer's tanks, those of the FTB Teams party and
   those released for him in the tank menu, never at locked ones. Without wage he slows down and leaves after three days.
+- **A team of aquarists:** after a week of work without a break, enough tanks (three per aquarist), another breeding and no
+  trouble, the first aquarist recommends a friend (tab Friend in his menu, and in the chat); up to three per player
+  (configurable up to ten). Each has his own bed, basin, chests and wage, every tank is looked after by exactly one of them
+  (the nearest workplace, or chosen in the menu), and the tab Team of every aquarist's menu shows them all.
 
 ![The aquarist villager at his breeding basin, two betta tanks beside him](docs/images/bettacraft-aquarist-villager.jpg)
 
@@ -354,8 +358,8 @@ feature is on every Minecraft version and loader unless the README's "What is mi
   and none lets go for half a second after a catch, so a double click never releases what you just caught.
 - 368 handbook pages in English and German with a page for every animal, plant, coral and device and where to get it
   (generated from the game data): GuideME on NeoForge; on Fabric the same pages as a Patchouli book (1.21.1) or a
-  Modonomicon book (1.21.11 and 26.x), converted at build time. 72 advancements, information pages in JEI (and REI and
-  EMI on Fabric), tooltips, and an FTB Quests chapter of 117 quests for modpacks.
+  Modonomicon book (1.21.11 and 26.x), converted at build time. 73 advancements, information pages in JEI (and REI and
+  EMI on Fabric), tooltips, and an FTB Quests chapter of 118 quests for modpacks.
 - Every feature has its own switch (`features.<group>.enabled` and sub-switches, 144 in all): off, it loses its recipes,
   trades, loot and spawns, hides from the creative tab, JEI and the handbook, and its logic rests (nothing is deleted).
 - Presets for modpacks (`preset = SIMPLE | REALISTIC | DECOR`), a care mode without deaths (`care.mode`), optional death of
