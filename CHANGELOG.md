@@ -4,7 +4,7 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
-## [1.57.0-beta.1] - 2026-11-27
+## [1.57.0-beta.1] - 2026-11-28
 
 One pipe system: glass and stainless steel pipes for everything, a pipe wrench, lines that take their role from the port they
 reach, pipe bundles inside and outside the tank with a dock per line, and a water change controller with four pipe ports that
