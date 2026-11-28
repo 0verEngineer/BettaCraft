@@ -1,4 +1,4 @@
-# The client smokes of this branch (Minecraft 1.21.1) that tools/test-matrix.sh runs after the build, the GameTests and
+# The client smokes of this branch (Minecraft 26.2) that tools/test-matrix.sh runs after the build, the GameTests and
 # the server smokes, one after another (background windows, muted). One Gradle task with its arguments per line.
 # A milestone that changes rendering or menus adds its own scene as an argument:
 #   tools/test-matrix.sh "runClient -Psmoketestm69" "runFabricClient -Psmoketestm69"
