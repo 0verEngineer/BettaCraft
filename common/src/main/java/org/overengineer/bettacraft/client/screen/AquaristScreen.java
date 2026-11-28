@@ -664,11 +664,11 @@ public class AquaristScreen extends Screen {
                 : Component.empty();
         if (!view.getBooleanOr("team_feature", false)) note = Component.translatable("gui.bettacraft.aquarist.team.feature_off");
         for (FormattedCharSequence line : font.split(note.copy().withStyle(ChatFormatting.GRAY), W - 16)) {
-            g.drawString(font, line, left + 8, ty, 0xFFFFFF);
+            g.drawString(font, line, left + 8, ty, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             ty += 10;
         }
         for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.team.shared").withStyle(ChatFormatting.DARK_GRAY), W - 16)) {
-            g.drawString(font, line, left + 8, ty, 0xFFFFFF);
+            g.drawString(font, line, left + 8, ty, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             ty += 10;
         }
     }
@@ -679,10 +679,10 @@ public class AquaristScreen extends Screen {
         int hired = view.getIntOr("team_hired", 0), max = view.getIntOr("team_max", 0);
         int y = top + 40;
         if (hired >= max) {
-            g.drawCenteredString(font, Component.translatable("gui.bettacraft.aquarist.friend.full", hired, max).withStyle(ChatFormatting.GOLD), left + W / 2, top + 80, 0xFFFFFF);
+            g.drawCenteredString(font, Component.translatable("gui.bettacraft.aquarist.friend.full", hired, max).withStyle(ChatFormatting.GOLD), left + W / 2, top + 80, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             int fy = top + 100;
             for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.full_text").withStyle(ChatFormatting.GRAY), W - 40)) {
-                g.drawCenteredString(font, line, left + W / 2, fy, 0xFFFFFF);
+                g.drawCenteredString(font, line, left + W / 2, fy, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
                 fy += 10;
             }
             return;
@@ -697,19 +697,19 @@ public class AquaristScreen extends Screen {
             Component pay = !view.getBooleanOr("wage", false) ? Component.translatable("gui.bettacraft.aquarist.friend.free")
                     : Component.translatable("gui.bettacraft.aquarist.friend.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0));
             for (FormattedCharSequence line : font.split(pay.copy().withStyle(ChatFormatting.GOLD), W - 20)) {
-                g.drawString(font, line, left + 10, y, 0xFFFFFF);
+                g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
                 y += 10;
             }
             y += 6;
             for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.home_text").withStyle(ChatFormatting.GRAY), W - 20)) {
-                g.drawString(font, line, left + 10, y, 0xFFFFFF);
+                g.drawString(font, line, left + 10, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
                 y += 10;
             }
-            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.team_after", hired + 1, max).withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 62, 0xFFFFFF);
+            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.team_after", hired + 1, max).withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 62, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             return;
         }
         for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.intro").withStyle(ChatFormatting.GRAY), W - 16)) {
-            g.drawString(font, line, left + 8, y, 0xFFFFFF);
+            g.drawString(font, line, left + 8, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
             y += 10;
         }
         y += 4;
@@ -727,7 +727,7 @@ public class AquaristScreen extends Screen {
         }
         y += 4;
         if (daysLeft > 0) {
-            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.in_days", daysLeft).withStyle(ChatFormatting.YELLOW), left + 8, y, 0xFFFFFF);
+            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.in_days", daysLeft).withStyle(ChatFormatting.YELLOW), left + 8, y, org.overengineer.bettacraft.client.ClientCompat.textColor(0xFFFFFF));
         }
     }
 
