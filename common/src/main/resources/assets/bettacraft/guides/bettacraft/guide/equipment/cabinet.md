@@ -21,7 +21,8 @@ The <ItemLink id="bettacraft:cabinet" /> is a stand for the aquarium, made of **
   attached external filter; the hose runs up the wall of its **outlet side** (see below; the back wall unless you
   choose another). The two heater slots of the cabinet menu are the heater slots of that filter.
 * **Air pump slot:** an [air pump](air_pump.md) in the cabinet drives the air stones and sponge filters of the
-  aquarium above, like one beside it; its air hose goes up next to the filter hose at the outlet side.
+  aquarium above, like one beside it; with an external filter in the cabinet its air hose goes up next to the filter hose
+  at the outlet side (without one no hose is drawn).
 * **Nine storage slots** for food and other things. Hoppers can use them, and the [feeder](feeder.md) on the aquarium
   takes food from the cabinets under it.
 * Broken, the cabinet drops its contents like a chest and keeps its wood, its outlet side and its front.
