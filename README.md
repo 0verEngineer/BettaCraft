@@ -95,9 +95,10 @@ Every feature in detail, with a picture for each kind of tank and animal: **[FEA
   (`power.costs` OFF / EASY / HARD; one energy store per tank, charged by FE, the crank or Create), tanks that travel on Create contraptions; **monitors** with dashboards and alarms, alarm
   waypoints in JourneyMap, Xaero's Minimap and FTB Chunks.
 - **Aquarists:** an aquarist villager trades plants, animals and food and buys your bred animals; a hired aquarist walks
-  to your tanks every day and feeds, changes water, scrapes algae and moves the young.
-- **For players and packs:** 368 handbook pages in English and German, 72 advancements, JEI / REI / EMI pages, an FTB
-  Quests chapter of 117 quests, 150 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
+  to your tanks every day and feeds, changes water, scrapes algae and moves the young, and recommends friends as the work
+  grows (a team of up to three, each tank with one of them).
+- **For players and packs:** 368 handbook pages in English and German, 73 advancements, JEI / REI / EMI pages, an FTB
+  Quests chapter of 118 quests, 151 feature switches and presets, and a **debug log** with `/bettacraft report` for bug
   reports.
 
 </details>
@@ -235,7 +236,7 @@ and evaporation are on but gentle, and no equipment needs power (`power.costs = 
 
 ### Quest chapter
 
-The chapter **Bettacraft** has 117 quests (1.57.0; 33 before 1.36.0) in branches from the first tank: bettas and their
+The chapter **Bettacraft** has 118 quests (1.58.0; 33 before 1.36.0) in branches from the first tank: bettas and their
 breeding, water care, plants and the interior, live food, tankmates with the guppy genetics, shrimp, snails and frogs, the
 reef with reef fish and seahorses, terraria, paludaria and turtles, big animals, guests (axolotls, Minecraft pets, mobs in
 glass, animals of other mods), the technology (cabinet, aeration, lights, power regulator, pipes, stainless steel, water

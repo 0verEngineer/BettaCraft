@@ -4,6 +4,59 @@ All notable changes to Bettacraft. The format follows [Keep a Changelog](https:/
 versions follow [Semantic Versioning](https://semver.org/). The release workflow publishes the section of the tagged
 version as release notes.
 
+## [1.58.0-beta.1] - 2026-11-28
+
+Several aquarists per player: the hired aquarist recommends a friend once the work grows, and every aquarist's menu shows the
+team. The repository set-up follows Fast Craft Book's.
+
+### Added
+- **A team of aquarists** (`features.aquaristNpc.team`, on by default): up to **3 aquarists per player** (server config
+  `hiredAquarist.maxAquarists`, 1 to 10; 1 = only one, as before). Only the first comes by himself. Every further one is a
+  **friend** whom the aquarist who has worked for you longest recommends, once **all** of these hold: he worked **7 in-game days
+  without a break** (his wage paid every morning) and 7 days went by since the last hiring (`friendAfterDays`); **enough
+  work**: 3 own tanks per aquarist, the friend included (`tanksPerAquarist`: the second from 6 tanks, the third from 9);
+  **another breeding** since the last hiring; **no trouble** for 3 days (`friendCalmDays`): no aquarist of the team without
+  his wage, no tank in their care with bad water.
+- **Tab Friend** in the menu of the one who recommends: every condition with ✔ / ✘ and its progress ("a friend in 3 days"),
+  then the offer with **[Hire him]** / **[No, thanks]**, and "Team full (3/3)" at the limit. When it is possible he says so
+  in the chat, with a button that opens his menu at that tab; the tab shines.
+- **Hired, the friend** comes to the one who recommended him and takes a free bed and breeding basin nearby. Without them he
+  waits next to him and does not work (`friendHomeGraceDays`, 5 days) before days without a home count; his menu shows what is
+  missing. Refused: the next friend after 5 to 10 days and another breeding. If the first leaves, the one who has been with
+  you longest recommends from then on.
+- **Tab Team** in **every** aquarist's menu: all aquarists of the employer with name, status, tanks and workplace (★ = the
+  one who recommends).
+- **No double work:** every tank is looked after by exactly one aquarist of the team: the one whose breeding basin is
+  nearest, or the one chosen on the tab Tanks (the button at the selected tank: the next aquarist, then back to the nearest).
+  Beds, basins, chests, rearing tanks and wages stay each aquarist's own.
+- `/bettacraft aquarist status` lists the whole team and the conditions of the next friend; `/bettacraft aquarist friend
+  show|hire|decline`, and for operators `/bettacraft aquarist friend [player]` (the friend is recommended now).
+- Advancement and quest **A Friend Joins**; handbook section "A team of aquarists" (English and German); the showcase world
+  has a station "Aquaristen-Team" (two aquarists sharing nine tanks, the friend on offer, a free third home).
+
+### Changed
+- A hired aquarist takes the **nearest** free breeding basin and bed (before: the first one found in range).
+
+### Migration
+- The records of the hired aquarists (`data/bettacraft_aquarists.dat`, schema 1): the one aquarist of an older world becomes
+  the first of the player's team and keeps working; his days for the friend count from the first load, and the friend needs
+  another breeding.
+
+### Development
+- **The workflows are the same file on every branch** (`git diff master <branch> -- .github` is empty): the branch facts come
+  from `gradle.properties` (new keys `java_version`, `fabric_game_versions`, `release_make_latest`), `tools/ci/branch.sh`
+  (Java, run directories, whether the power mods exist) and `tools/ci/release_tag.sh` (also the CurseForge game versions and
+  the dependencies of `tools/ci/curseforge-<loader>.txt`). `build.yml` runs on every release branch; commits that only change
+  `CLAUDE.md` (like the README, docs, licence) skip it.
+- **`tools/test-matrix.sh`** runs the branch's whole test set one step after the other (runData diff, both builds, both GameTest
+  suites and server smokes, the client smokes of `tools/test-matrix.txt` one at a time) with a log per step, a summary and a
+  hang guard; exit code 0 only when everything is green.
+- The dev mod manifest moved to `gradle/dev-mods.json` (one per branch; `gradle/dev-mods.gradle` is the same everywhere);
+  `verifyDevMods` hashes the files of the run's groups again right before every run task.
+- Gradle 9.9.1; `.gitignore` in English, the local planning documents are ignored by `.git/info/exclude`.
+- The GameTest "keeping fish without a generator" runs on a seeded random: the same result every run (it fell twice just under
+  its water quality check).
+
 ## [1.57.0-beta.1] - 2026-11-28
 
 One pipe system: glass and stainless steel pipes for everything, a pipe wrench, lines that take their role from the port they

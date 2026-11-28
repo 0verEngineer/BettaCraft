@@ -541,6 +541,11 @@ public final class DevShowcase {
         LOGGER.info("[showcase] M68 water row: {}", DevShowcaseM68.waterRow(level, at));
         if (DevShowcaseM68.PROBLEMS.isEmpty()) LOGGER.info("[showcase] M68 stations: all working");
         else LOGGER.error("[showcase] M68 stations: {} problem(s): {}", DevShowcaseM68.PROBLEMS.size(), DevShowcaseM68.PROBLEMS);
+        // M69: a team of aquarists (two hired, the friend on offer, a free third home)
+        at = startRow(level, "Aquaristen-Team");
+        LOGGER.info("[showcase] M69 team row: {}", DevShowcaseM69.teamRow(level, at));
+        if (DevShowcaseM69.PROBLEMS.isEmpty()) LOGGER.info("[showcase] M69 team: every tank with one aquarist");
+        else LOGGER.error("[showcase] M69 team: {} problem(s): {}", DevShowcaseM69.PROBLEMS.size(), DevShowcaseM69.PROBLEMS);
         // M30: big tanks (the last row: they are deeper than a row): the freshwater giants and the sea giants
         at = startRow(level, "Großbecken");
         bigTank(level, at, 24, 6, 12, 0F, new TankmateSpecies[]{TankmateSpecies.PANGASIUS, TankmateSpecies.REDTAIL_CATFISH, TankmateSpecies.WELS_CATFISH,

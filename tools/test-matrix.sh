@@ -60,6 +60,8 @@ step() {
   [ -z "$rc" ] && { wait $pid; rc=$?; }
   # a GameTest run that ran nothing (a wrong prefix) is not green
   if [ "$rc" = 0 ] && grep -qE "All 0 required tests passed|[^0-9]0 GAME TESTS COMPLETE" "$lf"; then log "NO TESTS RAN in $name (check the prefix)"; rc=126; fi
+  # a client smoke that ran its scene must not report a failure
+  if [ "$rc" = 0 ] && [ "$client" = 1 ] && grep -q "\[smoketest\] FAILED" "$lf"; then log "[smoketest] FAILED in $name"; rc=128; fi
   # a server smoke must say so
   if [ "$rc" = 0 ] && [[ "$name" == server* ]]; then
     local need=1; [ "$name" = servers ] && need=2

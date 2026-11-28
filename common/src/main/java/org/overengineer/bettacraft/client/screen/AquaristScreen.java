@@ -116,6 +116,17 @@ public class AquaristScreen extends Screen {
         refresh();
     }
 
+    /** Dev smoke test only (M69): selects this tank on the tanks tab. */
+    public void selectTankForTest(UUID id) {
+        selectedTank = id;
+        refresh();
+    }
+
+    /** Dev smoke test only (M69): a button's action without a click (e.g. {@link AquaristMenu#FRIEND_HIRE}). */
+    public void sendForTest(int action) {
+        send(action, 0, "");
+    }
+
     /** Dev smoke test only: opens the species list of the first rearing tank. */
     public void openSpeciesForTest() {
         UUID id = rearingId(0);
@@ -683,8 +694,8 @@ public class AquaristScreen extends Screen {
                 y += 10;
             }
             y += 6;
-            Component pay = !view.getBooleanOr("wage", false) ? Component.translatable("message.bettacraft.aquarist.offer.free")
-                    : Component.translatable("message.bettacraft.aquarist.offer.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0));
+            Component pay = !view.getBooleanOr("wage", false) ? Component.translatable("gui.bettacraft.aquarist.friend.free")
+                    : Component.translatable("gui.bettacraft.aquarist.friend.wage", view.getIntOr("wage_emeralds", 0), view.getIntOr("wage_food", 0));
             for (FormattedCharSequence line : font.split(pay.copy().withStyle(ChatFormatting.GOLD), W - 20)) {
                 g.drawString(font, line, left + 10, y, 0xFFFFFF);
                 y += 10;

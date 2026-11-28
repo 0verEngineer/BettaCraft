@@ -52,7 +52,7 @@ wechseln, zu putzen, zu schneiden und Jungtiere umzusetzen.
 
 ## Seine Aufgaben
 
-Rechtsklick auf ihn: Sein Menü hat drei Reiter. **Arbeit** zeigt sein Zuchtbecken, Bett und Kiste (mit den Knöpfen zum Zuweisen), den Lohn und die
+Rechtsklick auf ihn: Sein Menü hat fünf Reiter (den Reiter Freund nur bei dem, der Freunde empfiehlt, siehe unten). **Arbeit** zeigt sein Zuchtbecken, Bett und Kiste (mit den Knöpfen zum Zuweisen), den Lohn und die
 sechs Aufgaben: ein Klick auf den Namen einer Aufgabe schaltet sie an oder aus, die Zahl stellt ihre Stufe 1 bis 3. **Aufzuchtbecken** und
 **Becken** stehen weiter unten:
 
@@ -99,13 +99,51 @@ gesperrt oder unerwünscht sind.
 
 ![Das Beckenmenü mit dem Aquaristen-Knopf](../images/hired_aquarist_tank_menu.png)
 
+## Ein Team aus Aquaristen
+
+Du kannst **bis zu 3 Aquaristen** haben (Server-Config `hiredAquarist.maxAquarists`, bis 10; 1 = nur einer). Nur der erste
+kommt von selbst. Jeder weitere ist ein **Freund**, den dein Aquarist empfiehlt: der, der am längsten für dich arbeitet
+(mit ★ markiert). Der Reiter **Freund** seines Menüs zeigt jede Bedingung mit ✔ / ✘ und wie weit du bist („ein Freund in 3 Tagen“):
+
+* er hat **7 Spieltage ohne Unterbrechung** gearbeitet (Lohn jeden Morgen bezahlt), und seit dem letzten Einstellen sind 7
+  Tage vergangen;
+* **genug Arbeit**: du besitzt **3 Becken pro Aquarist**, den Freund mitgezählt (der zweite ab 6 Becken, der dritte ab 9);
+* **eine weitere Zucht** seit dem letzten Einstellen;
+* **kein Ärger** in den letzten 3 Tagen: kein Aquarist des Teams blieb ohne Lohn und kein Becken in ihrer Pflege hatte
+  schlechtes Wasser (ein Profi empfiehlt keinen Freund in einen schlecht geführten Betrieb);
+* das Team ist nicht voll.
+
+Ist alles erfüllt, sagt er es dir im Chat („Mein Freund ... sucht Arbeit – sprich mich an“) mit einem Knopf, der sein
+Menü am Reiter Freund öffnet, und der Reiter leuchtet. **[Einstellen]**: der Freund kommt zu ihm und nimmt sich ein freies
+Bett und ein freies Zuchtbecken in der Nähe. Ohne sie wartet er bei dem, der ihn empfohlen hat (5 Tage,
+`friendHomeGraceDays`), und arbeitet noch nicht; sein Reiter Arbeit zeigt, was fehlt, so kannst du beides danach bauen.
+**[Nein, danke]**: der nächste Freund nach 5 bis 10 Tagen und einer weiteren Zucht. Ist das Team voll, zeigt der Reiter
+„Team voll (3/3)“.
+
+* **Keine doppelte Arbeit:** jedes Becken pflegt **genau ein** Aquarist: der, dessen Zuchtbecken am nächsten liegt. Im
+  Reiter **Becken** ein Becken anklicken: der Knopf rechts zeigt, wer es pflegt; ein Klick gibt das Becken dem nächsten
+  Aquaristen des Teams (nach dem letzten wieder dem nächstgelegenen). Die Liste zeigt die Becken der anderen als „pflegt Lena“.
+* **Jeder hat sein Eigenes:** Bett, Zuchtbecken, Kisten, Aufzuchtbecken und Lohn gehören ihm (zugewiesen wie oben oder automatisch).
+* Der Reiter **Team** im Menü **jedes** Aquaristen listet alle: Name, Zustand, Becken, Arbeitsplatz.
+* Geht der erste (entlassen, unbezahlt, `/kill`), empfiehlt von da an der, der am längsten bei dir ist, die Freunde. Erst
+  wenn keiner mehr da ist, kommt wieder ein neuer erster Aquarist von selbst.
+* Die Freigaben A / A+ des Beckenmenüs gelten für alle Aquaristen des Besitzers. Jeder Spieler hat sein eigenes Team und Limit.
+* `/bettacraft aquarist status` listet dein Team und die Bedingungen des nächsten Freundes.
+
+![Der Reiter Team: alle Aquaristen des Arbeitgebers](../images/hired_aquarist_team.png)
+
+![Der Reiter Freund: die Bedingungen des nächsten Freundes, dann das Angebot](../images/hired_aquarist_friend.png)
+
 ## Einstellungen
 
 Config `features.aquaristNpc.enabled` (standardmäßig an). Aus: es kommt kein Aquarist, angestellte warten nur (sie arbeiten
 wieder, wenn es an ist), das Beckenmenü zeigt den Knopf nicht. Server-Config `hiredAquarist.*`: nötige Becken
 (`minOwnTanks`, 3), die Wartezeit nach einer Ablehnung (`returnDaysMin` 5, `returnDaysMax` 10), wie lange er auf eine
 Antwort wartet (`offerDays`, 1), Becken und Umkreis (`maxTanksCared` 16, `workRadius` 32, `homeRadius` 32), der Lohn
-(`wage`, `wageEmeralds` 1, `wageFood` 3, `unpaidDaysUntilLeave` 3, `unpaidWorkSpeed` 0,5) und FTB Teams (`ftbTeams`).
-Operatoren: `/bettacraft aquarist arrive [Spieler]` lässt sofort einen kommen.
+(`wage`, `wageEmeralds` 1, `wageFood` 3, `unpaidDaysUntilLeave` 3, `unpaidWorkSpeed` 0,5) und FTB Teams (`ftbTeams`); das
+Team (`features.aquaristNpc.team`, standardmäßig an; aus: kein Freund wird empfohlen, die angestellten bleiben):
+`maxAquarists` 3, `friendAfterDays` 7, `tanksPerAquarist` 3, `friendCalmDays` 3, `friendHomeGraceDays` 5. Operatoren:
+`/bettacraft aquarist arrive [Spieler]` lässt sofort einen kommen, `/bettacraft aquarist friend [Spieler]` lässt den
+ersten sofort seinen Freund empfehlen.
 
 ![Die vier Gesichter der Aquaristen](../images/hired_aquarist_looks.png)
