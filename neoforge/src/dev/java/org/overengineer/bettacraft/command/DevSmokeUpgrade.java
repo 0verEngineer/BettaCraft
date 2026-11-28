@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -34,6 +35,15 @@ import org.overengineer.bettacraft.entity.betta.BettaEntity;
 import org.overengineer.bettacraft.entity.tankmate.TankmateEntity;
 import org.overengineer.bettacraft.equipment.CabinetBlockEntity;
 import org.overengineer.bettacraft.equipment.FeederBlockEntity;
+import org.overengineer.bettacraft.filter.FilterPumpHeadBlockEntity;
+import org.overengineer.bettacraft.filter.MultiblockFilter;
+import org.overengineer.bettacraft.plumbing.PipeBlock;
+import org.overengineer.bettacraft.plumbing.PipeBlockEntity;
+import org.overengineer.bettacraft.plumbing.PipeBundleBlock;
+import org.overengineer.bettacraft.plumbing.PipeNetwork;
+import org.overengineer.bettacraft.plumbing.PipeRole;
+import org.overengineer.bettacraft.plumbing.PipeSlots;
+import org.overengineer.bettacraft.plumbing.interior.TankAnchors;
 import org.overengineer.bettacraft.registry.ModBlocks;
 import org.overengineer.bettacraft.tank.TankBlockEntity;
 import org.overengineer.bettacraft.tank.TankData;
@@ -90,6 +100,25 @@ public final class DevSmokeUpgrade {
     private static int m67Checked;
     static final String M67_FILE = "bettacraft_upgrade_m67.json";
     /**
+     * M68: the {@code pipes} section of a reference world of the M67 line ({@code Bettacraft Rohre 1.56.0}, written by
+     * {@code tools/upgrade/DevUpgradeReferenceM67}): every old pipe block, filter, shared dock and container. Read from the reference in
+     * both stages (stage 2: the same expectations after a save and reload). Null for the other reference worlds.
+     */
+    private static JsonObject pipesRef;
+    private static int m68Pipes, m68Roles, m68Filters, m68Docks, m68Containers;
+    /** M68: water (mB) open tanks evaporated between the save and the comparison (allowed, logged). */
+    private static long evaporated;
+    /** M68: the ids the registry aliases turn old blocks (in the world) and old items (in containers) into. */
+    static final Map<String, String> M68_BLOCKS = new TreeMap<>(), M68_ITEMS = new TreeMap<>();
+    static {
+        for (String old : List.of("filter_inlet_pipe", "filter_outlet_pipe", "filter_fresh_pipe", "filter_waste_pipe", "filter_fresh_port", "filter_waste_port")) {
+            M68_BLOCKS.put("bettacraft:" + old, "bettacraft:stainless_steel_pipe");
+            M68_ITEMS.put("bettacraft:" + old, "bettacraft:stainless_steel_pipe");
+        }
+        M68_ITEMS.put("bettacraft:pipe_tee", "bettacraft:stainless_steel_pipe");
+        M68_ITEMS.put("bettacraft:interior_pipe", "bettacraft:glass_pipe");
+    }
+    /**
      * M40: the reference world is one of the old 1.13 line (the checks for what came after it apply), not a newer one such
      * as {@code Bettacraft Referenz 1.31.0} (built for the old multiblock filters of M40: only the comparison and the M40 check).
      */
@@ -120,6 +149,11 @@ public final class DevSmokeUpgrade {
                     for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) chunks.add(ChunkPos.pack((p.getX() >> 4) + dx, (p.getZ() >> 4) + dz));
                 }
                 for (JsonElement e : expected.getAsJsonArray("chests")) chunks.add(ChunkPos.containing(BlockPos.of(e.getAsJsonObject().get("pos").getAsLong())).pack());
+                // M68: the old pipe system of an M67 world (the reference has it in both stages)
+                JsonObject ref = STAGE == 1 ? expected : JsonParser.parseString(Files.readString(root.resolve(REFERENCE), StandardCharsets.UTF_8)).getAsJsonObject();
+                pipesRef = ref.has("pipes") ? ref.getAsJsonObject("pipes") : null;
+                if (pipesRef != null) for (String k : new String[]{"blocks", "filters", "containers"})
+                    for (JsonElement e : pipesRef.getAsJsonArray(k)) chunks.add(ChunkPos.containing(BlockPos.of(e.getAsJsonObject().get("pos").getAsLong())).pack());
                 for (long c : chunks) {
                     ChunkPos cp = ChunkPos.unpack(c);
                     level.setChunkForced(cp.x(), cp.z(), true);
@@ -153,6 +187,7 @@ public final class DevSmokeUpgrade {
                 }
                 if (STAGE == 2 && legacy) m351Check(server, level); // M35.1: the old cyst jars of stage 1 after a save and reload
                 if (STAGE == 2) m67Check(server, level); // M67: the wound spring of stage 1 is energy in the tank's store
+                if (pipesRef != null) m68Check(level); // M68: the old pipe system converted, nothing lost (both stages)
                 // M40: old multiblock filters need their guards now (M52: not in a world this version saved itself, the
                 // Fabric save/load test; M53c: nor in a world of 1.32 or later, whose filters have them: the ports' references)
                 if (!sameVersion && olderThan(refVersion, 1, 32)) m40Check(level);
@@ -185,6 +220,9 @@ public final class DevSmokeUpgrade {
                 LOGGER.info("[smoketest] upgrade: {} places with old artemia cyst jars keep their count without the old uses (M35.1)", m351Checked);
                 LOGGER.info("[smoketest] upgrade: {} old multiblock filters keep their media and warn until guarded (M40, D2)", m40Checked);
                 LOGGER.info("[smoketest] upgrade: {} wound springs (cabinet or external filter) became energy in their tank's store, nothing lost (M67)", m67Checked);
+                if (pipesRef != null) LOGGER.info("[smoketest] upgrade: M68 {} old pipe blocks are new pipes with their connections ({} of them in their old role), "
+                        + "{} filters filter their tanks, {} shared docks split into a dock per line with its guard, {} containers hold the new items 1:1",
+                        m68Pipes, m68Roles, m68Filters, m68Docks, m68Containers);
                 LOGGER.info("[smoketest] UPGRADE STAGE {} PASSED", STAGE);
                 haltAt = ticks + 10;
             } else if (ticks == haltAt) {
@@ -246,6 +284,213 @@ public final class DevSmokeUpgrade {
                 }
             }
         }
+    }
+
+    // ------------------------------------------------------------------ M68 the old pipe system (an M67 world)
+
+    /** The sides as a mask (bit 1 << 3D data value, as the old side wrote them). */
+    private static int mask(java.util.function.Predicate<Direction> joined) {
+        int m = 0;
+        for (Direction d : Direction.values()) if (joined.test(d)) m |= 1 << d.get3DDataValue();
+        return m;
+    }
+
+    private static String sides(int mask) {
+        List<String> out = new ArrayList<>();
+        for (Direction d : Direction.values()) if ((mask & 1 << d.get3DDataValue()) != 0) out.add(d.getName());
+        return out.toString();
+    }
+
+    /** The role a migrated line may have now: its own (it reaches the filter) or none (a line without a filter port); never the other one. */
+    private static void m68Role(String where, BlockPos pos, int slot, int oldLine) {
+        PipeNetwork n = PipeNetwork.of(level(), pos, slot);
+        if (n == null) {
+            problems.add(where + ": no pipe network");
+            return;
+        }
+        if (n.shortCircuit()) {
+            problems.add(where + ": short circuit (old line " + oldLine + ")");
+            return;
+        }
+        PipeRole want = oldLine == 0 ? PipeRole.INTAKE : oldLine == 1 ? PipeRole.RETURN : null;
+        PipeRole have = n.role();
+        if (have == want && want != null) m68Roles++;
+        else if (have == PipeRole.INTAKE || have == PipeRole.RETURN) problems.add(where + ": role " + have + ", the old line was " + oldLine);
+    }
+
+    private static ServerLevel m68Level;
+
+    private static ServerLevel level() {
+        return m68Level;
+    }
+
+    /**
+     * M68: every old pipe position holds a new pipe joined on exactly the old sides (filter pipes and T-pieces stainless steel, old
+     * bundles slot bundles with slot = the old line, glass and steel pipes unchanged, the filter's water ports plain steel pipes), no
+     * line in the other role or short-circuited, covers kept; every multiblock filter of the old world reaches the same tanks, filters
+     * (a run of its care) and every tank that was OK is OK; every shared dock is now a dock per line, the intake guard behind the intake
+     * line and the outlet guard (or the nozzle) behind the return line; every container holds the new items, counts 1:1.
+     */
+    private static void m68Check(ServerLevel level) {
+        m68Level = level;
+        m68Pipes = m68Roles = m68Filters = m68Docks = m68Containers = 0;
+        org.overengineer.bettacraft.plumbing.PipeUpdates.flush(level);
+        for (JsonElement e : pipesRef.getAsJsonArray("blocks")) {
+            JsonObject o = e.getAsJsonObject();
+            BlockPos pos = BlockPos.of(o.get("pos").getAsLong());
+            String kind = o.get("kind").getAsString(), id = o.get("id").getAsString();
+            String where = "M68 old " + kind + " " + id + " at " + pos.toShortString();
+            BlockState s = level.getBlockState(pos);
+            String now = BuiltInRegistries.BLOCK.getKey(s.getBlock()).toString();
+            int before = problems.size();
+            switch (kind) {
+                case "filter", "port", "pipe" -> {
+                    String want = M68_BLOCKS.getOrDefault(id, id);
+                    if (!now.equals(want) || !(s.getBlock() instanceof PipeBlock)) {
+                        problems.add(where + ": now " + now + " instead of " + want);
+                        continue;
+                    }
+                    if (!kind.equals("port")) { // a port had no sides: it joins what is next to it now
+                        int want2 = o.get("sides").getAsInt(), have = mask(d -> s.getValue(PipeBlock.SIDES.get(d)));
+                        if (want2 != have) problems.add(where + ": joined " + sides(want2) + " -> " + sides(have));
+                    }
+                    if (kind.equals("filter")) m68Role(where, pos, 0, o.get("line").getAsInt());
+                    else if (PipeNetwork.of(level, pos, 0) != null && PipeNetwork.of(level, pos, 0).shortCircuit()) problems.add(where + ": short circuit");
+                }
+                case "bundle" -> {
+                    if (!(s.getBlock() instanceof PipeBundleBlock) || !(level.getBlockEntity(pos) instanceof PipeBlockEntity be)) {
+                        problems.add(where + ": now " + now + " instead of a pipe bundle");
+                        continue;
+                    }
+                    int lines = 0;
+                    for (JsonElement le : o.getAsJsonArray("lines")) {
+                        JsonObject l = le.getAsJsonObject();
+                        int line = l.get("line").getAsInt(), slot = be.slot(line), want = l.get("sides").getAsInt();
+                        lines++;
+                        if (!PipeSlots.present(slot) || !PipeSlots.steel(slot)) {
+                            problems.add(where + ": slot " + line + " (old line " + l.get("name").getAsString() + ") missing or not steel: " + Integer.toHexString(slot));
+                            continue;
+                        }
+                        int have = mask(d -> PipeSlots.joined(slot, d));
+                        if (want != have) problems.add(where + ": line " + l.get("name").getAsString() + " joined " + sides(want) + " -> " + sides(have));
+                        m68Role(where + " line " + l.get("name").getAsString(), pos, line, line);
+                    }
+                    if (PipeSlots.count(be.slots()) != lines) problems.add(where + ": " + PipeSlots.count(be.slots()) + " pipes instead of " + lines);
+                }
+                default -> problems.add(where + ": unknown kind");
+            }
+            if (o.has("cover")) {
+                var cover = level.getBlockEntity(pos) instanceof PipeBlockEntity be ? be.cover() : null;
+                String c = cover == null ? "none" : BuiltInRegistries.BLOCK.getKey(cover.getBlock()).toString();
+                if (!c.equals(o.get("cover").getAsString())) problems.add(where + ": cover " + o.get("cover").getAsString() + " -> " + c);
+            }
+            if (problems.size() == before) m68Pipes++;
+        }
+        // the filters: same tanks, they filter (a run of the filter's care), no short circuit, OK where they were OK
+        for (JsonElement e : pipesRef.getAsJsonArray("filters")) {
+            JsonObject o = e.getAsJsonObject();
+            BlockPos pos = BlockPos.of(o.get("pos").getAsLong());
+            String where = "M68 old multiblock filter at " + pos.toShortString();
+            if (!(level.getBlockEntity(pos) instanceof FilterPumpHeadBlockEntity h)) {
+                problems.add(where + ": its pump head is gone");
+                continue;
+            }
+            int before = problems.size();
+            int moved = h.run(level, true);
+            Map<Long, String> want = new TreeMap<>(), have = new TreeMap<>();
+            for (JsonElement l : o.getAsJsonArray("links")) want.put(l.getAsJsonObject().get("tank").getAsLong(), l.getAsJsonObject().get("status").getAsString());
+            for (var l : h.tanks()) have.put(l.tank().asLong(), l.status().name());
+            if (h.problem() == MultiblockFilter.Problem.SHORT_CIRCUIT) problems.add(where + ": short circuit");
+            else if (!h.problem().name().equals(o.get("problem").getAsString())) problems.add(where + ": problem " + o.get("problem").getAsString() + " -> " + h.problem());
+            if (!want.keySet().equals(have.keySet())) problems.add(where + ": tanks " + want.keySet() + " -> " + have.keySet());
+            for (var w : want.entrySet())
+                if (w.getValue().equals("OK") && !"OK".equals(have.get(w.getKey()))) problems.add(where + ": tank " + BlockPos.of(w.getKey()).toShortString() + " OK -> " + have.get(w.getKey()));
+            if (o.get("moved").getAsInt() > 0 && moved <= 0) problems.add(where + ": filtered " + o.get("moved").getAsInt() + ", now " + moved + " (" + h.tanks() + ")");
+            if (problems.size() == before) m68Filters++;
+        }
+        // the shared docks: a dock per line, each line's guard behind its own dock, nothing shared any more
+        for (JsonElement e : pipesRef.getAsJsonArray("sharedDocks")) {
+            JsonObject o = e.getAsJsonObject();
+            BlockPos member = BlockPos.of(o.get("member").getAsLong());
+            Direction face = Direction.byName(o.get("face").getAsString());
+            String where = "M68 old shared dock " + member.toShortString() + " " + face.getName();
+            TankBlockEntity c = org.overengineer.bettacraft.tank.TankMultiblock.getController(level, BlockPos.of(o.get("tank").getAsLong()));
+            if (c == null || !(level.getBlockEntity(BlockPos.of(o.get("filter").getAsLong())) instanceof FilterPumpHeadBlockEntity h)) {
+                problems.add(where + ": tank or filter gone");
+                continue;
+            }
+            int before = problems.size();
+            if (TankAnchors.lines(level, member, face).length < 2) problems.add(where + ": lines " + java.util.Arrays.toString(TankAnchors.lines(level, member, face)));
+            int intakes = 0, returns = 0;
+            for (MultiblockFilter.Link l : h.currentLinks(level)) {
+                if (!l.tank().getBlockPos().equals(c.getBlockPos())) continue;
+                for (boolean intake : new boolean[]{true, false})
+                    for (org.overengineer.bettacraft.plumbing.FilterLines.Dock d : intake ? l.intakes() : l.returns()) {
+                        if (!d.member().equals(member) || d.face() != face) continue;
+                        TankAnchors.Anchor a = TankAnchors.anchor(level, c, member, face, d.slot(), false);
+                        if (a == null || a.shared() || a.line() == 0) {
+                            problems.add(where + ": the " + (intake ? "intake" : "return") + " line (slot " + d.slot() + ") has no dock of its own: " + a);
+                            continue;
+                        }
+                        var n = org.overengineer.bettacraft.plumbing.interior.InteriorPlumbing.net(a.region(), a.key());
+                        boolean ok = intake ? !n.intakes().isEmpty() && n.outflows().isEmpty() : !n.outflows().isEmpty() && n.intakes().isEmpty();
+                        if (!ok) problems.add(where + ": behind the " + (intake ? "intake" : "return") + " line's dock (line " + a.line() + "): " + n);
+                        if (intake) intakes++;
+                        else returns++;
+                    }
+            }
+            if (intakes != 1 || returns != 1) problems.add(where + ": " + intakes + " intake and " + returns + " return docks of the filter there");
+            if (problems.size() == before) m68Docks++;
+        }
+        // the containers: the new items, counted 1:1 (shulker boxes in them too)
+        for (JsonElement e : pipesRef.getAsJsonArray("containers")) {
+            JsonObject o = e.getAsJsonObject();
+            BlockPos pos = BlockPos.of(o.get("pos").getAsLong());
+            Map<String, Integer> want = new TreeMap<>(), have = new TreeMap<>();
+            for (var c : o.getAsJsonObject("counts").entrySet()) want.merge(M68_ITEMS.getOrDefault(c.getKey(), c.getKey()), c.getValue().getAsInt(), Integer::sum);
+            if (level.getBlockEntity(pos) instanceof net.minecraft.world.Container box) for (int i = 0; i < box.getContainerSize(); i++) m68Count(box.getItem(i), have);
+            if (!want.equals(have)) problems.add("M68 " + o.get("block").getAsString() + " at " + pos.toShortString() + ": " + want + " -> " + have);
+            else m68Containers++;
+        }
+        if (m68Pipes == 0 || m68Filters == 0 || m68Docks == 0 || m68Containers == 0) problems.add("M68: nothing of the old pipe system checked");
+    }
+
+    private static void m68Count(ItemStack s, Map<String, Integer> out) {
+        if (s.isEmpty()) return;
+        out.merge(BuiltInRegistries.ITEM.getKey(s.getItem()).toString(), s.getCount(), Integer::sum);
+        var in = s.get(net.minecraft.core.component.DataComponents.CONTAINER);
+        if (in == null) return;
+        // 26.1: the contents hold item templates; copied out as stacks
+        net.minecraft.core.NonNullList<ItemStack> list = net.minecraft.core.NonNullList.withSize(64, ItemStack.EMPTY);
+        in.copyInto(list);
+        list.forEach(i -> m68Count(i, out));
+    }
+
+    /** M68 stage 1: the entries of {@code a} (an array of objects) with {@code field} (and the ids in an {@code items} text) mapped by {@code ids}. */
+    private static JsonElement m68Ids(JsonElement a, String field, Map<String, String> ids) {
+        JsonArray out = new JsonArray();
+        for (JsonElement e : a.getAsJsonArray()) {
+            JsonObject o = e.getAsJsonObject().deepCopy();
+            if (o.has(field)) o.addProperty(field, ids.getOrDefault(o.get(field).getAsString(), o.get(field).getAsString()));
+            if (o.has("items") && o.get("items").isJsonPrimitive()) {
+                String t = o.get("items").getAsString();
+                for (var m : M68_ITEMS.entrySet()) t = t.replace(":" + m.getKey() + "x", ":" + m.getValue() + "x");
+                o.addProperty("items", t);
+            }
+            out.add(o);
+        }
+        return out;
+    }
+
+    /** M68 stage 1: the interior of the tank at {@code pos} with one anchor more per shared dock of it (split into a dock per line). */
+    private static JsonObject m68Interior(long pos, JsonObject interior) {
+        int more = 0;
+        for (JsonElement e : pipesRef.getAsJsonArray("sharedDocks")) if (e.getAsJsonObject().get("tank").getAsLong() == pos) more++;
+        if (more == 0) return interior;
+        JsonObject o = interior.deepCopy();
+        String k = "bettacraft:pipe_anchor";
+        o.addProperty(k, (o.has(k) ? o.get(k).getAsInt() : 0) + more);
+        return o;
     }
 
     // ------------------------------------------------------------------ M35.1 old cyst jars
@@ -421,6 +666,18 @@ public final class DevSmokeUpgrade {
             for (String k : new String[]{"name", "water", "members", "front", "locked", "owner", "signVisible", "regionId"}) {
                 // M40: a tank without an interior may get one (a multiblock filter puts the docks of its pipes in): nothing lost
                 if (k.equals("regionId") && want.get(k).getAsInt() == -1 && have.get(k).getAsInt() >= 0) continue;
+                // M68: an open tank evaporates in the ticks between the save and this comparison (the M67 world's giant tanks have
+                // no lid): at most what it can lose in that game time (twice its rate per day, plus 1 mB of rounding), never more
+                if (k.equals("water") && expected.has("gameTime") && have.get(k).getAsLong() <= want.get(k).getAsLong()) {
+                    TankBlockEntity tc = level.getBlockEntity(BlockPos.of(pos)) instanceof TankBlockEntity tb ? tb : null;
+                    long elapsed = Math.max(0, level.getGameTime() - expected.get("gameTime").getAsLong());
+                    double evap = tc == null ? 0 : org.overengineer.bettacraft.tank.TankWater.evaporationPerDay(level, tc.getTank());
+                    long lost = want.get(k).getAsLong() - have.get(k).getAsLong();
+                    if (lost <= (long) Math.ceil(2 * evap * (elapsed + 100) / 24000.0) + 1) {
+                        if (lost > 0) evaporated += lost;
+                        continue;
+                    }
+                }
                 if (!want.get(k).equals(have.get(k))) problems.add(where + ": " + k + " " + want.get(k) + " -> " + have.get(k));
             }
             // floating plants spread while the world runs: none may be lost, a few more are fine
@@ -473,10 +730,16 @@ public final class DevSmokeUpgrade {
             String lostOrNew = critterDiff(want.getAsJsonArray("critters"), have.getAsJsonArray("critters"));
             if (lostOrNew != null) problems.add(where + ": small animals " + lostOrNew);
             critters += want.getAsJsonArray("critters").size();
-            if (want.has("interior") && !want.get("interior").equals(have.get("interior"))) {
-                problems.add(where + ": interior " + diff(want.getAsJsonObject("interior"), have.getAsJsonObject("interior")));
+            // M68 (an M67 world, stage 1): a shared dock became a dock per line (one anchor more each, the guards only moved), the old
+            // pipes around the tank are stainless steel pipes now (registry aliases)
+            boolean m68 = STAGE == 1 && pipesRef != null;
+            JsonObject wantInterior = want.has("interior") ? want.getAsJsonObject("interior") : null;
+            if (m68 && wantInterior != null) wantInterior = m68Interior(pos, wantInterior);
+            if (wantInterior != null && !wantInterior.equals(have.get("interior"))) {
+                problems.add(where + ": interior " + diff(wantInterior, have.getAsJsonObject("interior")));
             }
-            if (!want.get("equipment").equals(have.get("equipment"))) problems.add(where + ": equipment " + want.get("equipment") + " -> " + have.get("equipment"));
+            JsonElement wantEquipment = m68 ? m68Ids(want.get("equipment"), "block", M68_BLOCKS) : want.get("equipment");
+            if (!wantEquipment.equals(have.get("equipment"))) problems.add(where + ": equipment " + wantEquipment + " -> " + have.get("equipment"));
             // M22.3: every animal of an older world counts as analysed (magnifier)
             // M59: small animals born while loading (allowed above) are new and not analysed yet
             int born = Math.max(0, (have.has("critters") ? have.getAsJsonArray("critters").size() : 0) - want.getAsJsonArray("critters").size());
@@ -489,12 +752,14 @@ public final class DevSmokeUpgrade {
         for (JsonElement e : expected.getAsJsonArray("chests")) {
             long pos = e.getAsJsonObject().get("pos").getAsLong();
             JsonElement want = e.getAsJsonObject().get("items");
+            if (STAGE == 1 && pipesRef != null) want = m68Ids(want, "id", M68_ITEMS); // M68: old pipe items are the new pipes, slot for slot
             if (!want.equals(chests.get(pos))) problems.add("chest " + BlockPos.of(pos).toShortString() + ": " + want + " -> " + chests.get(pos));
             items += want.getAsJsonArray().size();
         }
         LOGGER.info("[smoketest] upgrade stage {}: compared {} tanks, {} animals, {} small animals, {} equipment blocks, {} items in chests: {} difference(s)",
                 STAGE, expected.getAsJsonArray("tanks").size(), animals, critters, equipment, items, problems.size());
         LOGGER.info("[smoketest] upgrade stage {}: {} guppies and endlers converted from their old variety", STAGE, converted);
+        if (evaporated > 0) LOGGER.info("[smoketest] upgrade stage {}: {} mB evaporated from open tanks since the save (allowed)", STAGE, evaporated);
         if (STAGE == 1 && legacy && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
     }
 
@@ -540,6 +805,7 @@ public final class DevSmokeUpgrade {
     private static void write(MinecraftServer server, ServerLevel level, String name) throws java.io.IOException {
         JsonObject s = snapshot(server, level, expected);
         s.addProperty("version", org.overengineer.bettacraft.platform.Platform.get().modVersion(BettaCraft.MOD_ID));
+        s.addProperty("gameTime", level.getGameTime()); // M68: for the evaporation allowed in stage 2
         Files.writeString(server.getWorldPath(LevelResource.ROOT).resolve(name), new GsonBuilder().setPrettyPrinting().create().toJson(s));
     }
 

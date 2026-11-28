@@ -1225,7 +1225,7 @@ ensureReferenceWorld = { String name, File saves ->
     if (w == null) throw new GradleException("reference world missing: ${new File(saves, name)}; tools/upgrade/references.json does not say how to build it")
     if (w.from) ensureReferenceWorld(w.from.toString(), saves)
     def chain = w.script == 'chain.sh'
-    def args = chain ? [w.commit, w.from, name] : [w.commit, name]
+    def args = chain ? [w.commit, w.from, name] : [w.commit, name] + (w['class'] ? [w['class']] : []) // M68: the old-side class
     def log = rootProject.file("build/upgrade-reference/${name.replaceAll(/[^A-Za-z0-9._-]/, '_')}.log")
     log.parentFile.mkdirs()
     logger.lifecycle("building the reference world '${name}' with commit ${w.commit} (tools/upgrade/${w.script}, several minutes), log ${log}")
@@ -1267,6 +1267,12 @@ def crossVersionReferences = {
 }
 ext.ensureReferenceWorld = ensureReferenceWorld
 ext.crossVersionReferences = crossVersionReferences
+// M68: the worlds smoketestUpgrade loads without -PupgradeWorld ('suite' of references.json; without one the default and
+// the crossVersion worlds)
+def referenceSuite = {
+    def suite = referencesFile.exists() ? new groovy.json.JsonSlurper().parse(referencesFile).suite : null
+    suite ? suite.collect { it.toString() } : null
+}
 
 // M63b: -Psmoketestworldtour: a fresh copy "Bettacraft Rundgang" of -PtourSource (default: the showcase "Bettacraft Schaukasten" when
 // there is one, else this branch's upgrade reference world, built if missing) for the tour, deleted after the run; the source stays
@@ -1502,6 +1508,8 @@ tasks.register('buildShowcase') {
 // commit 909d12a) to run/upgrade/saves, runs a dedicated server without a window on it twice (stage 1: compare with the
 // reference manifest the old version wrote, save, snapshot; stage 2: load the saved world again and compare with the
 // snapshot) and fails on a difference or on an ERROR / exception line in the logs. Logs: build/upgrade/stage{1,2}.log.
+// M68: without -PupgradeWorld every world of 'suite' in tools/upgrade/references.json runs one after another (this branch's
+// reference, the 1.21.1 world and "Bettacraft Rohre 1.56.0", the M67 world with the old pipe system).
 tasks.register('smoketestUpgrade') {
     group = 'verification'
     description = 'Loads the reference world of an older version and checks that nothing is lost (dedicated server, no window)'
@@ -1513,7 +1521,7 @@ tasks.register('smoketestUpgrade') {
         // after it the references of an older Minecraft version ("crossVersion": a 1.21.1 world, its saved data moved to the
         // 26.x places, its interiors kept). -PupgradeWorld=<name> loads only that world.
         def names = project.hasProperty('upgradeWorld') ? [project.property('upgradeWorld').toString()]
-                : ([defaultReference() ?: 'Bettacraft Referenz 26.3'] + crossVersionReferences()).unique()
+                : (referenceSuite() ?: ([defaultReference() ?: 'Bettacraft Referenz 26.3'] + crossVersionReferences()).unique())
         if (names.size() > 1) rootProject.file('build/upgrade').deleteDir()
         for (worldName in names) {
             def src = rootProject.file("${runRoot}/saves/${worldName}")
