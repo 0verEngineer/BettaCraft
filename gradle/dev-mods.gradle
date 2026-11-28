@@ -1,6 +1,7 @@
-// M59: the optional dev mod groups come from their official sources, not from hand-filled folders. The same file on every
-// branch; dev-mods.json (one per branch, written by tools/devmods/update_manifest.py) lists per loader and group folder the
-// official file of every jar (Modrinth Maven, CurseMaven, FTB Maven coordinates) with its size, SHA-1 and SHA-256.
+// M59: the optional dev mod groups come from their official sources, not from hand-filled folders. This script is the same
+// file on every branch; the manifest gradle/dev-mods.json is not: each branch has its own (its Minecraft version's files),
+// written by tools/devmods/update_manifest.py. It lists per loader and group folder the official file of every jar
+// (Modrinth Maven, CurseMaven, FTB Maven coordinates) with its size, SHA-1 and SHA-256.
 //
 // Every group a run switches on (the same flags as before: -Ppower ... -Pintegration / integrationTests, -Pzoo / zooTests,
 // the Fabric groups -Poverlays ... -Pfabricintegration) is resolved through Gradle (downloaded once into the Gradle cache,
@@ -10,15 +11,21 @@
 //   Fabric:   <fabricRunRoot>/<group>  (1.21.1: run-fabric/, ports: run/<minecraft_version>/fabric/; -PfabricRunDir=...)
 // The group folders belong to the manifest: a jar in them that the manifest does not list is moved (never deleted) to
 // <runRoot>/local-mods-backup/<date>/<loader>-<group>/. Mods to try out before they go into the manifest: <runRoot>/local-mods
-// (Fabric: <fabricRunRoot>/local-mods), loaded with -Plocal. A run without a group flag (gradlew build ...) reads nothing and
-// downloads nothing. Runs at configuration time of the root project, before the loader projects read the folders.
+// (Fabric: <fabricRunRoot>/local-mods), loaded with -Plocal.
+//
+// When it happens (M69, compared with Fast Craft Book, whose dev mods are plain Gradle dependencies checked by a task):
+// a run without a group flag (gradlew build, the IDE sync, ...) reads nothing and downloads nothing. With a group flag the
+// files are fetched while the root project is configured, before the loader projects read the folders: Fabric Loom
+// remaps the group jars (modLocalRuntime) and the NeoForge runs plan their mods folders while configuring, so the files
+// must be there by then. The task verifyDevMods then checks them again right before every run task of the run (each file
+// hashed anew, not the stamp of the copy): a jar replaced in a group folder after the copy stops the run.
 import groovy.json.JsonSlurper
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
-def devModsManifest = file('dev-mods.json')
+def devModsManifest = file('gradle/dev-mods.json')
 def devTasks = gradle.startParameter.taskNames.collect { it.toLowerCase() }
 def devHas = { String p -> project.hasProperty(p) }
 def devIntegration = devHas('integration') || devTasks.any { it.endsWith('integrationtests') }
@@ -150,6 +157,7 @@ if (!devWanted.isEmpty() || devShaderpacks) {
         stampFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(stamp))
         logger.lifecycle("dev mods ${what}: ${entries.size()} file(s) from the manifest in ${folder} (${copied} downloaded/copied${moved ? ", ${moved} foreign moved" : ''})")
     }
+    def devChecked = [] // [what, folder, entries] of every group synced above, for verifyDevMods
     def neoModsDirs = [new File(neoRoot, 'mods')] + ((neoRoot.listFiles() ?: []).findAll { it.isDirectory() }.collect { new File(it, 'mods') }.findAll { it.isDirectory() })
     devWanted.sort().each { String key ->
         def (loader, group) = key.split('/', 2)
@@ -162,11 +170,45 @@ if (!devWanted.isEmpty() || devShaderpacks) {
         }
         def root = loader == 'fabric' ? fabricRoot : neoRoot
         sync(key, new File(root, group), entries, new File(neoRoot, "local-mods-backup/${today}/${loader}-${group}"), loader == 'fabric' ? [] : neoModsDirs)
+        devChecked << [what: key, folder: new File(root, group), entries: entries]
     }
     // the shader packs of -Pshaders (Complementary): into <root>/shaderpacks of the loaders of the run; other packs stay
     if (devShaderpacks && spec.shaderpacks) {
         (wantNeo ? [neoRoot] : []).plus(wantFabric ? [fabricRoot] : []).each { root ->
             sync('shaderpacks', new File(root, 'shaderpacks'), spec.shaderpacks as List, null, [])
+            devChecked << [what: 'shaderpacks', folder: new File(root, 'shaderpacks'), entries: spec.shaderpacks as List]
+        }
+    }
+
+    // M69: the files of the run's groups hashed again right before its run tasks (not the stamp: what the game loads)
+    def verifyDevMods = tasks.register('verifyDevMods') {
+        group = 'verification'
+        description = 'Checks the dev mod files of the groups of this run against the hashes in gradle/dev-mods.json'
+        doLast {
+            def problems = []
+            int n = 0
+            devChecked.each { g ->
+                g.entries.each { e ->
+                    def f = new File(g.folder, e.file)
+                    if (!f.isFile()) {
+                        problems << "${g.what}: ${e.file} is missing in ${g.folder}".toString()
+                        return
+                    }
+                    def (s1, s256) = hashes(f)
+                    if (s1 != e.sha1 || s256 != e.sha256) problems << "${g.what}: ${f} has SHA-1 ${s1} / SHA-256 ${s256}, gradle/dev-mods.json expects ${e.sha1} / ${e.sha256}".toString()
+                    n++
+                }
+            }
+            if (!problems.isEmpty()) throw new GradleException("dev mods: ${problems.size()} file(s) are not the pinned ones, stopped:\n  " + problems.join('\n  '))
+            logger.lifecycle("verifyDevMods: ${n} file(s) of ${devChecked*.what} match gradle/dev-mods.json")
+        }
+    }
+    // every run, smoke and test task of the loaders (runClient, runServer, runGameTestServer, runFabric*, prodFabric*,
+    // integrationTests, zooTests, the multiplayer and save/load tests ...)
+    gradle.projectsEvaluated {
+        allprojects { pr ->
+            pr.tasks.matching { t -> t.name != 'verifyDevMods' && (t.name.startsWith('run') || t.name.startsWith('prod') || t.name.endsWith('Tests')
+                    || t.name.endsWith('Test') && t.name != 'test') }.configureEach { dependsOn verifyDevMods }
         }
     }
 }
