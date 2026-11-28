@@ -49,7 +49,7 @@ takes his wage every morning and **really walks to your tanks** to feed, change 
 
 ## His tasks
 
-Right-click him: his menu has three tabs. **Work** shows his basin, bed and chest (with the buttons to assign them), the wage and the six
+Right-click him: his menu has five tabs (the tab Friend only at the one who recommends friends, see below). **Work** shows his basin, bed and chest (with the buttons to assign them), the wage and the six
 tasks: click a task's name to switch it on or off, the number to set its level 1 to 3. **Rearing tanks** and **Tanks** are described below.
 
 | Task | What he does | Level 1 / 2 / 3 |
@@ -93,13 +93,49 @@ foreign, locked or unwanted.
 
 ![The tank menu with the aquarist button](../images/hired_aquarist_tank_menu.png)
 
+## A team of aquarists
+
+You can have **up to 3 aquarists** (server config `hiredAquarist.maxAquarists`, up to 10; 1 = only one). Only the first
+comes by himself. Every further one is a **friend** whom your aquarist recommends: the one who has worked for you longest
+(marked ★). The tab **Friend** of his menu shows each condition with ✔ / ✘ and how far you are ("a friend in 3 days"):
+
+* he worked **7 in-game days without a break** (his wage paid every morning), and 7 days went by since the last hiring;
+* **enough work**: you own **3 tanks per aquarist**, the friend included (the second from 6 tanks, the third from 9);
+* **another breeding** since the last hiring;
+* **no trouble** in the last 3 days: no aquarist of the team went without his wage and no tank in their care had bad water
+  (a professional does not recommend a friend into a badly run business);
+* the team is not full.
+
+When everything holds he tells you in the chat ("My friend ... is looking for work - talk to me") with a button that
+opens his menu at the tab Friend, and the tab shines. **[Hire him]**: the friend comes to him and takes a free bed and a
+free breeding basin nearby. Without them he waits next to the one who recommended him (5 days, `friendHomeGraceDays`)
+and does not work yet; his tab Work shows what is missing, so you can build them afterwards. **[No, thanks]**: the next
+friend after 5 to 10 days and another breeding. When the team is full the tab says "Team full (3/3)".
+
+* **No double work:** every tank is looked after by **exactly one** aquarist: the one whose basin is nearest. On the tab
+  **Tanks** click a tank: the button at the right shows who looks after it; click it to give the tank to the next
+  aquarist of the team (after the last one it goes back to the nearest). The list shows the tanks of the others as
+  "Lena looks after it".
+* **Each his own:** bed, breeding basin, chests, rearing tanks and wage are his own (assigned as above, or automatic).
+* The tab **Team** in **every** aquarist's menu lists all of them: name, status, tanks, workplace.
+* If the first leaves (dismissed, unpaid, `/kill`), the one who has been with you longest recommends the friends from then
+  on. Only when nobody is left does a new first aquarist come by himself again.
+* The releases A / A+ of the tank menu hold for all aquarists of the owner. Each player has his own team and limit.
+* `/bettacraft aquarist status` lists your team and the conditions of the next friend.
+
+![The tab Team: every aquarist of the employer](../images/hired_aquarist_team.png)
+
+![The tab Friend: the conditions of the next friend, then the offer](../images/hired_aquarist_friend.png)
+
 ## Settings
 
 Config `features.aquaristNpc.enabled` (on by default). Off: no aquarist comes, hired ones only wait (they work again when
 it is on), the tank menu hides the button. Server config `hiredAquarist.*`: tanks needed (`minOwnTanks`, 3), the wait
 after a refusal (`returnDaysMin` 5, `returnDaysMax` 10), how long he waits for an answer (`offerDays`, 1), tanks and radius
 (`maxTanksCared` 16, `workRadius` 32, `homeRadius` 32), the wage (`wage`, `wageEmeralds` 1, `wageFood` 3,
-`unpaidDaysUntilLeave` 3, `unpaidWorkSpeed` 0.5) and FTB Teams (`ftbTeams`). Operators: `/bettacraft aquarist arrive
-[player]` lets one come now.
+`unpaidDaysUntilLeave` 3, `unpaidWorkSpeed` 0.5) and FTB Teams (`ftbTeams`); the team (`features.aquaristNpc.team`, on by
+default; off: no friend is recommended, those hired stay): `maxAquarists` 3, `friendAfterDays` 7, `tanksPerAquarist` 3,
+`friendCalmDays` 3, `friendHomeGraceDays` 5. Operators: `/bettacraft aquarist arrive [player]` lets one come now,
+`/bettacraft aquarist friend [player]` makes the first recommend his friend now.
 
 ![The four looks of the aquarists](../images/hired_aquarist_looks.png)
