@@ -43,6 +43,7 @@
     "client.BackgroundWindowMixin",
     "client.ClientChunkCacheMixin",
     "client.ClientLevelMixin",
+    "client.FogCaptureMixin",
     "client.CreativeModeTabsAccessor",
     "client.IrisBlockIdsMixin",
     "client.LevelRendererFrustumMixin",
