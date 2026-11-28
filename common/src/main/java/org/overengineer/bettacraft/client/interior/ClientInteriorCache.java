@@ -102,7 +102,7 @@ public final class ClientInteriorCache {
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
             TankData t = be.getTank();
             if (t != null && t.regionId() == regionId && be.getLevel() == mc.level) { // M17: not a stale block entity
-                LAST_REQUEST.put(regionId, net.minecraft.util.Util.getMillis() / 50L); // M67.5: the same clock as tick()
+                LAST_REQUEST.put(regionId, System.nanoTime() / 50_000_000L); // M67.5: the same clock as tick()
                 PacketDistributor.sendToServer(new InteriorRequestPayload(regionId, be.getBlockPos(), known));
                 return;
             }
@@ -115,7 +115,7 @@ public final class ClientInteriorCache {
         if (mc.level == null || mc.player == null) return;
         // M67.5: real time in ticks of 50 ms (the game time stands still while the ticks are frozen: a region dropped after 600 idle
         // ticks was never asked for again)
-        long now = net.minecraft.util.Util.getMillis() / 50L;
+        long now = System.nanoTime() / 50_000_000L;
         double dist = ClientConfig.MINIATURE_RENDER_DISTANCE.get();
         IntOpenHashSet used = new IntOpenHashSet();
         for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
