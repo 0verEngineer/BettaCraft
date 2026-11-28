@@ -216,7 +216,10 @@ public final class AquaristTeamGameTests {
         ServerPlayer sp = player(h);
         MinecraftServer server = h.getLevel().getServer();
         ServerLevel level = h.getLevel();
+        int radius = ServerConfig.AQUARIST_HOME_RADIUS.get();
         try {
+            // M69: the free basins of other tests' structures nearby must not give him a home: he looks only 2 blocks around him
+            ServerConfig.AQUARIST_HOME_RADIUS.set(2);
             npc(h, sp);
             tanks(h, sp.getUUID(), 6);
             AquaristRecords.PlayerRecord r = ripe(server, sp.getUUID(), 8);
@@ -230,11 +233,13 @@ public final class AquaristTeamGameTests {
             friend.setGraceUntil(AquaristTeam.now(server) - 1);
             friend.payDay(level, 206);
             check(friend.homelessDays() == 1, "after the grace the days without a home count");
+            ServerConfig.AQUARIST_HOME_RADIUS.set(radius);
             home2(h);
             friend.findHome(level);
             check(friend.housed(), "a home built: he moves in");
             h.succeed();
         } finally {
+            ServerConfig.AQUARIST_HOME_RADIUS.set(radius);
             cleanup(h, sp.getUUID());
         }
     }
