@@ -475,6 +475,12 @@ neoForge {
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m67only', 'true'
             }
+            if (project.hasProperty('smoketestm69')) {
+                // gradlew runClient -Psmoketestm69: the M69 scene (a team of aquarists: the tabs Friend and Team, who looks after a tank,
+                // the recommendation in the chat, the friend waiting for a home, en and de; run/screenshots/bettacraft_m69_<lang>_<shot>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m69only', 'true'
+            }
             if (project.hasProperty('smoketestm66')) {
                 // gradlew runClient -Psmoketestm66 [-Pm66tag=before|after] [-Pm66parts=tank,devices,aquarist,pipes]: the M66 scene (every menu the UI
                 // overhaul changed, en and de, a roomy and a cramped GUI scale; run/screenshots/bettacraft_m66_<tag>_<lang>_<scale>_<shot>.png)

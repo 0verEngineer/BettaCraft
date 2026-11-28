@@ -1099,6 +1099,25 @@ def m51(out_en: Path, out_de: Path) -> None:
                 print("missing", src)
 
 
+# M69 scene (DevClientSmokeM69, -Psmoketestm69, GUI scale 2): the hired aquarist's tabs Team (of the second aquarist, the team of
+# three with the friend waiting for his home) and Friend (the conditions of the next friend), en and de: the whole menu panel
+# (AquaristScreen, 344 x 236 GUI pixels, centred). ``py guide_images.py m69``.
+M69_MENUS = {"hired_aquarist_team": "team_full", "hired_aquarist_friend": "friend_conditions"}
+
+
+def m69(out_en: Path, out_de: Path) -> None:
+    for name, shot in M69_MENUS.items():
+        for lang, out in (("en_us", out_en), ("de_de", out_de)):
+            src = SHOTS / f"bettacraft_m69_{lang}_{shot}.png"
+            if not src.exists():
+                print("missing", src)
+                continue
+            im = Image.open(src).convert("RGB")
+            gw, gh = im.width // 2, im.height // 2
+            left, top = (gw - 344) // 2, (gh - 236) // 2
+            save(im.crop((left * 2, top * 2, (left + 344) * 2, (top + 236) * 2)), out / f"{name}.png")
+
+
 # M62 part 4 scene (DevClientSmokeM62c, -Psmoketestm62c, 1920 x 1080 window): the tank menu at GUI scale 4, which now grows with
 # the screen (480 x 270 GUI pixels: wider and taller than the smallest menu). The upper part of the panel (tabs and content)
 # replaces the menu pictures of the handbook. ``py guide_images.py m62``.
@@ -1281,6 +1300,9 @@ def main() -> int:
     out_de = GUIDE / "_de_de" / "images"
     out_en.mkdir(parents=True, exist_ok=True)
     out_de.mkdir(parents=True, exist_ok=True)
+    if sys.argv[1:] == ["m69"]:
+        m69(out_en, out_de)
+        return 0
     if sys.argv[1:] == ["m68"]:
         m68(out_en, out_de)
         return 0
