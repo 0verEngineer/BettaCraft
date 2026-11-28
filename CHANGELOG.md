@@ -36,6 +36,8 @@ The One Probe, algae on Create contraptions, and the dev clients.
   were gone until a restart; fine with the pack active from the start).
 
 ### Changed
+- **Plants with real leaves in the miniature from 12 blocks** (`render.miniaturePlantMeshDistance`, was 24): a quick help for the
+  frame rate with many planted tanks. Client configs that already exist keep their value.
 - The mod page link of the loaders (NeoForge mod list, Mod Menu) is the CurseForge project; sources and issues stay on GitHub.
 - Development only: every dev and test client runs without VSync (`-Pvsync` keeps it), like the muted sound; the saved option is
   not changed.

@@ -109,7 +109,7 @@ Lautstärke je Geräteart (`sound.filterVolume`, `airPumpVolume`, `airStoneVolum
 der Luftpumpen und das Surren der Strömungspumpen sind aus, bis `sound.airPumpSound` bzw. `sound.flowPumpSound` eingeschaltet
 wird. Der Client-Befehl `/bettacraft sounds` spielt alle Gerätesounds nacheinander einmal ab, mit ihrem Namen im Chat. Die Server-Config `tank.protectFromExplosionsAndPistons` legt fest, ob der Bruchschutz
 auch Explosionen und Kolben abhält. Die **Client-Config** enthält Animations- und Miniatur-Distanz, die Entfernung, bis zu
-der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 24; weiter weg Pixel,
+der die Miniatur diese Pflanzen mit echten Blättern zeigt (`render.miniaturePlantMeshDistance`, 12; weiter weg Pixel,
 0 = immer Pixel), die Pflanzen-Optik und die wippenden Wasserpflanzen nur für diesen Spieler (`render.plantMeshes`,
 `render.swayingPlants`; beide in den Mod-Einstellungen, auch auf einem Server), das
 Glitzern der Wasseroberfläche, das Filtergeräusch, die verbundenen Glastexturen (`render.connectedGlass`) und die Breite
