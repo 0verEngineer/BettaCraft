@@ -11,7 +11,7 @@ Single source of truth for the critter models, like ``model_defs.py`` for the be
   binary alpha, one 64x64 box-UV texture per model (packed automatically). The frog texture is coloured.
 
 Writes ``client/model/CritterModelDefinitions.java``, ``textures/entity/critters/*.png``, the algae overlays
-``textures/entity/algae/algae.png`` (the four stages side by side) and the item icons ``algae_scraper``, ``dwarf_frog_bucket``.
+``textures/block/algae_film_<level>.png`` (M67.5: also the film of travelling tanks; the old ``algae.png`` is gone) and the item icons ``algae_scraper``, ``dwarf_frog_bucket``.
 
 Run from the repo root:  py tools/assetgen/critters.py
 """
@@ -37,6 +37,9 @@ class Cube:
     pattern: str = "plain"
     u: int = 0
     v: int = 0
+    #: M67.5: the part's pivot is the top end of the cube (centre of its -Y face, e.g. a leg's hip): the renderer swings
+    #: such a leg about its hip, so it stays on the body
+    hinge: bool = False
 
     @property
     def uv_size(self) -> tuple[int, int, int]:
@@ -62,11 +65,39 @@ def c(name, center, size, rot=(0, 0, 0), pattern="plain"):
 def mirror(cube: Cube, name: str) -> Cube:
     cx, cy, cz = cube.center
     rx, ry, rz = cube.rot
-    return Cube(name, (-cx, cy, cz), cube.size, (rx, -ry, -rz), cube.pattern)
+    return Cube(name, (-cx, cy, cz), cube.size, (rx, -ry, -rz), cube.pattern, hinge=cube.hinge)
 
 
 def pairs(base: Cube, prefix: str) -> list[Cube]:
-    return [Cube(prefix + "_r", base.center, base.size, base.rot, base.pattern), mirror(base, prefix + "_l")]
+    return [Cube(prefix + "_r", base.center, base.size, base.rot, base.pattern, hinge=base.hinge), mirror(base, prefix + "_l")]
+
+
+def leg(name, hip, foot, width=0.35, depth=None, pattern="plain") -> Cube:
+    """M67.5: a leg from its hip (inside the body) to its foot, hinged at the hip. The rotation turns the cube's +Y (down in
+    model space) onto hip -> foot; Minecraft rotates Z * Y * X, so with no Y rotation +Y becomes
+    (-cos x sin z, cos x cos z, sin x)."""
+    d = [f - h for f, h in zip(foot, hip)]
+    length = math.sqrt(sum(v * v for v in d))
+    dx, dy, dz = (v / length for v in d)
+    rx = math.degrees(math.asin(dz))
+    rz = math.degrees(math.atan2(-dx, dy))
+    centre = tuple((f + h) / 2 for f, h in zip(foot, hip))
+    return Cube(name, tuple(map(float, centre)), (float(width), float(length), float(width if depth is None else depth)),
+                (rx, 0.0, rz), pattern, hinge=True)
+
+
+def hinge_top(cu: Cube) -> tuple[float, float, float]:
+    """The top end (centre of the -Y face) of a cube, rotated like Minecraft (Z * Y * X)."""
+    rx, ry, rz = (math.radians(a) for a in cu.rot)
+    v = np.array([0.0, -cu.size[1] / 2, 0.0])
+    cxr, sxr = math.cos(rx), math.sin(rx)
+    cyr, syr = math.cos(ry), math.sin(ry)
+    czr, szr = math.cos(rz), math.sin(rz)
+    mx = np.array([[1, 0, 0], [0, cxr, -sxr], [0, sxr, cxr]])
+    my = np.array([[cyr, 0, syr], [0, 1, 0], [-syr, 0, cyr]])
+    mz = np.array([[czr, -szr, 0], [szr, czr, 0], [0, 0, 1]])
+    t = mz @ my @ mx @ v
+    return tuple(float(c0 + d0) for c0, d0 in zip(cu.center, t))
 
 
 # ---------------------------------------------------------------------------------------------------------- models
@@ -81,11 +112,13 @@ def shrimp() -> list[Group]:
         c("seg4", (0, -1.9, 5.7), (1.6, 1.4, 1.8), (34, 0, 0)),
         c("tail", (0, -1.3, 7.1), (3.4, 0.4, 2.0), (22, 0, 0)),
     ])
+    # M67.5: the walking legs start under the carapace and splay out to the feet on the floor (they hung beside the body,
+    # tops outwards, and the whole group swung about the model's origin); the swimmerets hang under the tail segments
     legs = Group("legs", cubes=[])
     for i, z in enumerate((-5.4, -4.4, -3.4, -2.4, -1.4)):
-        legs.cubes += pairs(c(f"leg{i}", (1.6, -1.25, z), (0.35, 2.6, 0.35), (0, 0, 24 + i * 2)), f"leg{i}")
-    for i, z in enumerate((0.6, 2.3, 3.9)):
-        legs.cubes += pairs(c(f"swim{i}", (0.7, -1.9, z), (0.3, 1.0, 0.6), (-15, 0, 10)), f"swim{i}")
+        legs.cubes += pairs(leg(f"leg{i}", (0.9, -2.2, z), (2.0, 0.0, z + 0.3 * (i - 2))), f"leg{i}")
+    for i, (z, bottom) in enumerate(((0.6, -2.1), (2.3, -1.95), (3.9, -1.6))):
+        legs.cubes += pairs(leg(f"swim{i}", (0.6, bottom - 0.3, z), (0.85, bottom + 0.7, z + 0.35), 0.3, 0.6), f"swim{i}")
     ant = Group("antennae", pivot=(0, -3.8, -6.0), cubes=[])
     ant.cubes += pairs(Cube("long", (0.5, -3.8, -6.0), (0.2, 0.2, 10.0), (-14, 22, 0)), "long")
     ant.cubes += pairs(Cube("short", (0.4, -3.9, -6.2), (0.2, 0.2, 3.0), (-24, 40, 0)), "short")
@@ -111,7 +144,7 @@ def crayfish() -> list[Group]:
     claws.cubes += pairs(c("finger", (2.8, -2.2, -11.0), (0.5, 0.6, 2.0), (0, 30, 0)), "finger")
     legs = Group("legs", cubes=[])
     for i, z in enumerate((-4.6, -3.4, -2.2, -1.0)):
-        legs.cubes += pairs(c(f"leg{i}", (2.3, -1.2, z), (0.45, 2.4, 0.45), (0, 0, 32)), f"leg{i}")
+        legs.cubes += pairs(leg(f"leg{i}", (1.3, -1.6, z), (3.0, 0.0, z + 0.35 * (i - 1.5)), 0.45), f"leg{i}")
     ant = Group("antennae", pivot=(0, -2.9, -7.4), cubes=[])
     ant.cubes += pairs(Cube("long", (0.6, -2.9, -7.4), (0.25, 0.25, 11.0), (-8, 26, 0)), "long")
     eyes = Group("eyes", cubes=pairs(c("eye", (0.9, -3.4, -7.2), (0.7, 0.7, 0.7)), "eye"))
@@ -286,7 +319,7 @@ def hermit() -> list[Group]:
     ])
     legs = Group("legs", cubes=[])
     for i, z in enumerate((-3.0, -2.0, -1.0)):
-        legs.cubes += pairs(c(f"leg{i}", (2.2, -1.0, z), (0.5, 2.2, 0.5), (0, 0, 36)), f"leg{i}")
+        legs.cubes += pairs(leg(f"leg{i}", (1.4, -1.2, z), (3.1, 0.0, z - 0.3 * (1 - i)), 0.5), f"leg{i}")
     ant = Group("antennae", pivot=(0, -3.0, -3.4), cubes=[])
     ant.cubes += pairs(Cube("long", (0.5, -3.0, -3.4), (0.2, 0.2, 5.0), (-20, 20, 0)), "long")
     eyes = Group("eyes", cubes=pairs(c("eye", (0.7, -3.6, -3.4), (0.6, 1.4, 0.6)), "eye"))
@@ -542,8 +575,12 @@ def java_layer(name: str, groups: list[Group], frog_offset: bool, size: int) -> 
             deform = "" if all(abs(x) < 1e-9 for x in grow) else f", new CubeDeformation({f(grow[0])}, {f(grow[1])}, {f(grow[2])})"
             cx, cy, cz = cu.center
             rx, ry, rz = cu.rot
+            y0 = -h / 2
+            if cu.hinge:  # M67.5: pivot at the top end, the box hangs from it (its grown top lies on the pivot)
+                cx, cy, cz = hinge_top(cu)
+                y0 = grow[1]
             lines.append(f"        {var}.addOrReplaceChild(\"{cu.name}\", CubeListBuilder.create().texOffs({cu.u}, {cu.v})"
-                         f".addBox({f(-w / 2)}, {f(-h / 2)}, {f(-d / 2)}, {f(w)}, {f(h)}, {f(d)}{deform}), "
+                         f".addBox({f(-w / 2)}, {f(y0)}, {f(-d / 2)}, {f(w)}, {f(h)}, {f(d)}{deform}), "
                          f"PartPose.offsetAndRotation({f(cx - px)}, {f(cy - py)}, {f(cz - pz)}, {rad(rx)}, {rad(ry)}, {rad(rz)}));")
     lines.append(f"        return LayerDefinition.create(mesh, {size}, {size});")
     lines.append("    }")
@@ -616,7 +653,7 @@ def algae(stage: int) -> np.ndarray:
 
 
 FILM_LEVELS = 8
-FILM_SIZE = 64  # one texture over 4x4 blocks (16 px per block), tiles without a seam
+FILM_SIZE = 256  # one texture over 16x16 blocks (16 px per block), tiles without a seam (M67.5: was 4x4, the blots repeated)
 
 
 def _film_field() -> np.ndarray:
@@ -744,10 +781,9 @@ def write_all() -> list:
     # M66: the four stages side by side in one texture (one render type: the film quads of every stage are drawn in one batch,
     # sorted back to front; four textures were four batches whose order hid back-wall algae behind front-wall algae)
     # M66 v6: the film of a tank in the world is part of its chunk mesh: block textures, one per density level (AlgaeFilm);
-    # the four stages side by side stay for the block entity film of travelling tanks (levels 2, 4, 6, 8 of the same film)
+    # M67.5: travelling tanks draw the same textures (AlgaeRenderer)
     for lv in range(1, FILM_LEVELS + 1):
         written.append(save_png(algae_film(lv), BLOCK_TEX / f"algae_film_{lv}.png"))
-    written.append(save_png(np.concatenate([algae_film(2 * st) for st in range(1, 5)], axis=1), ALGAE_TEX / "algae.png"))
     written.append(save_png(scraper_icon(), ITEM_TEX / "algae_scraper.png"))
     written.append(save_png(frog_brood(), CRIT_TEX / "frog_brood.png"))  # M47 part c
     # the frog bucket: buckets.py (M21, in the style of the active bucket variant)
