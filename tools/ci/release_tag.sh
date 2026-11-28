@@ -8,7 +8,15 @@
 #
 # Fails when the tag does not have that form, its mod version is not mod_version or its Minecraft version is not the
 # branch's minecraft_version (gradle.properties of the tagged commit). Writes version, loader, loader_name, mc, type
-# (alpha / beta / release), tag and jar to $GITHUB_OUTPUT (stdout without it).
+# (alpha / beta / release), tag and jar to $GITHUB_OUTPUT (stdout without it), and (M69, so that release.yml is the same
+# file on every branch) the branch facts of the CurseForge upload:
+#   java          java_version of gradle.properties (the Java of the game)
+#   game_versions the CurseForge game versions of the loader, one per line: minecraft_version for NeoForge,
+#                 fabric_game_versions (comma separated, e.g. 26.1,26.1.1,26.1.2) for Fabric
+#   game_label    the Minecraft versions in the file name, e.g. 1.21.1 or 26.1-26.1.2
+#   dependencies  the CurseForge dependencies of the loader, one per line (tools/ci/curseforge-<loader>.txt of the branch)
+#   latest        true when this release becomes the latest GitHub release (release_make_latest=true in gradle.properties:
+#                 only master, the main target ATM10, and only its NeoForge releases that are no pre-release)
 set -euo pipefail
 
 prop() { grep "^$1=" gradle.properties | head -1 | cut -d= -f2- | tr -d '\r'; }
@@ -16,7 +24,9 @@ fail() { echo "::error::$1"; exit 1; }
 
 version=$(prop mod_version)
 mc=$(prop minecraft_version)
+java=$(prop java_version)
 [ -n "$version" ] && [ -n "$mc" ] || fail "gradle.properties has no mod_version or minecraft_version"
+[ -n "$java" ] || fail "gradle.properties has no java_version"
 
 if [ "${IS_TAG:-false}" = true ]; then
   tag=${GITHUB_REF_NAME:?GITHUB_REF_NAME is not set}
@@ -46,6 +56,25 @@ case "$version" in
   *) type=release ;;
 esac
 
+if [ "$loader" = fabric ]; then
+  games=$(prop fabric_game_versions)
+  [ -n "$games" ] || fail "gradle.properties has no fabric_game_versions"
+else
+  games=$mc
+fi
+games=$(echo "$games" | tr ',' '\n' | sed 's/^ *//; s/ *$//' | grep -v '^$')
+first=$(echo "$games" | head -1)
+last=$(echo "$games" | tail -1)
+if [ "$first" = "$last" ]; then game_label=$first; else game_label="$first-$last"; fi
+echo "$games" | grep -qx "$mc" || fail "the CurseForge game versions of $loader ($(echo $games)) do not contain minecraft_version $mc"
+
+deps_file="tools/ci/curseforge-$loader.txt"
+[ -f "$deps_file" ] || fail "$deps_file is missing (the CurseForge dependencies of $loader on this branch)"
+deps=$(grep -v '^\s*\(#\|$\)' "$deps_file" | tr -d '\r')
+
+latest=false
+if [ "$type" = release ] && [ "$loader" = neoforge ] && [ "$(prop release_make_latest)" = true ]; then latest=true; fi
+
 out=${GITHUB_OUTPUT:-/dev/stdout}
 {
   echo "version=$version"
@@ -55,5 +84,14 @@ out=${GITHUB_OUTPUT:-/dev/stdout}
   echo "type=$type"
   echo "tag=$tag"
   echo "jar=build/libs/bettacraft-$loader-$mc-$version.jar"
+  echo "java=$java"
+  echo "game_label=$game_label"
+  echo "latest=$latest"
+  echo "game_versions<<EOF"
+  echo "$games"
+  echo "EOF"
+  echo "dependencies<<EOF"
+  echo "$deps"
+  echo "EOF"
 } >> "$out"
-echo "Bettacraft $version for $loader_name $mc, channel $type, tag $tag (pushed tag: ${IS_TAG:-false})"
+echo "Bettacraft $version for $loader_name $game_label (Java $java), channel $type, tag $tag (pushed tag: ${IS_TAG:-false})"

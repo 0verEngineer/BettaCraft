@@ -1,5 +1,7 @@
-# Release of a pushed tag v<mod_version>+<loader>-<minecraft> (M52), e.g. v1.42.0-beta.1+neoforge-1.21.11 or
-# v1.42.0-beta.1+fabric-1.21.11. Every branch releases its own Minecraft version (1.21.11 on this branch), one loader per tag:
+# Release of a pushed tag v<mod_version>+<loader>-<minecraft> (M52), e.g. v1.42.0-beta.1+neoforge-1.21.1 or
+# v1.42.0-beta.1+fabric-26.1.2. Every branch releases its own Minecraft version, one loader per tag. M69: the same file on
+# every branch; the branch facts (Minecraft and Java version, the CurseForge game versions and dependencies, the latest
+# release) come from gradle.properties and tools/ci/curseforge-<loader>.txt through tools/ci/release_tag.sh:
 #   0. tools/ci/release_tag.sh parses the tag and fails at once if its mod version is not mod_version or its Minecraft
 #      version is not minecraft_version of gradle.properties (a tag on the wrong branch), or the loader is unknown
 #   1. the full test set of build.yml for that loader (build, unit tests, GameTests, the server smoke variants)
@@ -59,6 +61,11 @@ jobs:
       type: ${{ steps.tag.outputs.type }}
       tag: ${{ steps.tag.outputs.tag }}
       jar: ${{ steps.tag.outputs.jar }}
+      java: ${{ steps.tag.outputs.java }}
+      game_versions: ${{ steps.tag.outputs.game_versions }}
+      game_label: ${{ steps.tag.outputs.game_label }}
+      dependencies: ${{ steps.tag.outputs.dependencies }}
+      latest: ${{ steps.tag.outputs.latest }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -98,14 +105,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Java 21
+      - name: Branch facts (Minecraft, Java, run directories)
+        id: branch
+        run: bash tools/ci/branch.sh
+
+      - name: Set up Java ${{ steps.branch.outputs.java }}
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
-          java-version: |
-            25
-            21
+          # 25 for the Gradle daemon (Fabric Loom, gradle/gradle-daemon-jvm.properties) and java_version of the game (the
+          # last one is the default)
+          java-version: ${{ steps.branch.outputs.java_versions }}
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
@@ -167,76 +177,29 @@ jobs:
             ${{ needs.tag.outputs.jar }}.sha256
             build/distributions/bettacraft-modpack-${{ needs.tag.outputs.version }}.zip
           prerelease: ${{ needs.tag.outputs.type != 'release' }}
-          # master's NeoForge 1.21.1 release stays the latest release of the repository
-          make_latest: false
+          # the NeoForge 1.21.1 release (master, the main target ATM10) is the latest release of the repository
+          # (release_make_latest=true in gradle.properties of master only)
+          make_latest: ${{ needs.tag.outputs.latest }}
           fail_on_unmatched_files: true
           # a re-run (e.g. after a failed CurseForge upload) finds the release of the tag and updates it: notes, and the
           # assets replaced by name
           overwrite_files: true
 
-      # CurseForge slugs checked on their project pages (api.cfwidget.com, 2026-11-21; a wrong slug fails the upload): every
-      # integrated mod (README "Optional integrations") that has a CurseForge file for this Minecraft version and loader.
-      # Required on Fabric: Fabric API and Forge Config API Port.
-      - name: Publish to CurseForge (NeoForge)
-        if: env.LOADER == 'neoforge' && env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
+      # The dependencies of the loader on this branch: tools/ci/curseforge-<loader>.txt (slugs checked on their project pages,
+      # a wrong slug fails the upload). Required on Fabric: Fabric API and Forge Config API Port.
+      - name: Publish to CurseForge (${{ needs.tag.outputs.loader_name }})
+        if: env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
           curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          curseforge-dependencies: |
-            jade(optional)
-            guideme(optional)
-            jei(optional)
-            the-one-probe(optional)
-            wthit-forge(optional)
-            fish-of-thieves(optional)
-            aquaculture(optional)
-            living-things(optional)
-            journeymap(optional)
-            biomes-o-plenty(optional)
-            ftb-quests-forge(optional)
-            ftb-teams-forge(optional)
-            oh-the-biomes-weve-gone(optional)
-            sodium(optional)
-            irisshaders(optional)
+          curseforge-dependencies: ${{ needs.tag.outputs.dependencies }}
           files: ${{ needs.tag.outputs.jar }}
-          name: Bettacraft ${{ needs.tag.outputs.version }} (NeoForge 1.21.11)
-          version: ${{ needs.tag.outputs.version }}+neoforge-1.21.11
+          name: Bettacraft ${{ needs.tag.outputs.version }} (${{ needs.tag.outputs.loader_name }} ${{ needs.tag.outputs.game_label }})
+          version: ${{ needs.tag.outputs.version }}+${{ needs.tag.outputs.loader }}-${{ needs.tag.outputs.mc }}
           version-type: ${{ needs.tag.outputs.type }}
           changelog-file: build/release-notes.md
-          loaders: neoforge
-          game-versions: "1.21.11"
-          java: "21"
-
-      - name: Publish to CurseForge (Fabric)
-        if: env.LOADER == 'fabric' && env.IS_TAG == 'true' && env.CURSEFORGE_TOKEN != '' && env.CURSEFORGE_PROJECT_ID != ''
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          curseforge-id: ${{ env.CURSEFORGE_PROJECT_ID }}
-          curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
-          curseforge-dependencies: |
-            fabric-api(required)
-            forge-config-api-port(required)
-            modonomicon(optional)
-            modmenu(optional)
-            jade(optional)
-            wthit(optional)
-            jei(optional)
-            roughly-enough-items(optional)
-            fish-of-thieves(optional)
-            living-things(optional)
-            journeymap(optional)
-            biomes-o-plenty(optional)
-            sodium(optional)
-            irisshaders(optional)
-            ftb-quests-fabric(optional)
-            ftb-teams-fabric(optional)
-            oh-the-biomes-weve-gone(optional)
-          files: ${{ needs.tag.outputs.jar }}
-          name: Bettacraft ${{ needs.tag.outputs.version }} (Fabric 1.21.11)
-          version: ${{ needs.tag.outputs.version }}+fabric-1.21.11
-          version-type: ${{ needs.tag.outputs.type }}
-          changelog-file: build/release-notes.md
-          loaders: fabric
-          game-versions: "1.21.11"
-          java: "21"
+          loaders: ${{ needs.tag.outputs.loader }}
+          # e.g. 26.1, 26.1.1 and 26.1.2 for the Fabric jar of 26.1.2 (fabric_game_versions)
+          game-versions: ${{ needs.tag.outputs.game_versions }}
+          java: ${{ needs.tag.outputs.java }}

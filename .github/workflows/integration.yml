@@ -1,6 +1,7 @@
 # Optional mod suites (M42, M59), only by hand: Actions > Integration tests > Run workflow.
 #
-# M59: every foreign mod comes from the manifest dev-mods.json: Gradle downloads each jar from its official source (Modrinth
+# M69: the same file on every branch; the branch facts (Java, run directories) come from tools/ci/branch.sh.
+# M59: every foreign mod comes from the manifest gradle/dev-mods.json: Gradle downloads each jar from its official source (Modrinth
 # Maven, CurseMaven, FTB Maven) and checks its SHA-1 and SHA-256. Nothing of them is committed, uploaded as an artifact or
 # released: on failure only the logs are uploaded, and the Gradle cache is read-only here (the jars are never saved into it).
 #   integration: gradlew integrationTests  - the whole GameTest suite plus the integration-only GameTests with every mod we
@@ -48,29 +49,38 @@ jobs:
           - name: Integration suite (every integrated mod)
             id: integration
             run: ./gradlew integrationTests
-            logs: run/1.21.11/gametest-integration/logs/
+            logs: neoforge:gametest-integration/logs/
           - name: Zoo suite (mods we do not integrate)
             id: zoo
             run: ./gradlew zooTests
-            logs: run/1.21.11/gametest-zoo/logs/
+            logs: neoforge:gametest-zoo/logs/
           - name: Fabric GameTests with the Fabric mod groups
             id: fabric
             run: ./gradlew runFabricGameTest -Pfabricintegration -Pquests
-            logs: run/1.21.11/fabric/gametest/logs/
+            logs: fabric:gametest/logs/
     steps:
       - name: Checkout
         if: inputs.suite == 'all' || inputs.suite == matrix.id
         uses: actions/checkout@v7
 
-      - name: Set up Java 21
+      - name: Branch facts (Minecraft, Java, run directories)
+        id: branch
+        if: inputs.suite == 'all' || inputs.suite == matrix.id
+        env:
+          LOGS: ${{ matrix.logs }}
+        run: |
+          bash tools/ci/branch.sh
+          # the logs of the suite: <loader>:<path below that loader's run directory>
+          root=$(grep "^$([ "${LOGS%%:*}" = fabric ] && echo fabric_run_dir || echo run_dir)=" "$GITHUB_OUTPUT" | tail -1 | cut -d= -f2)
+          echo "logs=$root/${LOGS#*:}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java ${{ steps.branch.outputs.java }}
         if: inputs.suite == 'all' || inputs.suite == matrix.id
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # 25 for the Gradle daemon (Fabric Loom 1.19, gradle/gradle-daemon-jvm.properties), 21 for the game (default)
-          java-version: |
-            25
-            21
+          # 25 for the Gradle daemon (Fabric Loom, gradle/gradle-daemon-jvm.properties) and java_version of the game
+          java-version: ${{ steps.branch.outputs.java_versions }}
 
       - name: Set up Gradle
         if: inputs.suite == 'all' || inputs.suite == matrix.id
@@ -102,7 +112,7 @@ jobs:
         with:
           name: logs-${{ matrix.id }}
           path: |
-            ${{ matrix.logs }}
+            ${{ steps.branch.outputs.logs }}
             ${{ matrix.id }}.log
           retention-days: 7
           if-no-files-found: ignore
