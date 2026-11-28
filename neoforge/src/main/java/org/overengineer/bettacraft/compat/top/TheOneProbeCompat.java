@@ -77,7 +77,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
             IProbeInfo names = head.vertical();
             names.mcText(b.getDisplayName().copy().withStyle(ChatFormatting.WHITE));
             names.mcText(Component.literal("Bettacraft").withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC));
-            betta(info, mode, b);
+            betta(info, mode, player, b);
             return true;
         });
         return null;
@@ -87,8 +87,17 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
         for (Component c : lines) info.mcText(c);
     }
 
-    private static void betta(IProbeInfo info, ProbeMode mode, BettaEntity b) {
-        add(info, InfoLines.betta(b, InfoData.betta(b), mode != ProbeMode.NORMAL));
+    private static void betta(IProbeInfo info, ProbeMode mode, Player player, BettaEntity b) {
+        add(info, InfoLines.betta(b, InfoData.betta(b), details(mode, player)));
+    }
+
+    /**
+     * M67.5: the details with TOP's extended mode or while the player sneaks. TOP's default ({@code needsProbe = 3}) gives the
+     * extended mode only with a probe: its server turns a sneaking player's request without one back into NORMAL, so the
+     * hint "sneak for details" did nothing. Sneaking is synced to the server, and TOP asks again every few hundred ms.
+     */
+    static boolean details(ProbeMode mode, Player player) {
+        return mode != ProbeMode.NORMAL || player != null && player.isShiftKeyDown();
     }
 
     /** Tank, external filter and cabinet. */
@@ -104,7 +113,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
             if (!org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) return;
             if (state.getBlock() instanceof TankBlock) {
                 if (InfoTarget.bettaBehindGlass(level, player) != null) return; // the display override shows the fish
-                add(info, InfoLines.tank(InfoData.tank(server, data.getPos()), mode != ProbeMode.NORMAL));
+                add(info, InfoLines.tank(InfoData.tank(server, data.getPos()), details(mode, player)));
             } else if (state.getBlock() instanceof ExternalFilterBlock || state.getBlock() instanceof CabinetBlock) {
                 CompoundTag d = InfoData.filter(server, level.getBlockEntity(data.getPos()));
                 add(info, InfoLines.filter(d));
@@ -130,7 +139,7 @@ public final class TheOneProbeCompat implements Function<ITheOneProbe, Void> {
 
         @Override
         public void addProbeEntityInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
-            if (entity instanceof BettaEntity b && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) betta(info, mode, b);
+            if (entity instanceof BettaEntity b && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) betta(info, mode, player, b);
             if (entity instanceof org.overengineer.bettacraft.aquarist.AquaristEntity a // M51
                     && org.overengineer.bettacraft.compat.info.OverlayProvider.shows(org.overengineer.bettacraft.compat.info.OverlayProvider.Overlay.TOP)) {
                 for (var line : InfoLines.aquarist(a)) info.text(line);

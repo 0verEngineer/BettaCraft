@@ -168,7 +168,7 @@ public final class TankmateModelDefinitions {
         g_body.addOrReplaceChild("body8", CubeListBuilder.create().texOffs(56, 26).addBox(-3.5F, -1F, -1F, 7F, 2F, 2F), PartPose.offsetAndRotation(0F, -1F, 8F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(106, 26).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(3.9F, -4.3622F, -10.68F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(114, 26).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(-3.9F, -4.3622F, -10.68F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(20, 26).addBox(-2.5F, -0.5F, -2F, 5F, 1F, 4F), PartPose.offsetAndRotation(0F, -0.5F, -12.5F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(20, 26).addBox(-2.5F, -0.5F, -2F, 5F, 1F, 4F), PartPose.offsetAndRotation(0F, -0.2F, -12.5F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("adipose", CubeListBuilder.create().texOffs(122, 26).addBox(0F, -1F, -1F, 0F, 2F, 2F), PartPose.offsetAndRotation(0F, -2.9518F, 5.64F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("pelvic_r", CubeListBuilder.create().texOffs(74, 26).addBox(-2F, 0F, -2F, 4F, 0F, 4F), PartPose.offsetAndRotation(2.8F, -0.4F, -0.6F, 0F, 0.3491F, -0.1047F));
         g_body.addOrReplaceChild("pelvic_l", CubeListBuilder.create().texOffs(90, 26).addBox(-2F, 0F, -2F, 4F, 0F, 4F), PartPose.offsetAndRotation(-2.8F, -0.4F, -0.6F, 0F, -0.3491F, 0.1047F));
@@ -208,7 +208,7 @@ public final class TankmateModelDefinitions {
         g_body.addOrReplaceChild("body8", CubeListBuilder.create().texOffs(12, 16).addBox(-2F, -1F, -1F, 4F, 2F, 2F), PartPose.offsetAndRotation(0F, -1F, 8F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(36, 16).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(2.3F, -3.3189F, -11.64F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(44, 16).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(-2.3F, -3.3189F, -11.64F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(24, 16).addBox(-1.5F, -0.5F, -1.5F, 3F, 1F, 3F), PartPose.offsetAndRotation(0F, -0.5F, -13.5F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("mouth", CubeListBuilder.create().texOffs(24, 16).addBox(-1.5F, -0.5F, -1.5F, 3F, 1F, 3F), PartPose.offsetAndRotation(0F, -0.2F, -13.5F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("pelvic_r", CubeListBuilder.create().texOffs(80, 16).addBox(-1.5F, 0F, -1.5F, 3F, 0F, 3F), PartPose.offsetAndRotation(1.5F, -0.4F, -1.08F, 0F, 0.3491F, -0.1047F));
         g_body.addOrReplaceChild("pelvic_l", CubeListBuilder.create().texOffs(92, 16).addBox(-1.5F, 0F, -1.5F, 3F, 0F, 3F), PartPose.offsetAndRotation(-1.5F, -0.4F, -1.08F, 0F, -0.3491F, 0.1047F));
         PartDefinition g_tail = fish.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offset(0F, -1.02F, 8F));
@@ -612,23 +612,23 @@ public final class TankmateModelDefinitions {
         g_body.addOrReplaceChild("body3", CubeListBuilder.create().texOffs(54, 0).addBox(-1.5F, -7.5F, -1.5F, 3F, 15F, 3F), PartPose.offsetAndRotation(0F, -19.5F, -5.5F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("body4", CubeListBuilder.create().texOffs(76, 0).addBox(-1.5F, -7F, -1F, 3F, 14F, 2F), PartPose.offsetAndRotation(0F, -19.5F, -3F, 0F, 0F, 0F));
         g_body.addOrReplaceChild("body5", CubeListBuilder.create().texOffs(96, 0).addBox(-1.5F, -5.5F, -1F, 3F, 11F, 2F), PartPose.offsetAndRotation(0F, -19.5F, -1F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("body6", CubeListBuilder.create().texOffs(0, 22).addBox(-1F, -4F, -1F, 2F, 8F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 1F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("body7", CubeListBuilder.create().texOffs(8, 22).addBox(-1F, -2.5F, -1F, 2F, 5F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 3F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("body8", CubeListBuilder.create().texOffs(32, 22).addBox(-1F, -1.5F, -1F, 2F, 3F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 5F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(40, 22).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(1.7F, -20.6779F, -9.2F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(48, 22).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(-1.7F, -20.6779F, -9.2F, 0F, 0F, 0F));
-        g_body.addOrReplaceChild("anal", CubeListBuilder.create().texOffs(18, 0).addBox(0F, -6F, -4.5F, 0F, 12F, 9F), PartPose.offsetAndRotation(0F, -6.811F, -0.02F, 0.4887F, 0F, 0F));
+        g_body.addOrReplaceChild("body6", CubeListBuilder.create().texOffs(0, 26).addBox(-1F, -4F, -1F, 2F, 8F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 1F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("body7", CubeListBuilder.create().texOffs(8, 26).addBox(-1F, -2.5F, -1F, 2F, 5F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 3F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("body8", CubeListBuilder.create().texOffs(32, 26).addBox(-1F, -1.5F, -1F, 2F, 3F, 2F), PartPose.offsetAndRotation(0F, -19.5F, 5F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("eye_r", CubeListBuilder.create().texOffs(40, 26).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(1.7F, -20.6779F, -9.2F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("eye_l", CubeListBuilder.create().texOffs(48, 26).addBox(-1F, -1F, -1F, 2F, 2F, 2F), PartPose.offsetAndRotation(-1.7F, -20.6779F, -9.2F, 0F, 0F, 0F));
+        g_body.addOrReplaceChild("anal", CubeListBuilder.create().texOffs(18, 0).addBox(0F, -8F, -4.5F, 0F, 16F, 9F), PartPose.offsetAndRotation(0F, -8.5769F, -0.9589F, 0.4887F, 0F, 0F));
         PartDefinition g_filaments = fish.addOrReplaceChild("filaments", CubeListBuilder.create(), PartPose.offset(0F, -11.8302F, -7.3F));
         g_filaments.addOrReplaceChild("filament_r", CubeListBuilder.create().texOffs(106, 0).addBox(-0.5F, -5.5F, -0.5F, 1F, 11F, 1F), PartPose.offsetAndRotation(0.6F, 4.5F, 1.5F, -0.2094F, 0F, 0.1047F));
         g_filaments.addOrReplaceChild("filament_l", CubeListBuilder.create().texOffs(110, 0).addBox(-0.5F, -5.5F, -0.5F, 1F, 11F, 1F), PartPose.offsetAndRotation(-0.6F, 4.5F, 1.5F, -0.2094F, 0F, -0.1047F));
         PartDefinition g_dorsal = fish.addOrReplaceChild("dorsal", CubeListBuilder.create(), PartPose.offset(0F, -26.9908F, -5.78F));
-        g_dorsal.addOrReplaceChild("dorsal", CubeListBuilder.create().texOffs(36, 0).addBox(0F, -6F, -4.5F, 0F, 12F, 9F), PartPose.offsetAndRotation(0F, -5.4627F, 5.76F, -0.4887F, 0F, 0F));
+        g_dorsal.addOrReplaceChild("dorsal", CubeListBuilder.create().texOffs(0, 0).addBox(0F, -8.5F, -4.5F, 0F, 17F, 9F), PartPose.offsetAndRotation(0F, -3.2554F, 4.5863F, -0.4887F, 0F, 0F));
         PartDefinition g_tail = fish.addOrReplaceChild("tail", CubeListBuilder.create(), PartPose.offset(0F, -19.5F, 5F));
-        g_tail.addOrReplaceChild("caudal", CubeListBuilder.create().texOffs(0, 0).addBox(0F, -6.5F, -4.5F, 0F, 13F, 9F), PartPose.offsetAndRotation(0F, 0F, 4.5F, 0F, 0F, 0F));
+        g_tail.addOrReplaceChild("caudal", CubeListBuilder.create().texOffs(36, 0).addBox(0F, -6.5F, -4.5F, 0F, 13F, 9F), PartPose.offsetAndRotation(0F, 0F, 4.5F, 0F, 0F, 0F));
         PartDefinition g_pec_r = fish.addOrReplaceChild("pec_r", CubeListBuilder.create(), PartPose.offset(1.4474F, -16.7337F, -8.06F));
-        g_pec_r.addOrReplaceChild("pec_r", CubeListBuilder.create().texOffs(16, 22).addBox(0F, -1.5F, -2F, 0F, 3F, 4F), PartPose.offsetAndRotation(0.6F, 0F, 2F, 0F, 0.6109F, 0.3491F));
+        g_pec_r.addOrReplaceChild("pec_r", CubeListBuilder.create().texOffs(16, 26).addBox(0F, -1.5F, -2F, 0F, 3F, 4F), PartPose.offsetAndRotation(0.6F, 0F, 2F, 0F, 0.6109F, 0.3491F));
         PartDefinition g_pec_l = fish.addOrReplaceChild("pec_l", CubeListBuilder.create(), PartPose.offset(-1.4474F, -16.7337F, -8.06F));
-        g_pec_l.addOrReplaceChild("pec_l", CubeListBuilder.create().texOffs(24, 22).addBox(0F, -1.5F, -2F, 0F, 3F, 4F), PartPose.offsetAndRotation(-0.6F, 0F, 2F, 0F, -0.6109F, -0.3491F));
+        g_pec_l.addOrReplaceChild("pec_l", CubeListBuilder.create().texOffs(24, 26).addBox(0F, -1.5F, -2F, 0F, 3F, 4F), PartPose.offsetAndRotation(-0.6F, 0F, 2F, 0F, -0.6109F, -0.3491F));
         return LayerDefinition.create(mesh, 128, 64);
     }
 

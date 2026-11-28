@@ -66,7 +66,8 @@ public class TankBakedModel implements DynamicModel {
     public static final ModelKey<Boolean> WATER_SMOOTH = new ModelKey<>("tank_water_smooth");
     /** M65: the glass bulkheads of the pipes joined to this block ({@link TankFlanges#mask}); absent = none. */
     public static final ModelKey<Integer> FLANGES = new ModelKey<>("tank_flanges");
-    /** M66 v6: the algae film of the block ({@link AlgaeFilm#at}) plus its position modulo {@link AlgaeFilm#TILE} in bits 32..37 (the film's texture runs over several blocks). */
+    /** M66 v6: the algae film of the block ({@link AlgaeFilm#at}) plus its position modulo {@link AlgaeFilm#TILE} in bits 32..43 (the film's texture runs
+     * over several blocks) and, M67.5, the tank's placement seed ({@link AlgaeFilm#seed}) in bits 44..59. */
     public static final ModelKey<Long> FILM = new ModelKey<>("tank_algae_film");
 
     private final TextureAtlasSprite edge;
@@ -86,8 +87,6 @@ public class TankBakedModel implements DynamicModel {
     /** Water quads drawn by the model while a shader pack is in use, by (fill, connection mask, water above, gaps). */
     private final Map<Long, List<BakedQuad>> waterCache = new ConcurrentHashMap<>();
     /** M66 v6: the water quads with algae film quads, by (water key, film). */
-    private record FilmKey(long water, long film) {}
-    private final Map<FilmKey, List<BakedQuad>> filmCache = new ConcurrentHashMap<>();
     /** Connected / cut glass quads: original quad -> (hidden slots, water behind it) -> the pieces. */
     private final Map<BakedQuad, Map<Integer, BakedQuad[]>> glassCache = new ConcurrentHashMap<>();
     /** Frame width (fraction of the face) per glass sprite. */
@@ -241,7 +240,8 @@ public class TankBakedModel implements DynamicModel {
         if (concave == 0 && corners == 0 && light == 0 && !water && flanges == 0) return modelData;
         var b = modelData.derive().with(CONCAVE, concave).with(CORNERS, corners);
         int film = water && !waterInModel(modelData) ? AlgaeFilm.at(pos) : 0; // a contraption has its own film (AlgaeRenderer)
-        if (film != 0) b.with(FILM, (film & 0xFFFFFFFFL) | (long) ((pos.getX() & 3) | (pos.getY() & 3) << 2 | (pos.getZ() & 3) << 4) << 32);
+        if (film != 0) b.with(FILM, (film & 0xFFFFFFFFL) | (long) ((pos.getX() & 15) | (pos.getY() & 15) << 4 | (pos.getZ() & 15) << 8) << 32
+                | (long) (AlgaeFilm.seed(pos) & 0xFFFF) << 44);
         if (flanges != 0) b.with(FLANGES, flanges);
         if (light != 0) b.with(LIGHT, light);
         if (water) b.with(WATER_SMOOTH, true);
@@ -274,8 +274,8 @@ public class TankBakedModel implements DynamicModel {
             var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
             TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), sideSprite = atlas.apply(TankWaterRenderer.SIDE);
             // only the position modulo AlgaeFilm.TILE matters for the film's texture
-            int par = (int) (film >>> 32);
-            net.minecraft.core.BlockPos parity = new net.minecraft.core.BlockPos(par & 3, par >> 2 & 3, par >> 4 & 3);
+            int par = (int) (film >>> 32) & 0xFFF, seed = (int) (film >>> 44) & 0xFFFF;
+            net.minecraft.core.BlockPos parity = new net.minecraft.core.BlockPos(par & 15, par >> 4 & 15, par >> 8 & 15);
             List<BakedQuad> list = new ArrayList<>();
             TankWaterRenderer.faces(state, above, gaps, light, (int) film, new TankWaterRenderer.FaceSink() {
                 @Override
@@ -285,12 +285,14 @@ public class TankBakedModel implements DynamicModel {
 
                 @Override
                 public void film(Direction d, float[] c, int lvl, boolean rev) {
-                    list.add(bakeFilm(d, c, rev, atlas.apply(AlgaeFilm.SPRITES[lvl]), parity));
+                    list.add(bakeFilm(d, c, rev, atlas.apply(AlgaeFilm.SPRITES[lvl]), parity, seed));
                 }
             });
             return List.copyOf(list);
         };
-        List<BakedQuad> plain = film == 0 ? waterCache.computeIfAbsent(key, build) : filmCache.computeIfAbsent(new FilmKey(key, film), k -> build.apply(key));
+        // M67.5: a block with film is built every time (its quads depend on its place in the 16-block tile and the tank's seed: a
+        // cache per key would only grow); the chunk is meshed again only when a film level changes
+        List<BakedQuad> plain = film == 0 ? waterCache.computeIfAbsent(key, build) : build.apply(key);
         return plain;
     }
 
@@ -312,13 +314,13 @@ public class TankBakedModel implements DynamicModel {
      * M66 v6: one algae film quad (see {@link AlgaeFilm}), white: its density is the texture's alpha. Port: smooth light like
      * the water face it lies on (this version lights the model's water by the chunk renderer, not by corner light values).
      */
-    private static BakedQuad bakeFilm(Direction d, float[] c, boolean reversed, TextureAtlasSprite sprite, net.minecraft.core.BlockPos parity) {
+    private static BakedQuad bakeFilm(Direction d, float[] c, boolean reversed, TextureAtlasSprite sprite, net.minecraft.core.BlockPos parity, int seed) {
         QuadBaker q = new QuadBaker().sprite(sprite).direction(reversed ? d.getOpposite() : d).shade(false).tint(-1).ao(true);
         float nx = reversed ? -d.getStepX() : d.getStepX(), nz = reversed ? -d.getStepZ() : d.getStepZ();
         for (int k = 0; k < 4; k++) {
             int i = reversed ? 3 - k : k;
             float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
-            q.vertex(x, y, z, 0xFFFFFFFF, sprite.getU(AlgaeFilm.u(d, parity, x, y, z)), sprite.getV(AlgaeFilm.v(parity, y)), nx, 0, nz);
+            q.vertex(x, y, z, 0xFFFFFFFF, sprite.getU(AlgaeFilm.u(d, parity, seed, x, y, z)), sprite.getV(AlgaeFilm.v(parity, seed, d, y)), nx, 0, nz);
         }
         return q.bake();
     }

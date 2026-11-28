@@ -173,7 +173,7 @@ public class BettaRenderer extends MobRenderer<BettaEntity, MobState<BettaEntity
                 : (float) Math.min(1.0, v / 0.04);
         float f = (fish.isSick() ? 2.0F : 1.2F + 3.1F * swim) * Mth.sin(0.6F * bob);
         pose.mulPose(Axis.YP.rotationDegrees(f));
-        if (!fish.isInWater()) {
+        if (FishFlop.outOfWater(fish)) {
             pose.translate(0.1F, 0.1F, -0.1F);
             pose.mulPose(Axis.ZP.rotationDegrees(90.0F));
         }

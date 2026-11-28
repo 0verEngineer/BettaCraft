@@ -50,7 +50,7 @@ feature: aquaticPlants.enabled
 
 Every plant has **real leaves** instead of leaf blocks, inside the interior and in the miniature outside the aquarium,
 and they sway in the water. The blocks are still there (shears and breaking work as before), they are only drawn
-differently. From further away than 24 blocks the miniature shows the plants as pixels again
+differently. From further away than 12 blocks the miniature shows the plants as pixels again
 (`render.miniaturePlantMeshDistance`). In the Mod settings (*Rendering*, `render.plantMeshes`) every player can switch
 back to the blocks; `features.visuals.plantMeshes` switches it off for the whole pack.
 
