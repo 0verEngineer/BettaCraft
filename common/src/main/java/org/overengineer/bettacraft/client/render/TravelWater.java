@@ -50,6 +50,34 @@ public final class TravelWater {
 
     private TravelWater() {}
 
+    /**
+     * M67.5: the render type of a travelling tank's water and of the algae film on its glass ({@link AlgaeRenderer}): the
+     * entity translucent pipeline on the block atlas, sorted back to front on upload, but without writing depth. Water and film
+     * of one tank go into this one batch, so they blend in the right order among each other, and nothing of it hides the
+     * glass and water behind it.
+     */
+    public static final class Types {
+        private Types() {}
+
+        public static final net.minecraft.client.renderer.rendertype.RenderType WATER = net.minecraft.client.renderer.rendertype.RenderType.create(
+                "bettacraft_travel_water",
+                net.minecraft.client.renderer.rendertype.RenderSetup.builder(com.mojang.renderpearl.api.pipeline.RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.ENTITY_SNIPPET)
+                        .withLocation(org.overengineer.bettacraft.BettaCraft.id("pipeline/travel_water"))
+                        .withShaderDefine("ALPHA_CUTOUT", 0.1F)
+                        .withShaderDefine("PER_FACE_LIGHTING")
+                        .withBindGroupLayout(net.minecraft.client.renderer.BindGroupLayouts.SAMPLER1)
+                        .withColorTargetState(new com.mojang.renderpearl.api.pipeline.ColorTargetState(com.mojang.renderpearl.api.pipeline.BlendFunction.TRANSLUCENT))
+                        .withCull(false)
+                        .withDepthStencilState(new com.mojang.renderpearl.api.pipeline.DepthStencilState(com.mojang.renderpearl.api.pipeline.DepthStencilState.DEFAULT.depthTest(), false))
+                        .build())
+                        .withTexture("Sampler0", net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS)
+                        .useLightmap()
+                        .useOverlay()
+                        .affectsCrumbling()
+                        .sortOnUpload()
+                        .createRenderSetup());
+    }
+
     private static final class Slosh {
         long last;
         Vec3 prev;
@@ -80,6 +108,11 @@ public final class TravelWater {
     /** Called once per frame (start of the level render) so several passes of one frame move the water only once. */
     public static void nextFrame() {
         frame++;
+    }
+
+    /** M67.5: the number of the frame (the miniature's fog is written once a frame). */
+    public static int frame() {
+        return frame;
     }
 
     /** The tilt of a travelling tank's water now: {slope x, slope z, wave amplitude} (dev smoke screenshots, tests). */
@@ -213,7 +246,7 @@ public final class TravelWater {
         }
         var atlas = org.overengineer.bettacraft.client.ClientCompat.blockSprites();
         TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), side = atlas.apply(TankWaterRenderer.SIDE);
-        VertexConsumer vc = buffers.getBuffer(RenderTypes.entityTranslucent(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS));
+        VertexConsumer vc = buffers.getBuffer(Types.WATER);
         PoseStack.Pose p = pose.last();
         double time = (mc.level == null ? 0 : (mc.level.getGameTime() % 24000L)) / 20.0 + org.overengineer.bettacraft.client.ClientCompat.partialTick() / 20.0;
         for (var e : cols.long2LongEntrySet()) {
