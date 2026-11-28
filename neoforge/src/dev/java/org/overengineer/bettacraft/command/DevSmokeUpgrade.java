@@ -108,6 +108,8 @@ public final class DevSmokeUpgrade {
     private static int m68Pipes, m68Roles, m68Filters, m68Docks, m68Containers;
     /** M68: water (mB) open tanks evaporated between the save and the comparison (allowed, logged). */
     private static long evaporated;
+    /** Turtle eggs laid in the tank interiors between the save and the comparison (allowed, logged). */
+    private static int eggsLaid;
     /** M68: the ids the registry aliases turn old blocks (in the world) and old items (in containers) into. */
     static final Map<String, String> M68_BLOCKS = new TreeMap<>(), M68_ITEMS = new TreeMap<>();
     static {
@@ -731,6 +733,16 @@ public final class DevSmokeUpgrade {
             boolean m68 = STAGE == 1 && pipesRef != null;
             JsonObject wantInterior = want.has("interior") ? want.getAsJsonObject("interior") : null;
             if (m68 && wantInterior != null) wantInterior = m68Interior(pos, wantInterior);
+            // eggs laid by the tank's turtles in the ticks since the save are new life, not an upgrade difference
+            if (wantInterior != null && have.get("interior") instanceof JsonObject hi) {
+                String egg = "bettacraft:turtle_eggs";
+                int w = wantInterior.has(egg) ? wantInterior.get(egg).getAsInt() : 0, h = hi.has(egg) ? hi.get(egg).getAsInt() : 0;
+                if (h > w) {
+                    wantInterior = wantInterior.deepCopy();
+                    wantInterior.addProperty(egg, h);
+                    eggsLaid += h - w;
+                }
+            }
             if (wantInterior != null && !wantInterior.equals(have.get("interior"))) {
                 problems.add(where + ": interior " + diff(wantInterior, have.getAsJsonObject("interior")));
             }
@@ -755,6 +767,7 @@ public final class DevSmokeUpgrade {
         LOGGER.info("[smoketest] upgrade stage {}: compared {} tanks, {} animals, {} small animals, {} equipment blocks, {} items in chests: {} difference(s)",
                 STAGE, expected.getAsJsonArray("tanks").size(), animals, critters, equipment, items, problems.size());
         LOGGER.info("[smoketest] upgrade stage {}: {} guppies and endlers converted from their old variety", STAGE, converted);
+        if (eggsLaid > 0) LOGGER.info("[smoketest] upgrade stage {}: {} turtle eggs laid in tank interiors since the save (allowed)", STAGE, eggsLaid);
         if (evaporated > 0) LOGGER.info("[smoketest] upgrade stage {}: {} mB evaporated from open tanks since the save (allowed)", STAGE, evaporated);
         if (STAGE == 1 && legacy && converted < 16) problems.add("only " + converted + " old guppies and endlers converted (the reference has every old variety)");
     }
