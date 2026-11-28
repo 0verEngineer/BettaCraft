@@ -109,7 +109,7 @@ device (`sound.filterVolume`, `airPumpVolume`, `airStoneVolume`, `flowPumpVolume
 and the whir of the flow pumps are off until `sound.airPumpSound` or `sound.flowPumpSound` is switched on. The client
 command `/bettacraft sounds` plays every device sound once, one after another, with its name in the chat. The server config `tank.protectFromExplosionsAndPistons`
 decides whether the break protection also stops explosions and pistons. The **client config** has the animation and miniature distances, the distance up to which the
-miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 24; further away pixels, 0 = always
+miniature shows those plants with real leaves (`render.miniaturePlantMeshDistance`, 12; further away pixels, 0 = always
 pixels), the plant look and the swaying water plants for this player alone (`render.plantMeshes`, `render.swayingPlants`;
 both in the Mod settings, also on a server), the water surface glitter,
 the filter sound, the connected glass textures (`render.connectedGlass`) and the width of the tank edge lines
