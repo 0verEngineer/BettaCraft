@@ -13,13 +13,7 @@ runs/
 __pycache__/
 *.pyc
 tools/assetgen/build/
-# Planungs-Dokumente (lokal, nicht versioniert)
-/PLAN.md
-/OFFEN.md
-/SONSTIGES.md
-/ASSETS-HOW.md
-/optional-features.md
-# Fertige Test-Builds pro Meilenstein
+# local test builds of each milestone
 /builds/
 # Gradle extras
 repo/
