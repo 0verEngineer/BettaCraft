@@ -1,12 +1,13 @@
-# Build and tests.
+# Build and tests. M69: the same file on every branch (master = Minecraft 1.21.1, one branch per other Minecraft version);
+# the branch facts (Java, run directories, whether the power mods exist) come from tools/ci/branch.sh.
 #
 # Lean on every push to master and on pull requests (private repository: Actions minutes are limited):
 #   build (compile, unit tests, verifyReleaseJar), CHANGELOG top section, runData output unchanged, GameTests,
 #   one dedicated-server smoke test (aquarium mods, Jade, JEI, GuideME on the server).
 # Full when started by hand with "full" ticked (Actions > Build > Run workflow) and before every release (release.yml
 # calls this workflow with full: true): additionally the server smoke without any optional mod, with The One Probe and
-# WTHIT, and the GameTests with the power mods of -Ppower (M59: downloaded by Gradle from their official sources, pinned
-# and hash-checked in dev-mods.json; only the download cache keeps them, never an artifact).
+# WTHIT, and the GameTests with the power mods of -Ppower where the branch has them (M59: downloaded by Gradle from their
+# official sources, pinned and hash-checked in gradle/dev-mods.json; only the download cache keeps them, never an artifact).
 # Not here: client smoke tests (need a window / GPU), the multiplayer test, buildShowcase and smoketestUpgrade (slow: it builds
 # its reference world from an old commit). The mod groups (integration, zoo, Fabric groups) run in the manual workflow
 # integration.yml.
@@ -17,11 +18,11 @@ run-name: "Build ${{ github.event_name == 'pull_request' && format('PR #{0} ({1}
 
 on:
   push:
-    branches: [master, "26.3"]
-    paths-ignore: ["README.md", "FEATURES.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
+    branches: [master, "1.21.11", "26.1.2", "26.2", "26.3"]
+    paths-ignore: ["README.md", "CLAUDE.md", "FEATURES.md", "docs/**", "LICENSE", ".gitignore", ".gitattributes"]
   pull_request:
-    branches: [master, "26.3"]
-    paths-ignore: ["README.md", "FEATURES.md", "LICENSE", ".gitignore", ".gitattributes", "docs/**"]
+    branches: [master, "1.21.11", "26.1.2", "26.2", "26.3"]
+    paths-ignore: ["README.md", "CLAUDE.md", "FEATURES.md", "docs/**", "LICENSE", ".gitignore", ".gitattributes"]
   workflow_dispatch:
     inputs:
       full:
@@ -71,12 +72,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Java 25
+      - name: Branch facts (Minecraft, Java, run directories)
+        id: branch
+        run: bash tools/ci/branch.sh
+
+      - name: Set up Java ${{ steps.branch.outputs.java }}
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # M52c: 26.1 runs on Java 25 (the Gradle daemon and the game)
-          java-version: 25
+          # 25 for the Gradle daemon (Fabric Loom, gradle/gradle-daemon-jvm.properties) and java_version of the game (the
+          # last one is the default)
+          java-version: ${{ steps.branch.outputs.java_versions }}
 
       - name: Set up Gradle (cache, wrapper validation)
         uses: gradle/actions/setup-gradle@v6
@@ -119,8 +125,6 @@ jobs:
       - name: Dedicated server smoke test (aquarium mods, Jade, JEI, GuideME)
         if: inputs.loader != 'fabric'
         run: |
-          mkdir -p run/26.3
-          echo "eula=true" > run/26.3/eula.txt
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew runServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-default.log
           grep -q "\[smoketest\] PASSED" smoke-default.log
@@ -133,11 +137,14 @@ jobs:
           ./gradlew runFabricGameTest $GRADLE_ARGS 2>&1 | tee gametest-fabric.log
 
       - name: Failed Fabric GameTests
-        if: failure() && inputs.loader != 'neoforge' && hashFiles('run/26.3/fabric/gametest/report.xml') != ''
+        if: failure() && inputs.loader != 'neoforge' && hashFiles(format('{0}/gametest/report.xml', steps.branch.outputs.fabric_run_dir)) != ''
+        env:
+          REPORT: ${{ steps.branch.outputs.fabric_run_dir }}/gametest/report.xml
         run: |
           python3 - <<'PY' || true
+          import os
           import xml.etree.ElementTree as ET
-          for tc in ET.parse('run/26.3/fabric/gametest/report.xml').iter('testcase'):
+          for tc in ET.parse(os.environ['REPORT']).iter('testcase'):
               f = tc.find('failure')
               if f is not None:
                   print('::error title=Fabric GameTest failed::' + tc.get('name') + ': ' + (f.get('message') or ''))
@@ -146,8 +153,6 @@ jobs:
       - name: Fabric dedicated server smoke test
         if: inputs.loader != 'neoforge'
         run: |
-          mkdir -p run/26.3/fabric/server
-          echo "eula=true" > run/26.3/fabric/server/eula.txt
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ./gradlew runFabricServer -Psmoketest $GRADLE_ARGS 2>&1 | tee smoke-fabric.log
           grep -q "\[smoketest\] PASSED" smoke-fabric.log
@@ -168,14 +173,14 @@ jobs:
         with:
           name: logs-build
           path: |
-            run/26.3/logs/
-            run/26.3/gametest/logs/
-            run/26.3/data/logs/
+            ${{ steps.branch.outputs.run_dir }}/logs/
+            ${{ steps.branch.outputs.run_dir }}/gametest/logs/
+            ${{ steps.branch.outputs.run_dir }}/data/logs/
             gametest.log
             gametest-fabric.log
-            run/26.3/fabric/server/logs/
-            run/26.3/fabric/gametest/logs/
-            run/26.3/fabric/gametest/report.xml
+            ${{ steps.branch.outputs.fabric_run_dir }}/server/logs/
+            ${{ steps.branch.outputs.fabric_run_dir }}/gametest/logs/
+            ${{ steps.branch.outputs.fabric_run_dir }}/gametest/report.xml
             smoke-*.log
             build/reports/
             common/build/reports/
@@ -215,36 +220,48 @@ jobs:
             loader: fabric
             run: ./gradlew fabricSaveLoadTest
             check: exit
+          # only where gradle/dev-mods.json has power mods for the branch's Minecraft version (none on 1.21.11)
           - name: GameTests with the power mods (-Ppower)
             id: gametest-power
             loader: neoforge
             run: ./gradlew runGameTestServer -Ppower
             check: exit
+            needs: power
     steps:
       - name: Checkout
         if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
         uses: actions/checkout@v7
 
-      - name: Set up Java 25
+      - name: Branch facts (Minecraft, Java, run directories, power mods)
+        id: branch
         if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
+        run: |
+          bash tools/ci/branch.sh
+          run=true
+          if [ "${{ matrix.needs }}" = power ] && [ "$(grep '^power=' "$GITHUB_OUTPUT" | tail -1 | cut -d= -f2)" != true ]; then
+            echo "::notice::${{ matrix.name }}: gradle/dev-mods.json has no power mods for this Minecraft version, skipped"
+            run=false
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java ${{ steps.branch.outputs.java }}
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && steps.branch.outputs.run == 'true'
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          # M52c: 26.1 runs on Java 25 (the Gradle daemon and the game)
-          java-version: 25
+          # 25 for the Gradle daemon (Fabric Loom, gradle/gradle-daemon-jvm.properties) and java_version of the game
+          java-version: ${{ steps.branch.outputs.java_versions }}
 
       - name: Set up Gradle
-        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && steps.branch.outputs.run == 'true'
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: true
 
       - name: ${{ matrix.name }}
-        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader)
+        if: (inputs.loader != 'neoforge' && inputs.loader != 'fabric' || inputs.loader == matrix.loader) && steps.branch.outputs.run == 'true'
         run: |
           chmod +x gradlew
-          mkdir -p run/26.3
-          echo "eula=true" > run/26.3/eula.txt
           # shellcheck disable=SC2086 # GRADLE_ARGS (and the task list) are split into words on purpose
           ${{ matrix.run }} $GRADLE_ARGS 2>&1 | tee "${{ matrix.id }}.log"
           if [ "${{ matrix.check }}" = smoke ]; then grep -q "\[smoketest\] PASSED" "${{ matrix.id }}.log"; fi
@@ -260,8 +277,9 @@ jobs:
         with:
           name: logs-${{ matrix.id }}
           path: |
-            run/26.3/logs/
-            run/26.3/gametest/logs/
+            ${{ steps.branch.outputs.run_dir }}/logs/
+            ${{ steps.branch.outputs.run_dir }}/gametest/logs/
+            ${{ steps.branch.outputs.fabric_run_dir }}/prod-server/logs/
             ${{ matrix.id }}.log
             build/saveload-fabric/
           retention-days: 7

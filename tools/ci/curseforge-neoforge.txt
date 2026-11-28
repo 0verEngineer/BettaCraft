@@ -1,0 +1,16 @@
+# CurseForge dependencies of the NeoForge file of this branch (read by tools/ci/release_tag.sh for release.yml, M69):
+# one slug(required|optional) per line. Every integrated mod that has a CurseForge file for this Minecraft version and
+# loader (slugs checked on their project pages; a wrong slug fails the upload).
+jade(optional)
+guideme(optional)
+jei(optional)
+the-one-probe(optional)
+wthit-forge(optional)
+fish-of-thieves(optional)
+aquaculture(optional)
+living-things(optional)
+journeymap(optional)
+biomes-o-plenty(optional)
+better-fishtanks(optional)
+naturalist(optional)
+applied-energistics-2(optional)
