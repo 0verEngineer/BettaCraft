@@ -2,8 +2,7 @@
 # the server smokes, one after another (background windows, muted). One Gradle task with its arguments per line.
 # A milestone that changes rendering or menus adds its own scene as an argument:
 #   tools/test-matrix.sh "runClient -Psmoketestm69" "runFabricClient -Psmoketestm69"
-# the title screen and the basic world scene (two tanks) on NeoForge
+# the title screen on NeoForge (-Psmoketestworld, every scene of every milestone, takes far longer than a step may: run it on its own)
 runClient -Psmoketest
-runClient -Psmoketestworld
 # the M11 + M13 scenes on Fabric
 runFabricClient -Psmoketestfabric
