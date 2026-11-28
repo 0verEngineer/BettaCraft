@@ -21,7 +21,8 @@ Die <ItemLink id="bettacraft:air_pump" /> ist eine kleine Membranpumpe. Stell si
 Seite) oder **oben darauf**: ihr Luftschlauch führt über den Glasrand ins Wasser. Sie treibt die
 [Ausströmersteine](air_stone.md) und die [Schwammfilter](sponge_filter.md) im [Innenraum](../interior.md) dieses
 Aquariums. Sie kann auch **in den [Aquariumschrank](cabinet.md)** unter dem Aquarium (eigener Platz im Schrank-Menü):
-ihr Schlauch läuft dann zusammen mit dem Filterschlauch an der Auslass-Seite des Schranks hoch.
+ihr Schlauch läuft dann zusammen mit dem Filterschlauch an der Auslass-Seite des Schranks hoch. Ohne Außenfilter im
+Schrank wird kein Schlauch gezeichnet (die Ausströmer sprudeln trotzdem).
 
 Der Schlauch führt innen an der Scheibe bis zum Boden und endet dort (er liegt nicht über den Boden zu den Ausströmern und Schwammfiltern).
 

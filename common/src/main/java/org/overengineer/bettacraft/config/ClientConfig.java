@@ -51,7 +51,7 @@ public final class ClientConfig {
         WATER_SURFACE_ANIMATION = b.comment("Animated glitter on the tank water surface").define("waterSurfaceAnimation", true);
         MINIATURE_RENDER_DISTANCE = b.comment("Distance (blocks) up to which tank interiors are rendered as miniature").defineInRange("miniatureRenderDistance", 64, 8, 512);
         MINIATURE_PLANT_MESH_DISTANCE = b.comment("Distance (blocks) up to which the miniature of a tank shows the plants with real leaves (like inside, features.visuals.plantMeshes); further away they are drawn as pixels again. 0 = always as pixels")
-                .defineInRange("miniaturePlantMeshDistance", 24, 0, 256);
+                .defineInRange("miniaturePlantMeshDistance", 12, 0, 256); // M67.5: 12 (was 24), the leaves cost frame time
         PLANT_MESHES = b.comment("Aquarium plants and corals with real leaves, polyps and tentacles that move in the water, inside the tank and in the "
                 + "miniature (off: the old block look, only for you; the pack switch features.visuals.plantMeshes turns it off for everyone)").define("plantMeshes", true);
         SWAYING_PLANTS = b.comment("Kelp, seagrass, corals and the water plants of other mods sway in the miniature outside the tank, the roots of the floating plants in the water (off: they stand still, only "

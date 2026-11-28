@@ -158,7 +158,11 @@ public final class MiniatureRenderer {
             MiniatureSway.beginFrame();
             uploadResults();
             boolean pack = IrisCompat.shaderPackInUse();
-            for (TankBlockEntity be : TankBlockEntity.CLIENT_CONTROLLERS) {
+            // M67.5 (point 16): the nearest tanks first. After a shader pack switch every tank in range is meshed again; in an
+            // unordered pass the tank in front of the camera waited behind hundreds of others and stayed empty for a long time
+            List<TankBlockEntity> byDistance = new ArrayList<>(TankBlockEntity.CLIENT_CONTROLLERS);
+            byDistance.sort(java.util.Comparator.comparingDouble(be -> be.getBlockPos().distToCenterSqr(cam)));
+            for (TankBlockEntity be : byDistance) {
                 TankData t = be.getTank();
                 if (t == null || t.regionId() < 0 || be.getLevel() != mc.level) continue;
                 if (org.overengineer.bettacraft.client.render.TravellingTankRenderer.travelling(be)) continue; // M32 part b: drawn at the ship's pose
@@ -352,7 +356,13 @@ public final class MiniatureRenderer {
         private static void add(Map<ChunkSectionLayer, ByteBufferBuilder> mems, Map<ChunkSectionLayer, BufferBuilder> bbs, ChunkSectionLayer layer, int size) {
             ByteBufferBuilder mem = new ByteBufferBuilder(size);
             mems.put(layer, mem);
-            bbs.put(layer, new BufferBuilder(mem, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK));
+            // M67.5 (point 16): exactly the vertex format of the pipeline that draws the layer now (drawFormat): Iris extends a
+            // block-format builder while a pack is in use, but the pipelines keep the format they had when the game started; after
+            // a pack was switched on in a running game every mesh came out extended against a plain pipeline, was taken for stale,
+            // rebuilt and never drawn
+            boolean extend = !drawFormat(layer).equals(DefaultVertexFormat.BLOCK);
+            BufferBuilder bb = IrisCompat.withExtension(extend, () -> new BufferBuilder(mem, com.mojang.renderpearl.api.pipeline.PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK));
+            bbs.put(layer, bb);
         }
 
         List<ByteBufferBuilder> memory() {
@@ -546,7 +556,7 @@ public final class MiniatureRenderer {
         java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
         for (ChunkSectionLayer rt : layers) {
             List<MiniatureMesh.Buffer> l = new ArrayList<>();
-            com.mojang.renderpearl.api.vertex.VertexFormat format = rt.vertexFormat();
+            com.mojang.renderpearl.api.vertex.VertexFormat format = drawFormat(rt);
             for (var me : region.meshes.long2ObjectEntrySet()) {
                 MiniatureMesh m = me.getValue();
                 if (!m.formatMatches(rt, format)) {
@@ -574,20 +584,25 @@ public final class MiniatureRenderer {
     }
 
     /**
-     * M52b: draws miniature buffers with the terrain pipelines of 1.21.11, like {@code ChunkSectionsToRender}: the
-     * terrain shader computes {@code Position + (ChunkPosition - CameraBlockPos) + CameraOffset}; with the chunk position at
-     * the camera's block that is the interior-local position plus the camera's fraction, which the model-view matrix takes
-     * back out before scaling the interior into the tank (the fog then sees interior-local distances, as in 1.21.1).
+     * M52b: draws miniature buffers with the terrain pipelines, like {@code ChunkSectionsToRender}: the terrain shader computes
+     * {@code Position + (ChunkPosition - CameraBlockPos) + CameraOffset}, i.e. {@code Position + chunk - camera}. M67.5: the
+     * chunk position carries the camera vector in region units (whole blocks; {@link MiniatureFog#chunk}) and the model-view
+     * matrix only the view, the scale and the rest of a block, so the fog sees the camera distance (in region units, with the
+     * fog distances scaled to match: {@link MiniatureFog#scaled}); before, it saw the distance from the region's corner.
      */
     static void drawBuffers(org.joml.Matrix4fc view, Vec3 cam, double originX, double originY, double originZ, float fx, float fy, float fz,
                             java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
-        int bx = net.minecraft.util.Mth.floor(cam.x), by = net.minecraft.util.Mth.floor(cam.y), bz = net.minecraft.util.Mth.floor(cam.z);
-        float ox = (float) (bx - cam.x), oy = (float) (by - cam.y), oz = (float) (bz - cam.z);
-        Matrix4f mv = new Matrix4f(view)
-                .translate((float) (originX - cam.x) + MARGIN, (float) (originY - cam.y) + MARGIN, (float) (originZ - cam.z) + MARGIN)
-                .scale(fx, fy, fz)
-                .translate(-ox, -oy, -oz);
-        drawWithModelView(mv, bx, by, bz, byLayer);
+        Matrix4f lin = new Matrix4f(view).scale(fx, fy, fz);
+        org.joml.Vector3d offset = new org.joml.Vector3d((originX - cam.x + MARGIN) / fx, (originY - cam.y + MARGIN) / fy, (originZ - cam.z + MARGIN) / fz);
+        drawAt(lin, offset, cam, (fx + fy + fz) / 3F, byLayer);
+    }
+
+    /** M67.5: the draw for the linear part {@code lin} and the camera vector {@code offset} (region units). */
+    private static void drawAt(Matrix4f lin, org.joml.Vector3d offset, Vec3 cam, float scale, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
+        org.joml.Vector3d rest = new org.joml.Vector3d();
+        int[] chunk = MiniatureFog.chunk(cam, offset, rest);
+        Matrix4f mv = new Matrix4f(lin).translate((float) -rest.x, (float) -rest.y, (float) -rest.z);
+        drawWithModelView(mv, chunk[0], chunk[1], chunk[2], byLayer, IrisCompat.shaderPackInUse() ? null : MiniatureFog.scaled(scale));
     }
 
     /**
@@ -610,7 +625,8 @@ public final class MiniatureRenderer {
         return chunkSections;
     }
 
-    static void drawWithModelView(Matrix4f mv, int chunkX, int chunkY, int chunkZ, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer) {
+    static void drawWithModelView(Matrix4f mv, int chunkX, int chunkY, int chunkZ, java.util.Map<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer,
+                                  @org.jetbrains.annotations.Nullable com.mojang.renderpearl.api.buffers.GpuBufferSlice fog) {
         Minecraft mc = Minecraft.getInstance();
         var atlas = mc.getTextureManager().getTexture(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).getTextureView();
         var gpuData = RenderSystem.getDynamicUniforms();
@@ -646,6 +662,7 @@ public final class MiniatureRenderer {
             } else {
                 pass.setUniform("DynamicTransforms", iris);
             }
+            if (fog != null) pass.setUniform("Fog", fog); // M67.5: the frame's fog scaled to region units
             pass.setUniform("Sampler0", atlas, sampler);
             pass.setUniform("Sampler2", lightmap, lightSampler);
             pass.setIndexBuffer(quads.getBuffer(), quads.type());
@@ -667,6 +684,21 @@ public final class MiniatureRenderer {
      * modulator changed nothing. The block pipelines take the same vertices and the same transform (the one Iris reads
      * anyway, see the M63b note in drawWithModelView) and come out in colour with every pack.
      */
+    /**
+     * M67.5 (point 16): the vertex format of the pipeline that draws {@code layer} now: with a shader pack the block pipeline
+     * ({@link #blockPipeline}), else the terrain one. The meshes were checked against the terrain layer's format only. Iris
+     * extends the block format when a pack is switched on in a running game but the terrain layer keeps its format, so every
+     * mesh built after the switch (block format, extended) looked stale against it: it was rebuilt and never drawn, and the
+     * miniatures, their substrate and decor stayed away (fine with the pack active from the start, both formats extended then).
+     */
+    private static com.mojang.renderpearl.api.vertex.VertexFormat drawFormat(ChunkSectionLayer layer) {
+        if (IrisCompat.shaderPackInUse()) {
+            com.mojang.renderpearl.api.vertex.VertexFormat f = blockPipeline(layer).getVertexFormatBinding(0);
+            if (f != null) return f;
+        }
+        return layer.vertexFormat();
+    }
+
     private static com.mojang.renderpearl.api.pipeline.RenderPipeline blockPipeline(ChunkSectionLayer layer) {
         return switch (layer) {
             case SOLID -> net.minecraft.client.renderer.RenderPipelines.SOLID_BLOCK;
@@ -700,7 +732,7 @@ public final class MiniatureRenderer {
         java.util.EnumMap<ChunkSectionLayer, List<MiniatureMesh.Buffer>> byLayer = new java.util.EnumMap<>(ChunkSectionLayer.class);
         for (ChunkSectionLayer rt : layers) {
             List<MiniatureMesh.Buffer> l = new ArrayList<>();
-            com.mojang.renderpearl.api.vertex.VertexFormat format = rt.vertexFormat();
+            com.mojang.renderpearl.api.vertex.VertexFormat format = drawFormat(rt);
             for (var me : region.meshes.long2ObjectEntrySet()) {
                 MiniatureMesh m = me.getValue();
                 if (!m.formatMatches(rt, format)) {
@@ -715,14 +747,16 @@ public final class MiniatureRenderer {
             if (!l.isEmpty()) byLayer.put(rt, l);
         }
         if (byLayer.isEmpty()) return;
-        // the pose is camera-relative at the controller block: the chunk position is 0, the camera fraction is in the pose
-        Matrix4f mv = modelView.mul(tr.pose())
-                .translate(min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN)
-                .scale(fx, fy, fz);
-        Vec3 cam = Minecraft.getInstance().gameRenderer.mainCamera().position();
-        int bx = net.minecraft.util.Mth.floor(cam.x), by = net.minecraft.util.Mth.floor(cam.y), bz = net.minecraft.util.Mth.floor(cam.z);
-        mv.translate((float) (cam.x - bx), (float) (cam.y - by), (float) (cam.z - bz));
-        drawWithModelView(mv, bx, by, bz, byLayer);
+        // the pose is camera-relative at the controller block (pose = T(c) * L): L * (s * p + t) + c = L * s * (p + (t + L^-1 c) / s);
+        // M67.5: the camera vector in region units goes to the chunk position (see drawBuffers), the rotation stays in the matrix
+        Matrix4f pose = new Matrix4f(tr.pose());
+        org.joml.Vector3f c = pose.getTranslation(new org.joml.Vector3f());
+        Matrix4f rot = new Matrix4f(pose).setTranslation(0, 0, 0);
+        new Matrix4f(rot).invert().transformDirection(c);
+        float tx = min.getX() - o.getX() + MARGIN, ty = min.getY() - o.getY() + MARGIN, tz = min.getZ() - o.getZ() + MARGIN;
+        Matrix4f lin = new Matrix4f(modelView).mul(rot).scale(fx, fy, fz);
+        org.joml.Vector3d offset = new org.joml.Vector3d((tx + c.x) / fx, (ty + c.y) / fy, (tz + c.z) / fz);
+        drawAt(lin, offset, Minecraft.getInstance().gameRenderer.mainCamera().position(), (fx + fy + fz) / 3F, byLayer);
     }
 
     /** Releases everything of a region (render thread). */

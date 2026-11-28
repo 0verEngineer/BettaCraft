@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * M21.1, {@code -Pshowcasebench}: instead of the pictures a frame-time bench of the plant meshes outside: at a few spots
  * (in front of the plant row, the whole showcase from above) the frames of 10 s are measured with
- * {@code render.miniaturePlantMeshDistance} 0 (voxels, as before), 24 (default) and 256 (every tank with meshes);
+ * {@code render.miniaturePlantMeshDistance} 0 (voxels, as before), 12 (default) and 256 (every tank with meshes);
  * logged as {@code [smoketest] bench ...} lines, plus a picture per spot and setting.
  */
 final class DevClientShowcaseTour {

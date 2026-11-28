@@ -132,6 +132,8 @@ neoForge {
             if (project.hasProperty('shaders')) systemProperty 'neoforge.disableGlValidation', 'true'
             // M54: every dev client is silent (BackgroundSoundMixin; the saved options stay as they are); -Psound to hear it
             if (!project.hasProperty('sound')) systemProperty 'bettacraft.silent', 'true'
+            // M67.5: no dev client waits for VSync (BackgroundVsyncMixin; the saved option stays as it is); -Pvsync to keep it
+            if (!project.hasProperty('vsync')) systemProperty 'bettacraft.novsync', 'true'
             // gradlew runClient -Psmoketest : quits automatically once the title screen is reached
             if (project.hasProperty('smoketest')) systemProperty 'bettacraft.smoketest', 'true'
             // gradlew runClient -Psmoketestworld : flat world with two tanks, screenshots to run/screenshots, then quits
@@ -452,6 +454,14 @@ neoForge {
                 // run/screenshots/bettacraft_m68_<shot>.png)
                 systemProperty 'bettacraft.smoketest.world', 'true'
                 systemProperty 'bettacraft.smoketest.m68only', 'true'
+            }
+            if (project.hasProperty('smoketestm675')) {
+                // gradlew runClient -Psmoketestm675 [-Pm675parts=animals,algae,screens,cabinet,bigtank,create] (create: with -Pcreate): the
+                // points of M67.5 (animals at the glass, algae pattern, release confirmation, cabinet hose, big tank haze and under water,
+                // algae on a contraption with its guard; run/screenshots/bettacraft_m675_<shot>.png)
+                systemProperty 'bettacraft.smoketest.world', 'true'
+                systemProperty 'bettacraft.smoketest.m675only', 'true'
+                if (project.hasProperty('m675parts')) systemProperty 'bettacraft.smoketest.m675parts', project.property('m675parts').toString()
             }
             if (project.hasProperty('smoketestm67')) {
                 // gradlew runClient -Psmoketestm67: the M67 scene (one energy store per tank on EASY: the crank at a joined cabinet, the tank
@@ -951,6 +961,7 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
+            mod_homepage           : mod_homepage,
     ]
     inputs.properties replaceProperties
     expand replaceProperties

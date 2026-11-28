@@ -110,7 +110,31 @@ public final class CritterMovement {
 
     /** Distance an animal keeps from the glass while it walks on the floor. */
     public static double margin(CritterSpecies s) {
-        return GLASS_INSET + s.length() * 0.3;
+        // at most MAX_MARGIN: a big crayfish still finds room in a tank one block wide (it walks along it there)
+        return GLASS_INSET + Math.min(MAX_MARGIN - GLASS_INSET, s.length() * reach(s.model()));
+    }
+
+    /** M67.5: the largest margin (blocks), so a floor one block wide keeps a strip of 0.16 blocks to walk on. */
+    static final double MAX_MARGIN = 0.42;
+
+    /**
+     * M67.5: how far the drawn model reaches from its centre in any heading, as a share of the species' length: the farthest
+     * corner (feelers, claws, tentacles and legs included) of {@code tools/assetgen/critters.py}'s models in the ground plane,
+     * plus a little for the swaying feelers. With 0.3 an animal facing the glass put its feelers, claws or a snail's tentacles
+     * through it.
+     */
+    public static double reach(CritterSpecies.Model m) {
+        return switch (m) {
+            case SHRIMP -> 0.70;
+            case CRAYFISH -> 0.82;
+            case NERITE -> 0.58;
+            case APPLE -> 0.73;
+            case RAMSHORN -> 0.57;
+            case BLADDER, TRUMPET, ASSASSIN -> 0.52;
+            case HERMIT -> 0.47;
+            case TURBO -> 0.62;
+            case TYLOMELANIA -> 0.57;
+        };
     }
 
     /** Whether an animal can stand at (x, y, z): inside the tank's blocks with the margin and under water. */
