@@ -466,8 +466,8 @@ git clone https://github.com/0verEngineer/BettaCraft.git && cd BettaCraft
 
 **Other mods are not shipped with the repository.** Their jars are downloaded from their official sources (Modrinth,
 CurseForge through CurseMaven, the FTB Maven) the first time a run needs them, checked against the SHA-1 and SHA-256 in
-`dev-mods.json` (a mismatch stops the build) and kept in the Gradle cache (afterwards `--offline` works). A build without a
-group flag never downloads anything. `dev-mods.json` lists for each loader and group folder (`run/<group>-mods`, Fabric
+`gradle/dev-mods.json` (a mismatch stops the build) and kept in the Gradle cache (afterwards `--offline` works). A build without a
+group flag never downloads anything. `gradle/dev-mods.json` lists for each loader and group folder (`run/<group>-mods`, Fabric
 `run-fabric/<group>-mods`; on the port branches `run/<mc>/...`) the exact file of every mod; the group folders belong to it (a
 jar it does not list is moved to `run/local-mods-backup/<date>/`). To try a mod out, put it into `run/local-mods` (Fabric:
 `run-fabric/local-mods`) and add `-Plocal`; to keep it, add it to its group folder and run `py tools/devmods/update_manifest.py`,
@@ -498,7 +498,7 @@ The integrations with other mods have an optional test suite of their own that n
 It loads the dev mod groups of every mod Bettacraft integrates (`-Ppower`, `-Paquatic`, `-Pbiomes`, `-Pstorage`, `-Pcreate`,
 `-Pquests`, `-Pkubejs`, `-Pfacades`, for the client also `-Pmaps`) plus `run/integration-mods` (Integrated Dynamics and
 Integrated Tunnels, XNet, LaserIO, Modular Routers, Industrial Foregoing, their libraries, and Athena and Farmer's Delight
-that other mods of the group look for). The jars are downloaded by `dev-mods.json` (see "Running the tests";
+that other mods of the group look for). The jars are downloaded by `gradle/dev-mods.json` (see "Running the tests";
 `-Pintegration` works with any run task).
 The GameTest server runs in `run/gametest-integration` and adds the integration-only tests (`gametest/integration`): items,
 fluids and FE through the pipes, cables and networks of Pipez, EnderIO, Mekanism, Create, AE2, Refined Storage, Integrated
@@ -523,7 +523,7 @@ integrate (no profile of its own):
 ./gradlew runClient -Pzoo -Psmoketestm42b --no-configuration-cache          # the miniature with those animals and plants
 ```
 
-It loads `run/zoo-mods` (downloaded by `dev-mods.json`: the Aether, Ars Nouveau and Ars Elemental, Productive Bees,
+It loads `run/zoo-mods` (downloaded by `gradle/dev-mods.json`: the Aether, Ars Nouveau and Ars Elemental, Productive Bees,
 Occultism, Thaumaturge, EvilCraft, Actually Additions, Mahou Tsukai, Psychadelic Chemistry, Fungi Delight, Oritech Things and
 Garnished with their libraries) together with the groups `-Paquatic`, `-Pbiomes` and `-Pcreate`, whose animals without a
 profile count too. The zoo tests survey every foreign mob and water plant without a profile: how each way in decides (its own
@@ -541,7 +541,7 @@ lost or doubled, a refused animal left in the tank, an inhabited tank that can b
   Fabric GameTests and a dedicated server smoke test on both loaders. Started by hand with *full* (and before every
   release) it also runs the server smoke without any optional mod and with The One Probe and WTHIT, the Fabric production
   server smoke, the Fabric save and load test, and the GameTests with the power mods of `-Ppower` (downloaded by
-  `dev-mods.json` like locally). A failed GameTest shows
+  `gradle/dev-mods.json` like locally). A failed GameTest shows
   up with its message as an annotation on the run page.
 - **Release** (`.github/workflows/release.yml`, a pushed tag `v<mod_version>+<loader>-<mc>`, e.g.
   `v1.42.0-beta.1+neoforge-1.21.1` or `v1.42.0-beta.1+fabric-26.1.2`, one tag per loader on the branch of that Minecraft
@@ -551,7 +551,7 @@ lost or doubled, a refused animal left in the tank, an inhabited tank that can b
   site; the loader, the Minecraft versions and that loader's dependencies). A manual run is a dry run. It also builds the CurseForge project description (`curseforgeDescription`, see below) as a workflow artifact.
 - **Integration tests** (`.github/workflows/integration.yml`, only started by hand; choose `all`, `integration`, `zoo` or
   `fabric`): `gradlew integrationTests`, `gradlew zooTests` and `gradlew runFabricGameTest -Pfabricintegration -Pquests`,
-  with every mod of `dev-mods.json` downloaded from its official source like locally. Only logs are uploaded, never a mod.
+  with every mod of `gradle/dev-mods.json` downloaded from its official source like locally. Only logs are uploaded, never a mod.
 - The same checks locally:
 
 ```

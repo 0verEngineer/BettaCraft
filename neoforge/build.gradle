@@ -88,7 +88,7 @@ configurations {
 // LaserIO, Modular Routers, Industrial Foregoing and their libraries, of ATM10AA). The GameTest server then runs in a
 // directory of its own (run/gametest-integration) and also registers the integration-only GameTests of
 // gametest/integration (system property bettacraft.integration); the normal suite never contains them.
-// M59: every jar of the groups is downloaded from its official source by the manifest dev-mods.json (gradle/dev-mods.gradle),
+// M59: every jar of the groups is downloaded from its official source by the manifest gradle/dev-mods.json (gradle/dev-mods.gradle),
 // locally and in CI alike; the partial CI run (-PintegrationPartial, tools/ci) is gone.
 def integration = project.hasProperty('integration') || gradle.startParameter.taskNames.any { it.toLowerCase().endsWith('integrationtests') }
 // M42 part b: the zoo, the other half of the optional suite. gradlew zooTests (or any run task with -Pzoo) puts run/zoo-mods
@@ -920,7 +920,7 @@ test {
     inputs.files(commonProject.fileTree('src/main/resources/assets'), commonProject.fileTree('src/generated/resources'))
         .withPropertyName('langSources')
     // M59: DevModsManifestTest reads the manifest of the dev mod groups and the build files
-    inputs.files(rootProject.file('dev-mods.json'), rootProject.file('gradle/dev-mods.gradle'), rootProject.file('neoforge/build.gradle'),
+    inputs.files(rootProject.file('gradle/dev-mods.json'), rootProject.file('gradle/dev-mods.gradle'), rootProject.file('neoforge/build.gradle'),
             rootProject.file('fabric/build.gradle')).withPropertyName('devModsManifest')
     testLogging {
         events 'failed', 'skipped'
@@ -984,7 +984,7 @@ idea {
 }
 
 // Optional extra mods, synced into the mods folder of each run before it starts and removed again from runs without the flag.
-// M59: the group folders are filled by Gradle from the manifest dev-mods.json (gradle/dev-mods.gradle: official sources -
+// M59: the group folders are filled by Gradle from the manifest gradle/dev-mods.json (gradle/dev-mods.gradle: official sources -
 // Modrinth Maven, CurseMaven, FTB Maven -, SHA-1 and SHA-256 checked, never in git). A new test mod goes into the manifest
 // (tools/devmods/update_manifest.py); a group without a build for this version is listed there under "gaps".
 //   -Plocal   : <runRoot>/local-mods, not managed by the manifest: mods to try out before they go into it (runClient,
@@ -1797,7 +1797,7 @@ tasks.named('check').configure { dependsOn 'verifyReleaseJar' }
 // M42: the optional integration suite, not part of build or check and not of the normal runGameTestServer: the whole GameTest
 // suite plus the integration-only tests (gametest/integration) with every integrated mod (see -Pintegration above), in
 // run/gametest-integration. Run by hand (gradlew integrationTests --no-configuration-cache) or in CI only from the manual
-// workflow integration.yml. The groups' jars are downloaded by the manifest dev-mods.json (M59), see the README.
+// workflow integration.yml. The groups' jars are downloaded by the manifest gradle/dev-mods.json (M59), see the README.
 // M42: a GameTest server that fails to start (a mod missing a dependency, a crash while loading) ends with exit code 0, and
 // the task looked green; the run counts only when the server reported its result line
 // M42 part b: the GameTest server never deleted its world, so every run added the region files of its new random test positions
