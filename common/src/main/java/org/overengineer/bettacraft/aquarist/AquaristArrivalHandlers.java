@@ -47,11 +47,12 @@ public final class AquaristArrivalHandlers {
         // offers that ran out while their aquarist was not loaded
         for (var en : rec.players().entrySet()) {
             AquaristRecords.PlayerRecord r = en.getValue();
-            if (r.npc != null && !r.hired && now > r.offerUntil) {
-                gone(server, r, false);
+            if (r.npc() != null && !r.hired() && now > r.offerUntil) {
+                gone(server, r, r.npc());
                 r.refused++;
             }
         }
+        AquaristTeam.tick(server); // M69: a friend of the first aquarist
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             if (org.overengineer.bettacraft.platform.Platform.get().isFakePlayer(p instanceof net.minecraft.world.entity.player.Player fp ? fp : null)) continue;
             rec.player(p.getUUID()).name = p.getGameProfile().name();

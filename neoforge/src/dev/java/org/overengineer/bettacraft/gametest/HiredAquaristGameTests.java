@@ -190,7 +190,7 @@ public final class HiredAquaristGameTests {
             check(sp.getUUID().equals(npc.employer()) && npc.hasCustomName(), "he offers it to the player, with a first name");
             check("offering".equals(AquaristArrival.whyNot(sp, true)), "one at a time: " + AquaristArrival.whyNot(sp, true));
             check(AquaristArrival.hire(sp) == null, "hired");
-            check(npc.phase() == AquaristEntity.Phase.HIRED && AquaristRecords.get(h.getLevel().getServer()).player(sp.getUUID()).hired, "he works now");
+            check(npc.phase() == AquaristEntity.Phase.HIRED && AquaristRecords.get(h.getLevel().getServer()).player(sp.getUUID()).hired(), "he works now");
             check("hired".equals(AquaristArrival.whyNot(sp, true)), "no second one: " + AquaristArrival.whyNot(sp, true));
             h.succeed();
         } finally {
@@ -213,7 +213,7 @@ public final class HiredAquaristGameTests {
         check(first.phase() == AquaristEntity.Phase.LEAVING, "he leaves");
         AquaristRecords.PlayerRecord r = AquaristRecords.get(s.server()).player(sp.getUUID());
         long now = s.server().overworld().getGameTime();
-        check(r.npc == null && r.refused == 1, "the record: none, refused once");
+        check(r.npc() == null && r.refused == 1, "the record: none, refused once");
         long days = (r.notBefore - now) / 24000L;
         check(days >= ServerConfig.getOr(ServerConfig.AQUARIST_RETURN_MIN, 5) && days <= ServerConfig.getOr(ServerConfig.AQUARIST_RETURN_MAX, 10),
                 "the next one in 5 to 10 days: " + days);
@@ -234,7 +234,7 @@ public final class HiredAquaristGameTests {
             check(second.phase() == AquaristEntity.Phase.LEAVING || second.isRemoved(), "the unanswered one leaves");
             check(first.isRemoved(), "the refused one walked off and is gone");
             AquaristRecords.PlayerRecord rr = AquaristRecords.get(s.server()).player(sp.getUUID());
-            check(rr.npc == null && rr.refused == 2, "counted as refused: " + rr.refused);
+            check(rr.npc() == null && rr.refused == 2, "counted as refused: " + rr.refused);
             cleanup(h, sp.getUUID());
         });
     }
@@ -639,7 +639,7 @@ public final class HiredAquaristGameTests {
             npc.payDay(level, 106);
             check(npc.phase() == AquaristEntity.Phase.LEAVING, "gone after three days");
             AquaristRecords.PlayerRecord r = AquaristRecords.get(level.getServer()).player(sp.getUUID());
-            check(r.npc == null && r.left == 1 && r.notBefore > level.getServer().overworld().getGameTime(), "he left: the next one later");
+            check(r.npc() == null && r.left == 1 && r.notBefore > level.getServer().overworld().getGameTime(), "he left: the next one later");
             check(!level.getPoiManager().existsAtPosition(org.overengineer.bettacraft.villager.ModVillagers.AQUARIST_POI_KEY, h.absolutePos(BASIN))
                     || level.getPoiManager().getInSquare(t -> true, h.absolutePos(BASIN), 0, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY)
                             .anyMatch(rec -> rec.getPos().equals(h.absolutePos(BASIN)) && rec.getFreeTickets() == 1), "the basin is free again");
@@ -717,14 +717,14 @@ public final class HiredAquaristGameTests {
                 await(h, 1500, () -> level.getEntity(id) == null && !level.hasChunk(cp.x(), cp.z()), "his chunk unloads", () -> {
                     check(AquaristWork.tank(level, npc, farId) == null, "a tank in an unloaded chunk is not his to touch");
                     AquaristRecords.PlayerRecord r0 = AquaristRecords.get(level.getServer()).player(sp.getUUID());
-                    check(id.equals(r0.npc) && r0.hired, "unloaded he stays hired");
+                    check(id.equals(r0.npc()) && r0.hired(), "unloaded he stays hired");
                     for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) level.setChunkForced(cp.x() + x, cp.z() + z, true);
                     await(h, 600, () -> level.getEntity(id) instanceof AquaristEntity, "he comes back", () -> {
                         AquaristEntity back = (AquaristEntity) level.getEntity(id);
                         check(back.carriedAnimals().size() == 1 && count(back.bag(), ModItems.BETTA_PELLETS.get()) == food, "with the young and the food");
                         check(back.phase() == AquaristEntity.Phase.HIRED && back.workplace() != null && back.bed() != null, "still hired, with his home");
                         AquaristRecords.PlayerRecord r = AquaristRecords.get(level.getServer()).player(sp.getUUID());
-                        check(id.equals(r.npc) && r.hired, "the record still has him");
+                        check(id.equals(r.npc()) && r.hired(), "the record still has him");
                         AquaristWork.perform(level, back, new AquaristWork.Job(AquaristWork.Kind.RELEASE_YOUNG, rear.getTank().id()));
                         check(back.carriedAnimals().isEmpty() && TankInhabitants.liveInhabitants(level, rear.getTank()).size() == 1, "the young betta in the rearing tank");
                         back.discard();
@@ -837,7 +837,7 @@ public final class HiredAquaristGameTests {
             tag.remove("aquarist");
             check(TankData.load(tag).aquaristAccess() == AquaristAccess.OWNER, "an old tank: the owner's aquarist");
             npc.kill((net.minecraft.server.level.ServerLevel) npc.level());
-            check(AquaristRecords.get(h.getLevel().getServer()).player(sp.getUUID()).npc == null, "/kill: he is gone for the records");
+            check(AquaristRecords.get(h.getLevel().getServer()).player(sp.getUUID()).npc() == null, "/kill: he is gone for the records");
             h.succeed();
         } finally {
             cleanup(h, sp.getUUID());

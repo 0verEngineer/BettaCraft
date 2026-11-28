@@ -265,6 +265,7 @@ A quest is shown while its switch is on and also those of the quests it depends 
 | always (the core of the mod) | Glass House, Water Works, The Basics, Travel Bag, Under the Tank, Cool Down, Swamp Soup |
 | `features.algae.enabled` | Clear View |
 | `features.aquaristNpc.enabled` | An Aquarist Comes By |
+| `features.aquaristNpc.team` | A Friend Joins |
 | `features.aquaticPlants.enabled` | Green Thumb |
 | `features.bettas.enabled` | Labyrinth Fish, Moving In, Fish Flakes, Room Service, Tropical, Mirror, Mirror, Back on Fin, A Lesson Learned (optional) |
 | `features.bigTanks.bigAnimals` | Heavy Lifting, Big Fish |
