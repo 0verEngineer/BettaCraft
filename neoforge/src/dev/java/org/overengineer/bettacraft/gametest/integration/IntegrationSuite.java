@@ -38,12 +38,12 @@ public final class IntegrationSuite {
 
     /**
      * Whether the test lacks one of its mods: then it fails (the group is incomplete). M59: every run has the whole group (the
-     * manifest dev-mods.json downloads it, locally and in CI), so there is no partial run any more; the result stays a boolean
+     * manifest gradle/dev-mods.json downloads it, locally and in CI), so there is no partial run any more; the result stays a boolean
      * for the callers ({@code if (lacks(h, ...)) return;}).
      */
     public static boolean lacks(GameTestHelper h, String... mods) {
         List<String> missing = java.util.Arrays.stream(mods).filter(m -> !org.overengineer.bettacraft.platform.Platform.get().isModLoaded(m)).toList();
         if (missing.isEmpty()) return false;
-        throw new GameTestAssertException("the integration group lacks " + missing + " (see dev-mods.json and run/*-mods)");
+        throw new GameTestAssertException("the integration group lacks " + missing + " (see gradle/dev-mods.json and run/*-mods)");
     }
 }

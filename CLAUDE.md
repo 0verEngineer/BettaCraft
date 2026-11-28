@@ -20,7 +20,7 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
 | `tools/ci` | `release_tag.sh` (tag parsing of `release.yml`) |
-| `dev-mods.json`, `gradle/dev-mods.gradle`, `tools/devmods` | M59: the manifest of every foreign test mod of this branch (per loader and group folder: Modrinth / CurseMaven / FTB Maven coordinate, size, SHA-1, SHA-256), the Gradle script that downloads and checks them into the group folders, `update_manifest.py` that rewrites the manifest from the folders |
+| `gradle/dev-mods.json`, `gradle/dev-mods.gradle`, `tools/devmods` | M59: the manifest of every foreign test mod of this branch (per loader and group folder: Modrinth / CurseMaven / FTB Maven coordinate, size, SHA-1, SHA-256), the Gradle script that downloads and checks them into the group folders, `update_manifest.py` that rewrites the manifest from the folders |
 | `tools/upgrade/references.json` | M59: the commit each upgrade reference world of this branch is built from (`smoketestUpgrade` builds a missing one) |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
 | `docs/description.md` | the CurseForge mod page (English only); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
@@ -123,12 +123,12 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   contact sheets of every picture).
 - Client smoke scenes: one `DevClientSmokeMxx` per milestone, flag `-PsmoketestmXX` in `build.gradle`, screenshots in
   `run/screenshots/bettacraft_mXX_*.png`; freeze animals with `SmokeFreeze.freeze`. Look at the screenshots.
-- **Foreign test mods come from `dev-mods.json`** (M59): a group flag makes Gradle download the group's jars from their
+- **Foreign test mods come from `gradle/dev-mods.json`** (M59): a group flag makes Gradle download the group's jars from their
   official source (Modrinth Maven, CurseMaven, FTB Maven; Gradle cache, `--offline` works afterwards), check SHA-1 and SHA-256
   and copy them under their file names into the group folder (`run/<group>`, Fabric `run-fabric/<group>`, ports
   `run/<mc>/...`). Never copy jars by hand and never commit one. The group folders belong to the manifest (foreign jars are
   moved to `run/local-mods-backup/<date>/`); to try a mod: `run/local-mods` + `-Plocal`. A new test mod: jar into its group
-  folder, `py tools/devmods/update_manifest.py`, commit `dev-mods.json`; `DevModsManifestTest` fails when a group the builds read
+  folder, `py tools/devmods/update_manifest.py`, commit `gradle/dev-mods.json`; `DevModsManifestTest` fails when a group the builds read
   is missing (a version without the mod: an entry in `gaps` with the reason). The versions are those of ATM10 / ATM10AA.
 - Test worlds (M59): every world a test run makes (server smoke `run/world`, `world_biomes`, `oldworld_check`, client smoke
   `run/saves/bettacraft_smoketest_*` / `bettacraft_fabric_smoketest_*`, GameTest, upgrade, multiplayer, Fabric save/load and
@@ -165,7 +165,7 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
   (e.g. `-Pgametests=bettacraft_integration`), also for the normal suite. The client side: `runClient -Pintegration
   -Psmoketestm42` (JEI, GuideME), `-Psmoketestm8` (overlays; with `-Ptop -PnoJade` / `-Pwthit -PnoJade`), `-Psmoketestm32d`
   (JourneyMap). CI: the manual workflow `integration.yml` (suite `all` / `integration` / `zoo` / `fabric`) runs `integrationTests`,
-  `zooTests` and `runFabricGameTest -Pfabricintegration -Pquests` with every mod of `dev-mods.json` (only logs are uploaded).
+  `zooTests` and `runFabricGameTest -Pfabricintegration -Pquests` with every mod of `gradle/dev-mods.json` (only logs are uploaded).
 - **Optional zoo suite** (M42 part b, the other half of the optional suite, never in `build` or the normal suite): `gradlew
   zooTests --no-configuration-cache` (or any run task with `-Pzoo`) puts `run/zoo-mods` (mods of ATM10AA with animals or
   water plants that we do NOT integrate: Aether, Ars Nouveau + Elemental, Productive Bees, Occultism, Thaumaturge, EvilCraft,
@@ -222,7 +222,7 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 ./gradlew fabricSaveLoadTest --no-configuration-cache      # showcase world built on Fabric, reloaded twice, nothing lost
 ./gradlew runFabricGameTest -Pfabric_loader_version=<min> -Pfabric_api_version=<min> -PexactFabricVersions --no-configuration-cache   # the declared minimums exactly (fabric.mod.json, README)
 ```
-- Fabric dev mod groups (official Fabric jars downloaded by `dev-mods.json` into `run-fabric/<group>`, not in git; nested libraries are extracted for the
+- Fabric dev mod groups (official Fabric jars downloaded by `gradle/dev-mods.json` into `run-fabric/<group>`, not in git; nested libraries are extracted for the
   dev runtime): `-Pmaps` (`map-mods`), `-Pshaders` (`shader-mods`: Sodium, Iris, Sodium Extra; Complementary in
   `run-fabric/shaderpacks`), `-Pperf` (`perf-mods`), `-Pvulkanmod` (`vulkan-mods`: VulkanMod where it exists), `-Poverlays` (Jade, JEI + Mezz Config, WTHIT + Bad Packets, The One Probe), `-Prei` (REI, Architectury,
   Cloth Config), `-Pemi`, `-Pfabricintegration` (Refined Storage, JourneyMap + Common Networking, Better Fish Tanks + MINT
@@ -256,7 +256,7 @@ Fabric Loom 1.19.4; the game still targets Java 21):
   there; checked on Modrinth, CurseForge and the mod's maven) is a documented gap (CHANGELOG, `VersionGaps`).
 - Every foreign mod added for testing (a new integration, mod group or single test jar, on any branch and loader) goes
   into the reproducible test suite in the same milestone: pinned with its official source and hashes in the branch's
-  `dev-mods.json` (`py tools/devmods/update_manifest.py`), so a fresh clone runs the test without manual work;
+  `gradle/dev-mods.json` (`py tools/devmods/update_manifest.py`), so a fresh clone runs the test without manual work;
   `DevModsManifestTest` checks it. Each port branch has its own manifest (`gradle/dev-mods.gradle` is the same everywhere).
 - Push, tag and release of any branch only with the user's OK.
 - **Release tags** (M52): `v<mod_version>+<loader>-<mc>`, e.g. `v1.42.0-beta.1+neoforge-1.21.1`,
@@ -302,4 +302,4 @@ Fabric Loom 1.19.4; the game still targets Java 21):
 `PLAN.md` (roadmap), `meilensteine/` (`AGENT-RULES.md`, one report per milestone, `README.md` overview),
 `manual-testing.md`, `optional-features.md`, `RELEASING.md`, `OFFEN.md`, `SONSTIGES.md`, `ASSETS-HOW.md`.
 The test modpack is a local PolyMC/Prism instance of ATM10 (read only, never move or edit it); its mods are no longer copied:
-the dev mod groups come from `dev-mods.json` (M59).
+the dev mod groups come from `gradle/dev-mods.json` (M59).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes dev-mods.json, the manifest of the optional dev mod groups of this branch (M59).
+"""Writes gradle/dev-mods.json, the manifest of the optional dev mod groups of this branch (M59).
 
 The jars of the groups (-Ppower, -Paquatic, integrationTests, zooTests, the Fabric groups ...) are never committed:
 gradle/dev-mods.gradle downloads them from their official source (Modrinth Maven, CurseMaven, FTB Maven) and checks
@@ -8,7 +8,7 @@ their hashes. This tool keeps the manifest in step with the group folders:
   1. put the new jar into its group folder (e.g. run/power-mods/, run-fabric/integration-mods/; ports:
      run/<mc>/<group>, run/<mc>/fabric/<group>)
   2. py tools/devmods/update_manifest.py            (add --dry-run to see the changes only)
-  3. run the group once (it is downloaded again from the manifest) and commit dev-mods.json
+  3. run the group once (it is downloaded again from the manifest) and commit gradle/dev-mods.json
 
 Every jar is looked up by its SHA-1: Modrinth (POST /v2/version_files), FTB Maven (the ftb-* file names), CurseForge
 (CFWidget file lists of the projects in CURSE_PROJECTS, downloaded from CurseMaven and compared byte for byte). A jar
@@ -128,7 +128,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--neo", default=os.path.join(ROOT, "run" if mc == "1.21.1" else f"run/{mc}"))
     ap.add_argument("--fabric", default=os.path.join(ROOT, "run-fabric" if mc == "1.21.1" else f"run/{mc}/fabric"))
-    ap.add_argument("--manifest", default=os.path.join(ROOT, "dev-mods.json"))
+    ap.add_argument("--manifest", default=os.path.join(ROOT, "gradle", "dev-mods.json"))
     ap.add_argument("--seed", nargs="*", default=[], help="older manifests whose maven coordinates are reused by SHA-1")
     ap.add_argument("--prune", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
