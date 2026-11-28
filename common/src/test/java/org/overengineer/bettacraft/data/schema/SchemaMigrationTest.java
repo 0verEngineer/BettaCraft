@@ -648,4 +648,24 @@ class SchemaMigrationTest {
         CompoundTag set = Schemas.CABINET.migrate(snbt("{schema:3,wood:\"minecraft:oak_planks\",drive:\"bottom\"}"));
         assertEquals(org.overengineer.bettacraft.equipment.DriveSide.BOTTOM, org.overengineer.bettacraft.equipment.DriveSide.byId(set.getStringOr("drive", "")));
     }
+
+    /** M69: the one aquarist of an old world is the first of his player's team, still hired; a player without one keeps none. */
+    @Test
+    void aquaristRecordsBecomeTeams() throws CommandSyntaxException {
+        CompoundTag v0 = snbt("{players:[{player:[I;1,2,3,4],npc:[I;5,6,7,8],hired:1b,breedings:4,refused:1,name:\"Ann\"},"
+                + "{player:[I;9,9,9,9],breedings:0,name:\"Bob\"}],tanks:[]}");
+        assertTrue(Schemas.AQUARIST_RECORDS.needsMigration(v0));
+        CompoundTag v1 = Schemas.AQUARIST_RECORDS.migrate(v0);
+        CompoundTag ann = v1.getListOrEmpty("players").getCompoundOrEmpty(0);
+        assertEquals(1, ann.getListOrEmpty("team").size());
+        CompoundTag m = ann.getListOrEmpty("team").getCompoundOrEmpty(0);
+        assertEquals(new java.util.UUID(((long) 5 << 32) | 6, ((long) 7 << 32) | 8), NbtCompat.getUUID(m, "id"));
+        assertTrue(m.getBooleanOr("hired", false));
+        assertEquals(-1L, m.getLongOr("since", 0L));
+        assertEquals(4, ann.getIntOr("breedings_at_hire", 0));
+        assertEquals(1, ann.getIntOr("refused", 0));
+        assertFalse(ann.contains("npc"));
+        assertEquals(0, v1.getListOrEmpty("players").getCompoundOrEmpty(1).getListOrEmpty("team").size());
+        assertFalse(Schemas.AQUARIST_RECORDS.needsMigration(v1));
+    }
 }

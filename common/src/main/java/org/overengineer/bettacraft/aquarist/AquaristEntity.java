@@ -127,6 +127,8 @@ public class AquaristEntity extends PathfinderMob {
     private UUID carriedTo;
     private long lastWageDay = Long.MIN_VALUE;
     private int unpaidDays, homelessDays;
+    /** M69: a hired friend waits for a home next to the one who recommended him until this day time (no homeless days). */
+    private long graceUntil = Long.MIN_VALUE;
     private long leaveAt = -1;
     /** Warnings reported per tank (until they clear). */
     private final Map<UUID, Set<String>> reported = new HashMap<>();
@@ -373,6 +375,7 @@ public class AquaristEntity extends PathfinderMob {
             return false;
         }
         workplace = taken;
+        AquaristTeam.note(level, this); // M69
         return true;
     }
 
@@ -383,8 +386,20 @@ public class AquaristEntity extends PathfinderMob {
         if (old != null && level.isLoaded(old) && poi.existsAtPosition(ModVillagers.AQUARIST_POI_KEY, old)) poi.release(old);
         workplace = null;
         int r = ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32);
-        poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> !p.equals(old), blockPosition(), r).ifPresent(p -> workplace = p.immutable());
+        takeNearest(poi, h -> h.is(ModVillagers.AQUARIST_POI_KEY), p -> !p.equals(old), blockPosition(), r).ifPresent(p -> workplace = p.immutable());
         if (workplace == null && old != null) poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> p.equals(old), old, 1).ifPresent(p -> workplace = p.immutable());
+        if (level() instanceof ServerLevel sl) AquaristTeam.note(sl, this); // M69
+    }
+
+    /**
+     * M69: takes the free point of interest of that type nearest to {@code center} (its ticket). Vanilla's take() takes the
+     * first one it finds in range, so with several free basins and beds (a team of aquarists) one could take a far one.
+     */
+    static java.util.Optional<BlockPos> takeNearest(net.minecraft.world.entity.ai.village.poi.PoiManager poi,
+                                                    java.util.function.Predicate<net.minecraft.core.Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> type,
+                                                    java.util.function.Predicate<BlockPos> where, BlockPos center, int radius) {
+        return poi.findClosest(type, where, center, radius, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.HAS_SPACE)
+                .flatMap(found -> poi.take(type, (h, p) -> p.equals(found), found, 1));
     }
 
     public ItemStackHandler bag() {
@@ -401,6 +416,20 @@ public class AquaristEntity extends PathfinderMob {
 
     public int unpaidDays() {
         return unpaidDays;
+    }
+
+    /** M69: the day time until which a hired friend may wait for a home ({@link AquaristTeam}). */
+    public long graceUntil() {
+        return graceUntil;
+    }
+
+    public void setGraceUntil(long t) {
+        graceUntil = t;
+    }
+
+    /** M69: a hired friend without a home who still waits for one (he does not work, no homeless day counts). */
+    public boolean waitingForHome() {
+        return !housed() && level() instanceof ServerLevel l && AquaristTeam.now(l.getServer()) < graceUntil;
     }
 
     public int homelessDays() {
@@ -632,11 +661,12 @@ public class AquaristEntity extends PathfinderMob {
         var poi = level.getPoiManager();
         BlockPos center = blockPosition();
         if (workplace == null) {
-            poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> true, center, r).ifPresent(p -> workplace = p.immutable());
+            takeNearest(poi, h -> h.is(ModVillagers.AQUARIST_POI_KEY), p -> true, center, r).ifPresent(p -> workplace = p.immutable());
         }
         if (bed == null) {
-            poi.take(h -> h.is(PoiTypes.HOME), (h, p) -> true, workplace != null ? workplace : center, r).ifPresent(p -> bed = p.immutable());
+            takeNearest(poi, h -> h.is(PoiTypes.HOME), p -> true, workplace != null ? workplace : center, r).ifPresent(p -> bed = p.immutable());
         }
+        AquaristTeam.note(level, this); // M69: the team knows his workplace at once (the tanks are shared out by it)
     }
 
     /**
@@ -648,6 +678,7 @@ public class AquaristEntity extends PathfinderMob {
         var poi = level.getPoiManager();
         workplace = poi.take(h -> h.is(ModVillagers.AQUARIST_POI_KEY), (h, p) -> p.equals(basin), basin, 1).map(BlockPos::immutable).orElse(null);
         bed = poi.take(h -> h.is(PoiTypes.HOME), (h, p) -> p.equals(bedHead), bedHead, 1).map(BlockPos::immutable).orElse(null);
+        AquaristTeam.note(level, this); // M69
         return housed();
     }
 
@@ -693,7 +724,8 @@ public class AquaristEntity extends PathfinderMob {
         boolean first = lastWageDay == Long.MIN_VALUE;
         lastWageDay = day;
         if (first) return; // the first day is free
-        homelessDays = housed() ? 0 : homelessDays + 1;
+        boolean waiting = waitingForHome(); // M69: a friend waiting for his home: no day without a home counts
+        homelessDays = housed() || waiting ? 0 : homelessDays + 1;
         if (!housed()) complain(level, workplace == null ? "no_workplace" : "no_bed", null);
         if (!ServerConfig.getOr(ServerConfig.AQUARIST_WAGE, true)) {
             unpaidDays = 0;
@@ -701,6 +733,7 @@ public class AquaristEntity extends PathfinderMob {
             if (unpaidDays > 0) say(level, Component.translatable("message.bettacraft.aquarist.paid_again"), ChatFormatting.GREEN);
             unpaidDays = 0;
         } else if (housed()) {
+            AquaristTeam.notePay(level, this, false); // M69: the streak of the friend's conditions starts again
             unpaidDays++;
             say(level, Component.translatable("message.bettacraft.aquarist.unpaid", unpaidDays, ServerConfig.getOr(ServerConfig.AQUARIST_LEAVE_DAYS, 3)),
                     ChatFormatting.RED);
@@ -805,16 +838,36 @@ public class AquaristEntity extends PathfinderMob {
         }
         // switched off he only waits: no wage day counts, nothing makes him leave
         if (phase() == Phase.HIRED && Features.enabled(Feature.AQUARIST_NPC)) {
-            if (tickCount % 100 == 0) checkHome(level);
+            if (tickCount % 100 == 0) {
+                checkHome(level);
+                noteTeam(level); // M69
+            }
             payDay(level);
         }
         entityData.set(DATA_STATUS, computeStatus(level));
+    }
+
+    /**
+     * M69: every 5 s while hired: his name, status, workplace and tanks for the team of his employer, and whether a tank in
+     * his care has bad water (trouble: no friend is recommended for a while).
+     */
+    void noteTeam(ServerLevel level) {
+        AquaristTeam.note(level, this);
+        List<TankBlockEntity> mine = AquaristWork.tanks(level, this);
+        AquaristTeam.noteCared(level, this, mine.size());
+        for (TankBlockEntity c : mine) {
+            if (c.getTank().waterMb() > 0 && org.overengineer.bettacraft.tank.TankWater.isBad(c.getTank())) {
+                AquaristTeam.noteTrouble(level, this);
+                break;
+            }
+        }
     }
 
     String computeStatus(ServerLevel level) {
         if (phase() == Phase.OFFERING) return "offering";
         if (phase() == Phase.LEAVING) return "leaving";
         if (!Features.enabled(Feature.AQUARIST_NPC)) return "off";
+        if (waitingForHome()) return "waiting_home";
         if (workplace == null) return "no_workplace";
         if (bed == null) return "no_bed";
         if (isSleeping()) return "sleeping";
@@ -1082,6 +1135,14 @@ public class AquaristEntity extends PathfinderMob {
         @Override
         public void start() {
             BlockPos home = workplace != null ? workplace : bed;
+            if (home == null && waitingForHome() && level() instanceof ServerLevel sl) { // M69: a friend waits next to the one who recommended him
+                AquaristRecords.PlayerRecord r = employer == null ? null : AquaristRecords.get(sl.getServer()).peek(employer);
+                AquaristEntity med = r == null ? null : AquaristTeam.mediatorEntity(sl.getServer(), r);
+                if (med != null && med != AquaristEntity.this && med.level() == level() && distanceToSqr(med) > 4 * 4) {
+                    getNavigation().moveTo(med, 0.5);
+                    return;
+                }
+            }
             if (home == null) {
                 Vec3 v = DefaultRandomPos.getPos(AquaristEntity.this, 6, 2);
                 if (v != null) getNavigation().moveTo(v.x, v.y, v.z, 0.45);
@@ -1209,6 +1270,7 @@ public class AquaristEntity extends PathfinderMob {
         a.putString("employer_name", employerName());
         if (offerUntil != Long.MAX_VALUE) a.putLong("offer_until", offerUntil);
         a.putBoolean("offer_said", offerSaid);
+        if (graceUntil != Long.MIN_VALUE) a.putLong("grace_until", graceUntil); // M69
         if (workplace != null) a.put("workplace", NbtCompat.writeBlockPos(workplace));
         if (bed != null) a.put("bed", NbtCompat.writeBlockPos(bed));
         CompoundTag lv = new CompoundTag();
@@ -1279,6 +1341,7 @@ public class AquaristEntity extends PathfinderMob {
         entityData.set(DATA_EMPLOYER, a.getStringOr("employer_name", ""));
         offerUntil = a.contains("offer_until") ? a.getLongOr("offer_until", 0L) : Long.MAX_VALUE;
         offerSaid = a.getBooleanOr("offer_said", false);
+        graceUntil = a.getLongOr("grace_until", Long.MIN_VALUE);
         workplace = NbtCompat.readBlockPos(a, "workplace").orElse(null);
         bed = NbtCompat.readBlockPos(a, "bed").orElse(null);
         CompoundTag lv = a.getCompoundOrEmpty("tasks");

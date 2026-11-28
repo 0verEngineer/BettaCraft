@@ -227,6 +227,8 @@ QUESTS = [
     ("powered_trip", [adv("powered_trip")], ["travelling_tank"], 12.25, -6.75, 150, None),
     # ------------------------------------------------------------ M51: the hired aquarist
     ("aquarist_hired", [adv("aquarist_hired")], ["spawned"], 11.00, 1.10, 150, None),
+    # ------------------------------------------------------------ M69: the friend of the hired aquarist
+    ("aquarist_team", [adv("aquarist_team")], ["aquarist_hired"], 12.25, 1.75, 150, None),
     # ------------------------------------------------------------ M53: the users of a tank
     ("shared_tank", [adv("shared_tank")], ["first_tank"], 0.25, 1.75, 25, None),
     # ------------------------------------------------------------ M56: terrarium plants, the dart frog tadpoles in bromeliads
@@ -269,7 +271,7 @@ OWN_FEATURES = {
     "sump": ["SUMP"], "refugium": ["REFUGIUM"], "calcium_reactor": ["CALCIUM_REACTOR"], "archerfish": ["ARCHERFISH"],
     "mudskipper": ["MUDSKIPPER"], "mangrove": ["MANGROVES"], "amano": ["AMANO_SHRIMP", "BREEDING"],
     "powered_trip": ["CREATE_TRAVEL_CARE"],
-    "aquarist_hired": ["AQUARIST_NPC"], "shared_tank": ["TANK_USERS"],
+    "aquarist_hired": ["AQUARIST_NPC"], "aquarist_team": ["AQUARIST_TEAM"], "shared_tank": ["TANK_USERS"],
     "terrarium_plants": ["TERRARIUM_PLANTS"], "bromeliad_tadpoles": ["BROMELIAD_TADPOLES"],
 }
 
