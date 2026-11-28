@@ -393,7 +393,7 @@ dependencies {
     // nested in Cloth Config (the dev runtime does not load jars inside mod jars)
     if (project.hasProperty('rei')) localRuntime 'me.shedaniel.cloth:basic-math:0.6.1'
 
-    // optional mod groups of the Fabric dev runs (M59: official jars downloaded by the manifest dev-mods.json into <fabricRunRoot>/<group>, hashes checked, never committed; -Plocal: <run dir>/local-mods, mods to try out, not in the manifest):
+    // optional mod groups of the Fabric dev runs (M59: official jars downloaded by the manifest gradle/dev-mods.json into <fabricRunRoot>/<group>, hashes checked, never committed; -Plocal: <run dir>/local-mods, mods to try out, not in the manifest):
     // -Poverlays (Jade, JEI, WTHIT, TOP), -Prei, -Pemi, -Pfabricintegration (Refined Storage, JourneyMap, Better Fish Tanks,
     // Naturalist, Fish of Thieves, Critters and Companions + libraries), -Pquests (FTB Quests, Library, Teams), M52b: -Pshaders
     // (Sodium, Iris; the shader pack in <fabricRunRoot>/shaderpacks)
