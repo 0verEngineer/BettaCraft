@@ -31,9 +31,12 @@ The One Probe, algae on Create contraptions, and the dev clients.
   sneaking now shows our details either way). A fish drawn in the probe's box swims upright instead of lying on its side.
 
 - **Fabric: miniatures stay when a shader pack is switched on in a running game.** The miniature's meshes were checked against
-  the vertex format of the terrain pipeline while a pack draws them with the block pipeline, whose format Iris extends on the switch:
-  every mesh built afterwards was taken for stale, rebuilt and never drawn (the miniature, its substrate and decor of many tanks
-  were gone until a restart; fine with the pack active from the start).
+  the vertex format of the terrain pipeline while a pack draws them with the block pipeline, and Iris extends the format of a new
+  mesh only while the level renders: after the switch every mesh came out in the wrong format, was taken for stale, rebuilt and never
+  drawn (the miniature, its substrate and decor of many tanks were gone until a restart; fine with the pack active from the start).
+  The meshes are now built in the format of the pipeline that draws them, the nearest tanks first.
+- **Miniatures with frozen ticks** (`/tick freeze`): a tank you came back to after half a minute away got its miniature back only when
+  the ticks ran again (the client and the server timed their requests in game time, which stands still then).
 
 ### Changed
 - **Plants with real leaves in the miniature from 12 blocks** (`render.miniaturePlantMeshDistance`, was 24): a quick help for the
