@@ -73,7 +73,7 @@ ext.fabricDevSkip = [
     // need Create (no Create for Fabric 1.21.1)
     'CreateDriveGameTests', 'CreateTravelGameTests', 'CreateGameTests',
 ] as Set
-ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM675', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
+ext.fabricDevClient = ['SmokeFreeze', 'DevClientWorldTour', 'DevClientSmokeM11', 'DevClientSmokeM13', 'DevClientSmokeM7', 'DevClientSmokeM53', 'DevClientSmokeM54', 'DevClientSmokeM55', 'DevClientSmokeM56', 'DevClientSmokeM61', 'DevClientSmokeM63', 'DevClientSmokeM64', 'DevClientSmokeM65', 'DevClientSmokeM66', 'DevClientSmokeM67', 'DevClientSmokeM675', 'DevClientSmokeM8', 'DevClientSmokeM62a', 'DevClientSmokeM62b', 'DevClientSmokeM62c', 'DevClientSmokeM62d'] as Set
 def neoDev = rootProject.file('neoforge/src/dev/java').canonicalPath
 ext.devExcluded = { File f ->
     if (!f.canonicalPath.startsWith(neoDev) || !f.name.endsWith('.java')) return false
@@ -143,6 +143,12 @@ loom {
                 property 'bettacraft.smoketest.world', 'true'
                 property 'bettacraft.smoketest.fabric', 'true'
                 property 'bettacraft.smoketest.m62bonly', 'true'
+            }
+            // M67.5: -Psmoketestm8 -Poverlays: the info overlays (Jade, WTHIT, The One Probe together) at a tank, a betta, a filter, a cabinet
+            if (project.hasProperty('smoketestm8')) {
+                property 'bettacraft.smoketest.world', 'true'
+                property 'bettacraft.smoketest.fabric', 'true'
+                property 'bettacraft.smoketest.m8only', 'true'
             }
             // M67.5: -Psmoketestm675 [-Pm675parts=animals,algae,screens,cabinet,bigtank]: the points of M67.5
             if (project.hasProperty('smoketestm675')) {
