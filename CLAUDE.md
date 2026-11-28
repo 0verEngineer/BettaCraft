@@ -19,14 +19,15 @@ writes in German; code, comments, commits, README and CHANGELOG are English, the
 | `neoforge/src/dev` | development-only source set, merged into the mod in every `gradlew run*` task but never in the jar: smoke scenes `DevSmoke*` / `DevClientSmoke*`, the showcase world (`command/DevShowcase`), GameTests (`gametest/`) and their template |
 | `tools/assetgen` | procedural textures, models, sounds, logo, handbook image crops, README media (Python, `py` launcher with PIL + numpy); outputs are committed |
 | `modpack/` | files for modpack makers, not in the jar: FTB Quests chapter (made by `tools/modpack/ftbquests_chapter.py`), KubeJS example; `gradlew modpackZip` |
-| `tools/ci` | `release_tag.sh` (tag parsing of `release.yml`) |
+| `tools/ci` | `release_tag.sh` (tag parsing of `release.yml`), `branch.sh` (the branch facts of the workflows), `curseforge-<loader>.txt` (the CurseForge dependencies of this branch) |
+| `tools/test-matrix.sh`, `tools/test-matrix.txt` | M69: the test matrix of the branch (see Build and test) |
 | `gradle/dev-mods.json`, `gradle/dev-mods.gradle`, `tools/devmods` | M59: the manifest of every foreign test mod of this branch (per loader and group folder: Modrinth / CurseMaven / FTB Maven coordinate, size, SHA-1, SHA-256), the Gradle script that downloads and checks them into the group folders, `update_manifest.py` that rewrites the manifest from the folders |
 | `tools/upgrade/references.json` | M59: the commit each upgrade reference world of this branch is built from (`smoketestUpgrade` builds a missing one) |
 | `tools/upgrade` | builds the reference world of an old version for `smoketestUpgrade` |
 | `docs/description.md` | the CurseForge mod page (English only); `gradlew curseforgeDescription` makes the paste-ready version with pinned image links |
 | `FEATURES.md` | every feature in detail with its pictures (the README has the short, folded list and links to it); same on every branch |
 | `docs/images` | README / CurseForge media (made by `tools/assetgen/readme_media.py`; banner by `preview.py`) |
-| `.github/workflows` | `build.yml` (push to master, PRs; manual *full* run), `release.yml` (tag `v<mod_version>+<loader>-<mc>`), `integration.yml` (manual only) |
+| `.github/workflows` | `build.yml` (push to a release branch, PRs; manual *full* run), `release.yml` (tag `v<mod_version>+<loader>-<mc>`), `integration.yml` (manual only); M69: the same files on every branch, the branch facts come from `gradle.properties` (`java_version`, `fabric_game_versions`, `release_make_latest`) and `tools/ci` (`branch.sh`, `release_tag.sh`, `curseforge-<loader>.txt`) |
 
 ## Key systems (where to look)
 
@@ -97,6 +98,12 @@ Always add `--no-configuration-cache` to `runClient`, `runServer`, `runData` and
 ./gradlew releaseNotes                            # build/release-notes.md from the top CHANGELOG section
 ./gradlew curseforgeDescription                   # build/curseforge/ description (md + html) from docs/description.md
 ```
+
+- **Test matrix** (M69, rule): `bash tools/test-matrix.sh [--parallel] ["<client task + flags>" ...]` runs everything that must
+  be green, one step after the other with logs and `build/test-matrix/summary.txt` (exit 0 = green): runData diff, `build` +
+  `:fabric:build`, both GameTest suites, both server smokes, the client smokes of `tools/test-matrix.txt` plus the
+  milestone's own (one client at a time, background, muted, timeouts, stopped at a loading error). **Run it on every branch
+  for every milestone and before every release**; while working `bash tools/test-matrix.sh quick <gametest-prefixes>`.
 
 - **Dev clients are silent** (M54, `BackgroundSoundMixin`): every `runClient` / `runFabricClient` / `prodFabricClient`, all
   `-Psmoketest*` and `-Pbackground` runs and the multiplayer test clients play no sound (the volumes read 0, the saved options
@@ -209,7 +216,7 @@ Build: ModDevGradle (common in NeoForm mode, neoforge) + Fabric Loom (fabric), t
 | `26.2` (M52d) | 26.2 | NeoForge + Fabric | 25 | full |
 | `26.3` (M52e) | 26.3 (newest) | NeoForge + Fabric | 25 | full |
 
-Fabric on 1.21.1 (this branch). Gradle 9.8.2 with the daemon on JDK 25 (`gradle/gradle-daemon-jvm.properties`, needed by
+Fabric on 1.21.1 (this branch). Gradle 9.9.1 with the daemon on JDK 25 (`gradle/gradle-daemon-jvm.properties`, needed by
 Fabric Loom 1.19.4; the game still targets Java 21):
 ```
 ./gradlew :fabric:build                                    # Fabric jar (+ Patchouli book from the GuideME pages, verifyFabricJar)
