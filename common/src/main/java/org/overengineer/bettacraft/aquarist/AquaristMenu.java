@@ -19,7 +19,8 @@ import org.overengineer.bettacraft.tank.TankBlockEntity;
  * M51: the menu of a hired aquarist (no container: a view sent to the client, actions sent back). The offering aquarist
  * shows his offer with the buttons to hire or refuse him; the hired one his status, home, wage, the tasks with their
  * levels, the tanks around his workplace with what he may do there, and the rearing tank. Only his employer (or an
- * operator) uses it, within 8 blocks.
+ * operator) uses it, within 8 blocks. M69: every aquarist shows the team of his employer (tab Team); the one who
+ * recommends friends shows the friend's conditions and the offer (tab Friend); a tank can be given to one of the team.
  */
 public final class AquaristMenu {
     public static final int HIRE = 0;
@@ -40,6 +41,10 @@ public final class AquaristMenu {
     public static final int SET_TANK_TASK = 10;
     /** M66: wait for the next right-click on a chest / a bed; AUTO_*: back to looking by himself. */
     public static final int ASSIGN_CHEST = 11, ASSIGN_BED = 12, AUTO_CHEST = 13, AUTO_BED = 14, ASSIGN_BASIN = 15, AUTO_BASIN = 16;
+    /** M69: hire / refuse the friend the mediator recommends. */
+    public static final int FRIEND_HIRE = 17, FRIEND_DECLINE = 18;
+    /** M69: text = "tank id|aquarist id" gives the tank to that aquarist of the team, "tank id|" back to the nearest workplace. */
+    public static final int SET_RESPONSIBLE = 19;
     /** Rows of the tank list. */
     public static final int MAX_TANK_ROWS = 24;
 
@@ -54,6 +59,7 @@ public final class AquaristMenu {
         ServerLevel level = (ServerLevel) npc.level();
         CompoundTag v = new CompoundTag();
         v.putInt("id", npc.getId());
+        v.putUUID("uuid", npc.getUUID()); // M69: to tell his tanks from those of the team
         v.putString("name", npc.getName().getString());
         v.putString("phase", npc.phase().name().toLowerCase(java.util.Locale.ROOT));
         v.putString("status", npc.computeStatus(level));
@@ -114,6 +120,10 @@ public final class AquaristMenu {
             t.putUUID("id", e.tank());
             t.putLong("pos", e.pos().asLong());
             t.putInt("off", npc.tasksOff(e.tank())); // M66: the tasks switched off here
+            // M69: who of the team looks after it, and whether it was given to him in the menu
+            UUID who = npc.employer() == null ? null : AquaristTeam.responsible(level.getServer(), e, npc.employer());
+            if (who != null) t.putUUID("who", who);
+            t.putBoolean("given", rec.assignedTo(e.tank()) != null && rec.assignedTo(e.tank()).equals(who));
             if (c == null) {
                 t.putString("name", "");
                 t.putString("verdict", "unloaded");
@@ -124,7 +134,56 @@ public final class AquaristMenu {
             tanks.add(t);
         }
         v.put("tanks", tanks);
+        team(level, npc, rec, v);
         return v;
+    }
+
+    /** M69: the team of his employer (every member, as the records know them) and, for the mediator, the friend. */
+    private static void team(ServerLevel level, AquaristEntity npc, AquaristRecords rec, CompoundTag v) {
+        AquaristRecords.PlayerRecord r = npc.employer() == null ? null : rec.peek(npc.employer());
+        v.putBoolean("team_feature", Features.enabled(Feature.AQUARIST_TEAM));
+        v.putInt("team_max", AquaristTeam.max());
+        if (r == null) return;
+        AquaristRecords.Member med = r.mediator();
+        ListTag team = new ListTag();
+        for (AquaristRecords.Member m : r.team) {
+            if (!m.hired) continue;
+            AquaristEntity e = AquaristTeam.entity(level.getServer(), m.id);
+            if (e != null) AquaristTeam.note((ServerLevel) e.level(), e);
+            CompoundTag t = new CompoundTag();
+            t.putUUID("id", m.id);
+            t.putString("name", m.name);
+            t.putString("status", e != null ? e.computeStatus((ServerLevel) e.level()) : m.status.isEmpty() ? "unloaded" : m.status);
+            t.putBoolean("loaded", e != null);
+            t.putInt("cared", m.cared);
+            if (m.workplace != null) t.putLong("workplace", m.workplace.asLong());
+            t.putBoolean("me", m.id.equals(npc.getUUID()));
+            t.putBoolean("mediator", med != null && med.id.equals(m.id));
+            t.putInt("days", (int) Math.max(0, (AquaristTeam.now(level.getServer()) - m.since) / 24000L));
+            team.add(t);
+        }
+        v.put("team", team);
+        v.putInt("team_hired", r.hiredCount());
+        boolean mediator = med != null && med.id.equals(npc.getUUID());
+        v.putBoolean("mediator", mediator);
+        if (!mediator) {
+            if (med != null) v.putString("mediator_name", med.name);
+            return;
+        }
+        CompoundTag f = new CompoundTag();
+        f.putBoolean("offered", r.friendOffered);
+        f.putString("name", r.friendName);
+        ListTag conds = new ListTag();
+        for (AquaristTeam.Condition c : AquaristTeam.conditions(level.getServer(), npc.employer(), r)) {
+            CompoundTag t = new CompoundTag();
+            t.putString("k", c.key());
+            t.putBoolean("ok", c.ok());
+            t.putInt("have", c.have());
+            t.putInt("need", c.need());
+            conds.add(t);
+        }
+        f.put("conds", conds);
+        v.put("friend", f);
     }
 
     private static UUID parse(String s) {
@@ -229,6 +288,18 @@ public final class AquaristMenu {
                     npc.findHome(level);
                     if (!npc.housed()) err = Component.translatable("message.bettacraft.aquarist.no_home_found", ServerConfig.getOr(ServerConfig.AQUARIST_HOME_RADIUS, 32));
                 }
+            }
+            case FRIEND_HIRE, FRIEND_DECLINE -> {
+                if (!employer) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (!AquaristTeam.isMediator(level.getServer(), npc)) err = Component.translatable("message.bettacraft.aquarist.friend.none");
+                else err = a.action() == FRIEND_HIRE ? AquaristTeam.hireFriend(p) : AquaristTeam.declineFriend(p);
+            }
+            case SET_RESPONSIBLE -> {
+                int bar = a.text().indexOf("|");
+                UUID id = bar < 0 ? null : parse(a.text().substring(0, bar));
+                UUID to = bar < 0 || bar + 1 >= a.text().length() ? null : parse(a.text().substring(bar + 1));
+                if (!boss || npc.employer() == null) err = Component.translatable("message.bettacraft.aquarist.not_yours");
+                else if (id != null) err = AquaristTeam.assign(level.getServer(), npc.employer(), id, to);
             }
             case DISMISS -> {
                 if (!boss || npc.phase() != AquaristEntity.Phase.HIRED) err = Component.translatable("message.bettacraft.aquarist.not_yours");

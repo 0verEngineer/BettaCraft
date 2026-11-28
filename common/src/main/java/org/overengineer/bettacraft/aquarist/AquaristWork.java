@@ -93,16 +93,21 @@ public final class AquaristWork {
 
     // ------------------------------------------------------------------ the tanks
 
-    /** The tanks he looks after now: loaded, his by the rules, around the workplace, at most {@code hiredAquarist.maxTanksCared}. */
+    /**
+     * The tanks he looks after now: loaded, his by the rules, around the workplace, at most {@code hiredAquarist.maxTanksCared};
+     * M69: only those of the team that are his ({@link AquaristTeam#responsible}: no tank gets two aquarists).
+     */
     public static List<TankBlockEntity> tanks(ServerLevel level, AquaristEntity npc) {
         List<TankBlockEntity> out = new ArrayList<>();
         BlockPos wp = npc.workplace();
         if (wp == null || npc.employer() == null) return out;
+        AquaristTeam.note(level, npc); // M69: his workplace as the team sees it, before the tanks are shared out
         int max = ServerConfig.getOr(ServerConfig.AQUARIST_MAX_TANKS, 16);
         int radius = ServerConfig.getOr(ServerConfig.AQUARIST_WORK_RADIUS, 32);
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         for (AquaristRecords.TankEntry e : rec.near(level.dimension(), wp, radius)) {
             if (out.size() >= max) break;
+            if (!AquaristTeam.mine(level.getServer(), npc, e)) continue; // M69: another aquarist of the team looks after it
             TankBlockEntity c = rec.resolve(level.getServer(), e);
             if (c != null && AquaristRules.mayWork(c.getTank(), npc.employer())) out.add(c);
         }

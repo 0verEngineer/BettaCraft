@@ -1532,6 +1532,19 @@
 			y: 1.1d
 		},
 		{
+			dependencies: ["4B6906DE47FD1153"],
+			description: ["{\"translate\":\"quest.bettacraft.aquarist_team.desc\"}"],
+			id: "7CFB54DF6FD6896E",
+			rewards: [{ id: "218A8DB50FC3C6A3", type: "xp", xp: 150 }],
+			tags: ["bettacraft_feature:aquaristNpc.team", "bettacraft_feature:breeding.enabled", "bettacraft_feature:bettas.enabled"],
+			tasks: [
+				{ advancement: "bettacraft:aquarist_team", criterion: "", id: "5DE380B2DFBDC8A3", type: "advancement" }
+			],
+			title: "{\"translate\":\"quest.bettacraft.aquarist_team.title\"}",
+			x: 12.2d,
+			y: 1.8d
+		},
+		{
 			dependencies: ["5C6C5D793BB24640"],
 			description: ["{\"translate\":\"quest.bettacraft.shared_tank.desc\"}"],
 			id: "5B30791AA5DE43DC",

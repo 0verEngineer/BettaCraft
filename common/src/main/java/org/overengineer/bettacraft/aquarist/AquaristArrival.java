@@ -31,7 +31,8 @@ import org.overengineer.bettacraft.registry.ModEntities;
  * near the player (not in a tank interior). Refused (or not answered within {@code offerDays}, dismissed, unpaid,
  * homeless, removed) the next one comes after a random {@code returnDaysMin..returnDaysMax} in-game days and another
  * breeding. The records ({@link AquaristRecords}) are the truth: an aquarist entity that is not the one of its player's
- * record (an old copy, a refused one that was unloaded) goes away when it is loaded.
+ * record (an old copy, a refused one that was unloaded) goes away when it is loaded. M69: the records keep a team per player
+ * ({@link AquaristTeam}); only the first comes by himself, the next ones are friends the first recommends.
  */
 public final class AquaristArrival {
     /** The breeding advancements: one of them is the "bred something" of the arrival. */
@@ -54,7 +55,7 @@ public final class AquaristArrival {
         if (server == null || p.isSpectator()) return "spectator";
         AquaristRecords rec = AquaristRecords.get(server);
         AquaristRecords.PlayerRecord r = rec.player(p.getUUID());
-        if (r.npc != null) return r.hired ? "hired" : "offering";
+        if (r.npc() != null) return r.hired() ? "hired" : "offering";
         if (rec.ownTanks(server, p.getUUID()) < ServerConfig.getOr(ServerConfig.AQUARIST_MIN_TANKS, 3)) return "tanks";
         if (!bred(p, r)) return "breeding";
         if (r.breedingsAtLeave >= 0) {
@@ -115,8 +116,9 @@ public final class AquaristArrival {
         if (!level.addFreshEntity(npc)) return null;
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         AquaristRecords.PlayerRecord r = rec.player(p.getUUID());
-        r.npc = npc.getUUID();
-        r.hired = false;
+        r.team.clear();
+        r.team.add(new AquaristRecords.Member(npc.getUUID(), false, AquaristTeam.now(level.getServer())));
+        r.team.get(0).name = npc.getName().getString();
         r.offerUntil = until;
         r.name = p.getGameProfile().getName();
         rec.setDirty();
@@ -127,7 +129,8 @@ public final class AquaristArrival {
 
     /**
      * An aquarist hired by {@code employer} at once, standing at {@code at} (GameTests, the client smoke and the multiplayer
-     * test; an aquarist the player had is replaced). He takes the free bed and breeding basin around him.
+     * test; the aquarists the player had are replaced: he is the only one of the team). He takes the free bed and breeding
+     * basin around him. M69: {@link AquaristTeam#spawnMember} adds one to the team instead.
      */
     public static AquaristEntity spawnHired(ServerLevel level, java.util.UUID employer, String employerName, net.minecraft.world.phys.Vec3 at) {
         AquaristEntity npc = spawnHiredHomeless(level, employer, employerName, at);
@@ -148,10 +151,11 @@ public final class AquaristArrival {
         level.addFreshEntity(npc);
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         AquaristRecords.PlayerRecord r = rec.player(employer);
-        r.npc = npc.getUUID();
-        r.hired = true;
+        r.team.clear();
+        r.friendOffered = false;
         r.offerUntil = Long.MAX_VALUE;
         r.name = employerName;
+        AquaristTeam.join(level.getServer(), r, npc);
         rec.setDirty();
         return npc;
     }
@@ -204,13 +208,13 @@ public final class AquaristArrival {
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(command))));
     }
 
-    /** The loaded aquarist of the player's record, or null. */
+    /** The loaded first aquarist of the player's team (the one who offers his work, or the first hired), or null. */
     @Nullable
     public static AquaristEntity npcOf(ServerPlayer p) {
         AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).peek(p.getUUID());
-        if (r == null || r.npc == null) return null;
+        if (r == null || r.npc() == null) return null;
         for (ServerLevel l : p.getServer().getAllLevels()) {
-            Entity e = l.getEntity(r.npc);
+            Entity e = l.getEntity(r.npc());
             if (e instanceof AquaristEntity a && a.isAlive()) return a;
         }
         return null;
@@ -222,13 +226,12 @@ public final class AquaristArrival {
     @Nullable
     public static Component hire(ServerPlayer p) {
         AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).player(p.getUUID());
-        if (r.npc == null || r.hired) return Component.translatable("message.bettacraft.aquarist.none_offering");
+        if (r.npc() == null || r.hired()) return Component.translatable("message.bettacraft.aquarist.none_offering");
         AquaristEntity npc = npcOf(p);
         if (npc == null || npc.phase() != AquaristEntity.Phase.OFFERING) return Component.translatable("message.bettacraft.aquarist.too_far");
         ServerLevel level = (ServerLevel) npc.level();
-        r.hired = true;
         r.offerUntil = Long.MAX_VALUE;
-        AquaristRecords.get(p.getServer()).setDirty();
+        AquaristTeam.join(p.getServer(), r, npc);
         npc.setPhase(AquaristEntity.Phase.HIRED);
         npc.setOfferUntil(Long.MAX_VALUE);
         npc.findHome(level);
@@ -242,11 +245,11 @@ public final class AquaristArrival {
     @Nullable
     public static Component decline(ServerPlayer p) {
         AquaristRecords.PlayerRecord r = AquaristRecords.get(p.getServer()).player(p.getUUID());
-        if (r.npc == null || r.hired) return Component.translatable("message.bettacraft.aquarist.none_offering");
+        if (r.npc() == null || r.hired()) return Component.translatable("message.bettacraft.aquarist.none_offering");
         AquaristEntity npc = npcOf(p);
         if (npc != null) npc.say((ServerLevel) npc.level(), Component.translatable("message.bettacraft.aquarist.declined"), ChatFormatting.GRAY);
         r.refused++;
-        gone(p.getServer(), r, true);
+        gone(p.getServer(), r, r.npc());
         if (npc != null) npc.startLeaving((ServerLevel) npc.level());
         return null;
     }
@@ -263,25 +266,34 @@ public final class AquaristArrival {
         UUID emp = npc.employer();
         if (emp != null) {
             AquaristRecords.PlayerRecord r = rec.player(emp);
-            if (npc.getUUID().equals(r.npc)) {
+            if (r.member(npc.getUUID()) != null) {
                 r.left++;
-                gone(level.getServer(), r, true);
+                gone(level.getServer(), r, npc.getUUID());
             }
         }
         npc.say(level, Component.translatable("message.bettacraft.aquarist.leaves." + why), ChatFormatting.RED);
         npc.startLeaving(level);
     }
 
-    /** The record of a player whose aquarist went: the next one after the wait and another breeding. */
-    static void gone(MinecraftServer server, AquaristRecords.PlayerRecord r, boolean breedingAgain) {
+    /**
+     * The aquarist {@code npc} of the player's team went (refused, left, removed). M69: the others stay; the tanks given to him
+     * go back to the nearest workplace. When nobody is left, the next one comes by himself after the wait and another
+     * breeding, as before M69.
+     */
+    static void gone(MinecraftServer server, AquaristRecords.PlayerRecord r, @Nullable UUID npc) {
+        AquaristRecords rec = AquaristRecords.get(server);
+        if (npc != null) {
+            r.team.removeIf(m -> m.id.equals(npc));
+            rec.unassignAll(npc);
+        }
+        if (r.mediator() == null) r.friendOffered = false;
+        rec.setDirty();
+        if (!r.team.isEmpty()) return;
         int min = ServerConfig.getOr(ServerConfig.AQUARIST_RETURN_MIN, 5), max = Math.max(min, ServerConfig.getOr(ServerConfig.AQUARIST_RETURN_MAX, 10));
         long days = min + (max > min ? server.overworld().getRandom().nextInt(max - min + 1) : 0);
-        r.npc = null;
-        r.hired = false;
         r.offerUntil = Long.MAX_VALUE;
         r.notBefore = server.overworld().getGameTime() + days * 24000L;
         r.breedingsAtLeave = r.breedings;
-        AquaristRecords.get(server).setDirty();
     }
 
     // ------------------------------------------------------------------ the entity against the records
@@ -292,14 +304,15 @@ public final class AquaristArrival {
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         UUID emp = npc.employer();
         AquaristRecords.PlayerRecord r = emp == null ? null : rec.peek(emp);
-        if (r == null || !npc.getUUID().equals(r.npc)) { // refused or replaced while he was not loaded: he goes
+        AquaristRecords.Member m = r == null ? null : r.member(npc.getUUID());
+        if (m == null) { // refused or replaced while he was not loaded: he goes
             npc.startLeaving(level);
             return;
         }
-        if (npc.phase() == AquaristEntity.Phase.HIRED && !r.hired) r.hired = true;
+        if (npc.phase() == AquaristEntity.Phase.HIRED && !m.hired) AquaristTeam.join(level.getServer(), r, npc);
         if (npc.phase() == AquaristEntity.Phase.OFFERING && level.getServer().overworld().getGameTime() > npc.offerUntil()) {
             r.refused++;
-            gone(level.getServer(), r, true);
+            gone(level.getServer(), r, npc.getUUID());
             npc.say(level, Component.translatable("message.bettacraft.aquarist.no_answer"), ChatFormatting.GRAY);
             npc.startLeaving(level);
         }
@@ -312,8 +325,8 @@ public final class AquaristArrival {
         if (emp == null) return;
         AquaristRecords rec = AquaristRecords.get(level.getServer());
         AquaristRecords.PlayerRecord r = rec.peek(emp);
-        if (r == null || !npc.getUUID().equals(r.npc)) return;
+        if (r == null || r.member(npc.getUUID()) == null) return;
         r.left++;
-        gone(level.getServer(), r, true);
+        gone(level.getServer(), r, npc.getUUID());
     }
 }

@@ -27,13 +27,16 @@ import org.overengineer.bettacraft.network.AquaristActionPayload;
  * name = on/off, the number = level 1 to 3), <b>Rearing tanks</b> (several, in order; the species each takes; the next tank is
  * chosen with the arrows and put in with the check mark at the right) and <b>Tanks</b> (the tanks around his workplace; click
  * one to choose what he does there). Dismissing him needs Shift. Everything comes from the server ({@code AquaristMenu#view}).
+ * M69: <b>Team</b> (every aquarist of the employer: name, status, tanks, workplace) in every aquarist's menu, <b>Friend</b>
+ * (only the one who recommends friends: the conditions of the next one with their progress, the offer with hire / no
+ * thanks, "team full"), and on the tanks tab the aquarist of the team who looks after the selected tank (click: the next).
  */
 public class AquaristScreen extends Screen {
     private static final int W = 344, H = 236;
     private static final int TEXT = 0xFFE0E0E0;
     private static final int REARING_ROWS = AquaristMenu.MAX_REARING, TANK_ROWS = 6;
 
-    enum Tab { WORK, REARING, TANKS }
+    enum Tab { WORK, REARING, TANKS, TEAM, FRIEND }
 
     private CompoundTag view;
     private int left, top;
@@ -52,12 +55,22 @@ public class AquaristScreen extends Screen {
     private final Button[] levelButtons = new Button[AquaristTask.ALL.length];
     private final Button[] tankTaskButtons = new Button[AquaristTask.ALL.length];
     private Button addButton, prevButton, nextButton, autoChest;
+    /** M69: the friend's offer, and who looks after the selected tank. */
+    private final List<Button> friendButtons = new ArrayList<>();
+    private Button whoButton;
     private final Button[] speciesButtons = new Button[REARING_ROWS];
     private final Button[] removeButtons = new Button[REARING_ROWS];
 
     public AquaristScreen(CompoundTag view) {
         super(Component.literal(view.getString("name")));
         this.view = view;
+        // M69: the mediator with a friend on offer opens at the tab Friend (the chat button leads here)
+        if (view.getBoolean("mediator") && view.getCompound("friend").getBoolean("offered")) tab = Tab.FRIEND;
+    }
+
+    /** M69: whether the tab Friend is there (only the aquarist who recommends friends, with the switch on). */
+    private boolean friendTab() {
+        return view.getBoolean("mediator") && view.getBoolean("team_feature");
     }
 
     /** A view from the server: opens the menu, or refreshes the open one (or its species list) of the same aquarist. */
@@ -88,7 +101,7 @@ public class AquaristScreen extends Screen {
         return view.getBoolean("boss");
     }
 
-    /** Dev smoke test only: the tab (0 work, 1 rearing tanks, 2 tanks). */
+    /** Dev smoke test only: the tab (0 work, 1 rearing tanks, 2 tanks, 3 team, 4 friend). */
     public void showTabForTest(int index) {
         tab = Tab.values()[index];
         scroll = 0;
@@ -117,6 +130,7 @@ public class AquaristScreen extends Screen {
         workButtons.clear();
         rearingButtons.clear();
         tankButtons.clear();
+        friendButtons.clear();
         offerButtons.add(addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.aquarist.hire").withStyle(ChatFormatting.GREEN),
                 b -> send(AquaristMenu.HIRE, 0, "")).bounds(left + 40, top + H - 34, 100, 20).build()));
         offerButtons.add(addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.aquarist.decline"), b -> {
@@ -124,10 +138,9 @@ public class AquaristScreen extends Screen {
             onClose();
         }).bounds(left + W - 140, top + H - 34, 100, 20).build()));
 
-        // the tabs
-        int tw = (W - 16 - 8) / 3;
+        // the tabs (placed in refresh: the tab Friend only for the one who recommends friends)
         for (Tab t : Tab.values()) {
-            tabButtons[t.ordinal()] = addRenderableWidget(new TankScreen.FitButton(left + 8 + t.ordinal() * (tw + 4), top + 18, tw, 14,
+            tabButtons[t.ordinal()] = addRenderableWidget(new TankScreen.FitButton(left + 8, top + 18, 60, 14,
                     Component.translatable("gui.bettacraft.aquarist.tab." + t.name().toLowerCase(java.util.Locale.ROOT)), b -> {
                 tab = t;
                 scroll = 0;
@@ -193,6 +206,15 @@ public class AquaristScreen extends Screen {
             }));
             tankButtons.add(tankTaskButtons[i]);
         }
+        // M69: who of the team looks after the selected tank (click: the next one, then back to the nearest workplace)
+        whoButton = addRenderableWidget(new TankScreen.FitButton(left + W - 8 - 130, top + H - 88, 130, 13, Component.empty(), b -> cycleWho()));
+        whoButton.setTooltip(Tooltip.create(Component.translatable("gui.bettacraft.aquarist.team.who.tooltip")));
+
+        // ---- M69 friend tab: hire the friend or not
+        friendButtons.add(addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.aquarist.friend.hire").withStyle(ChatFormatting.GREEN),
+                b -> send(AquaristMenu.FRIEND_HIRE, 0, "")).bounds(left + 40, top + H - 46, 110, 18).build()));
+        friendButtons.add(addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.aquarist.friend.decline"),
+                b -> send(AquaristMenu.FRIEND_DECLINE, 0, "")).bounds(left + W - 150, top + H - 46, 110, 18).build()));
 
         Button dismiss = addRenderableWidget(new TankScreen.FitButton(left + W - 88, top + H - 20, 80, 14,
                 Component.translatable("gui.bettacraft.aquarist.dismiss").withStyle(ChatFormatting.RED), b -> {
@@ -235,9 +257,25 @@ public class AquaristScreen extends Screen {
             b.visible = !offer;
             b.active = boss;
         }
+        if (tab == Tab.FRIEND && !friendTab()) tab = Tab.TEAM;
+        int count = friendTab() ? Tab.values().length : Tab.values().length - 1;
+        int tw = (W - 16 - 4 * (count - 1)) / count;
         for (Tab t : Tab.values()) {
-            tabButtons[t.ordinal()].visible = !offer;
-            tabButtons[t.ordinal()].active = t != tab;
+            Button b = tabButtons[t.ordinal()];
+            b.setX(left + 8 + t.ordinal() * (tw + 4));
+            b.setWidth(tw);
+            b.visible = !offer && t.ordinal() < count;
+            b.active = t != tab;
+        }
+        // the tab Friend shines while a friend is on offer
+        CompoundTag friend = view.getCompound("friend");
+        tabButtons[Tab.FRIEND.ordinal()].setMessage(friend.getBoolean("offered")
+                ? Component.literal("★ ").append(Component.translatable("gui.bettacraft.aquarist.tab.friend")).withStyle(ChatFormatting.GOLD)
+                : Component.translatable("gui.bettacraft.aquarist.tab.friend"));
+        boolean full = view.getInt("team_hired") >= view.getInt("team_max");
+        for (Button b : friendButtons) {
+            b.visible = !offer && tab == Tab.FRIEND && friend.getBoolean("offered") && !full;
+            b.active = boss;
         }
         for (Button b : workButtons) {
             b.visible = !offer && tab == Tab.WORK;
@@ -249,6 +287,15 @@ public class AquaristScreen extends Screen {
         }
         CompoundTag sel = selectedTankTag();
         for (Button b : tankButtons) b.visible = !offer && tab == Tab.TANKS && sel != null;
+        int teamSize = view.getList("team", Tag.TAG_COMPOUND).size();
+        whoButton.visible = !offer && tab == Tab.TANKS && sel != null && teamSize > 1;
+        whoButton.active = boss;
+        if (sel != null) {
+            String who = sel.hasUUID("who") ? memberName(sel.getUUID("who")) : "";
+            Component w = who.isEmpty() ? Component.translatable("gui.bettacraft.aquarist.team.who_nobody")
+                    : Component.translatable(sel.getBoolean("given") ? "gui.bettacraft.aquarist.team.who_given" : "gui.bettacraft.aquarist.team.who_auto", who);
+            whoButton.setMessage(w);
+        }
         autoChest.active = boss && view.contains("chest");
         int[] lv = levels();
         for (AquaristTask t : AquaristTask.ALL) {
@@ -288,6 +335,43 @@ public class AquaristScreen extends Screen {
                 b.active = boss && works(sel.getString("verdict"));
             }
         }
+    }
+
+    /** M69: the name of a member of the team ("" when he is not in it). */
+    private String memberName(UUID id) {
+        for (Tag t : view.getList("team", Tag.TAG_COMPOUND)) {
+            CompoundTag c = (CompoundTag) t;
+            if (c.getUUID("id").equals(id)) return c.getString("name");
+        }
+        return "";
+    }
+
+    /** M69: the selected tank goes to the next aquarist of the team (after the last: back to the nearest workplace). */
+    private void cycleWho() {
+        CompoundTag sel = selectedTankTag();
+        if (sel == null) return;
+        var team = view.getList("team", Tag.TAG_COMPOUND);
+        if (team.isEmpty()) return;
+        String tank = sel.getUUID("id").toString();
+        if (!sel.getBoolean("given")) { // automatic now: the first one that is not the automatic one
+            UUID auto = sel.hasUUID("who") ? sel.getUUID("who") : null;
+            for (Tag t : team) {
+                UUID id = ((CompoundTag) t).getUUID("id");
+                if (!id.equals(auto)) {
+                    send(AquaristMenu.SET_RESPONSIBLE, 0, tank + "|" + id);
+                    return;
+                }
+            }
+            return;
+        }
+        UUID cur = sel.getUUID("who");
+        for (int i = 0; i < team.size(); i++) {
+            if (!team.getCompound(i).getUUID("id").equals(cur)) continue;
+            if (i + 1 < team.size()) send(AquaristMenu.SET_RESPONSIBLE, 0, tank + "|" + team.getCompound(i + 1).getUUID("id"));
+            else send(AquaristMenu.SET_RESPONSIBLE, 0, tank + "|");
+            return;
+        }
+        send(AquaristMenu.SET_RESPONSIBLE, 0, tank + "|");
     }
 
     private static boolean works(String verdict) {
@@ -409,6 +493,8 @@ public class AquaristScreen extends Screen {
             case WORK -> renderWork(g);
             case REARING -> renderRearing(g);
             case TANKS -> renderTanks(g);
+            case TEAM -> renderTeam(g);
+            case FRIEND -> renderFriend(g);
         }
         renderStatusLine(g);
     }
@@ -445,7 +531,7 @@ public class AquaristScreen extends Screen {
     /** The line at the bottom, left of the dismiss button: the status. */
     private void renderStatusLine(GuiGraphics g) {
         String status = view.getString("status");
-        boolean bad = status.equals("no_workplace") || status.equals("no_bed") || status.equals("unpaid") || status.equals("off");
+        boolean bad = status.equals("no_workplace") || status.equals("no_bed") || status.equals("unpaid") || status.equals("off") || status.equals("waiting_home");
         Component st = Component.translatable("gui.bettacraft.aquarist.status", Component.translatable("gui.bettacraft.aquarist.status." + status)
                 .withStyle(bad ? ChatFormatting.RED : ChatFormatting.GREEN), view.getString("employer"));
         fit(g, st, left + 8, top + H - 17, W - 108);
@@ -511,7 +597,10 @@ public class AquaristScreen extends Screen {
             fit(g, Component.literal(name(c)), left + 10, y + 2, 170);
             int off = Integer.bitCount(c.getInt("off"));
             Component verdict = Component.translatable("gui.bettacraft.aquarist.tank." + v).withStyle(verdictColor(v));
-            if (works(v) && off > 0) verdict = Component.translatable("gui.bettacraft.aquarist.tanks.some_off", AquaristTask.ALL.length - off, AquaristTask.ALL.length).withStyle(ChatFormatting.YELLOW);
+            // M69: a tank another aquarist of the team looks after
+            if (works(v) && c.hasUUID("who") && view.hasUUID("uuid") && !c.getUUID("who").equals(view.getUUID("uuid"))) {
+                verdict = Component.translatable("gui.bettacraft.aquarist.tank.other", memberName(c.getUUID("who"))).withStyle(ChatFormatting.DARK_AQUA);
+            } else if (works(v) && off > 0) verdict = Component.translatable("gui.bettacraft.aquarist.tanks.some_off", AquaristTask.ALL.length - off, AquaristTask.ALL.length).withStyle(ChatFormatting.YELLOW);
             fit(g, verdict, left + 186, y + 2, W - 186 - 16);
         }
         if (list.isEmpty()) {
@@ -528,7 +617,103 @@ public class AquaristScreen extends Screen {
         if (sel == null) {
             g.drawString(font, Component.translatable("gui.bettacraft.aquarist.tanks.select").withStyle(ChatFormatting.GRAY), left + 8, top + H - 76, 0xFFFFFF);
         } else {
-            fit(g, Component.translatable("gui.bettacraft.aquarist.tanks.at", name(sel)).withStyle(ChatFormatting.YELLOW), left + 8, top + H - 84, W - 16);
+            int room = view.getList("team", Tag.TAG_COMPOUND).size() > 1 ? W - 16 - 134 : W - 16;
+            fit(g, Component.translatable("gui.bettacraft.aquarist.tanks.at", name(sel)).withStyle(ChatFormatting.YELLOW), left + 8, top + H - 84, room);
+        }
+    }
+
+    /** M69: every aquarist of the employer: name, status, tanks, workplace, days with him; ★ = the one who recommends friends. */
+    private void renderTeam(GuiGraphics g) {
+        var team = view.getList("team", Tag.TAG_COMPOUND);
+        fit(g, Component.translatable("gui.bettacraft.aquarist.team.title", view.getInt("team_hired"), view.getInt("team_max")).withStyle(ChatFormatting.AQUA),
+                left + 8, top + 40, W - 16);
+        int y = top + 56;
+        g.fill(left + 6, y - 2, left + W - 6, y + 12 * Math.max(1, Math.min(team.size(), 10)) + 1, 0x30000000);
+        for (int i = 0; i < Math.min(team.size(), 10); i++) {
+            CompoundTag c = team.getCompound(i);
+            int ry = y + i * 12;
+            if (c.getBoolean("me")) g.fill(left + 7, ry - 1, left + W - 7, ry + 11, 0x40FFFFFF);
+            MutableComponent nm = Component.literal((c.getBoolean("mediator") ? "★ " : "   ") + c.getString("name")).withStyle(c.getBoolean("mediator") ? ChatFormatting.GOLD : ChatFormatting.WHITE);
+            fit(g, nm, left + 10, ry + 1, 78);
+            String st = c.getString("status");
+            boolean bad = st.equals("no_workplace") || st.equals("no_bed") || st.equals("unpaid") || st.equals("off") || st.equals("waiting_home");
+            fit(g, Component.translatable("gui.bettacraft.aquarist.status." + st).withStyle(bad ? ChatFormatting.RED : st.equals("unloaded") ? ChatFormatting.DARK_GRAY : ChatFormatting.GREEN),
+                    left + 92, ry + 1, 94);
+            fit(g, Component.translatable("gui.bettacraft.aquarist.team.cared", c.getInt("cared")).withStyle(ChatFormatting.GRAY), left + 190, ry + 1, 56);
+            Component wp = c.contains("workplace") ? Component.literal(pos(c.getLong("workplace"))).withStyle(ChatFormatting.GRAY)
+                    : Component.translatable("gui.bettacraft.aquarist.team.no_workplace").withStyle(ChatFormatting.RED);
+            fit(g, wp, left + 250, ry + 1, W - 250 - 10);
+        }
+        int ty = y + 12 * Math.max(1, Math.min(team.size(), 10)) + 8;
+        Component note = view.getBoolean("mediator") ? Component.translatable("gui.bettacraft.aquarist.team.you_recommend")
+                : view.contains("mediator_name") ? Component.translatable("gui.bettacraft.aquarist.team.recommends", view.getString("mediator_name"))
+                : Component.empty();
+        if (!view.getBoolean("team_feature")) note = Component.translatable("gui.bettacraft.aquarist.team.feature_off");
+        for (FormattedCharSequence line : font.split(note.copy().withStyle(ChatFormatting.GRAY), W - 16)) {
+            g.drawString(font, line, left + 8, ty, 0xFFFFFF);
+            ty += 10;
+        }
+        for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.team.shared").withStyle(ChatFormatting.DARK_GRAY), W - 16)) {
+            g.drawString(font, line, left + 8, ty, 0xFFFFFF);
+            ty += 10;
+        }
+    }
+
+    /** M69: the friend: "team full", the offer, or the conditions of the next one with their progress (like the breeding tab). */
+    private void renderFriend(GuiGraphics g) {
+        CompoundTag f = view.getCompound("friend");
+        int hired = view.getInt("team_hired"), max = view.getInt("team_max");
+        int y = top + 40;
+        if (hired >= max) {
+            g.drawCenteredString(font, Component.translatable("gui.bettacraft.aquarist.friend.full", hired, max).withStyle(ChatFormatting.GOLD), left + W / 2, top + 80, 0xFFFFFF);
+            int fy = top + 100;
+            for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.full_text").withStyle(ChatFormatting.GRAY), W - 40)) {
+                g.drawCenteredString(font, line, left + W / 2, fy, 0xFFFFFF);
+                fy += 10;
+            }
+            return;
+        }
+        if (f.getBoolean("offered")) {
+            Component text = Component.translatable("gui.bettacraft.aquarist.friend.offer_text", f.getString("name"));
+            for (FormattedCharSequence line : font.split(text, W - 20)) {
+                g.drawString(font, line, left + 10, y, TEXT);
+                y += 10;
+            }
+            y += 6;
+            Component pay = !view.getBoolean("wage") ? Component.translatable("message.bettacraft.aquarist.offer.free")
+                    : Component.translatable("message.bettacraft.aquarist.offer.wage", view.getInt("wage_emeralds"), view.getInt("wage_food"));
+            for (FormattedCharSequence line : font.split(pay.copy().withStyle(ChatFormatting.GOLD), W - 20)) {
+                g.drawString(font, line, left + 10, y, 0xFFFFFF);
+                y += 10;
+            }
+            y += 6;
+            for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.home_text").withStyle(ChatFormatting.GRAY), W - 20)) {
+                g.drawString(font, line, left + 10, y, 0xFFFFFF);
+                y += 10;
+            }
+            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.team_after", hired + 1, max).withStyle(ChatFormatting.DARK_GRAY), left + 10, top + H - 62, 0xFFFFFF);
+            return;
+        }
+        for (FormattedCharSequence line : font.split(Component.translatable("gui.bettacraft.aquarist.friend.intro").withStyle(ChatFormatting.GRAY), W - 16)) {
+            g.drawString(font, line, left + 8, y, 0xFFFFFF);
+            y += 10;
+        }
+        y += 4;
+        int daysLeft = -1;
+        for (Tag t : f.getList("conds", Tag.TAG_COMPOUND)) {
+            CompoundTag c = (CompoundTag) t;
+            boolean ok = c.getBoolean("ok");
+            String k = c.getString("k");
+            MutableComponent line = Component.literal(ok ? "✔ " : "✘ ").withStyle(ok ? ChatFormatting.GREEN : ChatFormatting.RED)
+                    .append(Component.translatable("gui.bettacraft.aquarist.friend.cond." + k, c.getInt("have"), c.getInt("need")).withStyle(ok ? ChatFormatting.WHITE : ChatFormatting.GRAY));
+            fit(g, line, left + 12, y, W - 24);
+            y += 13;
+            if (k.equals("days") && !ok) daysLeft = Math.max(daysLeft, c.getInt("need") - c.getInt("have"));
+            if (k.equals("wait") && !ok) daysLeft = Math.max(daysLeft, c.getInt("have"));
+        }
+        y += 4;
+        if (daysLeft > 0) {
+            g.drawString(font, Component.translatable("gui.bettacraft.aquarist.friend.in_days", daysLeft).withStyle(ChatFormatting.YELLOW), left + 8, y, 0xFFFFFF);
         }
     }
 
@@ -562,6 +747,7 @@ public class AquaristScreen extends Screen {
             if (tab == Tab.WORK) g.fill(left + 4, top + 113, left + W - 4, top + 114, 0x804FA3A0);
             if (tab == Tab.REARING) g.fill(left + 4, top + H - 78, left + W - 4, top + H - 77, 0x804FA3A0);
             if (tab == Tab.TANKS) g.fill(left + 4, top + H - 90, left + W - 4, top + H - 89, 0x804FA3A0);
+            if (tab == Tab.FRIEND && view.getCompound("friend").getBoolean("offered")) g.fill(left + 4, top + H - 52, left + W - 4, top + H - 51, 0x804FA3A0);
             g.fill(left + 4, top + H - 24, left + W - 4, top + H - 23, 0x804FA3A0);
         }
     }
