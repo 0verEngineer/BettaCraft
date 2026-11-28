@@ -183,8 +183,8 @@ final class DevClientSmokeM69 {
         }
         basinA = base.offset(2, 0, 0);
         basinB = base.offset(22, 0, 0);
-        home(level, basinA, Blocks.RED_BED);
-        home(level, basinB, Blocks.BLUE_BED);
+        home(level, basinA, Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED));
+        home(level, basinB, Blocks.BED.pick(net.minecraft.world.item.DyeColor.BLUE));
         UUID me = p.getUUID();
         // seven tanks: four near A, three near B
         int[][] at = {{0, 8}, {4, 8}, {8, 8}, {0, 14}, {16, 8}, {20, 8}, {24, 8}};
@@ -278,35 +278,35 @@ final class DevClientSmokeM69 {
         then(8, () -> {});
         then(1, () -> server(p -> AquaristMenu.open(p, who.get())));
         then(20, () -> {
-            if (!(mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen)) problem("no aquarist menu: " + mc.screen);
+            if (!(mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.AquaristScreen)) problem("no aquarist menu: " + mc.gui.screen());
         });
     }
 
     private void tab(int index) {
-        call(mc.screen, "showTabForTest", new Class<?>[]{int.class}, index);
+        call(mc.gui.screen(), "showTabForTest", new Class<?>[]{int.class}, index);
     }
 
     /** Selects the tank on the tab Tanks. */
     private void selectTank(UUID id) {
-        if (mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen s) s.selectTankForTest(id);
+        if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.AquaristScreen s) s.selectTankForTest(id);
         else problem("no aquarist menu to select a tank");
     }
 
     private void send(int action) {
-        if (mc.screen instanceof org.overengineer.bettacraft.client.screen.AquaristScreen s) s.sendForTest(action);
+        if (mc.gui.screen() instanceof org.overengineer.bettacraft.client.screen.AquaristScreen s) s.sendForTest(action);
         else problem("no aquarist menu for action " + action);
     }
 
     private void closeAll() {
         then(1, () -> server(ServerPlayer::closeContainer));
-        then(3, () -> mc.setScreen(null));
+        then(3, () -> mc.gui.setScreen(null));
     }
 
     private void language(String code) {
         mc.options.languageCode = code;
         mc.getLanguageManager().setSelected(code);
         mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
-        if (mc.screen != null) mc.screen.resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
+        if (mc.gui.screen() != null) mc.gui.screen().resize(mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
     }
 
     private void scale(int s) {
@@ -346,7 +346,7 @@ final class DevClientSmokeM69 {
             mc.player.getAbilities().flying = true;
             mc.player.setDeltaMovement(Vec3.ZERO);
         }
-        if (mc.screen instanceof net.minecraft.client.gui.screens.PauseScreen) mc.setScreen(null);
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.PauseScreen) mc.gui.setScreen(null);
         if (steps.isEmpty()) return true;
         Step st = steps.peek();
         if (wait < st.delay()) {
@@ -365,6 +365,6 @@ final class DevClientSmokeM69 {
     }
 
     private void shot(String name) {
-        Screenshot.grab(mc.gameDirectory, "bettacraft_m69_" + name + ".png", mc.getMainRenderTarget(), 1, c -> {});
+        Screenshot.grab(mc.gameDirectory, "bettacraft_m69_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, c -> {});
     }
 }

@@ -68,7 +68,7 @@ public final class AquaristTeamGameTests {
     static void home2(GameTestHelper h) {
         h.setBlock(BASIN2, ModBlocks.BREEDING_BASIN.get().defaultBlockState());
         h.setBlock(CHEST2, Blocks.CHEST.defaultBlockState());
-        BlockState foot = Blocks.BLUE_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
+        BlockState foot = Blocks.BED.pick(net.minecraft.world.item.DyeColor.BLUE).defaultBlockState().setValue(BedBlock.FACING, Direction.SOUTH).setValue(BedBlock.PART, BedPart.FOOT);
         h.setBlock(BED2, foot);
         h.setBlock(BED2.south(), foot.setValue(BedBlock.PART, BedPart.HEAD));
     }

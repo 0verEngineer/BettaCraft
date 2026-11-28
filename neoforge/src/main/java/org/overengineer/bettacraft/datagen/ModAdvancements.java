@@ -210,7 +210,7 @@ final class ModAdvancements extends net.minecraft.data.advancements.AdvancementS
         event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
         // M51: the hired aquarist (he comes after the first breeding)
         AdvancementHolder hired = event(inserted, "aquarist_hired", Items.EMERALD, AdvancementType.GOAL, Progress.AQUARIST_HIRED);
-        event(hired, "aquarist_team", Items.RED_BED, AdvancementType.GOAL, Progress.AQUARIST_TEAM); // M69: the friend of the first
+        event(hired, "aquarist_team", Items.BED.pick(net.minecraft.world.item.DyeColor.RED), AdvancementType.GOAL, Progress.AQUARIST_TEAM); // M69: the friend of the first
         // M53: another player added to the users of a tank
         event(tank, "shared_tank", Items.NAME_TAG, AdvancementType.TASK, Progress.SHARED_TANK);
         // M48: a bred form of a tetra or a cory

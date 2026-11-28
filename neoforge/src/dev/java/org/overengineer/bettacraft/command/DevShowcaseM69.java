@@ -53,7 +53,7 @@ final class DevShowcaseM69 {
         // the ground of the station (the row's floor is at y -1, the cabinets' level)
         for (int x = -1; x <= 46; x++) for (int z = 0; z <= 5; z++) level.setBlockAndUpdate(at.offset(x, -2, z), Blocks.SMOOTH_STONE.defaultBlockState());
         BlockPos[] basins = {at.offset(4, -1, 4), at.offset(22, -1, 4), at.offset(38, -1, 4)};
-        Block[] beds = {Blocks.RED_BED, Blocks.BLUE_BED, Blocks.YELLOW_BED};
+        Block[] beds = {Blocks.BED.pick(net.minecraft.world.item.DyeColor.RED), Blocks.BED.pick(net.minecraft.world.item.DyeColor.BLUE), Blocks.BED.pick(net.minecraft.world.item.DyeColor.YELLOW)};
         for (int i = 0; i < 3; i++) home(level, basins[i], beds[i]);
         List<TankBlockEntity> tanks = new ArrayList<>();
         RandomSource r = RandomSource.create(6900);
