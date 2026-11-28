@@ -50,6 +50,8 @@ public final class FabricClientSmoke implements ClientModInitializer {
     private static DevClientSmokeM68 m68;
     /** M67: -Psmoketestm67 (one energy store per tank). */
     private static DevClientSmokeM67 m67;
+    private static DevClientSmokeM675 m675;
+    private static DevClientSmokeM8 m8;
     /** M65: -Psmoketestm65 (pipes, water at blocks against the glass). */
     private static DevClientSmokeM65 m65;
     /** M64: -Psmoketestm64 (the tank optics of M64). */
@@ -226,6 +228,34 @@ public final class FabricClientSmoke implements ClientModInitializer {
                     stage = 3;
                     LOGGER.info("[smoketest] fabric client world test finished");
                     LOGGER.info(m68.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M68");
+                    mc.stop();
+                }
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m8only")) {
+                LOGGER.info("[smoketest] fabric client in world: M8 info overlays");
+                m8 = new DevClientSmokeM8();
+                stage = 8;
+            }
+            if (stage == 8) {
+                if (m8.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished (M8)");
+                    LOGGER.info("[smoketest] PASSED");
+                    mc.stop();
+                }
+                return;
+            }
+            if (stage == 0 && ticks == 60 && Boolean.getBoolean("bettacraft.smoketest.m675only")) {
+                LOGGER.info("[smoketest] fabric client in world: M67.5 scene");
+                m675 = new DevClientSmokeM675();
+                stage = 675;
+            }
+            if (stage == 675) {
+                if (m675.tick()) {
+                    stage = 3;
+                    LOGGER.info("[smoketest] fabric client world test finished");
+                    LOGGER.info(m675.problems() == 0 ? "[smoketest] PASSED" : "[smoketest] FAILED: M67.5");
                     mc.stop();
                 }
                 return;

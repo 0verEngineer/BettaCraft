@@ -74,6 +74,55 @@ public final class CritterRenderer {
     public static void reset() {
         MODELS.clear();
         GROUPS.clear();
+        LEGS.clear();
+    }
+
+    /**
+     * M67.5: one leg of the legs group, hinged at its hip (tools/assetgen/critters.py {@code leg}): its rest pose, its place
+     * from the front (index), its side (+1 right, -1 left) and whether it is a swimmeret under the tail.
+     */
+    private record Leg(ModelPart part, net.minecraft.client.model.geom.PartPose rest, int index, int side, boolean swim) {}
+
+    private static final Map<CritterSpecies.Model, java.util.List<Leg>> LEGS = new java.util.EnumMap<>(CritterSpecies.Model.class);
+
+    private static java.util.List<Leg> legParts(ModelPart legs) {
+        java.util.List<Leg> out = new java.util.ArrayList<>();
+        if (legs == null) return out;
+        for (String kind : new String[]{"leg", "swim"}) {
+            for (int i = 0; i < 8; i++) {
+                for (int side : new int[]{1, -1}) {
+                    String n = kind + i + (side > 0 ? "_r" : "_l");
+                    if (!legs.hasChild(n)) continue;
+                    ModelPart part = legs.getChild(n);
+                    out.add(new Leg(part, part.getInitialPose(), i, side, kind.equals("swim")));
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * M67.5: every leg swings about its own hip (the group used to swing as a whole about the model's origin, so the legs
+     * slid off the body). Walking: a wave from the back to the front, the two sides in counter-phase, a leg lifts a little
+     * while it swings forward; standing: a faint shuffle. The swimmerets of a shrimp beat all the time.
+     */
+    private static void animateLegs(CritterSpecies.Model m, float phase, boolean walking, boolean alive) {
+        java.util.List<Leg> legs = LEGS.get(m);
+        if (legs == null) return;
+        for (Leg l : legs) {
+            l.part().loadPose(l.rest());
+            if (!alive) continue;
+            if (l.swim()) {
+                l.part().xRot += Mth.sin(phase * 3.0F - l.index() * 0.9F) * 0.35F;
+                continue;
+            }
+            float t = walking ? phase * 2.2F : phase * 0.4F;
+            float w = t - l.index() * 0.8F + (l.side() > 0 ? 0F : Mth.PI);
+            float swing = walking ? 0.32F : 0.04F;
+            l.part().xRot += Mth.sin(w) * swing;
+            // forward stroke (cos > 0): the foot comes off the floor, the leg folds a little in
+            if (walking) l.part().zRot -= l.side() * Math.max(0F, Mth.cos(w)) * 0.14F;
+        }
     }
 
     /** Bakes the models (lazily on the first frame after a reload). */
@@ -87,6 +136,7 @@ public final class CritterRenderer {
             Map<String, ModelPart> g = new HashMap<>();
             for (String n : GROUP_NAMES) if (root.hasChild(n)) g.put(n, root.getChild(n));
             GROUPS.put(m, g);
+            LEGS.put(m, legParts(g.get("legs")));
             TEXTURES.put(m, BettaCraft.id("textures/entity/critters/" + name(m) + ".png"));
         }
     }
@@ -280,10 +330,7 @@ public final class CritterRenderer {
         // animation of the groups
         ModelPart legs = group(m, "legs"), ant = group(m, "antennae"), tent = group(m, "tentacles"), eggs = group(m, "eggs"), horns = group(m, "horns");
         ModelPart foot = group(m, "foot");
-        if (legs != null) {
-            legs.xRot = walking ? Mth.sin(phase * 2.2F) * 0.18F : Mth.sin(phase * 0.4F) * 0.03F;
-            legs.zRot = walking ? Mth.cos(phase * 2.2F) * 0.05F : 0;
-        }
+        if (legs != null) animateLegs(m, phase, walking, alive);
         if (ant != null) {
             ant.yRot = Mth.sin(phase * 0.35F) * 0.18F;
             ant.xRot = Mth.cos(phase * 0.27F) * 0.1F;

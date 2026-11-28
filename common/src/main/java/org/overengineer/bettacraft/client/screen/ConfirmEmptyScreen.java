@@ -15,7 +15,8 @@ import org.overengineer.bettacraft.network.EmptyConfirmPayload;
  * happens, two buttons "Cancel" (focused, also Escape) and "Empty". Only "Empty" tells the server to let them go.
  */
 public final class ConfirmEmptyScreen extends Screen {
-    private static final int W = 220, H = 92;
+    /** M67.5: the box is as high as the wrapped text needs (a long bucket name pushed the text under the buttons). */
+    private static final int W = 240, TEXT_TOP = 32, LINE = 10, BUTTONS = 34;
     private final InteractionHand hand;
     private final ItemStack stack;
     /** The last screen opened (smoke tests press its buttons). */
@@ -37,8 +38,18 @@ public final class ConfirmEmptyScreen extends Screen {
         });
     }
 
+    private Component text() {
+        return Component.translatable("gui.bettacraft.confirm_empty.text", stack.getHoverName());
+    }
+
+    /** Height of the box: title, every wrapped line of the text, the buttons. */
+    int boxHeight() {
+        return TEXT_TOP + font.split(text(), W - 20).size() * LINE + 4 + BUTTONS;
+    }
+
     @Override
     protected void init() {
+        int H = boxHeight();
         int left = (width - W) / 2, top = (height - H) / 2;
         cancel = addRenderableWidget(Button.builder(Component.translatable("gui.bettacraft.confirm_empty.cancel"), b -> onClose())
                 .bounds(left + 12, top + H - 28, 94, 20).build());
@@ -60,20 +71,25 @@ public final class ConfirmEmptyScreen extends Screen {
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
+        int H = boxHeight();
         int left = (width - W) / 2, top = (height - H) / 2;
         g.fill(left, top, left + W, top + H, 0xE0101820);
         g.renderOutline(left, top, W, H, 0xFF6A8CA8);
         g.renderItem(stack, left + 10, top + 9);
         g.drawString(font, title, left + 32, top + 13, 0xFFFFFF);
-        Component what = Component.translatable("gui.bettacraft.confirm_empty.text", stack.getHoverName());
-        int y = top + 32;
-        for (var line : font.split(what, W - 20)) {
+        int y = top + TEXT_TOP;
+        for (var line : font.split(text(), W - 20)) {
             g.drawString(font, line, left + 10, y, 0xC8D2DC);
-            y += 10;
+            y += LINE;
         }
         // the buttons over the box
         cancel.render(g, mouseX, mouseY, partialTick);
         empty.render(g, mouseX, mouseY, partialTick);
+    }
+
+    /** Smoke test: the last line of the text ends above the buttons. */
+    public boolean textAboveButtons() {
+        return TEXT_TOP + font.split(text(), W - 20).size() * LINE <= boxHeight() - 28;
     }
 
     @Override

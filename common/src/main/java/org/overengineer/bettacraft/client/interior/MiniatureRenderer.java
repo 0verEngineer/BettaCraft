@@ -488,9 +488,9 @@ public final class MiniatureRenderer {
         float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
         float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
         float fz = (t.sizeZ() - 2 * MARGIN) / region.sizeZ;
-        Matrix4f mv = new Matrix4f(event.getModelViewMatrix())
-                .translate((float) (min.getX() - cam.x) + MARGIN, (float) (min.getY() - cam.y) + MARGIN, (float) (min.getZ() - cam.z) + MARGIN)
-                .scale(fx, fy, fz);
+        // M67.5: the translation goes into ChunkOffset (in mesh units), so the fog sees the camera distance (see FogSafe)
+        FogSafe fog = new FogSafe(new Matrix4f(event.getModelViewMatrix()), null,
+                (float) (min.getX() - cam.x) + MARGIN, (float) (min.getY() - cam.y) + MARGIN, (float) (min.getZ() - cam.z) + MARGIN, fx, fy, fz);
         Matrix4f proj = event.getProjectionMatrix();
         for (RenderType rt : layers) {
             boolean any = false;
@@ -504,8 +504,7 @@ public final class MiniatureRenderer {
             rt.setupRenderState();
             ShaderInstance shader = RenderSystem.getShader();
             if (shader != null) {
-                shader.setDefaultUniforms(VertexFormat.Mode.QUADS, mv, proj, Minecraft.getInstance().getWindow());
-                if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(0F, 0F, 0F);
+                fog.apply(shader, proj);
                 shader.apply();
                 for (MiniatureMesh m : region.meshes.values()) {
                     VertexBuffer vb = m.buffers.get(rt);
@@ -559,9 +558,7 @@ public final class MiniatureRenderer {
         float fx = (t.sizeX() - 2 * MARGIN) / region.sizeX;
         float fy = (t.sizeY() - 2 * MARGIN) / region.sizeY;
         float fz = (t.sizeZ() - 2 * MARGIN) / region.sizeZ;
-        Matrix4f mv = modelView.mul(tr.pose())
-                .translate(min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN)
-                .scale(fx, fy, fz);
+        FogSafe fog = new FogSafe(modelView, tr.pose(), min.getX() - o.getX() + MARGIN, min.getY() - o.getY() + MARGIN, min.getZ() - o.getZ() + MARGIN, fx, fy, fz);
         for (RenderType rt : layers) {
             boolean any = false;
             for (MiniatureMesh m : region.meshes.values()) {
@@ -574,8 +571,7 @@ public final class MiniatureRenderer {
             rt.setupRenderState();
             ShaderInstance shader = RenderSystem.getShader();
             if (shader != null) {
-                shader.setDefaultUniforms(VertexFormat.Mode.QUADS, mv, proj, Minecraft.getInstance().getWindow());
-                if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(0F, 0F, 0F);
+                fog.apply(shader, proj);
                 shader.apply();
                 for (MiniatureMesh m : region.meshes.values()) {
                     for (VertexBuffer vb : new VertexBuffer[]{m.buffers.get(rt), m.plantBuffers.get(rt), m.swayBuffers.get(rt)}) {
@@ -588,6 +584,56 @@ public final class MiniatureRenderer {
                 VertexBuffer.unbind();
             }
             rt.clearRenderState();
+        }
+    }
+
+    /**
+     * M67.5: the uniforms of a miniature draw. The meshes are in region units (0..region size) and the vanilla terrain shaders
+     * work out the fog from {@code Position + ChunkOffset} before the model-view matrix: with the translation and the scale in
+     * that matrix (as before) the fog saw the distance from the region's corner in region blocks, so the far half of a big
+     * tank (scale 8: 192 region blocks) lay in the sky fog (the white-blue haze over the miniature on NeoForge) and, under
+     * water, in the water fog (the blue inside a big tank). Now the model-view matrix keeps only rotation and scale; the
+     * translation, divided by the scale, is the ChunkOffset, so {@code Position + ChunkOffset} is the camera vector in region
+     * units, and the fog distances are divided by the scale too. A rotated pose (a travelling tank) keeps its rotation in the
+     * matrix (the fog distance does not change under a rotation). With a shader pack (its own programs, which may not use
+     * ChunkOffset) and for a shader without ChunkOffset the full matrix is used as before.
+     */
+    static final class FogSafe {
+        private final Matrix4f full, linear;
+        private final float ox, oy, oz, scale;
+
+        /** {@code view} the camera rotation, {@code pose} the travelling tank's pose (or null), (tx, ty, tz) the mesh origin in that frame. */
+        FogSafe(Matrix4f view, @org.jetbrains.annotations.Nullable Matrix4f pose, float tx, float ty, float tz, float fx, float fy, float fz) {
+            Matrix4f base = pose == null ? new Matrix4f(view) : new Matrix4f(view).mul(pose);
+            full = new Matrix4f(base).translate(tx, ty, tz).scale(fx, fy, fz);
+            // the pose's own translation (camera to the pose origin) moved into the tank frame: pose = T(c) * L, so
+            // L * (p + t) + c = L * (p + t + L^-1 c)
+            float cx = 0, cy = 0, cz = 0;
+            if (pose != null) {
+                org.joml.Vector3f c = pose.getTranslation(new org.joml.Vector3f());
+                Matrix4f lin = new Matrix4f(pose).setTranslation(0, 0, 0);
+                lin.invert().transformDirection(c);
+                cx = c.x; cy = c.y; cz = c.z;
+                base = new Matrix4f(view).mul(new Matrix4f(pose).setTranslation(0, 0, 0));
+            }
+            linear = new Matrix4f(base).scale(fx, fy, fz);
+            ox = (tx + cx) / fx;
+            oy = (ty + cy) / fy;
+            oz = (tz + cz) / fz;
+            scale = (fx + fy + fz) / 3F;
+        }
+
+        void apply(ShaderInstance shader, Matrix4f proj) {
+            boolean offset = shader.CHUNK_OFFSET != null && !IrisCompat.shaderPackInUse();
+            shader.setDefaultUniforms(VertexFormat.Mode.QUADS, offset ? linear : full, proj, Minecraft.getInstance().getWindow());
+            if (shader.CHUNK_OFFSET != null) shader.CHUNK_OFFSET.set(offset ? ox : 0F, offset ? oy : 0F, offset ? oz : 0F);
+            if (!offset || scale <= 0) return;
+            if (shader.FOG_START != null) shader.FOG_START.set(fogScaled(RenderSystem.getShaderFogStart()));
+            if (shader.FOG_END != null) shader.FOG_END.set(fogScaled(RenderSystem.getShaderFogEnd()));
+        }
+
+        private float fogScaled(float d) {
+            return d >= 1e30F || d <= -1e30F ? d : Math.max(-1e30F, Math.min(1e30F, d / scale));
         }
     }
 

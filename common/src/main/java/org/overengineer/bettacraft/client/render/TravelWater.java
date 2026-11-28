@@ -50,6 +50,29 @@ public final class TravelWater {
 
     private TravelWater() {}
 
+    /**
+     * M67.5: the render type of a travelling tank's water and of the algae film on its glass ({@link AlgaeRenderer}): the
+     * entity translucent shader on the block atlas, sorted back to front on upload, but without writing depth. Water and film
+     * of one tank go into this one batch, so they blend in the right order among each other, and nothing of it hides the
+     * glass and water behind it (before, the water and the film each wrote depth from their own batch, and the back wall's
+     * glass, water and film behind a film quad went missing: holes that moved with the camera).
+     */
+    public static final class Types {
+        private Types() {}
+
+        public static final RenderType WATER = RenderType.create("bettacraft_travel_water", com.mojang.blaze3d.vertex.DefaultVertexFormat.NEW_ENTITY,
+                com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, 1 << 16, true, true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(net.minecraft.client.renderer.RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+                        .setTextureState(new net.minecraft.client.renderer.RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
+                        .setTransparencyState(net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                        .setCullState(net.minecraft.client.renderer.RenderStateShard.NO_CULL)
+                        .setLightmapState(net.minecraft.client.renderer.RenderStateShard.LIGHTMAP)
+                        .setOverlayState(net.minecraft.client.renderer.RenderStateShard.OVERLAY)
+                        .setWriteMaskState(net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE)
+                        .createCompositeState(true));
+    }
+
     private static final class Slosh {
         long last;
         Vec3 prev;
@@ -213,7 +236,7 @@ public final class TravelWater {
         }
         var atlas = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite still = atlas.apply(TankWaterRenderer.STILL), side = atlas.apply(TankWaterRenderer.SIDE);
-        VertexConsumer vc = buffers.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
+        VertexConsumer vc = buffers.getBuffer(Types.WATER);
         PoseStack.Pose p = pose.last();
         double time = (mc.level == null ? 0 : (mc.level.getGameTime() % 24000L)) / 20.0 + mc.getTimer().getGameTimeDeltaPartialTick(false) / 20.0;
         for (var e : cols.long2LongEntrySet()) {

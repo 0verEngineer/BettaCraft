@@ -89,6 +89,41 @@ also tops off.
   pipes from before the filter lines (1.32) that run from the filter's inlet and outlet and touch each other are one line at two
   ports now: a short circuit (red); separate them with the pipe wrench.
 
+## [1.56.1-beta.1] - 2026-11-28
+
+Fixes from the user test of 1.54 to 1.56: animal models, animals at the glass, the algae pattern, the miniature in large tanks,
+The One Probe, algae on Create contraptions, and the dev clients.
+
+### Fixed
+- **Large tanks: no white-blue haze over the miniature, and you see something when you swim in one.** The miniature took its fog
+  distance from the corner of its region in region blocks instead of from the camera: the far half of a large tank (interior
+  scale 8) lay in the sky fog, and under water everything was the flat blue of the water fog. The fog now sees the real distance
+  (no shader pack; packs do their own fog).
+- **Shrimp, crayfish and hermit crab legs** start under the body and splay out to the floor; each leg swings about its own hip
+  (the legs hung beside the body and the whole set swung about a point far from it). The swimmerets of shrimp beat.
+- **Angelfish:** the tall dorsal and anal fins reach into the body (their base floated beside the disc).
+- **Plecos and otos:** the sucker mouth stands out of the belly; it lay in the same plane and flickered, worst on the glass.
+- **Animals keep out of the glass:** tankmates keep half their drawn length from it (female livebearers and hybrids included, which
+  are drawn longer), shrimp, crayfish and snails the reach of their feelers, claws and tentacles.
+- **Algae on the glass** no longer repeat every 4 blocks: the pattern spans 16 blocks and every tank and wall places it
+  differently. It stays where it is while the algae grow.
+- **Algae on tanks moved by Create** (and travelling tanks) look like the algae of standing tanks (same textures and fading of the
+  far wall) and are drawn together with the moving water without writing depth, so nothing behind them goes missing.
+- **Release confirmation:** the box grows with the text (a long bucket name ran under the buttons).
+- **Cabinet:** the air pump's hose goes up beside the filter hose only when an external filter sits in the cabinet (alone it
+  looked like the hose of a filter that is not there; the air stones bubble all the same).
+- **The One Probe:** "Sneak for details" works without a probe in the hand (TOP's default gives its extended mode only with one;
+  sneaking now shows our details either way). A fish drawn in the probe's box swims upright instead of lying on its side.
+- **Miniatures with frozen ticks** (`/tick freeze`): a tank you came back to after half a minute away got its miniature back only when
+  the ticks ran again (the client and the server timed their requests in game time, which stands still then).
+
+### Changed
+- **Plants with real leaves in the miniature from 12 blocks** (`render.miniaturePlantMeshDistance`, was 24): a quick help for the
+  frame rate with many planted tanks. Client configs that already exist keep their value.
+- The mod page link of the loaders (NeoForge mod list, Mod Menu) is the CurseForge project; sources and issues stay on GitHub.
+- Development only: every dev and test client runs without VSync (`-Pvsync` keeps it), like the muted sound; the saved option is
+  not changed.
+
 ## [1.56.0-beta.1] - 2026-11-27
 
 One energy store per tank: FE cables and the crank charge the same store, it grows with the tank and its cabinets, and one setting,
