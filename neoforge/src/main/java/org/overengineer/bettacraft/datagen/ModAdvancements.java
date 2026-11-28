@@ -51,7 +51,9 @@ final class ModAdvancements extends net.minecraft.data.advancements.AdvancementS
             // M56
             "terrarium_plant_grown", "bromeliad_tadpole",
             // M67
-            "tank_cranked"};
+            "tank_cranked",
+            // M69
+            "aquarist_team"};
 
     /** Generation a betta must reach for "Dynasty". */
     static final int DYNASTY_GENERATION = 5;
@@ -207,7 +209,8 @@ final class ModAdvancements extends net.minecraft.data.advancements.AdvancementS
         event(filled, "frog_tadpole", ModItems.FROG_BUCKET.get(), AdvancementType.GOAL, Progress.FROG_TADPOLE);
         event(inserted, "aquarist_trade", ModItems.BREEDING_BASIN.get(), AdvancementType.TASK, Progress.AQUARIST_TRADE);
         // M51: the hired aquarist (he comes after the first breeding)
-        event(inserted, "aquarist_hired", Items.EMERALD, AdvancementType.GOAL, Progress.AQUARIST_HIRED);
+        AdvancementHolder hired = event(inserted, "aquarist_hired", Items.EMERALD, AdvancementType.GOAL, Progress.AQUARIST_HIRED);
+        event(hired, "aquarist_team", Items.RED_BED, AdvancementType.GOAL, Progress.AQUARIST_TEAM); // M69: the friend of the first
         // M53: another player added to the users of a tank
         event(tank, "shared_tank", Items.NAME_TAG, AdvancementType.TASK, Progress.SHARED_TANK);
         // M48: a bred form of a tetra or a cory

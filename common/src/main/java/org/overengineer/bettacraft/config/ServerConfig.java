@@ -293,6 +293,8 @@ public final class ServerConfig {
     // M51: the hired aquarist (features.aquaristNpc.enabled)
     public static final ModConfigSpec.IntValue AQUARIST_MIN_TANKS, AQUARIST_RETURN_MIN, AQUARIST_RETURN_MAX, AQUARIST_MAX_TANKS, AQUARIST_WORK_RADIUS,
             AQUARIST_HOME_RADIUS, AQUARIST_WAGE_EMERALDS, AQUARIST_WAGE_FOOD, AQUARIST_LEAVE_DAYS;
+    /** M69: several aquarists per player (features.aquaristNpc.team). */
+    public static final ModConfigSpec.IntValue AQUARIST_MAX_COUNT, AQUARIST_FRIEND_DAYS, AQUARIST_TANKS_PER, AQUARIST_CALM_DAYS, AQUARIST_GRACE_DAYS;
     public static final ModConfigSpec.DoubleValue AQUARIST_OFFER_DAYS, AQUARIST_UNPAID_SPEED;
     public static final ModConfigSpec.BooleanValue AQUARIST_WAGE, AQUARIST_FTB_TEAMS;
     public static final ModConfigSpec.IntValue REEF_PUMP_BLOCKS;
@@ -1252,6 +1254,16 @@ public final class ServerConfig {
         AQUARIST_UNPAID_SPEED = b.comment("How fast an aquarist works while his wage is missing (1 = as fast as when paid)").defineInRange("unpaidWorkSpeed", 0.5, 0.05, 1.0);
         AQUARIST_FTB_TEAMS = b.comment("With FTB Teams: the tanks of the members of the employer's team count as his own (off: only the employer's",
                 "tanks and the tanks released for every aquarist)").define("ftbTeams", true);
+        AQUARIST_MAX_COUNT = b.comment("M69: aquarists one player can have at most (features.aquaristNpc.team): the first comes by himself, every",
+                "further one is a friend the first recommends in his menu (1: only one, as before M69)").defineInRange("maxAquarists", 3, 1, 10);
+        AQUARIST_FRIEND_DAYS = b.comment("In-game days the aquarist who recommends a friend must have worked without a break (his wage paid every",
+                "morning), and the days since the last hiring, before he offers the next friend").defineInRange("friendAfterDays", 7, 1, 1000);
+        AQUARIST_TANKS_PER = b.comment("Own tanks per aquarist for a friend (enough work): the second from 2 x this, the third from 3 x this")
+                .defineInRange("tanksPerAquarist", 3, 1, 1000);
+        AQUARIST_CALM_DAYS = b.comment("In-game days without trouble (no unpaid day, no tank in an aquarist's care with bad water) before a friend",
+                "is recommended (0: no such condition)").defineInRange("friendCalmDays", 3, 0, 100);
+        AQUARIST_GRACE_DAYS = b.comment("In-game days a hired friend waits next to the one who recommended him for a free bed and breeding basin",
+                "before days without a home count (he does not work while he waits)").defineInRange("friendHomeGraceDays", 5, 0, 1000);
         b.pop();
         b.comment("Handbook (needs the GuideME mod; without it there is no book)").push("guide");
         GUIDE_GIVE_BOOK = b.comment("When each player gets the handbook, once: ON_JOIN = on the first join, ON_FIRST_CATCH_OR_CRAFT = with the",

@@ -1,0 +1,29 @@
+{
+  "parent": "bettacraft:aquarist_hired",
+  "criteria": {
+    "event": {
+      "conditions": {
+        "event": "aquarist_team"
+      },
+      "trigger": "bettacraft:event"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.bettacraft.aquarist_team.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "minecraft:red_bed"
+    },
+    "title": {
+      "translate": "advancements.bettacraft.aquarist_team.title"
+    }
+  },
+  "requirements": [
+    [
+      "event"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
