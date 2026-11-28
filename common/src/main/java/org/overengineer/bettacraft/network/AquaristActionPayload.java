@@ -17,7 +17,7 @@ public record AquaristActionPayload(int entity, int action, int value, String te
             ByteBufCodecs.VAR_INT, AquaristActionPayload::entity,
             ByteBufCodecs.VAR_INT, AquaristActionPayload::action,
             ByteBufCodecs.VAR_INT, AquaristActionPayload::value,
-            ByteBufCodecs.stringUtf8(64), AquaristActionPayload::text,
+            ByteBufCodecs.stringUtf8(128), AquaristActionPayload::text, // M69: "tank id|aquarist id"
             AquaristActionPayload::new);
 
     @Override

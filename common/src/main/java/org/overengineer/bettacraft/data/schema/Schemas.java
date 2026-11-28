@@ -101,10 +101,42 @@ public final class Schemas {
             .step(0, data -> data)
             .build();
 
+    /** M51 SavedData bettacraft_aquarists (the hired aquarists and the tank index); v1 = M69: a team per player. */
+    public static final MigrationChain AQUARIST_RECORDS = MigrationChain.builder("aquarist_records")
+            .step(0, Schemas::aquaristsV0toV1)
+            .build();
+
     /** Player attachment bettacraft:guide_book (M6): whether the handbook was given. */
     public static final MigrationChain GUIDE_BOOK = MigrationChain.builder("guide_book")
             .step(0, data -> data)
             .build();
+
+    /**
+     * Aquarist records v0 -> v1 (M69: several aquarists per player): the one aquarist of a player ({@code npc}, {@code hired})
+     * becomes the first member of his team ({@code team:[{id, hired, since:-1}]}; -1 = hired before M69, the time is set
+     * when the records are first used). The breedings so far count as the ones at the last hiring, so the first friend needs
+     * another breeding like the next aquarist after a refusal.
+     */
+    static CompoundTag aquaristsV0toV1(CompoundTag data) {
+        if (!NbtCompat.has(data, "players", Tag.TAG_LIST)) return data;
+        net.minecraft.nbt.ListTag players = data.getListOrEmpty("players");
+        for (int i = 0; i < players.size(); i++) {
+            CompoundTag p = players.getCompoundOrEmpty(i);
+            net.minecraft.nbt.ListTag team = new net.minecraft.nbt.ListTag();
+            if (NbtCompat.hasUUID(p, "npc")) {
+                CompoundTag m = new CompoundTag();
+                NbtCompat.putUUID(m, "id", NbtCompat.getUUID(p, "npc"));
+                m.putBoolean("hired", p.getBooleanOr("hired", false));
+                m.putLong("since", -1L);
+                team.add(m);
+                p.putInt("breedings_at_hire", p.getIntOr("breedings", 0));
+            }
+            p.remove("npc");
+            p.remove("hired");
+            p.put("team", team);
+        }
+        return data;
+    }
 
     /**
      * Betta v1 -> v2 (M2): the genome stored one value per locus (the phenotype). Every value becomes a homozygous allele
