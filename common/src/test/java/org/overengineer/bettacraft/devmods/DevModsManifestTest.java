@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 /**
- * M59: the optional dev mod groups come from the manifest dev-mods.json (gradle/dev-mods.gradle downloads them from their
+ * M59: the optional dev mod groups come from the manifest gradle/dev-mods.json (gradle/dev-mods.gradle downloads them from their
  * official source and checks the hashes). Every group folder the loader builds read (NeoForge extraMods, the Fabric flag
  * map) must be in the manifest of this branch or listed there as a gap, every entry needs an official source and its hashes,
  * and one file name never stands for two different files of a loader. A new test mod therefore cannot be used without its manifest entry.
@@ -42,7 +42,7 @@ class DevModsManifestTest {
     }
 
     private static JsonObject manifest() throws IOException {
-        return JsonParser.parseString(read("dev-mods.json")).getAsJsonObject();
+        return JsonParser.parseString(read("gradle/dev-mods.json")).getAsJsonObject();
     }
 
     private static Map<String, List<JsonObject>> entries(JsonObject m) {
@@ -72,7 +72,7 @@ class DevModsManifestTest {
     @Test
     void theManifestIsForThisMinecraftVersion() throws IOException {
         String mc = read("gradle.properties").lines().filter(l -> l.startsWith("minecraft_version=")).findFirst().orElseThrow().substring(18).trim();
-        assertEquals(mc, manifest().get("minecraft").getAsString(), "dev-mods.json is the manifest of another Minecraft version");
+        assertEquals(mc, manifest().get("minecraft").getAsString(), "gradle/dev-mods.json is the manifest of another Minecraft version");
     }
 
     @Test
@@ -93,8 +93,8 @@ class DevModsManifestTest {
                 if (!e.has("size") || e.get("size").getAsLong() <= 0) problems.add(what + ": size");
             }
         }
-        assertTrue(n > 0, "dev-mods.json lists no file");
-        assertTrue(problems.isEmpty(), "dev-mods.json: " + problems);
+        assertTrue(n > 0, "gradle/dev-mods.json lists no file");
+        assertTrue(problems.isEmpty(), "gradle/dev-mods.json: " + problems);
     }
 
     @Test
@@ -126,10 +126,10 @@ class DevModsManifestTest {
             for (String g : read) {
                 boolean listed = groups.has(g) && !groups.getAsJsonArray(g).isEmpty();
                 boolean gap = gaps.has(g) && !gaps.get(g).getAsString().isBlank();
-                if (!listed && !gap) problems.add(loader + "/" + g + ": read by the build, not in dev-mods.json (nor a gap with its reason)");
+                if (!listed && !gap) problems.add(loader + "/" + g + ": read by the build, not in gradle/dev-mods.json (nor a gap with its reason)");
                 if (!script.contains("'" + g + "'")) problems.add(loader + "/" + g + ": no flag in gradle/dev-mods.gradle");
             }
-            for (String g : groups.keySet()) if (!read.contains(g)) problems.add(loader + "/" + g + ": in dev-mods.json, but no build reads it");
+            for (String g : groups.keySet()) if (!read.contains(g)) problems.add(loader + "/" + g + ": in gradle/dev-mods.json, but no build reads it");
         }
         assertTrue(problems.isEmpty(), String.join("\n", problems));
     }
@@ -137,7 +137,9 @@ class DevModsManifestTest {
     @Test
     void theOldCiListsAreGone() {
         for (String f : List.of("tools/ci/power-mods.json", "tools/ci/integration-mods.json", "tools/ci/fetch_mods.py")) {
-            assertTrue(!Files.exists(root().resolve(f)), f + ": the CI uses dev-mods.json since M59");
+            assertTrue(!Files.exists(root().resolve(f)), f + ": the CI uses gradle/dev-mods.json since M59");
         }
+        // M69: the manifest moved next to gradle/dev-mods.gradle (as in Fast Craft Book)
+        assertTrue(!Files.exists(root().resolve("dev-mods.json")), "dev-mods.json: the manifest is gradle/dev-mods.json since M69");
     }
 }
