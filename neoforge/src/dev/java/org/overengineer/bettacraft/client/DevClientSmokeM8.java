@@ -162,6 +162,11 @@ final class DevClientSmokeM8 {
     }
 
     private void sneak(boolean on) {
+        // M67.5: every key mapping on the sneak key (Jade has its own "show details" mapping on Shift; pressing only the vanilla one
+        // left Jade's details shot without details)
+        for (net.minecraft.client.KeyMapping k : mc.options.keyMappings) {
+            if (k.same(mc.options.keyShift)) k.setDown(on);
+        }
         mc.options.keyShift.setDown(on);
     }
 
