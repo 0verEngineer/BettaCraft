@@ -22,7 +22,8 @@ Der <ItemLink id="bettacraft:cabinet" /> ist ein Unterbau für das Aquarium aus 
   angeschlossener Außenfilter; der Schlauch läuft an der Wand seiner **Auslass-Seite** hoch (siehe unten; an der
   Rückwand, wenn du keine andere wählst). Die zwei Heizstab-Plätze im Schrank-Menü sind die Heizstab-Plätze dieses Filters.
 * **Luftpumpen-Platz:** Eine [Luftpumpe](air_pump.md) im Schrank treibt die Ausströmer und Schwammfilter des Aquariums
-  darüber an, wie eine daneben; ihr Luftschlauch läuft neben dem Filterschlauch an der Auslass-Seite hoch.
+  darüber an, wie eine daneben; mit einem Außenfilter im Schrank läuft ihr Luftschlauch neben dem Filterschlauch an der
+  Auslass-Seite hoch (ohne ihn wird kein Schlauch gezeichnet).
 * **Neun Lagerplätze** für Futter und anderes. Trichter können sie benutzen, und der [Futterautomat](feeder.md) auf dem
   Aquarium nimmt Futter aus den Schränken darunter.
 * Abgebaut droppt der Schrank seinen Inhalt wie eine Truhe und behält sein Holz, seine Auslass-Seite und seine Front.
