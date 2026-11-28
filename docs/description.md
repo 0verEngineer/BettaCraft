@@ -211,7 +211,7 @@ own, and he only works at his employer's tanks, those of the team (FTB Teams) an
 
 An in-game handbook in English and German with a page for every animal, plant, coral and device and where to get it
 (GuideME on NeoForge; on Fabric a Patchouli book on 1.21.1 and a Modonomicon book on 1.21.11 and 26.x, made from the same
-pages), 72 advancements, information pages in JEI (and REI and EMI on Fabric) and tooltips. Without a handbook mod every
+pages), 73 advancements, information pages in JEI (and REI and EMI on Fabric) and tooltips. Without a handbook mod every
 item explains itself in its tooltip.
 
 ![The tank menu with the genes of a betta and the water values, and the handbook page on genetics](images/bettacraft-menus.png)
@@ -251,7 +251,7 @@ version; what is missing where is listed after them.
   the road (on airships the fish swim on live) and with sloshing water; rotation
   drives pumps, the reverse osmosis unit, the food maker and the fertilizer maker, and the drive adapter powers a whole
   tank; Display Links show tank values. AE2 and Refined Storage autocrafting feeds the food maker and the crucible.
-- **For modpacks:** an FTB Quests chapter "Bettacraft" (117 quests, English and German; quests of switched-off features
+- **For modpacks:** an FTB Quests chapter "Bettacraft" (118 quests, English and German; quests of switched-off features
   hide themselves), KubeJS events (animal born, animal died, monitor alarm), waypoints at tanks with a monitor
   alarm (JourneyMap, Xaero's Minimap, FTB Chunks; for the owner and the listed users), FTB Teams for the hired aquarist, and `/bettacraft foreign list` to see which animals of other mods still need a
   profile.

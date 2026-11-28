@@ -151,7 +151,10 @@ public final class AquaristMenu {
         for (AquaristRecords.Member m : r.team) {
             if (!m.hired) continue;
             AquaristEntity e = AquaristTeam.entity(level.getServer(), m.id);
-            if (e != null) AquaristTeam.note((ServerLevel) e.level(), e);
+            if (e != null) {
+                AquaristTeam.note((ServerLevel) e.level(), e);
+                AquaristTeam.noteCared((ServerLevel) e.level(), e, AquaristWork.tanks((ServerLevel) e.level(), e).size());
+            }
             CompoundTag t = new CompoundTag();
             NbtCompat.putUUID(t, "id", m.id);
             t.putString("name", m.name);
