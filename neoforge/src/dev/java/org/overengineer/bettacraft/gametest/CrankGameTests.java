@@ -386,6 +386,10 @@ public final class CrankGameTests {
         Power saved = Power.current();
         long savedTime = level.getDayTime();
         try {
+            // M69: the 28 days run in one go on the server thread; the plants' growth and spread (and so the water of P) drew
+            // from the level's random in whatever state the earlier batches left it, and P ended between 0.387 and 0.69.
+            // Seeded, every run (and both loaders) simulates the same days: the check proves the same thing every time.
+            level.getRandom().setSeed(3700L);
             Power.all(true, true);
             ServerConfig.POWER_COSTS.set(ServerConfig.PowerCosts.EASY); // M67: the store is sized for a day on EASY
             // the room temperature follows the time of day the batch happens to start at (at night 23 °C chilled tank A's bettas
@@ -395,8 +399,7 @@ public final class CrankGameTests {
             ExternalFilterBlockEntity f = filter(h, new BlockPos(5, 1, 10), Direction.WEST);
             f.insertHeater(new ItemStack(ModItems.HEATER_MEDIUM.get()));
             TankEquipment.invalidate(b);
-            // M52: P holds two females: a pair bred in the 28 days, and its fry (2 to 23 bettas in the tank, by the shared random
-            // of the suite) set the nitrate and the quality, 0.40-0.69 at the end (0.396 failed the check once on 26.3)
+            // M52: P holds two females (a pair bred in the 28 days, and its fry set the nitrate and the quality)
             List<BettaEntity> fa = stock(h, a, 3701), fb = stock(h, b, 3711),
                     fp = List.of(LiveFoodGameTests.betta(h, p, true, 3721), LiveFoodGameTests.betta(h, p, true, 3722));
             float ambient = TankCare.ambient(level, a.getTank());
